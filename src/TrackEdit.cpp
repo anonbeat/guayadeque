@@ -1814,7 +1814,7 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist, int curitem )
+void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist, int curitem, wxString &lastvalue )
 {
     combobox->Clear();
 
@@ -1822,6 +1822,10 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
         return;
 
     wxString FilterText = combobox->GetValue().Lower();
+
+    if( FilterText == lastvalue )
+        return;
+
     if( FilterText.IsEmpty() )
     {
         combobox->Append( itemlist );
@@ -1840,41 +1844,42 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
         }
         combobox->Append( SetItems );
     }
+    lastvalue = FilterText;
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 {
     m_ArtistChanged = true;
-    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists, m_CurItem );
+    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists, m_CurItem, m_LastArtist );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 {
     m_AlbumArtistChanged = true;
-    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists, m_CurItem );
+    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists, m_CurItem, m_LastAlbumArtist );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 {
     m_AlbumChanged = true;
-    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums, m_CurItem );
+    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums, m_CurItem, m_LastAlbum );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 {
     m_CompChanged = true;
-    guUpdateComboBoxEntries( m_CompComboBox, m_Composers, m_CurItem );
+    guUpdateComboBoxEntries( m_CompComboBox, m_Composers, m_CurItem, m_LastComposer );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
 {
     m_GenreChanged = true;
-    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres, m_CurItem );
+    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres, m_CurItem, m_LastGenre );
 }
 
 // -------------------------------------------------------------------------------- //

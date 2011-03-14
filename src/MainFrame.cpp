@@ -4939,12 +4939,6 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
         ShowMainPanel( guPANEL_MAIN_SHOWCOVER, ( NewVisiblePanels & guPANEL_MAIN_SHOWCOVER ) );
     }
 
-//    ShowMainPanel( guPANEL_MAIN_PLAYERPLAYLIST, m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST );
-//    ShowMainPanel( guPANEL_MAIN_PLAYERFILTERS, m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS );
-//    ShowMainPanel( guPANEL_MAIN_PLAYERVUMETERS, m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS );
-//    ShowMainPanel( guPANEL_MAIN_LOCATIONS, m_VisiblePanels & guPANEL_MAIN_LOCATIONS );
-//    ShowMainPanel( guPANEL_MAIN_SHOWCOVER, m_VisiblePanels & guPANEL_MAIN_SHOWCOVER );
-
     LoadPerspective( LayoutStr );
 
     OnPlayerPlayListUpdateTitle( event );

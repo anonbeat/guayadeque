@@ -174,6 +174,12 @@ class guTrackEditor : public wxDialog
     guLyricSearchEngine *               m_LyricSearchEngine;
     guLyricSearchContext *              m_LyricSearchContext;
 
+    wxString                            m_LastArtist;
+    wxString                            m_LastAlbumArtist;
+    wxString                            m_LastAlbum;
+    wxString                            m_LastComposer;
+    wxString                            m_LastGenre;
+
     // Event handlers, overide them in your derived class
 	void                                OnSongListBoxSelected( wxCommandEvent &event );
 	void                                OnMoveUpBtnClick( wxCommandEvent& event );
