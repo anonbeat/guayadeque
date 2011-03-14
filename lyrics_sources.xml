@@ -37,6 +37,21 @@
         <item begin="[" end="]"/>
       </exclude>
     </lyricsource>
+    <lyricsource type="download" enabled="true" name="coveralia.com" source="http://www.coveralia.com/letras/{tl}-{al}.php">
+      <replace>
+        <item replace="áäå" with="a"/>
+        <item replace="éë" with="e"/>
+        <item replace="í" with="i"/>
+        <item replace="óö" with="o"/>
+        <item replace="úü" with="u"/>
+        <item replace=" /¿?.'" with="-"/>
+        <item replace="ñÑ" with="n"/>
+        <item replace="çÇ" with="c"/>
+      </replace>
+      <extract>
+        <item tag="&lt;p class=&quot;alincentro margen5&quot;&gt;"/>
+      </extract>
+    </lyricsource>
     <lyricsource type="download" enabled="true" name="directlyrics.com" source="http://www.directlyrics.com/{al}-{tl}-lyrics.html">
       <replace>
         <item replace=" _@,;&amp;\/'&quot;" with="-"/>
@@ -101,6 +116,17 @@
       </exclude>
       <notfound>
         <item tag="we do not have the lyric for this song"/>
+      </notfound>
+    </lyricsource>
+    <lyricsource type="download" enabled="true" name="lyrics007.com" source="http://www.lyrics007.com/{a}+Lyrics/{t}+Lyrics.html">
+      <extract>
+        <item begin="&lt;/script&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;" end="&lt;br&gt;&lt;script"/>
+      </extract>
+      <exclude>
+        <item tag="&lt;script type=&quot;text/javascript&quot;&gt;"/>
+      </exclude>
+      <notfound>
+        <item tag="Sorry, this song or the artist is deleted."/>
       </notfound>
     </lyricsource>
     <lyricsource type="download" enabled="true" name="lyricsbay.com" source="http://www.lyricsbay.com/{tl}_lyrics-{al}.html">
@@ -168,6 +194,18 @@
         <item tag="&lt;div id=&quot;songlyrics&quot; &gt;"/>
         <item tag="&lt;p&gt;"/>
       </extract>
+    </lyricsource>
+    <lyricsource type="download" enabled="true" name="lyricsvip.com" source="www.lyricsvip.com/{a}/{t}-Lyrics.html">
+      <replace>
+        <item replace=" " with="-"/>
+      </replace>
+      <extract>
+        <item tag="&lt;table class=&quot;tbl0&quot;&gt;"/>
+      </extract>
+      <exclude>
+        <item tag="&lt;h1&gt;"/>
+        <item tag="&lt;h2&gt;"/>
+      </exclude>
     </lyricsource>
     <lyricsource type="download" enabled="true" name="lyriki.com" source="http://www.lyriki.com/{al}:{tl}">
       <replace>
@@ -252,21 +290,6 @@
       </replace>
       <extract>
         <item tag="&lt;div class=&quot;tab_tra_pt&quot;&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="Coveralia" source="http://www.coveralia.com/letras/{tl}-{al}.php">
-      <replace>
-        <item replace="áäå" with="a"/>
-        <item replace="éë" with="e"/>
-        <item replace="í" with="i"/>
-        <item replace="óö" with="o"/>
-        <item replace="úü" with="u"/>
-        <item replace=" /¿?.'" with="-"/>
-        <item replace="ñÑ" with="n"/>
-        <item replace="çÇ" with="c"/>
-      </replace>
-      <extract>
-        <item tag="&lt;p class=&quot;alincentro margen5&quot;&gt;"/>
       </extract>
     </lyricsource>
   </lyricsources>
