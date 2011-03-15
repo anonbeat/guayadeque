@@ -1518,6 +1518,8 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
     guTrackArray Songs;
     guImagePtrArray Images;
     wxArrayString Lyrics;
+    wxArrayInt ChangedFlags;
+
     //m_AlbumListCtrl->GetSelectedSongs( &Songs );
     wxArrayInt Albums;
     Albums.Add( albumid );
@@ -1525,14 +1527,14 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
     if( !Songs.Count() )
         return;
     NormalizeTracks( &Songs );
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics, &ChangedFlags );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
-            guUpdateImages( Songs, Images );
-            guUpdateLyrics( Songs, Lyrics );
+            guUpdateLyrics( Songs, Lyrics, ChangedFlags );
+            guUpdateImages( Songs, Images, ChangedFlags );
 
             m_PlayerPanel->UpdatedTracks( &Songs );
         }

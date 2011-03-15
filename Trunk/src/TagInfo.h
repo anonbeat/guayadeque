@@ -62,6 +62,11 @@ using namespace TagLib;
 #define wxStringToTString(s) TagLib::String(s.ToUTF8(), TagLib::String::UTF8)
 #define TStringTowxString(s) wxString::FromUTF8( s.toCString(true) )
 
+#define     guTRACK_CHANGED_DATA_NONE           0
+#define     guTRACK_CHANGED_DATA_TAGS           ( 1 << 0 )
+#define     guTRACK_CHANGED_DATA_IMAGES         ( 1 << 1 )
+#define     guTRACK_CHANGED_DATA_LYRICS         ( 1 << 2 )
+
 // -------------------------------------------------------------------------------- //
 class guTagInfo
 {
@@ -310,8 +315,8 @@ bool        guTagSetPicture( const wxString &filename, wxImage * picture );
 bool        guTagSetPicture( const wxString &filename, const wxString &imagefile );
 wxString    guTagGetLyrics( const wxString &filename );
 bool        guTagSetLyrics( const wxString &filename, wxString &lyrics );
-void        guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images );
-void        guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics );
+void        guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags );
+void        guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, const wxArrayInt &changedflags );
 bool        guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal );
 #endif
 // -------------------------------------------------------------------------------- //

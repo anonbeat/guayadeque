@@ -288,8 +288,8 @@ class guLibPanel : public wxPanel
     virtual void            DoEditTracks( guTrackArray &tracks );
 
     virtual void            UpdateTracks( const guTrackArray &tracks );
-    virtual void            UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images );
-    virtual void            UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics );
+    virtual void            UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images, const wxArrayInt &changedflags );
+    virtual void            UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics, const wxArrayInt &changedflags );
 
     virtual void            SaveToPlayList( const wxArrayInt &tracks );
 

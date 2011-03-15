@@ -1083,14 +1083,15 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
 {
     guImagePtrArray Images;
     wxArrayString Lyrics;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &Images, &Lyrics );
+    wxArrayInt ChangedFlags;
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &Images, &Lyrics, &ChangedFlags );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             UpdateTracks( tracks );
-            UpdateTracksImages( tracks, Images );
-            UpdateTracksLyrics( tracks, Lyrics );
+            UpdateTracksLyrics( tracks, Lyrics, ChangedFlags );
+            UpdateTracksImages( tracks, Images, ChangedFlags );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &tracks );
@@ -1107,15 +1108,15 @@ void guLibPanel::UpdateTracks( const guTrackArray &tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images )
+void guLibPanel::UpdateTracksImages( const guTrackArray &tracks, const guImagePtrArray &images, const wxArrayInt &changedflags )
 {
-    guUpdateImages( tracks, images );
+    guUpdateImages( tracks, images, changedflags );
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics )
+void guLibPanel::UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics, const wxArrayInt &changedflags )
 {
-    guUpdateLyrics( tracks, lyrics );
+    guUpdateLyrics( tracks, lyrics, changedflags );
 }
 
 // -------------------------------------------------------------------------------- //

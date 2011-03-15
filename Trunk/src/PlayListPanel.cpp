@@ -1338,15 +1338,16 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
         return;
     guImagePtrArray Images;
     wxArrayString Lyrics;
+    wxArrayInt ChangedFlags;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics, &ChangedFlags );
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Tracks );
-            guUpdateImages( Tracks, Images );
-            guUpdateLyrics( Tracks, Lyrics );
+            guUpdateLyrics( Tracks, Lyrics, ChangedFlags );
+            guUpdateImages( Tracks, Images, ChangedFlags );
             m_PLTracksListBox->ReloadItems();
 
             // Update the track in database, playlist, etc

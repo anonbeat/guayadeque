@@ -1693,6 +1693,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
     guTrackArray Songs;
     guImagePtrArray Images;
     wxArrayString Lyrics;
+    wxArrayInt ChangedFlags;
 
     guListItems Labels;
     wxArrayInt SongIds;
@@ -1731,15 +1732,15 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
     if( !Songs.Count() )
         return;
 
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics );
+    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Songs, &Images, &Lyrics, &ChangedFlags );
 
     if( TrackEditor )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
             m_Db->UpdateSongs( &Songs );
-            guUpdateImages( Songs, Images );
-            guUpdateLyrics( Songs, Lyrics );
+            guUpdateLyrics( Songs, Lyrics, ChangedFlags );
+            guUpdateImages( Songs, Images, ChangedFlags );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Songs );
