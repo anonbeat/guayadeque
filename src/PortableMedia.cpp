@@ -3161,7 +3161,7 @@ void guIpodMediaLibPanel::SetPortableMediaDevice( guPortableMediaDevice * portab
 }
 
 // -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::UpdateTracks( const guTrackArray &tracks )
+void guIpodMediaLibPanel::UpdateTracks( const guTrackArray &tracks, const wxArrayInt &changedflags )
 {
     int Index;
     int Count = tracks.Count();
@@ -3191,7 +3191,7 @@ void guIpodMediaLibPanel::UpdateTracks( const guTrackArray &tracks )
     }
     ( ( guIpodLibrary * ) m_Db )->iPodFlush();
 
-    guPortableMediaLibPanel::UpdateTracks( tracks );
+    guPortableMediaLibPanel::UpdateTracks( tracks, changedflags );
 }
 
 // -------------------------------------------------------------------------------- //

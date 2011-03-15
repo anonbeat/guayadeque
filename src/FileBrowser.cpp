@@ -1835,7 +1835,7 @@ void guFileBrowser::OnFolderEditTracks( wxCommandEvent &event )
         {
             if( TrackEditor->ShowModal() == wxID_OK )
             {
-                m_Db->UpdateSongs( &Tracks );
+                m_Db->UpdateSongs( &Tracks, ChangedFlags );
                 guUpdateLyrics( Tracks, Lyrics, ChangedFlags );
                 guUpdateImages( Tracks, Images, ChangedFlags );
 
@@ -1979,7 +1979,7 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
         {
             if( TrackEditor->ShowModal() == wxID_OK )
             {
-                m_Db->UpdateSongs( &Tracks );
+                m_Db->UpdateSongs( &Tracks, ChangedFlags );
                 guUpdateLyrics( Tracks, Lyrics, ChangedFlags );
                 guUpdateImages( Tracks, Images, ChangedFlags );
 

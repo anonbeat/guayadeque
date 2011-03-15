@@ -1345,7 +1345,7 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            m_Db->UpdateSongs( &Tracks );
+            m_Db->UpdateSongs( &Tracks, ChangedFlags );
             guUpdateLyrics( Tracks, Lyrics, ChangedFlags );
             guUpdateImages( Tracks, Images, ChangedFlags );
             m_PLTracksListBox->ReloadItems();
@@ -1480,10 +1480,12 @@ void guPlayListPanel::OnPLTracksSetField( wxCommandEvent &event )
     //guLogMessage( wxT( "Setting Data to : %s" ), NewData.GetString().c_str() );
 
     // This should be done in a thread for huge selections of tracks...
+    wxArrayInt ChangedFlags;
     int Index;
     int Count = Tracks.Count();
     for( Index = 0; Index < Count; Index++ )
     {
+        ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
         guTrack * Track = &Tracks[ Index ];
         switch( ColumnId )
         {
@@ -1526,7 +1528,7 @@ void guPlayListPanel::OnPLTracksSetField( wxCommandEvent &event )
         }
     }
 
-    m_Db->UpdateSongs( &Tracks );
+    m_Db->UpdateSongs( &Tracks, ChangedFlags );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1603,10 +1605,12 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
             //guLogMessage( wxT( "Setting Data to : %s" ), DefValue.GetString().c_str() );
 
             // This should be done in a thread for huge selections of tracks...
+            wxArrayInt ChangedFlags;
             int Index;
             int Count = Tracks.Count();
             for( Index = 0; Index < Count; Index++ )
             {
+                ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
                 guTrack * Track = &Tracks[ Index ];
                 switch( ColumnId )
                 {
@@ -1648,7 +1652,7 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
                 }
             }
 
-            m_Db->UpdateSongs( &Tracks );
+            m_Db->UpdateSongs( &Tracks, ChangedFlags );
         }
         FieldEditor->Destroy();
     }
