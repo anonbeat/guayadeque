@@ -1823,20 +1823,21 @@ void guFileBrowser::OnFolderEditTracks( wxCommandEvent &event )
     guTrackArray Tracks;
     guImagePtrArray Images;
     wxArrayString Lyrics;
+    wxArrayInt ChangedFlags;
 
     m_FilesCtrl->GetAllSongs( &Tracks );
 
     if( Tracks.Count() )
     {
-        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
+        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics, &ChangedFlags );
 
         if( TrackEditor )
         {
             if( TrackEditor->ShowModal() == wxID_OK )
             {
                 m_Db->UpdateSongs( &Tracks );
-                guUpdateImages( Tracks, Images );
-                guUpdateLyrics( Tracks, Lyrics );
+                guUpdateLyrics( Tracks, Lyrics, ChangedFlags );
+                guUpdateImages( Tracks, Images, ChangedFlags );
 
                 // Update the track in database, playlist, etc
                 ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
@@ -1966,20 +1967,21 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
     guTrackArray Tracks;
     guImagePtrArray Images;
     wxArrayString Lyrics;
+    wxArrayInt ChangedFlags;
 
     m_FilesCtrl->GetSelectedSongs( &Tracks );
 
     if( Tracks.Count() )
     {
-        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics );
+        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics, &ChangedFlags );
 
         if( TrackEditor )
         {
             if( TrackEditor->ShowModal() == wxID_OK )
             {
                 m_Db->UpdateSongs( &Tracks );
-                guUpdateImages( Tracks, Images );
-                guUpdateLyrics( Tracks, Lyrics );
+                guUpdateLyrics( Tracks, Lyrics, ChangedFlags );
+                guUpdateImages( Tracks, Images, ChangedFlags );
 
                 // Update the track in database, playlist, etc
                 ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );

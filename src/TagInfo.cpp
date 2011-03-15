@@ -2084,24 +2084,26 @@ bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
 }
 
 // -------------------------------------------------------------------------------- //
-void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images )
+void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags )
 {
     int Index;
     int Count = images.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        guTagSetPicture( songs[ Index ].m_FileName, images[ Index ] );
+        if( changedflags[ Index ] & guTRACK_CHANGED_DATA_IMAGES )
+            guTagSetPicture( songs[ Index ].m_FileName, images[ Index ] );
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics )
+void guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, const wxArrayInt &changedflags )
 {
     int Index;
     int Count = lyrics.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        guTagSetLyrics( songs[ Index ].m_FileName, lyrics[ Index ] );
+        if( changedflags[ Index ] & guTRACK_CHANGED_DATA_LYRICS )
+            guTagSetLyrics( songs[ Index ].m_FileName, lyrics[ Index ] );
     }
 }
 

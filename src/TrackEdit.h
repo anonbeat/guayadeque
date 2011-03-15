@@ -25,6 +25,7 @@
 #include "LyricsPanel.h"
 #include "MusicBrainz.h"
 #include "RatingCtrl.h"
+#include "TagInfo.h"
 
 #include <wx/wx.h>
 #include <wx/notebook.h>
@@ -67,6 +68,7 @@ class guTrackEditor : public wxDialog
     guTrackArray *                      m_Items;
     guImagePtrArray *                   m_Images;
     wxArrayString *                     m_Lyrics;
+    wxArrayInt *                        m_ChangedFlags;
     int                                 m_CurItem;
     int                                 m_NextItem;
     guDbLibrary *                       m_Db;
@@ -77,6 +79,9 @@ class guTrackEditor : public wxDialog
 	wxColor                             m_NormalColor;
 	wxColor                             m_ErrorColor;
     wxTimer                             m_SelectedTimer;
+
+    void                                SetTagField( wxString &field, const wxString &newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
+    void                                SetTagField( int &field, const int newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
 
   protected:
     wxSortedArrayString                 m_Artists;
@@ -257,7 +262,7 @@ class guTrackEditor : public wxDialog
 
 public:
     guTrackEditor( wxWindow * parent, guDbLibrary * db,
-            guTrackArray * songs, guImagePtrArray * images, wxArrayString * lyrics );
+            guTrackArray * songs, guImagePtrArray * images, wxArrayString * lyrics, wxArrayInt * changedflags );
     ~guTrackEditor();
 
     friend class guMusicBrainzMetadataThread;
