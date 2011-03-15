@@ -1857,7 +1857,7 @@ void guDbLibrary::UpdateTrackBitRate( const int trackid, const int bitrate )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateSongs( const guTrackArray * Songs )
+void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &changedflags )
 {
   guTrack * Song;
   int index;
@@ -1868,6 +1868,9 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs )
   // Process each Track
   for( index = 0; index < count; index++ )
   {
+    if( !( changedflags[ index ] & guTRACK_CHANGED_DATA_TAGS ) )
+        continue;
+
     Song = &( * Songs )[ index ];
 
     if( wxFileExists( Song->m_FileName ) )

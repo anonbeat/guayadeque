@@ -459,7 +459,7 @@ class guIpodMediaLibPanel : public guPortableMediaLibPanel
 
     virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
-    virtual void                UpdateTracks( const guTrackArray &tracks );
+    virtual void                UpdateTracks( const guTrackArray &tracks, const wxArrayInt &changedflags );
 
     virtual void                DoDeleteAlbumCover( const int albumid );
 

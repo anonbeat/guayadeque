@@ -1089,7 +1089,7 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            UpdateTracks( tracks );
+            UpdateTracks( tracks, ChangedFlags );
             UpdateTracksLyrics( tracks, Lyrics, ChangedFlags );
             UpdateTracksImages( tracks, Images, ChangedFlags );
 
@@ -1102,9 +1102,9 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLibPanel::UpdateTracks( const guTrackArray &tracks )
+void guLibPanel::UpdateTracks( const guTrackArray &tracks, const wxArrayInt &changedflags )
 {
-    m_Db->UpdateSongs( &tracks );
+    m_Db->UpdateSongs( &tracks, changedflags );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1853,10 +1853,12 @@ void guLibPanel::OnSongSetField( wxCommandEvent &event )
     //guLogMessage( wxT( "Setting Data to : %s" ), NewData.GetString().c_str() );
 
     // This should be done in a thread for huge selections of tracks...
+    wxArrayInt ChangedFlags;
     int Index;
     int Count = Tracks.Count();
     for( Index = 0; Index < Count; Index++ )
     {
+        ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
         guTrack * Track = &Tracks[ Index ];
         switch( ColumnId )
         {
@@ -1899,7 +1901,7 @@ void guLibPanel::OnSongSetField( wxCommandEvent &event )
         }
     }
 
-    UpdateTracks( Tracks );
+    UpdateTracks( Tracks, ChangedFlags );
 
     ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
 }
@@ -1978,10 +1980,12 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
             //guLogMessage( wxT( "Setting Data to : %s" ), DefValue.GetString().c_str() );
 
             // This should be done in a thread for huge selections of tracks...
+            wxArrayInt ChangedFlags;
             int Index;
             int Count = Tracks.Count();
             for( Index = 0; Index < Count; Index++ )
             {
+                ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
                 guTrack * Track = &Tracks[ Index ];
                 switch( ColumnId )
                 {
@@ -2023,7 +2027,7 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
                 }
             }
 
-            UpdateTracks( Tracks );
+            UpdateTracks( Tracks, ChangedFlags );
 
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
