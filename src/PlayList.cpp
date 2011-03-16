@@ -1738,9 +1738,8 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
+            guUpdateTracks( Songs, Images, Lyrics, ChangedFlags );
             m_Db->UpdateSongs( &Songs, ChangedFlags );
-            guUpdateLyrics( Songs, Lyrics, ChangedFlags );
-            guUpdateImages( Songs, Images, ChangedFlags );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Songs );

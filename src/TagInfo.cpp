@@ -2084,6 +2084,68 @@ bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
 }
 
 // -------------------------------------------------------------------------------- //
+void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
+                    const wxArrayString &lyrics, const wxArrayInt &changedflags )
+{
+    int Index;
+    int Count = tracks.Count();
+
+    // Process each Track
+    for( Index = 0; Index < Count; Index++ )
+    {
+        // If there is nothign to change continue with next one
+        int ChangedFlag = changedflags[ Index ];
+        if( !ChangedFlag )
+            continue;
+
+        guTrack &Song = tracks[ Index ];
+
+        if( wxFileExists( Song.m_FileName ) )
+        {
+            guTagInfo * TagInfo = guGetTagInfoHandler( Song.m_FileName );
+
+            if( !TagInfo )
+            {
+                guLogError( wxT( "There is no handler for the file '%s'" ), Song.m_FileName.c_str() );
+                continue;
+            }
+
+            if( ChangedFlag & guTRACK_CHANGED_DATA_TAGS )
+            {
+                TagInfo->m_TrackName = Song.m_SongName;
+                TagInfo->m_AlbumArtist = Song.m_AlbumArtist;
+                TagInfo->m_ArtistName = Song.m_ArtistName;
+                TagInfo->m_AlbumName = Song.m_AlbumName;
+                TagInfo->m_GenreName = Song.m_GenreName;
+                TagInfo->m_Track = Song.m_Number;
+                TagInfo->m_Year = Song.m_Year;
+                TagInfo->m_Composer = Song.m_Composer;
+                TagInfo->m_Comments = Song.m_Comments;
+                TagInfo->m_Disk = Song.m_Disk;
+            }
+
+            if( ( ChangedFlag & guTRACK_CHANGED_DATA_LYRICS ) && TagInfo->CanHandleLyrics() )
+            {
+                TagInfo->SetLyrics( lyrics[ Index ] );
+            }
+
+            if( ( ChangedFlag & guTRACK_CHANGED_DATA_IMAGES ) && TagInfo->CanHandleImages() )
+            {
+                TagInfo->SetImage( images[ Index ] );
+            }
+
+            TagInfo->Write();
+
+            delete TagInfo;
+        }
+        else
+        {
+            guLogMessage( wxT( "File not found for edition: '%s'" ), Song.m_FileName.c_str() );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags )
 {
     int Index;
