@@ -1089,9 +1089,7 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            UpdateTracks( tracks, ChangedFlags );
-            UpdateTracksLyrics( tracks, Lyrics, ChangedFlags );
-            UpdateTracksImages( tracks, Images, ChangedFlags );
+            UpdateTracks( tracks, Images, Lyrics, ChangedFlags );
 
             // Update the track in database, playlist, etc
             ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &tracks );
@@ -1104,6 +1102,16 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::UpdateTracks( const guTrackArray &tracks, const wxArrayInt &changedflags )
 {
+    guImagePtrArray Images;
+    wxArrayString Lyrics;
+    UpdateTracks( tracks, Images, Lyrics, changedflags );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
+                    const wxArrayString &lyrics, const wxArrayInt &changedflags )
+{
+    guUpdateTracks( tracks, images, lyrics, changedflags );
     m_Db->UpdateSongs( &tracks, changedflags );
 }
 

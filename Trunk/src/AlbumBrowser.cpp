@@ -1532,9 +1532,10 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
+            guUpdateTracks( Songs, Images, Lyrics, ChangedFlags );
             m_Db->UpdateSongs( &Songs, ChangedFlags );
-            guUpdateLyrics( Songs, Lyrics, ChangedFlags );
-            guUpdateImages( Songs, Images, ChangedFlags );
+            //guUpdateLyrics( Songs, Lyrics, ChangedFlags );
+            //guUpdateImages( Songs, Images, ChangedFlags );
 
             m_PlayerPanel->UpdatedTracks( &Songs );
         }

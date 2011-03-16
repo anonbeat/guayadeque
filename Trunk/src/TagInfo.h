@@ -315,6 +315,8 @@ bool        guTagSetPicture( const wxString &filename, wxImage * picture );
 bool        guTagSetPicture( const wxString &filename, const wxString &imagefile );
 wxString    guTagGetLyrics( const wxString &filename );
 bool        guTagSetLyrics( const wxString &filename, wxString &lyrics );
+void        guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
+                    const wxArrayString &lyrics, const wxArrayInt &changedflags );
 void        guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags );
 void        guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, const wxArrayInt &changedflags );
 bool        guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal );
