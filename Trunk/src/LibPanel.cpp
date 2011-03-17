@@ -3427,6 +3427,34 @@ void guLibPanel::OnGoToSearch( wxCommandEvent &event )
         m_InputTextCtrl->SetFocus();
 }
 
+// -------------------------------------------------------------------------------- //
+void guLibPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
+{
+    wxArrayInt PanelIds;
+    PanelIds.Add( guPANEL_LIBRARY_TEXTSEARCH );
+    PanelIds.Add( guPANEL_LIBRARY_LABELS );
+    PanelIds.Add( guPANEL_LIBRARY_GENRES );
+    PanelIds.Add( guPANEL_LIBRARY_ARTISTS );
+    PanelIds.Add( guPANEL_LIBRARY_ALBUMS );
+    PanelIds.Add( guPANEL_LIBRARY_YEARS );
+    PanelIds.Add( guPANEL_LIBRARY_RATINGS );
+    PanelIds.Add( guPANEL_LIBRARY_PLAYCOUNT );
+    PanelIds.Add( guPANEL_LIBRARY_COMPOSERS );
+    PanelIds.Add( guPANEL_LIBRARY_ALBUMARTISTS );
+
+    int Index;
+    int Count = PanelIds.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        int PanelId = PanelIds[ Index ];
+        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
+        {
+            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
+        }
+    }
+
+    m_AuiManager.LoadPerspective( layoutstr, true );
+}
 
 
 // -------------------------------------------------------------------------------- //

@@ -341,6 +341,8 @@ class guLibPanel : public wxPanel
     virtual wxArrayString   GetCoverSearchWords( void );
 
     int                     VisiblePanels( void ) { return m_VisiblePanels; }
+    wxString                SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
+    void                    LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
     virtual wxString        GetCoverName( void );
     virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }

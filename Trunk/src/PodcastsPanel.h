@@ -201,6 +201,10 @@ public:
         m_Db->GetPodcastCounters( m_PodcastsListBox->GetFilters(), count, len, size );
     }
 
+    int                 VisiblePanels( void ) { return m_VisiblePanels; }
+    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
+    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
+
     friend class guPodcastDownloadQueueThread;
 };
 

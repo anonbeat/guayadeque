@@ -142,8 +142,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     //
     m_VolumeMonitor = new guGIO_VolumeMonitor();
 
-    // Load the preconfigured layouts from config file
-    LoadLayouts();
+//    // Load the preconfigured layouts from config file
+//    LoadLayouts();
 
     m_LyricSearchEngine = new guLyricSearchEngine();
 
@@ -240,7 +240,6 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     {
         ShowMainPanel( guPANEL_MAIN_SHOWCOVER, true );
     }
-
 
     CreateMenu();
 
@@ -445,6 +444,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     // Fill the Format extensions array
     guIsValidAudioFile( wxEmptyString );
+
+    // Load the layouts menu
+    CreateLayoutMenus();
 
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
@@ -1228,29 +1230,15 @@ void guMainFrame::CreateMenu()
     m_LayoutLoadMenu = new wxMenu();
     m_LayoutDelMenu = new wxMenu();
 
-    int Count = m_LayoutName.Count();
-    if( Count )
-    {
-        for( int Index = 0; Index < Count; Index++ )
-        {
-            MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
-            m_LayoutLoadMenu->Append( MenuItem );
-            MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
-            m_LayoutDelMenu->Append( MenuItem );
-        }
-    }
-
     m_MainMenu->AppendSubMenu( m_LayoutLoadMenu, _( "Load Layout" ), _( "Set current view from a user defined layout" ) );
     m_MainMenu->AppendSubMenu( m_LayoutDelMenu, _( "Delete Layout" ), _( "Delete a user defined layout" ) );
-    if( !Count )
-    {
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
-        m_LayoutLoadMenu->Append( MenuItem );
-        MenuItem->Enable( false );
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
-        m_LayoutDelMenu->Append( MenuItem );
-        MenuItem->Enable( false );
-    }
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+    m_LayoutLoadMenu->Append( MenuItem );
+    MenuItem->Enable( false );
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+    m_LayoutDelMenu->Append( MenuItem );
+    MenuItem->Enable( false );
 
     m_MainMenu->AppendSeparator();
 
@@ -1258,31 +1246,26 @@ void guMainFrame::CreateMenu()
                                             wxString( _( "Player PlayList" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_PLAYER_PLAYLIST ),
                                             _( "Show/Hide the player playlist panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayerPlayList );
-    m_ViewPlayerPlayList->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST );
 
     m_ViewPlayerFilters = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_FILTERS,
                                             wxString( _( "Player Filters" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_PLAYER_FILTERS ),
                                             _( "Show/Hide the player filters panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayerFilters );
-    m_ViewPlayerFilters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS );
 
     m_ViewPlayerVumeters = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_PLAYER_VUMETERS,
                                             wxString( _( "VU Meters" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_PLAYER_VUMETERS ),
                                             _( "Show/Hide the player vumeter" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewPlayerVumeters );
-    m_ViewPlayerVumeters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS );
 
     m_ViewMainLocations = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_MAIN_LOCATIONS,
                                             wxString( _( "Sources" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_MAIN_LOCATIONS ),
                                             _( "Show/Hide the locatons" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewMainLocations );
-    m_ViewMainLocations->Check( m_VisiblePanels & guPANEL_MAIN_LOCATIONS );
 
     m_ViewMainShowCover = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_MAIN_SHOWCOVER,
                                             wxString( _( "Cover" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_MAIN_SHOWCOVER ),
                                             _( "Show/Hide the cover" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewMainShowCover );
-    m_ViewMainShowCover->Check( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER );
 
     SubMenu = new wxMenu();
 
@@ -1290,59 +1273,38 @@ void guMainFrame::CreateMenu()
                                             wxString( _( "Library" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_LIBRARY ),
                                             _( "Show/Hide the library panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibrary );
-    m_ViewLibrary->Check( m_VisiblePanels & guPANEL_MAIN_LIBRARY );
 
     SubMenu->AppendSeparator();
 
     m_ViewLibTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the library text search" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibTextSearch );
-    m_ViewLibTextSearch->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
-    m_ViewLibTextSearch->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_LABELS, _( "Labels" ), _( "Show/Hide the library labels" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibLabels );
-    m_ViewLibLabels->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
-    m_ViewLibLabels->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_GENRES, _( "Genres" ), _( "Show/Hide the library genres" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibGenres );
-    m_ViewLibGenres->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
-    m_ViewLibGenres->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_ARTISTS, _( "Artists" ), _( "Show/Hide the library artists" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibArtists );
-    m_ViewLibArtists->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
-    m_ViewLibArtists->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibComposers = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_COMPOSERS, _( "Composers" ), _( "Show/Hide the library composers" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibComposers );
-    m_ViewLibComposers->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
-    m_ViewLibComposers->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibAlbumArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_ALBUMARTISTS, _( "Album Artist" ), _( "Show/Hide the library album artist" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibAlbumArtists );
-    m_ViewLibAlbumArtists->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
-    m_ViewLibAlbumArtists->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibAlbums = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_ALBUMS, _( "Albums" ), _( "Show/Hide the library albums" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibAlbums );
-    m_ViewLibAlbums->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
-    m_ViewLibAlbums->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibYears = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_YEARS, _( "Years" ), _( "Show/Hide the library years" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibYears );
-    m_ViewLibYears->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
-    m_ViewLibYears->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibRatings = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_RATINGS, _( "Ratings" ), _( "Show/Hide the library ratings" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibRatings );
-    m_ViewLibRatings->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
-    m_ViewLibRatings->Enable( m_ViewLibrary->IsChecked() );
 
     m_ViewLibPlayCounts = new wxMenuItem( SubMenu, ID_MENU_VIEW_LIB_PLAYCOUNT, _( "Play Counts" ), _( "Show/Hide the library play counts" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewLibPlayCounts );
-    m_ViewLibPlayCounts->Check( m_LibPanel && m_LibPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
-    m_ViewLibPlayCounts->Enable( m_ViewLibrary->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "Library" ), _( "Set the library visible panels" ) );
 
@@ -1353,24 +1315,17 @@ void guMainFrame::CreateMenu()
                                     wxString( _( "Radio" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_RADIO ),
                                     _( "Show/Hide the radio panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewRadios );
-    m_ViewRadios->Check( m_VisiblePanels & guPANEL_MAIN_RADIOS );
 
     SubMenu->AppendSeparator();
 
     m_ViewRadTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the radio text search" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewRadTextSearch );
-    m_ViewRadTextSearch->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
-    m_ViewRadTextSearch->Enable( m_ViewRadios->IsChecked() );
 
     m_ViewRadLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_LABELS, _( "Labels" ), _( "Show/Hide the radio labels" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewRadLabels );
-    m_ViewRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
-    m_ViewRadLabels->Enable( m_ViewRadios->IsChecked() );
 
     m_ViewRadGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_GENRES, _( "Genres" ), _( "Show/Hide the radio genres" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewRadGenres );
-    m_ViewRadGenres->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_GENRES ) );
-    m_ViewRadGenres->Enable( m_ViewRadios->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "Radio" ), _( "Set the radio visible panels" ) );
 
@@ -1379,13 +1334,11 @@ void guMainFrame::CreateMenu()
                                     wxString( _( "Last.fm" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_LASTFM ),
                                     _( "Show/Hide the Last.fm panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewLastFM );
-    m_ViewLastFM->Check( m_VisiblePanels & guPANEL_MAIN_LASTFM );
 
     m_ViewLyrics = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_LYRICS,
                                     wxString( _( "Lyrics" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_LYRICS ),
                                     _( "Show/Hide the lyrics panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewLyrics );
-    m_ViewLyrics->Check( m_VisiblePanels & guPANEL_MAIN_LYRICS );
 
 
     SubMenu = new wxMenu();
@@ -1394,12 +1347,9 @@ void guMainFrame::CreateMenu()
                                         wxString( _( "PlayLists" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_PLAYLISTS ),
                                         _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPlayLists );
-    m_ViewPlayLists->Check( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS );
 
     m_ViewPLTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_PL_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the playlists text search" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPLTextSearch );
-    m_ViewPLTextSearch->Check( m_PlayListPanel && m_PlayListPanel->IsPanelShown( guPANEL_PLAYLIST_TEXTSEARCH ) );
-    m_ViewPLTextSearch->Enable( m_ViewPlayLists->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "PlayLists" ), _( "Set the playlists visible panels" ) );
 
@@ -1409,19 +1359,14 @@ void guMainFrame::CreateMenu()
                                         wxString( _( "Podcasts" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_PODCASTS ),
                                         _( "Show/Hide the podcasts panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPodcasts );
-    m_ViewPodcasts->Check( m_VisiblePanels & guPANEL_MAIN_PODCASTS );
 
     SubMenu->AppendSeparator();
 
     m_ViewPodChannels = new wxMenuItem( SubMenu, ID_MENU_VIEW_POD_CHANNELS, _( "Channels" ), _( "Show/Hide the podcasts channels" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPodChannels );
-    m_ViewPodChannels->Check( m_PodcastsPanel && m_PodcastsPanel->IsPanelShown( guPANEL_PODCASTS_CHANNELS ) );
-    m_ViewPodChannels->Enable( m_ViewPodcasts->IsChecked() );
 
     m_ViewPodDetails = new wxMenuItem( SubMenu, ID_MENU_VIEW_POD_DETAILS, _( "Details" ), _( "Show/Hide the podcasts details" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPodDetails );
-    m_ViewPodDetails->Check( m_PodcastsPanel && m_PodcastsPanel->IsPanelShown( guPANEL_PODCASTS_DETAILS ) );
-    m_ViewPodDetails->Enable( m_ViewPodcasts->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "Podcasts" ), _( "Set the podcasts visible panels" ) );
 
@@ -1429,13 +1374,11 @@ void guMainFrame::CreateMenu()
                                         wxString( _( "Browser" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_ALBUMBROWSER ),
                                         _( "Show/Hide the album browser panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewAlbumBrowser );
-    m_ViewAlbumBrowser->Check( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER );
 
     m_ViewFileBrowser = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_FILEBROWSER,
                                         wxString( _( "Files" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_FILEBROWSER ),
                                         _( "Show/Hide the file browser panel" ), wxITEM_CHECK );
     m_MainMenu->Append( m_ViewFileBrowser );
-    m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
 
 
     SubMenu = new wxMenu();
@@ -1444,59 +1387,38 @@ void guMainFrame::CreateMenu()
                                     wxT( "Jamendo" ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_JAMENDO ),
                                     _( "Show/Hide the Jamendo panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamendo );
-    m_ViewJamendo->Check( m_VisiblePanels & guPANEL_MAIN_JAMENDO );
 
     SubMenu->AppendSeparator();
 
     m_ViewJamTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the Jamendo text search" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamTextSearch );
-    m_ViewJamTextSearch->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
-    m_ViewJamTextSearch->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_LABELS, _( "Labels" ), _( "Show/Hide the Jamendo labels" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamLabels );
-    m_ViewJamLabels->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
-    m_ViewJamLabels->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_GENRES, _( "Genres" ), _( "Show/Hide the Jamendo genres" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamGenres );
-    m_ViewJamGenres->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
-    m_ViewJamGenres->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_ARTISTS, _( "Artists" ), _( "Show/Hide the Jamendo artists" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamArtists );
-    m_ViewJamArtists->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
-    m_ViewJamArtists->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamComposers = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_COMPOSERS, _( "Composers" ), _( "Show/Hide the Jamendo composers" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamComposers );
-    m_ViewJamComposers->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
-    m_ViewJamComposers->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamAlbumArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_ALBUMARTISTS, _( "Album Artist" ), _( "Show/Hide the Jamendo album artist" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamAlbumArtists );
-    m_ViewJamAlbumArtists->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
-    m_ViewJamAlbumArtists->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamAlbums = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_ALBUMS, _( "Albums" ), _( "Show/Hide the Jamendo albums" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamAlbums );
-    m_ViewJamAlbums->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
-    m_ViewJamAlbums->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamYears = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_YEARS, _( "Years" ), _( "Show/Hide the Jamendo years" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamYears );
-    m_ViewJamYears->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
-    m_ViewJamYears->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamRatings = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_RATINGS, _( "Ratings" ), _( "Show/Hide the Jamendo ratings" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamRatings );
-    m_ViewJamRatings->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
-    m_ViewJamRatings->Enable( m_ViewJamendo->IsChecked() );
 
     m_ViewJamPlayCounts = new wxMenuItem( SubMenu, ID_MENU_VIEW_JAMENDO_PLAYCOUNT, _( "Play Counts" ), _( "Show/Hide the Jamendo play counts" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewJamPlayCounts );
-    m_ViewJamPlayCounts->Check( m_JamendoPanel && m_JamendoPanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
-    m_ViewJamPlayCounts->Enable( m_ViewJamendo->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, wxT( "Jamendo" ), _( "Set the Jamendo visible panels" ) );
 
@@ -1506,59 +1428,38 @@ void guMainFrame::CreateMenu()
                                      wxT( "Magnatune" ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_MAGNATUNE ),
                                      _( "Show/Hide the Magnatune panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagnatune );
-    m_ViewMagnatune->Check( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE );
 
     SubMenu->AppendSeparator();
 
     m_ViewMagTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the Magnatune text search" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagTextSearch );
-    m_ViewMagTextSearch->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_TEXTSEARCH ) );
-    m_ViewMagTextSearch->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_LABELS, _( "Labels" ), _( "Show/Hide the Magnatune labels" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagLabels );
-    m_ViewMagLabels->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_LABELS ) );
-    m_ViewMagLabels->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_GENRES, _( "Genres" ), _( "Show/Hide the Magnatune genres" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagGenres );
-    m_ViewMagGenres->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_GENRES ) );
-    m_ViewMagGenres->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_ARTISTS, _( "Artists" ), _( "Show/Hide the Magnatune artists" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagArtists );
-    m_ViewMagArtists->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ARTISTS ) );
-    m_ViewMagArtists->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagComposers = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_COMPOSERS, _( "Composers" ), _( "Show/Hide the Magnatune composers" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagComposers );
-    m_ViewMagComposers->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_COMPOSERS ) );
-    m_ViewMagComposers->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagAlbumArtists = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_ALBUMARTISTS, _( "Album Artist" ), _( "Show/Hide the Magnatune album artist" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagAlbumArtists );
-    m_ViewMagAlbumArtists->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ALBUMARTISTS ) );
-    m_ViewMagAlbumArtists->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagAlbums = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_ALBUMS, _( "Albums" ), _( "Show/Hide the Magnatune albums" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagAlbums );
-    m_ViewMagAlbums->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_ALBUMS ) );
-    m_ViewMagAlbums->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagYears = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_YEARS, _( "Years" ), _( "Show/Hide the Magnatune years" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagYears );
-    m_ViewMagYears->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_YEARS ) );
-    m_ViewMagYears->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagRatings = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_RATINGS, _( "Ratings" ), _( "Show/Hide the Magnatune ratings" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagRatings );
-    m_ViewMagRatings->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_RATINGS ) );
-    m_ViewMagRatings->Enable( m_ViewMagnatune->IsChecked() );
 
     m_ViewMagPlayCounts = new wxMenuItem( SubMenu, ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT, _( "Play Counts" ), _( "Show/Hide the Magnatune play counts" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewMagPlayCounts );
-    m_ViewMagPlayCounts->Check( m_MagnatunePanel && m_MagnatunePanel->IsPanelShown( guPANEL_LIBRARY_PLAYCOUNT ) );
-    m_ViewMagPlayCounts->Enable( m_ViewMagnatune->IsChecked() );
 
     m_MainMenu->AppendSubMenu( SubMenu, wxT( "Magnatune" ), _( "Set the Magnatune visible panels" ) );
 
@@ -1760,6 +1661,8 @@ void guMainFrame::CreateMenu()
     MenuBar->Append( m_MainMenu, _( "Help" ) );
 
 	SetMenuBar( MenuBar );
+
+	RefreshViewMenuState();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4621,37 +4524,269 @@ void guMainFrame::OnPodcastItemUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::LoadLayouts( void )
+wxString GetLayoutName( const wxString &filename )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxString LayoutName;
+    //guLogMessage( wxT( "Layout file: '%s'" ), filename.c_str() );
+    wxFileInputStream Ins( filename );
+    if( Ins.IsOk() )
+    {
+        wxXmlDocument XmlDoc( Ins );
+        wxXmlNode * XmlNode = XmlDoc.GetRoot();
+        if( XmlNode && XmlNode->GetName() == wxT( "layout" ) )
+        {
+            XmlNode->GetPropVal( wxT( "name" ), &LayoutName );
+        }
+    }
+    return LayoutName;
+}
 
-    m_LayoutName    = Config->ReadAStr( wxT( "Name"   ), wxEmptyString, wxT( "Layouts" ) );
-    m_LayoutData    = Config->ReadAStr( wxT( "Data"   ), wxEmptyString, wxT( "Layouts" ) );
-    m_LayoutTabs    = Config->ReadAStr( wxT( "Tabs"   ), wxEmptyString, wxT( "Layouts" ) );
+// -------------------------------------------------------------------------------- //
+wxString GetLayoutFileName( const wxString &layoutname )
+{
+    wxRegEx ReplaceEx( wxT( "[ <>:\\\\|\\?\\*]" ) );
+    wxString LayoutName = layoutname;
+    ReplaceEx.Replace( &LayoutName, wxT( "_" ) );
+    LayoutName = wxGetHomeDir() + wxT( "/.guayadeque/Layouts/" ) + LayoutName + wxT( ".xml" );
+    return LayoutName;
+}
 
-    size_t Count = wxMin( wxMin( m_LayoutName.Count(),
-                                        m_LayoutData.Count() ),
-                                 m_LayoutTabs.Count() );
+// -------------------------------------------------------------------------------- //
+void guMainFrame::LoadLayoutNames( void )
+{
+    m_LayoutNames.Empty();
 
-    while( m_LayoutName.Count() > Count )
-        m_LayoutName.RemoveAt( m_LayoutName.Count() - 1 );
+    wxDir         Dir;
+    wxString      FileName;
+    wxString      LayoutDir = wxGetHomeDir() + wxT( "/.guayadeque/Layouts/" );
 
-    while( m_LayoutData.Count() > Count )
-        m_LayoutData.RemoveAt( m_LayoutData.Count() - 1 );
+    Dir.Open( LayoutDir );
 
-    while( m_LayoutTabs.Count() > Count )
-        m_LayoutTabs.RemoveAt( m_LayoutTabs.Count() - 1 );
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES ) )
+        {
+            do {
+                if( FileName[ 0 ] == '.' )
+                    continue;
+
+                if( FileName.EndsWith( wxT( ".xml" ) ) )
+                {
+                    wxString LayoutName = GetLayoutName( LayoutDir + FileName );
+                    //guLogMessage( wxT( "LayoutName: '%s'" ), LayoutName.c_str() );
+                    if( !LayoutName.IsEmpty() )
+                    {
+                        m_LayoutNames.Add( LayoutName );
+                    }
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not open the Layouts dir" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CreateLayoutMenus( void )
+{
+    LoadLayoutNames();
+
+    while( m_LayoutLoadMenu->GetMenuItemCount() )
+        m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
+
+    while( m_LayoutDelMenu->GetMenuItemCount() )
+        m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
+
+    int Index;
+    int Count = m_LayoutNames.Count();
+    if( Count )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            m_LayoutLoadMenu->Append( ID_MENU_LAYOUT_LOAD + Index, m_LayoutNames[ Index ], _( "Load this user defined layout" ) );
+            m_LayoutDelMenu->Append( ID_MENU_LAYOUT_DELETE + Index, m_LayoutNames[ Index ], _( "Delete this user defined layout" ) );
+        }
+    }
+    else
+    {
+        wxMenuItem * MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+        m_LayoutLoadMenu->Append( MenuItem );
+        MenuItem->Enable( false );
+        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
+        m_LayoutDelMenu->Append( MenuItem );
+        MenuItem->Enable( false );
+    }
 
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::SaveLayouts( void )
+bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteAStr( wxT( "Name"   ), m_LayoutName,   wxT( "Layouts" ) );
-    Config->WriteAStr( wxT( "Data"   ), m_LayoutData,   wxT( "Layouts" ), false );
-    Config->WriteAStr( wxT( "Tabs"   ), m_LayoutTabs,   wxT( "Layouts" ), false );
-    Config->Flush();
+    wxXmlNode * RootNode;
+    wxXmlNode * XmlNode;
+    wxXmlDocument OutXml;
+
+    // RootNode
+    //
+    RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "layout" ) );
+
+    wxXmlProperty * Property = new wxXmlProperty( wxT( "name" ), layoutname, NULL );
+
+    RootNode->SetProperties( Property );
+
+
+    // MainWindow
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "mainwindow" ) );
+
+    // Size
+    int Width;
+    int Height;
+    GetSize( &Width, &Height );
+    // Pos
+    int PosX;
+    int PosY;
+    GetPosition( &PosX, &PosY );
+    // State
+    int State = 0;
+    if( IsFullScreen() )
+        State = 1;
+    else if( IsMaximized() )
+        State = 2;
+
+    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
+    wxString PLCaption = PaneInfo.caption;
+    PaneInfo.Caption( wxT( "Now Playing" ) );
+
+    Property = new wxXmlProperty( wxT( "posx" ), wxString::Format( wxT( "%d" ), PosX ),
+               new wxXmlProperty( wxT( "posy" ), wxString::Format( wxT( "%d" ), PosY ),
+               new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), Width ),
+               new wxXmlProperty( wxT( "height" ), wxString::Format( wxT( "%d" ), Height ),
+               new wxXmlProperty( wxT( "state" ), wxString::Format( wxT( "%d" ), State ),
+               new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_VisiblePanels ),
+               new wxXmlProperty( wxT( "layout" ), m_AuiManager.SavePerspective(),
+               new wxXmlProperty( wxT( "tabslayout" ), m_CatNotebook->SavePerspective(),
+               NULL ) ) ) ) ) ) ) );
+
+    XmlNode->SetProperties( Property );
+
+    RootNode->AddChild( XmlNode );
+
+
+    // Library
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "library" ) );
+
+    if( m_LibPanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_LibPanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_LibPanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+
+    // Radio
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "radio" ) );
+
+    if( m_RadioPanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_RadioPanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_RadioPanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+
+    // Playlists
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "playlists" ) );
+
+    if( m_PlayListPanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_PlayListPanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_PlayListPanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+
+    // Podcasts
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "podcasts" ) );
+
+    if( m_PodcastsPanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_PodcastsPanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_PodcastsPanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+
+    // FileBrowser
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "filebrowser" ) );
+
+    if( m_FileBrowserPanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_FileBrowserPanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_FileBrowserPanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+    // Jamendo
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "jamendo" ) );
+
+    if( m_JamendoPanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_JamendoPanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_JamendoPanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+    // Magnatune
+    //
+    XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "magnatune" ) );
+
+    if( m_MagnatunePanel )
+    {
+        Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_MagnatunePanel->VisiblePanels() ),
+                   new wxXmlProperty( wxT( "layout" ), m_MagnatunePanel->SavePerspective(),
+                   NULL ) );
+
+        XmlNode->SetProperties( Property );
+    }
+
+    RootNode->AddChild( XmlNode );
+
+
+    OutXml.SetRoot( RootNode );
+    return OutXml.Save( GetLayoutFileName( layoutname ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4659,68 +4794,18 @@ void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 {
     wxTextEntryDialog EntryDialog( this, _( "Enter the layout name:"), _( "New Layout" ) );
 
-    EntryDialog.SetValue( wxString::Format( _( "Layout %u" ), m_LayoutName.GetCount() + 1 ) );
+    EntryDialog.SetValue( wxString::Format( _( "Layout %u" ), m_LayoutNames.GetCount() + 1 ) );
 
     if( EntryDialog.ShowModal() == wxID_OK )
     {
-        // If was the first layout delete the dummy ones
-        if( !m_LayoutName.Count() )
+        if( !SaveCurrentLayout( EntryDialog.GetValue() ) )
         {
-            while( m_LayoutLoadMenu->GetMenuItemCount() )
-                m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
-
-            while( m_LayoutDelMenu->GetMenuItemCount() )
-                m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
-        }
-
-        int LayoutIndex = m_LayoutName.Index( EntryDialog.GetValue(), false );
-        if( LayoutIndex == wxNOT_FOUND )
-        {
-
-            m_LayoutName.Add( EntryDialog.GetValue() );
-
-            wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
-            wxString PLCaption = PaneInfo.caption;
-            PaneInfo.Caption( _( "Now Playing" ) );
-            wxString LayoutString;
-            // Save Size
-            int Width;
-            int Height;
-            GetSize( &Width, &Height );
-            LayoutString += wxString::Format( wxT( "Size:%i,%i;" ), Width, Height );
-            // Size Pos
-            int PosX;
-            int PosY;
-            GetPosition( &PosX, &PosY );
-            LayoutString += wxString::Format( wxT( "Position:%i,%i;" ), PosX, PosY );
-            // Save State
-            int State = 0;
-            if( IsFullScreen() )
-                State = 1;
-            else if( IsMaximized() )
-                State = 2;
-            LayoutString += wxString::Format( wxT( "State:%i;" ), State );
-            LayoutString += wxString::Format( wxT( "Flags:%i;" ), m_VisiblePanels );
-            LayoutString += m_AuiManager.SavePerspective();
-            m_LayoutData.Add( LayoutString );
-            PaneInfo.Caption( PLCaption );
-            m_LayoutTabs.Add( m_CatNotebook->SavePerspective() );
-
-            m_LayoutLoadMenu->Append( ID_MENU_LAYOUT_LOAD + m_LayoutName.Count() - 1,
-                    EntryDialog.GetValue(), _( "Load this user defined layout" ) );
-            m_LayoutDelMenu->Append( ID_MENU_LAYOUT_DELETE + m_LayoutName.Count() - 1,
-                    EntryDialog.GetValue(), _( "Load this user defined layout" ) );
+            guLogMessage( wxT( "Could not save the layout '%s'" ), EntryDialog.GetValue().c_str() );
         }
         else
         {
-            wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
-            wxString PLCaption = PaneInfo.caption;
-            PaneInfo.Caption( _( "Now Playing" ) );
-            m_LayoutData[ LayoutIndex ] = m_AuiManager.SavePerspective();
-            PaneInfo.Caption( PLCaption );
-            m_LayoutTabs[ LayoutIndex ] = m_CatNotebook->SavePerspective();
+            CreateLayoutMenus();
         }
-        SaveLayouts();
     }
 }
 
@@ -4729,58 +4814,14 @@ void guMainFrame::OnDeleteLayout( wxCommandEvent &event )
 {
     int Layout = event.GetId() - ID_MENU_LAYOUT_DELETE;
     //guLogMessage( wxT( "Delete Layout %i" ), Layout );
-    int Index;
-    int Count;
 
-    while( m_LayoutLoadMenu->GetMenuItemCount() )
-        m_LayoutLoadMenu->Delete( m_LayoutLoadMenu->FindItemByPosition( 0 ) );
-
-    while( m_LayoutDelMenu->GetMenuItemCount() )
-        m_LayoutDelMenu->Delete( m_LayoutDelMenu->FindItemByPosition( 0 ) );
-
-    m_LayoutName.RemoveAt( Layout );
-    m_LayoutData.RemoveAt( Layout );
-    m_LayoutTabs.RemoveAt( Layout );
-
-    wxMenuItem * MenuItem;
-    Count = m_LayoutName.Count();
-    for( Index = 0; Index < Count; Index++ )
+    if( Layout >= 0 && Layout < ( int ) m_LayoutNames.Count() )
     {
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_LOAD + Index, m_LayoutName[ Index ], _( "Load this user defined layout" ) );
-        m_LayoutLoadMenu->Append( MenuItem );
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DELETE + Index, m_LayoutName[ Index ], _( "Delete this user defined layout" ) );
-        m_LayoutDelMenu->Append( MenuItem );
-    }
-    if( !Count )
-    {
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
-        m_LayoutLoadMenu->Append( MenuItem );
-        MenuItem->Enable( false );
-        MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_LAYOUT_DUMMY, _( "No layouts defined" ), _( "Load this user defined layout" ) );
-        m_LayoutDelMenu->Append( MenuItem );
-        MenuItem->Enable( false );
-    }
-
-    SaveLayouts();
-}
-
-// -------------------------------------------------------------------------------- //
-void GetLayoutParams( const wxString &paramstr, int * param1, int * param2 )
-{
-    //Size:1445,987
-    long Num;
-    wxString Str1 = paramstr.AfterFirst( wxT( ':' ) ).BeforeFirst( wxT( ',' ) );
-    if( Str1.ToLong( &Num ) )
-    {
-        * param1 = Num;
-    }
-
-    if( param2 )
-    {
-        wxString Str2 = paramstr.AfterFirst( wxT( ',' ) );
-        if( Str2.ToLong( &Num ) )
+        wxString LayoutFile = GetLayoutFileName( m_LayoutNames[ Layout ] );
+        if( wxFileExists( LayoutFile ) )
         {
-            * param2 = Num;
+            wxRemoveFile( LayoutFile );
+            CreateLayoutMenus();
         }
     }
 }
@@ -4869,82 +4910,211 @@ void guMainFrame::LoadPerspective( const wxString &layout )
 void guMainFrame::OnLoadLayout( wxCommandEvent &event )
 {
     int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
-
-    Hide();
     //guLogMessage( wxT( "Loading Layout %i" ), Layout );
 
-    wxString LayoutStr = m_LayoutData[ Layout ];
-    int Width;
-    int Height;
-    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), &Width, &Height );
-
-    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
-
-    int PosX;
-    int PosY;
-    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), &PosX, &PosY );
-
-    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
-
-    int State;
-    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), &State, NULL );
-
-    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
-
-    unsigned int NewVisiblePanels;
-    GetLayoutParams( LayoutStr.BeforeFirst( wxT( ';' ) ), ( int * ) &NewVisiblePanels, NULL );
-
-    if( IsFullScreen() != ( State == 1 ) )
+    if( Layout >= 0 && Layout < ( int ) m_LayoutNames.Count() )
     {
-        ShowFullScreen( State == 1, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
-        Refresh();
-        Update();
+        wxString LayoutFile = GetLayoutFileName( m_LayoutNames[ Layout ] );
+        if( wxFileExists( LayoutFile ) )
+        {
+            wxFileInputStream Ins( LayoutFile );
+            if( Ins.IsOk() )
+            {
+                wxXmlDocument XmlDoc( Ins );
+                wxXmlNode * XmlNode = XmlDoc.GetRoot();
+
+                if( XmlNode && XmlNode->GetName() == wxT( "layout" ) )
+                {
+                    Hide();
+
+                    XmlNode = XmlNode->GetChildren();
+                    while( XmlNode )
+                    {
+                        wxString NodeName = XmlNode->GetName();
+                        if( NodeName == wxT( "mainwindow" ) )
+                        {
+                            wxString Field;
+                            long PosX;
+                            long PosY;
+                            long Width;
+                            long Height;
+                            long State;
+                            long VisiblePanels;
+                            wxString LayoutStr;
+                            wxString TabsLayoutStr;
+
+                            XmlNode->GetPropVal( wxT( "posx" ), &Field );
+                            Field.ToLong( &PosX );
+                            XmlNode->GetPropVal( wxT( "posy" ), &Field );
+                            Field.ToLong( &PosY );
+                            XmlNode->GetPropVal( wxT( "width" ), &Field );
+                            Field.ToLong( &Width );
+                            XmlNode->GetPropVal( wxT( "height" ), &Field );
+                            Field.ToLong( &Height );
+                            XmlNode->GetPropVal( wxT( "state" ), &Field );
+                            Field.ToLong( &State );
+                            XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                            Field.ToLong( &VisiblePanels );
+                            XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+                            XmlNode->GetPropVal( wxT( "tabslayout" ), &TabsLayoutStr );
+
+                            if( IsFullScreen() != ( State == 1 ) )
+                            {
+                                ShowFullScreen( State == 1, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+                                Refresh();
+                                Update();
+                            }
+
+                            if( IsMaximized() != ( State == 2 ) )
+                            {
+                                Maximize( State == 2 );
+                                Refresh();
+                                Update();
+                            }
+
+                            SetSize( PosX, PosY, Width, Height );
+
+                            LoadTabsPerspective( TabsLayoutStr );
+
+                            wxArrayInt PanelIds;
+                            PanelIds.Add( guPANEL_MAIN_PLAYERPLAYLIST );
+                            PanelIds.Add( guPANEL_MAIN_PLAYERFILTERS );
+                            PanelIds.Add( guPANEL_MAIN_PLAYERVUMETERS );
+                            PanelIds.Add( guPANEL_MAIN_LOCATIONS );
+                            PanelIds.Add( guPANEL_MAIN_SHOWCOVER );
+                            int Index;
+                            int Count = PanelIds.Count();
+
+                            for( Index = 0; Index < Count; Index++ )
+                            {
+                                int PanelId = PanelIds[ Index ];
+                                if( ( VisiblePanels & PanelId ) != ( int ) ( m_VisiblePanels & PanelId ) )
+                                {
+                                    ShowMainPanel( PanelId, ( VisiblePanels & PanelId ) );
+                                }
+                            }
+
+                            LoadPerspective( LayoutStr );
+
+                            OnPlayerPlayListUpdateTitle( event );
+                        }
+                        else if( NodeName == wxT( "library" ) )
+                        {
+                            if( m_LibPanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_LibPanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+                        else if( NodeName == wxT( "radio" ) )
+                        {
+                            if( m_RadioPanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_RadioPanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+                        else if( NodeName == wxT( "playlists" ) )
+                        {
+                            if( m_PlayListPanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_PlayListPanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+                        else if( NodeName == wxT( "podcasts" ) )
+                        {
+                            if( m_PodcastsPanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_PodcastsPanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+                        else if( NodeName == wxT( "filebrowser" ) )
+                        {
+                            if( m_FileBrowserPanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_FileBrowserPanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+                        else if( NodeName == wxT( "jamendo" ) )
+                        {
+                            if( m_JamendoPanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_JamendoPanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+                        else if( NodeName == wxT( "filebrowser" ) )
+                        {
+                            if( m_MagnatunePanel )
+                            {
+                                wxString Field;
+                                long VisiblePanels;
+                                wxString LayoutStr;
+
+                                XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                                Field.ToLong( &VisiblePanels );
+                                XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                m_MagnatunePanel->LoadPerspective( LayoutStr, VisiblePanels );
+                            }
+                        }
+
+                        XmlNode = XmlNode->GetNext();
+                    }
+
+                    RefreshViewMenuState();
+
+                    Show();
+                }
+            }
+
+        }
     }
-
-    if( IsMaximized() != ( State == 2 ) )
-    {
-        Maximize( State == 2 );
-        Refresh();
-        Update();
-    }
-
-    SetSize( PosX, PosY, Width, Height );
-
-    LayoutStr = LayoutStr.AfterFirst( wxT( ';' ) );
-
-    LoadTabsPerspective( m_LayoutTabs[ Layout ] );
-
-    if( ( NewVisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) != ( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) )
-    {
-        ShowMainPanel( guPANEL_MAIN_PLAYERPLAYLIST, ( NewVisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) );
-    }
-
-    if( ( NewVisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) != ( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) )
-    {
-        ShowMainPanel( guPANEL_MAIN_PLAYERFILTERS, ( NewVisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
-    }
-
-    if( ( NewVisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) != ( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) )
-    {
-        ShowMainPanel( guPANEL_MAIN_PLAYERVUMETERS, ( NewVisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) );
-    }
-
-    if( ( NewVisiblePanels & guPANEL_MAIN_LOCATIONS ) != ( m_VisiblePanels & guPANEL_MAIN_LOCATIONS ) )
-    {
-        ShowMainPanel( guPANEL_MAIN_LOCATIONS, ( NewVisiblePanels & guPANEL_MAIN_LOCATIONS ) );
-    }
-
-    if( ( NewVisiblePanels & guPANEL_MAIN_SHOWCOVER ) != ( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER ) )
-    {
-        ShowMainPanel( guPANEL_MAIN_SHOWCOVER, ( NewVisiblePanels & guPANEL_MAIN_SHOWCOVER ) );
-    }
-
-    LoadPerspective( LayoutStr );
-
-    OnPlayerPlayListUpdateTitle( event );
-
-    Show();
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -5004,6 +5174,193 @@ void guMainFrame::ResetViewMenuState( void )
     m_ViewMagPlayCounts->Enable( false );
     m_ViewMagComposers->Enable( false );
     m_ViewMagAlbumArtists->Enable( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::RefreshViewMenuState( void )
+{
+    int VisiblePanels;
+    bool IsEnabled;
+
+    m_ViewPlayerPlayList->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST );
+    m_ViewPlayerFilters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS );
+    m_ViewPlayerVumeters->Check( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS );
+    m_ViewMainLocations->Check( m_VisiblePanels & guPANEL_MAIN_LOCATIONS );
+    m_ViewMainShowCover->Check( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER );
+
+
+    // Library
+    //
+    IsEnabled = m_LibPanel && ( m_VisiblePanels & guPANEL_MAIN_LIBRARY );
+    VisiblePanels = m_LibPanel ? m_LibPanel->VisiblePanels() : 0;
+
+    m_ViewLibrary->Check( IsEnabled );
+
+    m_ViewLibTextSearch->Check( VisiblePanels & guPANEL_LIBRARY_TEXTSEARCH );
+    m_ViewLibTextSearch->Enable( IsEnabled );
+
+    m_ViewLibLabels->Check( VisiblePanels & guPANEL_LIBRARY_LABELS );
+    m_ViewLibLabels->Enable( IsEnabled );
+
+    m_ViewLibGenres->Check( VisiblePanels & guPANEL_LIBRARY_GENRES );
+    m_ViewLibGenres->Enable( IsEnabled );
+
+    m_ViewLibArtists->Check( VisiblePanels & guPANEL_LIBRARY_ARTISTS );
+    m_ViewLibArtists->Enable( IsEnabled );
+
+    m_ViewLibComposers->Check( VisiblePanels & guPANEL_LIBRARY_COMPOSERS );
+    m_ViewLibComposers->Enable( IsEnabled );
+
+    m_ViewLibAlbumArtists->Check( VisiblePanels & guPANEL_LIBRARY_ALBUMARTISTS );
+    m_ViewLibAlbumArtists->Enable( IsEnabled );
+
+    m_ViewLibAlbums->Check( VisiblePanels & guPANEL_LIBRARY_ALBUMS );
+    m_ViewLibAlbums->Enable( IsEnabled );
+
+    m_ViewLibYears->Check( VisiblePanels & guPANEL_LIBRARY_YEARS );
+    m_ViewLibYears->Enable( IsEnabled );
+
+    m_ViewLibRatings->Check( VisiblePanels & guPANEL_LIBRARY_RATINGS );
+    m_ViewLibRatings->Enable( IsEnabled );
+
+    m_ViewLibPlayCounts->Check( VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT );
+    m_ViewLibPlayCounts->Enable( IsEnabled );
+
+
+    // Radios
+    //
+    IsEnabled = m_RadioPanel && ( m_VisiblePanels & guPANEL_MAIN_RADIOS );
+    VisiblePanels = m_RadioPanel ? m_RadioPanel->VisiblePanels() : 0;
+
+    m_ViewRadios->Check( IsEnabled );
+
+    m_ViewRadTextSearch->Check( VisiblePanels & guPANEL_RADIO_TEXTSEARCH );
+    m_ViewRadTextSearch->Enable( IsEnabled );
+
+    m_ViewRadLabels->Check( VisiblePanels & guPANEL_RADIO_LABELS );
+    m_ViewRadLabels->Enable( IsEnabled );
+
+    m_ViewRadGenres->Check( VisiblePanels & guPANEL_RADIO_GENRES );
+    m_ViewRadGenres->Enable( IsEnabled );
+
+
+    // Last.fm
+    //
+    m_ViewLastFM->Check( m_VisiblePanels & guPANEL_MAIN_LASTFM );
+
+    // Lyrics
+    //
+    m_ViewLyrics->Check( m_VisiblePanels & guPANEL_MAIN_LYRICS );
+
+
+
+    // Playlist
+    //
+    IsEnabled = m_PlayListPanel && ( m_VisiblePanels & guPANEL_MAIN_PLAYLISTS );
+    VisiblePanels = m_PlayListPanel ? m_PlayListPanel->VisiblePanels() : 0;
+
+    m_ViewPlayLists->Check( IsEnabled );
+
+    m_ViewPLTextSearch->Check( VisiblePanels & guPANEL_PLAYLIST_TEXTSEARCH );
+    m_ViewPLTextSearch->Enable( IsEnabled );
+
+
+    // Podcasts
+    //
+    IsEnabled = m_PodcastsPanel && ( m_VisiblePanels & guPANEL_MAIN_PODCASTS );
+    VisiblePanels = m_PodcastsPanel ? m_PodcastsPanel->VisiblePanels() : 0;
+
+    m_ViewPodcasts->Check( IsEnabled );
+
+    m_ViewPodChannels->Check( VisiblePanels & guPANEL_PODCASTS_CHANNELS );
+    m_ViewPodChannels->Enable( IsEnabled );
+
+    m_ViewPodDetails->Check( VisiblePanels & guPANEL_PODCASTS_DETAILS );
+    m_ViewPodDetails->Enable( IsEnabled );
+
+    // AlbumBrowser
+    //
+    m_ViewAlbumBrowser->Check( m_VisiblePanels & guPANEL_MAIN_ALBUMBROWSER );
+
+    // FileBrowser
+    //
+    m_ViewFileBrowser->Check( m_VisiblePanels & guPANEL_MAIN_FILEBROWSER );
+
+
+    // Jamendo
+    //
+    IsEnabled = m_JamendoPanel && ( m_VisiblePanels & guPANEL_MAIN_JAMENDO );
+    VisiblePanels = m_JamendoPanel ? m_JamendoPanel->VisiblePanels() : 0;
+
+    m_ViewJamendo->Check( IsEnabled );
+
+    m_ViewJamTextSearch->Check( VisiblePanels & guPANEL_LIBRARY_TEXTSEARCH );
+    m_ViewJamTextSearch->Enable( IsEnabled );
+
+    m_ViewJamLabels->Check( VisiblePanels & guPANEL_LIBRARY_LABELS );
+    m_ViewJamLabels->Enable( IsEnabled );
+
+    m_ViewJamGenres->Check( VisiblePanels & guPANEL_LIBRARY_GENRES );
+    m_ViewJamGenres->Enable( IsEnabled );
+
+    m_ViewJamArtists->Check( VisiblePanels & guPANEL_LIBRARY_ARTISTS );
+    m_ViewJamArtists->Enable( IsEnabled );
+
+    m_ViewJamComposers->Check( VisiblePanels & guPANEL_LIBRARY_COMPOSERS );
+    m_ViewJamComposers->Enable( IsEnabled );
+
+    m_ViewJamAlbumArtists->Check( VisiblePanels & guPANEL_LIBRARY_ALBUMARTISTS );
+    m_ViewJamAlbumArtists->Enable( IsEnabled );
+
+    m_ViewJamAlbums->Check( VisiblePanels & guPANEL_LIBRARY_ALBUMS );
+    m_ViewJamAlbums->Enable( IsEnabled );
+
+    m_ViewJamYears->Check( VisiblePanels & guPANEL_LIBRARY_YEARS );
+    m_ViewJamYears->Enable( IsEnabled );
+
+    m_ViewJamRatings->Check( VisiblePanels & guPANEL_LIBRARY_RATINGS );
+    m_ViewJamRatings->Enable( IsEnabled );
+
+    m_ViewJamPlayCounts->Check( VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT );
+    m_ViewJamPlayCounts->Enable( IsEnabled );
+
+    // Magnatune
+    //
+    IsEnabled = m_MagnatunePanel && ( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE );
+    VisiblePanels = m_MagnatunePanel ? m_MagnatunePanel->VisiblePanels() : 0;
+
+    m_ViewMagnatune->Check( IsEnabled );
+
+    m_ViewMagTextSearch->Check( VisiblePanels & guPANEL_LIBRARY_TEXTSEARCH );
+    m_ViewMagTextSearch->Enable( IsEnabled );
+
+    m_ViewMagLabels->Check( VisiblePanels & guPANEL_LIBRARY_LABELS );
+    m_ViewMagLabels->Enable( IsEnabled );
+
+    m_ViewMagGenres->Check( VisiblePanels & guPANEL_LIBRARY_GENRES );
+    m_ViewMagGenres->Enable( IsEnabled );
+
+    m_ViewMagArtists->Check( VisiblePanels & guPANEL_LIBRARY_ARTISTS );
+    m_ViewMagArtists->Enable( IsEnabled );
+
+    m_ViewMagComposers->Check( VisiblePanels & guPANEL_LIBRARY_COMPOSERS );
+    m_ViewMagComposers->Enable( IsEnabled );
+
+    m_ViewMagAlbumArtists->Check( VisiblePanels & guPANEL_LIBRARY_ALBUMARTISTS );
+    m_ViewMagAlbumArtists->Enable( IsEnabled );
+
+    m_ViewMagAlbums->Check( VisiblePanels & guPANEL_LIBRARY_ALBUMS );
+    m_ViewMagAlbums->Enable( IsEnabled );
+
+    m_ViewMagYears->Check( VisiblePanels & guPANEL_LIBRARY_YEARS );
+    m_ViewMagYears->Enable( IsEnabled );
+
+    m_ViewMagRatings->Check( VisiblePanels & guPANEL_LIBRARY_RATINGS );
+    m_ViewMagRatings->Enable( IsEnabled );
+
+    m_ViewMagPlayCounts->Check( VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT );
+    m_ViewMagPlayCounts->Enable( IsEnabled );
+
 }
 
 // -------------------------------------------------------------------------------- //
