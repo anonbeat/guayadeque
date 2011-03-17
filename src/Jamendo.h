@@ -123,7 +123,6 @@ class guJamendoPanel : public guLibPanel
     void                        EndUpdateThread( void );
     void                        EndDownloadThread( void );
 
-
 };
 
 // -------------------------------------------------------------------------------- //

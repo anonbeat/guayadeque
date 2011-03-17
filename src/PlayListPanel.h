@@ -141,6 +141,7 @@ class guPlayListPanel : public wxPanel
 {
   protected :
     wxAuiManager        m_AuiManager;
+    unsigned int        m_VisiblePanels;
 
     guDbLibrary *       m_Db;
     guPlayerPanel *     m_PlayerPanel;
@@ -152,7 +153,6 @@ class guPlayListPanel : public wxPanel
     wxSearchCtrl *      m_InputTextCtrl;
 
     wxTimer             m_TextChangedTimer;
-    unsigned int        m_VisiblePanels;
     wxString            m_ExportLastFolder;
 
     void                OnPLNamesSelected( wxTreeEvent &event );
@@ -236,6 +236,9 @@ class guPlayListPanel : public wxPanel
 
     bool                IsPanelShown( const int panelid ) const;
     void                ShowPanel( const int panelid, bool show );
+    int                 VisiblePanels( void ) { return m_VisiblePanels; }
+    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
+    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
     friend class guPLNamesTreeCtrl;
 };

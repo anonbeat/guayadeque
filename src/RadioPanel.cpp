@@ -1977,6 +1977,27 @@ void guRadioPanel::OnGoToSearch( wxCommandEvent &event )
         m_InputTextCtrl->SetFocus();
 }
 
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
+{
+    wxArrayInt PanelIds;
+    PanelIds.Add( guPANEL_RADIO_TEXTSEARCH );
+    PanelIds.Add( guPANEL_RADIO_GENRES );
+    PanelIds.Add( guPANEL_RADIO_LABELS );
+
+    int Index;
+    int Count = PanelIds.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        int PanelId = PanelIds[ Index ];
+        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
+        {
+            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
+        }
+    }
+
+    m_AuiManager.LoadPerspective( layoutstr, true );
+}
 
 
 

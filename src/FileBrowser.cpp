@@ -2364,3 +2364,9 @@ void guFileBrowser::OnItemsPaste( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guFileBrowser::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
+{
+    m_AuiManager.LoadPerspective( layoutstr, true );
+}
+
+// -------------------------------------------------------------------------------- //

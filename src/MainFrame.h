@@ -72,7 +72,6 @@
 
 #endif
 
-
 #define     guPANEL_MAIN_PLAYERPLAYLIST     ( 1 << 0 )
 #define     guPANEL_MAIN_PLAYERFILTERS      ( 1 << 1 )
 #define     guPANEL_MAIN_PLAYERVUMETERS     ( 1 << 2 )
@@ -258,9 +257,7 @@ class guMainFrame : public wxFrame
     wxLongLong                      m_SelSize;
 
     // Layouts
-    wxArrayString                   m_LayoutName;
-    wxArrayString                   m_LayoutData;
-    wxArrayString                   m_LayoutTabs;
+    wxSortedArrayString             m_LayoutNames;
 
     guCopyToThread *                m_CopyToThread;
     wxMutex                         m_CopyToThreadMutex;
@@ -347,10 +344,11 @@ class guMainFrame : public wxFrame
     //void                            OnSysColorChanged( wxSysColourChangedEvent &event );
 
     void                            OnCreateNewLayout( wxCommandEvent &event );
-    void                            LoadLayouts( void );
-    void                            SaveLayouts( void );
     void                            OnLoadLayout( wxCommandEvent &event );
     void                            OnDeleteLayout( wxCommandEvent &event );
+    bool                            SaveCurrentLayout( const wxString &layoutname );
+    void                            LoadLayoutNames( void );
+    void                            CreateLayoutMenus( void );
 
     void                            OnPlayerShowPanel( wxCommandEvent &event );
     void                            ShowMainPanel( const int panelid, const bool enable );
@@ -427,6 +425,7 @@ class guMainFrame : public wxFrame
     void                            OnChangeVolume( wxCommandEvent &event );
 
     void                            ResetViewMenuState( void );
+    void                            RefreshViewMenuState( void );
 
     void                            OnSongSetRating( wxCommandEvent &event );
 

@@ -239,7 +239,7 @@ class guFileBrowser : public wxPanel
 {
   protected :
     wxAuiManager            m_AuiManager;
-    int                     m_VisiblePanels;
+    unsigned int            m_VisiblePanels;
 	guDbLibrary *           m_Db;
 	guPlayerPanel *         m_PlayerPanel;
 
@@ -287,6 +287,9 @@ class guFileBrowser : public wxPanel
         return m_FilesCtrl->GetCounters( count, len, size );
     }
 
+    int                 VisiblePanels( void ) { return m_VisiblePanels; }
+    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
+    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
 };
 

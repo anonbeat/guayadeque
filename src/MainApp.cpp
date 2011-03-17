@@ -125,6 +125,12 @@ guMainApp::guMainApp() : wxApp()
         guLogMessage( wxT( "Created the default lyrics sources file" ) );
     }
 
+    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Layouts" ) ) )
+    {
+        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Layouts" ), 0770 );
+        guLogMessage( wxT( "Created the Layouts directory" ) );
+    }
+
     m_Config = new guConfig();
     guConfig::Set( m_Config );
 

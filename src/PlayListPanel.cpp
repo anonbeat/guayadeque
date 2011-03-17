@@ -1894,3 +1894,23 @@ void guPlayListPanel::OnGoToSearch( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayListPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
+{
+    wxArrayInt PanelIds;
+    PanelIds.Add( guPANEL_PLAYLIST_TEXTSEARCH );
+
+    int Index;
+    int Count = PanelIds.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        int PanelId = PanelIds[ Index ];
+        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
+        {
+            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
+        }
+    }
+
+    m_AuiManager.LoadPerspective( layoutstr, true );
+}
+
+// -------------------------------------------------------------------------------- //

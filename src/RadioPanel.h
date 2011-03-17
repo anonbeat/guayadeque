@@ -173,14 +173,17 @@ class guRadioPanel : public wxPanel
 	guRadioPanel( wxWindow* parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
 	~guRadioPanel();
 
-    bool IsPanelShown( const int panelid ) const;
-    void ShowPanel( const int panelid, bool show );
+    void                GetRadioCounter( wxLongLong * count );
 
-    void GetRadioCounter( wxLongLong * count );
-
-    void EndStationPlayListLoaded( void ) { m_RadioPlayListLoadThreadMutex.Lock();
+    void                EndStationPlayListLoaded( void ) { m_RadioPlayListLoadThreadMutex.Lock();
                                             m_RadioPlayListLoadThread = NULL;
                                             m_RadioPlayListLoadThreadMutex.Unlock(); }
+
+    bool                IsPanelShown( const int panelid ) const;
+    void                ShowPanel( const int panelid, bool show );
+    int                 VisiblePanels( void ) { return m_VisiblePanels; }
+    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
+    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
 };
 
