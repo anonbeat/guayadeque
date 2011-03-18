@@ -270,6 +270,7 @@ class guMainFrame : public wxFrame
     guLyricSearchEngine *           m_LyricSearchEngine;
     guLyricSearchContext *          m_LyricSearchContext;
 
+    int                             m_LoadLayoutPending;
 
     void                            OnUpdateLibrary( wxCommandEvent &event );
     void                            OnUpdatePodcasts( wxCommandEvent &event );
@@ -335,6 +336,7 @@ class guMainFrame : public wxFrame
     void                            OnRemovePodcastThread( wxCommandEvent &event );
 
     void                            OnIdle( wxIdleEvent &event );
+    void                            OnSize( wxSizeEvent &event );
     void                            OnPageChanged( wxAuiNotebookEvent& event );
     void                            OnPageClosed( wxAuiNotebookEvent& event );
     void                            DoPageClose( wxPanel * panel );
