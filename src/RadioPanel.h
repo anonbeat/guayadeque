@@ -65,6 +65,14 @@ class guRadioLabelListBox;
 #define     guRADIO_SEARCH_FLAG_ALLGENRES       ( 1 << 3 )
 #define     guRADIO_SEARCH_FLAG_DEFAULT         ( guRADIO_SEARCH_FLAG_NOWPLAYING | guRADIO_SEARCH_FLAG_ALLGENRES )
 
+#define guRADIOSTATIONS_COLUMN_NAME         0
+#define guRADIOSTATIONS_COLUMN_BITRATE      1
+#define guRADIOSTATIONS_COLUMN_LISTENERS    2
+#define guRADIOSTATIONS_COLUMN_TYPE         3
+#define guRADIOSTATIONS_COLUMN_NOWPLAYING   4
+
+#define guRADIOSTATIONS_COLUMN_COUNT        5
+
 
 class guShoutcastItemData;
 
@@ -184,6 +192,9 @@ class guRadioPanel : public wxPanel
     int                 VisiblePanels( void ) { return m_VisiblePanels; }
     wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
     void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
+
+    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled );
+    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false );
 
 };
 

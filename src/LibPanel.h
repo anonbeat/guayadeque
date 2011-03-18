@@ -353,6 +353,9 @@ class guLibPanel : public wxPanel
 
     virtual wxImage *       GetAlbumCover( const int albumid, wxString &coverpath );
 
+    bool                    GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_SongListCtrl->GetColumnData( id, index, width, enabled ); }
+    bool                    SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_SongListCtrl->SetColumnData( id, index, width, enabled, refresh ); }
+
     friend class guLibPanelDropTarget;
 };
 

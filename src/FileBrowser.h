@@ -67,6 +67,8 @@ enum guFILEITEM_TYPE {
 #define guFILEBROWSER_COLUMN_SIZE       1
 #define guFILEBROWSER_COLUMN_TIME       2
 
+#define guFILEBROWSER_COLUMN_COUNT      3
+
 // -------------------------------------------------------------------------------- //
 class guFileItem
 {
@@ -232,6 +234,9 @@ class guFileBrowserFileCtrl : public wxPanel
         return m_FilesListBox->GetCounters( count, len, size );
     }
 
+    bool                    GetColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesListBox->GetColumnData( id, index, width, enabled ); }
+    bool                    SetColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesListBox->SetColumnData( id, index, width, enabled, refresh ); }
+
 };
 
 // -------------------------------------------------------------------------------- //
@@ -290,6 +295,9 @@ class guFileBrowser : public wxPanel
     int                 VisiblePanels( void ) { return m_VisiblePanels; }
     wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
     void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
+
+    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesCtrl->GetColumnData( id, index, width, enabled ); }
+    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesCtrl->SetColumnData( id, index, width, enabled, refresh ); }
 
 };
 

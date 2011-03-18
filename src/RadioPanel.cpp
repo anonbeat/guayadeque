@@ -246,16 +246,6 @@ class guUpdateRadiosThread : public wxThread
     virtual ExitCode Entry();
 };
 
-
-
-#define guRADIOSTATIONS_COLUMN_NAME         0
-#define guRADIOSTATIONS_COLUMN_BITRATE      1
-#define guRADIOSTATIONS_COLUMN_LISTENERS    2
-#define guRADIOSTATIONS_COLUMN_TYPE         3
-#define guRADIOSTATIONS_COLUMN_NOWPLAYING   4
-
-#define guRADIOSTATIONS_COLUMN_COUNT        5
-
 // -------------------------------------------------------------------------------- //
 // guRadioStationListBox
 // -------------------------------------------------------------------------------- //
@@ -1998,6 +1988,19 @@ void guRadioPanel::LoadPerspective( const wxString &layoutstr, const unsigned in
 
     m_AuiManager.LoadPerspective( layoutstr, true );
 }
+
+// -------------------------------------------------------------------------------- //
+bool guRadioPanel::GetTracksColumnData( const int id, int * index, int * width, bool * enabled )
+{
+    return m_StationsListBox->GetColumnData( id, index, width, enabled );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guRadioPanel::SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh )
+{
+    return m_StationsListBox->SetColumnData( id, index, width, enabled, refresh );
+}
+
 
 
 

@@ -652,14 +652,58 @@ void guListView::OnMouse( wxMouseEvent &event )
     event.Skip();
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guListView::OnSysColorChanged( wxSysColourChangedEvent &event )
-//{
-//    guLogMessage( wxT( "The sys color changed" ) );
-//
-//    m_Attr.LoadSysColors();
-//    event.Skip();
-//}
+// -------------------------------------------------------------------------------- //
+int FindColumnId( const guListViewColumnArray * columns, const int id )
+{
+    int index;
+    int count = columns->Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( ( * columns )[ index ].m_Id == id )
+            return index;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+bool  guListView::GetColumnData( const int id, int * index, int * width, bool * enabled )
+{
+    int ColPos = FindColumnId( m_Columns, id );
+    if( ColPos != wxNOT_FOUND )
+    {
+        * index   = ColPos;
+        * width   = ( * m_Columns )[ ColPos ].m_Width;
+        * enabled = ( * m_Columns )[ ColPos ].m_Enabled;
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool  guListView::SetColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh )
+{
+    int ColPos = FindColumnId( m_Columns, id );
+    if( ColPos != wxNOT_FOUND )
+    {
+        if( ColPos != index )
+        {
+            guListViewColumn * Column = m_Columns->Detach( ColPos );
+            m_Columns->Insert( Column, index );
+        }
+        ( * m_Columns )[ index ].m_Width = width;
+        ( * m_Columns )[ index ].m_Enabled = enabled;
+        if( refresh )
+        {
+            m_Header->RefreshWidth();
+            Refresh();
+        }
+        return true;
+    }
+    return false;
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guListViewClient
@@ -1513,19 +1557,6 @@ guListViewColEdit::~guListViewColEdit()
 	m_ColumnsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
 	m_UpBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
 	m_DownBitmapBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-int FindColumnId( const guListViewColumnArray * columns, const int id )
-{
-    int index;
-    int count = columns->Count();
-    for( index = 0; index < count; index++ )
-    {
-        if( ( * columns )[ index ].m_Id == id )
-            return index;
-    }
-    return wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //

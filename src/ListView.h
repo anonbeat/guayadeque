@@ -228,12 +228,11 @@ class guListViewClient : public wxVListBox
     guListViewClient( wxWindow * parent, const int flags, guListViewColumnArray * columns, guListViewAttr * attr );
     ~guListViewClient();
 
-    void SetItemHeigth( const int height );
+    void            SetItemHeigth( const int height );
 
-    void SetHScrollbar( const int width );
-    virtual void SetScrollPos( int orientation, int pos, bool refresh = true );
+    void            SetHScrollbar( const int width );
+    virtual void    SetScrollPos( int orientation, int pos, bool refresh = true );
     //int  GetHScrollPosition( void );
-
 
     friend class guListView;
     friend class guListViewHeader;
@@ -354,6 +353,9 @@ class guListView : public wxScrolledWindow
     void                    SetColumnLabel( const int col, const wxString &label );
     int                     GetColumnId( const int col ) const { return m_Columns->Item( col ).m_Id; }
     void                    SetColumnImage( const int col, const int imageindex );
+
+    bool                    GetColumnData( const int id, int * index, int * width, bool * enabled );
+    bool                    SetColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false );
 
     wxRect                  GetClientScreenRect( void ) { return m_ListBox->GetScreenRect(); }
 
