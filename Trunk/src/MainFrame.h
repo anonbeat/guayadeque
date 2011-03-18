@@ -98,6 +98,11 @@
 #define     guPORTABLEDEVICE_COMMANDS_COUNT 20  // 0 .. 9 Main Window Commands
                                                 // 10 .. 19 -> Library Pane Windows
 
+#define     guWINDOW_STATE_NORMAL           0
+#define     guWINDOW_STATE_FULLSCREEN       ( 1 << 0 )
+#define     guWINDOW_STATE_MAXIMIZED        ( 1 << 1 )
+#define     guWINDOW_STATE_NOSTATUSBAR      ( 1 << 3 )
+
 enum guUPDATED_TRACKS {
     guUPDATED_TRACKS_NONE = 0,
     guUPDATED_TRACKS_PLAYER,
