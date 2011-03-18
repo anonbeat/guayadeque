@@ -73,11 +73,11 @@ void guCoverPanel::OnSize( wxSizeEvent &event )
 {
     wxSize Size = event.GetSize();
     int MinSize = wxMin( Size.GetWidth(), Size.GetHeight() );
-    guLogMessage( wxT( "NewSize: %u" ), MinSize );
+    //guLogMessage( wxT( "NewSize: %u" ), MinSize );
     if( MinSize != m_LastSize )
     {
         m_LastSize = MinSize;
-        guLogMessage( wxT( "Updating Size: %u" ), MinSize );
+        //guLogMessage( wxT( "Updating Size: %u" ), MinSize );
 //        UpdateImage();
         if( m_ResizeTimer.IsRunning() )
         {

@@ -95,6 +95,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_JamendoDb = NULL;
     m_MagnatuneDb = NULL;
     m_CopyToThread = NULL;
+    m_LoadLayoutPending = wxNOT_FOUND;
 
     //
     m_Db->SetLibPath( Config->ReadAStr( wxT( "LibPath" ),
@@ -450,6 +451,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     //
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
+	Connect( wxEVT_SIZE, wxSizeEventHandler( guMainFrame::OnSize ), NULL, this );
 
     Connect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ), NULL, this );
     Connect( ID_MENU_UPDATE_LIBRARYFORCED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnForceUpdateLibrary ), NULL, this );
@@ -4855,14 +4857,28 @@ void guMainFrame::LoadPerspective( const wxString &layout )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnSize( wxSizeEvent &event )
+{
+    wxSize Size = event.GetSize();
+    //guLogMessage( wxT( "MainFrame.Size( %i, %i ) %i" ), Size.GetWidth(), Size.GetHeight(), m_LoadLayoutPending );
+    if( m_LoadLayoutPending != wxNOT_FOUND )
+    {
+        //guLogMessage( wxT( "LoadLayout command sent" ) );
+        wxCommandEvent LoadLayoutEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_LAYOUT_LOAD + m_LoadLayoutPending );
+        m_LoadLayoutPending = wxNOT_FOUND;
+        AddPendingEvent( LoadLayoutEvent );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnLoadLayout( wxCommandEvent &event )
 {
-    int Layout = event.GetId() - ID_MENU_LAYOUT_LOAD;
-    //guLogMessage( wxT( "Loading Layout %i" ), Layout );
+    int LayoutIndex = event.GetId() - ID_MENU_LAYOUT_LOAD;
+    //guLogMessage( wxT( "Loading LayoutIndex %i" ), LayoutIndex );
 
-    if( Layout >= 0 && Layout < ( int ) m_LayoutNames.Count() )
+    if( LayoutIndex >= 0 && LayoutIndex < ( int ) m_LayoutNames.Count() )
     {
-        wxString LayoutFile = GetLayoutFileName( m_LayoutNames[ Layout ] );
+        wxString LayoutFile = GetLayoutFileName( m_LayoutNames[ LayoutIndex ] );
         if( wxFileExists( LayoutFile ) )
         {
             wxFileInputStream Ins( LayoutFile );
@@ -4909,6 +4925,9 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                             if( IsFullScreen() != bool( State & guWINDOW_STATE_FULLSCREEN ) )
                             {
                                 ShowFullScreen( bool( State & guWINDOW_STATE_FULLSCREEN ), wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+                                if( bool( State & guWINDOW_STATE_FULLSCREEN ) )
+                                    Hide();
+                                m_LoadLayoutPending = LayoutIndex;
                                 Refresh();
                                 Update();
                             }
@@ -4916,6 +4935,7 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                             if( IsMaximized() != bool( State & guWINDOW_STATE_MAXIMIZED ) )
                             {
                                 Maximize( bool( State & guWINDOW_STATE_MAXIMIZED ) );
+                                m_LoadLayoutPending = LayoutIndex;
                                 Refresh();
                                 Update();
                             }
@@ -4927,9 +4947,12 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 Update();
                             }
 
-                            SetSize( PosX, PosY, Width, Height );
-                            Refresh();
-                            Update();
+                            if( !( State & ( guWINDOW_STATE_MAXIMIZED | guWINDOW_STATE_FULLSCREEN ) ) )
+                            {
+                                SetSize( PosX, PosY, Width, Height );
+                                Refresh();
+                                Update();
+                            }
 
                             LoadTabsPerspective( TabsLayoutStr );
 
@@ -5069,7 +5092,15 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                     Show();
                 }
             }
+            else
+            {
+                guLogError( wxT( "Could not read the file '%s'" ), LayoutFile.c_str() );
+            }
 
+        }
+        else
+        {
+            guLogError( wxT( "Could not find the file '%s'" ), LayoutFile.c_str() );
         }
     }
 }
