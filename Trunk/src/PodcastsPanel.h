@@ -48,6 +48,8 @@
 #define guPODCASTS_COLUMN_LASTPLAY      8
 #define guPODCASTS_COLUMN_ADDEDDATE     9
 
+#define guPODCASTS_COLUMN_COUNT         10
+
 // -------------------------------------------------------------------------------- //
 class guChannelsListBox : public guListBox
 {
@@ -152,8 +154,6 @@ class guPodcastPanel : public wxPanel
     int                         m_LastChannelInfoId;
     int                         m_LastPodcastInfoId;
 
-//    wxSplitterWindow *          m_MainSplitter;
-//    wxSplitterWindow *          m_TopSplitter;
 	guChannelsListBox *         m_ChannelsListBox;
     guPodcastListBox *          m_PodcastsListBox;
 	wxBoxSizer *                m_DetailMainSizer;
@@ -204,6 +204,10 @@ public:
     int                 VisiblePanels( void ) { return m_VisiblePanels; }
     wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
     void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
+
+    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PodcastsListBox->GetColumnData( id, index, width, enabled ); }
+    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PodcastsListBox->SetColumnData( id, index, width, enabled, refresh ); }
+
 
     friend class guPodcastDownloadQueueThread;
 };

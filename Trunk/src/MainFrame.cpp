@@ -4695,6 +4695,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guSONGS_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_LibPanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4711,6 +4736,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guRADIOSTATIONS_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_RadioPanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4727,6 +4777,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guSONGS_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_PlayListPanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4743,6 +4818,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guPODCASTS_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_PodcastsPanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4759,6 +4859,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guFILEBROWSER_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_FileBrowserPanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4774,6 +4899,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guSONGS_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_JamendoPanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4789,6 +4939,31 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
                    NULL ) );
 
         XmlNode->SetProperties( Property );
+
+        wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
+        int Index;
+        int Count = guSONGS_COLUMN_COUNT;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int  ColumnPos;
+            int  ColumnWidth;
+            bool ColumnEnabled;
+
+            wxXmlNode * Column = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "column" ) );
+
+            m_MagnatunePanel->GetTracksColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
+
+            Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                       new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                       new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                       new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+                       NULL ) ) ) );
+            Column->SetProperties( Property );
+
+            Columns->AddChild( Column );
+        }
+
+        XmlNode->AddChild( Columns );
     }
 
     RootNode->AddChild( XmlNode );
@@ -4990,6 +5165,32 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
 
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_LibPanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
+
                                 m_LibPanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }
                         }
@@ -5004,6 +5205,32 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 XmlNode->GetPropVal( wxT( "panels" ), &Field );
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_RadioPanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
 
                                 m_RadioPanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }
@@ -5020,6 +5247,32 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
 
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_PlayListPanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
+
                                 m_PlayListPanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }
                         }
@@ -5034,6 +5287,32 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 XmlNode->GetPropVal( wxT( "panels" ), &Field );
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_PodcastsPanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
 
                                 m_PodcastsPanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }
@@ -5050,6 +5329,32 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
 
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_FileBrowserPanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
+
                                 m_FileBrowserPanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }
                         }
@@ -5065,10 +5370,36 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
 
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_JamendoPanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
+
                                 m_JamendoPanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }
                         }
-                        else if( NodeName == wxT( "filebrowser" ) )
+                        else if( NodeName == wxT( "magnatune" ) )
                         {
                             if( m_MagnatunePanel )
                             {
@@ -5079,6 +5410,32 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                                 XmlNode->GetPropVal( wxT( "panels" ), &Field );
                                 Field.ToLong( &VisiblePanels );
                                 XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
+
+                                wxXmlNode * Columns = XmlNode->GetChildren();
+                                if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
+                                {
+                                    wxXmlNode * Column = Columns->GetChildren();
+                                    while( Column && ( Column->GetName() == wxT( "column" ) ) )
+                                    {
+                                        long ColumnId;
+                                        long ColumnPos;
+                                        long ColumnWidth;
+                                        long ColumnEnabled;
+
+                                        Column->GetPropVal( wxT( "id" ), &Field );
+                                        Field.ToLong( &ColumnId );
+                                        Column->GetPropVal( wxT( "pos" ), &Field );
+                                        Field.ToLong( &ColumnPos );
+                                        Column->GetPropVal( wxT( "width" ), &Field );
+                                        Field.ToLong( &ColumnWidth );
+                                        Column->GetPropVal( wxT( "enabled" ), &Field );
+                                        Field.ToLong( &ColumnEnabled );
+
+                                        m_MagnatunePanel->SetTracksColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );
+
+                                        Column = Column->GetNext();
+                                    }
+                                }
 
                                 m_MagnatunePanel->LoadPerspective( LayoutStr, VisiblePanels );
                             }

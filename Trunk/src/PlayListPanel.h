@@ -240,6 +240,9 @@ class guPlayListPanel : public wxPanel
     wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
     void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
+    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PLTracksListBox->GetColumnData( id, index, width, enabled ); }
+    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PLTracksListBox->SetColumnData( id, index, width, enabled, refresh ); }
+
     friend class guPLNamesTreeCtrl;
 };
 
