@@ -4632,7 +4632,9 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
     //
     RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "layout" ) );
 
-    wxXmlProperty * Property = new wxXmlProperty( wxT( "name" ), layoutname, NULL );
+    wxXmlProperty * Property = new wxXmlProperty( wxT( "name" ), layoutname,
+                               new wxXmlProperty( wxT( "version" ), wxT( "1.0" ),
+                               NULL ) );
 
     RootNode->SetProperties( Property );
 
@@ -4650,11 +4652,16 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
     int PosY;
     GetPosition( &PosX, &PosY );
     // State
-    int State = 0;
+    int State = guWINDOW_STATE_NORMAL;
+
     if( IsFullScreen() )
-        State = 1;
-    else if( IsMaximized() )
-        State = 2;
+        State |= guWINDOW_STATE_FULLSCREEN;
+
+    if( IsMaximized() )
+        State |= guWINDOW_STATE_MAXIMIZED;
+
+    if( !m_MainStatusBar->IsShown() )
+        State |= guWINDOW_STATE_NOSTATUSBAR;
 
     wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
     wxString PLCaption = PaneInfo.caption;
@@ -4831,65 +4838,6 @@ void guMainFrame::LoadPerspective( const wxString &layout )
 {
     m_AuiManager.LoadPerspective( layout, true );
 
-//    bool IsShown;
-//    wxAuiPaneInfo &PlayListPaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
-//    //guLogMessage( wxT( "PlayerPlayList: %i   %i" ), PlayListPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) );
-//    if( ( IsShown = PlayListPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERPLAYLIST ) )
-//    {
-//        if( IsShown )
-//            m_VisiblePanels |= guPANEL_MAIN_PLAYERPLAYLIST;
-//        else
-//            m_VisiblePanels ^= guPANEL_MAIN_PLAYERPLAYLIST;
-//
-//        m_ViewPlayerPlayList->Check( IsShown );
-//    }
-//
-//    wxAuiPaneInfo &FiltersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerFilters" ) );
-//    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
-//    if( ( IsShown = FiltersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) )
-//    {
-//        if( IsShown )
-//            m_VisiblePanels |= guPANEL_MAIN_PLAYERFILTERS;
-//        else
-//            m_VisiblePanels ^= guPANEL_MAIN_PLAYERFILTERS;
-//
-//        m_ViewPlayerFilters->Check( IsShown );
-//    }
-//
-//    wxAuiPaneInfo &VumetersPaneInfo = m_AuiManager.GetPane( wxT( "PlayerVumeters" ) );
-//    //guLogMessage( wxT( "PlayerFilters: %i   %i" ), FiltersPaneInfo.IsShown(), bool( m_VisiblePanels & guPANEL_MAIN_PLAYERFILTERS ) );
-//    if( ( IsShown = VumetersPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_PLAYERVUMETERS ) )
-//    {
-//        if( IsShown )
-//            m_VisiblePanels |= guPANEL_MAIN_PLAYERVUMETERS;
-//        else
-//            m_VisiblePanels ^= guPANEL_MAIN_PLAYERVUMETERS;
-//
-//        m_ViewPlayerVumeters->Check( IsShown );
-//    }
-//
-//    wxAuiPaneInfo &LocationsPaneInfo = m_AuiManager.GetPane( wxT( "MainSources" ) );
-//    if( ( IsShown = LocationsPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_LOCATIONS ) )
-//    {
-//        if( IsShown )
-//            m_VisiblePanels |= guPANEL_MAIN_LOCATIONS;
-//        else
-//            m_VisiblePanels ^= guPANEL_MAIN_LOCATIONS;
-//
-//        m_ViewMainLocations->Check( IsShown );
-//    }
-//
-//    wxAuiPaneInfo &ShowCoverPaneInfo = m_AuiManager.GetPane( wxT( "MainShowCover" ) );
-//    if( ( IsShown = ShowCoverPaneInfo.IsShown() ) != bool( m_VisiblePanels & guPANEL_MAIN_SHOWCOVER ) )
-//    {
-//        if( IsShown )
-//            m_VisiblePanels |= guPANEL_MAIN_SHOWCOVER;
-//        else
-//            m_VisiblePanels ^= guPANEL_MAIN_SHOWCOVER;
-//
-//        m_ViewMainShowCover->Check( IsShown );
-//    }
-
     wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
     if( !PaneInfo.IsShown() )
     {
@@ -4958,21 +4906,30 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                             XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
                             XmlNode->GetPropVal( wxT( "tabslayout" ), &TabsLayoutStr );
 
-                            if( IsFullScreen() != ( State == 1 ) )
+                            if( IsFullScreen() != bool( State & guWINDOW_STATE_FULLSCREEN ) )
                             {
-                                ShowFullScreen( State == 1, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+                                ShowFullScreen( bool( State & guWINDOW_STATE_FULLSCREEN ), wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
                                 Refresh();
                                 Update();
                             }
 
-                            if( IsMaximized() != ( State == 2 ) )
+                            if( IsMaximized() != bool( State & guWINDOW_STATE_MAXIMIZED ) )
                             {
-                                Maximize( State == 2 );
+                                Maximize( bool( State & guWINDOW_STATE_MAXIMIZED ) );
+                                Refresh();
+                                Update();
+                            }
+
+                            if( !m_MainStatusBar->IsShown() != bool( State & guWINDOW_STATE_NOSTATUSBAR ) )
+                            {
+                                m_MainStatusBar->Show( !( State & guWINDOW_STATE_NOSTATUSBAR ) );
                                 Refresh();
                                 Update();
                             }
 
                             SetSize( PosX, PosY, Width, Height );
+                            Refresh();
+                            Update();
 
                             LoadTabsPerspective( TabsLayoutStr );
 
