@@ -24,6 +24,7 @@
 #include "AAListBox.h"
 #include "AlListBox.h"
 #include "ArListBox.h"
+#include "AuiManagedPanel.h"
 #include "CoListBox.h"
 #include "DbLibrary.h"
 #include "GeListBox.h"
@@ -103,11 +104,11 @@ class guLibPanelDropTarget : public wxFileDropTarget
 };
 
 // -------------------------------------------------------------------------------- //
-class guLibPanel : public wxPanel
+class guLibPanel : public guAuiManagedPanel
 {
   protected :
-    wxAuiManager            m_AuiManager;
-    unsigned int            m_VisiblePanels;
+//    wxAuiManager            m_AuiManager;
+//    unsigned int            m_VisiblePanels;
 
     wxSearchCtrl *          m_InputTextCtrl;
     guGeListBox *           m_GenreListCtrl;
@@ -262,9 +263,6 @@ class guLibPanel : public wxPanel
     virtual void            OnSongCopyToClicked( wxCommandEvent &event );
 
     //
-    void                    OnPaneClose( wxAuiManagerEvent &event );
-
-    //
     void                    OnSelChangedTimer( wxTimerEvent &event );
     void                    OnTextChangedTimer( wxTimerEvent &event );
     void                    DoSelectionChanged( void );
@@ -302,6 +300,8 @@ class guLibPanel : public wxPanel
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();
 
+    virtual void            InitPanelData( void );
+
     virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
     virtual wxString        GetName( void );
     virtual guDbLibrary *   GetDb( void ) { return m_Db; };
@@ -323,9 +323,6 @@ class guLibPanel : public wxPanel
     void                    SelectAlbumArtists( wxArrayInt * ids );
     void                    SelectAlbums( wxArrayInt * albums );
 
-    bool                    IsPanelShown( const int panelid ) const;
-    void                    ShowPanel( const int panelid, bool show );
-
     void                    UpdatedTracks( const guTrackArray * tracks ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTracks( tracks ); }
     void                    UpdatedTrack( const guTrack * track ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTrack( track ); }
 
@@ -340,9 +337,12 @@ class guLibPanel : public wxPanel
 
     virtual wxArrayString   GetCoverSearchWords( void );
 
-    int                     VisiblePanels( void ) { return m_VisiblePanels; }
-    wxString                SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-    void                    LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
+//    bool                    IsPanelShown( const int panelid ) const;
+//    void                    ShowPanel( const int panelid, bool show );
+//    void                    OnPaneClose( wxAuiManagerEvent &event );
+//    int                     VisiblePanels( void ) { return m_VisiblePanels; }
+//    wxString                SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
+//    void                    LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
     virtual wxString        GetCoverName( void );
     virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
@@ -353,8 +353,8 @@ class guLibPanel : public wxPanel
 
     virtual wxImage *       GetAlbumCover( const int albumid, wxString &coverpath );
 
-    bool                    GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_SongListCtrl->GetColumnData( id, index, width, enabled ); }
-    bool                    SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_SongListCtrl->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual bool            GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_SongListCtrl->GetColumnData( id, index, width, enabled ); }
+    virtual bool            SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_SongListCtrl->SetColumnData( id, index, width, enabled, refresh ); }
 
     friend class guLibPanelDropTarget;
 };

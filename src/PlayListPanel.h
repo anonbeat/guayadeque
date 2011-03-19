@@ -21,6 +21,7 @@
 #ifndef PLAYLISTPANEL_H
 #define PLAYLISTPANEL_H
 
+#include "AuiManagedPanel.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 #include "PLSoListBox.h"
@@ -137,12 +138,9 @@ class guPLNamesDropTarget : public wxFileDropTarget
 };
 
 // -------------------------------------------------------------------------------- //
-class guPlayListPanel : public wxPanel
+class guPlayListPanel : public guAuiManagedPanel
 {
   protected :
-    wxAuiManager        m_AuiManager;
-    unsigned int        m_VisiblePanels;
-
     guDbLibrary *       m_Db;
     guPlayerPanel *     m_PlayerPanel;
 
@@ -197,26 +195,10 @@ class guPlayListPanel : public wxPanel
 
     void                OnTextChangedTimer( wxTimerEvent &event );
 
-    void                OnPaneClose( wxAuiManagerEvent &event );
-
     void                DeleteCurrentPlayList( void );
 
     void                OnPLTracksDeleteLibrary( wxCommandEvent &event );
     void                OnPLTracksDeleteDrive( wxCommandEvent &event );
-
-    //virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks ) { return m_Db->CreateStaticPlayList( name, tracks ); }
-    //virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks ) { return m_Db->UpdateStaticPlayList( plid, tracks ); }
-    //virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks ) { return m_Db->AppendStaticPlayList( plid, tracks ); }
-    //virtual int         DeleteStaticPlayList( const int plid, const wxArrayInt &tracks ) { return m_Db->DelPlaylistSetIds( plid, tracks ); }
-    //virtual void        SetPlayListName( const int plid, const wxString &newname ) { m_Db->SetPlayListName( plid, newname ); }
-    //virtual void        DeletePlayList( const int plid ) { m_Db->DeletePlayList( plid ); }
-
-    //virtual int         CreateDynamicPlayList( const wxString &name, const guDynPlayList * dynplaylist ) { return m_Db->CreateDynamicPlayList( name, dynplaylist ); }
-    //virtual void        GetDynamicPlayList( const int plid, guDynPlayList * dynplaylist ) { m_Db->GetDynamicPlayList( plid, dynplaylist ); }
-    //virtual void        UpdateDynamicPlayList( const int plid, const guDynPlayList * dynplaylist ) { m_Db->UpdateDynamicPlayList( plid, dynplaylist ); }
-
-    //virtual void        UpdateStaticPlayListFile( const int plid );
-
 
     virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
     virtual void        SendPlayListUpdatedEvent( void );
@@ -227,6 +209,8 @@ class guPlayListPanel : public wxPanel
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();
 
+    virtual void        InitPanelData( void );
+
     void                PlayListUpdated( void );
 
     bool                GetPlayListCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
@@ -234,14 +218,8 @@ class guPlayListPanel : public wxPanel
     void inline         UpdatedTracks( const guTrackArray * tracks ) { m_PLTracksListBox->UpdatedTracks( tracks ); };
     void inline         UpdatedTrack( const guTrack * track ) { m_PLTracksListBox->UpdatedTrack( track ); };
 
-    bool                IsPanelShown( const int panelid ) const;
-    void                ShowPanel( const int panelid, bool show );
-    int                 VisiblePanels( void ) { return m_VisiblePanels; }
-    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
-
-    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PLTracksListBox->GetColumnData( id, index, width, enabled ); }
-    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PLTracksListBox->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual bool        GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PLTracksListBox->GetColumnData( id, index, width, enabled ); }
+    virtual bool        SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PLTracksListBox->SetColumnData( id, index, width, enabled, refresh ); }
 
     friend class guPLNamesTreeCtrl;
 };

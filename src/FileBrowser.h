@@ -21,6 +21,7 @@
 #ifndef FILEBROWSER_H
 #define FILEBROWSER_H
 
+#include "AuiManagedPanel.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 
@@ -240,11 +241,9 @@ class guFileBrowserFileCtrl : public wxPanel
 };
 
 // -------------------------------------------------------------------------------- //
-class guFileBrowser : public wxPanel
+class guFileBrowser : public guAuiManagedPanel
 {
   protected :
-    wxAuiManager            m_AuiManager;
-    unsigned int            m_VisiblePanels;
 	guDbLibrary *           m_Db;
 	guPlayerPanel *         m_PlayerPanel;
 
@@ -287,17 +286,15 @@ class guFileBrowser : public wxPanel
     guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guFileBrowser();
 
+    //virtual void            InitPanelData();
+
     bool                    GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
     {
         return m_FilesCtrl->GetCounters( count, len, size );
     }
 
-    int                 VisiblePanels( void ) { return m_VisiblePanels; }
-    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
-
-    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesCtrl->GetColumnData( id, index, width, enabled ); }
-    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesCtrl->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual bool            GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesCtrl->GetColumnData( id, index, width, enabled ); }
+    virtual bool            SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesCtrl->SetColumnData( id, index, width, enabled, refresh ); }
 
 };
 

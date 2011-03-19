@@ -1430,38 +1430,12 @@ END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+    guAuiManagedPanel( parent )
 {
     m_Db = db;
     m_PlayerPanel = playerpanel;
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
-
-    m_AuiManager.SetManagedWindow( this );
-    m_AuiManager.SetArtProvider( new guAuiDockArt() );
-    m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
-                           wxAUI_MGR_TRANSPARENT_DRAG |
-                           wxAUI_MGR_TRANSPARENT_HINT );
-    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
 
     m_VisiblePanels = Config->ReadNum( wxT( "FBVisiblePanels" ), guPANEL_FILEBROWSER_VISIBLE_DEFAULT, wxT( "Positions" ) );
 
@@ -1567,7 +1541,6 @@ guFileBrowser::~guFileBrowser()
 
     Disconnect( ID_FILESYSTEM_ITEMS_COMMANDS, ID_FILESYSTEM_ITEMS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCommand ), NULL, this );
 
-    m_AuiManager.UnInit();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2361,12 +2334,6 @@ void guFileBrowser::OnItemsPaste( wxCommandEvent &event )
     {
         guLogError( wxT( "Could not open the clipboard object" ) );
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guFileBrowser::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
-{
-    m_AuiManager.LoadPerspective( layoutstr, true );
 }
 
 // -------------------------------------------------------------------------------- //

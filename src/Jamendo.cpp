@@ -227,6 +227,8 @@ guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlay
 {
     SetBaseCommand( ID_MENU_VIEW_JAMENDO );
 
+    InitPanelData();
+
     m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS | guLIBRARY_CONTEXTMENU_LINKS );
 
     m_DownloadThread = NULL;
@@ -259,7 +261,26 @@ guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlay
 // -------------------------------------------------------------------------------- //
 guJamendoPanel::~guJamendoPanel()
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this ); // Get notified when configuration changes
 }
+
+// -------------------------------------------------------------------------------- //
+void guJamendoPanel::InitPanelData( void )
+{
+    m_PanelCmdIds.Empty();
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_TEXTSEARCH );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_LABELS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_GENRES );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_ARTISTS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_COMPOSERS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_ALBUMARTISTS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_ALBUMS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_YEARS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_RATINGS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_PLAYCOUNT );
+}
+
 
 // -------------------------------------------------------------------------------- //
 void guJamendoPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )

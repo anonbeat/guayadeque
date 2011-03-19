@@ -1036,8 +1036,8 @@ void guRadioLabelListBox::CreateAcceleratorTable( void )
 // guRadioPanel
 // -------------------------------------------------------------------------------- //
 guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-              wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ),
-              m_TextChangedTimer( this, guRADIO_TIMER_TEXTSEARCH )
+                guAuiManagedPanel( parent ),
+                m_TextChangedTimer( this, guRADIO_TIMER_TEXTSEARCH )
 {
     m_Db = new guDbRadios( db );
     m_PlayerPanel = playerpanel;
@@ -1045,31 +1045,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
-    m_AuiManager.SetManagedWindow( this );
-    m_AuiManager.SetArtProvider( new guAuiDockArt() );
-    m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
-                           wxAUI_MGR_TRANSPARENT_DRAG |
-                           wxAUI_MGR_TRANSPARENT_HINT );
-    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
+    InitPanelData();
 
     m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), guPANEL_RADIO_VISIBLE_DEFAULT, wxT( "Positions" ) );
 
@@ -1210,8 +1186,6 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     Connect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
 
     Connect( ID_RADIO_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnGoToSearch ), NULL, this );
-
-    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1272,14 +1246,26 @@ guRadioPanel::~guRadioPanel()
 
     Disconnect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
 
-    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guRadioPanel::OnPaneClose ), NULL, this );
-
-    m_AuiManager.UnInit();
-
     if( m_Db )
     {
         delete m_Db;
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::InitPanelData( void )
+{
+    m_PanelNames.Add( wxT( "RadioTextSearch" ) );
+    m_PanelNames.Add( wxT( "RadioLabels" ) );
+    m_PanelNames.Add( wxT( "RadioGenres" ) );
+
+    m_PanelIds.Add( guPANEL_RADIO_TEXTSEARCH );
+    m_PanelIds.Add( guPANEL_RADIO_LABELS );
+    m_PanelIds.Add( guPANEL_RADIO_GENRES );
+
+    m_PanelCmdIds.Add( ID_MENU_VIEW_RAD_TEXTSEARCH );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_RAD_LABELS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_RAD_GENRES );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1288,12 +1274,6 @@ void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
     m_TextChangedTimer.Start( guRADIO_TIMER_TEXTSEARCH_VALUE, wxTIMER_ONE_SHOT );
-//    wxArrayString Words = guSplitWords( m_InputTextCtrl->GetLineText( 0 ) );
-//    m_Db->SetRaTeFilters( Words );
-//    m_LabelsListBox->ReloadItems();
-//    m_GenresTreeCtrl->ReloadItems();
-//    m_StationsListBox->ReloadItems();
-//    m_InputTextCtrl->ShowCancelButton( true );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1306,13 +1286,7 @@ void guRadioPanel::OnSearchSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
-//    wxArrayString Words;
     m_InputTextCtrl->Clear();
-//    m_Db->SetRaTeFilters( Words );
-//    m_LabelsListBox->ReloadItems();
-//    m_GenresTreeCtrl->ReloadItems();
-//    m_StationsListBox->ReloadItems();
-//    m_InputTextCtrl->ShowCancelButton( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1863,93 +1837,6 @@ void guRadioPanel::OnRadioUserImport( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guRadioPanel::IsPanelShown( const int panelid ) const
-{
-    return ( m_VisiblePanels & panelid );
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioPanel::ShowPanel( const int panelid, bool show )
-{
-    wxString PaneName;
-
-    switch( panelid )
-    {
-        case guPANEL_RADIO_TEXTSEARCH :
-            PaneName = wxT( "RadioTextSearch" );
-            break;
-
-        case guPANEL_RADIO_GENRES :
-            PaneName = wxT( "RadioGenres" );
-            break;
-
-        case guPANEL_RADIO_LABELS :
-            PaneName = wxT( "RadioLabels" );
-            break;
-
-////        case guPANEL_RADIO_STATIONS:
-////            PaneName = wxT( "RadioStations" );
-////            break;
-
-        default :
-            return;
-
-    }
-
-    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
-    if( PaneInfo.IsOk() )
-    {
-        if( show )
-            PaneInfo.Show();
-        else
-            PaneInfo.Hide();
-
-        m_AuiManager.Update();
-    }
-
-    if( show )
-        m_VisiblePanels |= panelid;
-    else
-        m_VisiblePanels ^= panelid;
-
-    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioPanel::OnPaneClose( wxAuiManagerEvent &event )
-{
-    wxAuiPaneInfo * PaneInfo = event.GetPane();
-    wxString PaneName = PaneInfo->name;
-    int CmdId = 0;
-
-    if( PaneName == wxT( "RadioTextSearch" ) )
-    {
-        CmdId = ID_MENU_VIEW_RAD_TEXTSEARCH;
-    }
-    else if( PaneName == wxT( "RadioLabels" ) )
-    {
-        CmdId = ID_MENU_VIEW_RAD_LABELS;
-    }
-    else if( PaneName == wxT( "RadioGenres" ) )
-    {
-        CmdId = ID_MENU_VIEW_RAD_GENRES;
-    }
-//    else if( PaneName == wxT( "RadioStations" ) )
-//    {
-//        CmdId = ID_MENU_VIEW_RAD_STATIONS;
-//    }
-
-    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
-    if( CmdId )
-    {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
-        AddPendingEvent( evt );
-    }
-
-    event.Veto();
-}
-
-// -------------------------------------------------------------------------------- //
 void guRadioPanel::GetRadioCounter( wxLongLong * count )
 {
     * count = m_StationsListBox->GetItemCount();
@@ -1965,28 +1852,6 @@ void guRadioPanel::OnGoToSearch( wxCommandEvent &event )
 
     if( FindFocus() != m_InputTextCtrl )
         m_InputTextCtrl->SetFocus();
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
-{
-    wxArrayInt PanelIds;
-    PanelIds.Add( guPANEL_RADIO_TEXTSEARCH );
-    PanelIds.Add( guPANEL_RADIO_GENRES );
-    PanelIds.Add( guPANEL_RADIO_LABELS );
-
-    int Index;
-    int Count = PanelIds.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        int PanelId = PanelIds[ Index ];
-        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
-        {
-            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
-        }
-    }
-
-    m_AuiManager.LoadPerspective( layoutstr, true );
 }
 
 // -------------------------------------------------------------------------------- //

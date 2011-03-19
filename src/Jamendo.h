@@ -115,6 +115,8 @@ class guJamendoPanel : public guLibPanel
     guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Jam" ) );
     ~guJamendoPanel();
 
+    virtual void                InitPanelData( void );
+
     guJamendoLibrary *          GetJamendoDb( void ) { return ( guJamendoLibrary * ) m_Db; }
     wxImage *                   GetAlbumCover( const int albumid, wxString &coverpath );
     void                        AddDownload( const int albumid, const bool iscover = true );
