@@ -195,8 +195,8 @@ public:
         m_Db->GetPodcastCounters( m_PodcastsListBox->GetFilters(), count, len, size );
     }
 
-    virtual bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PodcastsListBox->GetColumnData( id, index, width, enabled ); }
-    virtual bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PodcastsListBox->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual bool                GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PodcastsListBox->GetColumnData( id, index, width, enabled ); }
+    virtual bool                SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PodcastsListBox->SetColumnData( id, index, width, enabled, refresh ); }
 
 
     friend class guPodcastDownloadQueueThread;

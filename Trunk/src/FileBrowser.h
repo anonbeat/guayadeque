@@ -293,8 +293,8 @@ class guFileBrowser : public guAuiManagedPanel
         return m_FilesCtrl->GetCounters( count, len, size );
     }
 
-    virtual bool            GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesCtrl->GetColumnData( id, index, width, enabled ); }
-    virtual bool            SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesCtrl->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual bool            GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesCtrl->GetColumnData( id, index, width, enabled ); }
+    virtual bool            SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesCtrl->SetColumnData( id, index, width, enabled, refresh ); }
 
 };
 
