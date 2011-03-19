@@ -218,6 +218,7 @@ class guPlayListPanel : public guAuiManagedPanel
     void inline         UpdatedTracks( const guTrackArray * tracks ) { m_PLTracksListBox->UpdatedTracks( tracks ); };
     void inline         UpdatedTrack( const guTrack * track ) { m_PLTracksListBox->UpdatedTrack( track ); };
 
+    virtual int         GetListViewColumnCount( void ) { return guSONGS_COLUMN_COUNT; }
     virtual bool        GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PLTracksListBox->GetColumnData( id, index, width, enabled ); }
     virtual bool        SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PLTracksListBox->SetColumnData( id, index, width, enabled, refresh ); }
 

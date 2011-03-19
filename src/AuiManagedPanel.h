@@ -48,6 +48,7 @@ class guAuiManagedPanel : public wxPanel
     virtual wxString    SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
     virtual void        LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
 
+    virtual int         GetListViewColumnCount( void ) { return 0; }
     virtual bool        GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return false; }
     virtual bool        SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return false; }
 
