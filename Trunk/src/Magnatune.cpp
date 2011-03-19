@@ -250,6 +250,8 @@ guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, 
 {
     SetBaseCommand( ID_MENU_VIEW_MAGNATUNE );
 
+    InitPanelData();
+
     m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS | guLIBRARY_CONTEXTMENU_LINKS );
 
     m_UpdateThread = NULL;
@@ -288,6 +290,22 @@ guMagnatunePanel::~guMagnatunePanel()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMagnatunePanel::InitPanelData( void )
+{
+    m_PanelCmdIds.Empty();
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_TEXTSEARCH );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_LABELS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_GENRES );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_ARTISTS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_COMPOSERS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_ALBUMARTISTS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_ALBUMS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_YEARS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_RATINGS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //

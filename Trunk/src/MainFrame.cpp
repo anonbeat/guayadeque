@@ -1350,6 +1350,8 @@ void guMainFrame::CreateMenu()
                                         _( "Show/Hide the playlists panel" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPlayLists );
 
+    SubMenu->AppendSeparator();
+
     m_ViewPLTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_PL_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the playlists text search" ), wxITEM_CHECK );
     SubMenu->Append( m_ViewPLTextSearch );
 

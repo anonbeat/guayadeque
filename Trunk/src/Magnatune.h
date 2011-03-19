@@ -128,6 +128,8 @@ class guMagnatunePanel : public guLibPanel
     guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Jam" ) );
     ~guMagnatunePanel();
 
+    virtual void                InitPanelData();
+
     guMagnatuneLibrary *        GetMagnatuneDb( void ) { return ( guMagnatuneLibrary * ) m_Db; }
     wxImage *                   GetAlbumCover( const int albumid, const wxString &artist, const wxString &album, wxString &coverpath );
     void                        AddDownload( const int albumid, const wxString &artist, const wxString &album );

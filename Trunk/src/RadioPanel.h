@@ -21,6 +21,7 @@
 #ifndef RADIOPANEL_H
 #define RADIOPANEL_H
 
+#include "AuiManagedPanel.h"
 #include "DbRadios.h"
 #include "PlayerPanel.h"
 #include "ItemListBox.h"
@@ -120,16 +121,14 @@ class guRadioPlayListLoadThread : public wxThread
 // -------------------------------------------------------------------------------- //
 // Class guRadioPanel
 // -------------------------------------------------------------------------------- //
-class guRadioPanel : public wxPanel
+class guRadioPanel : public guAuiManagedPanel
 {
   private:
-    wxAuiManager                    m_AuiManager;
 	guDbRadios *                    m_Db;
 	guPlayerPanel *                 m_PlayerPanel;
 	guTrackArray                    m_StationPlayListTracks;
 
     wxTimer                         m_TextChangedTimer;
-    unsigned int                    m_VisiblePanels;
 
     guRadioPlayListLoadThread *     m_RadioPlayListLoadThread;
     wxMutex                         m_RadioPlayListLoadThreadMutex;
@@ -162,8 +161,6 @@ class guRadioPanel : public wxPanel
 	void OnRadioUserExport( wxCommandEvent &event );
 	void OnRadioUserImport( wxCommandEvent &event );
 
-    void OnPaneClose( wxAuiManagerEvent &event );
-
     void OnTextChangedTimer( wxTimerEvent &event );
 
     void LoadStationUrl( const wxString &stationurl, const bool enqueue, const bool asnext );
@@ -178,8 +175,10 @@ class guRadioPanel : public wxPanel
 	guRadioStationListBox * m_StationsListBox;
 
   public:
-	guRadioPanel( wxWindow* parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel ); //wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 579,465 ), long style = wxDEFAULT_FRAME_STYLE|wxTAB_TRAVERSAL );
+	guRadioPanel( wxWindow * parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel );
 	~guRadioPanel();
+
+    virtual void        InitPanelData( void );
 
     void                GetRadioCounter( wxLongLong * count );
 
@@ -187,14 +186,8 @@ class guRadioPanel : public wxPanel
                                             m_RadioPlayListLoadThread = NULL;
                                             m_RadioPlayListLoadThreadMutex.Unlock(); }
 
-    bool                IsPanelShown( const int panelid ) const;
-    void                ShowPanel( const int panelid, bool show );
-    int                 VisiblePanels( void ) { return m_VisiblePanels; }
-    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
-
-    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled );
-    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false );
+    virtual bool        GetTracksColumnData( const int id, int * index, int * width, bool * enabled );
+    virtual bool        SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false );
 
 };
 

@@ -21,6 +21,7 @@
 #ifndef PODCASTSPANEL_H
 #define PODCASTSPANEL_H
 
+#include "AuiManagedPanel.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 
@@ -122,7 +123,7 @@ class guPodcastListBox : public guListView
 class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
-class guPodcastPanel : public wxPanel
+class guPodcastPanel : public guAuiManagedPanel
 {
   private:
     void                MainSplitterOnIdle( wxIdleEvent& );
@@ -144,9 +145,6 @@ class guPodcastPanel : public wxPanel
 
 
   protected:
-    wxAuiManager                m_AuiManager;
-    unsigned int                m_VisiblePanels;
-
     guDbLibrary *               m_Db;
     guMainFrame *               m_MainFrame;
     guPlayerPanel *             m_PlayerPanel;
@@ -184,29 +182,21 @@ class guPodcastPanel : public wxPanel
 
     void OnConfigUpdated( wxCommandEvent &event );
 
-    void OnPaneClose( wxAuiManagerEvent &event );
-
 public:
     guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
 
-    bool IsPanelShown( const int panelid ) const;
-    void ShowPanel( const int panelid, bool show );
-
-    void SelectPodcast( const int podcastid );
-    void SelectChannel( const int channelid );
+    virtual void                InitPanelData( void );
+    void                        SelectPodcast( const int podcastid );
+    void                        SelectChannel( const int channelid );
 
     void GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
     {
         m_Db->GetPodcastCounters( m_PodcastsListBox->GetFilters(), count, len, size );
     }
 
-    int                 VisiblePanels( void ) { return m_VisiblePanels; }
-    wxString            SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-    void                LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
-
-    bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PodcastsListBox->GetColumnData( id, index, width, enabled ); }
-    bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PodcastsListBox->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual bool                GetTracksColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PodcastsListBox->GetColumnData( id, index, width, enabled ); }
+    virtual bool                SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PodcastsListBox->SetColumnData( id, index, width, enabled, refresh ); }
 
 
     friend class guPodcastDownloadQueueThread;

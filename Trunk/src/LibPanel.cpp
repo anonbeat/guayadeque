@@ -48,7 +48,7 @@
 
 // -------------------------------------------------------------------------------- //
 guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewPlayerPanel, const wxString &prefix ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL ),
+    guAuiManagedPanel( parent ), //wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 368,191 ), wxTAB_TRAVERSAL ),
     m_SelChangedTimer( this, guPANEL_TIMER_SELECTION ),
     m_TextChangedTimer( this, guPANEL_TIMER_TEXTSEARCH )
 {
@@ -75,38 +75,12 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 
     SetBaseCommand( ID_MENU_VIEW_LIBRARY );
 
-    m_AuiManager.SetManagedWindow( this );
-    m_AuiManager.SetArtProvider( new guAuiDockArt() );
-    m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
-                           wxAUI_MGR_TRANSPARENT_DRAG |
-                           wxAUI_MGR_TRANSPARENT_HINT );
-    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
+    InitPanelData();
 
     m_VisiblePanels = Config->ReadNum( m_ConfigPrefixVarName + wxT( "VisiblePanels" ), guPANEL_LIBRARY_VISIBLE_DEFAULT, wxT( "Positions" ) );
 
     //
     //
-    //
-
 	wxBoxSizer *        SearchSizer;
 	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
 	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -458,8 +432,6 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
 
     Connect( ID_LIBRARY_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGoToSearch ), NULL, this );
-
-    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guLibPanel::OnPaneClose ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -594,10 +566,45 @@ guLibPanel::~guLibPanel()
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongSelectAlbum ), NULL, this );
     Disconnect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteLibrary ), NULL, this );
     Disconnect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
+}
 
-    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guLibPanel::OnPaneClose ), NULL, this );
+// -------------------------------------------------------------------------------- //
+void guLibPanel::InitPanelData( void )
+{
+    guLogMessage( wxT( "guLibPanel::InitPanelData" ) );
 
-    m_AuiManager.UnInit();
+    m_PanelNames.Add( wxT( "TextSearch" ) );
+    m_PanelNames.Add( wxT( "Labels" ) );
+    m_PanelNames.Add( wxT( "Genres" ) );
+    m_PanelNames.Add( wxT( "Artists" ) );
+    m_PanelNames.Add( wxT( "Composers" ) );
+    m_PanelNames.Add( wxT( "AlbumArtists" ) );
+    m_PanelNames.Add( wxT( "Albums" ) );
+    m_PanelNames.Add( wxT( "Years" ) );
+    m_PanelNames.Add( wxT( "Ratings" ) );
+    m_PanelNames.Add( wxT( "PlayCounts" ) );
+
+    m_PanelIds.Add( guPANEL_LIBRARY_TEXTSEARCH );
+    m_PanelIds.Add( guPANEL_LIBRARY_LABELS );
+    m_PanelIds.Add( guPANEL_LIBRARY_GENRES );
+    m_PanelIds.Add( guPANEL_LIBRARY_ARTISTS );
+    m_PanelIds.Add( guPANEL_LIBRARY_ALBUMS );
+    m_PanelIds.Add( guPANEL_LIBRARY_YEARS );
+    m_PanelIds.Add( guPANEL_LIBRARY_RATINGS );
+    m_PanelIds.Add( guPANEL_LIBRARY_PLAYCOUNT );
+    m_PanelIds.Add( guPANEL_LIBRARY_COMPOSERS );
+    m_PanelIds.Add( guPANEL_LIBRARY_ALBUMARTISTS );
+
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_TEXTSEARCH );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_LABELS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_GENRES );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_ARTISTS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_COMPOSERS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_ALBUMARTISTS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_ALBUMS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_YEARS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_RATINGS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_PLAYCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -858,20 +865,6 @@ void guLibPanel::OnLabelListSelected( wxListEvent &event )
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
     m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
-//    m_Db->SetLaFilters( m_LabelsListCtrl->GetSelectedItems(), m_UpdateLock );
-//    if( !m_UpdateLock )
-//    {
-//        m_UpdateLock = true;
-//        ReloadGenres();
-//        ReloadArtists();
-//        ReloadAlbums();
-//        ReloadYears();
-//        ReloadRatings( false );
-//        ReloadSongs();
-//        //
-//        //
-//        m_UpdateLock = false;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -995,16 +988,6 @@ void guLibPanel::OnArtistListSelected( wxListEvent &event )
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
     m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
-//    m_Db->SetArFilters( m_ArtistListCtrl->GetSelectedItems(), m_UpdateLock );
-//    if( !m_UpdateLock )
-//    {
-//        m_UpdateLock = true;
-//        ReloadAlbums();
-//        ReloadYears();
-//        ReloadRatings( false );
-//        ReloadSongs();
-//        m_UpdateLock = false;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2313,13 +2296,6 @@ void guLibPanel::OnYearListSelected( wxListEvent &event )
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
     m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
-//    m_Db->SetYeFilters( m_YearListCtrl->GetSelectedItems() );
-//    if( !m_UpdateLock )
-//    {
-//        m_UpdateLock = true;
-//        ReloadSongs();
-//        m_UpdateLock = false;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2429,13 +2405,6 @@ void guLibPanel::OnRatingListSelected( wxListEvent &event )
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
     m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
-//    m_Db->SetRaFilters( m_RatingListCtrl->GetSelectedItems() );
-//    if( !m_UpdateLock )
-//    {
-//        m_UpdateLock = true;
-//        ReloadSongs();
-//        m_UpdateLock = false;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2545,13 +2514,6 @@ void guLibPanel::OnPlayCountListSelected( wxListEvent &event )
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
     m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
-//    m_Db->SetRaFilters( m_PlayCountListCtrl->GetSelectedItems() );
-//    if( !m_UpdateLock )
-//    {
-//        m_UpdateLock = true;
-//        ReloadSongs();
-//        m_UpdateLock = false;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2661,13 +2623,6 @@ void guLibPanel::OnComposerListSelected( wxListEvent &event )
     if( m_SelChangedTimer.IsRunning() )
         m_SelChangedTimer.Stop();
     m_SelChangedTimer.Start( guPANEL_TIMER_SELCHANGED, wxTIMER_ONE_SHOT );
-//    m_Db->SetRaFilters( m_ComposerListCtrl->GetSelectedItems() );
-//    if( !m_UpdateLock )
-//    {
-//        m_UpdateLock = true;
-//        ReloadSongs();
-//        m_UpdateLock = false;
-//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2879,144 +2834,6 @@ void guLibPanel::OnAlbumArtistSavePlayListClicked( wxCommandEvent &event )
     }
 
     SaveToPlayList( NewSongs );
-}
-
-
-//
-//
-// -------------------------------------------------------------------------------- //
-bool guLibPanel::IsPanelShown( const int panelid ) const
-{
-    return ( m_VisiblePanels & panelid );
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::ShowPanel( const int panelid, bool show )
-{
-    wxString PaneName;
-
-    switch( panelid )
-    {
-        case guPANEL_LIBRARY_TEXTSEARCH :
-            PaneName = wxT( "TextSearch" );
-            break;
-
-        case guPANEL_LIBRARY_LABELS :
-            PaneName = wxT( "Labels" );
-            break;
-
-        case guPANEL_LIBRARY_GENRES :
-            PaneName = wxT( "Genres" );
-            break;
-
-        case guPANEL_LIBRARY_ARTISTS :
-            PaneName = wxT( "Artists" );
-            break;
-
-        case guPANEL_LIBRARY_ALBUMS :
-            PaneName = wxT( "Albums" );
-            break;
-
-        case guPANEL_LIBRARY_YEARS :
-            PaneName = wxT( "Years" );
-            break;
-
-        case guPANEL_LIBRARY_RATINGS :
-            PaneName = wxT( "Ratings" );
-            break;
-
-        case guPANEL_LIBRARY_PLAYCOUNT :
-            PaneName = wxT( "PlayCounts" );
-            break;
-
-        case guPANEL_LIBRARY_COMPOSERS :
-            PaneName = wxT( "Composers" );
-            break;
-
-        case guPANEL_LIBRARY_ALBUMARTISTS :
-            PaneName = wxT( "AlbumArtists" );
-            break;
-
-        default :
-            return;
-
-    }
-
-    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
-    if( PaneInfo.IsOk() )
-    {
-        if( show )
-            PaneInfo.Show();
-        else
-            PaneInfo.Hide();
-
-        m_AuiManager.Update();
-    }
-
-    if( show )
-        m_VisiblePanels |= panelid;
-    else
-        m_VisiblePanels ^= panelid;
-
-    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
-}
-
-// -------------------------------------------------------------------------------- //
-void guLibPanel::OnPaneClose( wxAuiManagerEvent &event )
-{
-    wxAuiPaneInfo * PaneInfo = event.GetPane();
-    wxString PaneName = PaneInfo->name;
-    int CmdId = 0;
-
-    if( PaneName == wxT( "TextSearch" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_TEXTSEARCH;
-    }
-    else if( PaneName == wxT( "Labels" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_LABELS;
-    }
-    else if( PaneName == wxT( "Genres" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_GENRES;
-    }
-    else if( PaneName == wxT( "Artists" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_ARTISTS;
-    }
-    else if( PaneName == wxT( "Composers" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_COMPOSERS;
-    }
-    else if( PaneName == wxT( "AlbumArtists" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_ALBUMARTISTS;
-    }
-    else if( PaneName == wxT( "Albums" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_ALBUMS;
-    }
-    else if( PaneName == wxT( "Years" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_YEARS;
-    }
-    else if( PaneName == wxT( "Ratings" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_RATINGS;
-    }
-    else if( PaneName == wxT( "PlayCounts" ) )
-    {
-        CmdId = guLIBRARY_ELEMENT_PLAYCOUNT;
-    }
-
-    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
-    if( CmdId )
-    {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, m_BaseCommand + CmdId );
-        AddPendingEvent( evt );
-    }
-
-    event.Veto();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3427,34 +3244,7 @@ void guLibPanel::OnGoToSearch( wxCommandEvent &event )
         m_InputTextCtrl->SetFocus();
 }
 
-// -------------------------------------------------------------------------------- //
-void guLibPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
-{
-    wxArrayInt PanelIds;
-    PanelIds.Add( guPANEL_LIBRARY_TEXTSEARCH );
-    PanelIds.Add( guPANEL_LIBRARY_LABELS );
-    PanelIds.Add( guPANEL_LIBRARY_GENRES );
-    PanelIds.Add( guPANEL_LIBRARY_ARTISTS );
-    PanelIds.Add( guPANEL_LIBRARY_ALBUMS );
-    PanelIds.Add( guPANEL_LIBRARY_YEARS );
-    PanelIds.Add( guPANEL_LIBRARY_RATINGS );
-    PanelIds.Add( guPANEL_LIBRARY_PLAYCOUNT );
-    PanelIds.Add( guPANEL_LIBRARY_COMPOSERS );
-    PanelIds.Add( guPANEL_LIBRARY_ALBUMARTISTS );
 
-    int Index;
-    int Count = PanelIds.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        int PanelId = PanelIds[ Index ];
-        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
-        {
-            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
-        }
-    }
-
-    m_AuiManager.LoadPerspective( layoutstr, true );
-}
 
 
 // -------------------------------------------------------------------------------- //

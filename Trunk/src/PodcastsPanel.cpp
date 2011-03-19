@@ -41,7 +41,7 @@
 // guPostcastPanel
 // -------------------------------------------------------------------------------- //
 guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 672,586 ), wxTAB_TRAVERSAL )
+    guAuiManagedPanel( parent )
 {
     m_Db = db;
     m_MainFrame = mainframe;
@@ -66,6 +66,8 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
+    InitPanelData();
+
     // Check that the directory to store podcasts are created
     m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
     if( !wxDirExists( m_PodcastsPath ) )
@@ -73,34 +75,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
         wxMkdir( m_PodcastsPath, 0770 );
     }
 
-    m_AuiManager.SetManagedWindow( this );
-    m_AuiManager.SetArtProvider( new guAuiDockArt() );
-    m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
-                           wxAUI_MGR_TRANSPARENT_DRAG |
-                           wxAUI_MGR_TRANSPARENT_HINT );
-    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
-
     m_VisiblePanels = Config->ReadNum( wxT( "PodVisiblePanels" ), guPANEL_PODCASTS_VISIBLE_DEFAULT, wxT( "Positions" ) );
-
 
 	ChannelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * ChannelsMainSizer;
@@ -301,7 +276,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
 
-    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPodcastPanel::OnPaneClose ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -340,9 +314,19 @@ guPodcastPanel::~guPodcastPanel()
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
 
-    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guPodcastPanel::OnPaneClose ), NULL, this );
+}
 
-    m_AuiManager.UnInit();
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::InitPanelData( void )
+{
+    m_PanelNames.Add( wxT( "PodcastsChannels" ) );
+    m_PanelNames.Add( wxT( "PodcastsDetails" ) );
+
+    m_PanelIds.Add( guPANEL_PODCASTS_CHANNELS );
+    m_PanelIds.Add( guPANEL_PODCASTS_DETAILS );
+
+    m_PanelCmdIds.Add( ID_MENU_VIEW_POD_CHANNELS );
+    m_PanelCmdIds.Add( ID_MENU_VIEW_POD_DETAILS );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -891,77 +875,6 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPodcastPanel::IsPanelShown( const int panelid ) const
-{
-    return ( m_VisiblePanels & panelid );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::ShowPanel( const int panelid, bool show )
-{
-    wxString PaneName;
-
-    switch( panelid )
-    {
-        case guPANEL_PODCASTS_CHANNELS :
-            PaneName = wxT( "PodcastsChannels" );
-            break;
-
-        case guPANEL_PODCASTS_DETAILS :
-            PaneName = wxT( "PodcastsDetails" );
-            break;
-
-        default :
-            return;
-
-    }
-
-    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
-    if( PaneInfo.IsOk() )
-    {
-        if( show )
-            PaneInfo.Show();
-        else
-            PaneInfo.Hide();
-
-        m_AuiManager.Update();
-    }
-
-    if( show )
-        m_VisiblePanels |= panelid;
-    else
-        m_VisiblePanels ^= panelid;
-
-    guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnPaneClose( wxAuiManagerEvent &event )
-{
-    wxAuiPaneInfo * PaneInfo = event.GetPane();
-    wxString PaneName = PaneInfo->name;
-    int CmdId = 0;
-
-    if( PaneName == wxT( "PodcastsChannels" ) )
-    {
-        CmdId = ID_MENU_VIEW_POD_CHANNELS;
-    }
-    else if( PaneName == wxT( "PodcastsDetails" ) )
-    {
-        CmdId = ID_MENU_VIEW_POD_DETAILS;
-    }
-
-    guLogMessage( wxT( "OnPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
-    if( CmdId )
-    {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
-        AddPendingEvent( evt );
-    }
-
-    event.Veto();
-}
-
-// -------------------------------------------------------------------------------- //
 void guPodcastPanel::SelectPodcast( const int podcastid )
 {
     m_ChannelsListBox->SetSelection( wxNOT_FOUND );
@@ -974,28 +887,6 @@ void guPodcastPanel::SelectChannel( const int channelid )
     m_ChannelsListBox->SetSelection( wxNOT_FOUND );
     m_ChannelsListBox->SetSelection( m_ChannelsListBox->FindItem( channelid ) );
 }
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
-{
-    wxArrayInt PanelIds;
-    PanelIds.Add( guPANEL_PODCASTS_CHANNELS );
-    PanelIds.Add( guPANEL_PODCASTS_DETAILS );
-
-    int Index;
-    int Count = PanelIds.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        int PanelId = PanelIds[ Index ];
-        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
-        {
-            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
-        }
-    }
-
-    m_AuiManager.LoadPerspective( layoutstr, true );
-}
-
 
 
 

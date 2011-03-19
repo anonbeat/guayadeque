@@ -251,6 +251,8 @@ ADD_EXECUTABLE( guayadeque
 	Accelerators.h
 	AccelListBox.cpp
 	AccelListBox.h
+	AuiManagedPanel.cpp
+	AuiManagedPanel.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
