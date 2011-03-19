@@ -353,6 +353,7 @@ class guLibPanel : public guAuiManagedPanel
 
     virtual wxImage *       GetAlbumCover( const int albumid, wxString &coverpath );
 
+    virtual int             GetListViewColumnCount( void ) { return guSONGS_COLUMN_COUNT; }
     virtual bool            GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_SongListCtrl->GetColumnData( id, index, width, enabled ); }
     virtual bool            SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_SongListCtrl->SetColumnData( id, index, width, enabled, refresh ); }
 

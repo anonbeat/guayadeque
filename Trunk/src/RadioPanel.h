@@ -186,6 +186,7 @@ class guRadioPanel : public guAuiManagedPanel
                                             m_RadioPlayListLoadThread = NULL;
                                             m_RadioPlayListLoadThreadMutex.Unlock(); }
 
+    virtual int         GetListViewColumnCount( void ) { return guRADIOSTATIONS_COLUMN_COUNT; }
     virtual bool        GetListViewColumnData( const int id, int * index, int * width, bool * enabled );
     virtual bool        SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false );
 
