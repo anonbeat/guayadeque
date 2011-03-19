@@ -1855,13 +1855,13 @@ void guRadioPanel::OnGoToSearch( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guRadioPanel::GetTracksColumnData( const int id, int * index, int * width, bool * enabled )
+bool guRadioPanel::GetListViewColumnData( const int id, int * index, int * width, bool * enabled )
 {
     return m_StationsListBox->GetColumnData( id, index, width, enabled );
 }
 
 // -------------------------------------------------------------------------------- //
-bool guRadioPanel::SetTracksColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh )
+bool guRadioPanel::SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh )
 {
     return m_StationsListBox->SetColumnData( id, index, width, enabled, refresh );
 }
