@@ -21,14 +21,11 @@
 #ifndef _UTILS_H
 #define _UTILS_H
 
-#define _DEBUG      1
-
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <wx/wfstream.h>
 #include <wx/mstream.h>
 #include <wx/xml/xml.h>
-
 
 #if 0
 #define guLogMessage    //wxLogMessage
