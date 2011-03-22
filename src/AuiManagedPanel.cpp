@@ -21,6 +21,7 @@
 #include "AuiManagedPanel.h"
 
 #include "AuiDockArt.h"
+#include "AuiNotebook.h"
 #include "Commands.h"
 #include "Utils.h"
 
@@ -48,13 +49,13 @@ guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent ) :
             wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );

@@ -165,9 +165,12 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );
+
     wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
+
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
+
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
@@ -175,13 +178,13 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
             wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
+            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVEBORDER ) );
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
