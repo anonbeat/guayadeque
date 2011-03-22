@@ -2096,7 +2096,6 @@ void guTrackEditorGetComboDataThread::FillArrayStrings( wxSortedArrayString &arr
 // -------------------------------------------------------------------------------- //
 guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry()
 {
-    guLogMessage( wxT( "guTrackEditorGetComboDataThread..." ) );
     if( TestDestroy() )
         return 0;
 
