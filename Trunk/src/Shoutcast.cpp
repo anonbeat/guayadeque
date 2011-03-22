@@ -253,8 +253,6 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
                         {
                             NewStation = new guStationPlayListItem();
 
-                            wxASSERT( NewStation );
-
                             Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
                             Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
                             if( NewStation->m_Name.IsEmpty() )

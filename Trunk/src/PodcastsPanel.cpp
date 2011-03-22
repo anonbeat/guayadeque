@@ -1188,8 +1188,6 @@ void guPodcastListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 void guPodcastListBox::ReloadItems( bool reset )
 {
-    wxASSERT( m_Db );
-
     //
     wxArrayInt Selection;
     int FirstVisible = 0;

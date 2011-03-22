@@ -103,7 +103,6 @@ void AddArtistCommands( wxMenu * Menu, int SelCount )
     if( Menu )
     {
         SubMenu = new wxMenu();
-        wxASSERT( SubMenu );
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
@@ -219,7 +218,6 @@ void guArListBox::OnSearchLinkClicked( wxCommandEvent &event )
         if( Config )
         {
             wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-            wxASSERT( Links.Count() > 0 );
 
             index -= ID_LASTFM_SEARCH_LINK;
             wxString SearchLink = Links[ index ];
@@ -250,7 +248,6 @@ void guArListBox::OnCommandClicked( wxCommandEvent &event )
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-            wxASSERT( Commands.Count() > 0 );
 
             //guLogMessage( wxT( "CommandId: %u" ), index );
             index -= ID_ARTIST_COMMANDS;

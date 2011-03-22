@@ -205,9 +205,6 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannel( wxXmlNode * XmlNode, guN
 // -------------------------------------------------------------------------------- //
 int guNewPodcastChannelSelector::ReadNewPodcastChannels( wxXmlNode * XmlNode )
 {
-    wxASSERT( XmlNode );
-    wxASSERT( podcastarray );
-
     guNewPodcastCategory * NewPodcastChannel = NULL;
 
     while( XmlNode && XmlNode->GetName() == wxT( "outline" ) )
@@ -248,8 +245,6 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannels( wxXmlNode * XmlNode )
 // -------------------------------------------------------------------------------- //
 int guNewPodcastChannelSelector::LoadNewPodcastsFromXml( const wxString &filename )
 {
-    wxASSERT( podcastarray );
-
     wxFFileInputStream ins( filename );
     wxXmlDocument XmlDoc( ins );
     wxXmlNode * XmlNode = XmlDoc.GetRoot();

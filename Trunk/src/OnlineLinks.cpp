@@ -37,7 +37,6 @@ void AddOnlineLinksMenu( wxMenu * Menu )
     if( Menu )
     {
         SubMenu = new wxMenu();
-        wxASSERT( SubMenu );
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );

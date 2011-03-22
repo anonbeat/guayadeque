@@ -44,9 +44,6 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
     wxButton* ButtonsSizerOK;
     wxButton* ButtonsSizerCancel;
 
-    wxASSERT( parent );
-    wxASSERT( channel );
-
     m_PodcastChannel = channel;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();

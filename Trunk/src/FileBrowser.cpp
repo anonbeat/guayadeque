@@ -962,8 +962,6 @@ void guFilesListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 void guFilesListBox::ReloadItems( bool reset )
 {
-    wxASSERT( m_Db );
-
     //
     wxArrayInt Selection;
     int FirstVisible = 0;
