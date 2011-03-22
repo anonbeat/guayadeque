@@ -78,6 +78,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     InitPanelData();
 
     m_VisiblePanels = Config->ReadNum( m_ConfigPrefixVarName + wxT( "VisiblePanels" ), guPANEL_LIBRARY_VISIBLE_DEFAULT, wxT( "Positions" ) );
+    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
 
     //
     //
@@ -571,8 +573,6 @@ guLibPanel::~guLibPanel()
 // -------------------------------------------------------------------------------- //
 void guLibPanel::InitPanelData( void )
 {
-    guLogMessage( wxT( "guLibPanel::InitPanelData" ) );
-
     m_PanelNames.Add( wxT( "TextSearch" ) );
     m_PanelNames.Add( wxT( "Labels" ) );
     m_PanelNames.Add( wxT( "Genres" ) );
@@ -629,6 +629,8 @@ void guLibPanel::ReloadControls( void )
 // -------------------------------------------------------------------------------- //
 // TextSearch Events
 // -------------------------------------------------------------------------------- //
+//    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+//    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchActivated( wxCommandEvent& event )
@@ -641,6 +643,10 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
         m_DoneClearSearchText = false;
         return;
     }
+
+    if( !m_InstantSearchEnabled )
+        return;
+
     m_TextChangedTimer.Start( guPANEL_TIMER_TEXTCHANGED, wxTIMER_ONE_SHOT );
 }
 
@@ -658,24 +664,20 @@ void guLibPanel::OnSearchSelected( wxCommandEvent& event )
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
 
-    if( !DoTextSearch() )
+    if( !DoTextSearch() || !m_EnterSelectSearchEnabled || !m_InstantSearchEnabled )
         return;
 
     // if text search was successful, possibly enqueue results
-
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        if( !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) ) )
+        if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
-            {
-                OnSongQueueAllClicked( event );
-            }
-            else
-            {
-                OnSongPlayAllClicked( event );
-            }
+            OnSongQueueAllClicked( event );
+        }
+        else
+        {
+            OnSongPlayAllClicked( event );
         }
     }
 }

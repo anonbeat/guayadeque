@@ -135,6 +135,9 @@ class guLibPanel : public guAuiManagedPanel
     wxString                m_ConfigPrefixVarName;
     int                     m_ContextMenuFlags;
 
+    bool                    m_InstantSearchEnabled;
+    bool                    m_EnterSelectSearchEnabled;
+
     // Search Str events
     virtual void            OnSearchActivated( wxCommandEvent &event );
     virtual void            OnSearchCancelled( wxCommandEvent &event );
