@@ -685,9 +685,9 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                 wxDateTime PodcastTime;
                 PodcastTime.Set( ( time_t ) PodcastItem->m_Time );
 
-                wxFileName PodcastFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                wxFileName PodcastFile( m_PodcastsPath + wxT( "/" ) +
                                             PodcastItem->m_Channel + wxT( "/" ) +
-                                            PodcastTime.Format( wxT( "%Y%m%d%H%M%S-" ) ) +
+                                            //PodcastTime.Format( wxT( "%Y%m%d%H%M%S-" ) ) +
                                             Uri.BuildUnescapedURI().AfterLast( wxT( '/' ) ) );
                 if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
                 {
