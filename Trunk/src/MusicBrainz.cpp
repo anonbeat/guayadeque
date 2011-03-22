@@ -334,7 +334,6 @@ void guMusicBrainz::GetReleases( guMBReleaseArray * mbreleases, const wxString &
 // -------------------------------------------------------------------------------- //
 void guMusicBrainz::GetRelease( guMBRelease * mbrelease, const wxString &releaseid )
 {
-    wxASSERT( mbrelease );
     wxString QueryUrl = wxString::Format( wxT( guMUSICBRAINZ_URL_RELEASE_ID
                 "&inc=tracks+artist+release-events" ), releaseid.c_str() );
 
