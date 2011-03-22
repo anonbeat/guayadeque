@@ -366,7 +366,7 @@ void guStatusBar::OnAudioScrobbleClicked( void )
     if( ConfigUpdated )
     {
         Config->Flush();
-        Config->SendConfigChangedEvent( guPREFERENCE_PAGE_AUDIOSCROBBLE );
+        Config->SendConfigChangedEvent( guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE );
 
         UpdateAudioScrobbleIcon( ( ( LastFMEnabled != wxNOT_FOUND ) && LastFMEnabled ) || LibreFMEnabled );
     }
