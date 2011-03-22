@@ -308,7 +308,6 @@ void ReadXmlReleases( wxXmlNode * XmlNode, guMBReleaseArray * mbreleases )
 // -------------------------------------------------------------------------------- //
 void guMusicBrainz::GetReleases( guMBReleaseArray * mbreleases, const wxString &artist, const wxString &title )
 {
-    wxASSERT( mbrelease );
     wxString QueryUrl = wxString::Format( wxT( guMUSICBRAINZ_URL_RELEASE_BY_TEXT
                 "&releasetypes=Official" ),
                 guURLEncode( artist ).c_str(), guURLEncode( title ).c_str() );
