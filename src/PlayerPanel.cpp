@@ -849,6 +849,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
             m_SmartAddTracksThread->Pause();
             m_SmartAddTracksThread->Delete();
             m_SmartAddTracksThread = NULL;
+            m_SmartSearchEnabled = false;
         }
 
         // Reset the Smart played items
@@ -906,6 +907,7 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
                 m_SmartAddTracksThread->Pause();
                 m_SmartAddTracksThread->Delete();
                 m_SmartAddTracksThread = NULL;
+                m_SmartSearchEnabled = false;
             }
 
             // Reset the Smart played items
@@ -1108,6 +1110,7 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
             m_SmartAddTracksThread->Pause();
             m_SmartAddTracksThread->Delete();
             m_SmartAddTracksThread = NULL;
+            m_SmartSearchEnabled = false;
         }
 
         // Reset the Smart added songs cache
