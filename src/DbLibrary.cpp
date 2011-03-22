@@ -5951,8 +5951,8 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
     switch( Song.m_TrackMode )
     {
       case guTRACK_MODE_SMART :
-//        Source = 'L';
-//        break;
+        Source = 'L';
+        break;
       case guTRACK_MODE_USER :
         Source = 'P';
         break;

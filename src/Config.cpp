@@ -162,6 +162,21 @@ bool guConfig::WriteAStr( const wxString &Key, const wxArrayString &Value, const
     return ( index = count );
 }
 
+#if wxUSE_STL
+// -------------------------------------------------------------------------------- //
+bool guConfig::WriteAStr( const wxString &Key, const wxSortedArrayString &Value, const wxString &Category, bool ResetGroup )
+{
+    wxArrayString AStrings;
+    int Index;
+    int Count = Value.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        AStrings.Add( Value[ Index ] );
+    }
+    return WriteAStr( Key, AStrings, Category, ResetGroup );
+}
+#endif
+
 // -------------------------------------------------------------------------------- //
 wxArrayInt guConfig::ReadANum( const wxString &Key, const int Default, const wxString &Category  )
 {

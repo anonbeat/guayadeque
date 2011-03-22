@@ -48,6 +48,9 @@ class guConfig : public wxConfig
     bool            WriteStr( const wxString &KeyName, const wxString &Value, const wxString &Category = wxEmptyString );
     wxArrayString   ReadAStr( const wxString &Key, const wxString &Default, const wxString &Category = wxEmptyString );
     bool            WriteAStr( const wxString &Key, const wxArrayString &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
+#if wxUSE_STL
+    bool            WriteAStr( const wxString &Key, const wxSortedArrayString &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
+#endif
     wxArrayInt      ReadANum( const wxString &Key, const int Default, const wxString &Category = wxEmptyString );
     bool            WriteANum( const wxString &Key, const wxArrayInt &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
 
