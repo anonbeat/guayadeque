@@ -500,7 +500,6 @@ int guStatusBar::RemoveGauge( int gaugeid )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetSelInfo( const wxString &label )
 {
-    wxASSERT( m_SelInfo );
     m_SelInfo->SetLabel( label );
 }
 

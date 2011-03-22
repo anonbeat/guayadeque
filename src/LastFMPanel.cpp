@@ -264,7 +264,6 @@ void guLastFMInfoCtrl::OnSearchLinkClicked( wxCommandEvent &event )
     if( Config )
     {
         wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-        wxASSERT( Links.Count() > 0 );
 
         index -= ID_LASTFM_SEARCH_LINK;
         wxString SearchLink = Links[ index ];

@@ -436,7 +436,6 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
     if( Menu )
     {
         SubMenu = new wxMenu();
-        wxASSERT( SubMenu );
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
@@ -750,7 +749,6 @@ void guSoListBox::OnSearchLinkClicked( wxCommandEvent &event )
         if( Config )
         {
             wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-            wxASSERT( Links.Count() > 0 );
 
             index -= ID_LASTFM_SEARCH_LINK;
             wxString SearchLink = Links[ index ];
@@ -781,7 +779,6 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-            wxASSERT( Commands.Count() > 0 );
 
             index -= ID_SONGS_COMMANDS;
             wxString CurCmd = Commands[ index ];

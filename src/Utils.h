@@ -20,6 +20,9 @@
 // -------------------------------------------------------------------------------- //
 #ifndef _UTILS_H
 #define _UTILS_H
+
+#define _DEBUG      1
+
 #include <wx/wx.h>
 #include <wx/file.h>
 #include <wx/wfstream.h>

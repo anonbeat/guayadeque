@@ -4460,8 +4460,6 @@ void guMainFrame::UpdatePodcasts( void )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
 {
-    wxASSERT( items );
-
     int Index;
     int Count = items->Count();
     if( Count )

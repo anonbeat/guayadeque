@@ -2928,7 +2928,6 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
 {
-    wxASSERT( tracks );
     int index;
     int count = tracks->Count();
     for( index = 0; index < count; index++ )
@@ -2948,7 +2947,6 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdatedTrack( const guTrack * track )
 {
-    wxASSERT( track );
     if( track->m_FileName == m_MediaSong.m_FileName )
     {
         //m_MediaSong = * track;

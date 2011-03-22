@@ -3376,8 +3376,6 @@ void guDbLibrary::UpdateStaticPlayListFile( const int plid )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist )
 {
-  wxASSERT( playlist );
-
   int PlayListId = 0;
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3595,8 +3593,6 @@ const wxString DynPLDateOption( const int option, const int value, const int opt
 // -------------------------------------------------------------------------------- //
 const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
 {
-  wxASSERT( playlist );
-
   if( !playlist->m_Filters.Count() )
     return wxEmptyString;
 
@@ -4068,8 +4064,6 @@ void guDbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist )
 {
-  wxASSERT( playlist );
-
   wxString query;
 
   query = wxString::Format( wxT( "UPDATE playlists SET "
@@ -4863,7 +4857,6 @@ guTrack * guDbLibrary::FindSong( const wxString &artist, const wxString &trackna
   if( dbRes.NextRow() )
   {
     RetVal = new guTrack();
-    wxASSERT( RetVal );
     FillTrackFromDb( RetVal, &dbRes );
   }
   dbRes.Finalize();
@@ -5818,7 +5811,6 @@ void inline RemoveLabel( wxString * labelstr, const wxString * labelname, const 
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newname )
 {
-  wxASSERT( tracks );
   guTrack *     Song;
   int           index;
   int           count;
@@ -6161,8 +6153,6 @@ int guDbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
 {
-  wxASSERT( channel );
-
   wxString query;
   int ChannelId;
   if( ( ChannelId = GetPodcastChannelUrl( channel->m_Url ) ) == wxNOT_FOUND )
@@ -6230,7 +6220,6 @@ void guDbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
 {
-    wxASSERT( channels );
     int Index;
     int Count = channels->Count();
     for( Index = 0; Index < Count; Index++ )
@@ -6341,7 +6330,6 @@ void guDbLibrary::DelPodcastChannel( const int id )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc )
 {
-  wxASSERT( items );
   wxString query;
   wxSQLite3ResultSet dbRes;
 
@@ -6455,7 +6443,6 @@ void guDbLibrary::GetPodcastCounters( const wxArrayInt &filters, wxLongLong * co
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc )
 {
-  wxASSERT( items );
   wxString query;
   wxSQLite3ResultSet dbRes;
 
@@ -6539,8 +6526,6 @@ int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * it
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew )
 {
-  wxASSERT( item );
-
   wxString query;
   int ItemId;
   if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
@@ -6597,7 +6582,6 @@ void guDbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bo
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
 {
-    wxASSERT( items );
     int Index;
     int Count = items->Count();
     for( Index = 0; Index < Count; Index++ )
@@ -6834,7 +6818,6 @@ void guDbLibrary::DelPodcastItems( const int channelid )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
 {
-  wxASSERT( items );
   wxString query;
   wxSQLite3ResultSet dbRes;
 

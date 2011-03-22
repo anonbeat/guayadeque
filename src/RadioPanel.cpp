@@ -751,8 +751,6 @@ void guRadioStationListBox::GetItemsList( void )
 // -------------------------------------------------------------------------------- //
 void guRadioStationListBox::ReloadItems( bool reset )
 {
-    wxASSERT( m_Db );
-
     //
     wxArrayInt Selection;
     int FirstVisible = GetFirstVisibleLine();

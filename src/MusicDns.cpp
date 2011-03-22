@@ -161,8 +161,6 @@ static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, G
 // -------------------------------------------------------------------------------- //
 guMusicDnsThread::guMusicDnsThread( guMusicDns * musicdns, const wxChar * filename )
 {
-  wxASSERT( musicdns );
-
   //guLogMessage( wxT( "guMusicDnsThread..." ) );
   m_MusicDns = musicdns;
   m_FileName = wxString( filename );
@@ -272,7 +270,6 @@ guMusicDnsThread::guMusicDnsThread( guMusicDns * musicdns, const wxChar * filena
 // -------------------------------------------------------------------------------- //
 guMusicDnsThread::~guMusicDnsThread()
 {
-    wxASSERT( GST_IS_OBJECT( m_Pipeline ) );
     if( GST_IS_ELEMENT( m_Pipeline ) )
     {
         gst_element_set_state( m_Pipeline, GST_STATE_NULL );
@@ -428,8 +425,6 @@ void guMusicDns::CancelSearch( void )
 // -------------------------------------------------------------------------------- //
 bool guMusicDns::DoGetFingerprint( void )
 {
-    wxASSERT( m_Track );
-
     //guLogMessage( wxT( "DoGetFingerprint..." ) );
     if( m_Track )
     {

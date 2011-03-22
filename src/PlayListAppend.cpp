@@ -31,9 +31,6 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
     wxButton *                  StdBtnSizerOK;
     wxButton *                  StdBtnSizerCancel;
 
-    wxASSERT( db );
-    wxASSERT( tracks );
-
     m_Db = db;
     m_Tracks = tracks;
 

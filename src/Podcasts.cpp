@@ -230,8 +230,6 @@ void guPodcastChannel::CheckLogo( void )
 // -------------------------------------------------------------------------------- //
 int guPodcastChannel::GetUpdateItems( guDbLibrary * db, guPodcastItemArray * items )
 {
-  wxASSERT( items );
-
   wxString query;
   wxSQLite3ResultSet dbRes;
 
@@ -579,8 +577,6 @@ void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem 
 // -------------------------------------------------------------------------------- //
 void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, bool priority )
 {
-    wxASSERT( items );
-
     int Index;
     int Count = items->Count();
     if( Count )
@@ -611,8 +607,6 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
 // -------------------------------------------------------------------------------- //
 int guPodcastDownloadQueueThread::FindPodcastItem( guPodcastItem * podcastitem )
 {
-    wxASSERT( podcastitem );
-
     int Index;
     int Count = m_Items.Count();
     for( Index = 0; Index < Count; Index++ )
@@ -627,8 +621,6 @@ int guPodcastDownloadQueueThread::FindPodcastItem( guPodcastItem * podcastitem )
 // -------------------------------------------------------------------------------- //
 void guPodcastDownloadQueueThread::RemovePodcastItems( guPodcastItemArray * items )
 {
-    wxASSERT( items );
-
     int Index;
     int ItemPos;
     int Count = items->Count();

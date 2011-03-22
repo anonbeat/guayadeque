@@ -445,7 +445,6 @@ void guAlbumBrowserItemPanel::OnSearchLinkClicked( wxCommandEvent &event )
     if( Config )
     {
         wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-        wxASSERT( Links.Count() > 0 );
 
         index -= ID_LASTFM_SEARCH_LINK;
         wxString SearchLink = Links[ index ];
@@ -1238,7 +1237,6 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-            wxASSERT( Commands.Count() > 0 );
 
             index -= ID_ALBUM_COMMANDS;
             wxString CurCmd = Commands[ index ];
@@ -1396,7 +1394,6 @@ void guAlbumBrowser::OnAlbumDeleteCoverClicked( const int albumid )
             if( CoverId > 0 )
             {
                 wxString CoverPath = m_Db->GetCoverPath( CoverId );
-                wxASSERT( !CoverPath.IsEmpty() );
                 if( !wxRemoveFile( CoverPath ) )
                 {
                     guLogError( wxT( "Could not remove the cover file '%s'" ), CoverPath.c_str() );

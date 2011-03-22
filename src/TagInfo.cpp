@@ -1624,7 +1624,6 @@ bool guWavPackTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo(), m_ApeFile( filename )
 {
-    //wxASSERT( !m_FileName.Lower().EndsWith( wxT( ".ape" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
