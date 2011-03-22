@@ -183,7 +183,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
 
-    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
+    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
     if( Config->ReadBool( wxT( "LoadDefaultLayouts" ), false, wxT( "General" ) ) )

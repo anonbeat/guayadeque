@@ -56,7 +56,7 @@ guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent ) :
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ) );
 
-    AuiDockArt->SetColour( wxAUI_DOCKART_GRADIENT_TYPE,
+    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guAuiManagedPanel::OnPaneClose ), NULL, this );
