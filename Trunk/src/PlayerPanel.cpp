@@ -2623,7 +2623,7 @@ void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
 {
-    m_PlayLoop = m_PlayLoop++;
+    m_PlayLoop++;
     if( m_PlayLoop > guPLAYER_PLAYLOOP_TRACK )
         m_PlayLoop = guPLAYER_PLAYLOOP_NONE;
     SetPlayLoop( m_PlayLoop );

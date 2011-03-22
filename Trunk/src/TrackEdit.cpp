@@ -155,7 +155,8 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	ArStaticText->Wrap( -1 );
 	DataFlexSizer->Add( ArStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_ArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Artists, wxCB_DROPDOWN );
+    wxArrayString DummyArray;
+	m_ArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, DummyArray, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_ArtistComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_AACopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -167,7 +168,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	AAStaticText->Wrap( -1 );
 	DataFlexSizer->Add( AAStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_AlbumArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_AlbumArtists, wxCB_DROPDOWN );
+	m_AlbumArtistComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, DummyArray, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_AlbumArtistComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_AlCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -178,7 +179,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	AlStaticText->Wrap( -1 );
 	DataFlexSizer->Add( AlStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_AlbumComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Albums, wxCB_DROPDOWN );
+	m_AlbumComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, DummyArray, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_AlbumComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_TiCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -201,7 +202,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	CoStaticText->Wrap( -1 );
 	DataFlexSizer->Add( CoStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_CompComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Composers, wxCB_DROPDOWN );
+	m_CompComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, DummyArray, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_CompComboBox, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_CommentCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -258,7 +259,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	GeStaticText->Wrap( -1 );
 	DataFlexSizer->Add( GeStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxRIGHT, 5 );
 
-	m_GenreComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_Genres, wxCB_DROPDOWN );
+	m_GenreComboBox = new wxComboBox( DetailPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, DummyArray, wxCB_DROPDOWN );
 	DataFlexSizer->Add( m_GenreComboBox, 1, wxEXPAND|wxTOP|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_YeCopyButton = new wxBitmapButton( DetailPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
@@ -1927,6 +1928,10 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist, int curitem, wxString &lastvalue )
 {
+    wxArrayString SetItems;
+    int Index;
+    int Count;
+
     combobox->Clear();
 
     if( curitem == wxNOT_FOUND )
@@ -1939,18 +1944,25 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
 
     if( FilterText.IsEmpty() )
     {
+#if wxUSE_STL
+        Count = itemlist.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            SetItems.Add( itemlist[ Index ] );
+        }
+        combobox->Append( SetItems );
+#else
         combobox->Append( itemlist );
+#endif
     }
     else
     {
-        int index;
-        int count = itemlist.Count();
-        wxArrayString SetItems;
-        for( index = 0; index < count; index++ )
+        Count = itemlist.Count();
+        for( Index = 0; Index < Count; Index++ )
         {
-            if( itemlist[ index ].Lower().Find( FilterText ) != wxNOT_FOUND )
+            if( itemlist[ Index ].Lower().Find( FilterText ) != wxNOT_FOUND )
             {
-                SetItems.Add( itemlist[ index ] );
+                SetItems.Add( itemlist[ Index ] );
             }
         }
         combobox->Append( SetItems );
