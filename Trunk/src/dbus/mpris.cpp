@@ -4,7 +4,7 @@
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation; either version 2, or (at your option)
+//    the Free Software Foundation; either version 3, or (at your option)
 //    any later version.
 //
 //    This Program is distributed in the hope that it will be useful,
@@ -308,9 +308,6 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
 //    guLogMessage( wxT( "Serial : %i" ), Serial );
 //    guLogMessage( wxT( "RSerial: %i" ), RSerial );
 
-    if( !Dest || strcmp( Dest, GUAYADEQUE_MPRIS_SERVICENAME ) )
-        return RetVal;
-
     // If its a method call
     if( Type == DBUS_MESSAGE_TYPE_METHOD_CALL )
     {
@@ -322,44 +319,47 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
         if( !strcmp( Interface, "org.freedesktop.DBus.Introspectable" ) &&
             !strcmp( Member, "Introspect" ) )
         {
-            if( !strcmp( Path, "/" ) )
+            if( Dest && !strcmp( Dest, GUAYADEQUE_MPRIS_SERVICENAME ) )
             {
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
-
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Introspection_XML_Data_Root ) )
+                if( !strcmp( Path, "/" ) )
                 {
-                    guLogError( wxT( "Failed to attach the Introspection info" ) );
-                }
-                Send( reply );
-                Flush();
-                RetVal = DBUS_HANDLER_RESULT_HANDLED;
-            }
-            else if( !strcmp( Path, "/Player" ) )
-            {
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
 
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Introspection_XML_Data_Player ) )
-                {
-                    guLogError( wxT( "Failed to attach the Introspection info" ) );
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Introspection_XML_Data_Root ) )
+                    {
+                        guLogError( wxT( "Failed to attach the Introspection info" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
-                Send( reply );
-                Flush();
-                RetVal = DBUS_HANDLER_RESULT_HANDLED;
-            }
-            else if( !strcmp( Path, "/TrackList" ) )
-            {
-                DBusMessageIter args;
-                dbus_message_iter_init_append( reply->GetMessage(), &args );
+                else if( !strcmp( Path, "/Player" ) )
+                {
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
 
-                if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Introspection_XML_Data_Tracklist ) )
-                {
-                    guLogError( wxT( "Failed to attach the Introspection info" ) );
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Introspection_XML_Data_Player ) )
+                    {
+                        guLogError( wxT( "Failed to attach the Introspection info" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
-                Send( reply );
-                Flush();
-                RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                else if( !strcmp( Path, "/TrackList" ) )
+                {
+                    DBusMessageIter args;
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                    if( !dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Introspection_XML_Data_Tracklist ) )
+                    {
+                        guLogError( wxT( "Failed to attach the Introspection info" ) );
+                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
             }
         }
 
