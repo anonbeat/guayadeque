@@ -35,6 +35,8 @@
 #define GUAYADEQUE_MPRIS2_INTERFACE_TRACKLIST   "org.mpris.MediaPlayer2.TrackList"
 
 const char * guMPRIS2_INTROSPECTION_XML =
+    "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
+    "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
 	"<node>\n"
 	"  <interface name='org.mpris.MediaPlayer2'>\n"
 	"    <method name='Raise'/>\n"
@@ -630,20 +632,25 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
+    const char *    Dest = msg->GetDestination();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
 //    int             Serial = msg->GetSerial();
 //    int             RSerial = msg->GetReplySerial();
 
 //    // Show the details of the msg
-//    guLogMessage( wxT( "==MPRIS2========================" ) );
-//    guLogMessage( wxT( "Type   : %i" ), Type );
-//    guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
-//    guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
-//    guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
-//    guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
+    guLogMessage( wxT( "==MPRIS2========================" ) );
+    guLogMessage( wxT( "Type   : %i" ), Type );
+    guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
+    guLogMessage( wxT( "Dest   : %s" ), wxString::FromAscii( Dest ).c_str() );
+    guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
+    guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
+    guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
 //    guLogMessage( wxT( "Serial : %i" ), Serial );
 //    guLogMessage( wxT( "RSerial: %i" ), RSerial );
+
+    if( !Dest || strcmp( Dest, GUAYADEQUE_MPRIS2_SERVICE_NAME ) )
+        return RetVal;
 
     // If its a method call
     if( Type == DBUS_MESSAGE_TYPE_METHOD_CALL )
