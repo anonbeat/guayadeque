@@ -59,6 +59,9 @@ guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent ) :
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
             wxAuiStepColour( BaseColor, 150 ) );
 
+    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );
+
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 

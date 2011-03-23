@@ -96,7 +96,9 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
                                  close_button_state,
                                  x_extent);
 
-    wxCoord tab_height = m_tab_ctrl_height - 3;
+    wxCoord tab_height = m_tab_ctrl_height - 1;
+    if( !page.active )
+        tab_height -= 2;
     wxCoord tab_width = tab_size.x;
     wxCoord tab_x = in_rect.x;
     wxCoord tab_y = in_rect.y + in_rect.height - tab_height;
@@ -172,60 +174,11 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     int drawn_tab_height = border_points[0].y - border_points[1].y;
 
 
-    if (page.active)
-    {
-        wxRect r(tab_x, tab_y+1, tab_width, tab_height-3);
-
-        // start the gradent up a bit and leave the inside border inset
-        // by a pixel for a 3D look.  Only the top half of the inactive
-        // tab will have a slight gradient
-        r.x += 3;
-        r.y++;
-        r.width -= 4;
-        r.height /= 2;
-        r.height--;
-
-        // -- draw top gradient fill for glossy look
-        wxColor top_color = m_SelBgColor;
-        wxColor bottom_color = wxAuiStepColour(m_base_colour, 140);
-        dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
-
-        r.y += r.height;
-        r.y--;
-
-        // -- draw bottom fill for glossy look
-        top_color = m_base_colour;
-        bottom_color = m_base_colour;
-        dc.GradientFillLinear(r, top_color, bottom_color, wxSOUTH);
-    }
-     else
-    {
-        // draw inactive tab
-
-        wxRect r(tab_x, tab_y+1, tab_width, tab_height-3);
-
-        // start the gradent up a bit and leave the inside border inset
-        // by a pixel for a 3D look.  Only the top half of the inactive
-        // tab will have a slight gradient
-        r.x += 3;
-        r.y++;
-        r.width -= 4;
-        r.height /= 2;
-        r.height--;
-
-        // -- draw top gradient fill for glossy look
-        wxColor top_color = m_base_colour;
-        wxColor bottom_color = wxAuiStepColour(top_color, 160);
-        dc.GradientFillLinear(r, bottom_color, top_color, wxNORTH);
-
-        r.y += r.height;
-        r.y--;
-
-        // -- draw bottom fill for glossy look
-        top_color = m_base_colour;
-        bottom_color = m_base_colour;
-        dc.GradientFillLinear(r, top_color, bottom_color, wxSOUTH);
-    }
+    wxRect r( tab_x, tab_y + 1, tab_width, tab_height - 3 );
+    r.x += 3;
+    r.y++;
+    r.width -= 4;
+    dc.GradientFillLinear( r, m_base_colour, wxAuiStepColour( m_base_colour, 160 ), page.active ? wxNORTH : wxSOUTH );
 
     // draw tab outline
     dc.SetPen(m_border_pen);
