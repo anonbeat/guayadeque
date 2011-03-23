@@ -287,25 +287,29 @@ void FillMetadataArgs( guDBusMessage * reply, const guCurrentTrack * CurTrack )
 // -------------------------------------------------------------------------------- //
 DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
-    wxASSERT( msg );
-//    // Show the details of the msg
-//    printf( "Type   : %i\n", msg->GetType() );
-//    printf( "Iface  : %s\n", msg->GetInterface() );
-//    printf( "Path   : %s\n", msg->GetPath() );
-//    printf( "Member : %s\n", msg->GetMember() );
-//    printf( "Sender : %s\n", msg->GetSender() );
-//    printf( "Reply  : %i\n", msg->NeedReply() );
-//    printf( "Serial : %i\n", msg->GetSerial() );
-//    if( reply )
-//      printf( "RSerial: %i\n", reply->GetReplySerial() );
-//    printf( "==MPRIS========================\n" );
-
     //
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
+    const char *    Dest = msg->GetDestination();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
+//    int             Serial = msg->GetSerial();
+//    int             RSerial = msg->GetReplySerial();
+
+//    // Show the details of the msg
+    guLogMessage( wxT( "==MPRIS2========================" ) );
+    guLogMessage( wxT( "Type   : %i" ), Type );
+    guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
+    guLogMessage( wxT( "Dest   : %s" ), wxString::FromAscii( Dest ).c_str() );
+    guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
+    guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
+    guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
+//    guLogMessage( wxT( "Serial : %i" ), Serial );
+//    guLogMessage( wxT( "RSerial: %i" ), RSerial );
+
+    if( !Dest || strcmp( Dest, GUAYADEQUE_MPRIS_SERVICENAME ) )
+        return RetVal;
 
     // If its a method call
     if( Type == DBUS_MESSAGE_TYPE_METHOD_CALL )
