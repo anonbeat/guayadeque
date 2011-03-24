@@ -33,6 +33,7 @@
 #define GUAYADEQUE_MPRIS2_INTERFACE_ROOT        "org.mpris.MediaPlayer2"
 #define GUAYADEQUE_MPRIS2_INTERFACE_PLAYER      "org.mpris.MediaPlayer2.Player"
 #define GUAYADEQUE_MPRIS2_INTERFACE_TRACKLIST   "org.mpris.MediaPlayer2.TrackList"
+#define GUAYADEQUE_MPRIS2_INTERFACE_PLAYLISTS   "org.mpris.MediaPlayer2.Playlists"
 
 const char * guMPRIS2_INTROSPECTION_XML =
     "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
@@ -119,6 +120,24 @@ const char * guMPRIS2_INTROSPECTION_XML =
 	"    <property name='Tracks' type='ao' access='read'/>\n"
 	"    <property name='CanEditTracks' type='b' access='read'/>\n"
 	"  </interface>\n"
+//	"  <interface name='org.mpris.MediaPlayer2.Playlists'>\n"
+//	"    <method name='ActivatePlaylist'>\n"
+//	"      <arg direction='in' name='PlaylistId' type='o'/>\n"
+//	"    </method>\n"
+//	"    <method name='GetPlaylists'>\n"
+//	"      <arg direction='in' name='Index' type='u'/>\n"
+//	"      <arg direction='in' name='MaxCount' type='u'/>\n"
+//	"      <arg direction='in' name='Order' type='s'/>\n"
+//	"      <arg direction='in' name='ReverseOrder' type='b'/>\n"
+//	"      <arg direction='out' name='Playlists' type='a(oss)'/>\n"
+//	"    </method>\n"
+//	"    <signal name='PlaylistChanged'>\n"
+//	"      <arg name='Playlist' type='(b(oss))'/>\n"
+//	"    </signal>\n"
+//	"    <property name='PlaylistCount' type='u' access='read'/>\n"
+//	"    <property name='Orderings' type='as' access='read'/>\n"
+//	"    <property name='ActivePlaylist' type='b(oss)' access='read'/>\n"
+//	"  </interface>\n"
 	"</node>\n";
 
 
@@ -658,13 +677,13 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
-//    const char *    Dest = msg->GetDestination();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
 //    int             Serial = msg->GetSerial();
 //    int             RSerial = msg->GetReplySerial();
 
     // Show the details of the msg
+//    const char *    Dest = msg->GetDestination();
 //    guLogMessage( wxT( "==MPRIS2========================" ) );
 //    guLogMessage( wxT( "Type   : %i" ), Type );
 //    guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
@@ -708,62 +727,59 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
             {
                 if( !strcmp( Member, "GetAll" ) )
                 {
-                    //if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
-                    {
-                        DBusMessageIter args;
-                        DBusMessageIter dict;
-                        bool ReplyVal = true;
+                    DBusMessageIter args;
+                    DBusMessageIter dict;
+                    bool ReplyVal = true;
 
-                        dbus_message_iter_init_append( reply->GetMessage(), &args );
+                    dbus_message_iter_init_append( reply->GetMessage(), &args );
 
-                        dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
+                    dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
 
-                        FillMetadataDetails( &dict, "CanQuit", ReplyVal );
-                        FillMetadataDetails( &dict, "CanRaise", ReplyVal );
-                        FillMetadataDetails( &dict, "HasTrackList", ReplyVal );
-                        const char * AppName = "Guayadeque Music Player";
-                        FillMetadataDetails( &dict, "Identity", AppName );
-                        const char * DesktopPath = "guayadeque";
-                        FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
-                        const char * SupportedUriSchemes[] = { "file", "http", "smb", "sftp", "cdda", NULL };
-                        FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
-                        const char * SupportedMimeTypes[] = {
-                           "application/ogg",
-                           "application/x-ogg",
-                           "application/x-ogm-audio",
-                           "audio/aac",
-                           "audio/ape",
-                           "audio/mp4",
-                           "audio/mpc",
-                           "audio/mpeg",
-                           "audio/mpegurl",
-                           "audio/ogg",
-                           "audio/vnd.rn-realaudio",
-                           "audio/vorbis",
-                           "audio/x-flac",
-                           "audio/x-mp3",
-                           "audio/x-mpeg",
-                           "audio/x-mpegurl",
-                           "audio/x-ms-wma",
-                           "audio/x-musepack",
-                           "audio/x-oggflac",
-                           "audio/x-pn-realaudio",
-                           "audio/x-scpls",
-                           "audio/x-speex",
-                           "audio/x-vorbis",
-                           "audio/x-vorbis+ogg",
-                           "audio/x-wav",
-                           "video/x-ms-asf",
-                           "x-content/audio-player",
-                           NULL };
-                        FillMetadataDetails( &dict, "SupportedMimeTypes", SupportedMimeTypes );
+                    FillMetadataDetails( &dict, "CanQuit", ReplyVal );
+                    FillMetadataDetails( &dict, "CanRaise", ReplyVal );
+                    FillMetadataDetails( &dict, "HasTrackList", ReplyVal );
+                    const char * AppName = "Guayadeque Music Player";
+                    FillMetadataDetails( &dict, "Identity", AppName );
+                    const char * DesktopPath = "guayadeque";
+                    FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
+                    const char * SupportedUriSchemes[] = { "file", "http", "smb", "sftp", "cdda", NULL };
+                    FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
+                    const char * SupportedMimeTypes[] = {
+                       "application/ogg",
+                       "application/x-ogg",
+                       "application/x-ogm-audio",
+                       "audio/aac",
+                       "audio/ape",
+                       "audio/mp4",
+                       "audio/mpc",
+                       "audio/mpeg",
+                       "audio/mpegurl",
+                       "audio/ogg",
+                       "audio/vnd.rn-realaudio",
+                       "audio/vorbis",
+                       "audio/x-flac",
+                       "audio/x-mp3",
+                       "audio/x-mpeg",
+                       "audio/x-mpegurl",
+                       "audio/x-ms-wma",
+                       "audio/x-musepack",
+                       "audio/x-oggflac",
+                       "audio/x-pn-realaudio",
+                       "audio/x-scpls",
+                       "audio/x-speex",
+                       "audio/x-vorbis",
+                       "audio/x-vorbis+ogg",
+                       "audio/x-wav",
+                       "video/x-ms-asf",
+                       "x-content/audio-player",
+                       NULL };
+                    FillMetadataDetails( &dict, "SupportedMimeTypes", SupportedMimeTypes );
 
-                        dbus_message_iter_close_container( &args, &dict );
+                    dbus_message_iter_close_container( &args, &dict );
 
-                        Send( reply );
-                        Flush();
-                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
-                    }
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else
                 {
@@ -1291,9 +1307,60 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 }
                 else if( !strcmp( Member, "OpenUri" ) )
                 {
+                    DBusError error;
+                    dbus_error_init( &error );
+
+                    const char * Uri;
+                    dbus_message_get_args( msg->GetMessage(), &error,
+                            DBUS_TYPE_STRING, &Uri,
+                            DBUS_TYPE_INVALID );
+
+                    if( dbus_error_is_set( &error ) )
+                    {
+                        guLogMessage( wxT( "Could not read the OpenUri parameter : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                        dbus_error_free( &error );
+                    }
+                    else
+                    {
+                        wxArrayString Streams;
+                        Streams.Add( wxString( Uri, wxConvUTF8 ) );
+
+                        m_PlayerPanel->SetPlayList( Streams );
+                    }
                 }
             }
         }
+        else if( !strcmp( Interface, GUAYADEQUE_MPRIS2_INTERFACE_TRACKLIST ) )
+        {
+            if( !strcmp( Path, GUAYADEQUE_MPRIS2_OBJECT_PATH ) )
+            {
+                if( !strcmp( Member, "GetTracksMetadata" ) )
+                {
+                }
+                else if( !strcmp( Member, "AddTrack" ) )
+                {
+                }
+                else if( !strcmp( Member, "RemoveTrack" ) )
+                {
+                }
+                else if( !strcmp( Member, "GoTo" ) )
+                {
+                }
+            }
+        }
+        else if( !strcmp( Interface, GUAYADEQUE_MPRIS2_INTERFACE_PLAYLISTS ) )
+        {
+            if( !strcmp( Path, GUAYADEQUE_MPRIS2_OBJECT_PATH ) )
+            {
+                if( !strcmp( Member, "ActivatePlaylist" ) )
+                {
+                }
+                else if( !strcmp( Member, "GetPlaylists" ) )
+                {
+                }
+            }
+        }
+
     }
 
     return RetVal;
