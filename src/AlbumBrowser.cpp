@@ -261,9 +261,9 @@ void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem 
             m_Bitmap->SetBitmap( * blankcd );
 
 
-        m_ArtistLabel->SetLabel( guCheckLabelString( m_AlbumBrowserItem->m_ArtistName ) );
+        m_ArtistLabel->SetLabel( m_AlbumBrowserItem->m_ArtistName );
         m_ArtistLabel->SetToolTip( m_AlbumBrowserItem->m_ArtistName );
-        m_AlbumLabel->SetLabel( guCheckLabelString( m_AlbumBrowserItem->m_AlbumName ) );
+        m_AlbumLabel->SetLabel( m_AlbumBrowserItem->m_AlbumName );
         m_AlbumLabel->SetToolTip( m_AlbumBrowserItem->m_AlbumName );
 
         wxString Label;
