@@ -25,6 +25,7 @@
 #include "Commands.h"
 #include "CopyTo.h"
 #include "ConfirmExit.h"
+#include "EditWithOptions.h"
 #include "FileRenamer.h"    // NormalizeField
 #include "Images.h"
 #include "LibUpdate.h"
@@ -4816,20 +4817,23 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 {
-    wxTextEntryDialog EntryDialog( this, _( "Enter the layout name:"), _( "New Layout" ) );
+//    wxTextEntryDialog EntryDialog( this, _( "Enter the layout name:"), _( "New Layout" ) );
+    guEditWithOptions * SaveLayoutDialog = new guEditWithOptions( this, _( "Save Layout" ), _( "Layout:" ), wxString::Format( _( "Layout %u" ), m_LayoutNames.GetCount() + 1 ), m_LayoutNames );
 
-    EntryDialog.SetValue( wxString::Format( _( "Layout %u" ), m_LayoutNames.GetCount() + 1 ) );
-
-    if( EntryDialog.ShowModal() == wxID_OK )
+    if( SaveLayoutDialog )
     {
-        if( !SaveCurrentLayout( EntryDialog.GetValue() ) )
+        if( SaveLayoutDialog->ShowModal() == wxID_OK )
         {
-            guLogMessage( wxT( "Could not save the layout '%s'" ), EntryDialog.GetValue().c_str() );
+            if( !SaveCurrentLayout( SaveLayoutDialog->GetData() ) )
+            {
+                guLogMessage( wxT( "Could not save the layout '%s'" ), SaveLayoutDialog->GetData().c_str() );
+            }
+            else
+            {
+                CreateLayoutMenus();
+            }
         }
-        else
-        {
-            CreateLayoutMenus();
-        }
+        SaveLayoutDialog->Destroy();
     }
 }
 

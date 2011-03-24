@@ -18,8 +18,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef FIELDEDITOR_H
-#define FIELDEDITOR_H
+#ifndef EDITWITHOPTIONS_H
+#define EDITWITHOPTIONS_H
 
 #include <wx/string.h>
 #include <wx/stattext.h>
@@ -33,21 +33,19 @@
 #include <wx/dialog.h>
 
 // -------------------------------------------------------------------------------- //
-/// Class guFieldEditor
+// Class guEditWithOptions
 // -------------------------------------------------------------------------------- //
-class guFieldEditor : public wxDialog
+class guEditWithOptions : public wxDialog
 {
   protected:
-	wxStaticText* EditLabel;
-	wxComboBox* m_EditComboBox;
-	wxStdDialogButtonSizer* ButtonFrame;
-	wxButton* ButtonFrameOK;
-	wxButton* ButtonFrameCancel;
+	wxComboBox *    m_EditComboBox;
 
   public:
-    guFieldEditor( wxWindow * parent, const wxString &label, const wxString &defval, const wxArrayString &items );
-	~guFieldEditor();
-	wxString GetData( void );
+    guEditWithOptions( wxWindow * parent, const wxString &title, const wxString &label, const wxString &defval, const wxArrayString &items );
+	~guEditWithOptions();
+
+    void            SetItems( const wxArrayString &items ) { m_EditComboBox->Append( items ); }
+	wxString        GetData( void );
 
 };
 
