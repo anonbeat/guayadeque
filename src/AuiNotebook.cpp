@@ -78,7 +78,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 
     // if the caption is empty, measure some temporary text
     wxString caption = page.caption;
-    if (caption.empty())
+    if( caption.empty() )
         caption = wxT("Xj");
 
     dc.SetFont(m_selected_font);
@@ -109,12 +109,12 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 
     // select pen, brush and font for the tab to be drawn
 
-    if (page.active)
+    if( page.active )
     {
-        dc.SetFont(m_selected_font);
+        dc.SetFont( m_selected_font );
         texty = selected_texty;
     }
-     else
+    else
     {
         dc.SetFont(m_normal_font);
         texty = normal_texty;
@@ -174,33 +174,34 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     int drawn_tab_height = border_points[0].y - border_points[1].y;
 
 
-    wxRect r( tab_x, tab_y + 1, tab_width, tab_height - 3 );
-    r.x += 3;
-    r.y++;
-    r.width -= 4;
-    dc.GradientFillLinear( r, m_base_colour, wxAuiStepColour( m_base_colour, 160 ), page.active ? wxNORTH : wxSOUTH );
+    if( page.active )
+    {
+        dc.SetBrush( m_base_colour_brush );
+        dc.SetPen( * wxTRANSPARENT_PEN );
+        dc.DrawRectangle( tab_x + 1, tab_y + 2, tab_width - 1, tab_height - 3 );
+    }
 
     // draw tab outline
-    dc.SetPen(m_border_pen);
-    dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.DrawPolygon(WXSIZEOF(border_points), border_points);
+    dc.SetPen( m_border_pen );
+    dc.SetBrush( * wxTRANSPARENT_BRUSH );
+    dc.DrawPolygon( WXSIZEOF( border_points ), border_points );
 
     // there are two horizontal grey lines at the bottom of the tab control,
     // this gets rid of the top one of those lines in the tab control
     if (page.active)
     {
-       if (m_flags &wxAUI_NB_BOTTOM)
-           dc.SetPen(wxPen(wxColour(wxAuiStepColour(m_base_colour, 170))));
-       // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
-       // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
-       else //for wxAUI_NB_TOP
-           dc.SetPen(m_base_colour_pen);
-        dc.DrawLine(border_points[0].x+1,
-                    border_points[0].y,
-                    border_points[5].x,
-                    border_points[5].y);
-    }
+        if( m_flags & wxAUI_NB_BOTTOM )
+            dc.SetPen( wxPen( wxColour( wxAuiStepColour( m_base_colour, 170 ) ) ) );
+        // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
+        // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
+        else //for wxAUI_NB_TOP
+           dc.SetPen( m_base_colour_pen );
 
+        dc.DrawLine( border_points[ 0 ].x + 1,
+                     border_points[ 0 ].y,
+                     border_points[ 5 ].x,
+                     border_points[ 5 ].y );
+    }
 
     int text_offset = tab_x + 8;
     int close_button_width = 0;
