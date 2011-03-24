@@ -89,6 +89,8 @@
 		<Unit filename="src/AudioScrobble.h" />
 		<Unit filename="src/AuiDockArt.cpp" />
 		<Unit filename="src/AuiDockArt.h" />
+		<Unit filename="src/AuiManagedPanel.cpp" />
+		<Unit filename="src/AuiManagedPanel.h" />
 		<Unit filename="src/AuiNotebook.cpp" />
 		<Unit filename="src/AuiNotebook.h" />
 		<Unit filename="src/AutoPulseGauge.cpp" />
