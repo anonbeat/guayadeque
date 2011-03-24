@@ -699,6 +699,7 @@
 		<Unit filename="src/images/star_normal_tiny.h" />
 		<Unit filename="src/images/system_run.h" />
 		<Unit filename="src/images/tags.h" />
+		<Unit filename="src/images/taskbar_icon.h" />
 		<Unit filename="src/images/tiny_accept.h" />
 		<Unit filename="src/images/tiny_add.h" />
 		<Unit filename="src/images/tiny_close_highlight.h" />
