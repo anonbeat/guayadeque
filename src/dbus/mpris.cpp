@@ -291,7 +291,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
-    const char *    Dest = msg->GetDestination();
+//    const char *    Dest = msg->GetDestination();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
 //    int             Serial = msg->GetSerial();
@@ -319,6 +319,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
         if( !strcmp( Interface, "org.freedesktop.DBus.Introspectable" ) &&
             !strcmp( Member, "Introspect" ) )
         {
+            const char *    Dest = msg->GetDestination();
             if( Dest && !strcmp( Dest, GUAYADEQUE_MPRIS_SERVICENAME ) )
             {
                 if( !strcmp( Path, "/" ) )
@@ -362,9 +363,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
             }
         }
-
-
-        if( !strcmp( Interface, "org.freedesktop.MediaPlayer" ) )
+        else if( !strcmp( Interface, "org.freedesktop.MediaPlayer" ) )
         {
             //
             // ROOT

@@ -658,7 +658,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
     const char *    Member = msg->GetMember();
-    const char *    Dest = msg->GetDestination();
+//    const char *    Dest = msg->GetDestination();
     int             Type = msg->GetType();
     const char *    Path = msg->GetPath();
 //    int             Serial = msg->GetSerial();
@@ -686,6 +686,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
         {
             if( !strcmp( Member, "Introspect" ) )
             {
+                const char *    Dest = msg->GetDestination();
                 if( Dest && !strcmp( Dest, GUAYADEQUE_MPRIS2_SERVICE_NAME ) )
                 {
                     DBusMessageIter args;
@@ -1132,6 +1133,19 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                         }
                     }
                 }
+            }
+
+            if( RetVal == DBUS_HANDLER_RESULT_NOT_YET_HANDLED )
+            {
+                const char *    Dest = msg->GetDestination();
+
+                guLogMessage( wxT( "==MPRIS2========================" ) );
+                guLogMessage( wxT( "Type   : %i" ), Type );
+                guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
+                guLogMessage( wxT( "Dest   : %s" ), wxString::FromAscii( Dest ).c_str() );
+                guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
+                guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
+                guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
             }
         }
         else if( !strcmp( Interface, GUAYADEQUE_MPRIS2_INTERFACE_ROOT ) )

@@ -588,12 +588,12 @@ void guLibPanel::InitPanelData( void )
     m_PanelIds.Add( guPANEL_LIBRARY_LABELS );
     m_PanelIds.Add( guPANEL_LIBRARY_GENRES );
     m_PanelIds.Add( guPANEL_LIBRARY_ARTISTS );
+    m_PanelIds.Add( guPANEL_LIBRARY_COMPOSERS );
+    m_PanelIds.Add( guPANEL_LIBRARY_ALBUMARTISTS );
     m_PanelIds.Add( guPANEL_LIBRARY_ALBUMS );
     m_PanelIds.Add( guPANEL_LIBRARY_YEARS );
     m_PanelIds.Add( guPANEL_LIBRARY_RATINGS );
     m_PanelIds.Add( guPANEL_LIBRARY_PLAYCOUNT );
-    m_PanelIds.Add( guPANEL_LIBRARY_COMPOSERS );
-    m_PanelIds.Add( guPANEL_LIBRARY_ALBUMARTISTS );
 
     m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_TEXTSEARCH );
     m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_LABELS );
