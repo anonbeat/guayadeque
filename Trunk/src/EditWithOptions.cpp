@@ -18,11 +18,11 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "FieldEditor.h"
+#include "EditWithOptions.h"
 
 // -------------------------------------------------------------------------------- //
-guFieldEditor::guFieldEditor( wxWindow * parent, const wxString &label, const wxString &defval, const wxArrayString &items ) :
-    wxDialog( parent, wxID_ANY, _( "Field Editor" ), wxDefaultPosition, wxSize( 370, 175 ), wxDEFAULT_DIALOG_STYLE )
+guEditWithOptions::guEditWithOptions( wxWindow * parent, const wxString &title, const wxString &label, const wxString &defval, const wxArrayString &items ) :
+    wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 370, 175 ), wxDEFAULT_DIALOG_STYLE )
 {
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -32,7 +32,7 @@ guFieldEditor::guFieldEditor( wxWindow * parent, const wxString &label, const wx
 	wxBoxSizer * TopFrame;
 	TopFrame = new wxBoxSizer( wxHORIZONTAL );
 
-	wxStaticText * EditLabel = new wxStaticText( this, wxID_ANY, label + wxT( " :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * EditLabel = new wxStaticText( this, wxID_ANY, label + wxT( ":" ), wxDefaultPosition, wxDefaultSize, 0 );
 	EditLabel->Wrap( -1 );
 	TopFrame->Add( EditLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -52,16 +52,15 @@ guFieldEditor::guFieldEditor( wxWindow * parent, const wxString &label, const wx
 
 	SetSizer( MainFrame );
 	Layout();
-
 }
 
 // -------------------------------------------------------------------------------- //
-guFieldEditor::~guFieldEditor()
+guEditWithOptions::~guEditWithOptions()
 {
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guFieldEditor::GetData( void )
+wxString guEditWithOptions::GetData( void )
 {
     int Selected = m_EditComboBox->GetCurrentSelection();
     if( Selected != wxNOT_FOUND )
@@ -71,3 +70,4 @@ wxString guFieldEditor::GetData( void )
 }
 
 // -------------------------------------------------------------------------------- //
+

@@ -27,7 +27,7 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "DynamicPlayList.h"
-#include "FieldEditor.h"
+#include "EditWithOptions.h"
 #include "FileRenamer.h"
 #include "Images.h"
 #include "LabelEditor.h"
@@ -1546,7 +1546,7 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
             Items.Add( Value.GetString() );
     }
 
-    guFieldEditor * FieldEditor = new guFieldEditor( this, Label, DefValue.GetString(), Items );
+    guEditWithOptions * FieldEditor = new guEditWithOptions( this, _( "Field Editor" ), Label, DefValue.GetString(), Items );
 
     if( FieldEditor )
     {

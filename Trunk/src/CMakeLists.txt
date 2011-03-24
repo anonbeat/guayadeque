@@ -229,8 +229,6 @@ ADD_EXECUTABLE( guayadeque
 	AAListBox.h
 	TimeLine.cpp
 	TimeLine.h
-	FieldEditor.cpp
-	FieldEditor.h
 	Jamendo.cpp
 	Jamendo.h
 	Magnatune.cpp
@@ -253,6 +251,8 @@ ADD_EXECUTABLE( guayadeque
 	AccelListBox.h
 	AuiManagedPanel.cpp
 	AuiManagedPanel.h
+	EditWithOptions.cpp
+	EditWithOptions.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
