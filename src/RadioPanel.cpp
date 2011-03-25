@@ -1067,17 +1067,14 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "RadioTextSearch" ) ).Caption( _( "Text Search" ) ).
-            MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).Layer( 2 ).Position( 0 ).
+            Direction( 1 ).Layer( 2 ).Row( 0 ).Position( 0 ).BestSize( 111, 26 ).MinSize( 60, 26 ).MaxSize( -1, 26 ).
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Top() );
-
-
 
     wxPanel * GenrePanel;
 	GenrePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * GenreSizer;
 	GenreSizer = new wxBoxSizer( wxVERTICAL );
-
 
     m_GenresTreeCtrl = new guRadioGenreTreeCtrl( GenrePanel, m_Db );
 	GenreSizer->Add( m_GenresTreeCtrl, 1, wxEXPAND, 5 );
@@ -1088,7 +1085,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
 	m_AuiManager.AddPane( GenrePanel,
             wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genre" ) ).
-            MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 0 ).
+            Direction( 4 ).Layer( 1 ).Row( 0 ).Position( 0 ).BestSize( 220, 60 ).MinSize( 60, 60 ).
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
 
@@ -1106,10 +1103,9 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
 	m_AuiManager.AddPane( LabelsPanel,
             wxAuiPaneInfo().Name( wxT( "RadioLabels" ) ).Caption( _( "Labels" ) ).
-            MinSize( 60, 60 ).Layer( 1 ).Row( 0 ).Position( 1 ).
+            Direction( 4 ).Layer( 1 ).Row( 0 ).Position( 1 ).BestSize( 220, 60 ).MinSize( 60, 60 ).
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Left() );
-
 
 
     wxPanel * StationsPanel;
@@ -1135,13 +1131,17 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     wxString RadioLayout = Config->ReadStr( wxT( "Radio" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || RadioLayout.IsEmpty() )
     {
-        m_AuiManager.Update();
         m_VisiblePanels = guPANEL_RADIO_VISIBLE_DEFAULT;
+        RadioLayout = wxT( "layout2|name=RadioTextSearch;caption=" ) + wxString( _( "Text Search" ) );
+        RadioLayout += wxT( ";state=2099196;dir=1;layer=2;row=0;pos=0;prop=100000;bestw=111;besth=26;minw=60;minh=26;maxw=-1;maxh=26;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        RadioLayout += wxT( "name=RadioGenres;caption=" ) + wxString( _( "Genres" ) ) + wxT( ";state=2099196;dir=4;layer=1;row=0;pos=0;prop=100000;bestw=220;besth=60;minw=60;minh=60;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        RadioLayout += wxT( "name=RadioLabels;caption=" ) + wxString( _( "Labels" ) ) + wxT( ";state=2099196;dir=4;layer=1;row=0;pos=1;prop=100000;bestw=220;besth=60;minw=60;minh=60;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        RadioLayout += wxT( "name=RadioStations;caption=" ) + wxString( _( "Stations" ) ) + wxT( ";state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        RadioLayout += wxT( "dock_size(1,2,0)=47|dock_size(4,1,0)=179|dock_size(5,0,0)=52|" );
+        //m_AuiManager.Update();
     }
-    else
-    {
-        m_AuiManager.LoadPerspective( RadioLayout, true );
-    }
+
+    m_AuiManager.LoadPerspective( RadioLayout, true );
 
 
 	Connect( guRADIO_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnTextChangedTimer ), NULL, this );

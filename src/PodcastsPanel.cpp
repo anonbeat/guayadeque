@@ -241,17 +241,21 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
             CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
             Dockable( true ).Bottom() );
 
-
     wxString PodcastLayout = Config->ReadStr( wxT( "Podcasts" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || PodcastLayout.IsEmpty() )
     {
-        m_AuiManager.Update();
         m_VisiblePanels = guPANEL_PODCASTS_VISIBLE_DEFAULT;
+
+        PodcastLayout = wxT( "layout2|name=PodcastsChannels;caption=" ) + wxString( _( "Channels" ) );
+        PodcastLayout += wxT( ";state=2099196;dir=4;layer=0;row=0;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        PodcastLayout += wxT( "name=PodcastsItems;caption=Podcasts;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        PodcastLayout += wxT( "name=PodcastsDetails;caption=" ) + wxString( _( "Details" ) );
+        PodcastLayout += wxT( ";state=2099196;dir=3;layer=0;row=0;pos=0;prop=100000;bestw=100;besth=132;minw=100;minh=100;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|dock_size(4,0,0)=181|" );
+        PodcastLayout += wxT( "dock_size(5,0,0)=52|dock_size(3,0,0)=479|" );
+        //m_AuiManager.Update();
     }
-    else
-    {
-        m_AuiManager.LoadPerspective( PodcastLayout, true );
-    }
+
+    m_AuiManager.LoadPerspective( PodcastLayout, true );
 
     Connect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
