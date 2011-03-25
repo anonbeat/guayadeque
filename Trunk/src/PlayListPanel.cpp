@@ -628,11 +628,17 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     wxString PlayListLayout = Config->ReadStr( wxT( "PlayLists" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || PlayListLayout.IsEmpty() )
     {
-        m_AuiManager.Update();
         m_VisiblePanels = guPANEL_PLAYLIST_VISIBLE_DEFAULT;
+        //m_AuiManager.Update();
+        PlayListLayout = wxT( "layout2|name=PlayListTextSearch;caption=" ) + wxString( _( "Text Search" ) );
+        PlayListLayout += wxT( ";state=2099196;dir=1;layer=2;row=0;pos=0;prop=100000;bestw=111;besth=28;minw=60;minh=28;maxw=-1;maxh=28;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        PlayListLayout += wxT( "name=PlayListNames;caption=" ) + wxString( _( "Play Lists" ) );
+        PlayListLayout += wxT( ";state=2044;dir=4;layer=0;row=0;pos=0;prop=100000;bestw=180;besth=350;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        PlayListLayout += wxT( "name=PlayListTracks;caption=PlayList;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        PlayListLayout += wxT( "dock_size(1,2,0)=47|dock_size(4,0,0)=186|dock_size(5,0,0)=52|" );
     }
-    else
-        m_AuiManager.LoadPerspective( PlayListLayout, true );
+
+    m_AuiManager.LoadPerspective( PlayListLayout, true );
 
 
 	Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );

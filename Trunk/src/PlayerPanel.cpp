@@ -3177,7 +3177,7 @@ void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxS
                         }
                     }
                 }
-                else
+                else    // results comes sorted by match
                     break;
             }
             if( ( int ) songs->Count() >= m_TrackCount )

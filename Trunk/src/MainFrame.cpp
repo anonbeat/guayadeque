@@ -361,7 +361,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         Perspective += wxT( "name=PlayerPanel;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=308;besth=167;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
         Perspective += wxT( "name=PlayerSelector;caption=;state=2099196;dir=2;layer=1;row=0;pos=0;prop=100000;bestw=100;besth=100;minw=100;minh=100;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
         Perspective += wxT( "dock_size(3,0,1)=86|" );
-        Perspective += wxString::Format( wxT( "dock_size(3,0,2)=%i|" ), MainWindowSize.y - 86 - 230 );
+        Perspective += wxString::Format( wxT( "dock_size(3,0,2)=%i|" ), MainWindowSize.y - 86 - 200 );
         Perspective += wxT( "dock_size(5,0,0)=310|" );
         Perspective += wxString::Format( wxT( "dock_size(2,1,0)=%i|" ), MainWindowSize.x - 315 );
         m_AuiManager.LoadPerspective( Perspective, true );

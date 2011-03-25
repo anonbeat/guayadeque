@@ -288,13 +288,34 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     wxString LibraryLayout = Config->ReadStr( m_ConfigPrefixVarName + wxT( "Layout" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || LibraryLayout.IsEmpty() )
     {
-        m_AuiManager.Update();
         m_VisiblePanels = guPANEL_LIBRARY_VISIBLE_DEFAULT;
+        LibraryLayout = wxT( "layout2|name=TextSearch;caption=" ) + wxString( _( "Text Search" ) );
+        LibraryLayout += wxT( ";state=2099196;dir=1;layer=0;row=0;pos=0;prop=100000;bestw=121;besth=35;minw=60;minh=28;maxw=-1;maxh=28;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Genres;caption=" ) + wxString( _( "Genres" ) );
+        LibraryLayout += wxT( ";state=2099196;dir=1;layer=0;row=1;pos=1;prop=113793;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Labels;caption=" ) + wxString( _( "Labels" ) );
+        LibraryLayout += wxT( ";state=2099196;dir=1;layer=0;row=1;pos=0;prop=66995;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Artists;caption=" ) + wxString( _( "Artists" ) );
+        LibraryLayout += wxT( ";state=2099196;dir=1;layer=0;row=1;pos=2;prop=80788;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Albums;caption=" ) + wxString( _( "Albums" ) );
+        LibraryLayout += wxT( ";state=2099196;dir=1;layer=0;row=1;pos=3;prop=138424;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Years;caption=" ) + wxString( _( "Years" ) );
+        LibraryLayout += wxT( ";state=2099198;dir=1;layer=0;row=2;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Ratings;caption=" ) + wxString( _( "Ratings" ) );
+        LibraryLayout += wxT( ";state=2099198;dir=1;layer=0;row=2;pos=1;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=PlayCounts;caption=" ) + wxString( _( "Play Counts" ) );
+        LibraryLayout += wxT( ";state=2099198;dir=1;layer=0;row=2;pos=2;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Composers;caption=" ) + wxString( _( "Composers" ) );
+        LibraryLayout += wxT( ";state=2099198;dir=1;layer=0;row=2;pos=1;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=AlbumArtists;caption=" ) + wxString( _( "Album Artist" ) );
+        LibraryLayout += wxT( ";state=2099198;dir=1;layer=0;row=2;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "name=Tracks;caption=" ) + wxString( _( "Tracks" ) );
+        LibraryLayout += wxT( ";state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        LibraryLayout += wxT( "dock_size(1,0,0)=47|dock_size(1,0,1)=190|dock_size(5,0,0)=52|" );
+        //m_AuiManager.Update();
     }
-    else
-    {
-        m_AuiManager.LoadPerspective( LibraryLayout, true );
-    }
+
+    m_AuiManager.LoadPerspective( LibraryLayout, true );
 
 
     SetDropTarget( new guLibPanelDropTarget( this ) );

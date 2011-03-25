@@ -1461,13 +1461,15 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     wxString FileBrowserLayout = Config->ReadStr( wxT( "FileBrowser" ), wxEmptyString, wxT( "Positions" ) );
     if( Config->GetIgnoreLayouts() || FileBrowserLayout.IsEmpty() )
     {
-        m_AuiManager.Update();
         m_VisiblePanels = guPANEL_FILEBROWSER_VISIBLE_DEFAULT;
+        FileBrowserLayout = wxT( "layout2|name=FileBrowserDirCtrl;caption=" ) + wxString( _( "Directories" ) );
+        FileBrowserLayout += wxT( ";state=2044;dir=4;layer=0;row=0;pos=0;prop=100000;bestw=60;besth=28;minw=60;minh=28;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
+        FileBrowserLayout += wxT( "name=FileBrowserFilesCtrl;caption=;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=20;besth=20;minw=-1;minh=-1;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1| " );
+        FileBrowserLayout += wxT( "dock_size(5,0,0)=10|dock_size(4,0,0)=266|" );
+        //m_AuiManager.Update();
     }
-    else
-    {
-        m_AuiManager.LoadPerspective( FileBrowserLayout, true );
-    }
+
+    m_AuiManager.LoadPerspective( FileBrowserLayout, true );
 
 	m_DirCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guFileBrowser::OnDirItemChanged ), NULL, this );
     m_FilesCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,  wxListEventHandler( guFileBrowser::OnFileItemActivated ), NULL, this );

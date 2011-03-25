@@ -238,13 +238,13 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
     Disconnect( ID_ALBUMBROWSER_COVER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnCoverBeginDrag ), NULL, this );
 }
 
-// -------------------------------------------------------------------------------- //
-wxString inline guCheckLabelString( const wxString &label )
-{
-    wxString Label = label;
-    Label.Replace( wxT( "&" ), wxT( "&&" ) );
-    return Label;
-}
+//// -------------------------------------------------------------------------------- //
+//wxString inline guCheckLabelString( const wxString &label )
+//{
+//    wxString Label = label;
+//    Label.Replace( wxT( "&" ), wxT( "&&" ) );
+//    return Label;
+//}
 
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem * albumitem, wxBitmap * blankcd )
