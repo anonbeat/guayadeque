@@ -205,6 +205,8 @@ class guPlayListPanel : public guAuiManagedPanel
 
     void                OnGoToSearch( wxCommandEvent &event );
 
+    void                OnSetAllowDenyFilter( wxCommandEvent &event );
+
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guPlayListPanel();

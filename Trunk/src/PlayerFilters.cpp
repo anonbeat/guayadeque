@@ -134,3 +134,15 @@ void guPlayerFilters::EnableFilters( const bool enable )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerFilters::SetAllowFilterId( const int id )
+{
+    m_FilterAllowChoice->SetSelection( GetListItemsIdIndex( m_FilterPlayLists, id ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerFilters::SetDenyFilterId( const int id )
+{
+    m_FilterDenyChoice->SetSelection( GetListItemsIdIndex( m_FilterPlayLists, id ) );
+}
+
+// -------------------------------------------------------------------------------- //
