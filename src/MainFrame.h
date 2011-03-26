@@ -436,6 +436,8 @@ class guMainFrame : public wxFrame
 
     void                            OnSongSetRating( wxCommandEvent &event );
 
+    void                            OnSetAllowDenyFilter( wxCommandEvent &event );
+
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();

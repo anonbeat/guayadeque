@@ -499,6 +499,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 	Connect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectGenre ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_LOCATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectLocation ), NULL, this );
 
+    Connect( ID_MAINFRAME_SET_ALLOW_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetAllowDenyFilter ), NULL, this );
+    Connect( ID_MAINFRAME_SET_DENY_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetAllowDenyFilter ), NULL, this );
+
 	Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGenreSetSelection ), NULL, this );
 	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnArtistSetSelection ), NULL, this );
 	Connect( ID_ALBUMARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAlbumArtistSetSelection ), NULL, this );
@@ -6041,6 +6044,21 @@ void guMainFrame::OnSongSetRating( wxCommandEvent &event )
         m_PlayerPanel->SetRating( Rating );
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnSetAllowDenyFilter( wxCommandEvent &event )
+{
+    if( ( event.GetId() == ID_MAINFRAME_SET_ALLOW_PLAYLIST ) )
+    {
+        m_PlayerFilters->SetAllowFilterId( event.GetInt() );
+    }
+    else
+    {
+        m_PlayerFilters->SetDenyFilterId( event.GetInt() );
+    }
+}
+
+
 
 
 // -------------------------------------------------------------------------------- //

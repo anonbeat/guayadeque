@@ -54,6 +54,8 @@ class guPlayerFilters : public wxPanel
     int             GetDenySelection( void ) { return m_FilterDenyChoice->GetSelection(); }
     int             GetAllowFilterId( void ) { return m_FilterPlayLists[ m_FilterAllowChoice->GetSelection() ].m_Id; };
     int             GetDenyFilterId( void ) { return m_FilterPlayLists[ m_FilterDenyChoice->GetSelection() ].m_Id; };
+    void            SetAllowFilterId( const int id );
+    void            SetDenyFilterId( const int id );
 
 };
 
