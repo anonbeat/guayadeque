@@ -54,6 +54,7 @@
 #define guPLAYER_FONTSIZE_ALBUMNAME     11
 #define guPLAYER_FONTSIZE_ARTISTNAME    11
 
+wxArrayInt SupportedPlayCountTypes;
 
 // -------------------------------------------------------------------------------- //
 guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
@@ -2044,26 +2045,36 @@ void guPlayerPanel::SavePlayedTrack( void )
     }
 
     // Update the play count if it has player at least the half of the track
-    if( m_MediaSong.m_Loaded &&
-        ( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
-          ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) ) )  // If its a song from the library
+    if( m_MediaSong.m_Loaded )
     {
-        if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
+        if( !SupportedPlayCountTypes.Count() )
         {
-            m_MediaSong.m_PlayCount++;
-
-            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+            SupportedPlayCountTypes.Add( guTRACK_TYPE_DB );
+            SupportedPlayCountTypes.Add( guTRACK_TYPE_IPOD );
+            SupportedPlayCountTypes.Add( guTRACK_TYPE_JAMENDO );
+            SupportedPlayCountTypes.Add( guTRACK_TYPE_MAGNATUNE );
+            SupportedPlayCountTypes.Add( guTRACK_TYPE_PODCAST );
+        }
+        if( SupportedPlayCountTypes.Index( m_MediaSong.m_Type ) != wxNOT_FOUND )
+        {
+            if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
             {
-                guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
-                Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
-            }
-            else
-            {
-                m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
-            }
+                m_MediaSong.m_PlayCount++;
+                guLogDebug( wxT( "Increased the PlayCount of the track to %i" ), m_MediaSong.m_PlayCount );
 
-            // Update the track in database, playlist, etc
-            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                {
+                    guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+                    Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+                }
+                else
+                {
+                    m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+                }
+
+                // Update the track in database, playlist, etc
+                m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+            }
         }
     }
 
@@ -2281,6 +2292,8 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             }
             if( m_MediaSong.m_Loaded )
             {
+                SavePlayedTrack();
+
                 guCurrentTrack CurrentTrack;
                 CurrentTrack.m_Rating = 0;
                 CurrentTrack.m_Year = 0;
@@ -2353,6 +2366,8 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
             }
             if( m_MediaSong.m_Loaded )
             {
+                SavePlayedTrack();
+
                 guCurrentTrack CurrentTrack;
                 CurrentTrack.m_Rating = 0;
                 CurrentTrack.m_Year = 0;
@@ -2537,7 +2552,6 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         }
         else if( State == guMEDIASTATE_STOPPED )
         {
-            m_SavedPlayedTrack = false;
             //guLogDebug( wxT( "Loading '%s'" ), m_NextSong.m_FileName.c_str() );
             LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
             return;
