@@ -38,8 +38,8 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#define guLogDebug(...)
+#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+//#define guLogDebug(...)
 
 
 #define GUPLAYER_MIN_PREVTRACK_POS      5000
@@ -1262,7 +1262,7 @@ int guPlayerPanel::GetCaps()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::SetNextTrack( const guTrack * Song )
 {
-    //guLogDebug( wxT( "SetNextTrack: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogDebug( wxT( "SetNextTrack: %i" ), m_PlayListCtrl->GetCurItem() );
 
     if( !Song )
         return;
@@ -1311,6 +1311,7 @@ wxString inline FileNameEncode( const wxString filename )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
 {
+    guLogDebug( wxT( "LoadMedia  %i  %i  (%i)" ), m_CurTrackId, m_NextTrackId, m_SavedPlayedTrack );
     if( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE )
     {
         m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
@@ -1609,7 +1610,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
     {
-        guLogDebug( wxT( "OnMediaPosition... %i - %li   %li %li" ), event.GetInt(), event.GetExtraLong(), m_CurTrackId, m_NextTrackId );
+        //guLogDebug( wxT( "OnMediaPosition... %i - %li   %li %li" ), event.GetInt(), event.GetExtraLong(), m_CurTrackId, m_NextTrackId );
         m_LastCurPos = CurPos;
 
         if( m_TrackChanged )
@@ -1708,7 +1709,7 @@ void guPlayerPanel::SendRecordSplitEvent( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 {
-    guLogDebug( wxT( "OnMediaTags..." ) );
+    //guLogDebug( wxT( "OnMediaTags..." ) );
     guRadioTagInfo * RadioTag = ( guRadioTagInfo * ) event.GetClientData();
     if( RadioTag )
     {
@@ -1810,7 +1811,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 {
-    guLogDebug( wxT( "OnMediaBitrate... (%li) %i" ), event.GetExtraLong(), event.GetInt() );
+    //guLogDebug( wxT( "OnMediaBitrate... (%li) %i" ), event.GetExtraLong(), event.GetInt() );
 //
 //    if( m_NextSong.m_Bitrate != BitRate )
 //    {
@@ -1878,7 +1879,7 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaPlayStarted( void )
 {
-    guLogDebug( wxT( "OnMediaPlayStarted  %li" ), m_NextTrackId );
+    guLogDebug( wxT( "OnMediaPlayStarted  %i %i" ), m_CurTrackId, m_NextTrackId );
 
     SavePlayedTrack();
 
@@ -2060,7 +2061,7 @@ void guPlayerPanel::SavePlayedTrack( void )
             if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
             {
                 m_MediaSong.m_PlayCount++;
-                guLogDebug( wxT( "Increased the PlayCount of the track to %i" ), m_MediaSong.m_PlayCount );
+                guLogDebug( wxT( "Increased PlayCount to %i" ), m_MediaSong.m_PlayCount );
 
                 if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
                 {
@@ -2077,16 +2078,12 @@ void guPlayerPanel::SavePlayedTrack( void )
             }
         }
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
 {
     guLogDebug( wxT( "OnMediaFinished (%li) Cur: %i  %li" ), event.GetExtraLong(), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
-
-    ResetVumeterLevel();
-    SavePlayedTrack();
 
     if( m_SilenceDetected || m_AboutToEndDetected || m_NextTrackId || ( m_CurTrackId != event.GetExtraLong() ) )
     {
@@ -2123,9 +2120,14 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
                     AddToPlayList( Tracks, false );
 
                     OnMediaFinished( event );
+
+                    return;
                 }
             }
         }
+
+        ResetVumeterLevel();
+        SavePlayedTrack();
     }
 }
 
