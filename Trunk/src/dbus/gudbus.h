@@ -106,6 +106,7 @@ class guDBusClient
     guDBusClient( guDBusServer * server );
     ~guDBusClient();
 
+    bool                        HasOwner( const char * name );
     bool                        RequestName( const char * name );
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
     DBusConnection *            GetConnection();
@@ -137,6 +138,7 @@ class guDBusServer
     ~guDBusServer();
 
 
+    bool                        HasOwner( const char * name );
     bool                        RequestName( const char * name );
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
     DBusConnection *            GetConnection();

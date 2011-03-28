@@ -38,8 +38,8 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
-#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-//#define guLogDebug(...)
+//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+#define guLogDebug(...)
 
 
 #define GUPLAYER_MIN_PREVTRACK_POS      5000

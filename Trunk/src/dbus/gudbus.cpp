@@ -119,6 +119,12 @@ DBusConnection * guDBusServer::GetConnection()
 }
 
 // -------------------------------------------------------------------------------- //
+bool guDBusServer::HasOwner( const char * name )
+{
+    return dbus_bus_name_has_owner( m_DBusConn, name, NULL );
+}
+
+// -------------------------------------------------------------------------------- //
 bool guDBusServer::RequestName( const char * name )
 {
     wxASSERT( name );
@@ -222,8 +228,8 @@ guDBusMessage * guDBusServer::SendWithReplyAndBlock( guDBusMessage * msg, int ti
 
     DBusMessage * Result = dbus_connection_send_with_reply_and_block( m_DBusConn, msg->GetMessage(), timeout, &error );
     Reply =  Result ? new guDBusMessage( Result ) : NULL;
-    if( Result )
-        dbus_message_unref( Result );
+//    if( Result )
+//        dbus_message_unref( Result );
     return Reply;
 }
 
@@ -276,6 +282,12 @@ guDBusClient::guDBusClient( guDBusServer * server )
 guDBusClient::~guDBusClient()
 {
     UnRegisterClient();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guDBusClient::HasOwner( const char * name )
+{
+    return m_DBusServer->HasOwner( name );
 }
 
 // -------------------------------------------------------------------------------- //

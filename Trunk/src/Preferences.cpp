@@ -27,6 +27,7 @@
 #include "Transcode.h"
 #include "Utils.h"
 #include "MediaCtrl.h"
+#include "dbus/mpris2.h"
 
 #include <wx/statline.h>
 #include <wx/tokenzr.h>
@@ -343,9 +344,8 @@ guPrefDialog::~guPrefDialog()
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
-#ifdef WITH_LIBINDICATE_SUPPORT
-        m_SoundMenuChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
-#endif
+        if( m_SoundMenuChkBox )
+            m_SoundMenuChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
@@ -554,12 +554,23 @@ void guPrefDialog::BuildGeneralPage( void )
 	BehaviSizer->Add( m_TaskIconChkBox, 0, wxALL, 5 );
 
     m_SoundMenuChkBox = NULL;
+    bool WithIndicateSupport = false;
 #ifdef WITH_LIBINDICATE_SUPPORT
-	m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Integrate into SoundMenu"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_SoundMenuChkBox->SetValue( m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) );
-    m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
-	BehaviSizer->Add( m_SoundMenuChkBox, 0, wxALL, 5 );
+    WithIndicateSupport = true;
 #endif
+
+    guMPRIS2 * MPRIS2 = guMPRIS2::Get();
+    bool IsSoundMenuAvailable = MPRIS2->Indicators_Sound_Available();
+
+    guLogMessage( wxT( "SoundIndicatorIsBlackListed: %i ind %i" ), IsSoundMenuAvailable, WithIndicateSupport );
+    if( WithIndicateSupport || IsSoundMenuAvailable )
+    {
+        //bool SoundMenuEnabled = m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
+        m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Integrate into SoundMenu" ), wxDefaultPosition, wxDefaultSize, 0 );
+        m_SoundMenuChkBox->SetValue( !IsSoundMenuAvailable );
+        m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
+        BehaviSizer->Add( m_SoundMenuChkBox, 0, wxALL, 5 );
+    }
 
 	m_EnqueueChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Enqueue as default action"), wxDefaultPosition, wxDefaultSize, 0 );
     m_EnqueueChkBox->SetValue( m_Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
@@ -592,9 +603,8 @@ void guPrefDialog::BuildGeneralPage( void )
 	m_GenPanel->Layout();
 
 	m_TaskIconChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
-#ifdef WITH_LIBINDICATE_SUPPORT
-	m_SoundMenuChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
-#endif
+	if( m_SoundMenuChkBox )
+        m_SoundMenuChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
 
 }
 
@@ -2272,9 +2282,8 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), wxT( "General" ) );
-#ifdef WITH_LIBINDICATE_SUPPORT
-        m_Config->WriteBool( wxT( "SoundMenuIntegration" ), m_SoundMenuChkBox->GetValue(), wxT( "General" ) );
-#endif
+        if( m_SoundMenuChkBox )
+            m_Config->WriteBool( wxT( "SoundMenuIntegration" ), m_SoundMenuChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "General" ) );
         //m_Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlYearOrderChoice->GetSelection(), wxT( "General" ) );
