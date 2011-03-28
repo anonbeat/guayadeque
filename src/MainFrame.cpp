@@ -1721,6 +1721,7 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 {
+    guConfig * Config = ( guConfig * ) guConfig::Get();
 
 #ifdef WITH_LIBINDICATE_SUPPORT
     if( m_IndicateServer )
@@ -1736,9 +1737,25 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
         }
     }
     else
+#else
+    if( m_MPRIS2->Indicators_Sound_Available() )
+    {
+        if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
+        {
+            guMediaState State = m_PlayerPanel->GetState();
+            if( State == guMEDIASTATE_PLAYING )
+            {
+                if( event.CanVeto() )
+                {
+                    Show( false );
+                    return;
+                }
+            }
+        }
+    }
+    else
 #endif
     {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
         // If the icon
         if( m_TaskBarIcon &&
             Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
