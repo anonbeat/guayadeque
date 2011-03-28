@@ -140,11 +140,13 @@ const char * guMPRIS2_INTROSPECTION_XML =
 //	"  </interface>\n"
 	"</node>\n";
 
+guMPRIS2 * guMPRIS2::m_MPRIS2 = NULL;
 
 // -------------------------------------------------------------------------------- //
 guMPRIS2::guMPRIS2( guDBusServer * server, guPlayerPanel * playerpanel ) : guDBusClient( server )
 {
     m_PlayerPanel = playerpanel;
+
 
     RegisterClient();
 
@@ -1364,6 +1366,99 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     }
 
     return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )
+{
+    guDBusMethodCall * Msg = new guDBusMethodCall( "com.canonical.indicators.sound",
+                                               "/com/canonical/indicators/sound/service",
+                                               "com.canonical.indicators.sound",
+                                               "BlacklistMediaPlayer" );
+
+    const char * desktopname = "guayadeque";
+    int RetVal = wxNOT_FOUND;
+
+    dbus_message_append_args( Msg->GetMessage(), DBUS_TYPE_STRING, &desktopname, DBUS_TYPE_BOOLEAN, &blacklist, DBUS_TYPE_INVALID );
+
+    guDBusMessage * Reply = SendWithReplyAndBlock( Msg );
+    if( Reply )
+    {
+        DBusError error;
+        dbus_error_init( &error );
+
+        dbus_bool_t Blacklisted = false;
+
+        dbus_message_get_args( Reply->GetMessage(), &error, DBUS_TYPE_BOOLEAN, &Blacklisted, DBUS_TYPE_INVALID );
+
+        if( dbus_error_is_set( &error ) )
+        {
+            guLogMessage( wxT( "Indicator Sound parameter error : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+            dbus_error_free( &error );
+        }
+        else
+        {
+            RetVal = Blacklisted;
+        }
+
+        delete Reply;
+    }
+
+    delete Msg;
+
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guMPRIS2::Indicators_Sound_IsBlackListed( void )
+{
+    int RetVal = wxNOT_FOUND;
+
+    guDBusMethodCall * Msg = new guDBusMethodCall( "com.canonical.indicators.sound",
+                                               "/com/canonical/indicators/sound/service",
+                                               "com.canonical.indicators.sound",
+                                               "IsBlacklisted" );
+
+    const char * desktopname = "guayadeque";
+
+    dbus_message_append_args( Msg->GetMessage(), DBUS_TYPE_STRING, &desktopname, DBUS_TYPE_INVALID );
+
+    guDBusMessage * Reply = SendWithReplyAndBlock( Msg );
+    if( Reply )
+    {
+        DBusError error;
+        dbus_error_init( &error );
+
+        dbus_bool_t Blacklisted = false;
+
+        dbus_message_get_args( Reply->GetMessage(), &error, DBUS_TYPE_BOOLEAN, &Blacklisted, DBUS_TYPE_INVALID );
+
+        if( dbus_error_is_set( &error ) )
+        {
+            guLogMessage( wxT( "Indicator Sound parameter error : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+            dbus_error_free( &error );
+        }
+        else
+        {
+            RetVal = Blacklisted;
+        }
+
+        delete Reply;
+    }
+    else
+    {
+        guLogMessage( wxT( "Indicator_Sound_IsBlackListed without reply" ) );
+    }
+
+    delete Msg;
+
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMPRIS2::Indicators_Sound_Available( void )
+{
+    return HasOwner( "com.canonical.indicators.sound" );
 }
 
 // -------------------------------------------------------------------------------- //

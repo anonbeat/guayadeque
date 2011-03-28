@@ -28,6 +28,7 @@
 class guMPRIS2 : public guDBusClient
 {
   protected :
+    static guMPRIS2 *           m_MPRIS2;
     guPlayerPanel *             m_PlayerPanel;
 
   public :
@@ -41,8 +42,17 @@ class guMPRIS2 : public guDBusClient
     void                        OnPlayerCapsChange( void );
     void                        OnPlayerVolumeChange( void );
     void                        OnTrackListChange( void );
+
+    bool                        Indicators_Sound_Available( void );
+    int                         Indicators_Sound_BlacklistMediaPlayer( const bool blacklist = true );
+    int                         Indicators_Sound_IsBlackListed( void );
+
+    static void                 Set( guMPRIS2 * object ) { m_MPRIS2 = object; }
+    static guMPRIS2 *           Get( void ) { return m_MPRIS2; }
+
 };
 
 
 #endif
+
 // -------------------------------------------------------------------------------- //

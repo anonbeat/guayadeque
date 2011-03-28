@@ -392,22 +392,38 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_IndicateServer = NULL;
 #endif
 
-    if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
-    {
-#ifdef WITH_LIBINDICATE_SUPPORT
-        if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
-        {
-            m_IndicateServer = indicate_server_ref_default();
-            indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
-            indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
-            indicate_server_show( m_IndicateServer );
-        }
-        else
-#endif
-        {
-            CreateTaskBarIcon();
-        }
-    }
+//    if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
+//    {
+//#ifdef WITH_LIBINDICATE_SUPPORT
+//        if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
+//        {
+//            m_IndicateServer = indicate_server_ref_default();
+//            indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
+//            indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
+//            indicate_server_show( m_IndicateServer );
+//        }
+//        else
+//#else
+//        int IsBacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
+//        if( IsBacklisted != wxNOT_FOUND )
+//        {
+//            bool SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
+//            if( SoundMenuEnabled != IsBacklisted )
+//            {
+//                m_MPRIS2->Indicators_Sound_BlacklistMediaPlayer( !SoundMenuEnabled );
+//            }
+//
+//            if( !SoundMenuEnabled )
+//            {
+//                CreateTaskBarIcon();
+//            }
+//        }
+//        else
+//#endif
+//        {
+//            CreateTaskBarIcon();
+//        }
+//    }
 
     m_DBusServer = new guDBusServer( NULL );
     guDBusServer::Set( m_DBusServer );
@@ -429,6 +445,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     {
         guLogError( wxT( "Could not create the mpris2 dbus object" ) );
     }
+    guMPRIS2::Set( m_MPRIS2 );
 
     // Init the MMKeys object
     m_MMKeys = new guMMKeys( m_DBusServer, m_PlayerPanel );
@@ -1691,43 +1708,9 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
         {
             PrefDialog->SaveSettings();
 
+            CreateTaskBarIcon();
+
             guConfig * Config = ( guConfig * ) guConfig::Get();
-
-            if( !m_TaskBarIcon && Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
-            {
-#ifdef WITH_LIBINDICATE_SUPPORT
-                if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
-                {
-                    if( !m_IndicateServer )
-                    {
-                        m_IndicateServer = indicate_server_ref_default();
-                        indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
-                        indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
-                        indicate_server_show( m_IndicateServer );
-                    }
-                }
-                else if( m_IndicateServer )     // SoundMenuIntegration == false
-                {
-                    indicate_server_hide( m_IndicateServer );
-                    g_object_unref( m_IndicateServer );
-                    m_IndicateServer = NULL;
-
-                    CreateTaskBarIcon();
-                }
-                else                           // SoundMenuIntegration == false && !m_IndicateServer
-#endif
-                {
-                    CreateTaskBarIcon();
-                }
-            }
-            else if( m_TaskBarIcon && ( !Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) ||
-                                         Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) ) )
-            {
-                m_TaskBarIcon->RemoveIcon();
-                delete m_TaskBarIcon;
-                m_TaskBarIcon = NULL;
-            }
-
             Config->SendConfigChangedEvent( PrefDialog->GetVisiblePanels() );
             m_Db->ConfigChanged();
         }
@@ -4400,15 +4383,106 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     m_DBusServer->Run();
 
     CreatePortablePlayersMenu( m_PortableDevicesMenu );
+
+    CreateTaskBarIcon();
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::CreateTaskBarIcon( void )
 {
-    m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
-    if( m_TaskBarIcon )
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    bool ShowIcon = Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) );
+    bool SoundMenuEnabled = false;
+
+    if( ShowIcon )
     {
-        m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ) );
+
+#ifdef WITH_LIBINDICATE_SUPPORT
+        SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
+        if( SoundMenuEnabled )
+        {
+            if( !m_IndicateServer )
+            {
+                m_IndicateServer = indicate_server_ref_default();
+                indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
+                indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
+                indicate_server_show( m_IndicateServer );
+            }
+
+        }
+#else
+
+        if( m_MPRIS2->Indicators_Sound_Available() )
+        {
+            SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
+            guLogMessage( wxT( "Indicator Sound available..." ) );
+            int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
+            guLogMessage( wxT( "IsBlackListed: %i" ), IsBlacklisted );
+            if( IsBlacklisted != wxNOT_FOUND )
+            {
+                if( SoundMenuEnabled == bool( IsBlacklisted ) )
+                {
+                    m_MPRIS2->Indicators_Sound_BlacklistMediaPlayer( !SoundMenuEnabled );
+                }
+            }
+        }
+#endif
+    }
+
+    guLogMessage( wxT( "Icon: %i   SoundMenu: %i" ), ShowIcon, SoundMenuEnabled );
+    if( ShowIcon )
+    {
+        if( SoundMenuEnabled )
+        {
+            if( m_TaskBarIcon )
+            {
+                m_TaskBarIcon->RemoveIcon();
+                delete m_TaskBarIcon;
+                m_TaskBarIcon = NULL;
+            }
+        }
+        else
+        {
+            if( !m_TaskBarIcon )
+            {
+                m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
+                if( m_TaskBarIcon )
+                {
+                    m_TaskBarIcon->SetIcon( m_AppIcon, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ) );
+                }
+            }
+        }
+    }
+    else
+    {
+#ifdef WITH_LIBINDICATE_SUPPORT
+        if( m_IndicateServer )
+        {
+            indicate_server_hide( m_IndicateServer );
+            g_object_unref( m_IndicateServer );
+        }
+#else
+
+        if( m_MPRIS2->Indicators_Sound_Available() )
+        {
+            int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
+            guLogMessage( wxT( "IsBlackListed: %i" ), IsBlacklisted );
+            if( IsBlacklisted != wxNOT_FOUND )
+            {
+                if( !IsBlacklisted )
+                {
+                    m_MPRIS2->Indicators_Sound_BlacklistMediaPlayer( true );
+                }
+            }
+        }
+#endif
+        if( m_TaskBarIcon )
+        {
+            m_TaskBarIcon->RemoveIcon();
+            delete m_TaskBarIcon;
+            m_TaskBarIcon = NULL;
+        }
     }
 }
 
