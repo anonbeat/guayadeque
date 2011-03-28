@@ -567,7 +567,7 @@ void guPrefDialog::BuildGeneralPage( void )
     {
         //bool SoundMenuEnabled = m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
         m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Integrate into SoundMenu" ), wxDefaultPosition, wxDefaultSize, 0 );
-        m_SoundMenuChkBox->SetValue( !IsSoundMenuAvailable );
+        m_SoundMenuChkBox->SetValue( m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) );
         m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
         BehaviSizer->Add( m_SoundMenuChkBox, 0, wxALL, 5 );
     }
