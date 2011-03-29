@@ -5656,7 +5656,7 @@ void guDbLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
 
         TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
 
-        TagInfo->Write();
+        TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
 
         delete TagInfo;
       }
@@ -5720,7 +5720,7 @@ void guDbLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
 
         TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
 
-        TagInfo->Write();
+        TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
 
         delete TagInfo;
       }
@@ -5784,7 +5784,7 @@ void guDbLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
 
         TagInfo->m_TrackLabelsStr = TrackLabelStr;
 
-        TagInfo->Write();
+        TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
 
         delete TagInfo;
       }
@@ -5832,7 +5832,7 @@ void guDbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString 
       RemoveLabel( &TagInfo->m_ArtistLabelsStr, &label, &newname );
       RemoveLabel( &TagInfo->m_AlbumLabelsStr, &label, &newname );
 
-      TagInfo->Write();
+      TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
 
       delete TagInfo;
     }

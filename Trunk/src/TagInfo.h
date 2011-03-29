@@ -66,6 +66,7 @@ using namespace TagLib;
 #define     guTRACK_CHANGED_DATA_TAGS           ( 1 << 0 )
 #define     guTRACK_CHANGED_DATA_IMAGES         ( 1 << 1 )
 #define     guTRACK_CHANGED_DATA_LYRICS         ( 1 << 2 )
+#define     guTRACK_CHANGED_DATA_LABELS         ( 1 << 3 )
 
 // -------------------------------------------------------------------------------- //
 class guTagInfo
@@ -103,7 +104,7 @@ class guTagInfo
 
     void                SetFileName( const wxString &filename );
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
@@ -129,7 +130,7 @@ class guMp3TagInfo : public guTagInfo
     ~guMp3TagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
     virtual bool        SetImage( const wxImage * image );
@@ -151,7 +152,7 @@ class guFlacTagInfo : public guTagInfo
     ~guFlacTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage();
@@ -173,7 +174,7 @@ class guOggTagInfo : public guTagInfo
     ~guOggTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
@@ -195,7 +196,7 @@ class guMp4TagInfo : public guTagInfo
     ~guMp4TagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
 #ifdef TAGLIB_WITH_MP4_COVERS
     virtual bool        CanHandleImages( void );
@@ -219,7 +220,7 @@ class guApeTagInfo : public guTagInfo
     ~guApeTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
     virtual bool        CanHandleLyrics( void );
     virtual wxString    GetLyrics( void );
     virtual bool        SetLyrics( const wxString &lyrics );
@@ -236,7 +237,7 @@ class guMpcTagInfo : public guTagInfo
     ~guMpcTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
@@ -254,7 +255,7 @@ class guWavPackTagInfo : public guTagInfo
     ~guWavPackTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
@@ -275,7 +276,7 @@ class guTrueAudioTagInfo : public guTagInfo
     ~guTrueAudioTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );
@@ -296,7 +297,7 @@ class guASFTagInfo : public guTagInfo
     ~guASFTagInfo();
 
     virtual bool        Read( void );
-    virtual bool        Write( void );
+    virtual bool        Write( const int changedflag );
 
     virtual bool        CanHandleImages( void );
     virtual wxImage *   GetImage( void );

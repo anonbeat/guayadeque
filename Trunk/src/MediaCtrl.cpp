@@ -2636,7 +2636,7 @@ bool guMediaRecordCtrl::SaveTagInfo( const wxString &filename, const guTrack * T
             TagInfo->m_GenreName = Track->m_GenreName;
             TagInfo->m_TrackName = Track->m_SongName;
 
-            if( !( RetVal = TagInfo->Write() ) )
+            if( !( RetVal = TagInfo->Write( guTRACK_CHANGED_DATA_TAGS ) ) )
             {
                 guLogError( wxT( "Could not set tags to the record track" ) );
             }
