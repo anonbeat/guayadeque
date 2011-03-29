@@ -2303,6 +2303,8 @@ void guMainFrame::OnCommunity( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayerPlayListUpdateTitle( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "OnPlayerPlayListUPdateTitle..." ) );
+
     wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
     if( PaneInfo.IsOk() )
     {
@@ -4426,7 +4428,6 @@ void guMainFrame::CreateTaskBarIcon( void )
                 indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
                 indicate_server_show( m_IndicateServer );
             }
-
         }
 #else
 

@@ -795,7 +795,9 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                           DBUS_TYPE_STRING, &QueryIface,
                           DBUS_TYPE_STRING, &QueryProperty,
                           DBUS_TYPE_INVALID );
-                    //guLogMessage( wxT( "Asking for '%s' -> '%s' parameter" ), wxString( QueryIface, wxConvUTF8 ).c_str(), wxString( QueryProperty, wxConvUTF8 ).c_str() );
+
+//                    guLogMessage( wxT( "QIface : %s" ), wxString::FromAscii( QueryIface ).c_str() );
+//                    guLogMessage( wxT( "QProp. : %s" ), wxString::FromAscii( QueryProperty ).c_str() );
 
                     if( dbus_error_is_set( &error ) )
                     {
@@ -1085,6 +1087,18 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 {
                                 }
                             }
+                            else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Playlists" ) )
+                            {
+                                if( !strcmp( QueryProperty, "PlaylistCount" ) )
+                                {
+                                }
+                                else if( !strcmp( QueryProperty, "Orderings" ) )
+                                {
+                                }
+                                else if( !strcmp( QueryProperty, "ActivePlaylist" ) )
+                                {
+                                }
+                            }
                         }
                         else if( !strcmp( Member, "Set" ) )
                         {
@@ -1153,18 +1167,18 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 }
             }
 
-            if( RetVal == DBUS_HANDLER_RESULT_NOT_YET_HANDLED )
-            {
-                const char *    Dest = msg->GetDestination();
-
-                guLogMessage( wxT( "==MPRIS2========================" ) );
-                guLogMessage( wxT( "Type   : %i" ), Type );
-                guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
-                guLogMessage( wxT( "Dest   : %s" ), wxString::FromAscii( Dest ).c_str() );
-                guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
-                guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
-                guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
-            }
+//            if( RetVal == DBUS_HANDLER_RESULT_NOT_YET_HANDLED )
+//            {
+//                const char *    Dest = msg->GetDestination();
+//
+//                guLogMessage( wxT( "==MPRIS2========================" ) );
+//                guLogMessage( wxT( "Type   : %i" ), Type );
+//                guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
+//                guLogMessage( wxT( "Dest   : %s" ), wxString::FromAscii( Dest ).c_str() );
+//                guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
+//                guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
+//                guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
+//            }
         }
         else if( !strcmp( Interface, GUAYADEQUE_MPRIS2_INTERFACE_ROOT ) )
         {
@@ -1368,9 +1382,13 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
     return RetVal;
 }
 
+#define INDICATORS_SOUND_RETRY_COUNT    10
+#define INDICATORS_SOUND_WAIT_TIME      50
+
 // -------------------------------------------------------------------------------- //
 int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )
 {
+    int RetryCnt = 0;
     guDBusMethodCall * Msg = new guDBusMethodCall( "com.canonical.indicators.sound",
                                                "/com/canonical/indicators/sound/service",
                                                "com.canonical.indicators.sound",
@@ -1381,28 +1399,39 @@ int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )
 
     dbus_message_append_args( Msg->GetMessage(), DBUS_TYPE_STRING, &desktopname, DBUS_TYPE_BOOLEAN, &blacklist, DBUS_TYPE_INVALID );
 
-    guDBusMessage * Reply = SendWithReplyAndBlock( Msg );
-    if( Reply )
-    {
-        DBusError error;
-        dbus_error_init( &error );
-
-        dbus_bool_t Blacklisted = false;
-
-        dbus_message_get_args( Reply->GetMessage(), &error, DBUS_TYPE_BOOLEAN, &Blacklisted, DBUS_TYPE_INVALID );
-
-        if( dbus_error_is_set( &error ) )
+    guDBusMessage * Reply = NULL;
+    do {
+        Reply = SendWithReplyAndBlock( Msg );
+        if( Reply )
         {
-            guLogMessage( wxT( "Indicator Sound parameter error : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
-            dbus_error_free( &error );
+            DBusError error;
+            dbus_error_init( &error );
+
+            dbus_bool_t Blacklisted = false;
+
+            dbus_message_get_args( Reply->GetMessage(), &error, DBUS_TYPE_BOOLEAN, &Blacklisted, DBUS_TYPE_INVALID );
+
+            if( dbus_error_is_set( &error ) )
+            {
+                guLogMessage( wxT( "Indicator Sound parameter error : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                dbus_error_free( &error );
+            }
+            else
+            {
+                RetVal = Blacklisted;
+            }
+
+            delete Reply;
         }
         else
         {
-            RetVal = Blacklisted;
+            if( RetryCnt++ > INDICATORS_SOUND_RETRY_COUNT )
+                break;
+
+            wxMilliSleep( INDICATORS_SOUND_WAIT_TIME );
         }
 
-        delete Reply;
-    }
+    } while( !Reply );
 
     delete Msg;
 
@@ -1412,6 +1441,7 @@ int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )
 // -------------------------------------------------------------------------------- //
 int guMPRIS2::Indicators_Sound_IsBlackListed( void )
 {
+    int RetryCnt = 0;
     int RetVal = wxNOT_FOUND;
 
     guDBusMethodCall * Msg = new guDBusMethodCall( "com.canonical.indicators.sound",
@@ -1423,32 +1453,39 @@ int guMPRIS2::Indicators_Sound_IsBlackListed( void )
 
     dbus_message_append_args( Msg->GetMessage(), DBUS_TYPE_STRING, &desktopname, DBUS_TYPE_INVALID );
 
-    guDBusMessage * Reply = SendWithReplyAndBlock( Msg );
-    if( Reply )
-    {
-        DBusError error;
-        dbus_error_init( &error );
-
-        dbus_bool_t Blacklisted = false;
-
-        dbus_message_get_args( Reply->GetMessage(), &error, DBUS_TYPE_BOOLEAN, &Blacklisted, DBUS_TYPE_INVALID );
-
-        if( dbus_error_is_set( &error ) )
+    guDBusMessage * Reply = NULL;
+    do {
+        Reply = SendWithReplyAndBlock( Msg );
+        if( Reply )
         {
-            guLogMessage( wxT( "Indicator Sound parameter error : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
-            dbus_error_free( &error );
+            DBusError error;
+            dbus_error_init( &error );
+
+            dbus_bool_t Blacklisted = false;
+
+            dbus_message_get_args( Reply->GetMessage(), &error, DBUS_TYPE_BOOLEAN, &Blacklisted, DBUS_TYPE_INVALID );
+
+            if( dbus_error_is_set( &error ) )
+            {
+                guLogMessage( wxT( "Indicator Sound parameter error : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                dbus_error_free( &error );
+            }
+            else
+            {
+                RetVal = Blacklisted;
+            }
+
+            delete Reply;
         }
         else
         {
-            RetVal = Blacklisted;
+            if( RetryCnt++ > INDICATORS_SOUND_RETRY_COUNT )
+                break;
+
+            wxMilliSleep( INDICATORS_SOUND_WAIT_TIME );
         }
 
-        delete Reply;
-    }
-    else
-    {
-        guLogMessage( wxT( "Indicator_Sound_IsBlackListed without reply" ) );
-    }
+    } while( !Reply );
 
     delete Msg;
 
