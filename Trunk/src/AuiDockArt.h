@@ -31,13 +31,16 @@
 class guAuiDockArt : public wxAuiDefaultDockArt
 {
   protected :
-    wxBitmap m_CloseNormal;
-    wxBitmap m_CloseHighLight;
+    wxBitmap        m_CloseNormal;
+    wxBitmap        m_CloseHighLight;
+
+    void            DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool active );
 
   public :
     guAuiDockArt();
 
-    virtual void DrawPaneButton( wxDC &dc, wxWindow * window, int button, int button_state,
+    virtual void    DrawCaption( wxDC &dc, wxWindow * window, const wxString &text, const wxRect &rect, wxAuiPaneInfo &pane );
+    virtual void    DrawPaneButton( wxDC &dc, wxWindow * window, int button, int button_state,
                   const wxRect &rect, wxAuiPaneInfo &pane );
 
 };
