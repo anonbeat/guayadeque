@@ -562,10 +562,8 @@ void guPrefDialog::BuildGeneralPage( void )
     guMPRIS2 * MPRIS2 = guMPRIS2::Get();
     bool IsSoundMenuAvailable = MPRIS2->Indicators_Sound_Available();
 
-    guLogMessage( wxT( "SoundIndicatorIsBlackListed: %i ind %i" ), IsSoundMenuAvailable, WithIndicateSupport );
     if( WithIndicateSupport || IsSoundMenuAvailable )
     {
-        //bool SoundMenuEnabled = m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
         m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Integrate into SoundMenu" ), wxDefaultPosition, wxDefaultSize, 0 );
         m_SoundMenuChkBox->SetValue( m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) );
         m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );

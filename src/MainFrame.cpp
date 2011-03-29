@@ -4433,8 +4433,8 @@ void guMainFrame::CreateTaskBarIcon( void )
 
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
-            SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
             guLogMessage( wxT( "Indicator Sound available..." ) );
+            SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
             int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
             guLogMessage( wxT( "IsBlackListed: %i" ), IsBlacklisted );
             if( IsBlacklisted != wxNOT_FOUND )
