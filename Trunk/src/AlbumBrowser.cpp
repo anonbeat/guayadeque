@@ -1324,6 +1324,11 @@ void guAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
                     ReloadItems();
                     RefreshAll();
 
+                    if( CoverEditor->EmbedToFiles() )
+                    {
+                        OnAlbumEmbedCoverClicked( albumid );
+                    }
+
                     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
                     evt.SetInt( albumid );
                     evt.SetClientData( NULL );
