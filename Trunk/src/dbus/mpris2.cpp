@@ -1388,6 +1388,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 // -------------------------------------------------------------------------------- //
 int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )
 {
+    guLogMessage( wxT( "Indicators_Sound_BlacklistMediaPlayer( %i )" ), blacklist );
     int RetryCnt = 0;
     guDBusMethodCall * Msg = new guDBusMethodCall( "com.canonical.indicators.sound",
                                                "/com/canonical/indicators/sound/service",
@@ -1435,12 +1436,14 @@ int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )
 
     delete Msg;
 
+    guLogMessage( wxT( "Indicators_Sound_BlacklistMediaPlayer => %i" ), RetVal );
     return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
 int guMPRIS2::Indicators_Sound_IsBlackListed( void )
 {
+    guLogMessage( wxT( "Indicators_Sound_IsBlacklisted()" ) );
     int RetryCnt = 0;
     int RetVal = wxNOT_FOUND;
 
@@ -1489,13 +1492,16 @@ int guMPRIS2::Indicators_Sound_IsBlackListed( void )
 
     delete Msg;
 
+    guLogMessage( wxT( "Indicators_Sound_IsBlacklisted => %i" ), RetVal );
     return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMPRIS2::Indicators_Sound_Available( void )
 {
-    return HasOwner( "com.canonical.indicators.sound" );
+    bool RetVal = HasOwner( "com.canonical.indicators.sound" );
+    guLogMessage( wxT( "Indicators_Sound_Available => %i" ), RetVal );
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
