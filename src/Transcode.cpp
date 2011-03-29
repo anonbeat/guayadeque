@@ -487,7 +487,7 @@ void guTranscodeThread::Stop( void )
             OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
             OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
             OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
-            OutTagInfo->Write();
+            OutTagInfo->Write( guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_LABELS );
 
             delete OutTagInfo;
         }

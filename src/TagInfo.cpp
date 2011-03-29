@@ -673,9 +673,9 @@ bool guTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagInfo::Write( void )
+bool guTagInfo::Write( const int changedflag )
 {
-    if( m_Tag )
+    if( m_Tag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_Tag->setTitle( wxStringToTString( m_TrackName ) );
         m_Tag->setArtist( wxStringToTString( m_ArtistName ) );
@@ -849,42 +849,48 @@ void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const 
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMp3TagInfo::Write( void )
+bool guMp3TagInfo::Write( const int changedflag )
 {
     if( m_TagId3v2 )
     {
-        TagLib::ID3v2::TextIdentificationFrame * frame;
-        m_TagId3v2->removeFrames( "TPOS" );
-        frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
-        frame->setText( wxStringToTString( m_Disk ) );
-        m_TagId3v2->addFrame( frame );
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            TagLib::ID3v2::TextIdentificationFrame * frame;
+            m_TagId3v2->removeFrames( "TPOS" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
+            frame->setText( wxStringToTString( m_Disk ) );
+            m_TagId3v2->addFrame( frame );
 
-        m_TagId3v2->removeFrames( "TCOM" );
-        frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
-        frame->setText( wxStringToTString( m_Composer ) );
-        m_TagId3v2->addFrame( frame );
+            m_TagId3v2->removeFrames( "TCOM" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
+            frame->setText( wxStringToTString( m_Composer ) );
+            m_TagId3v2->addFrame( frame );
 
-        m_TagId3v2->removeFrames( "TPE2" );
-        frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
-        frame->setText( wxStringToTString( m_AlbumArtist ) );
-        m_TagId3v2->addFrame( frame );
+            m_TagId3v2->removeFrames( "TPE2" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
+            frame->setText( wxStringToTString( m_AlbumArtist ) );
+            m_TagId3v2->addFrame( frame );
 
-        m_TagId3v2->removeFrames( "TCMP" );
-        frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
-        frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-        m_TagId3v2->addFrame( frame );
+            m_TagId3v2->removeFrames( "TCMP" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
+            frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+            m_TagId3v2->addFrame( frame );
 
-        // I have found several TRCK fields in the mp3s
-        m_TagId3v2->removeFrames( "TRCK" );
-        m_TagId3v2->setTrack( m_Track );
+            // I have found several TRCK fields in the mp3s
+            m_TagId3v2->removeFrames( "TRCK" );
+            m_TagId3v2->setTrack( m_Track );
+        }
 
-        // The Labels
-        ID3v2_CheckLabelFrame( m_TagId3v2, "guARLABELS", m_ArtistLabelsStr );
-        ID3v2_CheckLabelFrame( m_TagId3v2, "guALLABELS", m_AlbumLabelsStr );
-        ID3v2_CheckLabelFrame( m_TagId3v2, "guTRLABELS", m_TrackLabelsStr );
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            ID3v2_CheckLabelFrame( m_TagId3v2, "guARLABELS", m_ArtistLabelsStr );
+            ID3v2_CheckLabelFrame( m_TagId3v2, "guALLABELS", m_AlbumLabelsStr );
+            ID3v2_CheckLabelFrame( m_TagId3v2, "guTRLABELS", m_TrackLabelsStr );
+        }
     }
 
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -913,7 +919,7 @@ bool guMp3TagInfo::SetImage( const wxImage * image )
     else
         return false;
 
-    return m_TagFile->save();
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -938,7 +944,7 @@ bool guMp3TagInfo::SetLyrics( const wxString &lyrics )
 	if( m_TagId3v2 )
     {
         SetID3v2Lyrics( m_TagId3v2, lyrics );
-        return m_TagFile->save();
+        return true;
     }
     return false;
 }
@@ -1002,16 +1008,16 @@ bool guFlacTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guFlacTagInfo::Write( void )
+bool guFlacTagInfo::Write( const int changedflag )
 {
-    if( m_XiphComment )
+    if( m_XiphComment && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
         m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
         m_XiphComment->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
     }
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1175,7 +1181,7 @@ wxString guFlacTagInfo::GetLyrics( void )
 // -------------------------------------------------------------------------------- //
 bool guFlacTagInfo::SetLyrics( const wxString &lyrics )
 {
-    return SetXiphCommentLyrics( m_XiphComment, lyrics ) && m_TagFile->save();
+    return SetXiphCommentLyrics( m_XiphComment, lyrics );
 }
 
 
@@ -1237,16 +1243,16 @@ bool guOggTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guOggTagInfo::Write( void )
+bool guOggTagInfo::Write( const int changedflag )
 {
-    if( m_XiphComment )
+    if( m_XiphComment && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
         m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
         m_XiphComment->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
     }
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1264,7 +1270,7 @@ wxImage * guOggTagInfo::GetImage( void )
 // -------------------------------------------------------------------------------- //
 bool guOggTagInfo::SetImage( const wxImage * image )
 {
-    return SetXiphCommentCoverArt( m_XiphComment, image ) && m_TagFile->save();
+    return SetXiphCommentCoverArt( m_XiphComment, image );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1282,7 +1288,7 @@ wxString guOggTagInfo::GetLyrics( void )
 // -------------------------------------------------------------------------------- //
 bool guOggTagInfo::SetLyrics( const wxString &lyrics )
 {
-    return SetXiphCommentLyrics( m_XiphComment, lyrics ) && m_TagFile->save();
+    return SetXiphCommentLyrics( m_XiphComment, lyrics );
 }
 
 
@@ -1369,9 +1375,9 @@ bool guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMp4TagInfo::Write( void )
+bool guMp4TagInfo::Write( const int changedflag )
 {
-    if( m_Mp4Tag )
+    if( m_Mp4Tag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_Mp4Tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
         m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
@@ -1381,7 +1387,7 @@ bool guMp4TagInfo::Write( void )
         m_Mp4Tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
         m_Mp4Tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
     }
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 #ifdef TAGLIB_WITH_MP4_COVERS
@@ -1400,7 +1406,7 @@ wxImage * guMp4TagInfo::GetImage( void )
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::SetImage( const wxImage * image )
 {
-    return SetMp4Image( m_Mp4Tag, image ) && m_Mp4Tag->save();
+    return SetMp4Image( m_Mp4Tag, image );
 }
 #endif
 
@@ -1420,7 +1426,7 @@ wxString guMp4TagInfo::GetLyrics( void )
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::SetLyrics( const wxString &lyrics )
 {
-    return SetMp4Lyrics( ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag(), lyrics ) && m_TagFile->save();
+    return SetMp4Lyrics( ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag(), lyrics );
 }
 
 
@@ -1481,16 +1487,16 @@ bool guMpcTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMpcTagInfo::Write( void )
+bool guMpcTagInfo::Write( const int changedflag )
 {
-    if( m_ApeTag )
+    if( m_ApeTag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_ApeTag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
         m_ApeTag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_ApeTag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
         m_ApeTag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
     }
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1508,7 +1514,8 @@ wxImage * guMpcTagInfo::GetImage( void )
 // -------------------------------------------------------------------------------- //
 bool guMpcTagInfo::SetImage( const wxImage * image )
 {
-    return m_ApeTag && SetApeImage( m_ApeTag, image ) && Write();
+    //return m_ApeTag && SetApeImage( m_ApeTag, image ) && Write();
+    return m_ApeTag && SetApeImage( m_ApeTag, image );
 }
 
 
@@ -1569,16 +1576,16 @@ bool guWavPackTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guWavPackTagInfo::Write( void )
+bool guWavPackTagInfo::Write( const int changedflag )
 {
-    if( m_ApeTag )
+    if( m_ApeTag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_ApeTag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
         m_ApeTag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
         m_ApeTag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
         m_ApeTag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
     }
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1596,7 +1603,7 @@ wxImage * guWavPackTagInfo::GetImage( void )
 // -------------------------------------------------------------------------------- //
 bool guWavPackTagInfo::SetImage( const wxImage * image )
 {
-    return m_ApeTag && SetApeImage( m_ApeTag, image ) && Write();
+    return m_ApeTag && SetApeImage( m_ApeTag, image );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1614,7 +1621,7 @@ wxString guWavPackTagInfo::GetLyrics( void )
 // -------------------------------------------------------------------------------- //
 bool guWavPackTagInfo::SetLyrics( const wxString &lyrics )
 {
-    return SetApeLyrics( m_ApeTag, lyrics ) && m_TagFile->save();
+    return SetApeLyrics( m_ApeTag, lyrics );
 }
 
 
@@ -1671,10 +1678,10 @@ bool guApeTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guApeTagInfo::Write( void )
+bool guApeTagInfo::Write( const int changedflag )
 {
     guApeTag * Tag = m_ApeFile.GetApeTag();
-    if( Tag )
+    if( Tag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         Tag->SetTitle( m_TrackName );
         Tag->SetArtist( m_ArtistName );
@@ -1780,9 +1787,9 @@ bool guTrueAudioTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTrueAudioTagInfo::Write( void )
+bool guTrueAudioTagInfo::Write( const int changedflag )
 {
-    if( m_TagId3v2 )
+    if( m_TagId3v2 && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         TagLib::ID3v2::TextIdentificationFrame * frame;
         m_TagId3v2->removeFrames( "TPOS" );
@@ -1811,7 +1818,7 @@ bool guTrueAudioTagInfo::Write( void )
 
     }
 
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1840,7 +1847,7 @@ bool guTrueAudioTagInfo::SetImage( const wxImage * image )
     else
         return false;
 
-    return m_TagFile->save();
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1865,7 +1872,7 @@ bool guTrueAudioTagInfo::SetLyrics( const wxString &lyrics )
 	if( m_TagId3v2 )
     {
         SetID3v2Lyrics( m_TagId3v2, lyrics );
-        return m_TagFile->save();
+        return true;
     }
     return false;
 }
@@ -1925,9 +1932,9 @@ bool guASFTagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guASFTagInfo::Write( void )
+bool guASFTagInfo::Write( const int changedflag )
 {
-    if( m_ASFTag )
+    if( m_ASFTag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
     {
         m_ASFTag->removeItem( "WM/PartOfSet" );
         m_ASFTag->setAttribute( "WM/PartOfSet", wxStringToTString( m_Disk ) );
@@ -1939,7 +1946,7 @@ bool guASFTagInfo::Write( void )
         m_ASFTag->setAttribute( "WM/AlbumArtist", wxStringToTString( m_AlbumArtist ) );
     }
 
-    return guTagInfo::Write();
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1968,7 +1975,7 @@ bool guASFTagInfo::SetImage( const wxImage * image )
     else
         return false;
 
-    return m_TagFile->save();
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1997,7 +2004,7 @@ bool guASFTagInfo::SetLyrics( const wxString &lyrics )
     {
         m_ASFTag->removeItem( "WM/Lyrics" );
         m_ASFTag->setAttribute( "WM/Lyrics", wxStringToTString( lyrics ) );
-        return m_TagFile->save();
+        return true;
     }
     return false;
 }
@@ -2032,7 +2039,7 @@ bool guTagSetPicture( const wxString &filename, wxImage * picture )
     {
         if( TagInfo->CanHandleImages() )
         {
-            RetVal = TagInfo->SetImage( picture );
+            RetVal = TagInfo->SetImage( picture ) && TagInfo->Write( guTRACK_CHANGED_DATA_IMAGES );
         }
         delete TagInfo;
     }
@@ -2075,7 +2082,7 @@ bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
     {
         if( TagInfo->CanHandleLyrics() )
         {
-            RetVal = TagInfo->SetLyrics( lyrics );
+            RetVal = TagInfo->SetLyrics( lyrics ) && TagInfo->Write( guTRACK_CHANGED_DATA_LYRICS );
         }
         delete TagInfo;
     }
@@ -2133,7 +2140,7 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
                 TagInfo->SetImage( images[ Index ] );
             }
 
-            TagInfo->Write();
+            TagInfo->Write( ChangedFlag );
 
             delete TagInfo;
         }
