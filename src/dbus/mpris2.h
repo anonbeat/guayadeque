@@ -44,7 +44,7 @@ class guMPRIS2 : public guDBusClient
     void                        OnTrackListChange( void );
 
     bool                        Indicators_Sound_Available( void );
-    int                         Indicators_Sound_BlacklistMediaPlayer( const bool blacklist = true );
+    int                         Indicators_Sound_BlacklistMediaPlayer( const dbus_bool_t blacklist = true );
     int                         Indicators_Sound_IsBlackListed( void );
 
     static void                 Set( guMPRIS2 * object ) { m_MPRIS2 = object; }
