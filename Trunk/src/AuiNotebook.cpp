@@ -68,6 +68,42 @@ wxAuiTabArt * guAuiTabArt::Clone()
 }
 
 // -------------------------------------------------------------------------------- //
+void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
+{
+    // draw background
+   wxColor top_color      = m_base_colour;
+   wxColor bottom_color   = wxAuiStepColour( m_base_colour, 140 );
+   wxRect r;
+
+   if( m_flags & wxAUI_NB_BOTTOM )
+       r = wxRect( rect.x, rect.y, rect.width + 2, rect.height );
+   // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
+   // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
+   else //for wxAUI_NB_TOP
+       r = wxRect(rect.x, rect.y, rect.width+2, rect.height-3);
+
+    dc.GradientFillLinear( r, top_color, bottom_color, wxNORTH );
+
+   // draw base lines
+   dc.SetPen( m_border_pen );
+   int y = rect.GetHeight();
+   int w = rect.GetWidth();
+
+   if( m_flags & wxAUI_NB_BOTTOM )
+   {
+       dc.SetBrush( wxBrush( bottom_color ) );
+       dc.DrawRectangle( -1, 0, w + 2, 4 );
+   }
+   // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
+   // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
+   else //for wxAUI_NB_TOP
+   {
+       dc.SetBrush( m_base_colour_brush );
+       dc.DrawRectangle( -1, y - 4, w + 2, 4 );
+   }
+}
+
+// -------------------------------------------------------------------------------- //
 void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &page,
         const wxRect & in_rect, int close_button_state, wxRect * out_tab_rect,
         wxRect * out_button_rect, int * x_extent )

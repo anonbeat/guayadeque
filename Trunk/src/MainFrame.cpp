@@ -181,13 +181,13 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
             BaseColor );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 150 ) );
+            wxAuiStepColour( BaseColor, 140 ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
             BaseColor );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 150 ) );
+            wxAuiStepColour( BaseColor, 140 ) );
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );

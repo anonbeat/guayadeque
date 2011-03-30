@@ -168,14 +168,15 @@ class guAuiTabArt : public wxAuiDefaultTabArt
     virtual ~guAuiTabArt();
 
     wxAuiTabArt * Clone();
-    virtual void DrawTab(wxDC& dc,
-                         wxWindow* wnd,
-                         const wxAuiNotebookPage& pane,
-                         const wxRect& in_rect,
+    virtual void DrawTab( wxDC &dc,
+                         wxWindow * wnd,
+                         const wxAuiNotebookPage &pane,
+                         const wxRect &in_rect,
                          int close_button_state,
-                         wxRect* out_tab_rect,
-                         wxRect* out_button_rect,
-                         int* x_extent);
+                         wxRect * out_tab_rect,
+                         wxRect * out_button_rect,
+                         int * x_extent );
+    virtual void DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect & rect );
 
 };
 
