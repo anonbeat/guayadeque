@@ -392,39 +392,6 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_IndicateServer = NULL;
 #endif
 
-//    if( Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "General" ) ) )
-//    {
-//#ifdef WITH_LIBINDICATE_SUPPORT
-//        if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) ) )
-//        {
-//            m_IndicateServer = indicate_server_ref_default();
-//            indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
-//            indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
-//            indicate_server_show( m_IndicateServer );
-//        }
-//        else
-//#else
-//        int IsBacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
-//        if( IsBacklisted != wxNOT_FOUND )
-//        {
-//            bool SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
-//            if( SoundMenuEnabled != IsBacklisted )
-//            {
-//                m_MPRIS2->Indicators_Sound_BlacklistMediaPlayer( !SoundMenuEnabled );
-//            }
-//
-//            if( !SoundMenuEnabled )
-//            {
-//                CreateTaskBarIcon();
-//            }
-//        }
-//        else
-//#endif
-//        {
-//            CreateTaskBarIcon();
-//        }
-//    }
-
     m_DBusServer = new guDBusServer( NULL );
     guDBusServer::Set( m_DBusServer );
     if( !m_DBusServer )
@@ -4433,10 +4400,8 @@ void guMainFrame::CreateTaskBarIcon( void )
 
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
-            guLogMessage( wxT( "Indicator Sound available..." ) );
             SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
             int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
-            guLogMessage( wxT( "IsBlackListed: %i" ), IsBlacklisted );
             if( IsBlacklisted != wxNOT_FOUND )
             {
                 if( SoundMenuEnabled == bool( IsBlacklisted ) )
@@ -4479,13 +4444,13 @@ void guMainFrame::CreateTaskBarIcon( void )
         {
             indicate_server_hide( m_IndicateServer );
             g_object_unref( m_IndicateServer );
+            m_IndicateServer = NULL;
         }
 #else
 
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
             int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
-            guLogMessage( wxT( "IsBlackListed: %i" ), IsBlacklisted );
             if( IsBlacklisted != wxNOT_FOUND )
             {
                 if( !IsBlacklisted )
