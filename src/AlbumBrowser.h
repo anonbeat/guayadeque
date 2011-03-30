@@ -170,6 +170,9 @@ class guAlbumBrowser : public wxPanel
     wxTimer                         m_TextChangedTimer;
     wxArrayString                   m_TextSearchFilter;
 
+    bool                            m_InstantSearchEnabled;
+    bool                            m_EnterSelectSearchEnabled;
+
     void                            OnChangedSize( wxSizeEvent &event );
     void                            OnChangingPosition( wxScrollEvent& event );
     void                            OnRefreshTimer( wxTimerEvent &event );
@@ -200,6 +203,8 @@ class guAlbumBrowser : public wxPanel
     void                            OnGoToSearch( wxCommandEvent &event );
     void                            OnConfigUpdated( wxCommandEvent &event );
     void                            CreateAcceleratorTable( void );
+
+    bool                            DoTextSearch( void );
 
   public :
     guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );

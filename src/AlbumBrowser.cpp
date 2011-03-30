@@ -686,6 +686,8 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPan
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
+    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
     int FilterSelected = Config->ReadNum( wxT( "Filter" ), 0, wxT( "AlbumBrowser" ) );
     m_DynFilterArray = Config->ReadAStr( wxT( "Filter"), wxEmptyString, wxT( "AlbumBrowserFilters") );
 
@@ -852,6 +854,12 @@ void guAlbumBrowser::OnConfigUpdated( wxCommandEvent &event )
     {
         CreateAcceleratorTable();
     }
+    if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -938,6 +946,10 @@ void guAlbumBrowser::OnSearchTextChanged( wxCommandEvent& event )
 {
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
+
+    if( !m_InstantSearchEnabled )
+        return;
+
     m_TextChangedTimer.Start( guALBUMBROWSER_TIMER_TEXTSEARCH_DELAY, wxTIMER_ONE_SHOT );
 }
 
@@ -945,11 +957,20 @@ void guAlbumBrowser::OnSearchTextChanged( wxCommandEvent& event )
 void guAlbumBrowser::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     m_SearchTextCtrl->Clear();
+
+    if( !m_InstantSearchEnabled )
+        DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnSearchSelected( wxCommandEvent& event )
 {
+    if( m_TextChangedTimer.IsRunning() )
+        m_TextChangedTimer.Stop();
+
+    if( !DoTextSearch() || !m_EnterSelectSearchEnabled || !m_InstantSearchEnabled )
+        return;
+
     guTrackArray Tracks;
     wxArrayInt Selections;
     int Index;
@@ -978,7 +999,7 @@ void guAlbumBrowser::OnSearchSelected( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::OnTextChangedTimer( wxTimerEvent &event )
+bool guAlbumBrowser::DoTextSearch( void )
 {
     wxString SearchString = m_SearchTextCtrl->GetLineText( 0 );
     if( !SearchString.IsEmpty() )
@@ -995,6 +1016,7 @@ void guAlbumBrowser::OnTextChangedTimer( wxTimerEvent &event )
 
             m_SearchTextCtrl->ShowCancelButton( true );
         }
+        return true;
     }
     else
     {
@@ -1008,6 +1030,13 @@ void guAlbumBrowser::OnTextChangedTimer( wxTimerEvent &event )
 
         m_SearchTextCtrl->ShowCancelButton( false );
     }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnTextChangedTimer( wxTimerEvent &event )
+{
+    DoTextSearch();
 }
 
 

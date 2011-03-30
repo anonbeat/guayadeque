@@ -153,6 +153,9 @@ class guPlayListPanel : public guAuiManagedPanel
     wxTimer             m_TextChangedTimer;
     wxString            m_ExportLastFolder;
 
+    bool                m_InstantSearchEnabled;
+    bool                m_EnterSelectSearchEnabled;
+
     void                OnPLNamesSelected( wxTreeEvent &event );
     void                OnPLNamesActivated( wxTreeEvent &event );
     void                OnPLNamesPlay( wxCommandEvent &event );
@@ -190,7 +193,7 @@ class guPlayListPanel : public guAuiManagedPanel
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
 
     void                OnSearchActivated( wxCommandEvent &event );
-    //void                OnSearchSelected( wxCommandEvent &event );
+    void                OnSearchSelected( wxCommandEvent &event );
     void                OnSearchCancelled( wxCommandEvent &event );
 
     void                OnTextChangedTimer( wxTimerEvent &event );
@@ -204,8 +207,11 @@ class guPlayListPanel : public guAuiManagedPanel
     virtual void        SendPlayListUpdatedEvent( void );
 
     void                OnGoToSearch( wxCommandEvent &event );
+    bool                DoTextSearch( void );
 
     void                OnSetAllowDenyFilter( wxCommandEvent &event );
+
+    void                OnConfigUpdated( wxCommandEvent &event );
 
   public :
     guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );

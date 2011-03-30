@@ -66,6 +66,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 	wxBoxSizer *        SongListSizer;
 
     guConfig *          Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     m_Db = db;
     m_PlayerPanel = NewPlayerPanel;
@@ -455,6 +456,8 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
     Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnSongDeleteDrive ), NULL, this );
 
     Connect( ID_LIBRARY_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLibPanel::OnGoToSearch ), NULL, this );
+
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLibPanel::OnConfigUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -462,11 +465,10 @@ guLibPanel::~guLibPanel()
 {
     // Save the Splitter positions into the main config
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        Config->WriteNum( m_ConfigPrefixVarName + wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
-        Config->WriteStr( m_ConfigPrefixVarName + wxT( "Layout" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
-    }
+    Config->UnRegisterObject( this );
+
+    Config->WriteNum( m_ConfigPrefixVarName + wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+    Config->WriteStr( m_ConfigPrefixVarName + wxT( "Layout" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
 
 	Disconnect( guPANEL_TIMER_SELECTION, wxEVT_TIMER, wxTimerEventHandler( guLibPanel::OnSelChangedTimer ), NULL, this );
 	Disconnect( guPANEL_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guLibPanel::OnTextChangedTimer ), NULL, this );
@@ -629,6 +631,18 @@ void guLibPanel::InitPanelData( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::ReloadControls( void )
 {
     guLogMessage( wxT( "ReloadControls...%08X" ), m_VisiblePanels );
@@ -649,10 +663,6 @@ void guLibPanel::ReloadControls( void )
 
 // -------------------------------------------------------------------------------- //
 // TextSearch Events
-// -------------------------------------------------------------------------------- //
-//    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
-//    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
-
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 {
@@ -675,6 +685,9 @@ void guLibPanel::OnSearchActivated( wxCommandEvent& event )
 void guLibPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     m_InputTextCtrl->Clear();
+
+    if( !m_InstantSearchEnabled )
+        DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //

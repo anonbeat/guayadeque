@@ -125,6 +125,8 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_SoundMenuChkBox;
     wxCheckBox *                m_IgnoreLayoutsChkBox;
     wxCheckBox *                m_DropFilesChkBox;
+    wxCheckBox *                m_InstantSearchChkBox;
+    wxCheckBox *                m_EnterSearchChkBox;
     wxCheckBox *                m_EnqueueChkBox;
     wxChoice *                  m_AlYearOrderChoice;
     wxCheckBox *                m_SavePlayListChkBox;
@@ -342,6 +344,7 @@ class guPrefDialog : public wxDialog
     void OnPageChanged( wxCommandEvent &event );
     void OnActivateTaskBarIcon( wxCommandEvent& event );
     void OnActivateSoundMenuIntegration( wxCommandEvent& event );
+    void OnActivateInstantSearch( wxCommandEvent& event );
     void OnRndPlayClicked( wxCommandEvent& event );
     void OnDelPlayedTracksChecked( wxCommandEvent& event );
     void OnPathsListBoxSelected( wxCommandEvent& event );

@@ -1383,7 +1383,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 }
 
 #define INDICATORS_SOUND_RETRY_COUNT    10
-#define INDICATORS_SOUND_WAIT_TIME      50
+#define INDICATORS_SOUND_WAIT_TIME      100
 
 // -------------------------------------------------------------------------------- //
 int guMPRIS2::Indicators_Sound_BlacklistMediaPlayer( const bool blacklist )

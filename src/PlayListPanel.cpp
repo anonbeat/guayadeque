@@ -577,8 +577,11 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     m_ExportLastFolder = wxGetHomeDir();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     m_VisiblePanels = Config->ReadNum( wxT( "PLVisiblePanels" ), guPANEL_PLAYLIST_VISIBLE_DEFAULT, wxT( "Positions" ) );
+    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
 
     InitPanelData();
 
@@ -691,7 +694,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbumArtist ), NULL, this );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ), NULL, this );
 
-    //m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
+    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPlayListPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guPlayListPanel::OnSearchCancelled ), NULL, this );
 
@@ -699,6 +702,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 
     Connect( ID_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnGoToSearch ), NULL, this );
 
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayListPanel::OnConfigUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -706,11 +710,10 @@ guPlayListPanel::~guPlayListPanel()
 {
     // Save the Splitter positions into the main config
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        Config->WriteNum( wxT( "PLVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
-        Config->WriteStr( wxT( "PlayLists" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
-    }
+    Config->UnRegisterObject( this );
+
+    Config->WriteNum( wxT( "PLVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+    Config->WriteStr( wxT( "PlayLists" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
 
 	Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guPlayListPanel::OnPLNamesSelected ), NULL, this );
 	Disconnect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guPlayListPanel::OnPLNamesActivated ), NULL, this );
@@ -751,7 +754,7 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbumArtist ), NULL, this );
     Disconnect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ), NULL, this );
 
-    //m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
+    m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guPlayListPanel::OnSearchSelected ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPlayListPanel::OnSearchActivated ), NULL, this );
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guPlayListPanel::OnSearchCancelled ), NULL, this );
 
@@ -771,10 +774,26 @@ void guPlayListPanel::InitPanelData()
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnSearchActivated( wxCommandEvent& event )
 {
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
+
+    if( !m_InstantSearchEnabled )
+        return;
+
     m_TextChangedTimer.Start( guPLAYLIST_TIMER_TEXTSEARCH_VALUE, wxTIMER_ONE_SHOT );
 }
 
@@ -782,10 +801,22 @@ void guPlayListPanel::OnSearchActivated( wxCommandEvent& event )
 void guPlayListPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     m_InputTextCtrl->Clear();
+
+    if( !m_InstantSearchEnabled )
+        DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
+void guPlayListPanel::OnSearchSelected( wxCommandEvent &event )
+{
+    if( !m_InstantSearchEnabled )
+    {
+        DoTextSearch();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayListPanel::DoTextSearch( void )
 {
     wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
     if( !SearchString.IsEmpty() )
@@ -797,6 +828,7 @@ void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
             m_NamesTreeCtrl->ReloadItems();
         }
         m_InputTextCtrl->ShowCancelButton( true );
+        return true;
     }
     else
     {
@@ -805,6 +837,13 @@ void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
         m_NamesTreeCtrl->ReloadItems();
         m_InputTextCtrl->ShowCancelButton( false );
     }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnTextChangedTimer( wxTimerEvent &event )
+{
+    DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //
