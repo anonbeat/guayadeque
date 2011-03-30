@@ -299,6 +299,8 @@ class guLibPanel : public guAuiManagedPanel
 
     virtual void            OnGoToSearch( wxCommandEvent &event );
 
+    void                    OnConfigUpdated( wxCommandEvent &event );
+
   public :
     guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
     ~guLibPanel();

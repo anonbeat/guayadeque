@@ -133,6 +133,9 @@ class guRadioPanel : public guAuiManagedPanel
     guRadioPlayListLoadThread *     m_RadioPlayListLoadThread;
     wxMutex                         m_RadioPlayListLoadThreadMutex;
 
+    bool                            m_InstantSearchEnabled;
+    bool                            m_EnterSelectSearchEnabled;
+
     void OnRadioUpdateEnd( wxCommandEvent &event );
 	void OnRadioUpdate( wxCommandEvent &Event );
 	void OnRadioUpdated( wxCommandEvent &Event );
@@ -167,12 +170,15 @@ class guRadioPanel : public guAuiManagedPanel
     void OnStationPlayListLoaded( wxCommandEvent &event );
 
     void OnGoToSearch( wxCommandEvent &event );
+    bool DoTextSearch( void );
 
   protected:
     wxSearchCtrl *          m_InputTextCtrl;
 	guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
 	guRadioLabelListBox *   m_LabelsListBox;
 	guRadioStationListBox * m_StationsListBox;
+
+    void                    OnConfigUpdated( wxCommandEvent &event );
 
   public:
 	guRadioPanel( wxWindow * parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel );

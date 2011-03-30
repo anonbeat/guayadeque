@@ -1042,10 +1042,13 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     m_RadioPlayListLoadThread = NULL;
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
+    Config->RegisterObject( this );
 
     InitPanelData();
 
     m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), guPANEL_RADIO_VISIBLE_DEFAULT, wxT( "Positions" ) );
+    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
 
 
 	wxBoxSizer * SearchSizer;
@@ -1184,17 +1187,18 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     Connect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
 
     Connect( ID_RADIO_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnGoToSearch ), NULL, this );
+
+    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioPanel::OnConfigUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guRadioPanel::~guRadioPanel()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config )
-    {
-        Config->WriteNum( wxT( "RadVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
-        Config->WriteStr( wxT( "Radio" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
-    }
+    Config->UnRegisterObject( this );
+
+    Config->WriteNum( wxT( "RadVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
+    Config->WriteStr( wxT( "Radio" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
 
     m_RadioPlayListLoadThreadMutex.Lock();
     if( m_RadioPlayListLoadThread )
@@ -1267,10 +1271,26 @@ void guRadioPanel::InitPanelData( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guRadioPanel::OnConfigUpdated( wxCommandEvent &event )
+{
+    int Flags = event.GetInt();
+    if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
 {
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
+
+    if( !m_InstantSearchEnabled )
+        return;
+
     m_TextChangedTimer.Start( guRADIO_TIMER_TEXTSEARCH_VALUE, wxTIMER_ONE_SHOT );
 }
 
@@ -1278,6 +1298,13 @@ void guRadioPanel::OnSearchActivated( wxCommandEvent& event )
 void guRadioPanel::OnSearchSelected( wxCommandEvent& event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    if( m_TextChangedTimer.IsRunning() )
+        m_TextChangedTimer.Stop();
+
+    if( !DoTextSearch() || !m_EnterSelectSearchEnabled || !m_InstantSearchEnabled )
+        return;
+
     OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
 }
 
@@ -1285,10 +1312,13 @@ void guRadioPanel::OnSearchSelected( wxCommandEvent& event )
 void guRadioPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
 {
     m_InputTextCtrl->Clear();
+
+    if( !m_InstantSearchEnabled )
+        DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
+bool guRadioPanel::DoTextSearch( void )
 {
     wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
     //guLogMessage( wxT( "Should do the search now: '%s'" ), SearchString.c_str() );
@@ -1304,6 +1334,7 @@ void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
         }
 
         m_InputTextCtrl->ShowCancelButton( true );
+        return true;
     }
     else
     {
@@ -1314,6 +1345,13 @@ void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
         m_StationsListBox->ReloadItems();
         m_InputTextCtrl->ShowCancelButton( false );
     }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnTextChangedTimer( wxTimerEvent &event )
+{
+    DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //
