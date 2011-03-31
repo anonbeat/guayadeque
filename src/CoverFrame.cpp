@@ -45,7 +45,9 @@ guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & t
     m_AutoCloseTimer->Start( 1000, wxTIMER_ONE_SHOT );
 
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guCoverFrame::CoverFrameActivate ) );
-	m_CoverBitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
+	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
+	Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
+	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
 
 	m_CoverBitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
 	Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
@@ -80,6 +82,7 @@ void guCoverFrame::OnTimer( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guCoverFrame::OnClick( wxMouseEvent &event )
 {
+    guLogMessage( wxT( "OnClick...." ) );
     Close();
 }
 
