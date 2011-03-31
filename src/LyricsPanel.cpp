@@ -714,41 +714,28 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
     }
     else
     {
-        guTagInfo * TagInfo;
-        TagInfo = guGetTagInfoHandler( files[ 0 ] );
-
-        if( TagInfo )
+        if( Track.ReadFromFile( files[ 0 ] ) )
         {
-            //guLogMessage( wxT( "Reading tags from the file..." ) );
-            if( TagInfo->Read() )
+            if( m_UpdateEnabled )
             {
-                Track.m_FileName = files[ 0 ];
-                Track.m_ArtistName = TagInfo->m_ArtistName;
-                Track.m_SongName = TagInfo->m_TrackName;
+                SetCurrentTrack( &Track );
 
-                if( m_UpdateEnabled )
-                {
-                    SetCurrentTrack( &Track );
-
-                    SetAutoUpdate( false );
-                }
-                else
-                {
-                    m_ArtistTextCtrl->SetValue( Track.m_ArtistName );
-                    m_TrackTextCtrl->SetValue( Track.m_SongName );
-                    if( m_CurrentTrack )
-                    {
-                        delete m_CurrentTrack;
-                        m_CurrentTrack = NULL;
-                    }
-                }
-                m_CurrentLyricText = wxEmptyString;
-
-                wxCommandEvent DummyEvent;
-                OnReloadBtnClick( DummyEvent );
+                SetAutoUpdate( false );
             }
+            else
+            {
+                m_ArtistTextCtrl->SetValue( Track.m_ArtistName );
+                m_TrackTextCtrl->SetValue( Track.m_SongName );
+                if( m_CurrentTrack )
+                {
+                    delete m_CurrentTrack;
+                    m_CurrentTrack = NULL;
+                }
+            }
+            m_CurrentLyricText = wxEmptyString;
 
-            delete TagInfo;
+            wxCommandEvent DummyEvent;
+            OnReloadBtnClick( DummyEvent );
         }
     }
 }
