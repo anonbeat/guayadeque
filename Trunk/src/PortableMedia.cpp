@@ -794,38 +794,16 @@ bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
         }
         else if( guIsValidAudioFile( CurFile ) )
         {
-            guTagInfo * TagInfo = guGetTagInfoHandler( CurFile );
-            if( TagInfo )
+            guTrack * CurTrack = new guTrack();
+            if( CurTrack->ReadFromFile( CurFile ) )
             {
-                guTrack * CurTrack = new guTrack();
-                if( CurTrack )
-                {
-                    CurTrack->m_Type = guTRACK_TYPE_NOTDB;
+                CurTrack->m_Type = guTRACK_TYPE_NOTDB;
 
-                    TagInfo->Read();
-
-                    CurTrack->m_FileName    = CurFile;
-                    CurTrack->m_ArtistName  = TagInfo->m_ArtistName;
-                    CurTrack->m_AlbumName   = TagInfo->m_AlbumName;
-                    CurTrack->m_SongName    = TagInfo->m_TrackName;
-                    CurTrack->m_Number      = TagInfo->m_Track;
-                    CurTrack->m_GenreName   = TagInfo->m_GenreName;
-                    CurTrack->m_Length      = TagInfo->m_Length;
-                    CurTrack->m_Year        = TagInfo->m_Year;
-                    CurTrack->m_Comments    = TagInfo->m_Comments;
-                    CurTrack->m_Composer    = TagInfo->m_Composer;
-                    CurTrack->m_Disk        = TagInfo->m_Disk;
-                    CurTrack->m_AlbumArtist = TagInfo->m_AlbumArtist;
-                    CurTrack->m_Rating      = wxNOT_FOUND;
-                    CurTrack->m_CoverId     = 0;
-
-                    CopyTracks->Add( CurTrack );
-                }
-
-                delete TagInfo;
+                CopyTracks->Add( CurTrack );
             }
             else
             {
+                delete CurTrack;
                 guLogError( wxT( "Could not read tags from file '%s'" ), CurFile.c_str() );
             }
         }

@@ -2276,36 +2276,18 @@ void guLastFMPanel::OnDropFiles( const wxArrayString &files )
     }
     else
     {
-        guTagInfo * TagInfo;
-        TagInfo = guGetTagInfoHandler( files[ 0 ] );
-
-        if( TagInfo )
+        if( Track.ReadFromFile( files[ 0 ] ) )
         {
-            //guLogMessage( wxT( "Reading tags from the file..." ) );
-            if( TagInfo->Read() )
-            {
-                Track.m_FileName = files[ 0 ];
-                Track.m_Type = guTRACK_TYPE_NOTDB;
-                Track.m_ArtistName = TagInfo->m_ArtistName;
-                Track.m_AlbumName = TagInfo->m_AlbumName;
-                Track.m_SongName = TagInfo->m_TrackName;
-                Track.m_Number = TagInfo->m_Track;
-                Track.m_GenreName = TagInfo->m_GenreName;
-                Track.m_Length = TagInfo->m_Length;
-                Track.m_Year = TagInfo->m_Year;
-                Track.m_Rating = wxNOT_FOUND;
+            Track.m_Type = guTRACK_TYPE_NOTDB;
 
-                guTrackChangeInfo ChangeInfo;
+            guTrackChangeInfo ChangeInfo;
 
-                ChangeInfo.m_ArtistName = Track.m_ArtistName;
-                ChangeInfo.m_TrackName = Track.m_SongName;
+            ChangeInfo.m_ArtistName = Track.m_ArtistName;
+            ChangeInfo.m_TrackName = Track.m_SongName;
 
-                SetUpdateEnable( false );
-                AppendTrackChangeInfo( &ChangeInfo );
-                ShowCurrentTrack();
-            }
-
-            delete TagInfo;
+            SetUpdateEnable( false );
+            AppendTrackChangeInfo( &ChangeInfo );
+            ShowCurrentTrack();
         }
     }
 }
