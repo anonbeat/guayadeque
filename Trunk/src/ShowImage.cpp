@@ -47,7 +47,10 @@ guShowImage::guShowImage( wxWindow * parent, wxImage * image, const wxPoint &pos
     }
 
 	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guShowImage::FrameActivate ) );
-	m_Bitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
+	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
+	Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
+	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
+
 	m_Bitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guShowImage::OnMouse ), NULL, this );
 	Connect( wxEVT_MOTION, wxMouseEventHandler( guShowImage::OnMouse ), NULL, this );
 	Connect( wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler( guShowImage::OnCaptureLost ), NULL, this );
