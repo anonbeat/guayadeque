@@ -2270,8 +2270,7 @@ void guMainFrame::OnCommunity( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPlayerPlayListUpdateTitle( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnPlayerPlayListUPdateTitle..." ) );
-
+    //guLogMessage( wxT( "OnPlayerPlayListUPdateTitle..." ) );
     wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
     if( PaneInfo.IsOk() )
     {

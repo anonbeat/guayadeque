@@ -212,7 +212,7 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
 
     dbus_message_iter_close_container( &dbiter, &dbitertracks );
 
-    dbus_bool_t PlayTrack = true;
+    dbus_bool_t PlayTrack = false;
     dbus_message_iter_append_basic( &dbiter, DBUS_TYPE_BOOLEAN, &PlayTrack );
 
     dbreply = dbus_connection_send_with_reply_and_block( dbconn, dbmsg, 5000, &dberr );

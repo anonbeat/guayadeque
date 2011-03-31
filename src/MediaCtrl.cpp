@@ -87,7 +87,8 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins, guFaderPlayB
             case guFADERPLAYBIN_STATE_FADEOUT_STOP :        StateName = wxT( "fading->stopped" );   break;
 
             case guFADERPLAYBIN_STATE_PENDING_REMOVE:	    StateName = wxT( "pending remove" );    break;
-            default :                                       StateName = wxT( "other" ); break;
+            case guFADERPLAYBIN_STATE_ERROR :	            StateName = wxT( "error" );             break;
+            default :                                       StateName = wxT( "other" );             break;
         }
 
         //if( !FaderPlayBin->Uri().IsEmpty() )
@@ -746,8 +747,11 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype )
             Lock();
             if( m_CurrentPlayBin )
             {
-                if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
+                guLogDebug( wxT( "Id: %i  State: %i  Error: %i" ), m_CurrentPlayBin->GetId(), m_CurrentPlayBin->GetState(), m_CurrentPlayBin->ErrorCode() );
+                //if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
+                if( !m_CurrentPlayBin->IsOk() )
                 {
+                    guLogDebug( wxT( "The current playbin has error...Removing it" ) );
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
                     ScheduleCleanUp();
                 }
@@ -1262,6 +1266,10 @@ void guMediaCtrl::DoCleanUp( void )
 	wxArrayPtrVoid ToDelete;
 
     Lock();
+#ifdef guSHOW_DUMPFADERPLAYBINS
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
+#endif
+
 
 	m_CleanUpId = 0;
 
@@ -1288,12 +1296,15 @@ void guMediaCtrl::DoCleanUp( void )
         SendEvent( event );
 	}
 
+#ifdef guSHOW_DUMPFADERPLAYBINS
+    DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
+#endif
 	Unlock();
 
 	Count = ToDelete.Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
-		//guLogDebug( wxT( "reaping stream %s" ), ( ( guFaderPlayBin * ) ToDelete[ Index ] )->m_Uri.c_str() );
+		guLogDebug( wxT( "Free stream %i" ), ( ( guFaderPlayBin * ) ToDelete[ Index ] )->GetId() );
 		delete ( ( guFaderPlayBin * ) ToDelete[ Index ] );
 	}
 }
@@ -1348,7 +1359,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, co
 	//guLogDebug( wxT( "creating new stream for %s" ), uri.c_str() );
     m_Player = mediactrl;
     m_Uri = uri;
-    m_Id = wxGetLocalTime();
+    m_Id = wxGetLocalTimeMillis().GetLo();
     m_State = guFADERPLAYBIN_STATE_WAITING;
     m_ErrorCode = 0;
     m_IsFading = false;
@@ -1372,12 +1383,23 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, co
 // -------------------------------------------------------------------------------- //
 guFaderPlayBin::~guFaderPlayBin()
 {
-    guLogDebug( wxT( "guFaderPlayBin::~guFaderPlayBin (%i)" ), m_Id );
+    guLogDebug( wxT( "guFaderPlayBin::~guFaderPlayBin (%i) e: %i" ), m_Id, m_ErrorCode );
     //m_Player->RemovePlayBin( this );
 
     if( m_Playbin )
     {
-        gst_element_set_state( m_Playbin, GST_STATE_NULL );
+        GstStateChangeReturn ChangeState = gst_element_set_state( m_Playbin, GST_STATE_NULL );
+//        typedef enum {
+//          GST_STATE_CHANGE_FAILURE             = 0,
+//          GST_STATE_CHANGE_SUCCESS             = 1,
+//          GST_STATE_CHANGE_ASYNC               = 2,
+//          GST_STATE_CHANGE_NO_PREROLL          = 3
+//        } GstSt
+        //guLogMessage( wxT( "Set To NULL: %i" ), ChangeState );
+        if( ChangeState == GST_STATE_CHANGE_ASYNC )
+        {
+            gst_element_get_state( m_Playbin, NULL, NULL, GST_CLOCK_TIME_NONE );
+        }
         gst_object_unref( GST_OBJECT( m_Playbin ) );
     }
 
@@ -1465,8 +1487,8 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
             if( m_ReplayGain )
             {
                 g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
+                g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( 6 ), NULL );
             }
-          //g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( 6 ), NULL );
 
           m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
           if( IsValidElement( m_FaderVolume ) )

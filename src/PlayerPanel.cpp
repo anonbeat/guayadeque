@@ -1070,6 +1070,55 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool afterc
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowplay, const bool aftercurrent  )
+{
+    int PrevTrackCount = m_PlayListCtrl->GetItemCount();
+
+    int Index;
+    int Count = files.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_PlayListCtrl->AddPlayListItem( files[ Index ], false, aftercurrent ? m_PlayListCtrl->GetCurItem() + 1 + Index : wxNOT_FOUND );
+    }
+
+    m_PlayListCtrl->ReloadItems();
+    TrackListChanged();
+
+    // Add the added track to the smart cache
+    if( m_PlaySmart )
+    {
+        Count = m_PlayListCtrl->GetItemCount();
+        // We only insert the last CACHEITEMS as the rest should be forgiven
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guTrack * Track = m_PlayListCtrl->GetItem( Index );
+
+            if( m_SmartAddedTracks.Index( Track->m_SongId ) == wxNOT_FOUND )
+                m_SmartAddedTracks.Add( Track->m_SongId );
+
+            if( m_SmartAddedArtists.Index( Track->m_ArtistName.Upper() ) == wxNOT_FOUND )
+                m_SmartAddedArtists.Add( Track->m_ArtistName.Upper() );
+
+        }
+
+        if( ( Count = m_SmartAddedTracks.Count() ) > m_SmartMaxTracksList )
+            m_SmartAddedTracks.RemoveAt( 0, Count - m_SmartMaxTracksList );
+
+        if( ( Count = m_SmartAddedArtists.Count() ) > m_SmartMaxArtistsList )
+            m_SmartAddedArtists.RemoveAt( 0, Count - m_SmartMaxArtistsList );
+    }
+
+    if( allowplay && ( m_PlayListCtrl->GetCount() > PrevTrackCount ) && ( GetState() != guMEDIASTATE_PLAYING ) )
+    {
+        //m_PlayListCtrl->SetCurrent( PrevTrackCount );
+        wxCommandEvent CmdEvent;
+        CmdEvent.SetInt( PrevTrackCount );
+        OnPlayListDClick( CmdEvent );
+        //OnPlayButtonClick( CmdEvent );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::TrackListChanged( void )
 {
 //    m_PlayListLenStaticText->SetLabel( m_PlayListCtrl->GetLengthStr() );
@@ -3084,7 +3133,7 @@ void guPlayerPanel::OnAddTracks( wxCommandEvent &event )
 
     if( TrackList )
     {
-        SetPlayList( * TrackList );
+        AddToPlayList( * TrackList, true, false );
         delete TrackList;
     }
 }
