@@ -292,6 +292,77 @@ guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guTrack::ReadFromFile( const wxString &filename )
+{
+  bool RetVal = false;
+
+  guTagInfo * TagInfo;
+
+  TagInfo = guGetTagInfoHandler( filename );
+  if( TagInfo )
+  {
+      //guLogMessage( wxT( "FileName: '%s'" ), filename.c_str() );
+      if( TagInfo->Read() )
+      {
+          m_Path = wxPathOnly( filename );
+          if( !m_Path.EndsWith( wxT( "/" ) ) )
+            m_Path += '/';
+
+          //guLogMessage( wxT( "PathName: %s" ), m_Path.c_str() );
+          m_PathId = wxNOT_FOUND;
+
+          m_Composer = TagInfo->m_Composer;
+
+          m_ArtistName = TagInfo->m_ArtistName;
+          if( m_ArtistName.IsEmpty() )
+            m_ArtistName = _( "Unknown" );
+          m_ArtistId = wxNOT_FOUND;
+
+          m_AlbumArtist = TagInfo->m_AlbumArtist;
+          m_AlbumArtistId = wxNOT_FOUND;;
+
+          m_AlbumName = TagInfo->m_AlbumName;
+          if( m_AlbumName.IsEmpty() )
+            m_AlbumName = m_Path.BeforeLast( wxT( '/' ) ).AfterLast( wxT( '/' ) );
+          m_AlbumId = wxNOT_FOUND;;
+
+          m_CoverId = 0;
+
+          m_GenreName = TagInfo->m_GenreName;
+          if( m_GenreName.IsEmpty() )
+            m_GenreName = _( "Unknown" );
+          m_GenreId = wxNOT_FOUND;;
+
+          m_FileName = filename;
+          m_SongName = TagInfo->m_TrackName;
+          if( m_SongName.IsEmpty() )
+            m_SongName = m_FileName.BeforeLast( wxT( '.' ) );
+          m_FileSize = guGetFileSize( filename );
+
+          m_SongId = wxNOT_FOUND;;
+
+          m_Number   = TagInfo->m_Track;
+          m_Year     = TagInfo->m_Year;
+          m_Length   = TagInfo->m_Length;
+          m_Bitrate  = TagInfo->m_Bitrate;
+          m_Rating   = wxNOT_FOUND;
+          m_Comments = TagInfo->m_Comments;
+          m_Disk     = TagInfo->m_Disk;
+
+          RetVal = true;
+      }
+      else
+      {
+          guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
+      }
+
+      delete TagInfo;
+  }
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary( guDb * db ) : guDb()
 {
     m_Db = db->GetDb();

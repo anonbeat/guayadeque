@@ -74,6 +74,7 @@ enum guRandomMode {
 };
 
 class guLibPanel;
+class guDbLibrary;
 
 // -------------------------------------------------------------------------------- //
 class guTrack
@@ -119,10 +120,12 @@ class guTrack
         m_Type = guTRACK_TYPE_DB;
         m_TrackMode = guTRACK_MODE_USER;
         m_Bitrate = 0;
-
     };
 
     ~guTrack() {};
+
+    bool ReadFromFile( const wxString &file );
+
 };
 WX_DECLARE_OBJARRAY(guTrack, guTrackArray);
 
