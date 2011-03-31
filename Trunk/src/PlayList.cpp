@@ -1199,28 +1199,9 @@ void guPlayList::AddPlayListItem( const wxString &filename, bool addpath, const 
                     else
                     {
                         //guLogMessage( wxT( "Reading tags from the file..." ) );
-                        guTagInfo * TagInfo = guGetTagInfoHandler( FileName );
-                        if( TagInfo )
+                        if( Track.ReadFromFile( FileName ) )
                         {
                             Track.m_Type = guTRACK_TYPE_NOTDB;
-
-                            TagInfo->Read();
-
-                            Track.m_ArtistName  = TagInfo->m_ArtistName;
-                            Track.m_AlbumName   = TagInfo->m_AlbumName;
-                            Track.m_SongName    = TagInfo->m_TrackName;
-                            Track.m_Number      = TagInfo->m_Track;
-                            Track.m_GenreName   = TagInfo->m_GenreName;
-                            Track.m_Length      = TagInfo->m_Length;
-                            Track.m_Year        = TagInfo->m_Year;
-                            Track.m_Comments    = TagInfo->m_Comments;
-                            Track.m_Composer    = TagInfo->m_Composer;
-                            Track.m_Disk        = TagInfo->m_Disk;
-                            Track.m_AlbumArtist = TagInfo->m_AlbumArtist;
-                            Track.m_Rating      = wxNOT_FOUND;
-                            Track.m_CoverId     = 0;
-
-                            delete TagInfo;
                         }
                         else
                         {
