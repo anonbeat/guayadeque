@@ -3497,6 +3497,81 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayLis
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetPlayListsCount( void )
+{
+  int RetVal = 0;
+
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT COUNT( playlist_id ) FROM playlists" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+  }
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetPlayLists( guListItems &playlists )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT playlist_id, playlist_name FROM playlists" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    playlists.Add( new guListItem( dbRes.GetInt( 0 ), dbRes.GetString( 1 ) ) );
+  }
+
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetPlayLists( wxArrayString &playlistnames )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT playlist_name FROM playlists" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    playlistnames.Add( dbRes.GetString( 0 ) );
+  }
+
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::GetPlayLists( wxArrayInt &playlistids )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT playlist_id FROM playlists" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    playlistids.Add( dbRes.GetInt( 0 ) );
+  }
+
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
 void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type, const wxArrayString * textfilters )
 {
   wxString query;
