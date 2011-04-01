@@ -120,33 +120,33 @@ const char * guMPRIS2_INTROSPECTION_XML =
 	"    <property name='Tracks' type='ao' access='read'/>\n"
 	"    <property name='CanEditTracks' type='b' access='read'/>\n"
 	"  </interface>\n"
-//	"  <interface name='org.mpris.MediaPlayer2.Playlists'>\n"
-//	"    <method name='ActivatePlaylist'>\n"
-//	"      <arg direction='in' name='PlaylistId' type='o'/>\n"
-//	"    </method>\n"
-//	"    <method name='GetPlaylists'>\n"
-//	"      <arg direction='in' name='Index' type='u'/>\n"
-//	"      <arg direction='in' name='MaxCount' type='u'/>\n"
-//	"      <arg direction='in' name='Order' type='s'/>\n"
-//	"      <arg direction='in' name='ReverseOrder' type='b'/>\n"
-//	"      <arg direction='out' name='Playlists' type='a(oss)'/>\n"
-//	"    </method>\n"
-//	"    <signal name='PlaylistChanged'>\n"
-//	"      <arg name='Playlist' type='(b(oss))'/>\n"
-//	"    </signal>\n"
-//	"    <property name='PlaylistCount' type='u' access='read'/>\n"
-//	"    <property name='Orderings' type='as' access='read'/>\n"
-//	"    <property name='ActivePlaylist' type='b(oss)' access='read'/>\n"
-//	"  </interface>\n"
+	"  <interface name='org.mpris.MediaPlayer2.Playlists'>\n"
+	"    <method name='ActivatePlaylist'>\n"
+	"      <arg direction='in' name='PlaylistId' type='o'/>\n"
+	"    </method>\n"
+	"    <method name='GetPlaylists'>\n"
+	"      <arg direction='in' name='Index' type='u'/>\n"
+	"      <arg direction='in' name='MaxCount' type='u'/>\n"
+	"      <arg direction='in' name='Order' type='s'/>\n"
+	"      <arg direction='in' name='ReverseOrder' type='b'/>\n"
+	"      <arg direction='out' name='Playlists' type='a(oss)'/>\n"
+	"    </method>\n"
+	"    <signal name='PlaylistChanged'>\n"
+	"      <arg name='Playlist' type='b(oss)'/>\n"
+	"    </signal>\n"
+	"    <property name='PlaylistCount' type='u' access='read'/>\n"
+	"    <property name='Orderings' type='as' access='read'/>\n"
+	"    <property name='ActivePlaylist' type='b(oss)' access='read'/>\n"
+	"  </interface>\n"
 	"</node>\n";
 
 guMPRIS2 * guMPRIS2::m_MPRIS2 = NULL;
 
 // -------------------------------------------------------------------------------- //
-guMPRIS2::guMPRIS2( guDBusServer * server, guPlayerPanel * playerpanel ) : guDBusClient( server )
+guMPRIS2::guMPRIS2( guDBusServer * server, guPlayerPanel * playerpanel, guDbLibrary * db ) : guDBusClient( server )
 {
     m_PlayerPanel = playerpanel;
-
+    m_Db = db;
 
     RegisterClient();
 
@@ -163,7 +163,7 @@ guMPRIS2::~guMPRIS2()
 static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const char * value )
 {
     DBusMessageIter dict_entry, variant;
-    if( value && strlen( value ) )
+    if( value )
     {
         dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
 
@@ -206,7 +206,7 @@ static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, cons
 static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const int value )
 {
     DBusMessageIter dict_entry, variant;
-    if( value )
+    if( name )
     {
         dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
 
@@ -224,7 +224,7 @@ static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, cons
 static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const gint64 value )
 {
     DBusMessageIter dict_entry, variant;
-    if( value )
+    if( name )
     {
         dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
 
@@ -241,7 +241,7 @@ static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, cons
 static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const double value )
 {
     DBusMessageIter dict_entry, variant;
-    if( value )
+    if( name )
     {
         dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
 
@@ -258,7 +258,7 @@ static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, cons
 static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const bool value )
 {
     DBusMessageIter dict_entry, variant;
-    if( value )
+    if( name )
     {
         dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
 
@@ -266,6 +266,41 @@ static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, cons
         dbus_message_iter_open_container( &dict_entry, DBUS_TYPE_VARIANT, DBUS_TYPE_BOOLEAN_AS_STRING, &variant );
         dbus_message_iter_append_basic( &variant, DBUS_TYPE_BOOLEAN, &value );
         dbus_message_iter_close_container( &dict_entry, &variant );
+
+        dbus_message_iter_close_container( Iter, &dict_entry );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const dbus_bool_t plstate,
+                            const char * plpath, const char * plname, const char * plicon )
+{
+    DBusMessageIter dict_entry, vstruct, ostruct, plstruct;
+    if( name )
+    {
+        guLogMessage( wxT( "playlist active %i" ), plstate );
+
+        dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
+
+        dbus_message_iter_append_basic( &dict_entry, DBUS_TYPE_STRING, &name );
+
+        dbus_message_iter_open_container( &dict_entry, DBUS_TYPE_VARIANT, "(b(oss))", &vstruct );
+
+        dbus_message_iter_open_container( &vstruct, DBUS_TYPE_STRUCT, NULL, &ostruct );
+
+        dbus_message_iter_append_basic( &ostruct, DBUS_TYPE_BOOLEAN, &plstate );
+
+        dbus_message_iter_open_container( &ostruct, DBUS_TYPE_STRUCT, NULL, &plstruct );
+
+        dbus_message_iter_append_basic( &plstruct, DBUS_TYPE_OBJECT_PATH, &plpath );
+        dbus_message_iter_append_basic( &plstruct, DBUS_TYPE_STRING, &plname );
+        dbus_message_iter_append_basic( &plstruct, DBUS_TYPE_STRING, &plicon );
+
+        dbus_message_iter_close_container( &ostruct, &plstruct );
+
+        dbus_message_iter_close_container( &vstruct, &ostruct );
+
+        dbus_message_iter_close_container( &dict_entry, &vstruct );
 
         dbus_message_iter_close_container( Iter, &dict_entry );
     }
@@ -295,49 +330,6 @@ static void FillMetadataAsList( DBusMessageIter * Iter, const char * name, const
     }
 }
 
-//// -------------------------------------------------------------------------------- //
-//void FillMetadataArgs( guDBusMessage * reply, const guTrack * CurTrack )
-//{
-//    DBusMessageIter dict;
-//    DBusMessageIter args;
-//
-//    wxASSERT( CurTrack );
-//
-//    const char * metadata_names[] = {
-//        "location", "title", "artist", "album", "tracknumber",
-//        "time", "mtime", "genre", "rating", "year", "arturl", "bitrate"
-//    };
-//
-//    dbus_message_iter_init_append( reply->GetMessage(), &args );
-//
-//    dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
-//
-//    FillMetadataDetails( &dict, metadata_names[ 0 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_FileName ).mb_str( wxConvUTF8 ) );
-//    FillMetadataDetails( &dict, metadata_names[ 1 ], ( const char * ) CurTrack->m_SongName.mb_str( wxConvUTF8 ) );
-//    FillMetadataDetails( &dict, metadata_names[ 2 ], ( const char * ) CurTrack->m_ArtistName.mb_str( wxConvUTF8 ) );
-//    FillMetadataDetails( &dict, metadata_names[ 3 ], ( const char * ) CurTrack->m_AlbumName.mb_str( wxConvUTF8 ) );
-//    if( CurTrack->m_Number )
-//        FillMetadataDetails( &dict, metadata_names[ 4 ], ( const int ) CurTrack->m_Number );
-//    FillMetadataDetails( &dict, metadata_names[ 5 ], ( const int ) CurTrack->m_Length );
-//    FillMetadataDetails( &dict, metadata_names[ 6 ], ( const int ) CurTrack->m_Length * 1000 );
-//    FillMetadataDetails( &dict, metadata_names[ 7 ], ( const char * ) CurTrack->m_GenreName.mb_str( wxConvUTF8 ) );
-//
-//    if( CurTrack->m_Rating >= 0 )
-//        FillMetadataDetails( &dict, metadata_names[ 8 ], ( const int ) CurTrack->m_Rating );
-//
-//    if( CurTrack->m_Year )
-//        FillMetadataDetails( &dict, metadata_names[ 9 ], ( const int ) CurTrack->m_Year );
-//
-////    if( !CurTrack->m_CoverPath.IsEmpty() )
-////        FillMetadataDetails( &dict, metadata_names[ 10 ], ( const char * ) ( wxT( "file://" ) + CurTrack->m_CoverPath ).mb_str( wxConvUTF8 ) );
-//
-//    if( CurTrack->m_Rating )
-//        FillMetadataDetails( &dict, metadata_names[ 11 ], ( const int ) CurTrack->m_Bitrate );
-//
-//    dbus_message_iter_close_container( &args, &dict );
-//
-//}
-
 // -------------------------------------------------------------------------------- //
 static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * curtrack, const int trackid )
 {
@@ -345,9 +337,10 @@ static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * cur
 
     dbus_message_iter_open_container( iter, DBUS_TYPE_ARRAY, "{sv}", &dict );
 
-    if( curtrack->m_Loaded )
+    FillMetadataDetails( &dict, "mpris:trackid", ( const char * ) wxString::Format( wxT( "/org/mpris/MediaPlayer2/Track/%u" ), trackid ).mb_str( wxConvUTF8 ) );
+
+    if( curtrack && curtrack->m_Loaded )
     {
-        FillMetadataDetails( &dict, "mpris:trackid", ( const char * ) wxString::Format( wxT( "/org/mpris/MediaPlayer2/Track/%u" ), trackid ).mb_str( wxConvUTF8 ) );
         wxString LocationUrl = wxT( "file://" ) + curtrack->m_FileName;
         LocationUrl.Replace( wxT( " "), wxT( "%20" ) );
         FillMetadataDetails( &dict, "xesam:url", ( const char * ) LocationUrl.mb_str( wxConvUTF8 ) );
@@ -391,6 +384,26 @@ static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * cur
     }
 
     dbus_message_iter_close_container( iter, &dict );
+}
+
+// -------------------------------------------------------------------------------- //
+static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const guCurrentTrack * curtrack, const int trackid )
+{
+    DBusMessageIter dict_entry, variant;
+    if( name && strlen( name ) )
+    {
+        dbus_message_iter_open_container( Iter, DBUS_TYPE_DICT_ENTRY, NULL, &dict_entry );
+
+        dbus_message_iter_append_basic( &dict_entry, DBUS_TYPE_STRING, &name );
+
+        dbus_message_iter_open_container( &dict_entry, DBUS_TYPE_VARIANT, "a{sv}", &variant );
+
+        FillMetadataIter( &variant, curtrack, trackid );
+
+        dbus_message_iter_close_container( &dict_entry, &variant );
+
+        dbus_message_iter_close_container( Iter, &dict_entry );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -631,7 +644,6 @@ void guMPRIS2::OnPlayerCapsChange( void )
     }
 }
 
-
 // -------------------------------------------------------------------------------- //
 void guMPRIS2::OnPlayerVolumeChange( void )
 {
@@ -672,9 +684,56 @@ void guMPRIS2::OnTrackListChange( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void inline IterAppendBasic( DBusMessageIter * iter, const int type, const char * value )
+{
+    dbus_message_iter_append_basic( iter, type, &value );
+}
+
+// -------------------------------------------------------------------------------- //
+void AppendPlaylist( DBusMessageIter * iter, guListItem &playlist )
+{
+    DBusMessageIter plstruct;
+    const char * plicon = "";
+
+    dbus_message_iter_open_container( iter, DBUS_TYPE_STRUCT, NULL, &plstruct );
+
+    IterAppendBasic( &plstruct, DBUS_TYPE_OBJECT_PATH,
+        wxString::Format( wxT( "/org/mpris/MediaPlayer2/guayadeque/Playlist/%i" ), playlist.m_Id ).mb_str( wxConvUTF8 ) );
+    IterAppendBasic( &plstruct, DBUS_TYPE_STRING, playlist.m_Name.mb_str( wxConvUTF8 ) );
+    IterAppendBasic( &plstruct, DBUS_TYPE_STRING, plicon );
+
+    dbus_message_iter_close_container( iter, &plstruct );
+
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMPRIS2::GetPlaylists( DBusMessage * msg, const dbus_int32_t start, const dbus_int32_t maxcount,
+                     const char * order, const dbus_bool_t reverseorder )
+{
+    DBusMessageIter args, arrentry;
+    guListItems Playlists;
+    m_Db->GetPlayLists( Playlists );
+
+    dbus_message_iter_init_append( msg, &args );
+
+    dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "(oss)", &arrentry );
+
+    int Index;
+    int Count = wxMin( start + maxcount, Playlists.Count() );
+
+    for( Index = start; Index < Count; Index++ )
+    {
+        AppendPlaylist( &arrentry, Playlists[ Index ] );
+    }
+
+    dbus_message_iter_close_container( &args, &arrentry );
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
 DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage * reply )
 {
-    wxASSERT( msg );
     //
     DBusHandlerResult RetVal = DBUS_HANDLER_RESULT_NOT_YET_HANDLED;
     const char *    Interface = msg->GetInterface();
@@ -727,67 +786,214 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
         {
             if( !strcmp( Path, "/org/mpris/MediaPlayer2" ) )
             {
+                DBusError error;
+                dbus_error_init( &error );
+
                 if( !strcmp( Member, "GetAll" ) )
                 {
-                    DBusMessageIter args;
-                    DBusMessageIter dict;
-                    bool ReplyVal = true;
+                    const char *    QueryIface;
 
-                    dbus_message_iter_init_append( reply->GetMessage(), &args );
+                    dbus_message_get_args( msg->GetMessage(), &error,
+                          DBUS_TYPE_STRING, &QueryIface,
+                          DBUS_TYPE_INVALID );
 
-                    dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
+//                    guLogMessage( wxT( "QIface : %s" ), wxString::FromAscii( QueryIface ).c_str() );
 
-                    FillMetadataDetails( &dict, "CanQuit", ReplyVal );
-                    FillMetadataDetails( &dict, "CanRaise", ReplyVal );
-                    FillMetadataDetails( &dict, "HasTrackList", ReplyVal );
-                    const char * AppName = "Guayadeque Music Player";
-                    FillMetadataDetails( &dict, "Identity", AppName );
-                    const char * DesktopPath = "guayadeque";
-                    FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
-                    const char * SupportedUriSchemes[] = { "file", "http", "smb", "sftp", "cdda", NULL };
-                    FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
-                    const char * SupportedMimeTypes[] = {
-                       "application/ogg",
-                       "application/x-ogg",
-                       "application/x-ogm-audio",
-                       "audio/aac",
-                       "audio/ape",
-                       "audio/mp4",
-                       "audio/mpc",
-                       "audio/mpeg",
-                       "audio/mpegurl",
-                       "audio/ogg",
-                       "audio/vnd.rn-realaudio",
-                       "audio/vorbis",
-                       "audio/x-flac",
-                       "audio/x-mp3",
-                       "audio/x-mpeg",
-                       "audio/x-mpegurl",
-                       "audio/x-ms-wma",
-                       "audio/x-musepack",
-                       "audio/x-oggflac",
-                       "audio/x-pn-realaudio",
-                       "audio/x-scpls",
-                       "audio/x-speex",
-                       "audio/x-vorbis",
-                       "audio/x-vorbis+ogg",
-                       "audio/x-wav",
-                       "video/x-ms-asf",
-                       "x-content/audio-player",
-                       NULL };
-                    FillMetadataDetails( &dict, "SupportedMimeTypes", SupportedMimeTypes );
+                    if( dbus_error_is_set( &error ) )
+                    {
+                        guLogMessage( wxT( "Could not read the parameter : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                        dbus_error_free( &error );
+                    }
+                    else
+                    {
+                        DBusMessageIter args;
+                        DBusMessageIter dict;
 
-                    dbus_message_iter_close_container( &args, &dict );
+                        if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
+                        {
+                            bool ReplyVal = true;
 
-                    Send( reply );
-                    Flush();
-                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                            dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                            dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
+
+                            FillMetadataDetails( &dict, "CanQuit", ReplyVal );
+                            FillMetadataDetails( &dict, "CanRaise", ReplyVal );
+                            FillMetadataDetails( &dict, "HasTrackList", ReplyVal );
+                            const char * AppName = "Guayadeque Music Player";
+                            FillMetadataDetails( &dict, "Identity", AppName );
+                            const char * DesktopPath = "guayadeque";
+                            FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
+                            const char * SupportedUriSchemes[] = { "file", "http", "smb", "sftp", "cdda", NULL };
+                            FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
+                            const char * SupportedMimeTypes[] = {
+                               "application/ogg",
+                               "application/x-ogg",
+                               "application/x-ogm-audio",
+                               "audio/aac",
+                               "audio/ape",
+                               "audio/mp4",
+                               "audio/mpc",
+                               "audio/mpeg",
+                               "audio/mpegurl",
+                               "audio/ogg",
+                               "audio/vnd.rn-realaudio",
+                               "audio/vorbis",
+                               "audio/x-flac",
+                               "audio/x-mp3",
+                               "audio/x-mpeg",
+                               "audio/x-mpegurl",
+                               "audio/x-ms-wma",
+                               "audio/x-musepack",
+                               "audio/x-oggflac",
+                               "audio/x-pn-realaudio",
+                               "audio/x-scpls",
+                               "audio/x-speex",
+                               "audio/x-vorbis",
+                               "audio/x-vorbis+ogg",
+                               "audio/x-wav",
+                               "video/x-ms-asf",
+                               "x-content/audio-player",
+                               NULL };
+                            FillMetadataDetails( &dict, "SupportedMimeTypes", SupportedMimeTypes );
+
+                            dbus_message_iter_close_container( &args, &dict );
+
+                            Send( reply );
+                            Flush();
+                            RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                        }
+                        else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Player" ) )
+                        {
+                            dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                            dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
+
+                            ////////////////////////////////////////////////////////////////////////
+                            const char * PlaybackStatus;
+                            guMediaState State = m_PlayerPanel->GetState();
+                            if( State == guMEDIASTATE_STOPPED )
+                                PlaybackStatus = "Stopped";
+                            else if( State == guMEDIASTATE_PAUSED )
+                                PlaybackStatus = "Paused";
+                            else //if( State == guMEDIASTATE_PLAYING )
+                                PlaybackStatus = "Playing";
+
+                            FillMetadataDetails( &dict, "PlaybackStatus", PlaybackStatus );
+
+                            ////////////////////////////////////////////////////////////////////////
+                            const char * LoopStatus;
+                            int PlayLoop = m_PlayerPanel->GetPlayLoop();
+                            if( PlayLoop == guPLAYER_PLAYLOOP_NONE )
+                                LoopStatus = "None";
+                            else if( PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+                                LoopStatus = "Track";
+                            else //if( PlayLoop == guPLAYER_PLAYLOOP_PLAYLIST )
+                                LoopStatus = "Playlist";
+
+                            FillMetadataDetails( &dict, "LoopStatus", LoopStatus );
+
+                            ////////////////////////////////////////////////////////////////////////
+                            double Rate = 1.0;
+                            FillMetadataDetails( &dict, "Rate", Rate );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool Shuffle = false;
+                            FillMetadataDetails( &dict, "Shuffle", Shuffle );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            const guCurrentTrack * CurTrack = m_PlayerPanel->GetCurrentTrack();
+                            FillMetadataDetails( &dict, "Metadata", CurTrack, m_PlayerPanel->GetCurrentItem() );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            double CurVolume = m_PlayerPanel->GetVolume() / 100;
+                            FillMetadataDetails( &dict, "Volume", CurVolume );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            double CurPosition = m_PlayerPanel->GetPosition() * 1000;
+                            FillMetadataDetails( &dict, "Position", CurPosition );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            FillMetadataDetails( &dict, "MinimumRate", Rate );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            FillMetadataDetails( &dict, "MaximumRate", Rate );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool CanGoNext = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT;
+                            FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool CanGoPrev = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV;
+                            FillMetadataDetails( &dict, "CanGoPrev", CanGoPrev );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool CanPlay = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY;
+                            FillMetadataDetails( &dict, "CanPlay", CanPlay );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool CanPause = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE;
+                            FillMetadataDetails( &dict, "CanPause", CanPause );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool CanSeek = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK;
+                            FillMetadataDetails( &dict, "CanSeek", CanSeek );
+
+
+                            ////////////////////////////////////////////////////////////////////////
+                            bool CanControl = true;
+                            FillMetadataDetails( &dict, "CanControl", CanControl );
+
+                            dbus_message_iter_close_container( &args, &dict );
+
+                            Send( reply );
+                            Flush();
+                            RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                        }
+                        else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Tracklist" ) )
+                        {
+                        }
+                        else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Playlists" ) )
+                        {
+                            dbus_message_iter_init_append( reply->GetMessage(), &args );
+
+                            dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
+
+                            int PlaylistCount = m_Db->GetPlayListsCount();
+                            FillMetadataDetails( &dict, "PlaylistCount", PlaylistCount );
+
+                            const char * PlaylistOrders[] = {
+                               "Default",
+                               NULL };
+                            FillMetadataDetails( &dict, "Orderings", PlaylistOrders );
+
+                            dbus_bool_t plstate = false;
+                            const char * plpath = "/org/mpris/MediaPlayer2/guayadeque/Playlist/0";
+                            const char * plname = "";
+                            const char * plicon = "";
+                            FillMetadataDetails( &dict, "ActivePlaylist", plstate, plpath, plname, plicon );
+
+                            dbus_message_iter_close_container( &args, &dict );
+
+                            Send( reply );
+                            Flush();
+                            RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                        }
+                    }
                 }
                 else
                 {
-                    DBusError error;
-                    dbus_error_init( &error );
-
                     const char *    QueryIface;
                     const char *    QueryProperty;
 
@@ -1085,6 +1291,13 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanEditTracks" ) )
                                 {
+                                    bool CanEdit = true;
+                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanEdit ) )
+                                    {
+                                        Send( reply );
+                                        Flush();
+                                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                                    }
                                 }
                             }
                             else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Playlists" ) )
@@ -1166,19 +1379,6 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                     }
                 }
             }
-
-//            if( RetVal == DBUS_HANDLER_RESULT_NOT_YET_HANDLED )
-//            {
-//                const char *    Dest = msg->GetDestination();
-//
-//                guLogMessage( wxT( "==MPRIS2========================" ) );
-//                guLogMessage( wxT( "Type   : %i" ), Type );
-//                guLogMessage( wxT( "Iface  : %s" ), wxString::FromAscii( Interface ).c_str() );
-//                guLogMessage( wxT( "Dest   : %s" ), wxString::FromAscii( Dest ).c_str() );
-//                guLogMessage( wxT( "Path   : %s" ), wxString::FromAscii( Path ).c_str() );
-//                guLogMessage( wxT( "OPath  : %s" ), wxString::FromAscii( msg->GetObjectPath() ).c_str() );
-//                guLogMessage( wxT( "Member : %s" ), wxString::FromAscii( Member ).c_str() );
-//            }
         }
         else if( !strcmp( Interface, GUAYADEQUE_MPRIS2_INTERFACE_ROOT ) )
         {
@@ -1370,13 +1570,69 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
             {
                 if( !strcmp( Member, "ActivatePlaylist" ) )
                 {
+                    DBusError error;
+                    dbus_error_init( &error );
+
+                    const char * PlaylistPath;
+                    dbus_message_get_args( msg->GetMessage(), &error,
+                            DBUS_TYPE_OBJECT_PATH, &PlaylistPath,
+                            DBUS_TYPE_INVALID );
+
+                    if( dbus_error_is_set( &error ) )
+                    {
+                        guLogMessage( wxT( "Could not read the ActivatePlaylist parameter : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                        dbus_error_free( &error );
+                    }
+                    else
+                    {
+                        wxString PlaylistName = wxString( PlaylistPath, wxConvUTF8 ).AfterLast( wxT( '/' ) );
+                        long PlaylistId;
+                        if( PlaylistName.ToLong( &PlaylistId ) )
+                        {
+                            // Send Event to the PlayerPanel to load the playlist
+                            guLogMessage( wxT( "We should now play the playlist %i" ), PlaylistId );
+
+                            Send( reply );
+                            Flush();
+                            RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                        }
+                    }
                 }
                 else if( !strcmp( Member, "GetPlaylists" ) )
                 {
+                    DBusError error;
+                    dbus_error_init( &error );
+
+                    dbus_uint32_t    Index;
+                    dbus_uint32_t    MaxCount;
+                    const char *    Order;
+                    dbus_bool_t     ReverseOrder;
+
+                    dbus_message_get_args( msg->GetMessage(), &error,
+                            DBUS_TYPE_UINT32, &Index,
+                            DBUS_TYPE_UINT32, &MaxCount,
+                            DBUS_TYPE_STRING, &Order,
+                            DBUS_TYPE_BOOLEAN, &ReverseOrder,
+                            DBUS_TYPE_INVALID );
+
+                    if( dbus_error_is_set( &error ) )
+                    {
+                        guLogMessage( wxT( "Could not read the GetPlaylists parameter : %s" ), wxString( error.message, wxConvUTF8 ).c_str() );
+                        dbus_error_free( &error );
+                    }
+                    else
+                    {
+                        // Send Event to the PlayerPanel to load the playlist
+                        if( GetPlaylists( reply->GetMessage(), Index, MaxCount, Order, ReverseOrder ) )
+                        {
+                            Send( reply );
+                            Flush();
+                            RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                        }
+                    }
                 }
             }
         }
-
     }
 
     return RetVal;

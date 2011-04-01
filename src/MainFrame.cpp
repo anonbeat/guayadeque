@@ -407,7 +407,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         guLogError( wxT( "Could not create the mpris dbus object" ) );
     }
 
-    m_MPRIS2 = new guMPRIS2( m_DBusServer, m_PlayerPanel );
+    m_MPRIS2 = new guMPRIS2( m_DBusServer, m_PlayerPanel, m_Db );
     if( !m_MPRIS2 )
     {
         guLogError( wxT( "Could not create the mpris2 dbus object" ) );

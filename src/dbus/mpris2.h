@@ -30,9 +30,14 @@ class guMPRIS2 : public guDBusClient
   protected :
     static guMPRIS2 *           m_MPRIS2;
     guPlayerPanel *             m_PlayerPanel;
+    guDbLibrary *               m_Db;
+
+  private :
+    bool GetPlaylists( DBusMessage * msg, const dbus_int32_t start, const dbus_int32_t maxcount,
+                         const char * order, const dbus_bool_t reverseorder );
 
   public :
-    guMPRIS2( guDBusServer * server, guPlayerPanel * playerpanel );
+    guMPRIS2( guDBusServer * server, guPlayerPanel * playerpanel, guDbLibrary * db );
     ~guMPRIS2();
 
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );

@@ -427,6 +427,10 @@ class guDbLibrary : public guDb
 
     virtual int         DelPlaylistSetIds( const int plid, const wxArrayInt &setids );
     int                 GetPlayListFiles( const int plid, wxFileDataObject * Files );
+    int                 GetPlayListsCount( void );
+    void                GetPlayLists( guListItems &playlists );
+    void                GetPlayLists( wxArrayString &playlistnames );
+    void                GetPlayLists( wxArrayInt &playlistids );
     void                GetPlayLists( guListItems * PlayLists, const int type, const wxArrayString * textfilters = NULL );
     int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
