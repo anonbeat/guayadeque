@@ -719,7 +719,7 @@ bool guMPRIS2::GetPlaylists( DBusMessage * msg, const dbus_int32_t start, const 
     dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "(oss)", &arrentry );
 
     int Index;
-    int Count = wxMin( start + maxcount, Playlists.Count() );
+    int Count = wxMin( start + maxcount, ( int ) Playlists.Count() );
 
     for( Index = start; Index < Count; Index++ )
     {
@@ -1386,22 +1386,17 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
             {
                 if( !strcmp( Member, "Raise" ) )
                 {
-                    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-                    if( !MainFrame->IsShown() )
-                    {
-                        MainFrame->Show( true );
-                        if( MainFrame->IsIconized() )
-                            MainFrame->Iconize( false );
-                    }
+                    wxCommandEvent RaiseCmd( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_WINDOW_RAISE );
+                    wxPostEvent( wxTheApp->GetTopWindow(), RaiseCmd );
+
                     Send( reply );
                     Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
                 }
                 else if( !strcmp( Member, "Quit" ) )
                 {
-                    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
                     wxCommandEvent QuitCmd( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_QUIT );
-                    wxPostEvent( MainFrame, QuitCmd );
+                    wxPostEvent( wxTheApp->GetTopWindow(), QuitCmd );
                     Send( reply );
                     Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -1590,7 +1585,9 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                         if( PlaylistName.ToLong( &PlaylistId ) )
                         {
                             // Send Event to the PlayerPanel to load the playlist
-                            guLogMessage( wxT( "We should now play the playlist %i" ), PlaylistId );
+                            wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LOAD_PLAYLIST );
+                            CmdEvent.SetInt( PlaylistId );
+                            wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 
                             Send( reply );
                             Flush();
@@ -1622,7 +1619,6 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                     }
                     else
                     {
-                        // Send Event to the PlayerPanel to load the playlist
                         if( GetPlaylists( reply->GetMessage(), Index, MaxCount, Order, ReverseOrder ) )
                         {
                             Send( reply );
