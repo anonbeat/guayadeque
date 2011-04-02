@@ -453,6 +453,7 @@ class guMainFrame : public wxFrame
     void                            LibraryReloadControls( wxCommandEvent &event );
     void                            OnQuit( wxCommandEvent &event );
     void                            OnCloseTab( wxCommandEvent &event );
+    void                            OnHideCaptions( wxCommandEvent &event );
     void                            UpdatePodcasts( void );
 
     void                            RemovePodcastsDownloadThread( void );

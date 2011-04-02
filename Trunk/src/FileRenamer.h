@@ -39,24 +39,20 @@
 #include <wx/sizer.h>
 #include <wx/statbox.h>
 #include <wx/dialog.h>
+#include <wx/regex.h>
 
 // -------------------------------------------------------------------------------- //
 wxString inline NormalizeField( const wxString &name )
 {
     // Special chars: < > : " / \ | ? *
     wxString RetVal = name;
-    RetVal.Replace( wxT( "<" ), wxT( "_" ) );
-    RetVal.Replace( wxT( ">" ), wxT( "_" ) );
-    RetVal.Replace( wxT( ":" ), wxT( "_" ) );
-    RetVal.Replace( wxT( "\"" ), wxT( "_" ) );
-    RetVal.Replace( wxT( "/" ), wxT( "_" ) );
-    RetVal.Replace( wxT( "\\" ), wxT( "_" ) );
-    RetVal.Replace( wxT( "|" ), wxT( "_" ) );
-    RetVal.Replace( wxT( "?" ), wxT( "_" ) );
-    RetVal.Replace( wxT( "*" ), wxT( "_" ) );
+    wxRegEx RepEx( wxT( "[<>:\"/\\?*]" ) );
+    RepEx.ReplaceAll( &RetVal, wxT( "_" ) );
+
     if( RetVal[ 0 ] == wxT( '.' ) )
         RetVal[ 0 ] = wxT( '_' );
-    return RetVal;
+
+    return RetVal.Trim( true ).Trim( false );
 }
 
 // -------------------------------------------------------------------------------- //
