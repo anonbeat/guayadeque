@@ -453,6 +453,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
     Connect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
     Connect( ID_MENU_VIEW_CLOSEWINDOW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCloseTab ), NULL, this );
+    Connect( ID_MENU_HIDE_CAPTIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnHideCaptions ), NULL, this );
     Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
 
     Connect( ID_MENU_VOLUME_DOWN, ID_MENU_VOLUME_UP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnChangeVolume ), NULL, this );
@@ -1496,6 +1497,13 @@ void guMainFrame::CreateMenu()
     MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_CLOSEWINDOW,
                                     wxString( _( "Close Current Tab" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_CLOSEWINDOW ),
                                     _( "Close the current selected tab" ), wxITEM_NORMAL );
+
+    m_MainMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_HIDE_CAPTIONS,
+                                    wxString( _( "Show/Hide Captions" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_CLOSEWINDOW ),
+                                    _( "Show/Hide the windows caption" ), wxITEM_NORMAL );
+
     m_MainMenu->Append( MenuItem );
 
     MenuBar->Append( m_MainMenu, _( "View" ) );
@@ -1986,6 +1994,27 @@ void guMainFrame::OnCloseTab( wxCommandEvent &event )
     {
         DoPageClose( ( wxPanel * ) m_CurrentPage );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnHideCaptions( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guMainFrame::OnHideCaptions" ) );
+
+    wxAuiPaneInfoArray &PaneInfoArray = m_AuiManager.GetAllPanes();
+
+    int Index;
+    int Count = PaneInfoArray.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        wxAuiPaneInfo &PaneInfo = PaneInfoArray[ Index ];
+        if( PaneInfo.dock_direction != wxAUI_DOCK_CENTER )
+            PaneInfo.CaptionVisible( !PaneInfo.HasCaption() );
+    }
+//    //m_AuiManager-
+//    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
+//    PaneInfo.CaptionVisible( !PaneInfo.HasCaption() );
+    m_AuiManager.Update();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -6142,6 +6171,7 @@ void guMainFrame::OnLoadPlayList( wxCommandEvent &event )
         m_PlayerPanel->SetPlayList( Tracks );
     }
 }
+
 
 
 
