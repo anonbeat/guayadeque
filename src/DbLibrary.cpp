@@ -4012,6 +4012,17 @@ wxString guDbLibrary::GetPlayListQuery( const int plid )
 }
 
 // -------------------------------------------------------------------------------- //
+int guDbLibrary::GetPlayListSongs( const int plid, guTrackArray * tracks )
+{
+    int PlType = GetPlayListType( plid );
+    if( PlType != wxNOT_FOUND )
+    {
+        return GetPlayListSongs( plid, PlType, tracks, NULL, NULL );
+    }
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
                     wxLongLong * len, wxLongLong * size )
 {

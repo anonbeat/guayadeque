@@ -628,6 +628,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
 
     Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSongSetRating ), NULL, this );
+
+    Connect( ID_MAINFRAME_WINDOW_RAISE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRaiseWindow ), NULL, this );
+    Connect( ID_MAINFRAME_LOAD_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLoadPlayList ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -766,6 +769,9 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
     Disconnect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
+
+    Disconnect( ID_MAINFRAME_WINDOW_RAISE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRaiseWindow ), NULL, this );
+    Disconnect( ID_MAINFRAME_LOAD_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLoadPlayList ), NULL, this );
 
     if( m_LibUpdateThread )
     {
@@ -6114,6 +6120,28 @@ void guMainFrame::OnSetAllowDenyFilter( wxCommandEvent &event )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnRaiseWindow( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "guMainFrame::OnRaiseWindow" ) );
+    if( !IsShown() )
+    {
+        Show( true );
+        if( IsIconized() )
+            Iconize( false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnLoadPlayList( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "OnLoadPlaylist %i " ), event.GetInt() );
+    guTrackArray Tracks;
+    if( m_Db->GetPlayListSongs( event.GetInt(), &Tracks ) )
+    {
+        m_PlayerPanel->SetPlayList( Tracks );
+    }
+}
 
 
 

@@ -438,6 +438,9 @@ class guMainFrame : public wxFrame
 
     void                            OnSetAllowDenyFilter( wxCommandEvent &event );
 
+    void                            OnRaiseWindow( wxCommandEvent &event );
+    void                            OnLoadPlayList( wxCommandEvent &event );
+
   public:
                                     guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache );
                                     ~guMainFrame();
