@@ -1501,7 +1501,7 @@ void guMainFrame::CreateMenu()
     m_MainMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( m_MainMenu, ID_MENU_HIDE_CAPTIONS,
-                                    wxString( _( "Show/Hide Captions" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_CLOSEWINDOW ),
+                                    wxString( _( "Show/Hide Captions" ) ),
                                     _( "Show/Hide the windows caption" ), wxITEM_NORMAL );
 
     m_MainMenu->Append( MenuItem );
