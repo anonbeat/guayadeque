@@ -1999,6 +1999,7 @@ void guMainFrame::OnCloseTab( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnHideCaptions( wxCommandEvent &event )
 {
+    int Visible = wxNOT_FOUND;
     guLogMessage( wxT( "guMainFrame::OnHideCaptions" ) );
 
     wxAuiPaneInfoArray &PaneInfoArray = m_AuiManager.GetAllPanes();
@@ -2009,7 +2010,11 @@ void guMainFrame::OnHideCaptions( wxCommandEvent &event )
     {
         wxAuiPaneInfo &PaneInfo = PaneInfoArray[ Index ];
         if( PaneInfo.dock_direction != wxAUI_DOCK_CENTER )
-            PaneInfo.CaptionVisible( !PaneInfo.HasCaption() );
+        {
+            if( Visible == wxNOT_FOUND )
+                Visible = !PaneInfo.HasCaption();
+            PaneInfo.CaptionVisible( Visible );
+        }
     }
 //    //m_AuiManager-
 //    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );

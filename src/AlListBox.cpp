@@ -454,7 +454,6 @@ wxString guAlListBox::GetSearchText( int item ) const
         ( * m_Items )[ item ].m_Name.c_str() );
 }
 
-
 // -------------------------------------------------------------------------------- //
 wxString inline guAlListBox::GetItemName( const int row ) const
 {
