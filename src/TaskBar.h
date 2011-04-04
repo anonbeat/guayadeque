@@ -29,14 +29,14 @@
 class guTaskBarIcon : public wxTaskBarIcon
 {
   protected :
-    guMainFrame *   m_MainFrame;
-    guPlayerPanel * m_PlayerPanel;
+    guMainFrame *       m_MainFrame;
+    guPlayerPanel *     m_PlayerPanel;
 
-    virtual wxMenu * CreatePopupMenu();
+    virtual wxMenu *    CreatePopupMenu();
 
-    void SendEventToMainFrame( wxCommandEvent &event );
-    void OnClick( wxTaskBarIconEvent &event );
-    //void SetRatingEvent( wxCommandEvent &event );
+    void                SendEventToMainFrame( wxCommandEvent &event );
+    void                OnClick( wxTaskBarIconEvent &event );
+    //void                SetRatingEvent( wxCommandEvent &event );
 
   public :
     guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPlayerPanel );

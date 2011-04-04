@@ -26,6 +26,8 @@
 #include <wx/menu.h>
 
 // ---------------------------------------------------------------------- //
+// guTaskBarIcon
+// ---------------------------------------------------------------------- //
 guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPlayerPanel ) : wxTaskBarIcon()
 {
     m_MainFrame = NewMainFrame;
@@ -74,12 +76,6 @@ void guTaskBarIcon::SendEventToMainFrame( wxCommandEvent &event )
 {
     wxPostEvent( m_MainFrame, event );
 }
-
-//// ---------------------------------------------------------------------- //
-//void guTaskBarIcon::SetRatingEvent( wxCommandEvent &event )
-//{
-//    m_PlayerPanel->SetRating( event.GetId() - ID_PLAYERPANEL_SETRATING_0 );
-//}
 
 // ---------------------------------------------------------------------- //
 void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )

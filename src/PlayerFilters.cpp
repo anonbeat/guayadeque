@@ -50,12 +50,12 @@ guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 
 	wxStaticText * FiltersDenyLabel = new wxStaticText( this, wxID_ANY, _( "Deny:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	FiltersDenyLabel->Wrap( -1 );
-	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	FiltersFlexSizer->Add( FiltersDenyLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	wxArrayString m_FilterDenyChoiceChoices;
 	m_FilterDenyChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDenyChoiceChoices, 0 );
 	m_FilterDenyChoice->SetSelection( 0 );
-	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	FiltersFlexSizer->Add( m_FilterDenyChoice, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 
 	FiltersMainSizer->Add( FiltersFlexSizer, 1, wxEXPAND, 5 );
 
