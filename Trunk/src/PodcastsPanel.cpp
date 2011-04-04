@@ -413,6 +413,8 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
                 m_Db->SavePodcastChannel( &PodcastChannel );
 
+                PodcastChannel.CheckDeleteItems( m_Db );
+
                 PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );
 
                 m_ChannelsListBox->ReloadItems();
@@ -478,6 +480,8 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
         //guLogMessage( wxT( "The Channel have DownloadType : %u" ), PodcastChannel.m_DownloadType );
 
         m_Db->SavePodcastChannel( &PodcastChannel );
+
+        PodcastChannel.CheckDeleteItems( m_Db );
 
         PodcastChannel.CheckDownloadItems( m_Db, m_MainFrame );
 
