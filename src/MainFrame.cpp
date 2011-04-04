@@ -2016,9 +2016,6 @@ void guMainFrame::OnHideCaptions( wxCommandEvent &event )
             PaneInfo.CaptionVisible( Visible );
         }
     }
-//    //m_AuiManager-
-//    wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_CatNotebook );
-//    PaneInfo.CaptionVisible( !PaneInfo.HasCaption() );
     m_AuiManager.Update();
 }
 

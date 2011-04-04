@@ -422,7 +422,7 @@ void guPodcastChannel::CheckDeleteItems( guDbLibrary * db )
                 return;
         }
 
-        query += wxString::Format( wxT( "AND podcastitem_addeddate < %u " ), DeleteTime.GetTicks() );
+        query += wxString::Format( wxT( "AND podcastitem_time < %u " ), DeleteTime.GetTicks() );
 
         //
         if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "Podcasts" ) ) )
@@ -453,9 +453,9 @@ void guPodcastChannel::Update( guDbLibrary * db, guMainFrame * mainframe )
         // Save only the new items in the channel
         db->SavePodcastChannel( this, true );
 
-        CheckDownloadItems( db, mainframe );
-
         CheckDeleteItems( db );
+
+        CheckDownloadItems( db, mainframe );
     }
 }
 
