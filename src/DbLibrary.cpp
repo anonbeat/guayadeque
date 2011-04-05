@@ -250,6 +250,93 @@ wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
   return RetVal;
 }
 
+
+
+
+// -------------------------------------------------------------------------------- //
+// guTrack
+// -------------------------------------------------------------------------------- //
+bool guTrack::ReadFromFile( const wxString &filename )
+{
+  bool RetVal = false;
+
+  guTagInfo * TagInfo;
+
+  TagInfo = guGetTagInfoHandler( filename );
+  if( TagInfo )
+  {
+      //guLogMessage( wxT( "FileName: '%s'" ), filename.c_str() );
+
+      m_Path = wxPathOnly( filename );
+      if( !m_Path.EndsWith( wxT( "/" ) ) )
+        m_Path += '/';
+      //guLogMessage( wxT( "PathName: %s" ), m_Path.c_str() );
+
+      if( TagInfo->Read() )
+      {
+          m_Composer = TagInfo->m_Composer;
+
+          m_ArtistName = TagInfo->m_ArtistName;
+
+          m_AlbumArtist = TagInfo->m_AlbumArtist;
+
+          m_AlbumName = TagInfo->m_AlbumName;
+
+          m_GenreName = TagInfo->m_GenreName;
+
+          m_SongName = TagInfo->m_TrackName;
+
+          m_Number   = TagInfo->m_Track;
+          m_Year     = TagInfo->m_Year;
+          m_Length   = TagInfo->m_Length;
+          m_Bitrate  = TagInfo->m_Bitrate;
+          m_Comments = TagInfo->m_Comments;
+          m_Disk     = TagInfo->m_Disk;
+      }
+      else
+      {
+          guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
+      }
+
+      m_PathId = wxNOT_FOUND;
+
+      if( m_ArtistName.IsEmpty() )
+        m_ArtistName = _( "Unknown" );
+      m_ArtistId = wxNOT_FOUND;
+
+      m_AlbumArtistId = wxNOT_FOUND;;
+
+      if( m_AlbumName.IsEmpty() && !m_Path.IsEmpty() )
+        m_AlbumName = m_Path.BeforeLast( wxT( '/' ) ).AfterLast( wxT( '/' ) );
+      m_AlbumId = wxNOT_FOUND;;
+
+      m_CoverId = 0;
+
+      if( m_GenreName.IsEmpty() )
+        m_GenreName = _( "Unknown" );
+      m_GenreId = wxNOT_FOUND;;
+
+      m_FileName = filename;
+      m_FileSize = guGetFileSize( filename );
+
+      if( m_SongName.IsEmpty() )
+        m_SongName = m_FileName.AfterLast( wxT( '/' ) ).BeforeLast( wxT( '.' ) );
+
+      m_SongId = wxNOT_FOUND;;
+
+      m_Rating   = wxNOT_FOUND;
+
+      RetVal = true;
+
+      delete TagInfo;
+  }
+
+  return RetVal;
+}
+
+
+
+
 // -------------------------------------------------------------------------------- //
 // guDbLibrary
 // -------------------------------------------------------------------------------- //
@@ -289,77 +376,6 @@ guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
   }
 
   //LoadCache();
-}
-
-// -------------------------------------------------------------------------------- //
-bool guTrack::ReadFromFile( const wxString &filename )
-{
-  bool RetVal = false;
-
-  guTagInfo * TagInfo;
-
-  TagInfo = guGetTagInfoHandler( filename );
-  if( TagInfo )
-  {
-      //guLogMessage( wxT( "FileName: '%s'" ), filename.c_str() );
-      if( TagInfo->Read() )
-      {
-          m_Path = wxPathOnly( filename );
-          if( !m_Path.EndsWith( wxT( "/" ) ) )
-            m_Path += '/';
-
-          //guLogMessage( wxT( "PathName: %s" ), m_Path.c_str() );
-          m_PathId = wxNOT_FOUND;
-
-          m_Composer = TagInfo->m_Composer;
-
-          m_ArtistName = TagInfo->m_ArtistName;
-          if( m_ArtistName.IsEmpty() )
-            m_ArtistName = _( "Unknown" );
-          m_ArtistId = wxNOT_FOUND;
-
-          m_AlbumArtist = TagInfo->m_AlbumArtist;
-          m_AlbumArtistId = wxNOT_FOUND;;
-
-          m_AlbumName = TagInfo->m_AlbumName;
-          if( m_AlbumName.IsEmpty() )
-            m_AlbumName = m_Path.BeforeLast( wxT( '/' ) ).AfterLast( wxT( '/' ) );
-          m_AlbumId = wxNOT_FOUND;;
-
-          m_CoverId = 0;
-
-          m_GenreName = TagInfo->m_GenreName;
-          if( m_GenreName.IsEmpty() )
-            m_GenreName = _( "Unknown" );
-          m_GenreId = wxNOT_FOUND;;
-
-          m_FileName = filename;
-          m_SongName = TagInfo->m_TrackName;
-          if( m_SongName.IsEmpty() )
-            m_SongName = m_FileName.BeforeLast( wxT( '.' ) );
-          m_FileSize = guGetFileSize( filename );
-
-          m_SongId = wxNOT_FOUND;;
-
-          m_Number   = TagInfo->m_Track;
-          m_Year     = TagInfo->m_Year;
-          m_Length   = TagInfo->m_Length;
-          m_Bitrate  = TagInfo->m_Bitrate;
-          m_Rating   = wxNOT_FOUND;
-          m_Comments = TagInfo->m_Comments;
-          m_Disk     = TagInfo->m_Disk;
-
-          RetVal = true;
-      }
-      else
-      {
-          guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
-      }
-
-      delete TagInfo;
-  }
-
-  return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1806,6 +1822,49 @@ int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::ReadFileTags( const wxString &filename )
 {
+  if( m_CurSong.ReadFromFile( filename ) )
+  {
+      m_CurSong.m_FileName = filename.AfterLast( wxT( '/' ) );
+      m_CurSong.m_PathId = GetPathId( m_CurSong.m_Path );
+      m_CurSong.m_ComposerId = GetComposerId( m_CurSong.m_Composer );
+      m_CurSong.m_ArtistId = GetArtistId( m_CurSong.m_ArtistName );
+      m_CurSong.m_AlbumArtistId = GetAlbumArtistId( m_CurSong.m_AlbumArtist );
+      m_CurSong.m_AlbumId = GetAlbumId( m_CurSong.m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, m_CurSong.m_Path );
+      m_CurSong.m_CoverId = GetAlbumCoverId( m_CurSong.m_AlbumId );
+      m_CurSong.m_GenreId = GetGenreId( m_CurSong.m_GenreName );
+      m_CurSong.m_SongId = GetSongId( m_CurSong.m_FileName, m_CurSong.m_PathId );
+
+//      wxArrayInt ArrayIds;
+//      //
+//      if( TagInfo->m_TrackLabels.Count() )
+//      {
+//        ArrayIds.Add( m_CurSong.m_SongId );
+//        wxArrayInt TrackLabelIds = GetLabelIds( TagInfo->m_TrackLabels );
+//        SetSongsLabels( ArrayIds, TrackLabelIds );
+//      }
+//
+//      if( TagInfo->m_ArtistLabels.Count() )
+//      {
+//        ArrayIds.Empty();
+//        ArrayIds.Add( m_CurSong.m_ArtistId );
+//        wxArrayInt ArtistLabelIds = GetLabelIds( TagInfo->m_ArtistLabels );
+//        SetArtistsLabels( ArrayIds, ArtistLabelIds );
+//      }
+//
+//      if( TagInfo->m_AlbumLabels.Count() )
+//      {
+//        ArrayIds.Empty();
+//        ArrayIds.Add( m_CurSong.m_AlbumId );
+//        wxArrayInt AlbumLabelIds = GetLabelIds( TagInfo->m_AlbumLabels );
+//        SetAlbumsLabels( ArrayIds, AlbumLabelIds );
+//      }
+
+      UpdateSong( false );
+
+    return 1;
+  }
+  return 0;
+
   guTagInfo * TagInfo;
 
   TagInfo = guGetTagInfoHandler( filename );
