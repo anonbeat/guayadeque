@@ -120,6 +120,16 @@ class guTrack
         m_Type = guTRACK_TYPE_DB;
         m_TrackMode = guTRACK_MODE_USER;
         m_Bitrate = 0;
+        m_Number = 0;
+        m_Year = 0;
+        m_Length = 0;
+        m_Offset = 0;
+        m_Bitrate = 0;
+        m_Rating = wxNOT_FOUND;
+        m_PlayCount = 0;
+        m_LastPlay = 0;
+        m_AddedTime = 0;
+        m_CoverId = 0;
     };
 
     ~guTrack() {};
