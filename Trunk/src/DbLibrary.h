@@ -299,7 +299,6 @@ class guDbLibrary : public guDb
 {
   protected :
     wxArrayString      m_LibPaths;
-    guTrack            m_CurSong;
     bool               m_NeedUpdate;
 
     // Library Filter Options
@@ -364,15 +363,14 @@ class guDbLibrary : public guDb
 
     wxString            GetCoverPath( const int CoverId );
     int                 GetAlbumId( wxString &AlbumName, const int ArtistId, const int PathId, const wxString &Path, const int coverid = 0 );
-    int                 GetSongId( wxString &filename, const int pathid );
-    int                 GetSongId( wxString &FileName, wxString &FilePath );
+    int                 GetSongId( wxString &filename, const int pathid, bool * created = NULL );
+    int                 GetSongId( wxString &FileName, wxString &FilePath, bool * created = NULL );
     wxArrayInt          GetLabelIds( const wxArrayString &Labels );
     wxArrayString       GetLabelNames( const wxArrayInt &LabelIds );
     int                 GetLabelId( int * LabelId, wxString &LabelName );
     int                 PathExists( const wxString &path );
     int                 GetPathId( wxString &PathValue );
     virtual int         UpdateSong( const guTrack &track, const bool allowrating = false );
-    virtual int         UpdateSong( const bool allowrating = false ) { return UpdateSong( m_CurSong, allowrating ); }
     int                 AddFiles( const wxArrayString &files );
 
     void                GetGenres( guListItems * Genres, const bool FullList = false );
@@ -491,11 +489,11 @@ class guDbLibrary : public guDb
     virtual void        UpdateSongsLabels( const guArrayListItems &labelsets );
     virtual void        UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newlabel );
 
-    void                SetTrackRating( const int songid, const int rating );
-    void                SetTracksRating( const wxArrayInt &songids, const int rating );
-    void                SetTracksRating( const guTrackArray * tracks, const int rating );
+    void                SetTrackRating( const int songid, const int rating, const bool writetags = false );
+    void                SetTracksRating( const wxArrayInt &songids, const int rating, const bool writetags = false );
+    void                SetTracksRating( const guTrackArray * tracks, const int rating, const bool writetags = false );
 
-    void                SetTrackPlayCount( const int songid, const int playcount );
+    void                SetTrackPlayCount( const int songid, const int playcount, const bool writetags = false );
 
 
     int                 GetYearsSongs( const wxArrayInt &Years, guTrackArray * Songs );

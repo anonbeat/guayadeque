@@ -86,6 +86,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     wxSize WindowSize;
     WindowSize.x = Config->ReadNum( wxT( "TrackEditSizeWidth" ), 625, wxT( "Positions" ) );
     WindowSize.y = Config->ReadNum( wxT( "TrackEditSizeHeight" ), 440, wxT( "Positions" ) );
+    m_EmbeddRatings = Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) );
 
     //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
     Create( parent, wxID_ANY, _( "Songs Editor" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
@@ -1051,7 +1052,8 @@ void guTrackEditor::WriteItemData( void )
 
         if( m_RatingChanged )
         {
-          SetTagField( ( * m_Items )[ m_CurItem ].m_Rating, m_Rating->GetRating(), ChangedFlag );
+          SetTagField( ( * m_Items )[ m_CurItem ].m_Rating, m_Rating->GetRating(), ChangedFlag,
+                      m_EmbeddRatings ? guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_RATING : guTRACK_CHANGED_DATA_TAGS );
         }
 
         if( m_CommentText->IsModified() )
@@ -1188,7 +1190,8 @@ void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
     int CurData = m_Rating->GetRating();
     for( index = 0; index < count; index++ )
     {
-        SetTagField( ( * m_Items )[ index ].m_Rating, CurData, ( * m_ChangedFlags )[ index ] );
+        SetTagField( ( * m_Items )[ index ].m_Rating, CurData, ( * m_ChangedFlags )[ index ],
+                m_EmbeddRatings ? guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_RATING : guTRACK_CHANGED_DATA_TAGS );
     }
 }
 

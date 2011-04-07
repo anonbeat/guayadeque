@@ -1841,29 +1841,40 @@ void guLibPanel::UpdatePlaylists( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongSetRating( wxCommandEvent &event )
 {
+    int Index;
+    int Count;
     int Rating = event.GetId() - ID_SONG_SET_RATING_0;
-    //guLogMessage( wxT( "guLibPanel::OnSongSetRating %i" ), Rating );
+    //guLogMessage( wxT( "OnSongSetRating( %i )" ), Rating );
 
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-    if( Tracks.Count() )
+    if( ( Count = Tracks.Count() ) )
     {
-        m_Db->SetTracksRating( &Tracks, Rating );
-        int Index;
-        int Count = Tracks.Count();
         for( Index = 0; Index < Count; Index++ )
         {
             Tracks[ Index ].m_Rating = Rating;
         }
 
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+        {
+            guImagePtrArray Images;
+            wxArrayString Lyrics;
+            wxArrayInt ChangedFlags;
+            ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING, Count );
+            guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+        }
+
+        m_Db->SetTracksRating( &Tracks, Rating );
+
         UpdatedTracks( &Tracks );
         ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_LIBRARY, &Tracks );
     }
-    else
-    {
-        event.SetId( ID_PLAYERPANEL_SETRATING_0 + Rating );
-        event.Skip();
-    }
+//    else
+//    {
+//        event.SetId( ID_PLAYERPANEL_SETRATING_0 + Rating );
+//        event.Skip();
+//    }
 }
 
 // -------------------------------------------------------------------------------- //

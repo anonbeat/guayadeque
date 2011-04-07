@@ -1779,7 +1779,7 @@ int guDbLibrary::GetPathId( wxString &PathValue )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetSongId( wxString &filename, const int pathid )
+int guDbLibrary::GetSongId( wxString &filename, const int pathid, bool * created )
 {
   //wxSQLite3StatementBuffer query;
   wxString query;
@@ -1807,6 +1807,10 @@ int guDbLibrary::GetSongId( wxString &filename, const int pathid )
     {
       RetVal = GetLastRowId();
     }
+    if( created )
+    {
+        * created = true;
+    }
   }
   dbRes.Finalize();
 
@@ -1814,145 +1818,109 @@ int guDbLibrary::GetSongId( wxString &filename, const int pathid )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath )
+int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath, bool * created )
 {
-  return GetSongId( FileName, GetPathId( FilePath ) );
+  return GetSongId( FileName, GetPathId( FilePath ), created );
 }
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::ReadFileTags( const wxString &filename )
 {
-  if( m_CurSong.ReadFromFile( filename ) )
-  {
-      m_CurSong.m_FileName = filename.AfterLast( wxT( '/' ) );
-      m_CurSong.m_PathId = GetPathId( m_CurSong.m_Path );
-      m_CurSong.m_ComposerId = GetComposerId( m_CurSong.m_Composer );
-      m_CurSong.m_ArtistId = GetArtistId( m_CurSong.m_ArtistName );
-      m_CurSong.m_AlbumArtistId = GetAlbumArtistId( m_CurSong.m_AlbumArtist );
-      m_CurSong.m_AlbumId = GetAlbumId( m_CurSong.m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, m_CurSong.m_Path );
-      m_CurSong.m_CoverId = GetAlbumCoverId( m_CurSong.m_AlbumId );
-      m_CurSong.m_GenreId = GetGenreId( m_CurSong.m_GenreName );
-      m_CurSong.m_SongId = GetSongId( m_CurSong.m_FileName, m_CurSong.m_PathId );
-
-//      wxArrayInt ArrayIds;
-//      //
-//      if( TagInfo->m_TrackLabels.Count() )
-//      {
-//        ArrayIds.Add( m_CurSong.m_SongId );
-//        wxArrayInt TrackLabelIds = GetLabelIds( TagInfo->m_TrackLabels );
-//        SetSongsLabels( ArrayIds, TrackLabelIds );
-//      }
-//
-//      if( TagInfo->m_ArtistLabels.Count() )
-//      {
-//        ArrayIds.Empty();
-//        ArrayIds.Add( m_CurSong.m_ArtistId );
-//        wxArrayInt ArtistLabelIds = GetLabelIds( TagInfo->m_ArtistLabels );
-//        SetArtistsLabels( ArrayIds, ArtistLabelIds );
-//      }
-//
-//      if( TagInfo->m_AlbumLabels.Count() )
-//      {
-//        ArrayIds.Empty();
-//        ArrayIds.Add( m_CurSong.m_AlbumId );
-//        wxArrayInt AlbumLabelIds = GetLabelIds( TagInfo->m_AlbumLabels );
-//        SetAlbumsLabels( ArrayIds, AlbumLabelIds );
-//      }
-
-      UpdateSong( false );
-
-    return 1;
-  }
-  return 0;
-
-  guTagInfo * TagInfo;
-
-  TagInfo = guGetTagInfoHandler( filename );
-
+  guTagInfo * TagInfo = guGetTagInfoHandler( filename );
   if( TagInfo )
   {
-      //guLogMessage( wxT( "FileName: '%s'" ), FileName.c_str() );
+      guTrack CurTrack;
+
+      //guLogMessage( wxT( "FileName: '%s'" ), filename.c_str() );
+      CurTrack.m_Path = wxPathOnly( filename );
+      if( !CurTrack.m_Path.EndsWith( wxT( "/" ) ) )
+        CurTrack.m_Path += '/';
+      //guLogMessage( wxT( "PathName: %s" ), m_Path.c_str() );
+
       if( TagInfo->Read() )
       {
-          //wxString PathName = wxGetCwd();
-          //guLogMessage( wxT( "FileName: %s" ), FileName.c_str() );
-
-          m_CurSong.m_Path = wxPathOnly( filename );
-          if( !m_CurSong.m_Path.EndsWith( wxT( "/" ) ) )
-            m_CurSong.m_Path += '/';
-
-          //guLogMessage( wxT( "PathName: %s" ), PathName.c_str() );
-          m_CurSong.m_PathId = GetPathId( m_CurSong.m_Path );
-
-          m_CurSong.m_ComposerId = GetComposerId( TagInfo->m_Composer );
-          m_CurSong.m_Composer = TagInfo->m_Composer;
-
-          m_CurSong.m_ArtistId = GetArtistId( TagInfo->m_ArtistName );
-          m_CurSong.m_ArtistName = TagInfo->m_ArtistName;
-
-          m_CurSong.m_AlbumArtistId = GetAlbumArtistId( TagInfo->m_AlbumArtist );
-          m_CurSong.m_AlbumArtist = TagInfo->m_AlbumArtist;
-
-          m_CurSong.m_AlbumId = GetAlbumId( TagInfo->m_AlbumName, m_CurSong.m_ArtistId, m_CurSong.m_PathId, m_CurSong.m_Path );
-          m_CurSong.m_AlbumName = TagInfo->m_AlbumName;
-
-          m_CurSong.m_CoverId = GetAlbumCoverId( m_CurSong.m_AlbumId );
-
-          m_CurSong.m_GenreId = GetGenreId( TagInfo->m_GenreName );
-          m_CurSong.m_GenreName = TagInfo->m_GenreName;
-
-          m_CurSong.m_FileName = filename.AfterLast( '/' );
-          m_CurSong.m_SongName = TagInfo->m_TrackName;
-          m_CurSong.m_FileSize = guGetFileSize( filename );
-
-          m_CurSong.m_SongId = GetSongId( m_CurSong.m_FileName, m_CurSong.m_PathId );
-
-          m_CurSong.m_Number   = TagInfo->m_Track;
-          m_CurSong.m_Year     = TagInfo->m_Year;
-          m_CurSong.m_Length   = TagInfo->m_Length;
-          m_CurSong.m_Bitrate  = TagInfo->m_Bitrate;
-          //m_CurSong.m_Rating   = -1;
-          m_CurSong.m_Composer = TagInfo->m_Composer;
-          m_CurSong.m_Comments = TagInfo->m_Comments;
-          m_CurSong.m_Disk     = TagInfo->m_Disk;
-
-          wxArrayInt ArrayIds;
-          //
-          if( TagInfo->m_TrackLabels.Count() )
-          {
-            ArrayIds.Add( m_CurSong.m_SongId );
-            wxArrayInt TrackLabelIds = GetLabelIds( TagInfo->m_TrackLabels );
-            SetSongsLabels( ArrayIds, TrackLabelIds );
-          }
-
-          if( TagInfo->m_ArtistLabels.Count() )
-          {
-            ArrayIds.Empty();
-            ArrayIds.Add( m_CurSong.m_ArtistId );
-            wxArrayInt ArtistLabelIds = GetLabelIds( TagInfo->m_ArtistLabels );
-            SetArtistsLabels( ArrayIds, ArtistLabelIds );
-          }
-
-          if( TagInfo->m_AlbumLabels.Count() )
-          {
-            ArrayIds.Empty();
-            ArrayIds.Add( m_CurSong.m_AlbumId );
-            wxArrayInt AlbumLabelIds = GetLabelIds( TagInfo->m_AlbumLabels );
-            SetAlbumsLabels( ArrayIds, AlbumLabelIds );
-          }
-
-          UpdateSong( false );
-
-          delete TagInfo;
-
-          return 1;
+          CurTrack.m_Composer       = TagInfo->m_Composer;
+          CurTrack.m_ArtistName     = TagInfo->m_ArtistName;
+          CurTrack.m_AlbumArtist    = TagInfo->m_AlbumArtist;
+          CurTrack.m_AlbumName      = TagInfo->m_AlbumName;
+          CurTrack.m_GenreName      = TagInfo->m_GenreName;
+          CurTrack.m_SongName       = TagInfo->m_TrackName;
+          CurTrack.m_Number         = TagInfo->m_Track;
+          CurTrack.m_Year           = TagInfo->m_Year;
+          CurTrack.m_Length         = TagInfo->m_Length;
+          CurTrack.m_Bitrate        = TagInfo->m_Bitrate;
+          CurTrack.m_Comments       = TagInfo->m_Comments;
+          CurTrack.m_Disk           = TagInfo->m_Disk;
+          CurTrack.m_Rating         = TagInfo->m_Rating;
+          CurTrack.m_PlayCount      = TagInfo->m_PlayCount;
       }
       else
       {
           guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
+
+      }
+
+      CurTrack.m_PathId = GetPathId( CurTrack.m_Path );
+
+      CurTrack.m_ComposerId = GetComposerId( CurTrack.m_Composer );
+
+      if( CurTrack.m_ArtistName.IsEmpty() )
+        CurTrack.m_ArtistName = _( "Unknown" );
+      CurTrack.m_ArtistId = GetArtistId( CurTrack.m_ArtistName );
+
+      CurTrack.m_AlbumArtistId = GetAlbumArtistId( CurTrack.m_AlbumArtist );
+
+      if( CurTrack.m_AlbumName.IsEmpty() && !CurTrack.m_Path.IsEmpty() )
+        CurTrack.m_AlbumName = CurTrack.m_Path.BeforeLast( wxT( '/' ) ).AfterLast( wxT( '/' ) );
+      CurTrack.m_AlbumId = GetAlbumId( CurTrack.m_AlbumName, CurTrack.m_ArtistId, CurTrack.m_PathId, CurTrack.m_Path );
+
+      CurTrack.m_CoverId = GetAlbumCoverId( CurTrack.m_AlbumId );
+
+      if( CurTrack.m_GenreName.IsEmpty() )
+        CurTrack.m_GenreName = _( "Unknown" );
+      CurTrack.m_GenreId = GetGenreId( CurTrack.m_GenreName );
+
+      CurTrack.m_FileName = filename.AfterLast( wxT( '/' ) );
+      CurTrack.m_FileSize = guGetFileSize( filename );
+
+      if( CurTrack.m_SongName.IsEmpty() )
+        CurTrack.m_SongName = CurTrack.m_FileName.AfterLast( wxT( '/' ) ).BeforeLast( wxT( '.' ) );
+
+      bool IsNewTrack = false;
+      CurTrack.m_SongId = GetSongId( CurTrack.m_FileName, CurTrack.m_PathId, &IsNewTrack );
+
+
+      wxArrayInt ArrayIds;
+
+      //
+      if( TagInfo->m_TrackLabels.Count() )
+      {
+        ArrayIds.Add( CurTrack.m_SongId );
+        wxArrayInt TrackLabelIds = GetLabelIds( TagInfo->m_TrackLabels );
+        SetSongsLabels( ArrayIds, TrackLabelIds );
+      }
+
+      if( TagInfo->m_ArtistLabels.Count() )
+      {
+        ArrayIds.Empty();
+        ArrayIds.Add( CurTrack.m_ArtistId );
+        wxArrayInt ArtistLabelIds = GetLabelIds( TagInfo->m_ArtistLabels );
+        SetArtistsLabels( ArrayIds, ArtistLabelIds );
+      }
+
+      if( TagInfo->m_AlbumLabels.Count() )
+      {
+        ArrayIds.Empty();
+        ArrayIds.Add( CurTrack.m_AlbumId );
+        wxArrayInt AlbumLabelIds = GetLabelIds( TagInfo->m_AlbumLabels );
+        SetAlbumsLabels( ArrayIds, AlbumLabelIds );
       }
 
       delete TagInfo;
+
+      UpdateSong( CurTrack, IsNewTrack );
+
+      return 1;
   }
 
   return 0;
@@ -2084,20 +2052,20 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
 
             //GetSongId( &SongId, FileName, PathId );
 
-            m_CurSong = * Song;
-            m_CurSong.m_GenreId = GenreId;
-            m_CurSong.m_ArtistId = ArtistId;
-            m_CurSong.m_AlbumArtistId = AlbumArtistId;
-            m_CurSong.m_ComposerId = ComposerId;
-            m_CurSong.m_AlbumId = AlbumId;
-            m_CurSong.m_PathId = PathId;
-            m_CurSong.m_FileName = Song->m_FileName.AfterLast( '/' );
+            guTrack CurTrack = * Song;
+            CurTrack.m_GenreId = GenreId;
+            CurTrack.m_ArtistId = ArtistId;
+            CurTrack.m_AlbumArtistId = AlbumArtistId;
+            CurTrack.m_ComposerId = ComposerId;
+            CurTrack.m_AlbumId = AlbumId;
+            CurTrack.m_PathId = PathId;
+            CurTrack.m_FileName = Song->m_FileName.AfterLast( '/' );
             //CurSong.SongId = SongId;
             //CurSong.FileName.c_str(),
             //CurSong.Number
             //CurSong.Year,
             //CurSong.Length,
-            UpdateSong( true );
+            UpdateSong( CurTrack, true );
         }
 //    }
 //    else
@@ -2128,91 +2096,53 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
 int guDbLibrary::UpdateSong( const guTrack &track, const bool allowrating )
 {
   wxString query;
-//  printf( "UpdateSong\n" );
+
+  query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
+                                 "song_genreid = %u, song_genre = '%s', "
+                                 "song_artistid = %u, song_artist = '%s', "
+                                 "song_albumartistid = %u, song_albumartist = '%s', "
+                                 "song_albumid = %u, song_album = '%s', "
+                                 "song_pathid = %u, song_path = '%s', "
+                                 "song_filename = '%s', song_format = '%s', "
+                                 "song_number = %u, song_year = %u, "
+                                 "song_composerid = %u, song_composer = '%s', "
+                                 "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
+                                 "song_length = %u, song_offset = %u, song_bitrate = %u, "
+                                 "song_filesize = %u" ),
+            escape_query_str( track.m_SongName ).c_str(),
+            track.m_GenreId,
+            escape_query_str( track.m_GenreName ).c_str(),
+            track.m_ArtistId,
+            escape_query_str( track.m_ArtistName ).c_str(),
+            track.m_AlbumArtistId,
+            escape_query_str( track.m_AlbumArtist ).c_str(),
+            track.m_AlbumId,
+            escape_query_str( track.m_AlbumName ).c_str(),
+            track.m_PathId,
+            escape_query_str( track.m_Path ).c_str(),
+            escape_query_str( track.m_FileName ).c_str(),
+            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
+            track.m_Number,
+            track.m_Year,
+            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Composer ).c_str(),
+            escape_query_str( track.m_Comments ).c_str(),
+            track.m_CoverId,
+            escape_query_str( track.m_Disk ).c_str(),
+            track.m_Length,
+            0, //track.m_Offset,
+            track.m_Bitrate,
+            track.m_FileSize );
 
   if( allowrating )
   {
-      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-                                 "song_genreid = %u, song_genre = '%s', "
-                                 "song_artistid = %u, song_artist = '%s', "
-                                 "song_albumartistid = %u, song_albumartist = '%s', "
-                                 "song_albumid = %u, song_album = '%s', "
-                                 "song_pathid = %u, song_path = '%s', "
-                                 "song_filename = '%s', song_format = '%s', "
-                                 "song_number = %u, song_year = %u, "
-                                 "song_composerid = %u, song_composer = '%s', "
-                                 "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
-                                 "song_length = %u, song_offset = %u, song_bitrate = %u, "
-                                 "song_rating = %i, "
-                                 "song_filesize = %u WHERE song_id = %u;" ),
-            escape_query_str( track.m_SongName ).c_str(),
-            track.m_GenreId,
-            escape_query_str( track.m_GenreName ).c_str(),
-            track.m_ArtistId,
-            escape_query_str( track.m_ArtistName ).c_str(),
-            track.m_AlbumArtistId,
-            escape_query_str( track.m_AlbumArtist ).c_str(),
-            track.m_AlbumId,
-            escape_query_str( track.m_AlbumName ).c_str(),
-            track.m_PathId,
-            escape_query_str( track.m_Path ).c_str(),
-            escape_query_str( track.m_FileName ).c_str(),
-            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
-            track.m_Number,
-            track.m_Year,
-            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
-            escape_query_str( track.m_Composer ).c_str(),
-            escape_query_str( track.m_Comments ).c_str(),
-            track.m_CoverId,
-            escape_query_str( track.m_Disk ).c_str(),
-            track.m_Length,
-            0, //track.m_Offset,
-            track.m_Bitrate,
+      query += wxString::Format( wxT( ", song_rating = %i, song_playcount = %i " ),
             track.m_Rating,
-            track.m_FileSize,
-            track.m_SongId );
+            track.m_PlayCount );
   }
-  else
-  {
-      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-                                 "song_genreid = %u, song_genre = '%s', "
-                                 "song_artistid = %u, song_artist = '%s', "
-                                 "song_albumartistid = %u, song_albumartist = '%s', "
-                                 "song_albumid = %u, song_album = '%s', "
-                                 "song_pathid = %u, song_path = '%s', "
-                                 "song_filename = '%s', song_format = '%s', "
-                                 "song_number = %u, song_year = %u, "
-                                 "song_composerid = %u, song_composer = '%s', "
-                                 "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
-                                 "song_length = %u, song_offset = %u, song_bitrate = %u, "
-                                 "song_filesize = %u WHERE song_id = %u;" ),
-            escape_query_str( track.m_SongName ).c_str(),
-            track.m_GenreId,
-            escape_query_str( track.m_GenreName ).c_str(),
-            track.m_ArtistId,
-            escape_query_str( track.m_ArtistName ).c_str(),
-            track.m_AlbumArtistId,
-            escape_query_str( track.m_AlbumArtist ).c_str(),
-            track.m_AlbumId,
-            escape_query_str( track.m_AlbumName ).c_str(),
-            track.m_PathId,
-            escape_query_str( track.m_Path ).c_str(),
-            escape_query_str( track.m_FileName ).c_str(),
-            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
-            track.m_Number,
-            track.m_Year,
-            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
-            escape_query_str( track.m_Composer ).c_str(),
-            escape_query_str( track.m_Comments ).c_str(),
-            track.m_CoverId,
-            escape_query_str( track.m_Disk ).c_str(),
-            track.m_Length,
-            0, //track.m_Offset,
-            track.m_Bitrate,
-            track.m_FileSize,
-            track.m_SongId );
-  }
-  //guLogMessage( wxT( "%s" ), query.c_str() );
+
+  query += wxString::Format( wxT( " WHERE song_id = %u;" ), track.m_SongId );
+
   return ExecuteUpdate( query );
 }
 
@@ -2693,14 +2623,17 @@ int guDbLibrary::AddLabel( wxString LabelName )
 int guDbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, const wxString &newlabel )
 {
   wxString query;
-  guListItems   LaItems;
-  guTrackArray  Tracks;
-  wxArrayInt    Labels;
-  Labels.Add( labelid );
 
-  GetLabelsSongs( Labels, &Tracks );
-  UpdateSongsLabel( &Tracks, oldlabel, newlabel );
+  guConfig * Config = ( guConfig * ) Config->Get();
+  if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+  {
+      guTrackArray  Tracks;
+      wxArrayInt    Labels;
+      Labels.Add( labelid );
 
+      GetLabelsSongs( Labels, &Tracks );
+      UpdateSongsLabel( &Tracks, oldlabel, newlabel );
+  }
 
   wxString LabelName = newlabel;
   escape_query_str( &LabelName );
@@ -2717,16 +2650,21 @@ int guDbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, cons
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::DelLabel( const int LabelId )
 {
-  guListItems   LaItems;
   wxString      query;
-  guTrackArray  Tracks;
-  wxArrayInt    Labels;
-  Labels.Add( LabelId );
 
-  GetLabels( &LaItems, true );
+  guConfig * Config = ( guConfig * ) Config->Get();
+  if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+  {
+      guListItems   LaItems;
+      guTrackArray  Tracks;
+      wxArrayInt    Labels;
+      Labels.Add( LabelId );
 
-  GetLabelsSongs( Labels, &Tracks );
-  UpdateSongsLabel( &Tracks, guListItemsGetName( LaItems, LabelId ), wxEmptyString );
+      GetLabels( &LaItems, true );
+
+      GetLabelsSongs( Labels, &Tracks );
+      UpdateSongsLabel( &Tracks, guListItemsGetName( LaItems, LabelId ), wxEmptyString );
+  }
 
   query = query.Format( wxT( "DELETE FROM tags WHERE tag_id = %u;" ), LabelId );
   if( ExecuteUpdate( query ) )
@@ -5854,31 +5792,35 @@ void guDbLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
     Artists.Add( labelsets[ ArIndex ].GetId() );
     SetArtistsLabels( Artists, ArLabels );
 
-    // Get the affected tracks
-    GetArtistsSongs( Artists, &Songs );
-    Count = Songs.Count();
-    for( Index = 0; Index < Count; Index++ )
+    guConfig * Config = ( guConfig * ) Config->Get();
+    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
     {
-      Song = &Songs[ Index ];
-
-      if( wxFileExists( Song->m_FileName ) )
+      // Get the affected tracks
+      GetArtistsSongs( Artists, &Songs );
+      Count = Songs.Count();
+      for( Index = 0; Index < Count; Index++ )
       {
-        guTagInfo * TagInfo;
-        TagInfo = guGetTagInfoHandler( Song->m_FileName );
-        if( !TagInfo )
-          continue;
+        Song = &Songs[ Index ];
 
-        TagInfo->Read();
+        if( wxFileExists( Song->m_FileName ) )
+        {
+          guTagInfo * TagInfo;
+          TagInfo = guGetTagInfoHandler( Song->m_FileName );
+          if( !TagInfo )
+            continue;
 
-        TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
+          TagInfo->Read();
 
-        TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
+          TagInfo->m_ArtistLabelsStr = ArtistLabelStr;
 
-        delete TagInfo;
-      }
-      else
-      {
-        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+          TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
+
+          delete TagInfo;
+        }
+        else
+        {
+          guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+        }
       }
     }
   }
@@ -5911,39 +5853,43 @@ void guDbLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
     if( !AlbumLabelStr.IsEmpty() )
       AlbumLabelStr.RemoveLast( 1 );
 
-    //guLogMessage( wxT( "Artist Labels : '%s'" ), ArtistLabelStr.c_str() );
+    guLogMessage( wxT( "Album Labels : '%s'" ), AlbumLabelStr.c_str() );
     // Update the Database
     wxArrayInt ItemIds;
     ItemIds.Add( labelsets[ ItemIndex ].GetId() );
     SetAlbumsLabels( ItemIds, ItemLabels );
 
-    // Get the affected tracks
-    GetAlbumsSongs( ItemIds, &Songs );
-
-    Count = Songs.Count();
-    for( Index = 0; Index < Count; Index++ )
+    guConfig * Config = ( guConfig * ) Config->Get();
+    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
     {
-      Song = &Songs[ Index ];
+        // Get the affected tracks
+        GetAlbumsSongs( ItemIds, &Songs );
 
-      if( wxFileExists( Song->m_FileName ) )
-      {
-        guTagInfo * TagInfo;
-        TagInfo = guGetTagInfoHandler( Song->m_FileName );
-        if( !TagInfo )
-          continue;
+        Count = Songs.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+          Song = &Songs[ Index ];
 
-        TagInfo->Read();
+          if( wxFileExists( Song->m_FileName ) )
+          {
+            guTagInfo * TagInfo;
+            TagInfo = guGetTagInfoHandler( Song->m_FileName );
+            if( !TagInfo )
+              continue;
 
-        TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
+            TagInfo->Read();
 
-        TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
+            TagInfo->m_AlbumLabelsStr = AlbumLabelStr;
 
-        delete TagInfo;
-      }
-      else
-      {
-        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
-      }
+            TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
+
+            delete TagInfo;
+          }
+          else
+          {
+            guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+          }
+        }
     }
   }
 }
@@ -5981,33 +5927,37 @@ void guDbLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
     ItemIds.Add( labelsets[ ItemIndex ].GetId() );
     SetSongsLabels( ItemIds, ItemLabels );
 
-    // Get the affected tracks
-    GetSongs( ItemIds, &Songs );
-
-    Count = Songs.Count();
-    for( Index = 0; Index < Count; Index++ )
+    guConfig * Config = ( guConfig * ) Config->Get();
+    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
     {
-      Song = &Songs[ Index ];
+        // Get the affected tracks
+        GetSongs( ItemIds, &Songs );
 
-      if( wxFileExists( Song->m_FileName ) )
-      {
-        guTagInfo * TagInfo;
-        TagInfo = guGetTagInfoHandler( Song->m_FileName );
-        if( !TagInfo )
-          continue;
+        Count = Songs.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+          Song = &Songs[ Index ];
 
-        TagInfo->Read();
+          if( wxFileExists( Song->m_FileName ) )
+          {
+            guTagInfo * TagInfo;
+            TagInfo = guGetTagInfoHandler( Song->m_FileName );
+            if( !TagInfo )
+              continue;
 
-        TagInfo->m_TrackLabelsStr = TrackLabelStr;
+            TagInfo->Read();
 
-        TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
+            TagInfo->m_TrackLabelsStr = TrackLabelStr;
 
-        delete TagInfo;
-      }
-      else
-      {
-        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
-      }
+            TagInfo->Write( guTRACK_CHANGED_DATA_LABELS );
+
+            delete TagInfo;
+          }
+          else
+          {
+            guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+          }
+        }
     }
   }
 }
@@ -6060,16 +6010,21 @@ void guDbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString 
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTrackRating( const int songid, const int rating )
+void guDbLibrary::SetTrackRating( const int songid, const int rating, const bool writetags )
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE songs SET song_rating = %u WHERE song_id = %u;" ),
                             rating, songid );
+
   ExecuteUpdate( query );
+
+  if( writetags )
+  {
+  }
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
+void guDbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating, const bool writetags )
 {
   wxString query;
   if( songids.Count() )
@@ -6078,11 +6033,16 @@ void guDbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating )
                                 rating );
       query += ArrayIntToStrList( songids );
       ExecuteUpdate( query );
+
+      if( writetags )
+      {
+
+      }
   }
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating )
+void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating, const bool writetags )
 {
     wxArrayInt TrackIds;
     int Index;
@@ -6093,17 +6053,21 @@ void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating
     }
     if( Count )
     {
-        SetTracksRating( TrackIds, rating );
+        SetTracksRating( TrackIds, rating, writetags );
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::SetTrackPlayCount( const int songid, const int playcount )
+void guDbLibrary::SetTrackPlayCount( const int songid, const int playcount, const bool writetags )
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = %u WHERE song_id = %u;" ),
                             playcount, wxDateTime::GetTimeNow(), songid );
   ExecuteUpdate( query );
+
+  if( writetags )
+  {
+  }
 }
 
 // -------------------------------------------------------------------------------- //

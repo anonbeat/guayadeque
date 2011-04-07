@@ -480,6 +480,8 @@ void guTranscodeThread::Stop( void )
             OutTagInfo->m_Track = InTagInfo->m_Track;
             OutTagInfo->m_Year = InTagInfo->m_Year;
             OutTagInfo->m_Disk = InTagInfo->m_Disk;
+            OutTagInfo->m_Rating = InTagInfo->m_Rating;
+            OutTagInfo->m_PlayCount = InTagInfo->m_PlayCount;
             OutTagInfo->m_TrackLabels = InTagInfo->m_TrackLabels;
             OutTagInfo->m_TrackLabelsStr = InTagInfo->m_TrackLabelsStr;
             OutTagInfo->m_ArtistLabels = InTagInfo->m_ArtistLabels;
@@ -487,7 +489,7 @@ void guTranscodeThread::Stop( void )
             OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
             OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
             OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
-            OutTagInfo->Write( guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_LABELS );
+            OutTagInfo->Write( guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_RATING | guTRACK_CHANGED_DATA_LABELS );
 
             delete OutTagInfo;
         }
