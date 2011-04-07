@@ -67,6 +67,7 @@ using namespace TagLib;
 #define     guTRACK_CHANGED_DATA_IMAGES         ( 1 << 1 )
 #define     guTRACK_CHANGED_DATA_LYRICS         ( 1 << 2 )
 #define     guTRACK_CHANGED_DATA_LABELS         ( 1 << 3 )
+#define     guTRACK_CHANGED_DATA_RATING         ( 1 << 4 )
 
 // -------------------------------------------------------------------------------- //
 class guTagInfo

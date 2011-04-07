@@ -1467,20 +1467,34 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksSetRating( wxCommandEvent &event )
 {
+    int Index;
+    int Count;
     int Rating = event.GetId() - ID_SONG_SET_RATING_0;
 
     guTrackArray Tracks;
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
 
-    m_Db->SetTracksRating( &Tracks, Rating );
-    int Index;
-    int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    if( ( Count = Tracks.Count() ) )
     {
-        Tracks[ Index ].m_Rating = Rating;
-    }
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Tracks[ Index ].m_Rating = Rating;
+        }
 
-    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+        {
+            guImagePtrArray Images;
+            wxArrayString Lyrics;
+            wxArrayInt ChangedFlags;
+            ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING, Count );
+            guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+        }
+
+        m_Db->SetTracksRating( &Tracks, Rating );
+
+        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

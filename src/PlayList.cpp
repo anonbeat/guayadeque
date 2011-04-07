@@ -662,14 +662,8 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                         }
                         m_Items[ Item ].m_Rating = Rating;
                         RefreshLine( Item );
-//                        if( Item == m_CurItem )
-//                        {
-//                            m_PlayerPanel->SetRating( Rating );
-//                        }
-                        m_Db->SetTrackRating( m_Items[ Item ].m_SongId, Rating );
 
-                        // Update the track in database, playlist, etc
-                        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER_PLAYLIST, &m_Items[ Item ] );
+                        SetTrackRating( m_Items[ Item ], Rating );
                     }
                     return;
                 }
@@ -1390,6 +1384,28 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
+
+    if( SelCount )
+    {
+        wxMenu * RatingMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_0, wxT( "☆☆☆☆☆" ), _( "Set the rating to 0" ), wxITEM_NORMAL );
+        RatingMenu->Append( MenuItem );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_1, wxT( "★☆☆☆☆" ), _( "Set the rating to 1" ), wxITEM_NORMAL );
+        RatingMenu->Append( MenuItem );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_2, wxT( "★★☆☆☆" ), _( "Set the rating to 2" ), wxITEM_NORMAL );
+        RatingMenu->Append( MenuItem );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_3, wxT( "★★★☆☆" ), _( "Set the rating to 3" ), wxITEM_NORMAL );
+        RatingMenu->Append( MenuItem );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_4, wxT( "★★★★☆" ), _( "Set the rating to 4" ), wxITEM_NORMAL );
+        RatingMenu->Append( MenuItem );
+        MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_5, wxT( "★★★★★" ), _( "Set the rating to 5" ), wxITEM_NORMAL );
+        RatingMenu->Append( MenuItem );
+
+        Menu->AppendSubMenu( RatingMenu, _( "Rating" ), _( "Set the current selected tracks rating" ) );
+
+        Menu->AppendSeparator();
+    }
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SEARCH,
                             wxString( _( "Search" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SEARCH ),
@@ -2231,7 +2247,6 @@ void guPlayList::OnSetRating( wxCommandEvent &event )
     {
         int Rating = event.GetId() - ID_PLAYERPANEL_SETRATING_0;
         guTrackArray UpdatedTracks;
-        wxArrayInt TrackIds;
 
         for( Index = 0; Index < Count; Index++ )
         {
@@ -2239,16 +2254,47 @@ void guPlayList::OnSetRating( wxCommandEvent &event )
             m_Items[ ItemNum ].m_Rating = Rating;
             RefreshLine( ItemNum );
 
-            TrackIds.Add( m_Items[ ItemNum ].m_SongId );
-
             UpdatedTracks.Add( m_Items[ ItemNum ] );
         }
 
-        // Update the track in database, playlist, etc
-        m_Db->SetTracksRating( TrackIds, Rating );
-        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &UpdatedTracks );
+        SetTracksRating( UpdatedTracks, Rating );
     }
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::SetTrackRating( const guTrack &track, const int rating )
+{
+    guTrackArray Tracks;
+    Tracks.Add( track );
+    SetTracksRating( Tracks, rating );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::SetTracksRating( const guTrackArray &tracks, const int rating )
+{
+    int Index;
+    int Count = tracks.Count();
+    wxArrayInt TrackIds;
+
+    for( Index = 0; Index < Count; Index++ )
+    {
+        TrackIds.Add( tracks[ Index ].m_SongId );
+    }
+
+    guConfig * Config = ( guConfig * ) Config->Get();
+    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+    {
+        guImagePtrArray Images;
+        wxArrayString Lyrics;
+        wxArrayInt ChangedFlags;
+        ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING, Count );
+        guUpdateTracks( tracks, Images, Lyrics, ChangedFlags );
+    }
+
+    m_Db->SetTracksRating( TrackIds, rating );
+
+    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &tracks );
+}
 
 // -------------------------------------------------------------------------------- //

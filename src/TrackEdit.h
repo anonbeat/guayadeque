@@ -80,6 +80,8 @@ class guTrackEditor : public wxDialog
 	wxColor                             m_ErrorColor;
     wxTimer                             m_SelectedTimer;
 
+    bool                                m_EmbeddRatings;
+
     void                                SetTagField( wxString &field, const wxString &newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
     void                                SetTagField( int &field, const int newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
 

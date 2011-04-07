@@ -30,7 +30,7 @@
 #include "Images.h"
 #include "MainFrame.h"
 #include "TagInfo.h"
-//#include "TrackChangeInfo.h"
+#include "TrackEdit.h"
 #include "Utils.h"
 #include "VolumeFrame.h"
 
@@ -70,6 +70,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PlayerFilters = filters;
     m_BufferGaugeId = wxNOT_FOUND;
     m_PendingNewRecordName = false;
+    m_MediaSong.m_Type = guTRACK_TYPE_NOTDB;
     m_MediaSong.m_SongId = 0;
     m_MediaSong.m_Length = 0;
     m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
@@ -2112,6 +2113,18 @@ void guPlayerPanel::SavePlayedTrack( void )
                 m_MediaSong.m_PlayCount++;
                 guLogDebug( wxT( "Increased PlayCount to %i" ), m_MediaSong.m_PlayCount );
 
+                guConfig * Config = ( guConfig * ) Config->Get();
+                if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+                {
+                    guTrackArray Tracks;
+                    guImagePtrArray Images;
+                    wxArrayString Lyrics;
+                    wxArrayInt ChangedFlags;
+                    Tracks.Add( m_MediaSong );
+                    ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING );
+                    guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+                }
+
                 if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
                 {
                     guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
@@ -3000,6 +3013,18 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
     m_MediaSong.m_Rating = event.GetInt();
     if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
     {
+        guConfig * Config = ( guConfig * ) Config->Get();
+        if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+        {
+            guTrackArray Tracks;
+            guImagePtrArray Images;
+            wxArrayString Lyrics;
+            wxArrayInt ChangedFlags;
+            Tracks.Add( m_MediaSong );
+            ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING );
+            guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+        }
+
         guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
         Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
 

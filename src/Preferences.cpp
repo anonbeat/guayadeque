@@ -679,21 +679,25 @@ void guPrefDialog::BuildLibraryPage( void )
 
 	wxStaticBoxSizer * LibOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_LibPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	m_UpdateLibChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Update library on application start"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_UpdateLibChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _( "Update library on application start" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_UpdateLibChkBox->SetValue( m_Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_UpdateLibChkBox, 0, wxALL, 5 );
 
-	m_LibScanPlayListChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Create Playlists on library scan"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibScanPlayListChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _( "Create Playlists on library scan" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_LibScanPlayListChkBox->SetValue( m_Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_LibScanPlayListChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_LibScanSymlinksChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Follow symbolic links on library scan"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibScanSymlinksChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _( "Follow symbolic links on library scan" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_LibScanSymlinksChkBox->SetValue( m_Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_LibScanSymlinksChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_LibScanEmbCoversChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _("Scan embedded covers in audio files"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibScanEmbCoversChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _( "Scan embedded covers in audio files" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_LibScanEmbCoversChkBox->SetValue( m_Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) ) );
 	LibOptionsSizer->Add( m_LibScanEmbCoversChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	m_LibSaveRatingsChkBox = new wxCheckBox( m_LibPanel, wxID_ANY, _( "Embed Rating, Play Count and Labels" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_LibSaveRatingsChkBox->SetValue( m_Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) );
+	LibOptionsSizer->Add( m_LibSaveRatingsChkBox, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	LibMainSizer->Add( LibOptionsSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -2316,6 +2320,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( wxT( "ScanAddPlayLists" ), m_LibScanPlayListChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ScanSymlinks" ), m_LibScanSymlinksChkBox->GetValue(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "ScanEmbeddedCovers" ), m_LibScanEmbCoversChkBox->GetValue(), wxT( "General" ) );
+        m_Config->WriteBool( wxT( "SaveRatingMetadata" ), m_LibSaveRatingsChkBox->GetValue(), wxT( "General" ) );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )

@@ -116,6 +116,9 @@ class guPlayList : public guListView
 
     void                        OnSetRating( wxCommandEvent &event );
 
+    void                        SetTrackRating( const guTrack &track, const int rating );
+    void                        SetTracksRating( const guTrackArray &tracks, const int rating );
+
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL, guMainFrame * mainframe = NULL );
     ~guPlayList();

@@ -48,6 +48,7 @@ class guLibUpdateThread : public wxThread
     bool                m_ScanSymlinks;
 
     int                 ScanDirectory( wxString dirname, bool includedir = false );
+    bool                ReadFileTags( const wxString &filename );
 
   public :
     guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath = wxEmptyString );
