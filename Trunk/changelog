@@ -1,5 +1,6 @@
  
   
+  * Added option to enable save ratings and playcounts to audio files
   * Changed command line behaviour to append the tracks to the playlist and
     play it if it was not already playing.
   * Sound menu integration in Ubuntu 11.04 natty
