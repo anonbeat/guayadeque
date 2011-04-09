@@ -258,14 +258,18 @@ void guFileBrowserDirCtrl::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
     AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
 
     RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST );
     RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_EDITTRACKS );
     RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_PLAY );
-    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE );
-    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
     {
@@ -319,17 +323,33 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE,
-                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
                             _( "Add the selected folder to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu.Append( MenuItem );
 
-    MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT,
-                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
-                            _( "Add the selected folder to playlist as Next Tracks" ) );
+    wxMenu * EnqueueMenu = new wxMenu();
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_TRACK,
+                            wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                            _( "Add current selected tracks to playlist after the current track" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-    Menu.Append( MenuItem );
+    EnqueueMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALBUM,
+                            wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                            _( "Add current selected tracks to playlist after the current album" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST,
+                            wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                            _( "Add current selected tracks to playlist after the current artist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+
+    Menu.Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
     Menu.AppendSeparator();
 
@@ -671,14 +691,18 @@ void guFilesListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
     AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
 
     RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST );
     RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_EDITTRACKS );
     RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_PLAY );
-    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE );
-    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
     {
@@ -1039,18 +1063,36 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE,
-                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected files to playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT,
-                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
-                            _( "Add current selected files to playlist as Next Tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        wxMenu * EnqueueMenu = new wxMenu();
 
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+        MenuItem->Enable( SelCount );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+        MenuItem->Enable( SelCount );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+        MenuItem->Enable( SelCount );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
     }
 
     if( SelCount )
@@ -1460,8 +1502,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
 	m_FilesCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guFileBrowser::OnFilesColClick ), NULL, this );
 
     Connect( ID_FILESYSTEM_FOLDER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPlay ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueue ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueueAsNext ), NULL, this );
+    Connect( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueue ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
     Connect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
@@ -1474,8 +1515,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel
     Connect( ID_FILESYSTEM_FOLDER_COMMANDS, ID_FILESYSTEM_FOLDER_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ) );
 
     Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueueAsNext ), NULL, this );
+    Connect( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsSaveToPlayList ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_COPYTO, ID_FILESYSTEM_ITEMS_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
@@ -1501,8 +1541,7 @@ guFileBrowser::~guFileBrowser()
 	m_FilesCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guFileBrowser::OnFilesColClick ), NULL, this );
 
     Disconnect( ID_FILESYSTEM_FOLDER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPlay ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueue ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueueAsNext ), NULL, this );
+    Disconnect( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueue ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
     Disconnect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
@@ -1515,8 +1554,7 @@ guFileBrowser::~guFileBrowser()
     Disconnect( ID_FILESYSTEM_FOLDER_COMMANDS, ID_FILESYSTEM_FOLDER_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ) );
 
     Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueueAsNext ), NULL, this );
+    Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsSaveToPlayList ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_COPYTO, ID_FILESYSTEM_ITEMS_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
@@ -1610,14 +1648,10 @@ void guFileBrowser::OnFolderPlay( wxCommandEvent &event )
 void guFileBrowser::OnFolderEnqueue( wxCommandEvent &event )
 {
     wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
-    m_PlayerPanel->AddToPlayList( Files );
-}
-
-// -------------------------------------------------------------------------------- //
-void guFileBrowser::OnFolderEnqueueAsNext( wxCommandEvent &event )
-{
-    wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
-    m_PlayerPanel->AddToPlayList( Files, true );
+    if( Files.Count() )
+    {
+        m_PlayerPanel->AddToPlayList( Files, true, event.GetId() - ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1905,17 +1939,7 @@ void guFileBrowser::OnItemsEnqueue( wxCommandEvent &event )
     wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
     if( Files.Count() )
     {
-        m_PlayerPanel->AddToPlayList( Files );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guFileBrowser::OnItemsEnqueueAsNext( wxCommandEvent &event )
-{
-    wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
-    if( Files.Count() )
-    {
-        m_PlayerPanel->AddToPlayList( Files, true );
+        m_PlayerPanel->AddToPlayList( Files, true, event.GetId() - ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL );
     }
 }
 

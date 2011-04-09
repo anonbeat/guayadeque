@@ -98,16 +98,20 @@ void guAlListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
     AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_ALBUM_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_ALBUM_EDITLABELS );
     RealAccelCmds.Add( ID_ALBUM_EDITTRACKS );
     RealAccelCmds.Add( ID_ALBUM_PLAY );
-    RealAccelCmds.Add( ID_ALBUM_ENQUEUE );
-    RealAccelCmds.Add( ID_ALBUM_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_ALBUM_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_ALBUM_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_ALBUM_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_ALBUM_ENQUEUE_AFTER_ARTIST );
     RealAccelCmds.Add( ID_LIBRARY_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
@@ -240,27 +244,43 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
     int ContextMenuFlags = m_LibPanel->GetContextMenuFlags();
 
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY,
-                            wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
-                            _( "Play current selected albums" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-    Menu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE,
-                            wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
-                            _( "Add current selected albums to the Playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-    Menu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE_ASNEXT,
-                            wxString( _( "Enqueue Next" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
-                            _( "Add current selected albums to the Playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-    Menu->Append( MenuItem );
-
     int SelCount = GetSelectedCount();
     if( SelCount )
     {
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY,
+                                wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
+                                _( "Play current selected albums" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE_AFTER_ALL,
+                                wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
+                                _( "Add current selected albums to the Playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu->Append( MenuItem );
+
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUM_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                                _( "Add current selected albums to the Playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUM_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                                _( "Add current selected albums to the Playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUM_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                                _( "Add current selected albums to the Playlist as Next Tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu, _( "Add the selected albums after" ) );
+
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITLABELS,
@@ -277,9 +297,9 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
-    }
 
-    Menu->AppendSeparator();
+        Menu->AppendSeparator();
+    }
 
     wxMenu * SubMenu = new wxMenu();
 
@@ -295,16 +315,16 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
 
     Menu->Append( wxID_ANY, _( "Ordered by" ), SubMenu, _( "Sets the albums order" ) );
 
-    Menu->AppendSeparator();
-
-    MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST,
-                            wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                            _( "Save the selected tracks to PlayList" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
-    Menu->Append( MenuItem );
-
     if( SelCount )
     {
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST,
+                                wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                _( "Save the selected tracks to PlayList" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        Menu->Append( MenuItem );
+
         if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS ) )
         {
             Menu->AppendSeparator();

@@ -889,7 +889,7 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        m_PlayListCtrl->AddPlayListItem( files[ Index ] );
+        m_PlayListCtrl->AddPlayListItem( files[ Index ], guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
     }
     m_PlayListCtrl->ReloadItems();
     if( m_PlayListCtrl->GetItemCount() )
@@ -942,7 +942,7 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowplay, const bool aftercurrent )
+void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowplay, const int aftercurrent )
 {
     int PrevTrackCount = m_PlayListCtrl->GetCount();
     if( tracks.Count() )
@@ -977,6 +977,7 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
                 m_SmartAddedArtists.RemoveAt( 0, Count - m_SmartMaxArtistsList );
         }
 
+        // Change vehaivour to start playing when its not playing
         if( allowplay && !PrevTrackCount && ( GetState() != guMEDIASTATE_PLAYING ) )
         {
             wxCommandEvent CmdEvent;
@@ -987,11 +988,11 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const wxString &FileName, const bool aftercurrent  )
+void guPlayerPanel::AddToPlayList( const wxString &FileName, const int aftercurrent  )
 {
     int PrevTrackCount = m_PlayListCtrl->GetCount();
 
-    m_PlayListCtrl->AddPlayListItem( FileName, false, aftercurrent ? m_PlayListCtrl->GetCurItem() + 1 : wxNOT_FOUND );
+    m_PlayListCtrl->AddPlayListItem( FileName, aftercurrent, wxNOT_FOUND );
     m_PlayListCtrl->ReloadItems();
     TrackListChanged();
     // Add the added track to the smart cache
@@ -1024,7 +1025,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName, const bool aftercur
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool aftercurrent  )
+void guPlayerPanel::AddToPlayList( const wxArrayString &files, const int aftercurrent  )
 {
     int PrevTrackCount = m_PlayListCtrl->GetItemCount();
 
@@ -1032,7 +1033,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool afterc
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        m_PlayListCtrl->AddPlayListItem( files[ Index ], false, aftercurrent ? m_PlayListCtrl->GetCurItem() + 1 + Index : wxNOT_FOUND );
+        m_PlayListCtrl->AddPlayListItem( files[ Index ], aftercurrent, aftercurrent ? Index : wxNOT_FOUND );
     }
 
     m_PlayListCtrl->ReloadItems();
@@ -1071,15 +1072,16 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool afterc
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowplay, const bool aftercurrent  )
+void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowplay, const int aftercurrent  )
 {
+    guLogMessage( wxT( "AddToPlayList( ..., %i, %i )" ), allowplay, aftercurrent );
     int PrevTrackCount = m_PlayListCtrl->GetItemCount();
 
     int Index;
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        m_PlayListCtrl->AddPlayListItem( files[ Index ], false, aftercurrent ? m_PlayListCtrl->GetCurItem() + 1 + Index : wxNOT_FOUND );
+        m_PlayListCtrl->AddPlayListItem( files[ Index ], aftercurrent, Index );
     }
 
     m_PlayListCtrl->ReloadItems();
@@ -1111,11 +1113,9 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowp
 
     if( allowplay && ( m_PlayListCtrl->GetCount() > PrevTrackCount ) && ( GetState() != guMEDIASTATE_PLAYING ) )
     {
-        //m_PlayListCtrl->SetCurrent( PrevTrackCount );
         wxCommandEvent CmdEvent;
         CmdEvent.SetInt( PrevTrackCount );
         OnPlayListDClick( CmdEvent );
-        //OnPlayButtonClick( CmdEvent );
     }
 }
 

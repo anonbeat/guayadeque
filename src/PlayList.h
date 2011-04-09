@@ -127,7 +127,7 @@ class guPlayList : public guListView
 
     void                        AddItem( const guTrack &NewItem, const int pos = wxNOT_FOUND );
     //void                        AddItem( const guTrack * NewItem );
-    void                        AddPlayListItem( const wxString &FileName, bool AddPath = false, const int pos = wxNOT_FOUND );
+    void                        AddPlayListItem( const wxString &FileName, const int aftercurrent, const int pos );
 
     virtual void                ReloadItems( bool reset = true );
 
@@ -147,7 +147,7 @@ class guPlayList : public guListView
     void                        ClearItems();
     long                        GetLength( void ) const;
     wxString                    GetLengthStr( void ) const;
-    void                        AddToPlayList( const guTrackArray &newitems, const bool deleteold = false, const bool aftercurrent = false );
+    void                        AddToPlayList( const guTrackArray &newitems, const bool deleteold = false, const int aftercurrent = 0 ); //guINSERT_AFTER_CURRENT_NONE
     void                        SetPlayList( const guTrackArray &NewItems );
     wxString                    FindCoverFile( const wxString &DirName );
     void                        Randomize( const bool isplaying );

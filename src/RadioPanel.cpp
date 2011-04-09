@@ -680,15 +680,19 @@ void guRadioStationListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
     AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_RADIO_USER_EDIT );
     RealAccelCmds.Add( ID_RADIO_EDIT_LABELS );
     RealAccelCmds.Add( ID_RADIO_PLAY );
-    RealAccelCmds.Add( ID_RADIO_ENQUEUE );
-    RealAccelCmds.Add( ID_RADIO_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_RADIO_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_RADIO_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_RADIO_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_RADIO_ENQUEUE_AFTER_ARTIST );
     RealAccelCmds.Add( ID_RADIO_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
@@ -810,17 +814,36 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE,
-                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE_AFTER_ALL,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected songs to playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_RADIO_ENQUEUE_ASNEXT,
-                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
-                            _( "Add current selected songs to playlist as Next Tracks" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_RADIO_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+        MenuItem->Enable( SelCount );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_RADIO_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+        MenuItem->Enable( SelCount );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_RADIO_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+        MenuItem->Enable( SelCount );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -1181,8 +1204,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
     Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ), NULL, this );
-    Connect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
-    Connect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
+    Connect( ID_RADIO_ENQUEUE_AFTER_ALL, ID_RADIO_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
 
     Connect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
 
@@ -1243,8 +1265,7 @@ guRadioPanel::~guRadioPanel()
     m_InputTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
 
     Disconnect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ), NULL, this );
-    Disconnect( ID_RADIO_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
-    Disconnect( ID_RADIO_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueueAsNext ), NULL, this );
+    Disconnect( ID_RADIO_ENQUEUE_AFTER_ALL, ID_RADIO_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
 
     Disconnect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
 
@@ -1532,23 +1553,17 @@ void guRadioPanel::OnRadioUpdateEnd( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioStationsPlay( wxCommandEvent &event )
 {
-    OnSelectStations();
+    OnSelectStations( false );
 }
 
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioStationsEnqueue( wxCommandEvent &event )
 {
-    OnSelectStations( true );
+    OnSelectStations( true, event.GetId() - ID_RADIO_ENQUEUE_AFTER_ALL );
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnRadioStationsEnqueueAsNext( wxCommandEvent &event )
-{
-    OnSelectStations( true, true );
-}
-
-// -------------------------------------------------------------------------------- //
-void guRadioPanel::OnSelectStations( bool enqueue, const bool asnext )
+void guRadioPanel::OnSelectStations( bool enqueue, const int aftercurrent )
 {
     wxString StationUrl;
     guRadioStation RadioStation;
@@ -1567,13 +1582,13 @@ void guRadioPanel::OnSelectStations( bool enqueue, const bool asnext )
 
         if( !StationUrl.IsEmpty() )
         {
-            LoadStationUrl( StationUrl, enqueue, asnext );
+            LoadStationUrl( StationUrl, enqueue, aftercurrent );
         }
     }
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueue, const bool asnext )
+void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueue, const int aftercurrent )
 {
     m_RadioPlayListLoadThreadMutex.Lock();
     if( m_RadioPlayListLoadThread )
@@ -1583,7 +1598,7 @@ void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueu
     }
 
     m_StationPlayListTracks.Empty();
-    m_RadioPlayListLoadThread = new guRadioPlayListLoadThread( this, stationurl.c_str(), &m_StationPlayListTracks, enqueue, asnext );
+    m_RadioPlayListLoadThread = new guRadioPlayListLoadThread( this, stationurl.c_str(), &m_StationPlayListTracks, enqueue, aftercurrent );
     if( !m_RadioPlayListLoadThread )
     {
         guLogError( wxT( "Could not create the download radio playlist thread" ) );
@@ -1595,13 +1610,13 @@ void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueu
 void guRadioPanel::OnStationPlayListLoaded( wxCommandEvent &event )
 {
     bool Enqueue = event.GetInt();
-    bool AsNext = event.GetExtraLong();
+    int  AfterCurrent = event.GetExtraLong();
 
     if( m_StationPlayListTracks.Count() )
     {
         if( Enqueue )
         {
-            m_PlayerPanel->AddToPlayList( m_StationPlayListTracks, true, AsNext );
+            m_PlayerPanel->AddToPlayList( m_StationPlayListTracks, true, AfterCurrent );
         }
         else
         {
@@ -1909,14 +1924,14 @@ bool guRadioPanel::SetListViewColumnData( const int id, const int index, const i
 // guRadioPlayListLoadThread
 // -------------------------------------------------------------------------------- //
 guRadioPlayListLoadThread::guRadioPlayListLoadThread( guRadioPanel * radiopanel,
-        const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext ) :
+        const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const int aftercurrent ) :
         m_StationUrl( stationurl )
 {
     m_RadioPanel = radiopanel;
     //m_StationUrl = stationurl;
     m_Tracks = tracks;
     m_Enqueue = enqueue;
-    m_AsNext = asnext;
+    m_AfterCurrent = aftercurrent;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1980,7 +1995,7 @@ guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
         //guLogMessage( wxT( "Send Event for station '%s'" ), m_StationUrl.c_str() );
         wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_PLAYLIST_LOADED );
         Event.SetInt( m_Enqueue );
-        Event.SetExtraLong( m_AsNext );
+        Event.SetExtraLong( m_AfterCurrent );
         wxPostEvent( m_RadioPanel, Event );
     }
 

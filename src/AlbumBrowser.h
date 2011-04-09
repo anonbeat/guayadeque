@@ -98,7 +98,6 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnSearchLinkClicked( wxCommandEvent &event );
     void                    OnPlayClicked( wxCommandEvent &event );
     void                    OnEnqueueClicked( wxCommandEvent &event );
-    void                    OnEnqueueAsNextClicked( wxCommandEvent &event );
     void                    OnCopyToClipboard( wxCommandEvent &event );
     void                    OnAlbumSelectName( wxCommandEvent &event );
     void                    OnArtistSelectName( wxCommandEvent &event );
@@ -257,7 +256,7 @@ class guAlbumBrowser : public wxPanel
 
     void                            UpdateNavLabel( const int page );
 
-    virtual void                    SelectAlbum( const int albumid, const bool append, const bool asnext = false );
+    virtual void                    SelectAlbum( const int albumid, const bool append, const int aftercurrent = 0 );
     virtual int                     GetAlbumTracks( const int albumid, guTrackArray * tracks );
     virtual void                    OnCommandClicked( const int commandid, const int albumid );
     virtual void                    OnAlbumDownloadCoverClicked( const int albumid );

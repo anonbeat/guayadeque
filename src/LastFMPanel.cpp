@@ -65,8 +65,7 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
     Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
-    Connect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
-    Connect( ID_LASTFM_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueAsNextClicked ), NULL, this );
+    Connect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
     Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
     Connect( ID_SONG_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
     Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
@@ -88,8 +87,7 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
 
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
     Disconnect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
-    Disconnect( ID_LASTFM_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
-    Disconnect( ID_LASTFM_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueAsNextClicked ), NULL, this );
+    Disconnect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
     Disconnect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
     Disconnect( ID_SONG_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
     Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
@@ -330,18 +328,7 @@ void guLastFMInfoCtrl::OnEnqueueClicked( wxCommandEvent &event )
     GetSelectedTracks( &Tracks );
     if( m_PlayerPanel && Tracks.Count() )
     {
-        m_PlayerPanel->AddToPlayList( Tracks );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guLastFMInfoCtrl::OnEnqueueAsNextClicked( wxCommandEvent &event )
-{
-    guTrackArray Tracks;
-    GetSelectedTracks( &Tracks );
-    if( m_PlayerPanel && Tracks.Count() )
-    {
-        m_PlayerPanel->AddToPlayList( Tracks, true, true );
+        m_PlayerPanel->AddToPlayList( Tracks, true, event.GetId() - ID_LASTFM_ENQUEUE_AFTER_ALL );
     }
 }
 
@@ -562,13 +549,31 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the artist tracks to the playlist as Next Tracks" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -794,13 +799,31 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the artist tracks to the playlist as Next Track" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -959,13 +982,31 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the artist tracks to the playlist as Next Track" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -1118,13 +1159,31 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the artist tracks to the playlist as Next Tracks" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -1284,13 +1343,31 @@ void guTopTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LASTFM_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the artist tracks to the playlist as Next Tracks" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu->Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
