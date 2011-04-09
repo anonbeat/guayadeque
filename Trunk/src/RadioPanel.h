@@ -108,10 +108,10 @@ class guRadioPlayListLoadThread : public wxThread
     wxString        m_StationUrl;
     guTrackArray *  m_Tracks;
     bool            m_Enqueue;
-    bool            m_AsNext;
+    int             m_AfterCurrent;
 
   public :
-    guRadioPlayListLoadThread( guRadioPanel * radiopanel, const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const bool asnext );
+    guRadioPlayListLoadThread( guRadioPanel * radiopanel, const wxChar * stationurl, guTrackArray * tracks, const bool enqueue, const int aftercurrent );
     ~guRadioPlayListLoadThread();
 
     virtual ExitCode Entry();
@@ -151,7 +151,7 @@ class guRadioPanel : public guAuiManagedPanel
 	void OnRadioStationsPlay( wxCommandEvent &event );
 	void OnRadioStationsEnqueue( wxCommandEvent &event );
 	void OnRadioStationsEnqueueAsNext( wxCommandEvent &event );
-	void OnSelectStations( bool enqueue = false, const bool asnext = false );
+	void OnSelectStations( bool enqueue = false, const int aftercurrent = 0 );
 
 	void OnRadioUserAdd( wxCommandEvent &event );
 	void OnRadioUserEdit( wxCommandEvent &event );
@@ -166,7 +166,7 @@ class guRadioPanel : public guAuiManagedPanel
 
     void OnTextChangedTimer( wxTimerEvent &event );
 
-    void LoadStationUrl( const wxString &stationurl, const bool enqueue, const bool asnext );
+    void LoadStationUrl( const wxString &stationurl, const bool enqueue, const int aftercurrent );
     void OnStationPlayListLoaded( wxCommandEvent &event );
 
     void OnGoToSearch( wxCommandEvent &event );

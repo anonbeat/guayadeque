@@ -40,10 +40,10 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_MENU_COMMUNITY );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUE );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUEALL );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUEALL_ASNEXT );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUE_ASNEXT );
+        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
         guAccelCmdIds.Add( ID_MENU_VIEW_FULLSCREEN );
         guAccelCmdIds.Add( ID_MAINFRAME_SETFORCEGAPLESS );
         guAccelCmdIds.Add( ID_MENU_HELP );
@@ -110,9 +110,9 @@ int guAccelGetActionNames( wxArrayString &actionnames )
 	actionnames.Add( _( "Edit Labels" ) );
 	actionnames.Add( _( "Edit Tracks" ) );
     actionnames.Add( _( "Enqueue" ) );
-    actionnames.Add( _( "Enqueue All" ) );
-    actionnames.Add( _( "Enqueue All Next" ) );
-    actionnames.Add( _( "Enqueue Next" ) );
+    actionnames.Add( _( "Enqueue After Track" ) );
+    actionnames.Add( _( "Enqueue After Album" ) );
+    actionnames.Add( _( "Enqueue After Artist" ) );
 	actionnames.Add( _( "Full Screen" ) );
 	actionnames.Add( _( "Gapless/Crossfading" ) );
 	actionnames.Add( _( "Help" ) );
@@ -178,9 +178,9 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 131148 );
     accelkeys.Add( 131141 );
     accelkeys.Add( 131085 );
+    accelkeys.Add( 393229 );
     accelkeys.Add( 65549 );
     accelkeys.Add( 327693 );
-    accelkeys.Add( 393229 );
     accelkeys.Add( 350 );
     accelkeys.Add( 131143 );
     accelkeys.Add( 340 );

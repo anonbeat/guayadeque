@@ -160,7 +160,6 @@ class guPlayListPanel : public guAuiManagedPanel
     void                OnPLNamesActivated( wxTreeEvent &event );
     void                OnPLNamesPlay( wxCommandEvent &event );
     void                OnPLNamesEnqueue( wxCommandEvent &event );
-    void                OnPLNamesEnqueueAsNext( wxCommandEvent &event );
 
     void                OnPLNamesNewPlaylist( wxCommandEvent &event );
     void                OnPLNamesEditPlaylist( wxCommandEvent &event );
@@ -173,11 +172,7 @@ class guPlayListPanel : public guAuiManagedPanel
 
     virtual void        OnPLTracksActivated( wxListEvent &event );
     void                OnPLTracksPlayClicked( wxCommandEvent &event );
-    void                OnPLTracksPlayAllClicked( wxCommandEvent &event );
     void                OnPLTracksQueueClicked( wxCommandEvent &event );
-    void                OnPLTracksQueueAsNextClicked( wxCommandEvent &event );
-    void                OnPLTracksQueueAllClicked( wxCommandEvent &event );
-    void                OnPLTracksQueueAllAsNextClicked( wxCommandEvent &event );
     void                OnPLTracksDeleteClicked( wxCommandEvent &event );
     void                OnPLTracksEditLabelsClicked( wxCommandEvent &event );
     void                OnPLTracksEditTracksClicked( wxCommandEvent &event );

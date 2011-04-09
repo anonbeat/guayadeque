@@ -47,14 +47,18 @@ void guGeListBox::CreateAcceleratorTable( void )
 
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_GENRE_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_GENRE_PLAY );
-    RealAccelCmds.Add( ID_GENRE_ENQUEUE );
-    RealAccelCmds.Add( ID_GENRE_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_GENRE_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_GENRE_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_GENRE_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_GENRE_ENQUEUE_AFTER_ARTIST );
     RealAccelCmds.Add( ID_LIBRARY_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
@@ -88,31 +92,55 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
                         _( "Play current selected genres" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE,
-                        wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE_AFTER_ALL,
+                        wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
                         _( "Add current selected genres to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
     Menu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_ENQUEUE_ASNEXT,
-                        wxString( _( "Enqueue Next" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
-                        _( "Add current selected genres to playlist as Next Tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
-    Menu->Append( MenuItem );
+    wxMenu * EnqueueMenu = new wxMenu();
 
-    Menu->AppendSeparator();
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_GENRE_ENQUEUE_AFTER_TRACK,
+                            wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                            _( "Add current selected tracks to playlist after the current track" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
 
-    MenuItem = new wxMenuItem( Menu, ID_GENRE_SAVETOPLAYLIST,
-                        wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                        _( "Save the selected tracks to PlayList" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
-    Menu->Append( MenuItem );
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_GENRE_ENQUEUE_AFTER_ALBUM,
+                            wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                            _( "Add current selected tracks to playlist after the current album" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
 
-    if( SelCount && ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_GENRE_ENQUEUE_AFTER_ARTIST,
+                            wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                            _( "Add current selected tracks to playlist after the current artist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
+
+    Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+
+    if( SelCount )
     {
         Menu->AppendSeparator();
-        m_LibPanel->CreateCopyToMenu( Menu, ID_GENRE_COPYTO );
+
+        MenuItem = new wxMenuItem( Menu, ID_GENRE_SAVETOPLAYLIST,
+                            wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                            _( "Save the selected tracks to PlayList" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        Menu->Append( MenuItem );
+
+        if( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO )
+        {
+            Menu->AppendSeparator();
+            m_LibPanel->CreateCopyToMenu( Menu, ID_GENRE_COPYTO );
+        }
     }
 
     m_LibPanel->CreateContextMenu( Menu );

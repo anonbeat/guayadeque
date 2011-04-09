@@ -55,15 +55,19 @@ void guCoListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
     AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_ASNEXT );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_COMPOSER_SAVETOPLAYLIST );
     RealAccelCmds.Add( ID_COMPOSER_EDITTRACKS );
     RealAccelCmds.Add( ID_COMPOSER_PLAY );
-    RealAccelCmds.Add( ID_COMPOSER_ENQUEUE );
-    RealAccelCmds.Add( ID_COMPOSER_ENQUEUE_ASNEXT );
+    RealAccelCmds.Add( ID_COMPOSER_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_COMPOSER_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_COMPOSER_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_COMPOSER_ENQUEUE_AFTER_ARTIST );
     RealAccelCmds.Add( ID_LIBRARY_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
@@ -99,18 +103,39 @@ void guCoListBox::CreateContextMenu( wxMenu * Menu ) const
                             _( "Play current selected composer" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
 
-    MenuItem = new wxMenuItem( Menu, ID_COMPOSER_ENQUEUE,
-                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE ),
+    MenuItem = new wxMenuItem( Menu, ID_COMPOSER_ENQUEUE_AFTER_ALL,
+                            wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected tracks to playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
 
-    MenuItem = new wxMenuItem( Menu, ID_COMPOSER_ENQUEUE_ASNEXT,
-                            wxString( _( "Enqueue Next" ) ) + guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_ASNEXT ),
-                            _( "Add current selected tracks to playlist as Next Tracks" ) );
+    wxMenu * EnqueueMenu = new wxMenu();
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_COMPOSER_ENQUEUE_AFTER_TRACK,
+                            wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                            _( "Add current selected albums to the Playlist as Next Tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-    Menu->Append( MenuItem );
+    EnqueueMenu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_COMPOSER_ENQUEUE_AFTER_ALBUM,
+                            wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                            _( "Add current selected albums to the Playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_COMPOSER_ENQUEUE_AFTER_ARTIST,
+                            wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                            _( "Add current selected albums to the Playlist as Next Tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+    MenuItem->Enable( SelCount );
+
+    Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu, _( "Add the selected albums after" ) );
 
     if( SelCount )
     {

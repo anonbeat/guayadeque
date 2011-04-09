@@ -180,8 +180,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 	m_Bitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guAlbumBrowserItemPanel::OnAlbumDClicked ), NULL, this );
 
     Connect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnPlayClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueAsNextClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditTracksClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCopyToClipboard ), NULL, this );
@@ -216,8 +215,7 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
 	m_Bitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guAlbumBrowserItemPanel::OnAlbumDClicked ), NULL, this );
 
     Disconnect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnPlayClicked ), NULL, this );
-    Disconnect( ID_ALBUMBROWSER_ENQUEUE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
-    Disconnect( ID_ALBUMBROWSER_ENQUEUE_ASNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueAsNextClicked ), NULL, this );
+    Disconnect( ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditTracksClicked ), NULL, this );
     Disconnect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCopyToClipboard ), NULL, this );
@@ -339,13 +337,31 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu.Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_ENQUEUE, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         Menu.Append( MenuItem );
 
-        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_ENQUEUE_ASNEXT, _( "Enqueue Next" ), _( "Enqueue the album tracks to the playlist as Next Tracks" ) );
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
-        Menu.Append( MenuItem );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu.Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
 
         Menu.AppendSeparator();
 
@@ -470,13 +486,7 @@ void guAlbumBrowserItemPanel::OnPlayClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnEnqueueClicked( wxCommandEvent &event )
 {
-    m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId, true );
-}
-
-// -------------------------------------------------------------------------------- //
-void guAlbumBrowserItemPanel::OnEnqueueAsNextClicked( wxCommandEvent &event )
-{
-    m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId, true, true );
+    m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId, true, event.GetId() - ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1111,7 +1121,7 @@ void guAlbumBrowser::OnRefreshTimer( wxTimerEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::SelectAlbum( const int albumid, const bool append, const bool asnext )
+void guAlbumBrowser::SelectAlbum( const int albumid, const bool append, const int aftercurrent )
 {
     guTrackArray Tracks;
     wxArrayInt Selections;
@@ -1120,7 +1130,7 @@ void guAlbumBrowser::SelectAlbum( const int albumid, const bool append, const bo
     {
         NormalizeTracks( &Tracks );
         if( append )
-            m_PlayerPanel->AddToPlayList( Tracks, true, asnext );
+            m_PlayerPanel->AddToPlayList( Tracks, true, aftercurrent );
         else
             m_PlayerPanel->SetPlayList( Tracks );
     }

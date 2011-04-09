@@ -43,6 +43,13 @@
 
 #define guTEMPORARY_COVER_FILENAME      wxT( "guayadeque-tmp-cover" )
 
+enum guInsertAfterCurrent {
+    guINSERT_AFTER_CURRENT_NONE = 0,
+    guINSERT_AFTER_CURRENT_TRACK,
+    guINSERT_AFTER_CURRENT_ALBUM,
+    guINSERT_AFTER_CURRENT_ARTIST,
+};
+
 // -------------------------------------------------------------------------------- //
 enum guSongCoverType {
     GU_SONGCOVER_NONE = 0,
@@ -362,10 +369,10 @@ class guPlayerPanel : public wxPanel
     guMainFrame *               MainFrame( void ) { return m_MainFrame; }
 
     void                        SetPlayList( const guTrackArray &SongList );
-    void                        AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, const bool aftercurrent = false );
-    void                        AddToPlayList( const wxString &FileName, const bool aftercurrent = false );
-    void                        AddToPlayList( const wxArrayString &files, const bool aftercurrent = false );
-    void                        AddToPlayList( const wxArrayString &files, const bool play, const bool aftercurrent );
+    void                        AddToPlayList( const guTrackArray &SongList, const bool allowplay = true, const int aftercurrent = guINSERT_AFTER_CURRENT_NONE );
+    void                        AddToPlayList( const wxString &FileName, const int aftercurrent = guINSERT_AFTER_CURRENT_NONE );
+    void                        AddToPlayList( const wxArrayString &files, const int aftercurrent = guINSERT_AFTER_CURRENT_NONE );
+    void                        AddToPlayList( const wxArrayString &files, const bool play, const int aftercurrent );
     void                        ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); };
     void                        SetPlayList( const wxArrayString &files );
     guPlayList *                PlayListCtrl( void ) { return m_PlayListCtrl; }
