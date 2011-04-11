@@ -649,6 +649,9 @@ bool SetASFImage( ASF::Tag * asftag, const wxImage * image )
     return NULL;
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
 // guTagInfo
 // -------------------------------------------------------------------------------- //
@@ -1601,6 +1604,65 @@ bool guMp4TagInfo::Read( void )
                 m_Compilation = m_Mp4Tag->itemListMap()["cpil"].toBool();
             }
 
+            // Rating
+            if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:RATING" ) )
+            {
+                long Rating = 0;
+                if( TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:RATING"].toStringList().front() ).ToLong( &Rating ) )
+                {
+                    if( Rating )
+                    {
+                        if( Rating > 5 )
+                        {
+                            m_Rating = guPopMToRating( Rating );
+                        }
+                        else
+                        {
+                            m_Rating = Rating;
+                        }
+                    }
+                }
+            }
+
+            if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:PLAY_COUNTER" ) )
+            {
+                long PlayCount = 0;
+                if( TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:PLAY_COUNTER"].toStringList().front()  ).ToLong( &PlayCount ) )
+                {
+                    m_PlayCount = PlayCount;
+                }
+            }
+
+            // Labels
+            if( m_TrackLabels.Count() == 0 )
+            {
+                if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:TRACK_LABELS" ) )
+                {
+                    m_TrackLabelsStr = TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:TRACK_LABELS"].toStringList().front() );
+                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+                }
+            }
+
+            if( m_ArtistLabels.Count() == 0 )
+            {
+                if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:ARTIST_LABELS" ) )
+                {
+                    m_ArtistLabelsStr = TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:ARTIST_LABELS"].toStringList().front() );
+                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+                }
+            }
+
+            if( m_AlbumLabels.Count() == 0 )
+            {
+                if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:ALBUM_LABELS" ) )
+                {
+                    m_AlbumLabelsStr = TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:ALBUM_LABELS"].toStringList().front() );
+                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+                }
+            }
+
+
+
         }
         return true;
     }
@@ -1634,17 +1696,58 @@ bool guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal )
 }
 
 // -------------------------------------------------------------------------------- //
+void Mp4_CheckLabelFrame( TagLib::MP4::Tag * mp4tag, const char * description, const wxString &value )
+{
+    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
+    if( mp4tag->itemListMap().contains( description ) )
+    {
+        if( !value.IsEmpty() )
+        {
+            mp4tag->itemListMap()[ description ] = TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) );
+        }
+        else
+        {
+            mp4tag->itemListMap().erase( description );
+        }
+    }
+    else
+    {
+        if( !value.IsEmpty() )
+        {
+            mp4tag->itemListMap().insert( description, TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::Write( const int changedflag )
 {
-    if( m_Mp4Tag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
+    if( m_Mp4Tag )
     {
-        m_Mp4Tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
-        m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
-        int first;
-        int second;
-        guStrDiskToDiskNum( m_Disk, first, second );
-        m_Mp4Tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
-        m_Mp4Tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            m_Mp4Tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
+            m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
+            int first;
+            int second;
+            guStrDiskToDiskNum( m_Disk, first, second );
+            m_Mp4Tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
+            m_Mp4Tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_RATING )
+        {
+            m_Mp4Tag->itemListMap()["----:com.apple.iTunes:RATING" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
+            m_Mp4Tag->itemListMap()[ "----:com.apple.iTunes:PLAY_COUNTER" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            Mp4_CheckLabelFrame( m_Mp4Tag, "----:com.apple.iTunes:ARTIST_LABELS", m_ArtistLabelsStr );
+            Mp4_CheckLabelFrame( m_Mp4Tag, "----:com.apple.iTunes:ALBUM_LABELS", m_AlbumLabelsStr );
+            Mp4_CheckLabelFrame( m_Mp4Tag, "----:com.apple.iTunes:TRACK_LABELS", m_TrackLabelsStr );
+        }
     }
     return guTagInfo::Write( changedflag );
 }
