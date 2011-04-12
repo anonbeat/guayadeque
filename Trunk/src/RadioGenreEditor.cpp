@@ -87,36 +87,58 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guRadioGenreEditor::GetGenres( void )
+int guListItemsFind( guListItems &items, const wxString &name )
 {
-    wxArrayString RetVal;
+    int Index;
+    int Count = items.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( items[ Index ].m_Name == name )
+            return Index;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+int guListItemsFind( guListItems &items, const int &id )
+{
+    int Index;
+    int Count = items.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( items[ Index ].m_Id == id )
+            return Index;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioGenreEditor::GetGenres( wxArrayString &addedgenres, wxArrayInt &deletedgenres )
+{
     int index;
     int count = m_CheckListBox->GetCount();
     for( index = 0; index < count; index++ )
     {
         if( m_CheckListBox->IsChecked( index ) )
         {
-            RetVal.Add( m_RadioGenres[ index ] );
+            if( guListItemsFind( m_AddedGenres, m_RadioGenres[ index ] ) == wxNOT_FOUND )
+                addedgenres.Add( m_RadioGenres[ index ] );
         }
-    }
-    if( !m_InputTextCtrl->IsEmpty() )
-    {
-        RetVal.Add( m_InputTextCtrl->GetValue() );
+        else
+        {
+            int Pos;
+            if( ( Pos = guListItemsFind( m_AddedGenres, m_RadioGenres[ index ] ) ) != wxNOT_FOUND )
+            {
+                deletedgenres.Add( m_AddedGenres[ Pos ].m_Id );
+            }
+        }
     }
 
-    // we add all and then remove the existans as guListBox dont have the Index function
-    // so we check the other direction
-    count = m_AddedGenres.Count();
-    int item;
-    for( index = 0; index < count; index++ )
+    if( !m_InputTextCtrl->IsEmpty() )
     {
-        item = RetVal.Index( m_AddedGenres[ index ].m_Name );
-        if( item != wxNOT_FOUND )
-        {
-            RetVal.RemoveAt( item );
-        }
+        if( guListItemsFind( m_AddedGenres, m_InputTextCtrl->GetValue() ) == wxNOT_FOUND )
+            addedgenres.Add( m_InputTextCtrl->GetValue() );
     }
-    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //

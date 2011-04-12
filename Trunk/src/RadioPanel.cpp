@@ -479,24 +479,39 @@ void guRadioGenreTreeCtrl::OnContextMenu( wxTreeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioGenreTreeCtrl::OnRadioGenreAdd( wxCommandEvent &event )
 {
-    int index;
-    int count;
+    int Index;
+    int Count;
     guRadioGenreEditor * RadioGenreEditor = new guRadioGenreEditor( this, m_Db );
     if( RadioGenreEditor )
     {
+        bool NeedReload = false;
         //
         if( RadioGenreEditor->ShowModal() == wxID_OK )
         {
-            wxArrayString NewGenres = RadioGenreEditor->GetGenres();
-            if( ( count = NewGenres.Count() ) )
+            wxArrayString NewGenres;
+            wxArrayInt DelGenres;
+            RadioGenreEditor->GetGenres( NewGenres, DelGenres );
+            if( ( Count = NewGenres.Count() ) )
             {
                 //
-                for( index = 0; index < count; index++ )
+                for( Index = 0; Index < Count; Index++ )
                 {
-                    m_Db->AddRadioGenre( NewGenres[ index ], guRADIO_SOURCE_GENRE, guRADIO_SEARCH_FLAG_NONE );
+                    m_Db->AddRadioGenre( NewGenres[ Index ], guRADIO_SOURCE_GENRE, guRADIO_SEARCH_FLAG_NONE );
                 }
-                ReloadItems();
+                NeedReload = true;
             }
+
+            if( ( Count = DelGenres.Count() ) )
+            {
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    m_Db->DelRadioGenre( DelGenres[ Index ] );
+                }
+                NeedReload = true;
+            }
+
+            if( NeedReload )
+                ReloadItems();
         }
         //
         RadioGenreEditor->Destroy();

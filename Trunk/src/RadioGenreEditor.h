@@ -52,7 +52,7 @@ class guRadioGenreEditor : public wxDialog
   public:
     guRadioGenreEditor( wxWindow* parent, guDbRadios * db ); //
     ~guRadioGenreEditor();
-    wxArrayString GetGenres( void );
+    void GetGenres( wxArrayString &addedgenres, wxArrayInt &deletedgenres );
 
 };
 
