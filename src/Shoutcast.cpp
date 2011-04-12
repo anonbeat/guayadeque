@@ -84,7 +84,8 @@
 
 
 //#define SHOUTCAST_GET_GENRE_URL         wxT( "http://yp.shoutcast.com/sbin/newxml.phtml" )
-//s o 1 N 1 5 v h C B 7  8 Z 6 k 4 _ s h 1  i q r P H n h  j F m X i T _ f a 1 _  B m i c Y Q P D b b K m
+//s o 1 N 1 5 v h C B 7 8 Z 6 k 4 __ s h 1 i q r P H n h j F m X i T __ f a 1 _ B m i c Y Q P D b b K m
+//a m 1 S G I 9 p 6 W l 8 Y b b W __ f a 1 6 6 9 M u i R P o r U B w __ s h 1 7 t O U i _ e z L 6 1 _ A
 #define SHOUTCAST_DEV_KEY0   "sh1iqrPH"
 #define SHOUTCAST_DEV_KEY1   "nhjFmXiT"
 #define SHOUTCAST_DEV_KEY    SHOUTCAST_DEV_KEY0 SHOUTCAST_DEV_KEY1
