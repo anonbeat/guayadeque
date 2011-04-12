@@ -671,7 +671,6 @@ void guDynPlayListEditor::FillPlayListEditData( void )
         m_PlayList->m_Sorted = m_SortCheckBox->IsChecked();
         m_PlayList->m_SortType = m_SortChoice->GetSelection();
         m_PlayList->m_SortDesc = m_DescCheckBox->IsChecked();
-        m_PlayList->m_AnyOption = m_AddOnAnyCheckBox->IsChecked();
     }
     else
     {
@@ -681,8 +680,8 @@ void guDynPlayListEditor::FillPlayListEditData( void )
         m_PlayList->m_Sorted = false;
         m_PlayList->m_SortType = 0;
         m_PlayList->m_SortDesc = false;
-        m_PlayList->m_AnyOption = false;
     }
+    m_PlayList->m_AnyOption = m_AddOnAnyCheckBox->IsChecked();
 }
 
 // -------------------------------------------------------------------------------- //
