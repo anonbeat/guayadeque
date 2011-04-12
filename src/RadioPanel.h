@@ -150,7 +150,6 @@ class guRadioPanel : public guAuiManagedPanel
 	void OnRadioLabelListSelected( wxListEvent &Event );
 	void OnRadioStationsPlay( wxCommandEvent &event );
 	void OnRadioStationsEnqueue( wxCommandEvent &event );
-	void OnRadioStationsEnqueueAsNext( wxCommandEvent &event );
 	void OnSelectStations( bool enqueue = false, const int aftercurrent = 0 );
 
 	void OnRadioUserAdd( wxCommandEvent &event );
