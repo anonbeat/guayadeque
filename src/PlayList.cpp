@@ -1379,7 +1379,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
         Track.m_FileName = FileName;
         AddItem( Track, InsertPosition + wxMax( 0, pos ) );
     }
-    else if( guIsMagnatuneFile( FileName ) )
+    else if( guIsMagnatuneFile( filename ) )
     {
         guMagnatuneLibrary * MagnatuneDb = m_MainFrame->GetMagnatuneDb();
         FileName = filename;
