@@ -263,7 +263,7 @@ class guFetchAlbumInfoThread : public guFetchLastFMInfoThread
     wxString                m_ArtistName;
 
   public:
-    guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const int start );
+    guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const int startpage );
     ~guFetchAlbumInfoThread();
 
     virtual ExitCode Entry();
@@ -278,9 +278,10 @@ class guFetchTopTracksInfoThread : public guFetchLastFMInfoThread
     guDbCache *             m_DbCache;
     wxString                m_ArtistName;
     int                     m_ArtistId;
+    int                     m_Start;
 
   public:
-    guFetchTopTracksInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname );
+    guFetchTopTracksInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const int startpage );
     ~guFetchTopTracksInfoThread();
 
     virtual ExitCode Entry();
@@ -609,15 +610,20 @@ class guLastFMPanel : public wxScrolledWindow
 	wxGridSizer *                       m_AlbumsSizer;
     guAlbumInfoCtrlArray                m_AlbumInfoCtrls;
     wxStaticText *                      m_AlbumsRangeLabel;
-    wxBitmapButton *                    m_PrevAlbumsBtn;
-    wxBitmapButton *                    m_NextAlbumsBtn;
+    wxBitmapButton *                    m_AlbumsPrevBtn;
+    wxBitmapButton *                    m_AlbumsNextBtn;
     int                                 m_AlbumsCount;
-    int                                 m_AlbumsStart;
+    int                                 m_AlbumsPageStart;
 
 	bool                                m_ShowTopTracks;
     wxStaticText *                      m_TopTracksStaticText;
 	wxGridSizer *                       m_TopTracksSizer;
 	guTopTrackInfoCtrlArray             m_TopTrackInfoCtrls;
+    wxStaticText *                      m_TopTracksRangeLabel;
+    wxBitmapButton *                    m_TopTracksPrevBtn;
+    wxBitmapButton *                    m_TopTracksNextBtn;
+    int                                 m_TopTracksCount;
+    int                                 m_TopTracksPageStart;
 
 	bool                                m_ShowArtists;
     wxStaticText *                      m_ArtistsStaticText;
@@ -672,8 +678,13 @@ class guLastFMPanel : public wxScrolledWindow
 
     void    UpdateAlbumsRangeLabel( void );
     void    OnAlbumsCountUpdated( wxCommandEvent &event );
-    void    OnPrevAlbumsClicked( wxCommandEvent &event );
-    void    OnNextAlbumsClicked( wxCommandEvent &event );
+    void    OnAlbumsPrevClicked( wxCommandEvent &event );
+    void    OnAlbumsNextClicked( wxCommandEvent &event );
+
+    void    UpdateTopTracksRangeLabel( void );
+    void    OnTopTracksCountUpdated( wxCommandEvent &event );
+    void    OnTopTracksPrevClicked( wxCommandEvent &event );
+    void    OnTopTracksNextClicked( wxCommandEvent &event );
 
   public :
             guLastFMPanel( wxWindow * parent, guDbLibrary * db,
