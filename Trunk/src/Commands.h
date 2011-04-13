@@ -352,6 +352,7 @@ enum guCommandIds {
     ID_LASTFM_UPDATE_SIMTRACK,              // The thread update the Similar tracks
     ID_LASTFM_UPDATE_SIMTRACK_COUNT,        // The thread update the Similar tracks
     ID_LASTFM_UPDATE_EVENTINFO,
+    ID_LASTFM_UPDATE_EVENTS_COUNT,
     ID_LASTFM_PLAY,
     ID_LASTFM_ENQUEUE_AFTER_ALL,
     ID_LASTFM_ENQUEUE_AFTER_TRACK,
