@@ -1184,7 +1184,7 @@ int guDbLibrary::GetComposerId( wxString &composername, bool create )
 // -------------------------------------------------------------------------------- //
 wxBitmap * guDbLibrary::GetCoverBitmap( const int coverid, const bool thumb )
 {
-  if( !coverid )
+  if( coverid <= 0 )
     return NULL;
 
   wxImage *             Img = NULL;

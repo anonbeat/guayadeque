@@ -169,7 +169,7 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
         dc.DrawText( _( "by " ) + Item->m_ArtistName, rect.x + 45, rect.y + 22 );
     }
 
-    if( Item->m_Thumb && Item->m_Thumb->IsOk() )
+    if( Item->m_Thumb )
     {
         dc.DrawBitmap( * Item->m_Thumb, rect.x + 1, rect.y + 1, false );
     }
