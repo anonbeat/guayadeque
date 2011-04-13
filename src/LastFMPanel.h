@@ -259,10 +259,11 @@ class guFetchAlbumInfoThread : public guFetchLastFMInfoThread
 {
   protected:
     guDbCache *             m_DbCache;
+    int                     m_Start;
     wxString                m_ArtistName;
 
   public:
-    guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname );
+    guFetchAlbumInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const int start );
     ~guFetchAlbumInfoThread();
 
     virtual ExitCode Entry();
@@ -607,6 +608,11 @@ class guLastFMPanel : public wxScrolledWindow
     wxStaticText *                      m_AlbumsStaticText;
 	wxGridSizer *                       m_AlbumsSizer;
     guAlbumInfoCtrlArray                m_AlbumInfoCtrls;
+    wxStaticText *                      m_AlbumsRangeLabel;
+    wxBitmapButton *                    m_PrevAlbumsBtn;
+    wxBitmapButton *                    m_NextAlbumsBtn;
+    int                                 m_AlbumsCount;
+    int                                 m_AlbumsStart;
 
 	bool                                m_ShowTopTracks;
     wxStaticText *                      m_TopTracksStaticText;
@@ -663,6 +669,11 @@ class guLastFMPanel : public wxScrolledWindow
 //	void    OnTrackTextRightClicked( wxMouseEvent &event );
 
     void    UpdateTrackChangeButtons( void );
+
+    void    UpdateAlbumsRangeLabel( void );
+    void    OnAlbumsCountUpdated( wxCommandEvent &event );
+    void    OnPrevAlbumsClicked( wxCommandEvent &event );
+    void    OnNextAlbumsClicked( wxCommandEvent &event );
 
   public :
             guLastFMPanel( wxWindow * parent, guDbLibrary * db,

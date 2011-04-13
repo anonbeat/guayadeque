@@ -344,9 +344,13 @@ enum guCommandIds {
     //ID_LASTFM_UPDATE_TRACK,               // The Player notifies the panel to update the content
     ID_LASTFM_UPDATE_ARTISTINFO,            // The thread update the Artist Info
     ID_LASTFM_UPDATE_ALBUMINFO,             // The thread update the top albums
+    ID_LASTFM_UPDATE_ALBUM_COUNT,
     ID_LASTFM_UPDATE_TOPTRACKS,             // The thread update the top tracks
+    ID_LASTFM_UPDATE_TOPTRACKS_COUNT,
     ID_LASTFM_UPDATE_SIMARTIST,             // The thread update the Similar artists
+    ID_LASTFM_UPDATE_SIMARTIST_COUNT,
     ID_LASTFM_UPDATE_SIMTRACK,              // The thread update the Similar tracks
+    ID_LASTFM_UPDATE_SIMTRACK_COUNT,        // The thread update the Similar tracks
     ID_LASTFM_UPDATE_EVENTINFO,
     ID_LASTFM_PLAY,
     ID_LASTFM_ENQUEUE_AFTER_ALL,
