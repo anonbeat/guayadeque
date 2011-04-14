@@ -6156,11 +6156,10 @@ void guMainFrame::OnRaiseWindow( wxCommandEvent &event )
 {
     //guLogMessage( wxT( "guMainFrame::OnRaiseWindow" ) );
     if( !IsShown() )
-    {
         Show( true );
-        if( IsIconized() )
-            Iconize( false );
-    }
+
+    if( IsIconized() )
+        Iconize( false );
 }
 
 // -------------------------------------------------------------------------------- //
