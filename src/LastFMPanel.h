@@ -726,7 +726,8 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnNextBtnClick( wxCommandEvent &event );
     void    OnReloadBtnClick( wxCommandEvent &event );
     void    OnTextUpdated( wxCommandEvent& event );
-    void    OnSearchBtnClick( wxCommandEvent &event );
+    void    OnTextCtrlKeyDown( wxKeyEvent &event );
+    void    OnSearchSelected( wxCommandEvent &event );
 
     void    UpdateTrackChangeButtons( void );
 
