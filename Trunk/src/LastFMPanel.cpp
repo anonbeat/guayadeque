@@ -1521,7 +1521,7 @@ int guEventInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
                                 guDbCache * dbcache, guPlayerPanel * playerpanel ) :
-    wxScrolledWindow( Parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL )
+    wxScrolledWindow( Parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxTAB_TRAVERSAL )
 {
     m_Db = db;
     m_DbCache = dbcache;
@@ -1581,8 +1581,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
 	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_ArtistTextCtrl->Enable( false );
-
+	m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
 	EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	wxStaticText * TrackStaticText;
@@ -1593,12 +1592,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_TrackTextCtrl->Enable( false );
-
-	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
-	m_SearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_SearchButton->Enable( false );
-
-	EditorSizer->Add( m_SearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
 	m_MainSizer->Add( EditorSizer, 0, wxEXPAND, 5 );
 
@@ -1907,7 +1901,10 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnReloadBtnClick ), NULL, this );
 	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
 	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-	m_SearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSearchBtnClick ), NULL, this );
+    m_ArtistTextCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLastFMPanel::OnTextCtrlKeyDown ), NULL, this );
+    m_TrackTextCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLastFMPanel::OnTextCtrlKeyDown ), NULL, this );
+    m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLastFMPanel::OnSearchSelected ), NULL, this );
+    m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLastFMPanel::OnSearchSelected ), NULL, this );
 	m_AlbumsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
 	m_TopTracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopTracksTitleDClick ), NULL, this );
 	m_SimArtistsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
@@ -1922,14 +1919,14 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 // -------------------------------------------------------------------------------- //
 guLastFMPanel::~guLastFMPanel()
 {
-    m_SimArtistsUpdateThreadMutex.Lock();
-    if( m_SimArtistsUpdateThread )
+    m_ArtistsUpdateThreadMutex.Lock();
+    if( m_ArtistsUpdateThread )
     {
-        m_SimArtistsUpdateThread->Pause();
-        m_SimArtistsUpdateThread->Delete();
-        m_SimArtistsUpdateThread = NULL;
+        m_ArtistsUpdateThread->Pause();
+        m_ArtistsUpdateThread->Delete();
+        m_ArtistsUpdateThread = NULL;
     }
-    m_SimArtistsUpdateThreadMutex.Unlock();
+    m_ArtistsUpdateThreadMutex.Unlock();
 
     m_AlbumsUpdateThreadMutex.Lock();
     if( m_AlbumsUpdateThread )
@@ -1967,6 +1964,15 @@ guLastFMPanel::~guLastFMPanel()
     }
     m_SimArtistsUpdateThreadMutex.Unlock();
 
+    m_EventsUpdateThreadMutex.Lock();
+    if( m_EventsUpdateThread )
+    {
+        m_EventsUpdateThread->Pause();
+        m_EventsUpdateThread->Delete();
+        m_EventsUpdateThread = NULL;
+    }
+    m_EventsUpdateThreadMutex.Unlock();
+
     //
     Disconnect( ID_LASTFM_UPDATE_ALBUMINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateAlbumItem ) );
     Disconnect( ID_LASTFM_UPDATE_ARTISTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistInfo ) );
@@ -1977,9 +1983,9 @@ guLastFMPanel::~guLastFMPanel()
 
 	m_ArtistDetailsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnArInfoTitleDClicked ), NULL, this );
 	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLastFMPanel::OnUpdateChkBoxClick ), NULL, this );
-	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-	m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSearchBtnClick ), NULL, this );
+//	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
+//	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
+//	m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSearchBtnClick ), NULL, this );
 	m_AlbumsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
 	m_TopTracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopTracksTitleDClick ), NULL, this );
 	m_SimArtistsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
@@ -2579,15 +2585,14 @@ void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
     //
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
     m_TrackTextCtrl->Enable( !m_UpdateEnabled );
-    m_SearchButton->Enable( !m_UpdateEnabled &&
-                !m_ArtistTextCtrl->IsEmpty() );
+//    m_SearchButton->Enable( !m_UpdateEnabled &&
+//                !m_ArtistTextCtrl->IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnTextUpdated( wxCommandEvent& event )
 {
-    m_SearchButton->Enable( !m_UpdateEnabled &&
-        !m_ArtistTextCtrl->IsEmpty() );
+    m_TrackTextCtrl->Enable( !m_UpdateCheckBox->IsChecked() && !m_ArtistTextCtrl->IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2683,12 +2688,35 @@ void guLastFMPanel::OnReloadBtnClick( wxCommandEvent& event )
     ShowCurrentTrack();
 }
 
+//// -------------------------------------------------------------------------------- //
+//void guLastFMPanel::OnSearchBtnClick( wxCommandEvent& event )
+//{
+//    guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+//    AppendTrackChangeInfo( &TrackChangeInfo );
+//    ShowCurrentTrack();
+//}
+
 // -------------------------------------------------------------------------------- //
-void guLastFMPanel::OnSearchBtnClick( wxCommandEvent& event )
+void guLastFMPanel::OnTextCtrlKeyDown( wxKeyEvent &event )
 {
-    guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
-    AppendTrackChangeInfo( &TrackChangeInfo );
-    ShowCurrentTrack();
+    if( event.GetKeyCode() == WXK_RETURN )
+    {
+        wxCommandEvent CmdEvent( wxEVT_COMMAND_TEXT_ENTER );
+        m_ArtistTextCtrl->AddPendingEvent( CmdEvent );
+        return;
+    }
+    event.Skip();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnSearchSelected( wxCommandEvent &event )
+{
+    if( !m_ArtistTextCtrl->IsEmpty() )
+    {
+        guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+        AppendTrackChangeInfo( &TrackChangeInfo );
+        ShowCurrentTrack();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
