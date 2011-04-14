@@ -707,8 +707,6 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnUpdateTrackItem( wxCommandEvent &event );
     void    OnUpdateEventItem( wxCommandEvent &event );
 
-//    void    OnShowMoreLinkClicked( wxHyperlinkEvent &event );
-//	  void    OnHtmlLinkClicked( wxHtmlLinkEvent& event );
 	void    OnArInfoTitleDClicked( wxMouseEvent &event );
     void    OnTopAlbumsTitleDClick( wxMouseEvent &event );
     void    OnTopTracksTitleDClick( wxMouseEvent &event );
@@ -716,19 +714,19 @@ class guLastFMPanel : public wxScrolledWindow
 	void    OnSimTrTitleDClick( wxMouseEvent &event );
 	void    OnEventsTitleDClick( wxMouseEvent &event );
 
+    void    SetTopAlbumsVisible( const bool dolayout = false );
+    void    SetTopTracksVisible( const bool dolayout = false );
+    void    SetSimArtistsVisible( const bool dolayout = false );
+    void    SetSimTracksVisible( const bool dolayout = false );
+    void    SetEventsVisible( const bool dolayout = false );
+
+
 	void    OnUpdateChkBoxClick( wxCommandEvent &event );
     void    OnPrevBtnClick( wxCommandEvent &event );
     void    OnNextBtnClick( wxCommandEvent &event );
     void    OnReloadBtnClick( wxCommandEvent &event );
     void    OnTextUpdated( wxCommandEvent& event );
     void    OnSearchBtnClick( wxCommandEvent &event );
-
-//	void    OnAlbumTextClicked( wxMouseEvent &event );
-//	void    OnArtistTextClicked( wxMouseEvent &event );
-//	void    OnTrackTextClicked( wxMouseEvent &event );
-//	void    OnAlbumTextRightClicked( wxMouseEvent &event );
-//	void    OnArtistTextRightClicked( wxMouseEvent &event );
-//	void    OnTrackTextRightClicked( wxMouseEvent &event );
 
     void    UpdateTrackChangeButtons( void );
 
@@ -766,7 +764,7 @@ class guLastFMPanel : public wxScrolledWindow
     void    AppendTrackChangeInfo( const guTrackChangeInfo * trackchangeinfo );
 	void    ShowCurrentTrack( void );
 	void    SetUpdateEnable( bool value );
-	void    UpdateLayout( void );
+	void    UpdateLayout( void ) { m_MainSizer->FitInside( this ); }
 	void    OnDropFiles( const wxArrayString &files );
 
     friend class guFetchLastFMInfoThread;
