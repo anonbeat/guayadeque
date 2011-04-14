@@ -1684,10 +1684,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
     m_MainSizer->Add( m_AlbumsSizer, 0, wxEXPAND, 5 );
 
-    if( m_ShowAlbums )
-        m_MainSizer->Show( m_AlbumsSizer );
-    else
-        m_MainSizer->Hide( m_AlbumsSizer );
+    SetTopAlbumsVisible();
 
     //
     // Top Tracks
@@ -1728,10 +1725,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_MainSizer->Add( m_TopTracksSizer, 0, wxEXPAND, 5 );
 	//MainSizer->Add( new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL ), 0, wxEXPAND, 5 );
-    if( m_ShowTopTracks )
-        m_MainSizer->Show( m_TopTracksSizer );
-    else
-        m_MainSizer->Hide( m_TopTracksSizer );
+    SetTopTracksVisible();
 
     //
     // Similar Artists
@@ -1772,10 +1766,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_MainSizer->Add( m_SimArtistsSizer, 0, wxEXPAND, 5 );
 
-    if( m_ShowSimArtists )
-        m_MainSizer->Show( m_SimArtistsSizer );
-    else
-        m_MainSizer->Hide( m_SimArtistsSizer );
+    SetSimArtistsVisible();
 
     //
     // Similar Tracks
@@ -1816,10 +1807,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_MainSizer->Add( m_SimTracksSizer, 0, wxEXPAND, 5 );
 	//MainSizer->Add( new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL ), 0, wxEXPAND, 5 );
-    if( m_ShowSimTracks )
-        m_MainSizer->Show( m_SimTracksSizer );
-    else
-        m_MainSizer->Hide( m_SimTracksSizer );
+	SetSimTracksVisible();
 
     //
     // Artist Events
@@ -1860,11 +1848,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_MainSizer->Add( m_EventsSizer, 0, wxEXPAND, 5 );
 	//MainSizer->Add( new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL ), 0, wxEXPAND, 5 );
-    if( m_ShowEvents )
-        m_MainSizer->Show( m_EventsSizer );
-    else
-        m_MainSizer->Hide( m_EventsSizer );
-
+    SetEventsVisible();
 
 	this->SetSizer( m_MainSizer );
 	this->Layout();
@@ -2838,64 +2822,119 @@ void guLastFMPanel::OnArInfoTitleDClicked( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLastFMPanel::UpdateLayout( void )
+void guLastFMPanel::SetTopAlbumsVisible( const bool dolayout )
 {
-    m_MainSizer->FitInside( this );
+    if( m_ShowAlbums )
+        m_MainSizer->Show( m_AlbumsSizer );
+    else
+        m_MainSizer->Hide( m_AlbumsSizer );
+
+    m_AlbumsRangeLabel->Show( m_ShowAlbums );
+    m_AlbumsPrevBtn->Show( m_ShowAlbums );
+    m_AlbumsNextBtn->Show( m_ShowAlbums );
+
+    if( dolayout )
+        UpdateLayout();
 }
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::SetTopTracksVisible( const bool dolayout )
+{
+    if( m_ShowTopTracks )
+        m_MainSizer->Show( m_TopTracksSizer );
+    else
+        m_MainSizer->Hide( m_TopTracksSizer );
+
+    m_TopTracksRangeLabel->Show( m_ShowTopTracks );
+    m_TopTracksPrevBtn->Show( m_ShowTopTracks );
+    m_TopTracksNextBtn->Show( m_ShowTopTracks );
+
+    if( dolayout )
+        UpdateLayout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::SetSimArtistsVisible( const bool dolayout )
+{
+    if( m_ShowSimArtists )
+        m_MainSizer->Show( m_SimArtistsSizer );
+    else
+        m_MainSizer->Hide( m_SimArtistsSizer );
+
+    m_SimArtistsRangeLabel->Show( m_ShowSimArtists );
+    m_SimArtistsPrevBtn->Show( m_ShowSimArtists );
+    m_SimArtistsNextBtn->Show( m_ShowSimArtists );
+
+    if( dolayout )
+        UpdateLayout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::SetSimTracksVisible( const bool dolayout )
+{
+    if( m_ShowSimTracks )
+        m_MainSizer->Show( m_SimTracksSizer );
+    else
+        m_MainSizer->Hide( m_SimTracksSizer );
+
+    m_SimTracksRangeLabel->Show( m_ShowSimTracks );
+    m_SimTracksPrevBtn->Show( m_ShowSimTracks );
+    m_SimTracksNextBtn->Show( m_ShowSimTracks );
+
+    if( dolayout )
+        UpdateLayout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::SetEventsVisible( const bool dolayout )
+{
+    if( m_ShowEvents )
+        m_MainSizer->Show( m_EventsSizer );
+    else
+        m_MainSizer->Hide( m_EventsSizer );
+
+    m_EventsRangeLabel->Show( m_ShowEvents );
+    m_EventsPrevBtn->Show( m_ShowEvents );
+    m_EventsNextBtn->Show( m_ShowEvents );
+
+    if( dolayout )
+        UpdateLayout();
+}
+
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnTopAlbumsTitleDClick( wxMouseEvent &event )
 {
     m_ShowAlbums = !m_ShowAlbums;
-    if( m_ShowAlbums )
-        m_MainSizer->Show( m_AlbumsSizer );
-    else
-        m_MainSizer->Hide( m_AlbumsSizer );
-    UpdateLayout();
+    SetTopAlbumsVisible( true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnTopTracksTitleDClick( wxMouseEvent &event )
 {
     m_ShowTopTracks = !m_ShowTopTracks;
-    if( m_ShowTopTracks )
-        m_MainSizer->Show( m_TopTracksSizer );
-    else
-        m_MainSizer->Hide( m_TopTracksSizer );
-    UpdateLayout();
+    SetTopTracksVisible( true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnSimArTitleDClick( wxMouseEvent &event )
 {
     m_ShowSimArtists = !m_ShowSimArtists;
-    if( m_ShowSimArtists )
-        m_MainSizer->Show( m_SimArtistsSizer );
-    else
-        m_MainSizer->Hide( m_SimArtistsSizer );
-    UpdateLayout();
+    SetSimArtistsVisible( true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnSimTrTitleDClick( wxMouseEvent &event )
 {
     m_ShowSimTracks = !m_ShowSimTracks;
-    if( m_ShowSimTracks )
-        m_MainSizer->Show( m_SimTracksSizer );
-    else
-        m_MainSizer->Hide( m_SimTracksSizer );
-    UpdateLayout();
+    SetSimTracksVisible( true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnEventsTitleDClick( wxMouseEvent &event )
 {
     m_ShowEvents = !m_ShowEvents;
-    if( m_ShowEvents )
-        m_MainSizer->Show( m_EventsSizer );
-    else
-        m_MainSizer->Hide( m_EventsSizer );
-    UpdateLayout();
+    SetEventsVisible( true );
 }
 
 // -------------------------------------------------------------------------------- //
