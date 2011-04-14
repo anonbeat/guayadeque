@@ -236,6 +236,54 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
 }
 
 // -------------------------------------------------------------------------------- //
+bool MakeWindowVisible( void )
+{
+    DBusError dberr;
+    DBusConnection * dbconn;
+    DBusMessage * dbmsg, * dbreply;
+
+    dbus_error_init( &dberr );
+    dbconn = dbus_bus_get( DBUS_BUS_SESSION, &dberr );
+
+    if( dbus_error_is_set( &dberr ) )
+    {
+         printf( "getting session bus failed: %s\n", dberr.message );
+         dbus_error_free( &dberr );
+         return false;
+    }
+
+
+    dbmsg = dbus_message_new_method_call( "org.mpris.MediaPlayer2.guayadeque",
+                                          "/org/mpris/MediaPlayer2",
+                                          "org.mpris.MediaPlayer2",
+                                          "Raise" );
+    if( dbmsg == NULL )
+    {
+         guLogError( wxT( "Couldn’t create a DBusMessage" ) );
+         return false;
+    }
+
+    dbreply = dbus_connection_send_with_reply_and_block( dbconn, dbmsg, 5000, &dberr );
+    if( dbus_error_is_set( &dberr ) )
+    {
+          guLogMessage( wxT( "Error showing window" ) );
+          dbus_message_unref( dbmsg );
+          dbus_error_free( &dberr );
+          return false;
+    }
+
+    if( dbreply )
+        dbus_message_unref( dbreply );
+
+    /* Don’t need this anymore */
+    dbus_message_unref( dbmsg );
+
+    dbus_connection_unref( dbconn );
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
 bool guMainApp::OnInit()
 {
     guRandomInit();
@@ -259,6 +307,8 @@ bool guMainApp::OnInit()
                 wxMilliSleep( 100 );
             }
         }
+
+        MakeWindowVisible();
 
         guLogMessage( wxT( "Another program instance is already running, aborting." ) );
         return false;
