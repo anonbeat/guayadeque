@@ -340,16 +340,17 @@ class guFetchEventsInfoThread : public guFetchLastFMInfoThread
 };
 
 // -------------------------------------------------------------------------------- //
-class guFetchTrackInfoThread : public guFetchLastFMInfoThread
+class guFetchSimTracksInfoThread : public guFetchLastFMInfoThread
 {
   private:
     guDbCache *             m_DbCache;
     wxString                m_ArtistName;
     wxString                m_TrackName;
+    int                     m_Start;
 
   public:
-    guFetchTrackInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const wxChar * trackname );
-    ~guFetchTrackInfoThread();
+    guFetchSimTracksInfoThread( guLastFMPanel * lastfmpanel, guDbCache * dbcache, const wxChar * artistname, const wxChar * trackname, const int stargpage );
+    ~guFetchSimTracksInfoThread();
 
     virtual ExitCode Entry();
 
@@ -618,8 +619,8 @@ class guLastFMPanel : public wxScrolledWindow
 	guFetchSimilarArtistInfoThread *    m_SimArtistsUpdateThread;
 	wxMutex                             m_SimArtistsUpdateThreadMutex;
 
-	guFetchTrackInfoThread *            m_TracksUpdateThread;
-	wxMutex                             m_TracksUpdateThreadMutex;
+	guFetchSimTracksInfoThread *        m_SimTracksUpdateThread;
+	wxMutex                             m_SimTracksUpdateThreadMutex;
 
 	guFetchEventsInfoThread *           m_EventsUpdateThread;
 	wxMutex                             m_EventsUpdateThreadMutex;
@@ -675,15 +676,15 @@ class guLastFMPanel : public wxScrolledWindow
     int                                 m_SimArtistsCount;
     int                                 m_SimArtistsPageStart;
 
-	bool                                m_ShowTracks;
-    wxStaticText *                      m_TracksStaticText;
-	wxGridSizer *                       m_TracksSizer;
-	guTrackInfoCtrlArray                m_TracksInfoCtrls;
-    wxStaticText *                      m_TracksRangeLabel;
-    wxBitmapButton *                    m_TracksPrevBtn;
-    wxBitmapButton *                    m_TracksNextBtn;
-    int                                 m_TracksCount;
-    int                                 m_TracksPageStart;
+	bool                                m_ShowSimTracks;
+    wxStaticText *                      m_SimTracksStaticText;
+	wxGridSizer *                       m_SimTracksSizer;
+	guTrackInfoCtrlArray                m_SimTracksInfoCtrls;
+    wxStaticText *                      m_SimTracksRangeLabel;
+    wxBitmapButton *                    m_SimTracksPrevBtn;
+    wxBitmapButton *                    m_SimTracksNextBtn;
+    int                                 m_SimTracksCount;
+    int                                 m_SimTracksPageStart;
 
 	bool                                m_ShowEvents;
     wxStaticText *                      m_EventsStaticText;
@@ -746,10 +747,10 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnSimArtistsPrevClicked( wxCommandEvent &event );
     void    OnSimArtistsNextClicked( wxCommandEvent &event );
 
-    void    UpdateTracksRangeLabel( void );
-    void    OnTracksCountUpdated( wxCommandEvent &event );
-    void    OnTracksPrevClicked( wxCommandEvent &event );
-    void    OnTracksNextClicked( wxCommandEvent &event );
+    void    UpdateSimTracksRangeLabel( void );
+    void    OnSimTracksCountUpdated( wxCommandEvent &event );
+    void    OnSimTracksPrevClicked( wxCommandEvent &event );
+    void    OnSimTracksNextClicked( wxCommandEvent &event );
 
     void    UpdateEventsRangeLabel( void );
     void    OnEventsCountUpdated( wxCommandEvent &event );
@@ -773,7 +774,7 @@ class guLastFMPanel : public wxScrolledWindow
     friend class guFetchAlbumInfoThread;
     friend class guFetchTopTracksInfoThread;
     friend class guFetchSimilarArtistInfoThread;
-    friend class guFetchTrackInfoThread;
+    friend class guFetchSimTracksInfoThread;
     friend class guFetchEventsInfoThread;
     friend class guDownloadImageThread;
 };

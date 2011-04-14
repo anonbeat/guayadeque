@@ -766,16 +766,6 @@ void guAlbumInfoCtrl::Clear( void )
     m_Info = NULL;
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guAlbumInfoCtrl::OnClick( wxMouseEvent &event )
-//{
-//    if( m_Info )
-//    {
-//        //guLogMessage( wxT( "guAlbumInfo::OnClick %s" ), Info->Album->Url.c_str() );
-//        guWebExecute( m_Info->m_Album->m_Url );
-//    }
-//}
-
 // -------------------------------------------------------------------------------- //
 wxString guAlbumInfoCtrl::GetSearchText( void )
 {
@@ -936,16 +926,6 @@ void guSimilarArtistInfoCtrl::Clear( void )
         delete m_Info;
     m_Info = NULL;
 }
-
-//// -------------------------------------------------------------------------------- //
-//void guSimilarArtistInfoCtrl::OnClick( wxMouseEvent &event )
-//{
-//    if( m_Info )
-//    {
-//        //guLogMessage( wxT( "guArtistInfo::OnClick %s" ), Info->Artist->Url.c_str() );
-//        guWebExecute( m_Info->m_Artist->m_Url );
-//    }
-//}
 
 // -------------------------------------------------------------------------------- //
 void guSimilarArtistInfoCtrl::OnSelectArtist( wxCommandEvent &event )
@@ -1553,7 +1533,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     m_ShowAlbums = true;
     m_ShowTopTracks = true;
     m_ShowSimArtists = true;
-    m_ShowTracks = true;
+    m_ShowSimTracks = true;
     m_ShowEvents = true;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1563,7 +1543,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
         m_ShowAlbums = Config->ReadBool( wxT( "LFMShowAlbums" ), true, wxT( "General" )  );
         m_ShowTopTracks = Config->ReadBool( wxT( "LFMShowTopTracks" ), true, wxT( "General" )  );
         m_ShowSimArtists = Config->ReadBool( wxT( "LFMShowArtists" ), true, wxT( "General" )  );
-        m_ShowTracks = Config->ReadBool( wxT( "LFMShowTracks" ), true, wxT( "General" )  );
+        m_ShowSimTracks = Config->ReadBool( wxT( "LFMShowTracks" ), true, wxT( "General" )  );
         m_ShowEvents = Config->ReadBool( wxT( "LFMShowEvents" ), true, wxT( "General" )  );
     }
     m_UpdateEnabled = Config->ReadBool( wxT( "LFMFollowPlayer" ), true, wxT( "General" ) );
@@ -1803,31 +1783,43 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	wxBoxSizer * SimTracksTitleSizer;
 	SimTracksTitleSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_TracksStaticText = new wxStaticText( this, wxID_ANY, _("Similar Tracks"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_TracksStaticText->Wrap( -1 );
-	m_TracksStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
+	m_SimTracksStaticText = new wxStaticText( this, wxID_ANY, _("Similar Tracks"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SimTracksStaticText->Wrap( -1 );
+	m_SimTracksStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
-	SimTracksTitleSizer->Add( m_TracksStaticText, 0, wxALL, 5 );
+	SimTracksTitleSizer->Add( m_SimTracksStaticText, 0, wxALL, 5 );
 
 	wxStaticLine * SimTrStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	SimTracksTitleSizer->Add( SimTrStaticLine, 1, wxEXPAND | wxALL, 5 );
 
+    m_SimTracksRangeLabel = new wxStaticText( this, wxID_ANY, wxT( "0 - 0 / 0" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_AlbumsStaticText->Wrap( -1 );
+	SimTracksTitleSizer->Add( m_SimTracksRangeLabel, 0, wxLEFT|wxTOP|wxBOTTOM, 5 );
+
+    m_SimTracksPrevBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_left ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_SimTracksPrevBtn->Enable( false );
+	SimTracksTitleSizer->Add( m_SimTracksPrevBtn, 0, wxLEFT, 5 );
+
+    m_SimTracksNextBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_right ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_SimTracksNextBtn->Enable( false );
+	SimTracksTitleSizer->Add( m_SimTracksNextBtn, 0, wxRIGHT, 5 );
+
 	m_MainSizer->Add( SimTracksTitleSizer, 0, wxEXPAND, 5 );
 
-	m_TracksSizer = new wxGridSizer( 4, 3, 0, 0 );
+	m_SimTracksSizer = new wxGridSizer( 4, 3, 0, 0 );
 
     for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
     {
-        m_TracksInfoCtrls.Add( new guTrackInfoCtrl( this, m_Db, m_DbCache, m_PlayerPanel ) );
-        m_TracksSizer->Add( m_TracksInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+        m_SimTracksInfoCtrls.Add( new guTrackInfoCtrl( this, m_Db, m_DbCache, m_PlayerPanel ) );
+        m_SimTracksSizer->Add( m_SimTracksInfoCtrls[ index ], 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
     }
 
-	m_MainSizer->Add( m_TracksSizer, 0, wxEXPAND, 5 );
+	m_MainSizer->Add( m_SimTracksSizer, 0, wxEXPAND, 5 );
 	//MainSizer->Add( new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL ), 0, wxEXPAND, 5 );
-    if( m_ShowTracks )
-        m_MainSizer->Show( m_TracksSizer );
+    if( m_ShowSimTracks )
+        m_MainSizer->Show( m_SimTracksSizer );
     else
-        m_MainSizer->Hide( m_TracksSizer );
+        m_MainSizer->Hide( m_SimTracksSizer );
 
     //
     // Artist Events
@@ -1835,7 +1827,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	wxBoxSizer * EventsTitleSizer;
 	EventsTitleSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_EventsStaticText = new wxStaticText( this, wxID_ANY, _("Events"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_EventsStaticText = new wxStaticText( this, wxID_ANY, _( "Events" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_EventsStaticText->Wrap( -1 );
 	m_EventsStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
@@ -1843,6 +1835,18 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	wxStaticLine * EventsStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	EventsTitleSizer->Add( EventsStaticLine, 1, wxEXPAND | wxALL, 5 );
+
+    m_EventsRangeLabel = new wxStaticText( this, wxID_ANY, wxT( "0 - 0 / 0" ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_AlbumsStaticText->Wrap( -1 );
+	EventsTitleSizer->Add( m_EventsRangeLabel, 0, wxLEFT|wxTOP|wxBOTTOM, 5 );
+
+    m_EventsPrevBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_left ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_EventsPrevBtn->Enable( false );
+	EventsTitleSizer->Add( m_EventsPrevBtn, 0, wxLEFT, 5 );
+
+    m_EventsNextBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_right ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_EventsNextBtn->Enable( false );
+	EventsTitleSizer->Add( m_EventsNextBtn, 0, wxRIGHT, 5 );
 
 	m_MainSizer->Add( EventsTitleSizer, 0, wxEXPAND, 5 );
 
@@ -1870,7 +1874,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     m_ArtistsUpdateThread = NULL;
     m_AlbumsUpdateThread = NULL;
     m_TopTracksUpdateThread = NULL;
-    m_TracksUpdateThread = NULL;
+    m_SimTracksUpdateThread = NULL;
     m_SimArtistsUpdateThread = NULL;
     m_EventsUpdateThread = NULL;
 
@@ -1880,6 +1884,8 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     m_TopTracksPageStart = 0;
     m_SimArtistsCount = 0;
     m_SimArtistsPageStart = 0;
+    m_SimTracksCount = 0;
+    m_SimTracksPageStart = 0;
 
     SetDropTarget( new guLastFMPanelDropTarget( this ) );
 
@@ -1896,6 +1902,9 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_SimArtistsNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimArtistsNextClicked ), NULL, this );
 
     Connect( ID_LASTFM_UPDATE_SIMTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTrackItem ) );
+    Connect( ID_LASTFM_UPDATE_SIMTRACK_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnSimTracksCountUpdated ) );
+	m_SimTracksPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimTracksPrevClicked ), NULL, this );
+	m_SimTracksNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimTracksNextClicked ), NULL, this );
 
     Connect( ID_LASTFM_UPDATE_TOPTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTopTrackItem ) );
     Connect( ID_LASTFM_UPDATE_TOPTRACKS_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnTopTracksCountUpdated ), NULL, this );
@@ -1903,6 +1912,9 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_TopTracksNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnTopTracksNextClicked ), NULL, this );
 
     Connect( ID_LASTFM_UPDATE_EVENTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateEventItem ) );
+    Connect( ID_LASTFM_UPDATE_EVENTS_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnEventsCountUpdated ) );
+	m_EventsPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnEventsPrevClicked ), NULL, this );
+	m_EventsNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnEventsNextClicked ), NULL, this );
 
 	m_ArtistDetailsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnArInfoTitleDClicked ), NULL, this );
 	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLastFMPanel::OnUpdateChkBoxClick ), NULL, this );
@@ -1915,7 +1927,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_AlbumsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
 	m_TopTracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopTracksTitleDClick ), NULL, this );
 	m_SimArtistsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
-	m_TracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
+	m_SimTracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
 	m_EventsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnEventsTitleDClick ), NULL, this );
 
 //	ShowMoreHyperLink->Connect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guLastFMPanel::OnShowMoreLinkClicked ), NULL, this );
@@ -1953,14 +1965,14 @@ guLastFMPanel::~guLastFMPanel()
     }
     m_TopTracksUpdateThreadMutex.Unlock();
 
-    m_TracksUpdateThreadMutex.Lock();
-    if( m_TracksUpdateThread )
+    m_SimTracksUpdateThreadMutex.Lock();
+    if( m_SimTracksUpdateThread )
     {
-        m_TracksUpdateThread->Pause();
-        m_TracksUpdateThread->Delete();
-        m_TracksUpdateThread = NULL;
+        m_SimTracksUpdateThread->Pause();
+        m_SimTracksUpdateThread->Delete();
+        m_SimTracksUpdateThread = NULL;
     }
-    m_TracksUpdateThreadMutex.Unlock();
+    m_SimTracksUpdateThreadMutex.Unlock();
 
     m_SimArtistsUpdateThreadMutex.Lock();
     if( m_SimArtistsUpdateThread )
@@ -1987,7 +1999,7 @@ guLastFMPanel::~guLastFMPanel()
 	m_AlbumsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
 	m_TopTracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopTracksTitleDClick ), NULL, this );
 	m_SimArtistsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
-	m_TracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
+	m_SimTracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
 	m_EventsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnEventsTitleDClick ), NULL, this );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1997,7 +2009,7 @@ guLastFMPanel::~guLastFMPanel()
         Config->WriteBool( wxT( "LFMShowAlbums" ), m_ShowAlbums, wxT( "General" ) );
         Config->WriteBool( wxT( "LFMShowTopTracks" ), m_ShowTopTracks, wxT( "General" ) );
         Config->WriteBool( wxT( "LFMShowArtists" ), m_ShowSimArtists, wxT( "General" ) );
-        Config->WriteBool( wxT( "LFMShowTracks" ), m_ShowTracks, wxT( "General" ) );
+        Config->WriteBool( wxT( "LFMShowTracks" ), m_ShowSimTracks, wxT( "General" ) );
         Config->WriteBool( wxT( "LFMShowEvents" ), m_ShowEvents, wxT( "General" ) );
         Config->WriteBool( wxT( "LFMFollowPlayer" ), m_UpdateCheckBox->GetValue(), wxT( "General" ) );
     }
@@ -2046,6 +2058,14 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_SimArtistsUpdateThread = NULL;
         }
 
+        m_EventsUpdateThreadMutex.Lock();
+        if( m_EventsUpdateThread )
+        {
+            m_EventsUpdateThread->Pause();
+            m_EventsUpdateThread->Delete();
+            m_EventsUpdateThread = NULL;
+        }
+
         // Clear the LastFM controls to default values
         m_ArtistInfoCtrl->Clear();
 
@@ -2075,6 +2095,12 @@ void guLastFMPanel::ShowCurrentTrack( void )
         m_SimArtistsNextBtn->Enable( false );
         UpdateSimArtistsRangeLabel();
 
+        m_EventsCount = 0;
+        m_EventsPageStart = 0;
+        m_EventsPrevBtn->Enable( false );
+        m_EventsNextBtn->Enable( false );
+        UpdateEventsRangeLabel();
+
         m_LastArtistName = m_ArtistName;
         if( !m_ArtistName.IsEmpty() )
         {
@@ -2082,9 +2108,11 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_AlbumsUpdateThread = new guFetchAlbumInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_AlbumsPageStart );
             m_TopTracksUpdateThread = new guFetchTopTracksInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TopTracksPageStart );
             m_SimArtistsUpdateThread = new guFetchSimilarArtistInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TopTracksPageStart );
+            m_EventsUpdateThread = new guFetchEventsInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_EventsPageStart );
         }
         m_ArtistTextCtrl->SetValue( m_ArtistName );
 
+        m_EventsUpdateThreadMutex.Unlock();
         m_SimArtistsUpdateThreadMutex.Unlock();
         m_TopTracksUpdateThreadMutex.Unlock();
         m_AlbumsUpdateThreadMutex.Unlock();
@@ -2093,28 +2121,34 @@ void guLastFMPanel::ShowCurrentTrack( void )
 
     if( m_LastTrackName != m_TrackName )
     {
-        m_TracksUpdateThreadMutex.Lock();
-        if( m_TracksUpdateThread )
+        m_SimTracksUpdateThreadMutex.Lock();
+        if( m_SimTracksUpdateThread )
         {
-            m_TracksUpdateThread->Pause();
-            m_TracksUpdateThread->Delete();
-            m_TracksUpdateThread = NULL;
+            m_SimTracksUpdateThread->Pause();
+            m_SimTracksUpdateThread->Delete();
+            m_SimTracksUpdateThread = NULL;
         }
 
         for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
         {
-            m_TracksInfoCtrls[ index ]->Clear();
+            m_SimTracksInfoCtrls[ index ]->Clear();
         }
+
+        m_SimTracksCount = 0;
+        m_SimTracksPageStart = 0;
+        m_SimTracksPrevBtn->Enable( false );
+        m_SimTracksNextBtn->Enable( false );
+        UpdateSimTracksRangeLabel();
 
         m_LastTrackName = m_TrackName;
         if( !m_ArtistName.IsEmpty() && !m_TrackName.IsEmpty() )
         {
-            m_TracksUpdateThread = new guFetchTrackInfoThread( this, m_DbCache,
-                m_ArtistName.c_str(), m_TrackName.c_str() );
+            m_SimTracksUpdateThread = new guFetchSimTracksInfoThread( this, m_DbCache,
+                m_ArtistName.c_str(), m_TrackName.c_str(), m_SimTracksPageStart );
         }
         m_TrackTextCtrl->SetValue( m_TrackName );
 
-        m_TracksUpdateThreadMutex.Unlock();
+        m_SimTracksUpdateThreadMutex.Unlock();
     }
 }
 
@@ -2371,6 +2405,174 @@ void  guLastFMPanel::OnSimArtistsNextClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMPanel::UpdateEventsRangeLabel( void )
+{
+    if( m_EventsCount )
+    {
+        int StartIndex = m_EventsPageStart * GULASTFMINFO_MAXITEMS;
+        m_EventsRangeLabel->SetLabel( wxString::Format( wxT( "%i - %i / %i" ),
+                                StartIndex + 1,
+                                wxMin( StartIndex + GULASTFMINFO_MAXITEMS, m_EventsCount ),
+                                m_EventsCount ) );
+    }
+    else
+    {
+        m_EventsRangeLabel->SetLabel( wxT( "0 - 0 / 0"));
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnEventsCountUpdated( wxCommandEvent &event )
+{
+    m_EventsCount = event.GetInt();
+    UpdateEventsRangeLabel();
+    m_EventsPrevBtn->Enable( m_EventsPageStart );
+    m_EventsNextBtn->Enable( ( ( m_EventsPageStart + 1 )  * GULASTFMINFO_MAXITEMS ) < m_EventsCount );
+}
+
+// -------------------------------------------------------------------------------- //
+void  guLastFMPanel::OnEventsPrevClicked( wxCommandEvent &event )
+{
+    if( m_EventsPageStart )
+    {
+        m_EventsUpdateThreadMutex.Lock();
+        if( m_EventsUpdateThread )
+        {
+            m_EventsUpdateThread->Pause();
+            m_EventsUpdateThread->Delete();
+            m_EventsUpdateThread = NULL;
+        }
+
+        m_EventsPageStart--;
+        m_EventsPrevBtn->Enable( m_EventsPageStart );
+        m_EventsNextBtn->Enable( ( ( m_EventsPageStart + 1 )  * GULASTFMINFO_MAXITEMS ) < m_EventsCount );
+
+        int index;
+        for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
+        {
+            m_EventsInfoCtrls[ index ]->Clear();
+        }
+
+        m_EventsUpdateThread = new guFetchEventsInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_EventsPageStart );
+
+        m_EventsUpdateThreadMutex.Unlock();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void  guLastFMPanel::OnEventsNextClicked( wxCommandEvent &event )
+{
+    if( ( ( m_EventsPageStart + 1 ) * GULASTFMINFO_MAXITEMS ) < m_EventsCount )
+    {
+        m_EventsUpdateThreadMutex.Lock();
+        if( m_EventsUpdateThread )
+        {
+            m_EventsUpdateThread->Pause();
+            m_EventsUpdateThread->Delete();
+            m_EventsUpdateThread = NULL;
+        }
+
+        m_EventsPageStart++;
+        m_EventsPrevBtn->Enable( m_EventsPageStart );
+        m_EventsNextBtn->Enable( ( ( m_EventsPageStart + 1 )  * GULASTFMINFO_MAXITEMS ) < m_EventsCount );
+
+        int index;
+        for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
+        {
+            m_EventsInfoCtrls[ index ]->Clear();
+        }
+
+        m_EventsUpdateThread = new guFetchEventsInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_EventsPageStart );
+
+        m_EventsUpdateThreadMutex.Unlock();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::UpdateSimTracksRangeLabel( void )
+{
+    if( m_SimTracksCount )
+    {
+        int StartIndex = m_SimTracksPageStart * GULASTFMINFO_MAXITEMS;
+        m_SimTracksRangeLabel->SetLabel( wxString::Format( wxT( "%i - %i / %i" ),
+                                StartIndex + 1,
+                                wxMin( StartIndex + GULASTFMINFO_MAXITEMS, m_SimTracksCount ),
+                                m_SimTracksCount ) );
+    }
+    else
+    {
+        m_SimTracksRangeLabel->SetLabel( wxT( "0 - 0 / 0"));
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnSimTracksCountUpdated( wxCommandEvent &event )
+{
+    m_SimTracksCount = event.GetInt();
+    UpdateSimTracksRangeLabel();
+    m_SimTracksPrevBtn->Enable( m_SimTracksPageStart );
+    m_SimTracksNextBtn->Enable( ( ( m_SimTracksPageStart + 1 )  * GULASTFMINFO_MAXITEMS ) < m_SimTracksCount );
+}
+
+// -------------------------------------------------------------------------------- //
+void  guLastFMPanel::OnSimTracksPrevClicked( wxCommandEvent &event )
+{
+    if( m_SimTracksPageStart )
+    {
+        m_SimTracksUpdateThreadMutex.Lock();
+        if( m_SimTracksUpdateThread )
+        {
+            m_SimTracksUpdateThread->Pause();
+            m_SimTracksUpdateThread->Delete();
+            m_SimTracksUpdateThread = NULL;
+        }
+
+        m_SimTracksPageStart--;
+        m_SimTracksPrevBtn->Enable( m_SimTracksPageStart );
+        m_SimTracksNextBtn->Enable( ( ( m_SimTracksPageStart + 1 )  * GULASTFMINFO_MAXITEMS ) < m_SimTracksCount );
+
+        int index;
+        for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
+        {
+            m_SimTracksInfoCtrls[ index ]->Clear();
+        }
+
+        m_SimTracksUpdateThread = new guFetchSimTracksInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TrackName.c_str(), m_SimTracksPageStart );
+
+        m_SimTracksUpdateThreadMutex.Unlock();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void  guLastFMPanel::OnSimTracksNextClicked( wxCommandEvent &event )
+{
+    if( ( ( m_SimTracksPageStart + 1 ) * GULASTFMINFO_MAXITEMS ) < m_SimTracksCount )
+    {
+        m_SimTracksUpdateThreadMutex.Lock();
+        if( m_SimTracksUpdateThread )
+        {
+            m_SimTracksUpdateThread->Pause();
+            m_SimTracksUpdateThread->Delete();
+            m_SimTracksUpdateThread = NULL;
+        }
+
+        m_SimTracksPageStart++;
+        m_SimTracksPrevBtn->Enable( m_SimTracksPageStart );
+        m_SimTracksNextBtn->Enable( ( ( m_SimTracksPageStart + 1 )  * GULASTFMINFO_MAXITEMS ) < m_SimTracksCount );
+
+        int index;
+        for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
+        {
+            m_SimTracksInfoCtrls[ index ]->Clear();
+        }
+
+        m_SimTracksUpdateThread = new guFetchSimTracksInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TrackName.c_str(), m_SimTracksPageStart );
+
+        m_SimTracksUpdateThreadMutex.Unlock();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guLastFMPanel::SetUpdateEnable( bool value )
 {
     m_UpdateCheckBox->SetValue( value );
@@ -2573,7 +2775,7 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
     guLastFMTrackInfo * TrackInfo = ( guLastFMTrackInfo * ) event.GetClientData();
     if( TrackInfo )
     {
-        m_TracksInfoCtrls[ index ]->SetInfo( TrackInfo );
+        m_SimTracksInfoCtrls[ index ]->SetInfo( TrackInfo );
         //Layout();
         m_MainSizer->FitInside( this );
     }
@@ -2677,11 +2879,11 @@ void guLastFMPanel::OnSimArTitleDClick( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnSimTrTitleDClick( wxMouseEvent &event )
 {
-    m_ShowTracks = !m_ShowTracks;
-    if( m_ShowTracks )
-        m_MainSizer->Show( m_TracksSizer );
+    m_ShowSimTracks = !m_ShowSimTracks;
+    if( m_ShowSimTracks )
+        m_MainSizer->Show( m_SimTracksSizer );
     else
-        m_MainSizer->Hide( m_TracksSizer );
+        m_MainSizer->Hide( m_SimTracksSizer );
     UpdateLayout();
 }
 
@@ -3346,7 +3548,13 @@ guFetchEventsInfoThread::ExitCode guFetchEventsInfoThread::Entry()
         {
             //guLogMessage( wxT( "==== Getting Artist Events ====" ) );
             guEventInfoArray ArtistEvents = LastFM->ArtistGetEvents( m_ArtistName );
-            if( ( count = ArtistEvents.Count() ) )
+            count = ArtistEvents.Count();
+
+            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_EVENTS_COUNT );
+            CountEvent.SetInt( count );
+            wxPostEvent( m_LastFMPanel, CountEvent );
+
+            if( count )
             {
                 //guLogMessage( wxT( "Similar Artists: %u" ), count );
                 count = wxMin( count, m_Start + GULASTFMINFO_MAXITEMS );
@@ -3394,15 +3602,17 @@ guFetchEventsInfoThread::ExitCode guFetchEventsInfoThread::Entry()
 
 
 // -------------------------------------------------------------------------------- //
-// guFetchTrackInfoThread
+// guFetchSimTracksInfoThread
 // -------------------------------------------------------------------------------- //
-guFetchTrackInfoThread::guFetchTrackInfoThread( guLastFMPanel * lastfmpanel,
-         guDbCache * dbcache, const wxChar * artistname, const wxChar * trackname ) :
+guFetchSimTracksInfoThread::guFetchSimTracksInfoThread( guLastFMPanel * lastfmpanel,
+         guDbCache * dbcache, const wxChar * artistname, const wxChar * trackname,
+         const int startpage ) :
     guFetchLastFMInfoThread( lastfmpanel )
 {
     m_DbCache = dbcache;
     m_ArtistName = wxString( artistname );
     m_TrackName  = wxString( trackname );
+    m_Start = startpage * GULASTFMINFO_MAXITEMS;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -3412,21 +3622,21 @@ guFetchTrackInfoThread::guFetchTrackInfoThread( guLastFMPanel * lastfmpanel,
 }
 
 // -------------------------------------------------------------------------------- //
-guFetchTrackInfoThread::~guFetchTrackInfoThread()
+guFetchSimTracksInfoThread::~guFetchSimTracksInfoThread()
 {
     if( !TestDestroy() )
     {
-        m_LastFMPanel->m_TracksUpdateThreadMutex.Lock();
+        m_LastFMPanel->m_SimTracksUpdateThreadMutex.Lock();
         if( !TestDestroy() )
         {
-            m_LastFMPanel->m_TracksUpdateThread = NULL;
+            m_LastFMPanel->m_SimTracksUpdateThread = NULL;
         }
-        m_LastFMPanel->m_TracksUpdateThreadMutex.Unlock();
+        m_LastFMPanel->m_SimTracksUpdateThreadMutex.Unlock();
     }
 }
 
 // -------------------------------------------------------------------------------- //
-guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
+guFetchSimTracksInfoThread::ExitCode guFetchSimTracksInfoThread::Entry()
 {
     int index;
     int count;
@@ -3437,17 +3647,23 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
         {
             //guLogMessage( wxT( "==== Getting Similar Tracks ====" ) );
             guSimilarTrackInfoArray SimilarTracks = LastFM->TrackGetSimilar( m_ArtistName, m_TrackName );
-            if( ( count = SimilarTracks.Count() ) )
+            count = SimilarTracks.Count();
+
+            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_SIMTRACK_COUNT );
+            CountEvent.SetInt( count );
+            wxPostEvent( m_LastFMPanel, CountEvent );
+
+            if( count )
             {
                 //guLogMessage( wxT( "Similar Tracks: %u" ), count );
-                if( count > GULASTFMINFO_MAXITEMS )
-                    count = GULASTFMINFO_MAXITEMS;
-                for( index = 0; index < count; index++ )
+                count = wxMin( count, m_Start + GULASTFMINFO_MAXITEMS );
+
+                for( index = m_Start; index < count; index++ )
                 {
                     m_DownloadThreadsMutex.Lock();
                     if( !TestDestroy() )
                     {
-                        guLastFMTrackInfo * LastFMTrackInfo = new guLastFMTrackInfo( index, NULL,
+                        guLastFMTrackInfo * LastFMTrackInfo = new guLastFMTrackInfo( index - m_Start, NULL,
                               new guSimilarTrackInfo( SimilarTracks[ index ] ) );
                         if( LastFMTrackInfo )
                         {
@@ -3456,7 +3672,8 @@ guFetchTrackInfoThread::ExitCode guFetchTrackInfoThread::Entry()
                                     m_LastFMPanel,
                                     this,
                                     m_DbCache,
-                                    index, SimilarTracks[ index ].m_ImageLink.c_str(),
+                                    index - m_Start,
+                                    SimilarTracks[ index ].m_ImageLink.c_str(),
                                     ID_LASTFM_UPDATE_SIMTRACK,
                                     LastFMTrackInfo,
                                     &LastFMTrackInfo->m_Image,
