@@ -29,6 +29,7 @@
 #include "Utils.h"
 #include "AuiNotebook.h"
 #include "PlayListAppend.h"
+#include "MainFrame.h"
 
 #include <wx/arrimpl.cpp>
 #include "wx/clipbrd.h"
@@ -1915,6 +1916,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnPlayClicked ), NULL, this );
     Connect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnEnqueueClicked ), NULL, this );
     Connect( ID_LASTFM_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnSaveClicked ), NULL, this );
+    Connect( ID_LASTFM_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnCopyToClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3059,6 +3061,11 @@ void guLastFMPanel::OnContextMenu( wxContextMenuEvent &event )
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
     Menu.Append( MenuItem );
 
+    Menu.AppendSeparator();
+
+    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    MainFrame->CreateCopyToMenu( &Menu, ID_LASTFM_COPYTO );
+
     PopupMenu( &Menu, Point.x, Point.y );
 }
 
@@ -3234,6 +3241,25 @@ void guLastFMPanel::OnSaveClicked( wxCommandEvent &event )
         }
         PlayListAppendDlg->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnCopyToClicked( wxCommandEvent &event )
+{
+    guTrackArray * Tracks = new guTrackArray();
+
+    GetContextMenuTracks( Tracks );
+
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
+    int Index = event.GetId() - ID_LASTFM_COPYTO;
+    if( Index > 99 )
+    {
+        Index -= 100;
+        CmdEvent.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
+    }
+    CmdEvent.SetInt( Index );
+    CmdEvent.SetClientData( ( void * ) Tracks );
+    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
