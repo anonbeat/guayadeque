@@ -28,6 +28,7 @@
 #include "TagInfo.h"
 #include "Utils.h"
 #include "AuiNotebook.h"
+#include "PlayListAppend.h"
 
 #include <wx/arrimpl.cpp>
 #include "wx/clipbrd.h"
@@ -544,7 +545,7 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
     if( m_Info->m_ArtistId != wxNOT_FOUND )
     {
-        guLogMessage( wxT( "The artist id = %i" ), m_Info->m_ArtistId );
+        //guLogMessage( wxT( "The artist id = %i" ), m_Info->m_ArtistId );
         MenuItem = new wxMenuItem( Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
@@ -1558,8 +1559,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
-
-	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
 	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_left ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PrevButton->Enable( false );
@@ -1572,8 +1572,6 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ReloadButton->Enable( false );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
-
-	EditorSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	wxStaticText * ArtistStaticText;
 	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1612,14 +1610,10 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 	m_ArtistDetailsStaticText->SetFont( CurrentFont );
 
-	ArInfoTitleSizer->Add( m_ArtistDetailsStaticText, 0, wxALL, 5 );
+	ArInfoTitleSizer->Add( m_ArtistDetailsStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticLine * ArInfoStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	ArInfoTitleSizer->Add( ArInfoStaticLine, 1, wxEXPAND | wxALL, 5 );
-
-//	m_LastFMPlayBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-//	m_LastFMPlayBitmapBtn->SetToolTip( _( "Enables or Disables the update of this page when the current playing track changes" ) );
-//	ArInfoTitleSizer->Add( m_LastFMPlayBitmapBtn, 0, wxRIGHT, 5 );
 
 	m_MainSizer->Add( ArInfoTitleSizer, 0, wxEXPAND, 5 );
 
@@ -1649,7 +1643,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	//AlbumsStaticText->SetCursor( wxCURSOR_HAND );
 	m_AlbumsStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
-	AlTitleSizer->Add( m_AlbumsStaticText, 0, wxALL, 5 );
+	AlTitleSizer->Add( m_AlbumsStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticLine * AlStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	AlTitleSizer->Add( AlStaticLine, 1, wxEXPAND | wxALL, 5 );
@@ -1690,7 +1684,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_TopTracksStaticText->Wrap( -1 );
 	m_TopTracksStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
-	TopTracksTitleSizer->Add( m_TopTracksStaticText, 0, wxALL, 5 );
+	TopTracksTitleSizer->Add( m_TopTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticLine * TopTrStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	TopTracksTitleSizer->Add( TopTrStaticLine, 1, wxEXPAND | wxALL, 5 );
@@ -1731,7 +1725,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_SimArtistsStaticText->Wrap( -1 );
 	m_SimArtistsStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
-	SimArTitleSizer->Add( m_SimArtistsStaticText, 0, wxALL, 5 );
+	SimArTitleSizer->Add( m_SimArtistsStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticLine * SimArStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	SimArTitleSizer->Add( SimArStaticLine, 1, wxEXPAND | wxALL, 5 );
@@ -1772,7 +1766,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_SimTracksStaticText->Wrap( -1 );
 	m_SimTracksStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
-	SimTracksTitleSizer->Add( m_SimTracksStaticText, 0, wxALL, 5 );
+	SimTracksTitleSizer->Add( m_SimTracksStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticLine * SimTrStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	SimTracksTitleSizer->Add( SimTrStaticLine, 1, wxEXPAND | wxALL, 5 );
@@ -1813,7 +1807,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_EventsStaticText->Wrap( -1 );
 	m_EventsStaticText->SetFont( CurrentFont ); //wxFont( GULASTFM_TITLE_FONT_SIZE, 70, 90, 92, false, wxEmptyString ) );
 
-	EventsTitleSizer->Add( m_EventsStaticText, 0, wxALL, 5 );
+	EventsTitleSizer->Add( m_EventsStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticLine * EventsStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
 	EventsTitleSizer->Add( EventsStaticLine, 1, wxEXPAND | wxALL, 5 );
@@ -1848,6 +1842,8 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	this->Layout();
 
 	SetScrollRate( 21, 21 );
+
+    m_ContextMenuObject = NULL;
 
     m_ArtistsUpdateThread = NULL;
     m_AlbumsUpdateThread = NULL;
@@ -1911,9 +1907,14 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	m_SimTracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
 	m_EventsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnEventsTitleDClick ), NULL, this );
 
-//	ShowMoreHyperLink->Connect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guLastFMPanel::OnShowMoreLinkClicked ), NULL, this );
-//	ArtistDetails->Connect( wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler( guLastFMPanel::OnHtmlLinkClicked ), NULL, this );
+    m_AlbumsStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
+    m_TopTracksStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
+    m_SimArtistsStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
+    m_SimTracksStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
 
+    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnPlayClicked ), NULL, this );
+    Connect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnEnqueueClicked ), NULL, this );
+    Connect( ID_LASTFM_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnSaveClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3003,13 +3004,245 @@ void guLastFMPanel::OnDropFiles( const wxArrayString &files )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnContextMenu( wxContextMenuEvent &event )
+{
+    m_ContextMenuObject = ( wxStaticText * ) event.GetEventObject();
+
+    wxMenu Menu;
+    wxPoint Point = event.GetPosition();
+    // If from keyboard
+    if( Point.x == -1 && Point.y == -1 )
+    {
+        wxSize Size = GetSize();
+        Point.x = Size.x / 2;
+        Point.y = Size.y / 2;
+    }
+    else
+    {
+        CalcUnscrolledPosition( Point.x, Point.y, &Point.x, &Point.y );
+        Point = ScreenToClient( Point );
+    }
+
+    wxMenuItem * MenuItem = new wxMenuItem( &Menu, ID_LASTFM_PLAY, _( "Play" ), _( "Play the artist tracks" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+    Menu.Append( MenuItem );
+
+    MenuItem = new wxMenuItem( &Menu, ID_LASTFM_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the artist tracks to the playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    Menu.Append( MenuItem );
+
+    wxMenu * EnqueueMenu = new wxMenu();
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_TRACK,
+                            wxString( _( "Current Track" ) ),
+                            _( "Add current selected tracks to playlist after the current track" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ALBUM,
+                            wxString( _( "Current Album" ) ),
+                            _( "Add current selected tracks to playlist after the current album" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( EnqueueMenu, ID_LASTFM_ENQUEUE_AFTER_ARTIST,
+                            wxString( _( "Current Artist" ) ),
+                            _( "Add current selected tracks to playlist after the current artist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    EnqueueMenu->Append( MenuItem );
+
+    Menu.Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+
+    Menu.AppendSeparator();
+
+    MenuItem = new wxMenuItem( &Menu, ID_LASTFM_SAVETOPLAYLIST, _( "Save to PlayList" ), _( "Save the selected tracks to PlayList" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+    Menu.Append( MenuItem );
+
+    PopupMenu( &Menu, Point.x, Point.y );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::GetContextMenuTracks( guTrackArray * tracks )
+{
+    guLastFM LastFM;
+
+    if( m_ContextMenuObject == m_AlbumsStaticText )
+    {
+        // Top Albums
+        guAlbumInfoArray TopAlbums = LastFM.ArtistGetTopAlbums( m_ArtistName );
+        wxArrayInt AlbumIds;
+        int Index;
+        int Count = TopAlbums.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int AlbumId = m_Db->FindAlbum( m_ArtistName, TopAlbums[ Index ].m_Name );
+            if( AlbumId != wxNOT_FOUND )
+            {
+                AlbumIds.Add( AlbumId );
+            }
+        }
+
+        if( AlbumIds.Count() )
+        {
+            m_Db->GetAlbumsSongs( AlbumIds, tracks );
+        }
+    }
+    else if( m_ContextMenuObject == m_TopTracksStaticText )
+    {
+        // Top Tracks
+        guTopTrackInfoArray TopTracks = LastFM.ArtistGetTopTracks( m_ArtistName );
+        wxArrayInt TrackIds;
+        int Index;
+        int Count = TopTracks.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int TrackId = m_Db->FindTrack( m_ArtistName, TopTracks[ Index ].m_TrackName );
+            if( TrackId != wxNOT_FOUND )
+            {
+                TrackIds.Add( TrackId );
+            }
+        }
+
+        if( TrackIds.Count() )
+        {
+            m_Db->GetSongs( TrackIds, tracks );
+        }
+    }
+    else if( m_ContextMenuObject == m_SimArtistsStaticText )
+    {
+        // Similar Artists
+        guSimilarArtistInfoArray SimilarArtists = LastFM.ArtistGetSimilar( m_ArtistName );
+        wxArrayInt ArtistIds;
+        int Index;
+        int Count = SimilarArtists.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int ArtistId = m_Db->FindArtist( SimilarArtists[ Index ].m_Name );
+            if( ArtistId != wxNOT_FOUND )
+            {
+                ArtistIds.Add( ArtistId );
+            }
+        }
+
+        if( ArtistIds.Count() )
+        {
+            m_Db->GetArtistsSongs( ArtistIds, tracks );
+        }
+    }
+    else if( m_ContextMenuObject == m_SimTracksStaticText )
+    {
+        // Similar Tracks
+        guSimilarTrackInfoArray SimilarTracks = LastFM.TrackGetSimilar( m_ArtistName, m_TrackName );
+        wxArrayInt TrackIds;
+        int Index;
+        int Count = SimilarTracks.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            int TrackId = m_Db->FindTrack( SimilarTracks[ Index ].m_ArtistName, SimilarTracks[ Index ].m_TrackName );
+            if( TrackId != wxNOT_FOUND )
+            {
+                TrackIds.Add( TrackId );
+            }
+        }
+
+        if( TrackIds.Count() )
+        {
+            m_Db->GetSongs( TrackIds, tracks );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnPlayClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+
+    GetContextMenuTracks( &Tracks );
+
+    if( m_PlayerPanel && Tracks.Count() )
+    {
+        m_PlayerPanel->SetPlayList( Tracks );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnEnqueueClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+
+    GetContextMenuTracks( &Tracks );
+
+    if( m_PlayerPanel && Tracks.Count() )
+    {
+        m_PlayerPanel->AddToPlayList( Tracks, true, event.GetId() - ID_LASTFM_ENQUEUE_AFTER_ALL );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnSaveClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+
+    GetContextMenuTracks( &Tracks );
+
+    int Index;
+    int Count = Tracks.Count();
+    if( Count )
+    {
+        wxArrayInt TrackIds;
+        for( Index = 0; Index < Count; Index++ )
+        {
+            TrackIds.Add( Tracks[ Index ].m_SongId );
+        }
+
+        guListItems PlayLists;
+        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
+
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
+
+        if( PlayListAppendDlg->ShowModal() == wxID_OK )
+        {
+            int Selected = PlayListAppendDlg->GetSelectedPlayList();
+            if( Selected == -1 )
+            {
+                wxString PLName = PlayListAppendDlg->GetPlaylistName();
+                if( PLName.IsEmpty() )
+                {
+                    PLName = _( "UnNamed" );
+                }
+                m_Db->CreateStaticPlayList( PLName, TrackIds );
+            }
+            else
+            {
+                int PLId = PlayLists[ Selected ].m_Id;
+                wxArrayInt OldSongs;
+                m_Db->GetPlayListSongIds( PLId, &OldSongs );
+                if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
+                {
+                    m_Db->UpdateStaticPlayList( PLId, TrackIds );
+                    m_Db->AppendStaticPlayList( PLId, OldSongs );
+                }
+                else                                                // END
+                {
+                    m_Db->AppendStaticPlayList( PLId, TrackIds );
+                }
+            }
+
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+        PlayListAppendDlg->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 // guFetchLastFMInfoThread
 // -------------------------------------------------------------------------------- //
 guFetchLastFMInfoThread::guFetchLastFMInfoThread( guLastFMPanel * lastfmpanel ) :
     wxThread( wxTHREAD_DETACHED )
 {
     m_LastFMPanel = lastfmpanel;
-
 }
 
 // -------------------------------------------------------------------------------- //
