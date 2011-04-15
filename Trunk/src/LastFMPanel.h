@@ -758,6 +758,7 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnPlayClicked( wxCommandEvent &event );
     void    OnEnqueueClicked( wxCommandEvent &event );
     void    OnSaveClicked( wxCommandEvent &event );
+    void    OnCopyToClicked( wxCommandEvent &event );
 
     void    GetContextMenuTracks( guTrackArray * tracks );
 
