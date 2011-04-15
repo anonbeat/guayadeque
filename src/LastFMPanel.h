@@ -450,8 +450,6 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
     guLastFMAlbumInfo * m_Info;
 
     virtual void        OnContextMenu( wxContextMenuEvent& event );
-//    void                OnSearchLinkClicked( wxCommandEvent &event );
-    //virtual void        OnClick( wxMouseEvent &event );
     virtual wxString    GetSearchText( void );
     virtual wxString    GetItemUrl( void );
     virtual void        CreateContextMenu( wxMenu * Menu );
@@ -511,7 +509,6 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual wxString    GetSearchText( void );
     virtual wxString    GetItemUrl( void );
-    //void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnSongSelectName( wxCommandEvent &event );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
@@ -542,7 +539,6 @@ class guTopTrackInfoCtrl : public guLastFMInfoCtrl
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual wxString    GetSearchText( void );
     virtual wxString    GetItemUrl( void );
-    //void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnSongSelectName( wxCommandEvent &event );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
@@ -573,7 +569,6 @@ class guEventInfoCtrl : public guLastFMInfoCtrl
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual wxString    GetSearchText( void );
     virtual wxString    GetItemUrl( void );
-    //void                OnClick( wxMouseEvent &event );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
 
     virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
@@ -696,6 +691,8 @@ class guLastFMPanel : public wxScrolledWindow
     int                                 m_EventsCount;
     int                                 m_EventsPageStart;
 
+    wxStaticText *                      m_ContextMenuObject;
+
 
 	// TODO : Check if its really necesary
 	wxMutex                             m_UpdateInfoMutex;
@@ -755,6 +752,14 @@ class guLastFMPanel : public wxScrolledWindow
     void    OnEventsCountUpdated( wxCommandEvent &event );
     void    OnEventsPrevClicked( wxCommandEvent &event );
     void    OnEventsNextClicked( wxCommandEvent &event );
+
+    void    OnContextMenu( wxContextMenuEvent& event );
+
+    void    OnPlayClicked( wxCommandEvent &event );
+    void    OnEnqueueClicked( wxCommandEvent &event );
+    void    OnSaveClicked( wxCommandEvent &event );
+
+    void    GetContextMenuTracks( guTrackArray * tracks );
 
   public :
             guLastFMPanel( wxWindow * parent, guDbLibrary * db,

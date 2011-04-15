@@ -225,7 +225,7 @@ bool guDbCache::SetContent( const wxString &url, const wxString &content )
   ExecuteUpdate( query );
 
   // delete the expired entries but call it only 2% of the times
-  if( guRandom( 1000 ) < 20 )
+  if( guRandom( 1000 ) < 7 )
     ClearExpired();
 
   return true;
