@@ -166,6 +166,8 @@ class guPrefDialog : public wxDialog
     wxTextCtrl *                m_PlayOutDevName;
     wxCheckBox *                m_NotifyChkBox;
     wxChoice *                  m_PlayReplayModeChoice;
+    wxStaticText *              m_PlayPreAmpLevelVal;
+    wxSlider *                  m_PlayPreAmpLevelSlider;
 
     wxPanel *                   m_XFadePanel;
     wxStaticText *              m_XFadeOutLenVal;
@@ -375,6 +377,8 @@ class guPrefDialog : public wxDialog
     void OnDownCoverBtnClick( wxCommandEvent& event );
 	void OnDelCoverBtnClick( wxCommandEvent& event );
     void OnPlayLevelEnabled( wxCommandEvent& event );
+    void OnReplayGainModeChanged( wxCommandEvent &event );
+    void OnPlayPreAmpLevelValueChanged( wxScrollEvent &event );
     void OnPlayLevelValueChanged( wxScrollEvent &event );
     void OnPlayEndTimeEnabled( wxCommandEvent& event );
     void OnPlayOutDevChanged( wxCommandEvent& event );

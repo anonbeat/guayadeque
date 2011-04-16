@@ -255,8 +255,6 @@
 		<Unit filename="src/DynamicPlayList.h" />
 		<Unit filename="src/Equalizer.cpp" />
 		<Unit filename="src/Equalizer.h" />
-		<Unit filename="src/FieldEditor.cpp" />
-		<Unit filename="src/FieldEditor.h" />
 		<Unit filename="src/FileBrowser.cpp" />
 		<Unit filename="src/FileBrowser.h" />
 		<Unit filename="src/FileRenamer.cpp" />

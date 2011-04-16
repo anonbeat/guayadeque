@@ -488,16 +488,19 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 
     if( Init() )
     {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_ForceGapless      = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
-        m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-        m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
-        m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
-        m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
-        m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
-        m_ReplayGainMode    = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
-        m_OutputDevice      = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
-        m_OutputDeviceName  = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
+//        guConfig * Config       = ( guConfig * ) guConfig::Get();
+//        m_ForceGapless          = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
+//        m_FadeOutTime           = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+//        m_FadeInTime            = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
+//        m_FadeInVolStart        = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
+//        m_FadeInVolTriger       = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
+//        m_BufferSize            = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
+//        m_ReplayGainMode        = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
+//        m_ReplayGainPreAmp      = double( Config->ReadNum( wxT( "ReplayGainPreAmp" ), 6, wxT( "General" ) ) );
+//        //m_ReplayGainFallback    = double( Config->ReadNum( wxT( "ReplayGainPreAmp" ), 6, wxT( "General" ) ) );
+//        m_OutputDevice          = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
+//        m_OutputDeviceName      = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
+        UpdatedConfig();
    }
 }
 
@@ -1111,16 +1114,18 @@ bool guMediaCtrl::Seek( wxFileOffset where )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::UpdatedConfig( void )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_ForceGapless      = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
-    m_FadeOutTime       = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-    m_FadeInTime        = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
-    m_FadeInVolStart    = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
-    m_FadeInVolTriger   = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
-    m_BufferSize        = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
-    m_ReplayGainMode    = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
-    m_OutputDevice      = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
-    m_OutputDeviceName  = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
+    guConfig * Config  = ( guConfig * ) guConfig::Get();
+    m_ForceGapless          = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
+    m_FadeOutTime           = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+    m_FadeInTime            = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
+    m_FadeInVolStart        = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
+    m_FadeInVolTriger       = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
+    m_BufferSize            = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
+    m_ReplayGainMode        = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
+    m_ReplayGainPreAmp      = double( Config->ReadNum( wxT( "ReplayGainPreAmp" ), 6, wxT( "General" ) ) );
+    //m_ReplayGainFallback    = double( Config->ReadNum( wxT( "ReplayGainFallback" ), -6, wxT( "General" ) ) );
+    m_OutputDevice          = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
+    m_OutputDeviceName      = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1487,7 +1492,8 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
             if( m_ReplayGain )
             {
                 g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
-                g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( 6 ), NULL );
+                g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", m_Player->m_ReplayGainPreAmp, NULL );
+                //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
             }
 
           m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );

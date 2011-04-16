@@ -4924,15 +4924,14 @@ int guDbLibrary::FindTrack( const wxString &Artist, const wxString &Name )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
-  wxString Param = Name;
-  escape_query_str( &Param );
 
   int ArtistId = FindArtist( Artist );
   if( ArtistId != wxNOT_FOUND )
   {
     query = wxString::Format( wxT( "SELECT song_id FROM songs WHERE " )\
                 wxT( "song_artistid = %d AND song_name = '%s' LIMIT 1;" ),
-                ArtistId, Param.c_str() );
+                ArtistId,
+                escape_query_str( Name ).c_str() );
 
     dbRes = ExecuteQuery( query );
 

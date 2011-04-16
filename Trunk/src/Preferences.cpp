@@ -774,8 +774,23 @@ void guPrefDialog::BuildPlaybackPage( void )
 	wxString m_PlayReplayModeChoiceChoices[] = { _( "Disabled" ), _("Track"), _("Album") };
 	int m_PlayReplayModeChoiceNChoices = sizeof( m_PlayReplayModeChoiceChoices ) / sizeof( wxString );
 	m_PlayReplayModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PlayReplayModeChoiceNChoices, m_PlayReplayModeChoiceChoices, 0 );
-	m_PlayReplayModeChoice->SetSelection( m_Config->ReadNum( wxT( "ReplayGainMode"), 0, wxT( "General" ) ) );
+	int ReplayGainModeVal = m_Config->ReadNum( wxT( "ReplayGainMode"), 0, wxT( "General" ) );
+	m_PlayReplayModeChoice->SetSelection( ReplayGainModeVal );
 	PlayReplaySizer->Add( m_PlayReplayModeChoice, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * PlayPreAmpLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _( "PreAmp :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	PlayPreAmpLabel->Wrap( -1 );
+	PlayReplaySizer->Add( PlayPreAmpLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+
+    int ReplayGainPreAmpVal = m_Config->ReadNum( wxT( "ReplayGainPreAmp"), 6, wxT( "General" ) );
+	m_PlayPreAmpLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%idb"), ReplayGainPreAmpVal ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayPreAmpLevelVal->Wrap( -1 );
+	m_PlayPreAmpLevelVal->Enable( ReplayGainModeVal );
+	PlayReplaySizer->Add( m_PlayPreAmpLevelVal, 0, wxALIGN_CENTER_VERTICAL, 5 );
+
+	m_PlayPreAmpLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, ReplayGainPreAmpVal, -20, 20, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+	m_PlayPreAmpLevelSlider->Enable( ReplayGainModeVal );
+	PlayReplaySizer->Add( m_PlayPreAmpLevelSlider, 1, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxEXPAND, 5 );
 
 	PlayGenSizer->Add( PlayReplaySizer, 1, wxEXPAND, 5 );
 
@@ -912,11 +927,13 @@ void guPrefDialog::BuildPlaybackPage( void )
     //
 	m_RndPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
 	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
+	m_PlayReplayModeChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnReplayGainModeChanged ), NULL, this );
+    m_PlayPreAmpLevelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayPreAmpLevelValueChanged ), NULL, this );
+    m_PlayPreAmpLevelSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnPlayPreAmpLevelValueChanged ), NULL, this );
 	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
     m_PlayLevelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
 	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
 	m_PlayOutDevChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnPlayOutDevChanged ), NULL, this );
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2329,6 +2346,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "General" ) );
         m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "ReplayGainMode" ), m_PlayReplayModeChoice->GetSelection(), wxT( "General" ) );
+        m_Config->WriteNum( wxT( "ReplayGainPreAmp" ), m_PlayPreAmpLevelSlider->GetValue(), wxT( "General" ) );
 
         m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "Playback" ) );
         m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "Playback" ) );
@@ -2987,6 +3005,22 @@ void guPrefDialog::OnPlayLevelEnabled( wxCommandEvent& event )
 	m_PlayLevelVal->Enable( event.IsChecked() );
 	m_PlayEndTimeCheckBox->Enable( event.IsChecked() );
 	m_PlayEndTimeSpinCtrl->Enable( event.IsChecked() && m_PlayEndTimeCheckBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnReplayGainModeChanged( wxCommandEvent &event )
+{
+    bool Enabled = m_PlayReplayModeChoice->GetSelection();
+    m_PlayPreAmpLevelVal->Enable( Enabled );
+    m_PlayPreAmpLevelSlider->Enable( Enabled );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnPlayPreAmpLevelValueChanged( wxScrollEvent &event )
+{
+    int Value = m_PlayPreAmpLevelSlider->GetValue();
+    m_PlayPreAmpLevelVal->SetLabel( wxString::Format( wxT( "%idb" ), Value ) );
+    m_PlayPreAmpLevelVal->GetParent()->GetSizer()->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
