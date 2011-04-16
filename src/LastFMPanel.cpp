@@ -3086,34 +3086,25 @@ void guLastFMPanel::GetContextMenuTracks( guTrackArray * tracks )
             int AlbumId = m_Db->FindAlbum( m_ArtistName, TopAlbums[ Index ].m_Name );
             if( AlbumId != wxNOT_FOUND )
             {
+                AlbumIds.Empty();
                 AlbumIds.Add( AlbumId );
+                m_Db->GetAlbumsSongs( AlbumIds, tracks );
             }
-        }
-
-        if( AlbumIds.Count() )
-        {
-            m_Db->GetAlbumsSongs( AlbumIds, tracks );
         }
     }
     else if( m_ContextMenuObject == m_TopTracksStaticText )
     {
         // Top Tracks
         guTopTrackInfoArray TopTracks = LastFM.ArtistGetTopTracks( m_ArtistName );
-        wxArrayInt TrackIds;
         int Index;
         int Count = TopTracks.Count();
         for( Index = 0; Index < Count; Index++ )
         {
-            int TrackId = m_Db->FindTrack( m_ArtistName, TopTracks[ Index ].m_TrackName );
-            if( TrackId != wxNOT_FOUND )
+            guTrack * Track = m_Db->FindSong( m_ArtistName, TopTracks[ Index ].m_TrackName, 0, 0 );
+            if( Track )
             {
-                TrackIds.Add( TrackId );
+                tracks->Add( Track );
             }
-        }
-
-        if( TrackIds.Count() )
-        {
-            m_Db->GetSongs( TrackIds, tracks );
         }
     }
     else if( m_ContextMenuObject == m_SimArtistsStaticText )
@@ -3128,34 +3119,25 @@ void guLastFMPanel::GetContextMenuTracks( guTrackArray * tracks )
             int ArtistId = m_Db->FindArtist( SimilarArtists[ Index ].m_Name );
             if( ArtistId != wxNOT_FOUND )
             {
+                ArtistIds.Empty();
                 ArtistIds.Add( ArtistId );
+                m_Db->GetArtistsSongs( ArtistIds, tracks );
             }
-        }
-
-        if( ArtistIds.Count() )
-        {
-            m_Db->GetArtistsSongs( ArtistIds, tracks );
         }
     }
     else if( m_ContextMenuObject == m_SimTracksStaticText )
     {
         // Similar Tracks
         guSimilarTrackInfoArray SimilarTracks = LastFM.TrackGetSimilar( m_ArtistName, m_TrackName );
-        wxArrayInt TrackIds;
         int Index;
         int Count = SimilarTracks.Count();
         for( Index = 0; Index < Count; Index++ )
         {
-            int TrackId = m_Db->FindTrack( SimilarTracks[ Index ].m_ArtistName, SimilarTracks[ Index ].m_TrackName );
-            if( TrackId != wxNOT_FOUND )
+            guTrack * Track = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName, SimilarTracks[ Index ].m_TrackName, 0, 0 );
+            if( Track )
             {
-                TrackIds.Add( TrackId );
+                tracks->Add( Track );
             }
-        }
-
-        if( TrackIds.Count() )
-        {
-            m_Db->GetSongs( TrackIds, tracks );
         }
     }
 }

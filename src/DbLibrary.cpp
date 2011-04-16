@@ -3991,18 +3991,21 @@ int guDbLibrary::GetPlayListSongIds( const int plid, wxArrayInt * tracks )
 wxString guDbLibrary::GetPlayListQuery( const int plid )
 {
     wxString RetVal = wxEmptyString;
-    int PlType = GetPlayListType( plid );
-
-    if( PlType == guPLAYLIST_TYPE_STATIC )
+    if( plid )
     {
-        RetVal = wxString::Format( wxT( "SELECT plset_songid FROM plsets WHERE plset_plid = %u" ), plid );
-    }
-    else if( PlType == guPLAYLIST_TYPE_DYNAMIC )
-    {
-      guDynPlayList PlayList;
-      GetDynamicPlayList( plid, &PlayList );
+        int PlType = GetPlayListType( plid );
 
-      RetVal = wxT( "SELECT song_id FROM songs " ) + DynPlayListToSQLQuery( &PlayList );
+        if( PlType == guPLAYLIST_TYPE_STATIC )
+        {
+            RetVal = wxString::Format( wxT( "SELECT plset_songid FROM plsets WHERE plset_plid = %u" ), plid );
+        }
+        else if( PlType == guPLAYLIST_TYPE_DYNAMIC )
+        {
+          guDynPlayList PlayList;
+          GetDynamicPlayList( plid, &PlayList );
+
+          RetVal = wxT( "SELECT song_id FROM songs " ) + DynPlayListToSQLQuery( &PlayList );
+        }
     }
     //guLogMessage( wxT( "::GetPlaylistQuery %s"), RetVal.c_str() );
     return RetVal;
@@ -4436,7 +4439,6 @@ int guDbLibrary::GetArtistsSongs( const wxArrayInt &Artists, guTrackArray * Song
 
   if( Artists.Count() )
   {
-
     wxString AllowPlQuery = GetPlayListQuery( filterallow );
     wxString DenyPlQuery = GetPlayListQuery( filterdeny );
 
@@ -4974,22 +4976,20 @@ guTrack * guDbLibrary::FindSong( const wxString &artist, const wxString &trackna
   wxString ArtistName = artist;
   wxString TrackName = trackname;
 
+  wxString Filters = wxEmptyString;
 
   wxString AllowPlQuery = GetPlayListQuery( filterallow );
-  wxString DenyPlQuery = GetPlayListQuery( filterdeny );
-
-  wxString Filters = wxEmptyString;
   if( !AllowPlQuery.IsEmpty() )
   {
       Filters += wxT( "WHERE song_id IN ( " ) + AllowPlQuery + wxT( " ) " );
   }
 
+  wxString DenyPlQuery = GetPlayListQuery( filterdeny );
   if( !DenyPlQuery.IsEmpty() )
   {
     Filters += Filters.IsEmpty() ? wxT( "WHERE " ) : wxT( "AND " );
     Filters += wxT( "song_id NOT IN ( " ) + DenyPlQuery + wxT( " ) " );
   }
-
 
   escape_query_str( &ArtistName );
   escape_query_str( &TrackName );
