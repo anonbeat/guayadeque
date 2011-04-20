@@ -1,9 +1,12 @@
 IF( DEBUG )
 	ADD_DEFINITIONS( -g )
+	MESSAGE( "Adding debug symbols." )
 ENDIF( DEBUG )
 
 IF( PROFILE )
 	ADD_DEFINITIONS( -pg )
+	SET(CMAKE_EXE_LINKER_FLAGS "-pg -g")
+	MESSAGE( "Adding profiling code." )
 ENDIF( PROFILE )
 
 INCLUDE_DIRECTORIES(
