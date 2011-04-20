@@ -616,10 +616,12 @@ void guLyricsPanel::OnLyricsPaste( wxCommandEvent &event )
     {
         if( wxTheClipboard->IsSupported( wxDF_TEXT ) )
         {
+            guLogMessage( wxT( "Pasting:" ) );
             wxTextDataObject data;
             if( wxTheClipboard->GetData( data ) )
             {
-                m_LyricText->SetValue( data.GetText() );
+                wxString PasteLyric = data.GetText();
+                SetLyricText( &PasteLyric, true );
 
                 OnSaveBtnClick( event );
             }
