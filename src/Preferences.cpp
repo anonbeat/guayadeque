@@ -767,7 +767,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	wxBoxSizer * PlayReplaySizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxStaticText * PlayReplayLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("Replaygain Mode :"), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * PlayReplayLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("Replaygain Mode:"), wxDefaultPosition, wxDefaultSize, 0 );
 	PlayReplayLabel->Wrap( -1 );
 	PlayReplaySizer->Add( PlayReplayLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -776,9 +776,9 @@ void guPrefDialog::BuildPlaybackPage( void )
 	m_PlayReplayModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PlayReplayModeChoiceNChoices, m_PlayReplayModeChoiceChoices, 0 );
 	int ReplayGainModeVal = m_Config->ReadNum( wxT( "ReplayGainMode"), 0, wxT( "General" ) );
 	m_PlayReplayModeChoice->SetSelection( ReplayGainModeVal );
-	PlayReplaySizer->Add( m_PlayReplayModeChoice, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+	PlayReplaySizer->Add( m_PlayReplayModeChoice, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxStaticText * PlayPreAmpLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _( "PreAmp :" ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxStaticText * PlayPreAmpLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _( "PreAmp:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	PlayPreAmpLabel->Wrap( -1 );
 	PlayReplaySizer->Add( PlayPreAmpLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 

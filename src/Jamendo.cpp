@@ -144,39 +144,39 @@ void guJamendoLibrary::CreateNewSong( guTrack * track )
                     track->m_AlbumName + wxT( "/" );
     track->m_PathId = GetPathId( track->m_Path );
 
-    query = wxString::Format( wxT( "SELECT song_id FROM songs WHERE song_id = %i LIMIT 1" ), track->m_SongId );
+    query = wxString::Format( wxT( "SELECT song_id FROM songs WHERE song_id = %i LIMIT 1;" ), track->m_SongId );
     dbRes = ExecuteQuery( query );
 
-    if( dbRes.NextRow() )
+    if( !dbRes.NextRow() )
     {
-      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-                                 "song_genreid = %u, song_genre = '%s', "
-                                 "song_artistid = %u, song_artist = '%s', "
-                                 "song_albumid = %u, song_album = '%s', "
-                                 "song_pathid = %u, song_path = '%s', "
-                                 "song_filename = '%s', "
-                                 "song_number = %u, song_year = %u, "
-                                 "song_length = %u "
-                                 "WHERE song_id = %u;" ),
-                    escape_query_str( track->m_SongName ).c_str(),
-                    track->m_GenreId,
-                    escape_query_str( track->m_GenreName ).c_str(),
-                    track->m_ArtistId,
-                    escape_query_str( track->m_ArtistName ).c_str(),
-                    track->m_AlbumId,
-                    escape_query_str( track->m_AlbumName ).c_str(),
-                    track->m_PathId,
-                    escape_query_str( track->m_Path ).c_str(),
-                    escape_query_str( track->m_FileName ).c_str(),
-                    track->m_Number,
-                    track->m_Year,
-                    track->m_Length,
-                    track->m_SongId );
-
-        ExecuteUpdate( query );
-    }
-    else
-    {
+//      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
+//                                 "song_genreid = %u, song_genre = '%s', "
+//                                 "song_artistid = %u, song_artist = '%s', "
+//                                 "song_albumid = %u, song_album = '%s', "
+//                                 "song_pathid = %u, song_path = '%s', "
+//                                 "song_filename = '%s', "
+//                                 "song_number = %u, song_year = %u, "
+//                                 "song_length = %u "
+//                                 "WHERE song_id = %u;" ),
+//                    escape_query_str( track->m_SongName ).c_str(),
+//                    track->m_GenreId,
+//                    escape_query_str( track->m_GenreName ).c_str(),
+//                    track->m_ArtistId,
+//                    escape_query_str( track->m_ArtistName ).c_str(),
+//                    track->m_AlbumId,
+//                    escape_query_str( track->m_AlbumName ).c_str(),
+//                    track->m_PathId,
+//                    escape_query_str( track->m_Path ).c_str(),
+//                    escape_query_str( track->m_FileName ).c_str(),
+//                    track->m_Number,
+//                    track->m_Year,
+//                    track->m_Length,
+//                    track->m_SongId );
+//
+//        ExecuteUpdate( query );
+//    }
+//    else
+//    {
         wxString query = wxString::Format( wxT( "INSERT INTO songs( "
                     "song_id, song_playcount, song_addedtime, "
                     "song_name, song_genreid, song_genre, song_artistid, song_artist, "
@@ -970,7 +970,9 @@ void ReadJamendoXmlTracks( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, 
             ReadJamendoXmlTrack( xmlnode->GetChildren(), thread, track );
 
             if( genres.Index( track->m_GenreId - 1 ) != wxNOT_FOUND )
+            {
                 db->CreateNewSong( track );
+            }
         }
         xmlnode = xmlnode->GetNext();
     }
@@ -1133,6 +1135,7 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
             if( m_AllowedGenres.Count() )
             {
                 wxString ArtistChunk = guGetNextXMLChunk( XmlFile, CurPos, "<artist>", "</artist>" );
+                int LastTime = wxGetLocalTime() + 2;
                 while( !TestDestroy() && !ArtistChunk.IsEmpty() )
                 {
                     wxStringInputStream Ins( ArtistChunk );
@@ -1152,8 +1155,19 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
                     }
 
                     ArtistChunk = guGetNextXMLChunk( XmlFile, CurPos, "<artist>", "</artist>" );
-                    evtup.SetExtraLong( CurPos );
-                    wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+
+                    if( wxGetLocalTime() > LastTime )
+                    {
+                        LastTime = wxGetLocalTime() + 2;
+                        query = wxT( "END TRANSACTION" );
+                        m_Db->ExecuteUpdate( query );
+
+                        evtup.SetExtraLong( CurPos );
+                        wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+
+                        query = wxT( "BEGIN TRANSACTION" );
+                        m_Db->ExecuteUpdate( query );
+                    }
                 }
             }
 

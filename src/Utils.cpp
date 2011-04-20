@@ -591,7 +591,7 @@ bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwr
 // -------------------------------------------------------------------------------- //
 wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr )
 {
-    #define XMLREAD_BUFFER_SIZE     2048
+    #define XMLREAD_BUFFER_SIZE         10240
     wxString RetVal;
     //wxFileOffset CurPos = xmlfile.Tell();
     CurPos = xmlfile.Tell();
