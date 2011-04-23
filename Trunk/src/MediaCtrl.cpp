@@ -544,6 +544,7 @@ void guMediaCtrl::UpdatePosition( void )
         Pos = Pos / GST_MSECOND;
         if( Pos != m_LastPosition )
         {
+
             if( !m_CurrentPlayBin->AboutToFinishPending() || Pos < m_LastPosition )
             {
                 //guLogMessage( wxT( "Sent UpdatePositon event for %i" ), m_CurrentPlayBin->GetId() );
