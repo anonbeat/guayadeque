@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-04-17 12:04+0000\n"
-"PO-Revision-Date: 2011-04-17 12:04-0000\n"
+"POT-Creation-Date: 2011-04-22 16:34+0000\n"
+"PO-Revision-Date: 2011-04-22 16:49-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@gmail.com>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -1667,7 +1667,7 @@ msgid " Names Preview "
 msgstr " Forskoða nöfn "
 
 #: FileRenamer.cpp:66
-#: LyricsPanel.cpp:2048
+#: LyricsPanel.cpp:2050
 #: PortableMedia.cpp:1084
 #: Preferences.cpp:1882
 #: Preferences.cpp:1998
@@ -2048,7 +2048,7 @@ msgstr "Breyta Merkjum Laga"
 #: LibPanel.cpp:1960
 #: PlayListPanel.cpp:1589
 msgid "Field Editor"
-msgstr "Svæða Ritlil"
+msgstr "Svæða Ritill"
 
 #: LibPanel.cpp:3132
 msgid ""
@@ -2159,103 +2159,103 @@ msgstr "Prenta innihald texta"
 
 #: LyricsPanel.cpp:439
 #: LyricsPanel.cpp:558
-#: LyricsPanel.cpp:837
 #: LyricsPanel.cpp:839
+#: LyricsPanel.cpp:841
 msgid "Searching..."
 msgstr "Leitar..."
 
-#: LyricsPanel.cpp:750
-#: LyricsPanel.cpp:843
+#: LyricsPanel.cpp:752
+#: LyricsPanel.cpp:845
 msgid "No lyrics found"
 msgstr "Eingir textar funndust"
 
-#: LyricsPanel.cpp:835
+#: LyricsPanel.cpp:837
 msgid "Lyrics from "
 msgstr "Textar frá"
 
-#: LyricsPanel.cpp:2024
+#: LyricsPanel.cpp:2026
 msgid "Lyrics Target Editor"
 msgstr "Breyta Ákvörðunarstað Texta"
 
-#: LyricsPanel.cpp:2024
+#: LyricsPanel.cpp:2026
 msgid "Lyrics Source Editor"
 msgstr "Breyta Textum"
 
-#: LyricsPanel.cpp:2057
+#: LyricsPanel.cpp:2059
 msgid "Type:"
 msgstr "Tegund:"
 
-#: LyricsPanel.cpp:2062
+#: LyricsPanel.cpp:2064
 msgid "Embedded"
 msgstr "Innbyggt"
 
-#: LyricsPanel.cpp:2063
+#: LyricsPanel.cpp:2065
 msgid "File"
 msgstr "Skrá"
 
-#: LyricsPanel.cpp:2064
+#: LyricsPanel.cpp:2066
 msgid "Command"
 msgstr "Skipun"
 
-#: LyricsPanel.cpp:2066
+#: LyricsPanel.cpp:2068
 #: PodcastsPanel.cpp:1284
 msgid "Download"
 msgstr "Niðurhal"
 
-#: LyricsPanel.cpp:2073
+#: LyricsPanel.cpp:2075
 msgid "Source:"
 msgstr "Uppruni:"
 
-#: LyricsPanel.cpp:2081
-#: LyricsPanel.cpp:2483
+#: LyricsPanel.cpp:2083
+#: LyricsPanel.cpp:2485
 msgid "Replace:"
 msgstr "Endursetja:"
 
-#: LyricsPanel.cpp:2116
+#: LyricsPanel.cpp:2118
 msgid "Extract:"
 msgstr "Afþjappa:"
 
-#: LyricsPanel.cpp:2146
+#: LyricsPanel.cpp:2148
 msgid "Exclude:"
 msgstr "Útiloka:"
 
-#: LyricsPanel.cpp:2176
+#: LyricsPanel.cpp:2178
 msgid "Not Found:"
 msgstr "Ekkert Fannst:"
 
-#: LyricsPanel.cpp:2481
+#: LyricsPanel.cpp:2483
 msgid "Replace option editor"
 msgstr "Endursetja  breytt"
 
-#: LyricsPanel.cpp:2482
+#: LyricsPanel.cpp:2484
 #: RadioPanel.cpp:93
 msgid "Search:"
 msgstr "Leit:"
 
-#: LyricsPanel.cpp:2487
+#: LyricsPanel.cpp:2489
 msgid "Extract option editor"
 msgstr "Afþjappa Breytt"
 
-#: LyricsPanel.cpp:2488
-#: LyricsPanel.cpp:2494
+#: LyricsPanel.cpp:2490
+#: LyricsPanel.cpp:2496
 msgid "Begin:"
 msgstr "Byrja:"
 
-#: LyricsPanel.cpp:2489
-#: LyricsPanel.cpp:2495
+#: LyricsPanel.cpp:2491
+#: LyricsPanel.cpp:2497
 msgid "End:"
 msgstr "Endir:"
 
-#: LyricsPanel.cpp:2493
+#: LyricsPanel.cpp:2495
 msgid "Exclude option editor"
 msgstr "Útiloka breytt"
 
-#: LyricsPanel.cpp:2499
+#: LyricsPanel.cpp:2501
 msgid "Not Found option editor"
 msgstr "Ekkert fannst Breytt"
 
-#: LyricsPanel.cpp:2500
-#: LyricsPanel.cpp:2501
+#: LyricsPanel.cpp:2502
+#: LyricsPanel.cpp:2503
 msgid "Tag:"
 msgstr "Merkja:"
 
@@ -3883,16 +3883,16 @@ msgid "Show Notifications"
 msgstr "Sýna Tilkynningar"
 
 #: Preferences.cpp:770
-msgid "Replaygain Mode :"
-msgstr "Endurspilunar styrkur :"
+msgid "Replaygain Mode:"
+msgstr "Endurspilunar Styrkur:"
 
 #: Preferences.cpp:774
 msgid "Disabled"
 msgstr "Óvirkt"
 
 #: Preferences.cpp:781
-msgid "PreAmp :"
-msgstr "Formagnari :"
+msgid "PreAmp:"
+msgstr "Formögnun:"
 
 #: Preferences.cpp:800
 msgid " Random / Smart Play Modes "
@@ -3957,7 +3957,7 @@ msgstr "Lengd út:"
 
 #: Preferences.cpp:968
 msgid "Select the length of the fade out. 0 for gapless playback"
-msgstr "Velja lengd fyrir lag krossvíxlun. 0 fyrir eyðulaus spilun "
+msgstr "Velja lengd fyrir deyft út. 0 fyrir eyðulaus spilun "
 
 #: Preferences.cpp:971
 msgid "In length:"
@@ -3965,7 +3965,7 @@ msgstr "Lengd inn:"
 
 #: Preferences.cpp:980
 msgid "Select the length of the fade in"
-msgstr "Velja lengd deyfa út"
+msgstr "Velja lengd deyfa inn"
 
 #: Preferences.cpp:983
 msgid "In vol. Start:"
@@ -3973,7 +3973,7 @@ msgstr "Inn hljóð.Byrja:"
 
 #: Preferences.cpp:992
 msgid "Select the initial volume of the fade in"
-msgstr "Velja upphafs hljóðstillingu deyfa út"
+msgstr "Velja upphafs hljóðstillingu deyfa inn"
 
 #: Preferences.cpp:995
 msgid "In start:"
@@ -3981,7 +3981,7 @@ msgstr "Inn byrja:"
 
 #: Preferences.cpp:1004
 msgid "Select at which volume of the fade out the fade in starts"
-msgstr "Velja hljóðstillingu  lagi er deyft út"
+msgstr "Velja hljóðstillingu  lagi er deyft inn byrja"
 
 #: Preferences.cpp:1047
 msgid " Record "
@@ -4106,7 +4106,7 @@ msgstr " Vafra skipun "
 
 #: Preferences.cpp:1448
 msgid "Radio Min. Allowed Bitrate "
-msgstr "Minnsti leyfður hraði útvarps"
+msgstr "Minnsti leyfður hraði útvarps "
 
 #: Preferences.cpp:1461
 msgid " Player online buffer size "
@@ -4181,7 +4181,7 @@ msgstr "Hljóð snið:"
 
 #: Preferences.cpp:1629
 msgid "Torrent command:"
-msgstr " Torrent skipun "
+msgstr " Torrent skipun: "
 
 #: Preferences.cpp:1714
 msgid "Membership :"
