@@ -1615,11 +1615,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     if( event.GetInt() < 0 )
         return;
 
-#if __WORDSIZE == 64
-     int EventId = ( gint64 ) event.GetClientData();
-#else
-     int EventId = ( int ) event.GetClientData();
-#endif
+    long EventId = ( long ) event.GetClientData();
+
     if( EventId != m_CurTrackId )
         return;
 
@@ -2106,6 +2103,7 @@ void guPlayerPanel::SavePlayedTrack( void )
             SupportedPlayCountTypes.Add( guTRACK_TYPE_MAGNATUNE );
             SupportedPlayCountTypes.Add( guTRACK_TYPE_PODCAST );
         }
+
         if( SupportedPlayCountTypes.Index( m_MediaSong.m_Type ) != wxNOT_FOUND )
         {
             if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
@@ -2125,7 +2123,7 @@ void guPlayerPanel::SavePlayedTrack( void )
                     guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
                 }
 
-                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                if( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST )
                 {
                     guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
                     Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
