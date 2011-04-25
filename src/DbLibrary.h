@@ -389,6 +389,7 @@ class guDbLibrary : public guDb
     int                 GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * filter,
                             const wxArrayString &textfilters, const int start, const int count, const int order );
     int                 GetAlbumsCount( guDynPlayList * filter, const wxArrayString &textfilters );
+    bool                GetAlbumDetails( const int albumid, int * year, int * trackcount );
     int                 GetAlbumYear( const int albumid );
     int                 GetAlbumTrackCount( const int albumid );
 
