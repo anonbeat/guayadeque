@@ -115,12 +115,15 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
 
                     if( TestDestroy() )
                         break;
-
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUMBROWSER_UPDATEDETAILS );
-                    event.SetInt( Index );
-                    wxPostEvent( m_AlbumBrowser, event );
-                    //guLogMessage( wxT( "Sent Details %i %i for %i" ), m_AlbumBrowser->m_AlbumItems[ Index ].m_Year, m_AlbumBrowser->m_AlbumItems[ Index ].m_TrackCount, Index );
                 }
+            }
+
+            if( !TestDestroy() )
+            {
+                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUMBROWSER_UPDATEDETAILS );
+                //event.SetInt( Index );
+                wxPostEvent( m_AlbumBrowser, event );
+                //guLogMessage( wxT( "Sent Details %i %i for %i" ), m_AlbumBrowser->m_AlbumItems[ Index ].m_Year, m_AlbumBrowser->m_AlbumItems[ Index ].m_TrackCount, Index );
             }
         }
         m_AlbumBrowser->m_AlbumItemsMutex.Unlock();
@@ -264,15 +267,15 @@ void guAlbumBrowserItemPanel::SetAlbumItem( const int index, guAlbumBrowserItem 
         m_AlbumLabel->SetLabel( m_AlbumBrowserItem->m_AlbumName );
         m_AlbumLabel->SetToolTip( m_AlbumBrowserItem->m_AlbumName );
 
-        wxString Label;
-        if( m_AlbumBrowserItem->m_Year )
-        {
-            Label += wxString::Format( wxT( "(%u) " ), m_AlbumBrowserItem->m_Year );
-        }
-        Label += wxString::Format( wxT( "%u " ), m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" );
-
-        m_TracksLabel->SetLabel( Label );
-        m_TracksLabel->SetToolTip( Label );
+//        wxString Label;
+//        if( m_AlbumBrowserItem->m_Year )
+//        {
+//            Label += wxString::Format( wxT( "(%u) " ), m_AlbumBrowserItem->m_Year );
+//        }
+//        Label += wxString::Format( wxT( "%u " ), m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" );
+//
+//        m_TracksLabel->SetLabel( Label );
+//        m_TracksLabel->SetToolTip( Label );
     }
     else
     {
@@ -301,7 +304,8 @@ void guAlbumBrowserItemPanel::UpdateDetails( void )
         Label += wxString::Format( wxT( "%u " ), m_AlbumBrowserItem->m_TrackCount ) + _( "Tracks" );
 
         m_TracksLabel->SetLabel( Label );
-        m_MainSizer->Layout();
+        m_TracksLabel->SetToolTip( Label );
+//        m_MainSizer->Layout();
     }
 }
 
@@ -1590,9 +1594,13 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 {
     m_AlbumItemsMutex.Lock();
     //guLogMessage( wxT( "OnUpdateDetails %i - %i" ), event.GetInt(), m_ItemPanels.GetCount() );
-    int Item = event.GetInt();
-    if( ( Item >= 0 ) && Item < ( int ) m_ItemPanels.GetCount() )
-        m_ItemPanels[ event.GetInt() ]->UpdateDetails();
+    int Index;
+    int Count = m_ItemPanels.GetCount();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_ItemPanels[ Index ]->UpdateDetails();
+    }
+    Layout();
     m_AlbumItemsMutex.Unlock();
 }
 
