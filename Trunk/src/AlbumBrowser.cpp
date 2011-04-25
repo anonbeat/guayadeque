@@ -110,8 +110,11 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
 
                 if( m_AlbumBrowser->m_AlbumItems[ Index ].m_AlbumId != ( unsigned int ) wxNOT_FOUND )
                 {
-                    m_AlbumBrowser->m_AlbumItems[ Index ].m_Year = Db->GetAlbumYear( m_AlbumBrowser->m_AlbumItems[ Index ].m_AlbumId );
-                    m_AlbumBrowser->m_AlbumItems[ Index ].m_TrackCount = Db->GetAlbumTrackCount( m_AlbumBrowser->m_AlbumItems[ Index ].m_AlbumId );
+//                    m_AlbumBrowser->m_AlbumItems[ Index ].m_Year = Db->GetAlbumYear( m_AlbumBrowser->m_AlbumItems[ Index ].m_AlbumId );
+//                    m_AlbumBrowser->m_AlbumItems[ Index ].m_TrackCount = Db->GetAlbumTrackCount( m_AlbumBrowser->m_AlbumItems[ Index ].m_AlbumId );
+                    Db->GetAlbumDetails( m_AlbumBrowser->m_AlbumItems[ Index ].m_AlbumId,
+                        ( int * ) &m_AlbumBrowser->m_AlbumItems[ Index ].m_Year,
+                        ( int * ) &m_AlbumBrowser->m_AlbumItems[ Index ].m_TrackCount );
 
                     if( TestDestroy() )
                         break;

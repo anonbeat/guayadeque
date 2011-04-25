@@ -3067,6 +3067,28 @@ void guDbLibrary::GetAlbums( guListItems * Albums, bool FullList )
 const wxString DynPlayListToSQLQuery( guDynPlayList * playlist );
 
 // -------------------------------------------------------------------------------- //
+bool guDbLibrary::GetAlbumDetails( const int albumid, int * year, int * trackcount )
+{
+  wxString              query;
+  wxSQLite3ResultSet    dbRes;
+  bool RetVal = false;
+  query = wxString::Format( wxT( "SELECT MAX(song_year), COUNT(song_id) FROM songs WHERE song_albumid = %i;" ), albumid );
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+    * year = dbRes.GetInt( 0 );
+    * trackcount = dbRes.GetInt( 1 );
+    RetVal = true;
+  }
+
+  dbRes.Finalize();
+
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetAlbumYear( const int albumid )
 {
   wxString              query;
