@@ -4419,7 +4419,6 @@ void guMainFrame::CreateTaskBarIcon( void )
 
     if( ShowIcon )
     {
-
 #ifdef WITH_LIBINDICATE_SUPPORT
         SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
         if( SoundMenuEnabled )
@@ -4433,7 +4432,6 @@ void guMainFrame::CreateTaskBarIcon( void )
             }
         }
 #else
-
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
             SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "General" ) );
@@ -4447,11 +4445,7 @@ void guMainFrame::CreateTaskBarIcon( void )
             }
         }
 #endif
-    }
 
-    guLogMessage( wxT( "Icon: %i   SoundMenu: %i" ), ShowIcon, SoundMenuEnabled );
-    if( ShowIcon )
-    {
         if( SoundMenuEnabled )
         {
             if( m_TaskBarIcon )
@@ -4463,6 +4457,26 @@ void guMainFrame::CreateTaskBarIcon( void )
         }
         else
         {
+#ifdef WITH_LIBINDICATE_SUPPORT
+            if( m_IndicateServer )
+            {
+                indicate_server_hide( m_IndicateServer );
+                g_object_unref( m_IndicateServer );
+                m_IndicateServer = NULL;
+            }
+#else
+            if( m_MPRIS2->Indicators_Sound_Available() )
+            {
+                int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
+                if( IsBlacklisted != wxNOT_FOUND )
+                {
+                    if( !IsBlacklisted )
+                    {
+                        m_MPRIS2->Indicators_Sound_BlacklistMediaPlayer( true );
+                    }
+                }
+            }
+#endif
             if( !m_TaskBarIcon )
             {
                 m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
@@ -4483,7 +4497,6 @@ void guMainFrame::CreateTaskBarIcon( void )
             m_IndicateServer = NULL;
         }
 #else
-
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
             int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
