@@ -255,7 +255,7 @@ static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, cons
 }
 
 // -------------------------------------------------------------------------------- //
-static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const bool value )
+static void FillMetadataDetails( DBusMessageIter * Iter, const char * name, const dbus_bool_t value )
 {
     DBusMessageIter dict_entry, variant;
     if( name )
@@ -511,19 +511,19 @@ void guMPRIS2::OnPlayerTrackChange( void )
 
         int Caps = m_PlayerPanel->GetCaps();
 
-        bool CanGoNext = Caps & MPRIS_CAPS_CAN_GO_NEXT;
+        dbus_bool_t CanGoNext = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_NEXT );
         FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
 
-        bool CanGoPrev = Caps & MPRIS_CAPS_CAN_GO_PREV;
-        FillMetadataDetails( &dict, "CanGoPrevious", ( bool ) CanGoPrev );
+        dbus_bool_t CanGoPrev = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_PREV );
+        FillMetadataDetails( &dict, "CanGoPrevious", CanGoPrev );
 
-        bool CanPlay = Caps & MPRIS_CAPS_CAN_PLAY;
+        dbus_bool_t CanPlay = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PLAY );
         FillMetadataDetails( &dict, "CanPlay", CanPlay );
 
-        bool CanPause = Caps & MPRIS_CAPS_CAN_PAUSE;
+        dbus_bool_t CanPause = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PAUSE );
         FillMetadataDetails( &dict, "CanPause", CanPause );
 
-        bool CanSeek = Caps & MPRIS_CAPS_CAN_SEEK;
+        dbus_bool_t CanSeek = dbus_bool_t( Caps & MPRIS_CAPS_CAN_SEEK );
         FillMetadataDetails( &dict, "CanSeek", CanSeek );
 
 
@@ -616,16 +616,16 @@ void guMPRIS2::OnPlayerCapsChange( void )
 
         int Caps = m_PlayerPanel->GetCaps();
 
-        bool CanGoNext = Caps & MPRIS_CAPS_CAN_GO_NEXT;
+        dbus_bool_t CanGoNext = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_NEXT );
         FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
 
-        bool CanGoPrev = Caps & MPRIS_CAPS_CAN_GO_PREV;
+        dbus_bool_t CanGoPrev = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_PREV );
         FillMetadataDetails( &dict, "CanGoPrevious", CanGoPrev );
 
-        bool CanPlay = Caps & MPRIS_CAPS_CAN_PLAY;
+        dbus_bool_t CanPlay = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PLAY );
         FillMetadataDetails( &dict, "CanPlay", CanPlay );
 
-        bool CanPause = Caps & MPRIS_CAPS_CAN_PAUSE;
+        dbus_bool_t CanPause = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PAUSE );
         FillMetadataDetails( &dict, "CanPause", CanPause );
 
 
@@ -811,7 +811,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
                         if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
                         {
-                            bool ReplyVal = true;
+                            dbus_bool_t ReplyVal = true;
 
                             dbus_message_iter_init_append( reply->GetMessage(), &args );
 
@@ -899,7 +899,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool Shuffle = false;
+                            dbus_bool_t Shuffle = false;
                             FillMetadataDetails( &dict, "Shuffle", Shuffle );
 
 
@@ -927,32 +927,32 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool CanGoNext = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT;
+                            dbus_bool_t CanGoNext = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT );
                             FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool CanGoPrev = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV;
+                            dbus_bool_t CanGoPrev = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV );
                             FillMetadataDetails( &dict, "CanGoPrev", CanGoPrev );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool CanPlay = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY;
+                            dbus_bool_t CanPlay = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY );
                             FillMetadataDetails( &dict, "CanPlay", CanPlay );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool CanPause = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE;
+                            dbus_bool_t CanPause = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE );
                             FillMetadataDetails( &dict, "CanPause", CanPause );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool CanSeek = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK;
+                            dbus_bool_t CanSeek = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK );
                             FillMetadataDetails( &dict, "CanSeek", CanSeek );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            bool CanControl = true;
+                            dbus_bool_t CanControl = true;
                             FillMetadataDetails( &dict, "CanControl", CanControl );
 
                             dbus_message_iter_close_container( &args, &dict );
@@ -1018,7 +1018,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             {
                                 if( !strcmp( QueryProperty, "CanQuit" ) )
                                 {
-                                    bool ReplyVal = true;
+                                    dbus_bool_t ReplyVal = true;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &ReplyVal ) )
                                     {
                                         Send( reply );
@@ -1028,7 +1028,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanRaise" ) )
                                 {
-                                    bool ReplyVal = true;
+                                    dbus_bool_t ReplyVal = true;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &ReplyVal ) )
                                     {
                                         Send( reply );
@@ -1038,7 +1038,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "HasTrackList" ) )
                                 {
-                                    bool ReplyVal = true;
+                                    dbus_bool_t ReplyVal = true;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &ReplyVal ) )
                                     {
                                         Send( reply );
@@ -1165,7 +1165,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "Shuffle" ) )
                                 {
-                                    bool Shuffle = false;
+                                    dbus_bool_t Shuffle = false;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &Shuffle ) )
                                     {
                                         Send( reply );
@@ -1225,7 +1225,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanGoNext" ) )
                                 {
-                                    bool CanGoNext = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT;
+                                    dbus_bool_t CanGoNext = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT );
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanGoNext ) )
                                     {
                                         Send( reply );
@@ -1235,7 +1235,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanGoPrevious" ) )
                                 {
-                                    bool CanGoPrev = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV;
+                                    dbus_bool_t CanGoPrev = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV );
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanGoPrev ) )
                                     {
                                         Send( reply );
@@ -1245,7 +1245,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanPlay" ) )
                                 {
-                                    bool CanPlay = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY;
+                                    dbus_bool_t CanPlay = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY );
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanPlay ) )
                                     {
                                         Send( reply );
@@ -1255,7 +1255,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanPause" ) )
                                 {
-                                    bool CanPause = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE;
+                                    dbus_bool_t CanPause = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE );
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanPause ) )
                                     {
                                         Send( reply );
@@ -1265,7 +1265,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanSeek" ) )
                                 {
-                                    bool CanSeek = m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK;
+                                    dbus_bool_t CanSeek = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK );
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanSeek ) )
                                     {
                                         Send( reply );
@@ -1275,7 +1275,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanControl" ) )
                                 {
-                                    bool CanControl = true;
+                                    dbus_bool_t CanControl = true;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanControl ) )
                                     {
                                         Send( reply );
@@ -1291,7 +1291,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanEditTracks" ) )
                                 {
-                                    bool CanEdit = true;
+                                    dbus_bool_t CanEdit = true;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanEdit ) )
                                     {
                                         Send( reply );

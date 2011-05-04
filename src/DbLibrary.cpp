@@ -30,6 +30,7 @@
 #include "PlayerPanel.h"
 #include "TagInfo.h"
 #include "Utils.h"
+#include "TreePanel.h"
 
 #include <wx/mstream.h>
 #include <wx/wfstream.h>
@@ -5300,10 +5301,107 @@ int guDbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
   guTrack * Song;
 
   query = GU_TRACKS_QUERYSTR;
-  //query += GetSongsDBNamesSQL( m_TracksOrder );
-  query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
-  query += wxT( "song_id IN " ) + ArrayIntToStrList( SongIds );
+  //query += ( query.Find( wxT( "WHERE" ) ) == wxNOT_FOUND ) ? wxT( "WHERE " ) : wxT( "AND " );
+  query += wxT( "WHERE song_id IN " ) + ArrayIntToStrList( SongIds );
   query += GetSongsSortSQL( m_TracksOrder, m_TracksOrderDesc );
+
+  //guLogMessage( wxT( "%s" ), query.c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    Song = new guTrack();
+    FillTrackFromDb( Song, &dbRes );
+    Songs->Add( Song );
+  }
+  dbRes.Finalize();
+
+  return Songs->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline GetTreeViewFilterEntrySql( const guTreeViewFilterEntry &filterentry )
+{
+  wxString RetVal = wxT( "(" );
+  int Index;
+  int Count = filterentry.Count();
+
+  for( Index = 0; Index < Count; Index++ )
+  {
+    switch( filterentry[ Index ].m_Type )
+    {
+        case guLIBRARY_ELEMENT_GENRES :
+            RetVal += wxT( "song_genreid=" );
+            break;
+
+        case guLIBRARY_ELEMENT_ARTISTS :
+            RetVal += wxT( "song_artistid=" );
+            break;
+
+        case guLIBRARY_ELEMENT_COMPOSERS :
+            RetVal += wxT( "song_composerid=" );
+            break;
+
+        case guLIBRARY_ELEMENT_ALBUMARTISTS :
+            RetVal += wxT( "song_albumartistid=" );
+            break;
+
+        case guLIBRARY_ELEMENT_ALBUMS :
+            RetVal += wxT( "song_albumid=" );
+            break;
+
+        case guLIBRARY_ELEMENT_YEARS :
+            RetVal += wxT( "song_year=" );
+            break;
+
+        case guLIBRARY_ELEMENT_RATINGS :
+            RetVal += wxT( "song_rating=" );
+            break;
+
+        case guLIBRARY_ELEMENT_PLAYCOUNT :
+            RetVal += wxT( "song_playcount=" );
+            break;
+    }
+
+    RetVal += wxString::Format( wxT( "%i AND " ), filterentry[ Index ].m_Id );
+  }
+  RetVal.RemoveLast( 4 );
+  RetVal += wxT( ")" );
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString inline GetTreeViewFilterArraySql( const guTreeViewFilterArray &filterarray )
+{
+  wxString RetVal = wxT( "(" );
+  int Index;
+  int Count = filterarray.Count();
+
+  for( Index = 0; Index < Count; Index++ )
+  {
+    RetVal += GetTreeViewFilterEntrySql( filterarray[ Index ] );
+    RetVal += wxT( "OR " );
+  }
+  RetVal.RemoveLast( 3 );
+  RetVal += wxT( ")" );
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbLibrary::GetSongs( const guTreeViewFilterArray &filters, guTrackArray * Songs, const wxArrayString &textfilters, const int order, const bool orderdesc )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  guTrack * Song;
+
+  query = GU_TRACKS_QUERYSTR;
+  query += wxT( "WHERE " ) + GetTreeViewFilterArraySql( filters );
+  if( textfilters.Count() )
+  {
+    query += wxT( " AND " ) + TextFilterToSQL( textfilters );
+  }
+  query += GetSongsSortSQL( ( guTRACKS_ORDER ) order, orderdesc );
 
   //guLogMessage( wxT( "%s" ), query.c_str() );
 

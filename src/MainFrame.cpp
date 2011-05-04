@@ -121,6 +121,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
     m_LastFMPanel = NULL;
     m_LyricsPanel = NULL;
     m_PlayListPanel = NULL;
+    m_TreeViewPanel = NULL;
     m_PodcastsPanel = NULL;
     m_PlayerVumeters = NULL;
     m_AlbumBrowserPanel = NULL;
@@ -326,6 +327,12 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
         if( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE )
         {
             OnViewMagnatune( ShowEvent );
+        }
+
+        // Album Browser Page
+        if( m_VisiblePanels & guPANEL_MAIN_TREEVIEW )
+        {
+            OnViewTreeView( ShowEvent );
         }
     }
 
@@ -548,6 +555,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
     Connect( ID_MENU_VIEW_PLAYLISTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPlayLists ), NULL, this );
     Connect( ID_MENU_VIEW_PL_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListShowPanel ), NULL, this );
+
+    Connect( ID_MENU_VIEW_TREEVIEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewTreeView ), NULL, this );
+    Connect( ID_MENU_VIEW_TV_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnTreeViewShowPanel ), NULL, this );
 
     Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
     Connect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
@@ -1313,6 +1323,20 @@ void guMainFrame::CreateMenu()
 
     m_MainMenu->AppendSubMenu( SubMenu, _( "Library" ), _( "Set the library visible panels" ) );
 
+
+    SubMenu = new wxMenu();
+
+    m_ViewTreeView = new wxMenuItem( m_MainMenu, ID_MENU_VIEW_TREEVIEW,
+                                        wxString( _( "Tree" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_TREEVIEW ),
+                                        _( "Show/Hide the Tree View Panel" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewTreeView );
+
+    SubMenu->AppendSeparator();
+
+    m_ViewTVTextSearch = new wxMenuItem( SubMenu, ID_MENU_VIEW_TV_TEXTSEARCH, _( "Text Search" ), _( "Show/Hide the Tree View text search" ), wxITEM_CHECK );
+    SubMenu->Append( m_ViewTVTextSearch );
+
+    m_MainMenu->AppendSubMenu( SubMenu, _( "Tree" ), _( "Set the Tree View visible panels" ) );
 
     SubMenu = new wxMenu();
 
@@ -3446,6 +3470,55 @@ void guMainFrame::OnViewPortableDevice( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewTreeView( wxCommandEvent &event )
+{
+    if( event.IsChecked() )
+    {
+        if( !m_TreeViewPanel )
+            m_TreeViewPanel = new guTreeViewPanel( m_CatNotebook, m_Db, m_PlayerPanel, m_LibPanel );
+
+        InsertTabPanel( m_TreeViewPanel, 7, _( "Tree" ) );
+
+        m_VisiblePanels |= guPANEL_MAIN_TREEVIEW;
+    }
+    else
+    {
+        RemoveTabPanel( m_TreeViewPanel );
+
+        m_VisiblePanels ^= guPANEL_MAIN_TREEVIEW;
+    }
+    m_CatNotebook->Refresh();
+
+    m_ViewTreeView->Check( m_VisiblePanels & guPANEL_MAIN_TREEVIEW );
+
+    m_ViewTVTextSearch->Check( m_TreeViewPanel && m_TreeViewPanel->IsPanelShown( guPANEL_TREEVIEW_TEXTSEARCH ) );
+    m_ViewTVTextSearch->Enable( m_ViewTreeView->IsChecked() );
+
+    if( m_LocationPanel )
+    {
+        m_LocationPanel->OnPanelVisibleChanged();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnTreeViewShowPanel( wxCommandEvent &event )
+{
+    unsigned int PanelId = 0;
+
+    switch( event.GetId() )
+    {
+        case ID_MENU_VIEW_TV_TEXTSEARCH :
+            PanelId = guPANEL_TREEVIEW_TEXTSEARCH;
+            m_ViewTVTextSearch->Check( event.IsChecked() );
+            break;
+
+    }
+
+    if( PanelId && m_TreeViewPanel )
+        m_TreeViewPanel->ShowPanel( PanelId, event.IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewPortableDevicePanel( wxCommandEvent &event )
 {
     int PanelId = ( event.GetId() - ID_MENU_VIEW_PORTABLE_DEVICE ) % 20;
@@ -4298,6 +4371,22 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
         SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
         SelInfo += wxString::Format( wxT( ",   %s" ), LenToString( m_SelLength.GetLo() ).c_str() );
         m_MainStatusBar->SetSelInfo( SelInfo );
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_TreeViewPanel )
+    {
+        if( m_TreeViewPanel->GetTreeViewCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
+        {
+            wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+            SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+            SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
+                LenToString( m_SelLength.GetLo() ).c_str(),
+                SizeToString( m_SelSize.GetValue() ).c_str() );
+            m_MainStatusBar->SetSelInfo( SelInfo );
+        }
+        else
+        {
+            m_MainStatusBar->SetSelInfo( wxEmptyString );
+        }
     }
     else
     {
@@ -5278,6 +5367,10 @@ void guMainFrame::ResetViewMenuState( void )
     m_ViewLyrics->Check( false );
 
     m_ViewPlayLists->Check( false );
+    m_ViewPLTextSearch->Check( false );
+
+    m_ViewTreeView->Check( false );
+    m_ViewTVTextSearch->Check( false );
 
     m_ViewPodcasts->Check( false );
     m_ViewPodChannels->Enable( false );
@@ -5400,6 +5493,16 @@ void guMainFrame::RefreshViewMenuState( void )
     m_ViewPLTextSearch->Check( VisiblePanels & guPANEL_PLAYLIST_TEXTSEARCH );
     m_ViewPLTextSearch->Enable( IsEnabled );
 
+
+    // Tree View
+    //
+    IsEnabled = m_TreeViewPanel && ( m_VisiblePanels & guPANEL_MAIN_TREEVIEW );
+    VisiblePanels = m_TreeViewPanel ? m_TreeViewPanel->VisiblePanels() : 0;
+
+    m_ViewTreeView->Check( IsEnabled );
+
+    m_ViewTVTextSearch->Check( VisiblePanels & guPANEL_TREEVIEW_TEXTSEARCH );
+    m_ViewTVTextSearch->Enable( IsEnabled );
 
     // Podcasts
     //
@@ -5582,6 +5685,10 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         {
             OnViewMagnatune( event );
         }
+        else if( TabName == wxT( "TreeView" ) )
+        {
+            OnViewTreeView( event );
+        }
         Index++;
     }
 
@@ -5689,6 +5796,9 @@ void guMainFrame::OnPlayerShowPanel( wxCommandEvent &event )
 
             if( m_VisiblePanels & guPANEL_MAIN_MAGNATUNE )
                 OnViewMagnatune( event );
+
+            if( m_VisiblePanels & guPANEL_MAIN_TREEVIEW )
+                OnViewTreeView( event );
 
             break;
         }
@@ -5832,6 +5942,11 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
     if( ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) && m_PlayListPanel )
     {
         m_PlayListPanel->UpdatedTracks( tracks );
+    }
+
+    if( ( updatedby != guUPDATED_TRACKS_TREEVIEW ) && m_TreeViewPanel )
+    {
+        m_TreeViewPanel->UpdatedTracks( tracks );
     }
 
     if( m_LyricsPanel )

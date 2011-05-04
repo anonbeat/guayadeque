@@ -373,6 +373,7 @@ wxString guAuiNotebook::GetPageId( wxAuiNotebookPage &page )
         Names.Add( _( "Files" ) );
         Names.Add( wxT( "Jamendo" ) );
         Names.Add( wxT( "Magnatune" ) );
+        Names.Add( _( "Tree" ) );
     }
 
     if( !Ids.Count() )
@@ -387,6 +388,7 @@ wxString guAuiNotebook::GetPageId( wxAuiNotebookPage &page )
         Ids.Add( wxT( "Files" ) );
         Ids.Add( wxT( "Jamendo" ) );
         Ids.Add( wxT( "Magnatune" ) );
+        Ids.Add( wxT( "TreeView" ) );
     }
 
     int Index = Names.Index( page.caption );

@@ -418,8 +418,10 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
 
+            //guLogMessage( wxT( "CommandId: %u" ), index );
             index -= ID_ALBUM_COMMANDS;
             wxString CurCmd = Commands[ index ];
+
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( Selection );

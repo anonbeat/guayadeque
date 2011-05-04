@@ -256,6 +256,14 @@ ADD_EXECUTABLE( guayadeque
 	AuiManagedPanel.h
 	EditWithOptions.cpp
 	EditWithOptions.h
+	TreeViewFilter.cpp
+	TreeViewFilter.h
+	TreePanel.cpp
+	TreePanel.h
+	TVSoListBox.cpp
+	TVSoListBox.h
+	TreeViewFilterEditor.cpp
+	TreeViewFilterEditor.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

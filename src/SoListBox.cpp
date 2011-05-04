@@ -526,7 +526,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_ENQUEUE_AFTER_ALL,
-                            wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                            wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected songs to the playlist" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );

@@ -190,7 +190,9 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
             Menu.Append( MenuItem );
 
-            MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Add current selected songs to the playlist" ) );
+            MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_ENQUEUE_AFTER_ALL,
+                                wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
+                                _( "Add current selected songs to the playlist" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
             Menu.Append( MenuItem );
 
