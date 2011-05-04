@@ -253,6 +253,8 @@
 		<Unit filename="src/Discogs.h" />
 		<Unit filename="src/DynamicPlayList.cpp" />
 		<Unit filename="src/DynamicPlayList.h" />
+		<Unit filename="src/EditWithOptions.cpp" />
+		<Unit filename="src/EditWithOptions.h" />
 		<Unit filename="src/Equalizer.cpp" />
 		<Unit filename="src/Equalizer.h" />
 		<Unit filename="src/FileBrowser.cpp" />
@@ -358,6 +360,8 @@
 		<Unit filename="src/StaticBitmap.h" />
 		<Unit filename="src/StatusBar.cpp" />
 		<Unit filename="src/StatusBar.h" />
+		<Unit filename="src/TVSoListBox.cpp" />
+		<Unit filename="src/TVSoListBox.h" />
 		<Unit filename="src/TaListBox.cpp" />
 		<Unit filename="src/TaListBox.h" />
 		<Unit filename="src/TagInfo.cpp" />
@@ -375,6 +379,12 @@
 		<Unit filename="src/TrackEdit.h" />
 		<Unit filename="src/Transcode.cpp" />
 		<Unit filename="src/Transcode.h" />
+		<Unit filename="src/TreePanel.cpp" />
+		<Unit filename="src/TreePanel.h" />
+		<Unit filename="src/TreeViewFilter.cpp" />
+		<Unit filename="src/TreeViewFilter.h" />
+		<Unit filename="src/TreeViewFilterEditor.cpp" />
+		<Unit filename="src/TreeViewFilterEditor.h" />
 		<Unit filename="src/Utils.cpp" />
 		<Unit filename="src/Utils.h" />
 		<Unit filename="src/Version.h" />

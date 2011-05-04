@@ -292,6 +292,7 @@ enum guLIBRARY_FILTER {
 
 class guDynPlayList;
 class guAlbumBrowserItemArray;
+class guTreeViewFilterArray;
 class guCurrentTrack;
 
 // -------------------------------------------------------------------------------- //
@@ -396,6 +397,7 @@ class guDbLibrary : public guDb
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
     bool                GetSong( const int songid, guTrack * song );
+    int                 GetSongs( const guTreeViewFilterArray &filters, guTrackArray * Songs, const wxArrayString &textfilters, const int order, const bool orderdesc );
     int                 GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs );
     int                 GetSongsCount( void );
     int                 GetSongs( guTrackArray * Songs, const int start, const int end );
@@ -573,6 +575,7 @@ int guListItemSearch( const guListItems &Items, int StartPos, int EndPos, int m_
 wxString guListItemsGetName( const guListItems &Items, int m_Id );
 wxArrayInt GetArraySameItems( const wxArrayInt &Source, const wxArrayInt &Oper );
 wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper );
+wxString TextFilterToSQL( const wxArrayString &TeFilters );
 
 // -------------------------------------------------------------------------------- //
 wxString inline ArrayIntToStrList( const wxArrayInt &Data )

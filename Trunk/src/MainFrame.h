@@ -50,6 +50,7 @@
 #include "RadioPanel.h"
 #include "StatusBar.h"
 #include "SplashWin.h"
+#include "TreePanel.h"
 #include "Vumeters.h"
 
 #include <wx/aui/aui.h>
@@ -87,11 +88,14 @@
 #define     guPANEL_MAIN_MAGNATUNE          ( 1 << 12 )
 #define     guPANEL_MAIN_LOCATIONS          ( 1 << 13 )
 #define     guPANEL_MAIN_SHOWCOVER          ( 1 << 14 )
+#define     guPANEL_MAIN_TREEVIEW           ( 1 << 15 )
 
-#define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS | \
-                                              guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  | \
-                                              guPANEL_MAIN_PLAYLISTS | guPANEL_MAIN_PODCASTS | \
-                                              guPANEL_MAIN_ALBUMBROWSER | guPANEL_MAIN_FILEBROWSER )
+
+#define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_LIBRARY | guPANEL_MAIN_RADIOS |\
+                                              guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS  |\
+                                              guPANEL_MAIN_PLAYLISTS | guPANEL_MAIN_PODCASTS |\
+                                              guPANEL_MAIN_ALBUMBROWSER | guPANEL_MAIN_FILEBROWSER |\
+                                              guPANEL_MAIN_TREEVIEW )
 #define     guPANEL_MAIN_VISIBLE_DEFAULT    ( guPANEL_MAIN_PLAYERPLAYLIST | guPANEL_MAIN_PLAYERFILTERS | \
                                               guPANEL_MAIN_SELECTOR )
 
@@ -108,7 +112,8 @@ enum guUPDATED_TRACKS {
     guUPDATED_TRACKS_PLAYER,
     guUPDATED_TRACKS_PLAYER_PLAYLIST,
     guUPDATED_TRACKS_LIBRARY,
-    guUPDATED_TRACKS_PLAYLISTS
+    guUPDATED_TRACKS_PLAYLISTS,
+    guUPDATED_TRACKS_TREEVIEW
 };
 
 class guTaskBarIcon;
@@ -144,6 +149,7 @@ class guMainFrame : public wxFrame
     guMagnatunePanel *              m_MagnatunePanel;
     guLocationPanel *               m_LocationPanel;
     guCoverPanel *                  m_CoverPanel;
+    guTreeViewPanel *               m_TreeViewPanel;
 
     guTaskBarIcon *                 m_TaskBarIcon;
 #ifdef WITH_LIBINDICATE_SUPPORT
@@ -219,6 +225,9 @@ class guMainFrame : public wxFrame
     wxMenuItem *                    m_ViewPodcasts;
     wxMenuItem *                    m_ViewPodChannels;
     wxMenuItem *                    m_ViewPodDetails;
+
+    wxMenuItem *                    m_ViewTreeView;
+    wxMenuItem *                    m_ViewTVTextSearch;
 
     wxMenuItem *                    m_ViewFullScreen;
     wxMenuItem *                    m_ViewStatusBar;
@@ -387,6 +396,9 @@ class guMainFrame : public wxFrame
 
     void                            OnViewPortableDevice( wxCommandEvent &event );
     void                            OnViewPortableDevicePanel( wxCommandEvent &event );
+
+    void                            OnViewTreeView( wxCommandEvent &event );
+    void                            OnTreeViewShowPanel( wxCommandEvent &event );
 
     void                            OnMainPaneClose( wxAuiManagerEvent &event );
 

@@ -96,7 +96,7 @@ void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
         int BitsPerSample;
         int Channels;
         int BufferSize;
-        bool HasAlpha;
+        dbus_bool_t HasAlpha;
         char * ImageData;
 
         const char * icon_data = "icon_data";
