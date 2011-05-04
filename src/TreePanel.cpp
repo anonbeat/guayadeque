@@ -1833,13 +1833,6 @@ void guTreeViewPanel::OnTVTracksSelectAlbum( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTreeViewPanel::GetTreeViewCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
-{
-    m_TVTracksListBox->GetCounters( count, len, size );
-    return true;
-}
-
-// -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTVTracksDeleteLibrary( wxCommandEvent &event )
 {
     if( m_TVTracksListBox->GetSelectedCount() )
@@ -1927,5 +1920,6 @@ void guTreeViewPanel::OnTrackListColClicked( wxListEvent &event )
 
     m_TVTracksListBox->ReloadItems( false );
 }
+
 
 // -------------------------------------------------------------------------------- //

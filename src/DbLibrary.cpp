@@ -5389,6 +5389,37 @@ wxString inline GetTreeViewFilterArraySql( const guTreeViewFilterArray &filterar
 }
 
 // -------------------------------------------------------------------------------- //
+void guDbLibrary::GetSongsCounters( const guTreeViewFilterArray &filters, const wxArrayString &textfilters, wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+  if( !filters.Count() )
+  {
+      * count = 0;
+      * len = 0;
+      * size = 0;
+      return;
+  }
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT COUNT(), SUM(song_length), SUM(song_filesize) FROM songs " );
+  query += wxT( "WHERE " ) + GetTreeViewFilterArraySql( filters );
+  if( textfilters.Count() )
+  {
+    query += wxT( " AND " ) + TextFilterToSQL( textfilters );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      * count = dbRes.GetInt64( 0 );
+      * len   = dbRes.GetInt64( 1 );
+      * size  = dbRes.GetInt64( 2 );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
 int guDbLibrary::GetSongs( const guTreeViewFilterArray &filters, guTrackArray * Songs, const wxArrayString &textfilters, const int order, const bool orderdesc )
 {
   wxString query;

@@ -397,6 +397,7 @@ class guDbLibrary : public guDb
     void                GetPaths( guListItems * Paths, bool FullList = false );
 
     bool                GetSong( const int songid, guTrack * song );
+    void                GetSongsCounters( const guTreeViewFilterArray &filters, const wxArrayString &textfilters, wxLongLong * count, wxLongLong * len, wxLongLong * size );
     int                 GetSongs( const guTreeViewFilterArray &filters, guTrackArray * Songs, const wxArrayString &textfilters, const int order, const bool orderdesc );
     int                 GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs );
     int                 GetSongsCount( void );

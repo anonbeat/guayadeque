@@ -181,12 +181,6 @@ void guTreeViewFilterEditor::OnFilterListBoxSelected( wxCommandEvent& event )
         m_DownFilterButton->Enable( false );
         m_DelFilterButton->Enable( false );
     }
-    int Index;
-    int Count = m_FilterItems.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        guLogMessage( wxT( "Entry%i: %i" ), Index, m_FilterItems[ Index ] );
-    }
 }
 
 // -------------------------------------------------------------------------------- //

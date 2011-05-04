@@ -196,7 +196,7 @@ class guTreeViewPanel : public guAuiManagedPanel
 
     virtual void            InitPanelData( void );
 
-    bool                    GetTreeViewCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
+    void                    GetTreeViewCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size ) { m_TVTracksListBox->GetCounters( count, len, size ); }
 
     void inline             UpdatedTracks( const guTrackArray * tracks ) { m_TVTracksListBox->UpdatedTracks( tracks ); };
     void inline             UpdatedTrack( const guTrack * track ) { m_TVTracksListBox->UpdatedTrack( track ); };

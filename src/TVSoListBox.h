@@ -60,12 +60,7 @@ class guTVSoListBox : public guSoListBox
     virtual int         GetItemId( const int row ) const;
     virtual wxString    GetItemName( const int row ) const;
 
-    void                GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
-    {
-        * count = GetItemCount();
-        * len   = m_TracksLength;
-        * size  = m_TracksSize;
-    }
+    void                GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
 
     void                SetTracksOrder( const int order )
     {
