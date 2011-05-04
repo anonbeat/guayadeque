@@ -4374,7 +4374,8 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
     }
     else if( m_CurrentPage == ( wxWindow * ) m_TreeViewPanel )
     {
-        if( m_TreeViewPanel->GetTreeViewCounters( &m_SelCount, &m_SelLength, &m_SelSize ) )
+        m_TreeViewPanel->GetTreeViewCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+        if( m_SelCount > 0 )
         {
             wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
             SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );

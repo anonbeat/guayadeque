@@ -105,122 +105,6 @@ void guTVSoListBox::SetFilters( guTreeViewFilterArray &filters )
     ReloadItems();
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guTVSoListBox::OnDropFile( const wxString &filename )
-//{
-////    if( ( m_PLIds.Count() == 1 ) && m_PLTypes[ 0 ] == guTVAYLIST_TYPE_STATIC )
-////    {
-////        //guLogMessage( wxT( "Adding file '%s'" ), filename.c_str() );
-////        if( guIsValidAudioFile( filename ) )
-////        {
-////            if( wxFileExists( filename ) )
-////            {
-////                guTrack Track;
-////                if( m_Db->FindTrackFile( filename, &Track ) )
-////                {
-////                    m_DropIds.Add( Track.m_SongId );
-////                }
-////            }
-////        }
-////    }
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guTVSoListBox::OnDropEnd( void )
-//{
-////    int index;
-////    int count;
-////    wxArrayInt ItemIds;
-////
-////    if( ( m_PLIds.Count() == 1 ) && ( m_PLTypes[ 0 ] == guTVAYLIST_TYPE_STATIC ) )
-////    {
-////        if( m_DropIds.Count() )
-////        {
-////            count = m_Items.Count();
-////            for( index = 0; index < count; index++ )
-////            {
-////                ItemIds.Add( m_Items[ index ].m_SongId );
-////            }
-////
-////            //int InsertPos = m_DragOverItem + m_DragOverAfter;
-////            int InsertPos = m_DragOverItem + m_DragOverAfter;
-////            if( m_DragOverItem == wxNOT_FOUND )
-////                InsertPos = m_Items.Count();
-////            //guLogMessage( wxT( "Pos: %i + %i  %i of %i " ), m_DragOverItem, m_DragOverAfter, InsertPos, m_Items.Count() );
-////
-////            count = m_DropIds.Count();
-////            for( index = 0; index < count; index++ )
-////            {
-////                ItemIds.Insert( m_DropIds[ index ], InsertPos + index );
-////            }
-////
-////            // Save it to the database
-////            m_Db->UpdateStaticPlayList( m_PLIds[ 0 ], ItemIds );
-////            m_Db->UpdateStaticPlayListFile( m_PLIds[ 0 ] );
-////
-////            m_DropIds.Clear();
-////        }
-////        ReloadItems();
-////    }
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guTVSoListBox::MoveSelection( void )
-//{
-////    wxArrayInt   MoveIds;
-////    wxArrayInt   MoveIndex;
-////    wxArrayInt   ItemIds;
-////
-////    if( ( m_PLIds.Count() != 1 ) || ( m_PLTypes[ 0 ] != guTVAYLIST_TYPE_STATIC ) )
-////        return;
-////
-////    // Copy the elements we are going to move
-////    unsigned long cookie;
-////    int item = GetFirstSelected( cookie );
-////    while( item != wxNOT_FOUND )
-////    {
-////        MoveIndex.Add( item );
-////        MoveIds.Add( m_Items[ item ].m_SongId );
-////        item = GetNextSelected( cookie );
-////    }
-////
-////    // Get the position where to move it
-////    int InsertPos;
-////    if( m_DragOverItem != wxNOT_FOUND )
-////        InsertPos = m_DragOverItem + m_DragOverAfter;
-////    else
-////        InsertPos = m_Items.Count();
-////
-////    // Remove the elements from the original position
-////    int index;
-////    int count = MoveIndex.Count();
-////    for( index = count - 1; index >= 0; index-- )
-////    {
-////        m_Items.RemoveAt( MoveIndex[ index ] );
-////
-////        if( MoveIndex[ index ] < InsertPos )
-////            InsertPos--;
-////    }
-////
-////    count = m_Items.Count();
-////    for( index = 0; index < count; index++ )
-////    {
-////        ItemIds.Add( m_Items[ index ].m_SongId );
-////    }
-////
-////    count = MoveIds.Count();
-////    for( index = 0; index < count; index++ )
-////    {
-////        ItemIds.Insert( MoveIds[ index ], InsertPos + index );
-////    }
-////
-////    // Save it to the database
-////    m_Db->UpdateStaticPlayList( m_PLIds[ 0 ], ItemIds );
-////    m_Db->UpdateStaticPlayListFile( m_PLIds[ 0 ] );
-////
-////    ReloadItems();
-//}
-
 // -------------------------------------------------------------------------------- //
 int guTVSoListBox::GetSelectedSongs( guTrackArray * tracks )
 {
@@ -259,6 +143,12 @@ wxString guTVSoListBox::GetItemName( const int row ) const
 int guTVSoListBox::GetItemId( const int row ) const
 {
     return m_Items[ row ].m_SongId;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTVSoListBox::GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+    m_Db->GetSongsCounters( m_Filters, m_TextFilters, count, len, size );
 }
 
 // -------------------------------------------------------------------------------- //
