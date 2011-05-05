@@ -126,7 +126,7 @@ void guDBusNotify::Notify( const wxString &icon, const wxString &summary,
             ImageData[ Index++ ] = HasAlpha ? adata[ AlphaCnt++ ] : 255;
         }
 
-
+        HasAlpha = true;
         dbus_message_iter_open_container( &array, DBUS_TYPE_DICT_ENTRY, 0, &dict );
 
         dbus_message_iter_append_basic( &dict, DBUS_TYPE_STRING, &icon_data );
