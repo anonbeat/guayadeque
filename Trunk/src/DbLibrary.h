@@ -577,6 +577,7 @@ wxString guListItemsGetName( const guListItems &Items, int m_Id );
 wxArrayInt GetArraySameItems( const wxArrayInt &Source, const wxArrayInt &Oper );
 wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper );
 wxString TextFilterToSQL( const wxArrayString &TeFilters );
+wxString LabelFilterToSQL( const wxArrayInt &LaFilters );
 
 // -------------------------------------------------------------------------------- //
 wxString inline ArrayIntToStrList( const wxArrayInt &Data )

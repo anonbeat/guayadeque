@@ -385,11 +385,11 @@ void guTreeViewTreeCtrl::OnContextMenu( wxTreeEvent &event )
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
             Menu.Append( MenuItem );
 
-            MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_FILTER_EDIT, _( "Edit" ), _( "" ) );
+            MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_FILTER_EDIT, _( "Edit" ), _( "Edit the selected filter" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu.Append( MenuItem );
 
-            MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_FILTER_DELETE, _( "Delete" ), _( "" ) );
+            MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_FILTER_DELETE, _( "Delete" ), _( "Delete the selected filter" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
             Menu.Append( MenuItem );
 
