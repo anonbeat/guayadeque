@@ -511,19 +511,19 @@ void guMPRIS2::OnPlayerTrackChange( void )
 
         int Caps = m_PlayerPanel->GetCaps();
 
-        dbus_bool_t CanGoNext = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_NEXT );
+        dbus_bool_t CanGoNext = ( Caps & MPRIS_CAPS_CAN_GO_NEXT ) > 0;
         FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
 
-        dbus_bool_t CanGoPrev = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_PREV );
+        dbus_bool_t CanGoPrev = ( Caps & MPRIS_CAPS_CAN_GO_PREV ) > 0;
         FillMetadataDetails( &dict, "CanGoPrevious", CanGoPrev );
 
-        dbus_bool_t CanPlay = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PLAY );
+        dbus_bool_t CanPlay = ( Caps & MPRIS_CAPS_CAN_PLAY ) > 0;
         FillMetadataDetails( &dict, "CanPlay", CanPlay );
 
-        dbus_bool_t CanPause = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PAUSE );
+        dbus_bool_t CanPause = ( Caps & MPRIS_CAPS_CAN_PAUSE ) > 0;
         FillMetadataDetails( &dict, "CanPause", CanPause );
 
-        dbus_bool_t CanSeek = dbus_bool_t( Caps & MPRIS_CAPS_CAN_SEEK );
+        dbus_bool_t CanSeek = ( Caps & MPRIS_CAPS_CAN_SEEK ) > 0;
         FillMetadataDetails( &dict, "CanSeek", CanSeek );
 
 
@@ -616,16 +616,16 @@ void guMPRIS2::OnPlayerCapsChange( void )
 
         int Caps = m_PlayerPanel->GetCaps();
 
-        dbus_bool_t CanGoNext = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_NEXT );
+        dbus_bool_t CanGoNext = ( Caps & MPRIS_CAPS_CAN_GO_NEXT ) > 0;
         FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
 
-        dbus_bool_t CanGoPrev = dbus_bool_t( Caps & MPRIS_CAPS_CAN_GO_PREV );
+        dbus_bool_t CanGoPrev = ( Caps & MPRIS_CAPS_CAN_GO_PREV ) > 0;
         FillMetadataDetails( &dict, "CanGoPrevious", CanGoPrev );
 
-        dbus_bool_t CanPlay = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PLAY );
+        dbus_bool_t CanPlay = ( Caps & MPRIS_CAPS_CAN_PLAY ) > 0;
         FillMetadataDetails( &dict, "CanPlay", CanPlay );
 
-        dbus_bool_t CanPause = dbus_bool_t( Caps & MPRIS_CAPS_CAN_PAUSE );
+        dbus_bool_t CanPause = ( Caps & MPRIS_CAPS_CAN_PAUSE ) > 0;
         FillMetadataDetails( &dict, "CanPause", CanPause );
 
 
@@ -927,27 +927,27 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            dbus_bool_t CanGoNext = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT );
+                            dbus_bool_t CanGoNext = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT ) > 0;
                             FillMetadataDetails( &dict, "CanGoNext", CanGoNext );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            dbus_bool_t CanGoPrev = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV );
+                            dbus_bool_t CanGoPrev = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV ) > 0;
                             FillMetadataDetails( &dict, "CanGoPrev", CanGoPrev );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            dbus_bool_t CanPlay = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY );
+                            dbus_bool_t CanPlay = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY ) > 0;
                             FillMetadataDetails( &dict, "CanPlay", CanPlay );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            dbus_bool_t CanPause = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE );
+                            dbus_bool_t CanPause = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE ) > 0;
                             FillMetadataDetails( &dict, "CanPause", CanPause );
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            dbus_bool_t CanSeek = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK );
+                            dbus_bool_t CanSeek = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK ) > 0;
                             FillMetadataDetails( &dict, "CanSeek", CanSeek );
 
 
@@ -1225,7 +1225,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanGoNext" ) )
                                 {
-                                    dbus_bool_t CanGoNext = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT );
+                                    dbus_bool_t CanGoNext = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_NEXT ) > 0;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanGoNext ) )
                                     {
                                         Send( reply );
@@ -1235,7 +1235,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanGoPrevious" ) )
                                 {
-                                    dbus_bool_t CanGoPrev = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV );
+                                    dbus_bool_t CanGoPrev = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV ) > 0;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanGoPrev ) )
                                     {
                                         Send( reply );
@@ -1245,7 +1245,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanPlay" ) )
                                 {
-                                    dbus_bool_t CanPlay = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY );
+                                    dbus_bool_t CanPlay = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PLAY ) > 0;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanPlay ) )
                                     {
                                         Send( reply );
@@ -1255,7 +1255,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanPause" ) )
                                 {
-                                    dbus_bool_t CanPause = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE );
+                                    dbus_bool_t CanPause = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_PAUSE ) > 0;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanPause ) )
                                     {
                                         Send( reply );
@@ -1265,7 +1265,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "CanSeek" ) )
                                 {
-                                    dbus_bool_t CanSeek = dbus_bool_t( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK );
+                                    dbus_bool_t CanSeek = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_SEEK ) > 0;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanSeek ) )
                                     {
                                         Send( reply );
