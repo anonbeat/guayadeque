@@ -291,8 +291,9 @@ class guPortableMediaLibrary : public guDbLibrary
     guPortableMediaLibrary( const wxString &libpath, guPortableMediaDevice * portablemediadevice );
     ~guPortableMediaLibrary();
 
-    virtual void            UpdateStaticPlayListFile( const int plid );
     virtual void            DeletePlayList( const int plid );
+
+    virtual void            UpdateStaticPlayListFile( const int plid );
 
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibrary *, guPortableMediaLibraryArray );

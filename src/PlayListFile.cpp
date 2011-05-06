@@ -34,6 +34,22 @@
 WX_DEFINE_OBJARRAY(guStationPlayList);
 
 // -------------------------------------------------------------------------------- //
+// guStationPlayListItem
+// -------------------------------------------------------------------------------- //
+wxString guStationPlayListItem::GetLocation( const bool relative, const wxString &pathbase )
+{
+    if( relative )
+    {
+        wxFileName FileName( m_Location );
+        if( FileName.MakeRelativeTo( pathbase ) )
+        {
+            return FileName.GetFullPath();
+        }
+    }
+    return m_Location;
+}
+
+// -------------------------------------------------------------------------------- //
 guPlayListFile::guPlayListFile( const wxString &uri )
 {
     if( !uri.IsEmpty() )
@@ -127,26 +143,26 @@ bool guPlayListFile::Load( const wxString &uri )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListFile::Save( const wxString &filename )
+bool guPlayListFile::Save( const wxString &filename, const bool relative )
 {
     if( filename.Lower().EndsWith( wxT( ".pls" ) ) )
     {
-        return WritePlsFile( filename );
+        return WritePlsFile( filename, relative );
     }
     else if( filename.Lower().EndsWith( wxT( ".xspf" ) ) )
     {
-        return WriteXspfFile( filename );
+        return WriteXspfFile( filename, relative );
     }
     else if( filename.Lower().EndsWith( wxT( ".asx" ) ) )
     {
-        return WriteAsxFile( filename );
+        return WriteAsxFile( filename, relative );
     }
     else
     {
         wxString FileName = filename;
         if( !FileName.Lower().EndsWith( wxT( ".m3u" ) ) )
             FileName += wxT( ".m3u" );
-        return WriteM3uFile( FileName );
+        return WriteM3uFile( FileName, relative );
     }
     return false;
 }
@@ -443,7 +459,7 @@ bool guPlayListFile::ReadAsxFile( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListFile::WritePlsFile( const wxString &filename )
+bool guPlayListFile::WritePlsFile( const wxString &filename, const bool relative )
 {
     wxFile PlsFile;
     if( PlsFile.Create( filename, true ) && PlsFile.IsOpened() )
@@ -453,8 +469,10 @@ bool guPlayListFile::WritePlsFile( const wxString &filename )
         PlsFile.Write( wxString::Format( wxT( "numberofentries=%u\n" ), Count ) );
         for( int Index = 0; Index < Count; Index++ )
         {
-            PlsFile.Write( wxString::Format( wxT( "File%u=%s\n" ), Index + 1, m_PlayList[ Index ].m_Location.c_str() ) );
-            PlsFile.Write( wxString::Format( wxT( "Title%u=%s\n" ), Index + 1, m_PlayList[ Index ].m_Name.c_str() ) );
+            PlsFile.Write( wxString::Format( wxT( "File%u=%s\n" ), Index + 1,
+                                m_PlayList[ Index ].GetLocation( relative, wxPathOnly( filename ) ).c_str() ) );
+            PlsFile.Write( wxString::Format( wxT( "Title%u=%s\n" ), Index + 1,
+                                m_PlayList[ Index ].m_Name.c_str() ) );
         }
         PlsFile.Close();
     }
@@ -466,7 +484,7 @@ bool guPlayListFile::WritePlsFile( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListFile::WriteM3uFile( const wxString &filename )
+bool guPlayListFile::WriteM3uFile( const wxString &filename, const bool relative )
 {
     wxFile M3uFile;
     if( M3uFile.Create( filename, true ) && M3uFile.IsOpened() )
@@ -475,7 +493,7 @@ bool guPlayListFile::WriteM3uFile( const wxString &filename )
         int Count = m_PlayList.Count();
         for( int Index = 0; Index < Count; Index++ )
         {
-            M3uFile.Write( m_PlayList[ Index ].m_Location );
+            M3uFile.Write( m_PlayList[ Index ].GetLocation( relative, wxPathOnly( filename ) ) );
             M3uFile.Write( wxT( "\n" ) );
         }
         M3uFile.Close();
@@ -488,7 +506,7 @@ bool guPlayListFile::WriteM3uFile( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListFile::WriteXspfFile( const wxString &filename )
+bool guPlayListFile::WriteXspfFile( const wxString &filename, const bool relative )
 {
     wxXmlDocument OutXml;
     //OutXml.SetRoot(  );
@@ -507,7 +525,7 @@ bool guPlayListFile::WriteXspfFile( const wxString &filename )
         wxXmlNode * TrackNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "track" ) );
 
         wxXmlNode * LocationNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "location" ) );
-        wxXmlNode * LocationNodeVal = new wxXmlNode( wxXML_TEXT_NODE, wxT( "location" ), m_PlayList[ Index ].m_Location );
+        wxXmlNode * LocationNodeVal = new wxXmlNode( wxXML_TEXT_NODE, wxT( "location" ), m_PlayList[ Index ].GetLocation( relative, wxPathOnly( filename ) ) );
         LocationNode->AddChild( LocationNodeVal );
 
         wxXmlNode * TitleNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "title" ) );
@@ -525,7 +543,7 @@ bool guPlayListFile::WriteXspfFile( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPlayListFile::WriteAsxFile( const wxString &filename )
+bool guPlayListFile::WriteAsxFile( const wxString &filename, const bool relative )
 {
     wxXmlDocument OutXml;
     //OutXml.SetRoot(  );
@@ -542,7 +560,7 @@ bool guPlayListFile::WriteAsxFile( const wxString &filename )
         wxXmlNode * EntryNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "entry" ) );
 
         wxXmlNode * RefNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "ref" ) );
-        wxXmlProperty * RefNodeVal = new wxXmlProperty( wxT( "href" ), m_PlayList[ Index ].m_Location, NULL );
+        wxXmlProperty * RefNodeVal = new wxXmlProperty( wxT( "href" ), m_PlayList[ Index ].GetLocation( relative, wxPathOnly( filename ) ), NULL );
         RefNode->SetProperties( RefNodeVal );
 
         wxXmlNode * TitleNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "title" ) );

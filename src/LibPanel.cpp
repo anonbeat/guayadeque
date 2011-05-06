@@ -1721,6 +1721,7 @@ void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
 
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
+            int PLId;
             int Selected = PlayListAppendDlg->GetSelectedPlayList();
             if( Selected == -1 )
             {
@@ -1729,11 +1730,11 @@ void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
                 {
                     PLName = _( "UnNamed" );
                 }
-                m_Db->CreateStaticPlayList( PLName, tracks );
+                PLId = m_Db->CreateStaticPlayList( PLName, tracks );
             }
             else
             {
-                int PLId = PlayLists[ Selected ].m_Id;
+                PLId = PlayLists[ Selected ].m_Id;
                 wxArrayInt OldSongs;
                 m_Db->GetPlayListSongIds( PLId, &OldSongs );
                 if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
@@ -1746,6 +1747,7 @@ void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
                     m_Db->AppendStaticPlayList( PLId, tracks );
                 }
             }
+            m_Db->UpdateStaticPlayListFile( PLId );
             UpdatePlaylists();
         }
         PlayListAppendDlg->Destroy();

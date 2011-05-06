@@ -533,6 +533,53 @@ guPortableMediaLibrary::~guPortableMediaLibrary()
 }
 
 // -------------------------------------------------------------------------------- //
+void guPortableMediaLibrary::DeletePlayList( const int plid )
+{
+    int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
+    if( PlayListFormats )
+    {
+        wxString PlayListName = GetPlayListName( plid );
+
+        wxString PlayListFile = m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
+        PlayListFile += wxT( "/" ) + PlayListName;
+        if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U )
+        {
+            PlayListFile += wxT( ".m3u" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_PLS )
+        {
+            PlayListFile += wxT( ".pls" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_XSPF )
+        {
+            PlayListFile += wxT( ".xspf" );
+        }
+        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_ASX )
+        {
+            PlayListFile += wxT( ".asx" );
+        }
+        else
+        {
+            PlayListFile += wxT( ".m3u" );
+        }
+
+        wxFileName FileName( PlayListFile );
+        if( FileName.Normalize() )
+        {
+            if( FileName.FileExists() )
+            {
+                if( !wxRemoveFile( FileName.GetFullPath() ) )
+                {
+                    guLogError( wxT( "Could not delete the playlist file '%s'" ), FileName.GetFullPath().c_str() );
+                }
+            }
+        }
+    }
+
+    guDbLibrary::DeletePlayList( plid );
+}
+
+// -------------------------------------------------------------------------------- //
 void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
 {
     guLogMessage( wxT( "guPortableMediaLibrary::UpdateStaticPlayListFile" ) );
@@ -579,56 +626,9 @@ void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
                     Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
             }
 
-            PlayListFile.Save( FileName.GetFullPath() );
+            PlayListFile.Save( FileName.GetFullPath(), true );
         }
     }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibrary::DeletePlayList( const int plid )
-{
-    int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
-    if( PlayListFormats )
-    {
-        wxString PlayListName = GetPlayListName( plid );
-
-        wxString PlayListFile = m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
-        PlayListFile += wxT( "/" ) + PlayListName;
-        if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U )
-        {
-            PlayListFile += wxT( ".m3u" );
-        }
-        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_PLS )
-        {
-            PlayListFile += wxT( ".pls" );
-        }
-        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_XSPF )
-        {
-            PlayListFile += wxT( ".xspf" );
-        }
-        else if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_ASX )
-        {
-            PlayListFile += wxT( ".asx" );
-        }
-        else
-        {
-            PlayListFile += wxT( ".m3u" );
-        }
-
-        wxFileName FileName( PlayListFile );
-        if( FileName.Normalize() )
-        {
-            if( FileName.FileExists() )
-            {
-                if( !wxRemoveFile( FileName.GetFullPath() ) )
-                {
-                    guLogError( wxT( "Could not delete the playlist file '%s'" ), FileName.GetFullPath().c_str() );
-                }
-            }
-        }
-    }
-
-    guDbLibrary::DeletePlayList( plid );
 }
 
 // -------------------------------------------------------------------------------- //
