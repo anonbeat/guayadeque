@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-05-05 18:47+0000\n"
-"PO-Revision-Date: 2011-05-05 18:50-0000\n"
+"POT-Creation-Date: 2011-05-05 22:27+0000\n"
+"PO-Revision-Date: 2011-05-05 22:28-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@gmail.com>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -5004,6 +5004,14 @@ msgstr "Búa til"
 #: TreePanel.cpp:384
 msgid "Create a new filter"
 msgstr "Búa til nýja síu"
+
+#: TreePanel.cpp:388
+msgid "Edit the selected filter"
+msgstr "Breyta völdri síu"
+
+#: TreePanel.cpp:392
+msgid "Delete the selected filter"
+msgstr "Eyða völdri síu"
 
 #: TreePanel.cpp:446
 msgid "Edit the labels assigned to the selected items"

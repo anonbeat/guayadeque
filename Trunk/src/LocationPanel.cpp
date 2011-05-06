@@ -159,6 +159,9 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     CurrentItem = AppendItem( m_MyMusicId, _( "Album Browser" ), -1, -1, new guLocationItemData( ID_MENU_VIEW_ALBUMBROWSER, ( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER ) ) );
     if( VisiblePanels & guPANEL_MAIN_ALBUMBROWSER )
         SetItemFont( CurrentItem, BoldFont );
+    CurrentItem = AppendItem( m_MyMusicId, _( "Tree" ), -1, -1, new guLocationItemData( ID_MENU_VIEW_TREEVIEW, ( VisiblePanels & guPANEL_MAIN_TREEVIEW ) ) );
+    if( VisiblePanels & guPANEL_MAIN_TREEVIEW )
+        SetItemFont( CurrentItem, BoldFont );
     CurrentItem = AppendItem( m_MyMusicId, _( "File Browser" ), -1, -1, new guLocationItemData( ID_MENU_VIEW_FILEBROWSER, ( VisiblePanels & guPANEL_MAIN_FILEBROWSER ) ) );
     if( VisiblePanels & guPANEL_MAIN_FILEBROWSER )
         SetItemFont( CurrentItem, BoldFont );

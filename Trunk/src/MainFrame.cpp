@@ -3942,6 +3942,10 @@ void guMainFrame::OnSelectLocation( wxCommandEvent &event )
             PanelIndex = m_CatNotebook->GetPageIndex( m_AlbumBrowserPanel );
             break;
 
+        case ID_MENU_VIEW_TREEVIEW :
+            PanelIndex = m_CatNotebook->GetPageIndex( m_TreeViewPanel );
+            break;
+
         case ID_MENU_VIEW_FILEBROWSER :
             PanelIndex = m_CatNotebook->GetPageIndex( m_FileBrowserPanel );
             break;
@@ -4189,6 +4193,11 @@ void guMainFrame::DoPageClose( wxPanel * curpage )
         m_ViewMagRatings->Enable( false );
         m_ViewMagPlayCounts->Enable( false );
         PanelId = guPANEL_MAIN_MAGNATUNE;
+    }
+    else if( curpage == m_TreeViewPanel )
+    {
+        m_ViewTreeView->Check( false );
+        PanelId = guPANEL_MAIN_TREEVIEW;
     }
     else
     {
