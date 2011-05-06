@@ -299,7 +299,7 @@ class guLibPanel : public guAuiManagedPanel
     virtual guDbLibrary *   GetDb( void ) { return m_Db; };
     virtual wxArrayString   GetLibraryPaths( void );
     virtual wxString        GetPlaylistPath( void ) { return wxEmptyString; }
-    void                    SetBaseCommand( int basecmd ) { m_BaseCommand = basecmd; }
+    void                    SetBaseCommand( int basecmd ) { m_BaseCommand = basecmd; InitPanelData(); }
 
     void                    ReloadControls( void );
     void                    UpdateLabels( void );

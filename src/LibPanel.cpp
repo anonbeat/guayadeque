@@ -76,7 +76,7 @@ guLibPanel::guLibPanel( wxWindow* parent, guDbLibrary * db, guPlayerPanel * NewP
 
     SetBaseCommand( ID_MENU_VIEW_LIBRARY );
 
-    InitPanelData();
+//    InitPanelData();
 
     m_VisiblePanels = Config->ReadNum( m_ConfigPrefixVarName + wxT( "VisiblePanels" ), guPANEL_LIBRARY_VISIBLE_DEFAULT, wxT( "Positions" ) );
     m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
@@ -582,6 +582,7 @@ guLibPanel::~guLibPanel()
 // -------------------------------------------------------------------------------- //
 void guLibPanel::InitPanelData( void )
 {
+    m_PanelNames.Empty();
     m_PanelNames.Add( wxT( "TextSearch" ) );
     m_PanelNames.Add( wxT( "Labels" ) );
     m_PanelNames.Add( wxT( "Genres" ) );
@@ -593,6 +594,7 @@ void guLibPanel::InitPanelData( void )
     m_PanelNames.Add( wxT( "Ratings" ) );
     m_PanelNames.Add( wxT( "PlayCounts" ) );
 
+    m_PanelIds.Empty();
     m_PanelIds.Add( guPANEL_LIBRARY_TEXTSEARCH );
     m_PanelIds.Add( guPANEL_LIBRARY_LABELS );
     m_PanelIds.Add( guPANEL_LIBRARY_GENRES );
@@ -604,16 +606,17 @@ void guLibPanel::InitPanelData( void )
     m_PanelIds.Add( guPANEL_LIBRARY_RATINGS );
     m_PanelIds.Add( guPANEL_LIBRARY_PLAYCOUNT );
 
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_TEXTSEARCH );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_LABELS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_GENRES );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_ARTISTS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_COMPOSERS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_ALBUMARTISTS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_ALBUMS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_YEARS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_RATINGS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_LIB_PLAYCOUNT );
+    m_PanelCmdIds.Empty();
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_TEXTSEARCH );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_LABELS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_GENRES );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_ARTISTS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_COMPOSERS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_ALBUMARTISTS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_ALBUMS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_YEARS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_RATINGS );
+    m_PanelCmdIds.Add( m_BaseCommand + guLIBRARY_ELEMENT_PLAYCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
