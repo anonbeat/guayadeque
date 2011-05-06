@@ -39,6 +39,8 @@ class guStationPlayListItem
         m_Name = title;
         m_Location = location;
     }
+
+    wxString GetLocation( const bool relative = false, const wxString &pathbase = wxEmptyString );
 };
 WX_DECLARE_OBJARRAY(guStationPlayListItem, guStationPlayList);
 
@@ -67,10 +69,10 @@ class guPlayListFile
     bool                ReadXspfFile( const wxString &filename );
     bool                ReadAsxFile( const wxString &filename );
 
-    bool                WritePlsFile( const wxString &filename );
-    bool                WriteM3uFile( const wxString &filename );
-    bool                WriteXspfFile( const wxString &filename );
-    bool                WriteAsxFile( const wxString &filename );
+    bool                WritePlsFile( const wxString &filename, const bool relative = false );
+    bool                WriteM3uFile( const wxString &filename, const bool relative = false );
+    bool                WriteXspfFile( const wxString &filename, const bool relative = false );
+    bool                WriteAsxFile( const wxString &filename, const bool relative = false );
 
   public :
     guPlayListFile( void ) {};
@@ -78,7 +80,7 @@ class guPlayListFile
     ~guPlayListFile();
 
     bool                    Load( const wxString &uri );
-    bool                    Save( const wxString &filename );
+    bool                    Save( const wxString &filename, const bool relative = false );
 
     wxString                GetName( void ) { return m_Name; };
     void                    SetName( const wxString &name ) { m_Name = name; };
