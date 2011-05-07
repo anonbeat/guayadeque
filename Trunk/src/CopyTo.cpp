@@ -343,7 +343,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #endif
         {
 
-            FileName = DestDir + guExpandTrackMacros( FilePattern, CurTrack );
+            FileName = DestDir + guExpandTrackMacros( FilePattern, CurTrack, m_CurrentFile - 1 );
 
             // Replace all the special chars < > : " / \ | ? *
             FileName.Replace( wxT( "<" ), wxT( "_" ) );
@@ -636,7 +636,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         {
             // Need to delete the old files
             //CopyToAction.LibPanel()->DeleteTracks( CopyToAction.Tracks() );
-            m_DeleteTracks.Add( CurTrack );
+            m_DeleteTracks.Add( new guTrack( * CurTrack ) );
         }
     }
 }

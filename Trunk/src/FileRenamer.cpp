@@ -252,7 +252,7 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
                                     wxT( '.' ) + FileName.AfterLast( wxT( '.' ) );
                     }
 
-                    FileName = guExpandTrackMacros( FileName, Track );
+                    FileName = guExpandTrackMacros( FileName, Track, Index );
 
                     m_FilesListBox->SetString( Selection[ Index ], FileName );
 

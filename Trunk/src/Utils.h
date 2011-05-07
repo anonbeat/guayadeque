@@ -89,7 +89,7 @@ int guGetFileMode( const wxString &filepath );
 bool guSetFileMode( const wxString &filepath, int mode, bool adding = false );
 bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
 wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr );
-wxString guExpandTrackMacros( const wxString &pattern, guTrack * track );
+wxString guExpandTrackMacros( const wxString &pattern, guTrack * track, const int indexpos = 0 );
 
 // -------------------------------------------------------------------------------- //
 #endif

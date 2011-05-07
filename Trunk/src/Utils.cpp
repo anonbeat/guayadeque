@@ -685,7 +685,7 @@ wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * 
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guExpandTrackMacros( const wxString &pattern, guTrack * track )
+wxString guExpandTrackMacros( const wxString &pattern, guTrack * track, const int indexpos )
 {
     wxString RetVal = pattern;
 
@@ -753,6 +753,8 @@ wxString guExpandTrackMacros( const wxString &pattern, guTrack * track )
         RetVal.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), track->m_Year ) );
     if( RetVal.Find( wxT( "{d}" ) ) != wxNOT_FOUND )
         RetVal.Replace( wxT( "{d}" ), NormalizeField( track->m_Disk ) );
+    if( RetVal.Find( wxT( "{i}" ) ) != wxNOT_FOUND )
+        RetVal.Replace( wxT( "{i}" ), wxString::Format( wxT( "%04u" ), indexpos ) );
 
     return RetVal;
 }
