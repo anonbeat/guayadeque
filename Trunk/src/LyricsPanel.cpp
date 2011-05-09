@@ -383,7 +383,7 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
         m_UpdateCheckBox->SetValue( autoupdate );
     }
 
-    if( m_UpdateEnabled && m_CurrentTrack )
+    if( m_UpdateEnabled )
     {
         wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_REQUEST_CURRENTTRACK );
         Event.SetClientData( this );
