@@ -66,7 +66,7 @@ guGSession::~guGSession()
 			"org.gnome.SessionManager",
 			"UnregisterClient" );
 
-    const char * pClient = m_ObjectPath.ToAscii();
+    const char * pClient = strdup( m_ObjectPath.mb_str() );
 
     dbus_message_append_args( Msg->GetMessage(),
         DBUS_TYPE_OBJECT_PATH, &pClient,
@@ -74,6 +74,7 @@ guGSession::~guGSession()
 
     SendWithReply( Msg );
 
+    delete pClient;
     delete Msg;
     //guLogMessage( wxT( "Unregistering GSession '%s'" ), m_ObjectPath.c_str() );
 }
