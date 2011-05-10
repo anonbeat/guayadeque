@@ -486,6 +486,8 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbLibrary * db, guDbCache * dbcac
 
 	Connect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectTrack ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
+	Connect( ID_MAINFRAME_SELECT_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumArtist ), NULL, this );
+	Connect( ID_MAINFRAME_SELECT_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectComposer ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtist ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectYear ), NULL, this );
 	Connect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectGenre ), NULL, this );
@@ -673,6 +675,8 @@ guMainFrame::~guMainFrame()
 
 	Disconnect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectTrack ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbum ), NULL, this );
+	Disconnect( ID_MAINFRAME_SELECT_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectAlbumArtist ), NULL, this );
+	Disconnect( ID_MAINFRAME_SELECT_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectComposer ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectArtist ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectYear ), NULL, this );
 	Disconnect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectGenre ), NULL, this );
@@ -3751,6 +3755,66 @@ void guMainFrame::OnSelectAlbum( wxCommandEvent &event )
                 m_CatNotebook->SetSelection( PaneIndex );
             }
             LibPanel->SelectAlbum( event.GetInt() );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnSelectAlbumArtist( wxCommandEvent &event )
+{
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_PODCAST )
+    {
+    }
+    else if( Type == guTRACK_TYPE_JAMENDO )
+    {
+    }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+    }
+    else
+    {
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            LibPanel->SelectAlbumArtist( event.GetInt() );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnSelectComposer( wxCommandEvent &event )
+{
+    int Type = event.GetExtraLong();
+    if( Type == guTRACK_TYPE_PODCAST )
+    {
+    }
+    else if( Type == guTRACK_TYPE_JAMENDO )
+    {
+    }
+    else if( Type == guTRACK_TYPE_MAGNATUNE )
+    {
+    }
+    else
+    {
+        guLibPanel * LibPanel = ( guLibPanel * ) event.GetClientData();
+        if( !LibPanel )
+            LibPanel = m_LibPanel;
+        if( LibPanel )
+        {
+            int PaneIndex = m_CatNotebook->GetPageIndex( LibPanel );
+            if( PaneIndex != wxNOT_FOUND )
+            {
+                m_CatNotebook->SetSelection( PaneIndex );
+            }
+            LibPanel->SelectComposer( event.GetInt() );
         }
     }
 }

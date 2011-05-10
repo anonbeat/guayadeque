@@ -108,3 +108,18 @@ void  guListBox::SetSelectedItems( const wxArrayInt &selection )
 }
 
 // -------------------------------------------------------------------------------- //
+int guListBox::FindItemId( const int id )
+{
+    int Index;
+    int Count = m_Items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_Items->Item( Index ).m_Id == id )
+        {
+            return Index;
+        }
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //

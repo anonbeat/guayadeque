@@ -53,6 +53,8 @@ class guListBox : public guListView
 
     virtual void            SetSelectedItems( const wxArrayInt &selection );
 
+    virtual int             FindItemId( const int id );
+
 };
 
 #endif

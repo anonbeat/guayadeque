@@ -147,6 +147,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     Connect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectAlbum ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SELECT_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectAlbumArtist ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SELECT_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectComposer ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectYear ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectGenre ), NULL, this );
 
@@ -217,6 +219,8 @@ guPlayList::~guPlayList()
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectAlbum ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectAlbumArtist ), NULL, this );
+    Disconnect( ID_PLAYER_PLAYLIST_SELECT_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectComposer ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectYear ), NULL, this );
     Disconnect( ID_PLAYER_PLAYLIST_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectGenre ), NULL, this );
 
@@ -1588,6 +1592,12 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_ARTIST, _( "Artist" ), _( "Selects the artist of the current song" ) );
         SubMenu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_ALBUMARTIST, _( "Album Artist" ), _( "Select the album artist of the current song" ) );
+        SubMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_COMPOSER, _( "Composer" ), _( "Select the composer of the current song" ) );
+        SubMenu->Append( MenuItem );
+
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SELECT_ALBUM, _( "Album" ), _( "Select the album of the current song" ) );
         SubMenu->Append( MenuItem );
 
@@ -1937,6 +1947,46 @@ void guPlayList::OnSelectAlbum( wxCommandEvent &event )
         {
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
             evt.SetInt( m_Items[ SelItem ].m_AlbumId );
+            evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectAlbumArtist( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelType = m_Items[ SelItem ].m_Type;
+        if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_JAMENDO ) ||
+            ( SelType == guTRACK_TYPE_PODCAST ) )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUMARTIST );
+            evt.SetInt( m_Items[ SelItem ].m_AlbumArtistId );
+            evt.SetExtraLong( SelType );
+            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSelectComposer( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( SelectedItems.Count() )
+    {
+        int SelItem = SelectedItems[ 0 ];
+        int SelType = m_Items[ SelItem ].m_Type;
+        if( ( SelType == guTRACK_TYPE_DB ) ||
+            ( SelType == guTRACK_TYPE_JAMENDO ) ||
+            ( SelType == guTRACK_TYPE_PODCAST ) )
+        {
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_COMPOSER );
+            evt.SetInt( m_Items[ SelItem ].m_ComposerId );
             evt.SetExtraLong( SelType );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }

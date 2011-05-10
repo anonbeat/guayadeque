@@ -95,6 +95,8 @@ class guPlayList : public guListView
     void                        OnSelectTrack( wxCommandEvent &event );
     void                        OnSelectArtist( wxCommandEvent &event );
     void                        OnSelectAlbum( wxCommandEvent &event );
+    void                        OnSelectAlbumArtist( wxCommandEvent &event );
+    void                        OnSelectComposer( wxCommandEvent &event );
     void                        OnSelectYear( wxCommandEvent &event );
     void                        OnSelectGenre( wxCommandEvent &event );
 
