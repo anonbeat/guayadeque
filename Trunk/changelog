@@ -1,5 +1,6 @@
  
   
+  * Added compositor and album artist to select context menus
   * Added a new panel with a tree view of the library
   * Added option to enable save ratings and playcounts to audio files
   * Changed command line behaviour to append the tracks to the playlist and

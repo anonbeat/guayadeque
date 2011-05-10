@@ -243,6 +243,7 @@ class guLibPanel : public guAuiManagedPanel
     virtual void            OnSongListColClicked( wxListEvent &event );
     virtual void            OnSongSelectGenre( wxCommandEvent &event );
     virtual void            OnSongSelectAlbumArtist( wxCommandEvent &event );
+    virtual void            OnSongSelectComposer( wxCommandEvent &event );
     virtual void            OnSongSelectArtist( wxCommandEvent &event );
     virtual void            OnSongSelectAlbum( wxCommandEvent &event );
     virtual void            OnSongDeleteLibrary( wxCommandEvent &event );
@@ -306,13 +307,16 @@ class guLibPanel : public guAuiManagedPanel
 
     void                    SelectTrack( const int trackid );
     void                    SelectAlbum( const int albumid );
+    void                    SelectAlbumArtist( const int albumid );
     void                    SelectArtist( const int artistid );
+    void                    SelectComposer( const int artistid );
     void                    SelectYear( const int year );
     void                    SelectAlbumName( const wxString &album );
     void                    SelectArtistName( const wxString &artist );
     void                    SelectGenres( wxArrayInt * genres );
     void                    SelectArtists( wxArrayInt * artits );
     void                    SelectAlbumArtists( wxArrayInt * ids );
+    void                    SelectComposers( wxArrayInt * ids );
     void                    SelectAlbums( wxArrayInt * albums );
 
     void                    UpdatedTracks( const guTrackArray * tracks ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTracks( tracks ); }

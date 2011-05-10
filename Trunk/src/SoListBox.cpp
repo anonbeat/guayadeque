@@ -651,6 +651,9 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_ALBUMARTIST, _( "Album Artist" ), _( "Selects the album artist of the current song" ) );
         SubMenu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_COMPOSER, _( "Composer" ), _( "Selects the composer of the current song" ) );
+        SubMenu->Append( MenuItem );
+
         MenuItem = new wxMenuItem( Menu, ID_SONG_BROWSE_ALBUM, _( "Album" ), _( "Select the album of the current song" ) );
         SubMenu->Append( MenuItem );
 
