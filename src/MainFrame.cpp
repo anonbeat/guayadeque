@@ -4523,28 +4523,32 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnRequestCurrentTrack( wxCommandEvent &event )
 {
-    wxCommandEvent UpdateEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
-    guTrack * CurTrack = new guTrack( * m_PlayerPanel->GetCurrentTrack() );
-    UpdateEvent.SetClientData( CurTrack );
-
-    if( event.GetClientData() == m_LyricsPanel )
+    const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
+    if( CurrentTrack->m_Loaded )
     {
-        m_LyricsPanel->OnSetCurrentTrack( UpdateEvent );
+        wxCommandEvent UpdateEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+        guTrack * Track = new guTrack( * CurrentTrack );
+        UpdateEvent.SetClientData( Track );
 
-        if( m_LyricSearchEngine )
+        if( event.GetClientData() == m_LyricsPanel )
         {
-            if( m_LyricSearchContext )
-                delete m_LyricSearchContext;
-            m_LyricSearchContext = m_LyricSearchEngine->CreateContext( this, CurTrack );
-            m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
-        }
-    }
-    else if( event.GetClientData() == m_LastFMPanel )
-    {
-        m_LastFMPanel->OnUpdatedTrack( UpdateEvent );
-    }
+            m_LyricsPanel->OnSetCurrentTrack( UpdateEvent );
 
-    delete CurTrack;
+            if( m_LyricSearchEngine )
+            {
+                if( m_LyricSearchContext )
+                    delete m_LyricSearchContext;
+                m_LyricSearchContext = m_LyricSearchEngine->CreateContext( this, Track );
+                m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
+            }
+        }
+        else if( event.GetClientData() == m_LastFMPanel )
+        {
+            m_LastFMPanel->OnUpdatedTrack( UpdateEvent );
+        }
+
+        delete Track;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
