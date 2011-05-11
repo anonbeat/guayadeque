@@ -1699,6 +1699,8 @@ void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsour
         text->Replace( wxT( "{a1}" ), DoReplace( Track->m_ArtistName.Trim( false )[ 0 ], lyricsource ) );
     if( text->Find( wxT( "{al1}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{al1}" ), DoReplace( Track->m_ArtistName.Lower().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( wxT( "{au1}" ) ) != wxNOT_FOUND )
+        text->Replace( wxT( "{au1}" ), DoReplace( Track->m_ArtistName.Upper().Trim( false )[ 0 ], lyricsource ) );
     if( text->Find( wxT( "{as}" ) ) )
     {
         text->Replace( wxT( "{as}" ), DoReplace( SpecialCase( Track->m_ArtistName.Lower() ), lyricsource ) );
@@ -1714,6 +1716,8 @@ void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsour
         text->Replace( wxT( "{b1}" ), DoReplace( Track->m_AlbumName.Trim( false )[ 0 ], lyricsource ) );
     if( text->Find( wxT( "{bl1}" ) ) != wxNOT_FOUND )
         text->Replace( wxT( "{bl1}" ), DoReplace( Track->m_AlbumName.Lower().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( wxT( "{bu1}" ) ) != wxNOT_FOUND )
+        text->Replace( wxT( "{bu1}" ), DoReplace( Track->m_AlbumName.Upper().Trim( false )[ 0 ], lyricsource ) );
     if( text->Find( wxT( "{bs}" ) ) )
     {
         text->Replace( wxT( "{bs}" ), DoReplace( SpecialCase( Track->m_AlbumName.Lower() ), lyricsource ) );
