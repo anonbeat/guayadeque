@@ -336,6 +336,7 @@ class guMainFrame : public wxFrame
     void                            OnSelectLocation( wxCommandEvent &event );
     void                            OnGenreSetSelection( wxCommandEvent &event );
     void                            OnAlbumArtistSetSelection( wxCommandEvent &event );
+    void                            OnComposerSetSelection( wxCommandEvent &event );
     void                            OnArtistSetSelection( wxCommandEvent &event );
     void                            OnAlbumSetSelection( wxCommandEvent &event );
 

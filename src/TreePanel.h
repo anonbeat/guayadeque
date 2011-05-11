@@ -164,6 +164,7 @@ class guTreeViewPanel : public guAuiManagedPanel
 
     void                    OnTVTracksSelectGenre( wxCommandEvent &event );
     void                    OnTVTracksSelectAlbumArtist( wxCommandEvent &event );
+    void                    OnTVTracksSelectComposer( wxCommandEvent &event );
     void                    OnTVTracksSelectArtist( wxCommandEvent &event );
     void                    OnTVTracksSelectAlbum( wxCommandEvent &event );
 

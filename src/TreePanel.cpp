@@ -909,6 +909,7 @@ guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectGenre ), NULL, this );
     Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectArtist ), NULL, this );
     Connect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbumArtist ), NULL, this );
+    Connect( ID_SONG_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectComposer ), NULL, this );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbum ), NULL, this );
 
     m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guTreeViewPanel::OnSearchSelected ), NULL, this );
@@ -1807,6 +1808,26 @@ void guTreeViewPanel::OnTVTracksSelectAlbumArtist( wxCommandEvent &event )
         }
     }
     event.SetId( ID_ALBUMARTIST_SETSELECTION );
+    event.SetClientData( ( void * ) Ids );
+    wxPostEvent( wxTheApp->GetTopWindow(), event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::OnTVTracksSelectComposer( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_TVTracksListBox->GetSelectedSongs( &Tracks );
+    wxArrayInt * Ids = new wxArrayInt();
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Ids->Index( Tracks[ index ].m_ComposerId ) == wxNOT_FOUND )
+        {
+            Ids->Add( Tracks[ index ].m_ComposerId );
+        }
+    }
+    event.SetId( ID_COMPOSER_SETSELECTION );
     event.SetClientData( ( void * ) Ids );
     wxPostEvent( wxTheApp->GetTopWindow(), event );
 }
