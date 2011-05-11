@@ -1,7 +1,7 @@
  
   
-  * Added {al1} and {bl1} to lyrics panel patterns for lower first letter of
-    artist name and album name.
+  * Added {al1}, {au1}, {bl1} and {bu1} to lyrics panel patterns for
+    lower/upper first letter of artist name and album name.
   * Added compositor and album artist to select context menus
   * Added a new panel with a tree view of the library
   * Added option to enable save ratings and playcounts to audio files
