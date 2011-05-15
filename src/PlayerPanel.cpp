@@ -3268,7 +3268,7 @@ void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxS
                 else    // results comes sorted by match
                     break;
             }
-            if( ( int ) songs->Count() >= m_TrackCount )
+            if( TestDestroy() || ( ( int ) songs->Count() >= m_TrackCount ) )
                 break;
         }
     }
@@ -3295,7 +3295,7 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
             if( CurAddedTrack )
             {
                 CurAddedTrack--;
-                while( FoundTracks.Count() < 20 && CurAddedTrack )
+                while( !TestDestroy() && ( FoundTracks.Count() < 20 && CurAddedTrack ) )
                 {
                     if( m_Db->GetSong( ( * m_SmartAddedTracks )[ CurAddedTrack ], &AddedTrack ) )
                     {
@@ -3308,11 +3308,11 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 
             // Aleatorize tracks
             Count = FoundTracks.Count();
-            if( Count )
+            if( !TestDestroy() && Count )
             {
                 for( Index = 0; Index < m_TrackCount; Index++ )
                 {
-                    if( !Count )
+                    if( TestDestroy() || !Count )
                         break;
 
                     if( Count > 1 )
