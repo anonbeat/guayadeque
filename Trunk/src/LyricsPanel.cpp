@@ -1928,9 +1928,12 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
         }
         else if( LyricSource.Type() == guLYRIC_SOURCE_TYPE_EMBEDDED )
         {
-            m_LyricText = guTagGetLyrics( m_LyricSearchContext->m_Track.m_FileName );
-            if( !m_LyricText.IsEmpty() )
-                break;
+            if( wxFileExists( m_LyricSearchContext->m_Track.m_FileName ) )
+            {
+                m_LyricText = guTagGetLyrics( m_LyricSearchContext->m_Track.m_FileName );
+                if( !m_LyricText.IsEmpty() )
+                    break;
+            }
         }
         else if( LyricSource.Type() == guLYRIC_SOURCE_TYPE_FILE )
         {
