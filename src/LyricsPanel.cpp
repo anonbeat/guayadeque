@@ -1561,6 +1561,8 @@ wxString guLyricSearchThread::CheckExtract( const wxString &content, guLyricSour
     wxString RetVal = wxEmptyString;
     int Index;
     int Count = lyricsource.ExtractCount();
+    if( !Count )
+        return content;
     for( Index = 0; Index < Count; Index++ )
     {
         guLyricSourceExtract * LyricSourceExtract = lyricsource.ExtractItem( Index );
@@ -1765,17 +1767,23 @@ void guLyricSearchThread::LyricDownload( guLyricSource &lyricsource )
 // -------------------------------------------------------------------------------- //
 void guLyricSearchThread::LyricFile( guLyricSource &lyricsource )
 {
-    wxString FileName = GetSource( lyricsource );
-    guLogMessage( wxT( "Trying to read file: %s" ), FileName.c_str() );
-
-    if( wxFileExists( FileName ) )
+    wxString FilePath = GetSource( lyricsource );
+    wxFileName FileName( FilePath );
+    if( FileName.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
     {
-        wxFileInputStream Ins( FileName );
-        if( Ins.IsOk() )
+        if( wxFileExists( FileName.GetFullPath() ) )
         {
-            wxStringOutputStream Outs( &m_LyricText );
-            Ins.Read( Outs );
+            wxFileInputStream Ins( FileName.GetFullPath() );
+            if( Ins.IsOk() )
+            {
+                wxStringOutputStream Outs( &m_LyricText );
+                Ins.Read( Outs );
+            }
         }
+//        else
+//        {
+//            guLogMessage( wxT( "File not found: '%s'" ), FileName.GetFullPath().c_str() );
+//        }
     }
 }
 
