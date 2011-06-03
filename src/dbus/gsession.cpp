@@ -61,21 +61,24 @@ guGSession::guGSession( guDBusServer * server ) : guDBusClient( server )
 // -------------------------------------------------------------------------------- //
 guGSession::~guGSession()
 {
-    guDBusMethodCall * Msg = new guDBusMethodCall( "org.gnome.SessionManager",
+    if( !m_ObjectPath.IsEmpty() )
+    {
+        guDBusMethodCall * Msg = new guDBusMethodCall( "org.gnome.SessionManager",
 			"/org/gnome/SessionManager",
 			"org.gnome.SessionManager",
 			"UnregisterClient" );
 
-    const char * pClient = strdup( m_ObjectPath.mb_str() );
+        const char * pClient = strdup( m_ObjectPath.mb_str() );
 
-    dbus_message_append_args( Msg->GetMessage(),
-        DBUS_TYPE_OBJECT_PATH, &pClient,
-        DBUS_TYPE_INVALID );
+        dbus_message_append_args( Msg->GetMessage(),
+            DBUS_TYPE_OBJECT_PATH, &pClient,
+            DBUS_TYPE_INVALID );
 
-    SendWithReply( Msg );
+        SendWithReply( Msg );
 
-    delete pClient;
-    delete Msg;
+        delete pClient;
+        delete Msg;
+    }
     //guLogMessage( wxT( "Unregistering GSession '%s'" ), m_ObjectPath.c_str() );
 }
 
