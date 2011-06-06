@@ -56,7 +56,6 @@ class guEQPreset
 };
 WX_DECLARE_OBJARRAY(guEQPreset, guEQPresetArray);
 
-
 // -------------------------------------------------------------------------------- //
 // Class guEq10Band
 // -------------------------------------------------------------------------------- //
@@ -69,16 +68,8 @@ class guEq10Band : public wxDialog
     wxBitmapButton *    m_ResetButton;
     wxBitmapButton *    m_SaveButton;
     wxBitmapButton *    m_DelButton;
-    wxSlider *          m_Band0;
-    wxSlider *          m_Band1;
-    wxSlider *          m_Band2;
-    wxSlider *          m_Band3;
-    wxSlider *          m_Band4;
-    wxSlider *          m_Band5;
-    wxSlider *          m_Band6;
-    wxSlider *          m_Band7;
-    wxSlider *          m_Band8;
-    wxSlider *          m_Band9;
+    wxSlider *          m_Bands[ guEQUALIZER_BAND_COUNT ];
+    wxStaticText *      m_Values[ guEQUALIZER_BAND_COUNT ];
 
     guMediaCtrl *       m_MediaCtrl;
     guEQPresetArray     m_EQPresets;
@@ -89,7 +80,8 @@ class guEq10Band : public wxDialog
     void OnAddPreset( wxCommandEvent& event );
     void OnDelPreset( wxCommandEvent& event );
     void OnResetPreset( wxCommandEvent &event );
-    void OnBandChanged( wxScrollEvent& event );
+    void OnBandChanged( wxScrollEvent &event );
+    void OnUpdateLabel( wxScrollEvent &event );
 
   public:
     guEq10Band( wxWindow* parent, guMediaCtrl * mediactrl );

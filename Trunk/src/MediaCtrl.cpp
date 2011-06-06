@@ -1509,7 +1509,9 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
             if( IsValidElement( level ) )
             {
                 g_object_set( level, "message", TRUE, NULL );
-                g_object_set( level, "interval", gint64( 100000000 ), NULL );
+                g_object_set( level, "interval", 100000000, NULL) ;
+                g_object_set( level, "peak-falloff", 6.0, NULL );
+                g_object_set( level, "peak-ttl", 3 * 300000000, NULL );
 
                 m_Volume = gst_element_factory_make( "volume", "pb_volume" );
                 if( IsValidElement( m_Volume ) )
@@ -1881,7 +1883,7 @@ bool guFaderPlayBin::SetEqualizer( const wxArrayInt &eqbands )
 void guFaderPlayBin::SetEqualizerBand( const int band, const int value )
 {
     g_object_set( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
-            band ).char_str(), gdouble( value ), NULL );
+            band ).char_str(), gdouble( value ) / 10.0, NULL );
 }
 
 // -------------------------------------------------------------------------------- //
