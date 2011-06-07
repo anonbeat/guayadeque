@@ -98,7 +98,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     }
 
     //
-	SetSizeHints( wxDefaultSize, wxDefaultSize );
+	SetSizeHints( wxSize( 450,260 ), wxDefaultSize );
 
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
@@ -143,6 +143,59 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 
 	wxBoxSizer* BandsSizer;
 	BandsSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxBoxSizer * LabelsSizer;
+	LabelsSizer = new wxBoxSizer( wxVERTICAL );
+
+	wxStaticText * Label = new wxStaticText( this, wxID_ANY, wxT("dBs"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxTOP|wxALIGN_RIGHT, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("12"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("6"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxT("-12"), wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+
+	Label = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	Label->Wrap( -1 );
+	LabelsSizer->Add( Label, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+
+	BandsSizer->Add( LabelsSizer, 1, wxEXPAND, 5 );
 
 	wxBoxSizer* BandSizer00;
 	BandSizer00 = new wxBoxSizer( wxVERTICAL );
