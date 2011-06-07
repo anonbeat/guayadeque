@@ -129,6 +129,8 @@ class guLyricsPanel : public wxPanel
 
     wxString                GetLyricSource( void );
 
+    bool                    UpdateEnabled( void ) { return m_UpdateEnabled; }
+
 };
 
 // -------------------------------------------------------------------------------- //
