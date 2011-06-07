@@ -487,14 +487,17 @@ void guEq10Band::OnBandChanged( wxScrollEvent &event )
     wxSlider * Band = ( wxSlider * ) event.GetEventObject();
     if( Band )
     {
-        long value;
-        Band->GetLabel().ToLong( &value );
-        //guLogMessage( wxT( "Band%u = %i (%i)" ), value, event.GetPosition(), m_PresetComboBox->GetSelection() );
-        m_MediaCtrl->SetEqualizerBand( value, event.GetPosition() );
+        long BandIndex;
+        Band->GetLabel().ToLong( &BandIndex );
+        //guLogMessage( wxT( "Band%u = %i (%i)" ), BandIndex, event.GetPosition(), m_PresetComboBox->GetSelection() );
+        m_MediaCtrl->SetEqualizerBand( BandIndex, event.GetPosition() );
         if( m_PresetComboBox->GetSelection() != wxNOT_FOUND )
             m_BandChanged = true;
 
         OnPresetText( event );
+
+        m_Values[ BandIndex ]->SetLabel( wxString::Format( wxT( "%.1f" ), double( event.GetPosition() ) / 10.0 ) );
+        m_Values[ BandIndex ]->GetContainingSizer()->Layout();
     }
 }
 
