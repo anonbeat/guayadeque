@@ -2305,7 +2305,10 @@ int guPlayerPanel::GetPlayLoop()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 {
-    if( wxGetKeyState( WXK_SHIFT ) )
+    bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_PREVTRACK ) ||
+                      ( event.GetEventObject() == m_PrevTrackButton );
+
+    if( wxGetKeyState( WXK_SHIFT ) && m_MainFrame->IsActive() && ForceSkip )
     {
         OnPrevAlbumButtonClick( event );
         return;
@@ -2328,9 +2331,6 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         SetPosition( 0 );
         return;
     }
-
-    bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_PREVTRACK ) ||
-                      ( event.GetEventObject() == m_PrevTrackButton );
 
     PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop, ForceSkip );
     if( PrevItem )
@@ -2390,20 +2390,20 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 {
-    if( wxGetKeyState( WXK_SHIFT ) )
+    bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
+                      ( event.GetEventObject() == m_NextTrackButton );
+
+    if( wxGetKeyState( WXK_SHIFT ) && m_MainFrame->IsActive() && ForceSkip )
     {
         OnNextAlbumButtonClick( event );
         return;
     }
-    guLogDebug( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt() );
+    guLogDebug( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i  %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt(), m_IsSkipping );
     guMediaState State;
     guTrack * NextItem;
 
     if( m_IsSkipping )
         return;
-
-    bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
-                      ( event.GetEventObject() == m_NextTrackButton );
 
     NextItem = m_PlayListCtrl->GetNext( m_PlayLoop, ForceSkip );
     if( NextItem )
@@ -2487,7 +2487,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
 {
-    //guLogDebug( wxT( "OnNextAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
+    guLogDebug( wxT( "OnNextAlbumButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, m_IsSkipping );
     guMediaState State;
 
     if( m_IsSkipping )
