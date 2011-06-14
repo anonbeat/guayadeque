@@ -131,7 +131,7 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, _( "Prev Album" ), _( "Skip to previous album track in current playlist" ) );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVALBUM, _( "Prev Album" ), _( "Skip to previous album track in current playlist" ) );
         //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
         Menu->Append( MenuItem );
 

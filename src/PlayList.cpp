@@ -876,6 +876,7 @@ guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
 // -------------------------------------------------------------------------------- //
 guTrack * guPlayList::GetNextAlbum( const int playloop, const bool forceskip )
 {
+    int SaveCurItem = m_CurItem;
     if( m_Items.Count() )
     {
         if( m_CurItem == wxNOT_FOUND )
@@ -915,12 +916,14 @@ guTrack * guPlayList::GetNextAlbum( const int playloop, const bool forceskip )
 //            return &m_Items[ m_CurItem ];
 //        }
     }
+    m_CurItem = SaveCurItem;
     return NULL;
 }
 
 // -------------------------------------------------------------------------------- //
 guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
 {
+    int SaveCurItem = m_CurItem;
     if( m_Items.Count() )
     {
         //guLogMessage( wxT( "GetPrevAlbum... %i" ), m_CurItem );
@@ -972,6 +975,7 @@ guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
 //            return &m_Items[ m_CurItem ];
 //        }
     }
+    m_CurItem = SaveCurItem;
     return NULL;
 }
 
