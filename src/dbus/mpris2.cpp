@@ -1382,7 +1382,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                     if( GetVariant( msg->GetMessage(), DBUS_TYPE_DOUBLE, &Volume ) )
                                     {
                                         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETVOLUME );
-                                        event.SetInt( Volume );
+                                        event.SetInt( Volume * 100 );
                                         wxPostEvent( m_PlayerPanel, event );
                                         Send( reply );
                                         Flush();
