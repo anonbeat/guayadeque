@@ -439,6 +439,7 @@ static bool AddVariant( DBusMessage * msg, const int type, const void * data )
 // -------------------------------------------------------------------------------- //
 static bool GetVariant( DBusMessage * msg, const int type, const void * data )
 {
+    //guLogMessage( wxT( "GetVariant..." ) );
 	DBusMessageIter iter, variant;
 
 	if( !dbus_message_iter_init( msg, &iter ) )
@@ -446,12 +447,27 @@ static bool GetVariant( DBusMessage * msg, const int type, const void * data )
         guLogMessage( wxT( "GetVariant called without arguments" ) );
         return false;
 	}
-	dbus_message_iter_recurse( &iter, &variant );
-	if( dbus_message_iter_get_arg_type( &variant ) == type )
-	{
-        dbus_message_iter_get_basic( &variant, &data );
-        return true;
-	}
+	do {
+	    if( dbus_message_iter_get_arg_type( &iter ) == DBUS_TYPE_VARIANT )
+	    {
+	        guLogMessage( wxT( "Found the Variant variable") );
+            dbus_message_iter_recurse( &iter, &variant );
+            if( dbus_message_iter_get_arg_type( &variant ) == type )
+            {
+                dbus_message_iter_get_basic( &variant, &data );
+                return true;
+            }
+//            else
+//            {
+//                guLogMessage( wxT( "Not of that type. It was %i" ), dbus_message_iter_get_arg_type( &variant ) );
+//            }
+	    }
+//	    else
+//	    {
+//            guLogMessage( wxT( "Param of type %i" ), dbus_message_iter_get_arg_type( &iter ) );
+//	    }
+	} while( dbus_message_iter_next( &iter ) );
+
 	return false;
 }
 
