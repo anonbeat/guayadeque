@@ -437,9 +437,8 @@ static bool AddVariant( DBusMessage * msg, const int type, const void * data )
 }
 
 // -------------------------------------------------------------------------------- //
-static bool GetVariant( DBusMessage * msg, const int type, const void * data )
+static bool GetVariant( DBusMessage * msg, const int type, void * data )
 {
-    //guLogMessage( wxT( "GetVariant..." ) );
 	DBusMessageIter iter, variant;
 
 	if( !dbus_message_iter_init( msg, &iter ) )
@@ -454,18 +453,10 @@ static bool GetVariant( DBusMessage * msg, const int type, const void * data )
             dbus_message_iter_recurse( &iter, &variant );
             if( dbus_message_iter_get_arg_type( &variant ) == type )
             {
-                dbus_message_iter_get_basic( &variant, &data );
+                dbus_message_iter_get_basic( &variant, data );
                 return true;
             }
-//            else
-//            {
-//                guLogMessage( wxT( "Not of that type. It was %i" ), dbus_message_iter_get_arg_type( &variant ) );
-//            }
 	    }
-//	    else
-//	    {
-//            guLogMessage( wxT( "Param of type %i" ), dbus_message_iter_get_arg_type( &iter ) );
-//	    }
 	} while( dbus_message_iter_next( &iter ) );
 
 	return false;
@@ -1382,7 +1373,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                     if( GetVariant( msg->GetMessage(), DBUS_TYPE_DOUBLE, &Volume ) )
                                     {
                                         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETVOLUME );
-                                        event.SetInt( Volume * 100 );
+                                        event.SetInt( ( int ) ( Volume * 100 ) );
                                         wxPostEvent( m_PlayerPanel, event );
                                         Send( reply );
                                         Flush();
