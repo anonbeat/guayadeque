@@ -322,3 +322,11 @@ int guPLSoListBox::GetItemId( const int row ) const
 }
 
 // -------------------------------------------------------------------------------- //
+wxString guPLSoListBox::GetSearchText( int item ) const
+{
+    return wxString::Format( wxT( "\"%s\" \"%s\"" ),
+            m_Items[ item ].m_ArtistName.c_str(),
+            m_Items[ item ].m_SongName.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //

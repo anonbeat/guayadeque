@@ -74,7 +74,7 @@ class guSoListBox : public guListView
 
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
-    wxString                    GetSearchText( int item ) const;
+    virtual wxString            GetSearchText( int item ) const;
 
     void                        OnItemColumnClicked( wxListEvent &event );
     void                        OnItemColumnRClicked( wxListEvent &event );

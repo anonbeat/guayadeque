@@ -47,6 +47,8 @@ class guPLSoListBox : public guSoListBox
 
     virtual void        CreateAcceleratorTable();
 
+    virtual wxString    GetSearchText( int item ) const;
+
   public :
     guPLSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, int style = 0 );
     ~guPLSoListBox();
