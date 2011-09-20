@@ -3351,7 +3351,10 @@ bool guIpodMediaLibPanel::SetAlbumCover( const int albumid, const wxString &albu
                         guLogMessage( wxT( "Couldnt set the cover image %s" ), TmpFile.c_str() );
                 }
 
-                guTagSetPicture( Tracks[ Index ].m_FileName, coverimg );
+                if( m_PortableMediaDevice->CoverFormats() & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
+                {
+                    guTagSetPicture( Tracks[ Index ].m_FileName, coverimg );
+                }
             }
             ( ( guIpodLibrary * ) m_Db )->iPodFlush();
             wxRemoveFile( TmpFile );

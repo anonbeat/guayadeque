@@ -1825,7 +1825,7 @@ int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath, bool * creat
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::ReadFileTags( const wxString &filename )
+int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowratings )
 {
   guTagInfo * TagInfo = guGetTagInfoHandler( filename );
   if( TagInfo )
@@ -1858,7 +1858,6 @@ int guDbLibrary::ReadFileTags( const wxString &filename )
       else
       {
           guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
-
       }
 
       CurTrack.m_PathId = GetPathId( CurTrack.m_Path );
@@ -1919,7 +1918,7 @@ int guDbLibrary::ReadFileTags( const wxString &filename )
 
       delete TagInfo;
 
-      UpdateSong( CurTrack, IsNewTrack );
+      UpdateSong( CurTrack, IsNewTrack || allowratings );
 
       return 1;
   }

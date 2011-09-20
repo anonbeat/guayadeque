@@ -277,6 +277,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         ScanDirectory( m_ScanPath, true );
     }
 
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    bool EmbeddedRatings = Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) );
     // For every new track file update it in the database
     count = m_TrackFiles.Count();
     if( count )
@@ -293,7 +295,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 break;
 
             //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ index ].c_str() );
-            m_Db->ReadFileTags( m_TrackFiles[ index ] );
+            m_Db->ReadFileTags( m_TrackFiles[ index ], EmbeddedRatings );
             //Sleep( 1 );
             index++;
             evtup.SetExtraLong( index );
@@ -311,7 +313,6 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     }
     else
     {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
         CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
     }
