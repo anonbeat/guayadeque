@@ -30,13 +30,13 @@ class guFetchCoverLinksThread;
 class guGoogleCoverFetcher : public guCoverFetcher
 {
   private :
-    wxArrayString ExtractImageInfo( const wxString &content );
-    int           ExtractImagesInfo( wxString &content, int count );
+    void            ExtractImageInfo( const wxString &content );
+    int             ExtractImagesInfo( wxString &content, int count );
 
   public :
     guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
                                     const wxChar * artist, const wxChar * album );
-    virtual int   AddCoverLinks( int pagenum );
+    virtual int     AddCoverLinks( int pagenum );
 };
 
 #endif
