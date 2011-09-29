@@ -32,9 +32,6 @@
 #define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&sout=1&start=%u" )
 
 #define GOOGLE_COVERS_PER_PAGE      15
-#define GOOGLE_COVERINFO_LINK       3           // 3 -> Link
-#define GOOGLE_COVERINFO_COMMENT    6           // 6 -> Comment
-#define GOOGLE_COVERINFO_SIZE       9           // 9 -> Size >> 425 x 283 - 130 KB
 
 // -------------------------------------------------------------------------------- //
 guGoogleCoverFetcher::guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
@@ -44,107 +41,61 @@ guGoogleCoverFetcher::guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
+wxString ExtractString( const wxString &source, const wxString &start, const wxString &end )
 {
-    wxArrayString RetVal;
-    wxString CurParam;
-    CurParam = wxEmptyString;
-    wxChar CurChar;
-    int index;
-    int count = content.Length();
-    for( index = 0; index < count; index++ )
+    int StartPos = source.Find( start );
+    int EndPos;
+    if( StartPos != wxNOT_FOUND )
     {
-        CurChar = content[ index ];
-        if( CurChar == wxT( '\"' ) )
+        wxString SearchStr = source.Mid( StartPos + start.Length() );
+        EndPos = SearchStr.Find( end );
+        if( EndPos != wxNOT_FOUND )
         {
-            index++;
-            while( ( CurChar = content[ index ] ) != wxT( '\"' ) && ( index < count ) )
-            {
-                CurParam.Append( CurChar );
-                index++;
-            }
-        }
-        else if( CurChar == wxT( ',' ) /*|| CurChar == wxT( ')' )*/ )
-        {
-            //guLogMessage( wxT( "%i= '%s'" ), RetVal.Count(), CurParam.c_str() );
-            RetVal.Add( CurParam );
-            CurParam = wxEmptyString;
-        }
-        else
-        {
-            CurParam.Append( CurChar );
-        }
-    }
-    if( !CurParam.IsEmpty() )
-        RetVal.Add( CurParam );
-    //guLogMessage( wxT( "ImageLink: %s" ), RetVal[ 3 ].c_str() );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString ExtractCoverFromGoogleLink( wxString &link )
-{
-    int StrPos = link.Find( wxT( "/imgres?imgurl\\x3d" ) );
-    if( StrPos != wxNOT_FOUND )
-    {
-        StrPos += 18;
-        wxString RetVal = link.Mid( StrPos );
-        StrPos = RetVal.Find( wxT( "\\x26imgrefurl" ) );
-        if( StrPos != wxNOT_FOUND )
-        {
-            return RetVal.Mid( 0, StrPos );
+            return SearchStr.Mid( 0, EndPos );
         }
     }
     return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
+void guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
+{
+    //guLogMessage( wxT( "ExtractImageInfo: '%s'" ), content.c_str() );
+    wxArrayString CurImageInfo;
+    CurImageInfo.Add( ExtractString( content, wxT( "<a href=\"/imgres?imgurl=" ), wxT( "&amp;" ) ) );
+    wxString ImgInfo = ExtractString( content, wxT( "&amp;w=" ), wxT( "&amp;" ) );
+    if( !ImgInfo.IsEmpty() )
+        ImgInfo += wxT( " x " ) + ExtractString( content, wxT( "&amp;h=" ), wxT( "&amp;" ) );
+    CurImageInfo.Add( ImgInfo );
+    m_CoverLinks->Add( CurImageInfo );
+}
+
+// -------------------------------------------------------------------------------- //
 int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
 {
-    wxArrayString CurImage;
-    wxArrayString GoogleImage;
     int ImageIndex = 0;
-
-    int StrPos = content.Find( wxT( "dyn.setResults([[" ) );
-    if( StrPos == wxNOT_FOUND )
-        return 0;
-    content = content.Mid( StrPos + 14 );
-    StrPos = content.Find( wxT( "]]);" ) );
-    if( StrPos == wxNOT_FOUND )
-        return 0;
-    content = content.Mid( 0, StrPos );
-
-    StrPos = 0;
-    //guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
-    while( ( StrPos != wxNOT_FOUND ) && !m_MainThread->TestDestroy() )
+    while( !m_MainThread->TestDestroy() )
     {
-        content = content.Mid( StrPos + 3 );
-        StrPos = content.Find( wxT( "],[" ) );
+        int FindPos = content.Find( wxT( "<a href=\"/imgres?imgurl=" ) );
+        if( FindPos == wxNOT_FOUND )
+            break;
 
-        //guLogMessage( wxT( "%s" ), content.Mid( 0, StrPos ).c_str() );
-        wxHtmlEntitiesParser EntitiesParser;
-        GoogleImage = ExtractImageInfo( EntitiesParser.Parse( content.Mid( 0, StrPos ) ) );
-        if( GoogleImage.Count() >= GOOGLE_COVERINFO_SIZE )
-        {
-            //RetVal.Add( CurImage );
-            CurImage.Empty();
-            if( GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
-            {
-                GoogleImage[ GOOGLE_COVERINFO_LINK ] = ExtractCoverFromGoogleLink( GoogleImage[ 0 ] );
-            }
+        content = content.Mid( FindPos );
 
-            if( !GoogleImage[ GOOGLE_COVERINFO_LINK ].IsEmpty() )
-            {
-                CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_LINK ] );
-                CurImage.Add( GoogleImage[ GOOGLE_COVERINFO_SIZE ] );
-                m_CoverLinks->Add( CurImage );
-                ImageIndex++;
-                if( ImageIndex == count )
-                    break;
-            }
-        }
-        //guLogMessage( wxT( "Pos: %u" ), StrPos );
+        FindPos = content.Find( wxT( "</a>" ) );
+        if( FindPos == wxNOT_FOUND )
+            break;
+
+        ExtractImageInfo( content.Mid( 0, FindPos + 4 ) );
+        ImageIndex++;
+        if( ImageIndex > count )
+            break;
+
+        content = content.Mid( FindPos + 4 );
+        if( content.IsEmpty() )
+            break;
     }
+
     return ImageIndex;
 }
 
@@ -154,7 +105,7 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
     wxString SearchString = wxString::Format( wxT( "\"%s\" \"%s\"" ), m_Artist.c_str(), m_Album.c_str() );
     //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, m_SearchString.c_str() );
     wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_URL, guURLEncode( SearchString ).c_str(), ( pagenum * GOOGLE_COVERS_PER_PAGE ) );
-    guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
+    //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
     if( !m_MainThread->TestDestroy() )
     {
         //printf( "Buffer:\n%s\n", Buffer );
