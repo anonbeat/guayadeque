@@ -135,7 +135,7 @@ TagLib::ID3v2::PopularimeterFrame * GetPopM( TagLib::ID3v2::Tag * tag, const Tag
 int inline guPopMToRating( const int rating )
 {
     if( rating < 0 )
-        return -1;
+        return 0;
     if( rating == 0 )
         return 0;
     if( rating < 64 )
@@ -168,7 +168,7 @@ int inline guWMRatingToRating( const int rating )
 // -------------------------------------------------------------------------------- //
 int inline guRatingToPopM( const int rating )
 {
-    int Ratings[] = { -1, 0, 1, 64, 128, 192, 255 };
+    int Ratings[] = { 0, 0, 1, 64, 128, 192, 255 };
     guLogMessage( wxT( "Rating: %i => %i" ), rating, Ratings[ rating + 1 ] );
     return Ratings[ rating + 1 ];
 }
