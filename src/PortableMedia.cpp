@@ -1861,9 +1861,10 @@ int guIpodLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &trackids
     if( OldPlayList )
     {
         int Index;
-        int Count = trackids.Count();
+        int Count;
         guTrackArray PlayListTracks;
         GetSongs( trackids, &PlayListTracks );
+	Count = PlayListTracks.Count();
         for( Index = 0; Index < Count; Index++ )
         {
             Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
