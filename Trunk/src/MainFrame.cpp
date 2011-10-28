@@ -4586,6 +4586,8 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     // Now we can start the dbus server
     m_DBusServer->Run();
 
+    //m_MMKeys->GrabMediaPlayerKeys( 0 );
+
     CreatePortablePlayersMenu( m_PortableDevicesMenu );
 
     CreateTaskBarIcon();
