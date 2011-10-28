@@ -336,8 +336,8 @@ void guLastFMAudioScrobble::ReadUserConfig( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) );
-        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) );
+        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "lastfm" ) );
+        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "lastfm" ) );
     }
 }
 
@@ -362,8 +362,8 @@ void guLibreFMAudioScrobble::ReadUserConfig( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LibreFM" ) );
-        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LibreFM" ) );
+        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "librefm" ) );
+        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "librefm" ) );
     }
 }
 
@@ -381,12 +381,12 @@ guAudioScrobble::guAudioScrobble( guDbLibrary * db )
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) )
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) )
     {
         m_LastFMAudioScrobble = new guLastFMAudioScrobble( db );
     }
 
-    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) )
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) ) )
     {
         m_LibreFMAudioScrobble = new guLibreFMAudioScrobble( db );
     }
@@ -531,7 +531,7 @@ void guAudioScrobble::OnConfigUpdated( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) )
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) )
     {
         if( !m_LastFMAudioScrobble )
             m_LastFMAudioScrobble = new guLastFMAudioScrobble( m_Db );
@@ -545,7 +545,7 @@ void guAudioScrobble::OnConfigUpdated( void )
         }
     }
 
-    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) )
+    if( Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) ) )
     {
         if( !m_LibreFMAudioScrobble )
             m_LibreFMAudioScrobble = new guLibreFMAudioScrobble( m_Db );

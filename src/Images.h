@@ -179,7 +179,12 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_star_highlight_big,
     //
     guIMAGE_INDEX_tiny_crossfade,
-    guIMAGE_INDEX_tiny_gapless
+    guIMAGE_INDEX_tiny_gapless,
+    //
+    guIMAGE_INDEX_tiny_mv_library,
+    guIMAGE_INDEX_tiny_mv_albumbrowser,
+    guIMAGE_INDEX_tiny_mv_treeview,
+    guIMAGE_INDEX_tiny_mv_playlists
 };
 
 

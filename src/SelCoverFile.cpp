@@ -65,7 +65,7 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	MainSizer->Add( ControlsSizer, 1, wxEXPAND, 5 );
 
 	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "General" ) ) );
+    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "general" ) ) );
 	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
 	wxStdDialogButtonSizer * StdBtnSizer = new wxStdDialogButtonSizer();
@@ -74,23 +74,29 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	StdBtnSizer->AddButton( m_StdBtnOk );
 	wxButton * StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	StdBtnSizer->AddButton( StdBtnSizerCancel );
+	StdBtnSizer->SetAffirmativeButton( m_StdBtnOk );
+	StdBtnSizer->SetCancelButton( StdBtnSizerCancel );
 	StdBtnSizer->Realize();
 	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	m_StdBtnOk->SetDefault();
+
 	m_SelFileBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
 	m_FileLink->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
 
 	Connect( ID_SELCOVERDIALOG_FINISH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSelCoverFile::OnCoverFinish ), NULL, this );
+
+	m_FileLink->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
 guSelCoverFile::~guSelCoverFile()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "General" ) );
+    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "general" ) );
 
 	m_SelFileBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
 	m_FileLink->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
@@ -102,7 +108,7 @@ guSelCoverFile::~guSelCoverFile()
 void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
     wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
 
     wxFileDialog * FileDialog = new wxFileDialog( this, _( "Select the cover filename" ),

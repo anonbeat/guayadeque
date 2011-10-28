@@ -31,13 +31,15 @@ class guStationPlayListItem
   public:
     wxString m_Name;
     wxString m_Location;
+    int      m_Length;
 
     guStationPlayListItem() {};
 
-    guStationPlayListItem( const wxString &location, const wxString &title )
+    guStationPlayListItem( const wxString &location, const wxString &title, const int length = wxNOT_FOUND )
     {
         m_Name = title;
         m_Location = location;
+        m_Length = length;
     }
 
     wxString GetLocation( const bool relative = false, const wxString &pathbase = wxEmptyString );
@@ -94,9 +96,9 @@ class guPlayListFile
         return m_PlayList[ index ];
     }
 
-    void                    AddItem( const wxString &location, const wxString &title = wxEmptyString )
+    void                    AddItem( const wxString &location, const wxString &title = wxEmptyString, const int length = wxNOT_FOUND )
     {
-        m_PlayList.Add( new guStationPlayListItem( location, title ) );
+        m_PlayList.Add( new guStationPlayListItem( location, title, length ) );
     }
 
     void                    AddItem( const guStationPlayListItem &item )

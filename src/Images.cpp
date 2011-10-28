@@ -179,6 +179,11 @@
 //
 #include "./images/tiny_crossfade.h"
 #include "./images/tiny_gapless.h"
+//
+#include "./images/tiny_mv_library.h"
+#include "./images/tiny_mv_albumbrowser.h"
+#include "./images/tiny_mv_treeview.h"
+#include "./images/tiny_mv_playlists.h"
 
 // -------------------------------------------------------------------------------- //
 typedef struct {
@@ -260,12 +265,12 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_pref_playback,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_podcasts,                 wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_pref_record,                   wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_crossfader,		    wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_jamendo,		    wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_magnatune,		    wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_pref_accelerators,		    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_crossfader,		        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_jamendo,		            wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_magnatune,		        wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_pref_accelerators,		        wxBITMAP_TYPE_PNG ),
     //
-    GUIMAGE( guImage_loc_library,		    wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_loc_library,		            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_portable_device,	        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_net_radio,	                wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_loc_podcast,	                wxBITMAP_TYPE_PNG ),
@@ -346,7 +351,12 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_star_highlight_big,            wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_tiny_crossfade,                wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_tiny_gapless,                  wxBITMAP_TYPE_PNG )
+    GUIMAGE( guImage_tiny_gapless,                  wxBITMAP_TYPE_PNG ),
+    //
+    GUIMAGE( guImage_tiny_mv_library,               wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_mv_albumbrowser,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_mv_treeview,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_tiny_mv_playlists,             wxBITMAP_TYPE_PNG )
 };
 
 

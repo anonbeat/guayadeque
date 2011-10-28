@@ -72,11 +72,9 @@ class guLocationTreeCtrl : public wxTreeCtrl
     wxImageList *   m_ImageList;
 
     wxTreeItemId    m_RootId;
-    wxTreeItemId    m_MyMusicId;
+    wxTreeItemId    m_LocalMusicId;
+    wxTreeItemId    m_OnlineMusicId;
     wxTreeItemId    m_PortableDeviceId;
-    wxTreeItemId    m_OnlineRadioId;
-    wxTreeItemId    m_OnlineStoreId;
-    wxTreeItemId    m_PodcastId;
     wxTreeItemId    m_ContextId;
 
     wxArrayString   m_IconNames;
@@ -84,7 +82,7 @@ class guLocationTreeCtrl : public wxTreeCtrl
 
 
     void            OnContextMenu( wxTreeEvent &event );
-    void            OnKeyDown( wxKeyEvent &event );
+//    void            OnKeyDown( wxKeyEvent &event );
 
   public :
     guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainframe );
@@ -92,11 +90,9 @@ class guLocationTreeCtrl : public wxTreeCtrl
 
     void            ReloadItems( const bool loadstate = false );
 
-    wxTreeItemId    MyMusicId( void ) { return m_MyMusicId; }
+    wxTreeItemId    LocalMusicId( void ) { return m_LocalMusicId; }
+    wxTreeItemId    OnlineMusicId( void ) { return m_OnlineMusicId; }
     wxTreeItemId    PortableDeviceId( void ) { return m_PortableDeviceId; }
-    wxTreeItemId    OnlineRadioId( void ) { return m_OnlineRadioId; }
-    wxTreeItemId    OnlineStoreId( void ) { return m_OnlineStoreId; }
-    wxTreeItemId    PodcastId( void ) { return m_PodcastId; }
     wxTreeItemId    ContextId( void ) { return m_ContextId; }
 
     bool            Locked( void ) { return m_LockCount; }
@@ -111,6 +107,9 @@ class guLocationTreeCtrl : public wxTreeCtrl
                 ReloadItems();
         }
     }
+
+    int             GetIconIndex( const wxString &collection );
+
 };
 
 // -------------------------------------------------------------------------------- //
@@ -118,6 +117,7 @@ class guLocationPanel : public wxPanel
 {
   protected :
     guMainFrame *           m_MainFrame;
+
     guLocationTreeCtrl *    m_LocationTreeCtrl;
 
     void                    OnLocationItemActivated( wxTreeEvent &event );
@@ -127,7 +127,7 @@ class guLocationPanel : public wxPanel
     guLocationPanel( wxWindow * parent );
     ~guLocationPanel();
 
-    void                    OnPortableDeviceChanged( void );
+    void                    CollectionsUpdated( void );
     void                    OnPanelVisibleChanged( void );
 
     bool                    Locked( void ) { return m_LocationTreeCtrl->Locked(); }

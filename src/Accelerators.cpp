@@ -43,6 +43,7 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
         guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
         guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+        //
         guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
         guAccelCmdIds.Add( ID_MENU_VIEW_FULLSCREEN );
         guAccelCmdIds.Add( ID_MAINFRAME_SETFORCEGAPLESS );
@@ -53,6 +54,7 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_MENU_PLAY_STREAM );
         guAccelCmdIds.Add( ID_MENU_PREFERENCES );
         guAccelCmdIds.Add( ID_MENU_QUIT );
+        //
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_RANDOMPLAY );
         guAccelCmdIds.Add( ID_PLAYERPANEL_SETRATING_0 );
         guAccelCmdIds.Add( ID_PLAYERPANEL_SETRATING_1 );
@@ -63,6 +65,7 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_REPEATTRACK );
         guAccelCmdIds.Add( ID_MENU_LAYOUT_CREATE );
+        //
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_SAVE );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_SEARCH );
         guAccelCmdIds.Add( ID_MENU_VIEW_ALBUMBROWSER );
@@ -70,14 +73,13 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_MENU_VIEW_PLAYER_PLAYLIST );
         guAccelCmdIds.Add( ID_MENU_VIEW_FILEBROWSER );
         guAccelCmdIds.Add( ID_MENU_VIEW_PLAYER_FILTERS );
-        guAccelCmdIds.Add( ID_MENU_VIEW_JAMENDO );
         guAccelCmdIds.Add( ID_MENU_VIEW_LASTFM );
         guAccelCmdIds.Add( ID_MENU_VIEW_LIBRARY );
         guAccelCmdIds.Add( ID_MENU_VIEW_LYRICS );
-        guAccelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE );
+        //
+        guAccelCmdIds.Add( ID_MENU_VIEW_RADIO );
         guAccelCmdIds.Add( ID_MENU_VIEW_PLAYLISTS );
         guAccelCmdIds.Add( ID_MENU_VIEW_PODCASTS );
-        guAccelCmdIds.Add( ID_MENU_VIEW_RADIO );
         guAccelCmdIds.Add( ID_MENU_VIEW_MAIN_LOCATIONS );
         guAccelCmdIds.Add( ID_MENU_VIEW_STATUSBAR );
         guAccelCmdIds.Add( ID_MENU_VIEW_PLAYER_VUMETERS );
@@ -85,6 +87,7 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_PLAYERPANEL_NEXTALBUM );
         guAccelCmdIds.Add( ID_PLAYERPANEL_PREVTRACK );
         guAccelCmdIds.Add( ID_PLAYERPANEL_PREVALBUM );
+        //
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_SMARTPLAY );
         guAccelCmdIds.Add( ID_PLAYERPANEL_STOP );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_STOP_ATEND );
@@ -112,6 +115,7 @@ int guAccelGetActionNames( wxArrayString &actionnames )
     actionnames.Add( _( "Enqueue" ) );
     actionnames.Add( _( "Enqueue After Track" ) );
     actionnames.Add( _( "Enqueue After Album" ) );
+    //
     actionnames.Add( _( "Enqueue After Artist" ) );
 	actionnames.Add( _( "Full Screen" ) );
 	actionnames.Add( _( "Gapless/Crossfading" ) );
@@ -122,6 +126,7 @@ int guAccelGetActionNames( wxArrayString &actionnames )
 	actionnames.Add( _( "Play Stream" ) );
 	actionnames.Add( _( "Preferences" ) );
 	actionnames.Add( _( "Quit" ) );
+	//
 	actionnames.Add( _( "Randomize Playlist" ) );
 	actionnames.Add( wxString( _( "Rating" ) ) + wxT( " ☆☆☆☆☆" ) );
 	actionnames.Add( wxString( _( "Rating" ) ) + wxT( " ★☆☆☆☆" ) );
@@ -132,21 +137,21 @@ int guAccelGetActionNames( wxArrayString &actionnames )
 	actionnames.Add( _( "Repeat All Tracks" ) );
 	actionnames.Add( _( "Repeat Current Track" ) );
 	actionnames.Add( _( "Save Layout" ) );
+	//
 	actionnames.Add( _( "Save to Playlist" ) );
 	actionnames.Add( _( "Search" ) );
 	actionnames.Add( _( "Show Browser" ) );
 	actionnames.Add( _( "Show Covers" ) );
-	actionnames.Add( _( "Show Current Playlist" ) );
+	actionnames.Add( _( "Show Playlist" ) );
 	actionnames.Add( _( "Show Files" ) );
 	actionnames.Add( _( "Show Filters" ) );
-	actionnames.Add( _( "Show Jamendo" ) );
 	actionnames.Add( _( "Show Last.fm" ) );
 	actionnames.Add( _( "Show Library" ) );
 	actionnames.Add( _( "Show Lyrics" ) );
-	actionnames.Add( _( "Show Magnatune" ) );
-	actionnames.Add( _( "Show PLaylists" ) );
-	actionnames.Add( _( "Show Podcasts" ) );
+	//
 	actionnames.Add( _( "Show Radio" ) );
+	actionnames.Add( _( "Show Playlists" ) );
+	actionnames.Add( _( "Show Podcasts" ) );
 	actionnames.Add( _( "Show Sources" ) );
 	actionnames.Add( _( "Show Status Bar" ) );
 	actionnames.Add( _( "Show VU Meters" ) );
@@ -154,12 +159,13 @@ int guAccelGetActionNames( wxArrayString &actionnames )
 	actionnames.Add( _( "Skip Next Album" ) );
 	actionnames.Add( _( "Skip Previous" ) );
 	actionnames.Add( _( "Skip Previous Album" ) );
-	actionnames.Add( _( "Smart Mode" ) );
+	//
+	actionnames.Add( _( "Smart Play" ) );
 	actionnames.Add( _( "Stop" ) );
 	actionnames.Add( _( "Stop at End" ) );
 	actionnames.Add( _( "Update Covers" ) );
-	actionnames.Add( _( "Update Library" ) );
-	actionnames.Add( _( "Update Library (Forced)" ) );
+	actionnames.Add( _( "Update" ) );
+	actionnames.Add( _( "Update (Forced)" ) );
 	actionnames.Add( _( "Update Podcasts" ) );
 	actionnames.Add( _( "Volume Down" ) );
 	actionnames.Add( _( "Volume Up" ) );
@@ -180,6 +186,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 131085 );
     accelkeys.Add( 393229 );
     accelkeys.Add( 65549 );
+    //
     accelkeys.Add( 327693 );
     accelkeys.Add( 350 );
     accelkeys.Add( 131143 );
@@ -190,6 +197,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 131151 );
     accelkeys.Add( 131421 );
     accelkeys.Add( 131153 );
+    //
     accelkeys.Add( 131154 );
     accelkeys.Add( 131120 );
     accelkeys.Add( 131121 );
@@ -200,6 +208,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 342 );
     accelkeys.Add( 262486 );
     accelkeys.Add( 343 );
+    //
     accelkeys.Add( 131155 );
     accelkeys.Add( 131142 );
     accelkeys.Add( 0 );
@@ -210,8 +219,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 0 );
     accelkeys.Add( 0 );
     accelkeys.Add( 0 );
-    accelkeys.Add( 0 );
-    accelkeys.Add( 0 );
+    //
     accelkeys.Add( 0 );
     accelkeys.Add( 0 );
     accelkeys.Add( 0 );
@@ -222,6 +230,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 393532 );
     accelkeys.Add( 131386 );
     accelkeys.Add( 393530 );
+    //
     accelkeys.Add( 341 );
     accelkeys.Add( 196640 );
     accelkeys.Add( 393248 );
@@ -239,7 +248,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
 void guAccelOnConfigUpdated( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    guAccelKeys = Config->ReadANum( wxT( "AccelKey" ), 0, wxT( "Accelerators" ) );
+    guAccelKeys = Config->ReadANum( wxT( "AccelKey" ), 0, wxT( "accelerators" ) );
     if( guAccelKeys.Count() == 0 )
     {
         guAccelGetDefaultKeys( guAccelKeys );
@@ -625,13 +634,12 @@ int guAccelDoAcceleratorTable( const wxArrayInt &aliascmds, const wxArrayInt &re
     int EntryCount = 0;
     int Index;
     int Count = aliascmds.Count();
-
     for( Index = 0; Index < Count; Index++ )
     {
         int AccelKeyCode = guAccelGetCommandKeyCode( aliascmds[ Index ] );
         if( AccelKeyCode )
         {
-            //guLogMessage( wxT( "PlayList Accelerator %i) %04X  %04X %i  %c" ), Index, AccelKeyCode >> 16, AccelKeyCode & 0xFFFF, AccelKeyCode & 0xFFFF );
+            //guLogMessage( wxT( "Creating Accelerator %i) %04X  %04X %i  '%s'" ), Index, AccelKeyCode >> 16, AccelKeyCode & 0xFFFF, AccelKeyCode & 0xFFFF, guAccelGetKeyCodeString( AccelKeyCode ).c_str() );
             AccelEntries[ EntryCount++ ].Set( AccelKeyCode >> 16, AccelKeyCode & 0xFFFF, realcmds[ Index ] );
         }
     }
@@ -642,6 +650,5 @@ int guAccelDoAcceleratorTable( const wxArrayInt &aliascmds, const wxArrayInt &re
     }
     return EntryCount;
 }
-
 
 // -------------------------------------------------------------------------------- //

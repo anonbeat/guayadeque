@@ -126,7 +126,7 @@ bool guGauge::SetValue( int value )
     {
         m_LastValue = m_PaintWidth;
         Refresh();
-        Update();
+//        Update();
     }
     return true;
 }
@@ -139,7 +139,7 @@ void guGauge::SetRange( int range )
     m_Factor = (float) GetSize().x / (float) range;
     SetValue( GetValue() );
     Refresh();
-    Update();
+//    Update();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -156,8 +156,8 @@ guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-    m_ForceGapless = ( !FadeOutTime || Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) ) );
+    int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
+    m_ForceGapless = ( !FadeOutTime || Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "crossfader" ) ) );
 
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Enable audioscrobbling" ) );
@@ -219,7 +219,7 @@ void guStatusBar::OnConfigUpdated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         Config->RegisterObject( this );
 
-        int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+        int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
         SetPlayMode( !FadeOutTime || m_ForceGapless );
     }
 }
@@ -274,7 +274,7 @@ void guStatusBar::SetPlayMode( const bool forcegapless )
     {
         m_ForceGapless = forcegapless;
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "Crossfader" ) );
+        Config->WriteBool( wxT( "ForceGapless" ), m_ForceGapless, wxT( "crossfader" ) );
         Config->Flush();
         if( m_PlayMode )
         {
@@ -347,20 +347,20 @@ void guStatusBar::OnAudioScrobbleClicked( void )
     bool ConfigUpdated = false;
     int  LastFMEnabled = wxNOT_FOUND;
     int  LibreFMEnabled = wxNOT_FOUND;
-    if( !Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() &&
-        !Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LastFM" ) ).IsEmpty() )
+    if( !Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "lastfm" ) ).IsEmpty() &&
+        !Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "lastfm" ) ).IsEmpty() )
     {
-        LastFMEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) );
-        Config->WriteBool( wxT( "SubmitEnabled"), LastFMEnabled, wxT( "LastFM" ) );
+        LastFMEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) );
+        Config->WriteBool( wxT( "SubmitEnabled"), LastFMEnabled, wxT( "lastfm" ) );
         ConfigUpdated = true;
     }
 
-    if( ( ( LastFMEnabled == ( LibreFMEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) ) ) ) ||
+    if( ( ( LastFMEnabled == ( LibreFMEnabled = !Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) ) ) ) ||
           ( LastFMEnabled == wxNOT_FOUND ) ) &&
-       !Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "LibreFM" ) ).IsEmpty() &&
-        !Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "LibreFM" ) ).IsEmpty() )
+       !Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "librefm" ) ).IsEmpty() &&
+        !Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "librefm" ) ).IsEmpty() )
     {
-        Config->WriteBool( wxT( "SubmitEnabled"), LibreFMEnabled, wxT( "LibreFM" ) );
+        Config->WriteBool( wxT( "SubmitEnabled"), LibreFMEnabled, wxT( "librefm" ) );
     }
 
     if( ConfigUpdated )
@@ -386,7 +386,7 @@ void guStatusBar::OnPlayModeClicked( void )
 {
     //guLogMessage( wxT( "StatusBar::OnPlayModeClicked..." ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+    int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
     if( FadeOutTime )
     {
         SetPlayMode( !m_ForceGapless );

@@ -71,6 +71,7 @@ class guAlbumBrowserItem
 WX_DECLARE_OBJARRAY( guAlbumBrowserItem, guAlbumBrowserItemArray );
 
 class guAlbumBrowser;
+class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
 class guAlbumBrowserItemPanel : public wxPanel
@@ -86,11 +87,8 @@ class guAlbumBrowserItemPanel : public wxPanel
     // GUI
     wxBoxSizer *            m_MainSizer;
     guStaticBitmap *        m_Bitmap;
-    //wxStaticText *          m_ArtistLabel;
     guAutoScrollText *      m_ArtistLabel;
-    //wxStaticText *          m_AlbumLabel;
     guAutoScrollText *      m_AlbumLabel;
-    //wxStaticText *          m_TracksLabel;
     guAutoScrollText *      m_TracksLabel;
 
     void                    OnContextMenu( wxContextMenuEvent &event );
@@ -134,6 +132,7 @@ class guUpdateAlbumDetails;
 class guAlbumBrowser : public wxPanel
 {
   protected :
+    guMediaViewer *                 m_MediaViewer;
     guDbLibrary *                   m_Db;
     guPlayerPanel *                 m_PlayerPanel;
     guAlbumBrowserItemArray         m_AlbumItems;
@@ -149,50 +148,41 @@ class guAlbumBrowser : public wxPanel
     unsigned int                    m_PagesCount;       // The number of pages to scroll
     wxBitmap *                      m_BlankCD;
     wxTimer                         m_RefreshTimer;
-    wxArrayString                   m_DynFilterArray;
     guDynPlayList                   m_DynFilter;
-    int                             m_ContextMenuFlags;
+    guAlbumBrowserItem *            m_LastAlbumBrowserItem;
 
+    wxString                        m_LastSearchString;
+
+    int                             m_SortSelected;
+
+    wxString                        m_ConfigPath;
 
     // GUI
-    wxBoxSizer *                    m_FilterSizer;
-    wxChoice *                      m_FilterChoice;
-    wxBitmapButton *                m_AddFilterButton;
-    wxBitmapButton *                m_DelFilterButton;
-    wxBitmapButton *                m_EditFilterButton;
-    wxChoice *                      m_OrderChoice;
 	wxGridSizer *                   m_AlbumsSizer;
 	wxStaticText *                  m_NavLabel;
 	wxSlider *                      m_NavSlider;
 	wxSize                          m_LastSize;
-	wxSearchCtrl *                  m_SearchTextCtrl;
-    wxTimer                         m_TextChangedTimer;
     wxArrayString                   m_TextSearchFilter;
 
-    bool                            m_InstantSearchEnabled;
-    bool                            m_EnterSelectSearchEnabled;
+    int                             GetItemStart( void ) { return m_ItemStart; }
+    int                             GetItemCount( void ) { return m_ItemCount; }
+    int                             GetAlbumsCount( void ) { return m_AlbumsCount; }
 
     void                            OnChangedSize( wxSizeEvent &event );
     void                            OnChangingPosition( wxScrollEvent& event );
     void                            OnRefreshTimer( wxTimerEvent &event );
 
-    void                            OnFilterSelected( wxCommandEvent &event );
+//    void                            OnFilterSelected( wxCommandEvent &event );
     void                            OnAddFilterClicked( wxCommandEvent &event );
     void                            OnDelFilterClicked( wxCommandEvent &event );
     void                            OnEditFilterClicked( wxCommandEvent &event );
 
-    void                            OnOrderSelected( wxCommandEvent &event );
+    void                            OnSortSelected( wxCommandEvent &event );
     void                            OnUpdateDetails( wxCommandEvent &event );
 
     void                            OnMouseWheel( wxMouseEvent& event );
-//    void                            OnBeginDrag( wxCommandEvent &event );
 
-    void                            OnSearchTextChanged( wxCommandEvent &event );
-    void                            OnSearchCancelled( wxCommandEvent &event );
-    void                            OnSearchSelected( wxCommandEvent &event );
-    void                            OnTextChangedTimer( wxTimerEvent &event );
-
-    virtual void                    NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+    virtual void                    NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
     virtual void                    OnBitmapMouseOver( const int coverid, const wxPoint &position );
 
@@ -203,21 +193,26 @@ class guAlbumBrowser : public wxPanel
     void                            OnConfigUpdated( wxCommandEvent &event );
     void                            CreateAcceleratorTable( void );
 
-    bool                            DoTextSearch( void );
+    bool                            DoTextSearch( const wxString &searchtext );
+
+  protected :
+    void                            CreateControls( void );
 
   public :
-    guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    //guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer );
     ~guAlbumBrowser();
 
-    virtual int                     GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
-    virtual void                    SetContextMenuFlags( const int flags ) { m_ContextMenuFlags = flags; }
+    virtual int                     GetContextMenuFlags( void );
 
-    virtual void                    CreateContextMenu( wxMenu * Menu ) {};
+    virtual void                    SetLastAlbumItem( guAlbumBrowserItem * item ) { m_LastAlbumBrowserItem = item; }
+
+    virtual void                    CreateContextMenu( wxMenu * Menu );
 
     void RefreshCount( void )
     {
-        m_AlbumsCount = m_Db->GetAlbumsCount( m_FilterChoice->GetSelection() ? &m_DynFilter : NULL, m_TextSearchFilter );
-        m_ItemStart = 0;
+        m_AlbumsCount = m_Db->GetAlbumsCount( m_DynFilter.IsEmpty() ? NULL : &m_DynFilter, m_TextSearchFilter );
+        //m_ItemStart = 0;
         RefreshPageCount();
     }
 
@@ -273,9 +268,17 @@ class guAlbumBrowser : public wxPanel
 
     void                            SetAlbumCover( const int albumid, const wxString &cover );
 
+    void                            SetFilter( const wxString &filterstr );
+
+    int                             GetSortSelected( void ) { return m_SortSelected; }
+
+    virtual void                    AlbumCoverChanged( void );
+
+    void                            SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 
     friend class guUpdateAlbumDetails;
     friend class guAlbumBrowserItemPanel;
+    friend class guMediaViewer;
 };
 
 // -------------------------------------------------------------------------------- //

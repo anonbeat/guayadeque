@@ -20,121 +20,39 @@
 // -------------------------------------------------------------------------------- //
 #include "AuiManagedPanel.h"
 
-#include "AuiDockArt.h"
-#include "AuiNotebook.h"
-#include "Commands.h"
 #include "Utils.h"
 
-#include <wx/settings.h>
-
 // -------------------------------------------------------------------------------- //
-guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent ) :
-                        wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent, wxAuiManager * manager ) :
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ), wxTAB_TRAVERSAL )
 {
-    m_AuiManager.SetManagedWindow( this );
-    m_AuiManager.SetArtProvider( new guAuiDockArt() );
-    m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
-                           wxAUI_MGR_TRANSPARENT_DRAG |
-                           wxAUI_MGR_TRANSPARENT_HINT );
+    m_Manager = manager;
 
-    wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
-
-    wxColour BaseColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 140 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 140 ) );
-
-    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );
-
-    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
-
-    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guAuiManagedPanel::OnPaneClose ), NULL, this );
+    Connect( wxEVT_SIZE, wxSizeEventHandler( guAuiManagedPanel::OnChangedSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guAuiManagedPanel::~guAuiManagedPanel()
 {
-    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guAuiManagedPanel::OnPaneClose ), NULL, this );
-
-    m_AuiManager.UnInit();
+    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAuiManagedPanel::OnChangedSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
-void guAuiManagedPanel::ShowPanel( const int panelid, bool show )
+void guAuiManagedPanel::OnChangedSize( wxSizeEvent &event )
 {
-    int PanelIndex = m_PanelIds.Index( panelid );
-    if( PanelIndex != wxNOT_FOUND )
-    {
-        wxString PaneName = m_PanelNames[ PanelIndex ];
+    wxSize Size = event.GetSize();
 
-        wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( PaneName );
-        if( PaneInfo.IsOk() )
+    wxAuiPaneInfo &PaneInfo = m_Manager->GetPane( this );
+    if( PaneInfo.IsOk() )
+    {
+        if( ( PaneInfo.floating_size.x != Size.x ) || ( PaneInfo.floating_size.y != Size.y ) )
         {
-            if( show )
-                PaneInfo.Show();
-            else
-                PaneInfo.Hide();
-
-            m_AuiManager.Update();
-        }
-
-        if( show )
-            m_VisiblePanels |= panelid;
-        else
-            m_VisiblePanels ^= panelid;
-
-        guLogMessage( wxT( "Id: %i Pane: %s Show:%i  Flags:%08X" ), panelid, PaneName.c_str(), show, m_VisiblePanels );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guAuiManagedPanel::OnPaneClose( wxAuiManagerEvent &event )
-{
-    wxAuiPaneInfo * PaneInfo = event.GetPane();
-    int PanelIndex = m_PanelNames.Index( PaneInfo->name );
-    if( PanelIndex != wxNOT_FOUND )
-    {
-        guLogMessage( wxT( "OnPaneClose: %s  %i" ), m_PanelNames[ PanelIndex ].c_str(), m_PanelCmdIds[ PanelIndex ] );
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, m_PanelCmdIds[ PanelIndex ] );
-        AddPendingEvent( evt );
-
-    }
-
-    event.Veto();
-}
-
-// -------------------------------------------------------------------------------- //
-void guAuiManagedPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
-{
-    int Index;
-    int Count = m_PanelIds.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        int PanelId = m_PanelIds[ Index ];
-        if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
-        {
-            ShowPanel( PanelId, ( visiblepanels & PanelId ) );
+            PaneInfo.floating_size.x = Size.x;
+            PaneInfo.floating_size.y = Size.y;
         }
     }
 
-    m_AuiManager.LoadPerspective( layoutstr, true );
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

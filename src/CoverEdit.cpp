@@ -24,6 +24,7 @@
 #include "Commands.h"
 #include "Config.h"
 #include "CoverFetcher.h"
+#include "CoverFrame.h"
 #include "Discogs.h"
 #include "Google.h"
 #include "Images.h"
@@ -102,7 +103,11 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
 	CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_blank_cd_cover ), wxDefaultPosition, wxSize( -1,-1 ), 0 );
+    int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
+    wxImage DefaultCover( guImage( CoverFrame ? guIMAGE_INDEX_blank_cd_cover : guIMAGE_INDEX_no_cover ) );
+    if( !CoverFrame )
+        DefaultCover.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
+	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, DefaultCover, wxDefaultPosition, wxSize( -1,-1 ), 0 );
 	CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
@@ -135,7 +140,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
 	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "General" ) ) );
+    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "general" ) ) );
 	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
     wxStdDialogButtonSizer * ButtonsSizer;
@@ -146,17 +151,21 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	ButtonsSizer->AddButton( ButtonsSizerOK );
 	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALIGN_BOTTOM|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	ButtonsSizerOK->SetDefault();
+
     m_ArtistTextCtrl->SetValue( Artist );
     m_AlbumTextCtrl->SetValue( Album );
     m_CurrentImage = 0;
 
-    m_EngineIndex = Config->ReadNum( wxT( "CoverSearchEngine" ), 0, wxT( "General" ) );
+    m_EngineIndex = Config->ReadNum( wxT( "CoverSearchEngine" ), 0, wxT( "general" ) );
 	m_EngineChoice->SetSelection( m_EngineIndex );
 
 	// Connect Events
@@ -179,14 +188,16 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
     m_PrevButton->Disable();
     m_NextButton->Disable();
+
+    m_ArtistTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
 guCoverEditor::~guCoverEditor()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "CoverSearchEngine" ), m_EngineChoice->GetSelection(), wxT( "General" ) );
-    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "General" ) );
+    Config->WriteNum( wxT( "CoverSearchEngine" ), m_EngineChoice->GetSelection(), wxT( "general" ) );
+    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "general" ) );
 
     m_DownloadThreadMutex.Lock();
     int index;
@@ -342,31 +353,54 @@ void guCoverEditor::UpdateCoverBitmap( void )
 {
     m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ),  m_AlbumCovers.Count() ? m_CurrentImage + 1 : 0, m_AlbumCovers.Count() ) );
 
-    wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
-    if( BlankCD )
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
+    if( CoverFrame == guCOVERFRAME_DEFAULT )
     {
-        if( BlankCD->IsOk() )
+        wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
+        if( BlankCD )
         {
-            if( m_AlbumCovers.Count() && m_AlbumCovers[ m_CurrentImage ].m_Image )
+            if( BlankCD->IsOk() )
             {
-                wxImage CoverImage = m_AlbumCovers[ m_CurrentImage ].m_Image->Copy();
-                // 38,6
-                wxMemoryDC MemDC;
-                MemDC.SelectObject( * BlankCD );
-                CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
-                MemDC.DrawBitmap( wxBitmap( CoverImage ), 34, 4, false );
-                // Update the Size label
-                m_SizeStaticText->SetLabel( m_AlbumCovers[ m_CurrentImage ].m_SizeStr );
+                if( m_AlbumCovers.Count() && m_AlbumCovers[ m_CurrentImage ].m_Image )
+                {
+                    wxImage CoverImage = m_AlbumCovers[ m_CurrentImage ].m_Image->Copy();
+                    // 38,6
+                    wxMemoryDC MemDC;
+                    MemDC.SelectObject( * BlankCD );
+                    CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
+                    MemDC.DrawBitmap( wxBitmap( CoverImage ), 34, 4, false );
+                    // Update the Size label
+                    m_SizeStaticText->SetLabel( m_AlbumCovers[ m_CurrentImage ].m_SizeStr );
+                }
+                else
+                {
+                    m_SizeStaticText->SetLabel( wxEmptyString );
+                }
+                m_SizeSizer->Layout();
+                m_CoverBitmap->SetBitmap( * BlankCD );
+                m_CoverBitmap->Refresh();
             }
-            else
-            {
-                m_SizeStaticText->SetLabel( wxEmptyString );
-            }
-            m_SizeSizer->Layout();
-            m_CoverBitmap->SetBitmap( * BlankCD );
-            m_CoverBitmap->Refresh();
+            delete BlankCD;
         }
-        delete BlankCD;
+    }
+    else
+    {
+        wxImage CoverImage;
+        if( m_AlbumCovers.Count() && m_AlbumCovers[ m_CurrentImage ].m_Image )
+        {
+            CoverImage = m_AlbumCovers[ m_CurrentImage ].m_Image->Copy();
+            CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
+            // Update the Size label
+            m_SizeStaticText->SetLabel( m_AlbumCovers[ m_CurrentImage ].m_SizeStr );
+        }
+        else
+        {
+            m_SizeStaticText->SetLabel( wxEmptyString );
+        }
+        m_SizeSizer->Layout();
+        m_CoverBitmap->SetBitmap( CoverImage );
+        m_CoverBitmap->Refresh();
     }
 }
 

@@ -21,6 +21,7 @@
 #ifndef LYRICSPANEL_H
 #define LYRICSPANEL_H
 
+#include "AuiNotebook.h"
 #include "DbLibrary.h"
 #include "TrackChangeInfo.h"
 
@@ -60,6 +61,7 @@ class guLyricsPanel : public wxPanel
 	wxBoxSizer *            m_TitleSizer;
     wxStaticText *          m_LyricTitle;
     wxTextCtrl *            m_LyricText;
+    guMediaViewer *         m_MediaViewer;
 
     wxCheckBox *            m_UpdateCheckBox;
 
@@ -130,6 +132,8 @@ class guLyricsPanel : public wxPanel
     wxString                GetLyricSource( void );
 
     bool                    UpdateEnabled( void ) { return m_UpdateEnabled; }
+
+    guMediaViewer *         GetMediaViewer( void ) { return m_MediaViewer; }
 
 };
 

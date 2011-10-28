@@ -26,8 +26,10 @@
 #include "Images.h"
 #include "MainApp.h"
 #include "MainFrame.h"
+#include "MediaViewer.h"
 #include "OnlineLinks.h"
 #include "Utils.h"
+#include "Settings.h"
 #include "LibPanel.h"
 
 #include <wx/renderer.h>
@@ -47,11 +49,15 @@ guAlListBox::guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
+    m_ConfigPath = libpanel->GetMediaViewer()->ConfigPath();
+    m_AlbumsOrder = Config->ReadNum( wxT( "AlbumsOrder" ), 0, m_ConfigPath );
+    m_Db->SetAlbumsOrder( m_AlbumsOrder );
+
     guListViewColumn * Column = new guListViewColumn( label, 0 );
     InsertColumn( Column );
 
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
-    Connect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
+    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
+    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
     Connect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlListBox::OnConfigUpdated ), NULL, this );
@@ -67,11 +73,13 @@ guAlListBox::~guAlListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
+    Config->WriteNum( wxT( "AlbumsOrder" ), m_AlbumsOrder, m_ConfigPath );
+
     if( m_Items )
         delete m_Items;
 
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
+    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
+    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
     Disconnect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlListBox::OnConfigUpdated ), NULL, this );
@@ -182,7 +190,9 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 // -------------------------------------------------------------------------------- //
 void guAlListBox::OnOrderSelected( wxCommandEvent &event )
 {
-    m_Db->SetAlbumsOrder( event.GetId() - ID_ALBUM_ORDER_NAME );
+    m_AlbumsOrder = event.GetId() - ID_ALBUM_ORDER_NAME;
+    m_Db->SetAlbumsOrder( m_AlbumsOrder );
+
     ReloadItems( false );
 }
 
@@ -216,22 +226,24 @@ void AddAlbumCommands( wxMenu * Menu, int SelCount )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
             {
                 if( ( Commands[ index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
                 {
-                    MenuItem = new wxMenuItem( Menu, ID_ALBUM_COMMANDS + index, Names[ index ], Commands[ index ] );
+                    MenuItem = new wxMenuItem( Menu, ID_COMMANDS_BASE + index, Names[ index ], Commands[ index ] );
                     SubMenu->Append( MenuItem );
                 }
             }
+
+            SubMenu->AppendSeparator();
         }
         else
         {
-            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            MenuItem = new wxMenuItem( Menu, ID_MENU_PREFERENCES_COMMANDS, _( "Preferences" ), _( "Add commands in preferences" ) );
             SubMenu->Append( MenuItem );
         }
         Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
@@ -279,7 +291,7 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
-        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu, _( "Add the selected albums after" ) );
+        Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu, _( "Add the selected albums after" ) );
 
         Menu->AppendSeparator();
 
@@ -289,11 +301,11 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
         {
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITTRACKS,
-                                wxString( _( "Edit Album songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
-                                _( "Edit the selected albums songs" ) );
+                                wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                                _( "Edit the selected songs" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
@@ -305,67 +317,67 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
 
     SubMenu->AppendRadioItem( ID_ALBUM_ORDER_NAME, _( "Name" ), _( "Albums are sorted by name" ) );
     SubMenu->AppendRadioItem( ID_ALBUM_ORDER_YEAR, _( "Year" ), _( "Albums are sorted by year" ) );
-    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_YEAR_REVERSE, _( "Year descending" ), _( "Albums are sorted by year descending" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_YEAR_REVERSE, _( "Year Descending" ), _( "Albums are sorted by year descending" ) );
     SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_NAME, _( "Artist, Name" ), _( "Albums are sorted by artist and album name" ) );
     SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_YEAR, _( "Artist, Year" ), _( "Albums are sorted by artist and year" ) );
-    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, _( "Artist, Year descending" ), _( "Albums are sorted by artist and year descending" ) );
+    SubMenu->AppendRadioItem( ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, _( "Artist, Year Descending" ), _( "Albums are sorted by artist and year descending" ) );
 
     MenuItem = SubMenu->FindItemByPosition( m_Db->GetAlbumsOrder() );
     MenuItem->Check( true );
 
-    Menu->Append( wxID_ANY, _( "Ordered by" ), SubMenu, _( "Sets the albums order" ) );
+    Menu->Append( wxID_ANY, _( "Sort By" ), SubMenu, _( "Sets the albums order" ) );
 
     if( SelCount )
     {
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST,
-                                wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                                _( "Save the selected tracks to PlayList" ) );
+                                wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                _( "Save the selected tracks to Playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
-        if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS ) )
+        if( SelCount == 1 && ( ContextMenuFlags & guCONTEXTMENU_DOWNLOAD_COVERS ) )
         {
             Menu->AppendSeparator();
 
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_MANUALCOVER, _( "Download Album cover" ), _( "Download cover for the current selected album" ) );
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_MANUALCOVER, _( "Download Cover" ), _( "Download cover for the current selected album" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
             Menu->Append( MenuItem );
 
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECT_COVER, _( "Select cover location" ), _( "Select the cover image file from disk" ) );
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECT_COVER, _( "Select Cover" ), _( "Select the cover image file from disk" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
             Menu->Append( MenuItem );
 
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_DELETE, _( "Delete Album cover" ), _( "Delete the cover for the selected album" ) );
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_DELETE, _( "Delete Cover" ), _( "Delete the cover for the selected album" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
             Menu->Append( MenuItem );
         }
 
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EMBED_COVERS )
+        if( ContextMenuFlags & guCONTEXTMENU_EMBED_COVERS )
         {
-            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed cover" ), _( "Embed the current cover to the album files" ) );
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed Cover" ), _( "Embed the current cover to the album files" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
             Menu->Append( MenuItem );
         }
 
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
-            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
-            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_COMMANDS ) )
         {
             Menu->AppendSeparator();
 
-            if( ( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO ) )
+            if( ( m_LibPanel->GetContextMenuFlags() & guCONTEXTMENU_COPY_TO ) )
             {
-                m_LibPanel->CreateCopyToMenu( Menu, ID_ALBUM_COPYTO );
+                m_LibPanel->CreateCopyToMenu( Menu );
             }
 
-            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            if( SelCount == 1 && ( ContextMenuFlags & guCONTEXTMENU_LINKS ) )
             {
                 AddOnlineLinksMenu( Menu );
             }
 
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+            if( ContextMenuFlags & guCONTEXTMENU_COMMANDS )
                 AddAlbumCommands( Menu, SelCount );
         }
     }
@@ -376,30 +388,11 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
 // -------------------------------------------------------------------------------- //
 void guAlListBox::OnSearchLinkClicked( wxCommandEvent &event )
 {
-    int Item;
     unsigned long cookie;
-    Item = GetFirstSelected( cookie );
+    int Item = GetFirstSelected( cookie );
     if( Item != wxNOT_FOUND )
     {
-        int index = event.GetId();
-
-        guConfig * Config = ( guConfig * ) Config->Get();
-        if( Config )
-        {
-            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-
-            index -= ID_LASTFM_SEARCH_LINK;
-            wxString SearchLink = Links[ index ];
-            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
-            if( Lang.IsEmpty() )
-            {
-                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
-                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
-            }
-            SearchLink.Replace( wxT( "{lang}" ), Lang );
-            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
-            guWebExecute( SearchLink );
-        }
+        ExecuteOnlineLink( event.GetId(), GetSearchText( Item ) );
     }
 }
 
@@ -416,10 +409,10 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) Config->Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
 
             //guLogMessage( wxT( "CommandId: %u" ), index );
-            index -= ID_ALBUM_COMMANDS;
+            index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ index ];
 
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
@@ -477,24 +470,6 @@ wxString guAlListBox::GetSearchText( int item ) const
 }
 
 // -------------------------------------------------------------------------------- //
-wxString inline guAlListBox::GetItemName( const int row ) const
-{
-    return ( * m_Items )[ row ].m_Name;
-}
-
-// -------------------------------------------------------------------------------- //
-int inline guAlListBox::GetItemId( const int row ) const
-{
-    return ( * m_Items )[ row ].m_Id;
-}
-
-// -------------------------------------------------------------------------------- //
-void guAlListBox::GetItemsList( void )
-{
-    m_Db->GetAlbums( ( guAlbumItems * ) m_Items );
-}
-
-// -------------------------------------------------------------------------------- //
 void guAlListBox::ReloadItems( bool reset )
 {
     wxArrayInt Selection;
@@ -519,16 +494,16 @@ void guAlListBox::ReloadItems( bool reset )
     RefreshAll();
 }
 
-// -------------------------------------------------------------------------------- //
-void  guAlListBox::SetSelectedItems( const wxArrayInt &selection )
-{
-    guListView::SetSelectedItems( selection );
-
-//    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
-//    event.SetEventObject( this );
-//    event.SetInt( -1 );
-//    (void) GetEventHandler()->ProcessEvent( event );
-}
+//// -------------------------------------------------------------------------------- //
+//void  guAlListBox::SetSelectedItems( const wxArrayInt &selection )
+//{
+//    guListView::SetSelectedItems( selection );
+//
+////    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
+////    event.SetEventObject( this );
+////    event.SetInt( -1 );
+////    (void) GetEventHandler()->ProcessEvent( event );
+//}
 
 // -------------------------------------------------------------------------------- //
 int guAlListBox::GetDragFiles( wxFileDataObject * files )

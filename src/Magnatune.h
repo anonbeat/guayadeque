@@ -22,23 +22,25 @@
 #define MAGNATUNE_H
 
 #include "Config.h"
-#include "LibPanel.h"
 #include "DbLibrary.h"
+#include "LibPanel.h"
+#include "MediaViewer.h"
 #include "Preferences.h"
+#include "Settings.h"
 
 #include <wx/string.h>
 #include <wx/window.h>
 
-#define guMAGNATUNE_DATABASE_DUMP_URL         wxT( "http://he3.magnatune.com/info/album_info_xml.gz" )
+#define guMAGNATUNE_DATABASE_DUMP_URL       wxT( "http://he3.magnatune.com/info/album_info_xml.gz" )
 //#define guMAGNATUNE_FILE_STREAM_URL
-#define guMAGNATUNE_STREAM_FORMAT_MP3         wxT( ".mp3" )
-#define guMAGNATUNE_STREAM_FORMAT_OGG         wxT( ".ogg" )
+#define guMAGNATUNE_STREAM_FORMAT_MP3       wxT( ".mp3" )
+#define guMAGNATUNE_STREAM_FORMAT_OGG       wxT( ".ogg" )
 
-#define guMAGNATUNE_ACTION_UPDATE             0   // Download the database and then upgrade
-#define guMAGNATUNE_ACTION_UPGRADE            1   // Just refresh the tracks not updating the database
+#define guMAGNATUNE_ACTION_UPDATE           0   // Download the database and then upgrade
+#define guMAGNATUNE_ACTION_UPGRADE          1   // Just refresh the tracks not updating the database
 
-#define guMAGNATUNE_PARTNER_ID                wxT( "guayadeque" )
-#define guMAGNATUNE_DOWNLOAD_URL              wxT( "http://%s:%s@download.magnatune.com/buy/membership_free_dl_xml.php?sku=%s&id=guayadeque" )
+#define guMAGNATUNE_PARTNER_ID              wxT( "guayadeque" )
+#define guMAGNATUNE_DOWNLOAD_URL            wxT( "http://%s:%s@download.magnatune.com/buy/membership_free_dl_xml.php?sku=%s&id=guayadeque" )
 
 enum guMagnatune_Membership {
     guMAGNATUNE_MEMBERSHIP_FREE,
@@ -67,6 +69,7 @@ class guMagnatuneLibrary : public guDbLibrary
 class guMagnatuneUpdateThread : public wxThread
 {
   private :
+    guMediaViewer *         m_MediaViewer;
     guMagnatuneLibrary *    m_Db;
     guMainFrame *           m_MainFrame;
     int                     m_GaugeId;
@@ -77,7 +80,7 @@ class guMagnatuneUpdateThread : public wxThread
     wxString                m_AlbumSku;
     wxString                m_CoverLink;
 
-    bool                UpdateDatabase( void );
+    bool                UpgradeDatabase( void );
     void                ReadMagnatuneXmlTrack( wxXmlNode * xmlnode );
     void                ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode );
     void                AddGenres( const wxString &genre );
@@ -86,7 +89,7 @@ class guMagnatuneUpdateThread : public wxThread
   protected :
 
   public :
-    guMagnatuneUpdateThread( guMagnatuneLibrary * db, const int action, int gaugeid );
+    guMagnatuneUpdateThread( guMediaViewer * mediaviewer, const int action, int gaugeid );
     ~guMagnatuneUpdateThread();
 
     ExitCode Entry();
@@ -94,48 +97,55 @@ class guMagnatuneUpdateThread : public wxThread
 };
 
 class guMagnatuneDownloadThread;
+class guMediaViewerMagnatune;
 
 // -------------------------------------------------------------------------------- //
 class guMagnatunePanel : public guLibPanel
 {
   protected :
-    int                         m_Membership;
-    wxString                    m_UserName;
-    wxString                    m_Password;
-    guMagnatuneUpdateThread *   m_UpdateThread;
-    wxMutex                     m_UpdateThreadMutex;
-
-    virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
-    virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
-    void                        OnEditSetup( wxCommandEvent &event );
-
-    void                        OnUpdate( wxCommandEvent &event );
-    void                        OnUpgrade( wxCommandEvent &event );
-    void                        StartUpdateTracks( const int action );
-
-    void                        OnConfigUpdated( wxCommandEvent &event );
-    void                        OnCoverDownloaded( wxCommandEvent &event );
-
-    void                        OnAlbumDownloadCoverClicked( wxCommandEvent &event );
-    void                        OnAlbumSelectCoverClicked( wxCommandEvent &event );
-
     void                        OnDownloadAlbum( wxCommandEvent &event );
     void                        OnDownloadTrackAlbum( wxCommandEvent &event );
 
-    void                        DownloadAlbums( const wxArrayInt &albumids );
-
   public :
-    guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Jam" ) );
+    guMagnatunePanel( wxWindow * parent, guMediaViewerMagnatune * mediaviewer );
     ~guMagnatunePanel();
 
-    virtual void                InitPanelData();
-
     guMagnatuneLibrary *        GetMagnatuneDb( void ) { return ( guMagnatuneLibrary * ) m_Db; }
-    wxImage *                   GetAlbumCover( const int albumid, const wxString &artist, const wxString &album, wxString &coverpath );
-    void                        AddDownload( const int albumid, const wxString &artist, const wxString &album );
+};
 
-    void                        EndUpdateThread( void );
+// -------------------------------------------------------------------------------- //
+class guMagnatuneAlbumBrowser : public guAlbumBrowser
+{
+  protected :
+    void                        OnDownloadAlbum( wxCommandEvent &event );
 
+  public :
+    guMagnatuneAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer );
+    ~guMagnatuneAlbumBrowser();
+};
+
+// -------------------------------------------------------------------------------- //
+class guMagnatuneTreePanel : public guTreeViewPanel
+{
+  protected :
+    void                        OnDownloadAlbum( wxCommandEvent &event );
+    void                        OnDownloadTrackAlbum( wxCommandEvent &event );
+
+  public :
+    guMagnatuneTreePanel( wxWindow * parent, guMediaViewer * mediaviewer );
+    ~guMagnatuneTreePanel();
+
+};
+
+// -------------------------------------------------------------------------------- //
+class guMagnatunePlayListPanel : public guPlayListPanel
+{
+  protected :
+    void                        OnDownloadTrackAlbum( wxCommandEvent &event );
+
+  public :
+    guMagnatunePlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer );
+    ~guMagnatunePlayListPanel();
 
 };
 
@@ -143,20 +153,75 @@ class guMagnatunePanel : public guLibPanel
 class guMagnatuneDownloadThread : public wxThread
 {
   protected :
-    guMagnatuneLibrary *    m_Db;
-    guMagnatunePanel *      m_MagnatunePanel;
-    wxString                m_ArtistName;
-    wxString                m_AlbumName;
-    int                     m_AlbumId;
+    guMagnatuneLibrary *        m_Db;
+    guMediaViewerMagnatune *    m_MediaViewer;
+    wxString                    m_ArtistName;
+    wxString                    m_AlbumName;
+    int                         m_AlbumId;
 
   public :
-    guMagnatuneDownloadThread( guMagnatunePanel * jamendopanel, const int albumid,
+    guMagnatuneDownloadThread( guMediaViewerMagnatune * mediaviewer, const int albumid,
                                 const wxString &artist, const wxString &album );
     ~guMagnatuneDownloadThread();
 
     ExitCode Entry();
-
 };
 
+// -------------------------------------------------------------------------------- //
+class guMediaViewerMagnatune : public guMediaViewer
+{
+  protected :
+    int                         m_Membership;
+    wxString                    m_UserName;
+    wxString                    m_Password;
+
+    virtual void            LoadMediaDb( void );
+    virtual void            OnConfigUpdated( wxCommandEvent &event );
+
+    void                    OnCoverDownloaded( wxCommandEvent &event );
+    void                    OnUpdateFinished( wxCommandEvent &event );
+
+    void                    EndUpdateThread( void );
+
+  public :
+    guMediaViewerMagnatune( wxWindow * parent, guMediaCollection &mediacollection,
+                          const int basecmd, guMainFrame * mainframe, const int mode,
+                          guPlayerPanel * playerpanel );
+    ~guMediaViewerMagnatune();
+
+    virtual wxImage *       GetAlbumCover( const int albumid, int &coverid, wxString &coverpath,
+                                const wxString &artistname = wxEmptyString, const wxString &albumname = wxEmptyString );
+
+    virtual void            UpdateLibrary( void );
+    virtual void            UpgradeLibrary( void );
+    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
+    virtual void            AddDownload( const int albumid, const wxString &artist, const wxString &album );
+
+    virtual void            DownloadAlbumCover( const int albumid );
+
+    virtual void            DownloadAlbums( const wxArrayInt &albums );
+
+    virtual void            CreateContextMenu( wxMenu * menu, const int windowid = wxNOT_FOUND );
+
+    virtual bool            CreateLibraryView( void );
+    virtual bool            CreateAlbumBrowserView( void );
+    virtual bool            CreateTreeView( void );
+    virtual bool            CreatePlayListView( void );
+
+    virtual wxString        GetCoverName( const int albumid );
+    virtual void            SelectAlbumCover( const int albumid );
+
+    virtual bool            FindMissingCover( const int albumid, const wxString &artistname,
+                                              const wxString &albumname, const wxString &albumpath );
+
+    virtual void            EditProperties( void );
+
+    friend class guMagnatuneDownloadThread;
+    friend class guMagnatuneUpdateThread;
+};
+
+
 #endif
+
 // -------------------------------------------------------------------------------- //

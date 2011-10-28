@@ -21,7 +21,7 @@
 #ifndef TREEPANEL_H
 #define TREEPANEL_H
 
-#include "AuiManagedPanel.h"
+#include "AuiManagerPanel.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 #include "LibPanel.h"
@@ -59,6 +59,21 @@
 class guTreeViewPanel;
 
 // -------------------------------------------------------------------------------- //
+class guTreeViewData : public wxTreeItemData
+{
+  public :
+    int         m_Id;
+    int         m_Type;
+
+    guTreeViewData( const int id, const int type ) { m_Id = id; m_Type = type; };
+
+    int         GetData( void ) { return m_Id; };
+    void        SetData( int id ) { m_Id = id; };
+    int         GetType( void ) { return m_Type; };
+    void        SetType( int type ) { m_Type = type; };
+};
+
+// -------------------------------------------------------------------------------- //
 // guTreeViewTreeCtrl
 // -------------------------------------------------------------------------------- //
 class guTreeViewTreeCtrl : public wxTreeCtrl
@@ -78,6 +93,8 @@ class guTreeViewTreeCtrl : public wxTreeCtrl
     wxArrayInt          m_FilterLayout;
     int                 m_CurrentFilter;
 
+    wxString            m_ConfigPath;
+
     void                OnContextMenu( wxTreeEvent &event );
 
     void                OnBeginDrag( wxTreeEvent &event );
@@ -91,11 +108,13 @@ class guTreeViewTreeCtrl : public wxTreeCtrl
     void                OnCommandClicked( wxCommandEvent &event );
 
   public :
-    guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guTreeViewPanel * playlistpanel );
+    guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guTreeViewPanel * treeviewpanel );
     ~guTreeViewTreeCtrl();
 
     void                ReloadItems( void );
     void                ReloadFilters( void );
+
+    virtual int         GetContextMenuFlags( void );
 
     void                SetCurrentFilter( const int curfilter ) { m_CurrentFilter = curfilter; LoadFilterLayout(); ReloadFilters(); }
 
@@ -118,24 +137,22 @@ class guTreeViewTreeCtrl : public wxTreeCtrl
 };
 
 // -------------------------------------------------------------------------------- //
-class guTreeViewPanel : public guAuiManagedPanel
+class guTreeViewPanel : public guAuiManagerPanel
 {
   protected :
+    guMediaViewer *         m_MediaViewer;
     guDbLibrary *           m_Db;
-    guLibPanel *            m_LibPanel;
     guPlayerPanel *         m_PlayerPanel;
 
     wxSplitterWindow *      m_MainSplitter;
     guTreeViewTreeCtrl *    m_TreeViewCtrl;
     guTVSoListBox *         m_TVTracksListBox;
 
-    wxSearchCtrl *          m_InputTextCtrl;
-
-    wxTimer                 m_TextChangedTimer;
     wxTimer                 m_TreeItemSelectedTimer;
 
-    bool                    m_InstantSearchEnabled;
-    bool                    m_EnterSelectSearchEnabled;
+    wxString                m_ConfigPath;
+
+    wxString                m_LastSearchString;
 
     void                    OnTreeViewSelected( wxTreeEvent &event );
     void                    OnTreeViewActivated( wxTreeEvent &event );
@@ -168,34 +185,31 @@ class guTreeViewPanel : public guAuiManagedPanel
     void                    OnTVTracksSelectArtist( wxCommandEvent &event );
     void                    OnTVTracksSelectAlbum( wxCommandEvent &event );
 
-    void                    OnSearchActivated( wxCommandEvent &event );
-    void                    OnSearchSelected( wxCommandEvent &event );
-    void                    OnSearchCancelled( wxCommandEvent &event );
-
-    void                    OnTextChangedTimer( wxTimerEvent &event );
     void                    OnTreeItemSelectedTimer( wxTimerEvent &event );
 
     void                    OnTVTracksDeleteLibrary( wxCommandEvent &event );
     void                    OnTVTracksDeleteDrive( wxCommandEvent &event );
 
-    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
     virtual void            SendPlayListUpdatedEvent( void );
 
     void                    OnGoToSearch( wxCommandEvent &event );
-    bool                    DoTextSearch( void );
-
-    void                    OnConfigUpdated( wxCommandEvent &event );
-
-    guLibPanel *            GetLibPanel( void ) { return m_LibPanel; }
+    bool                    DoTextSearch( const wxString &searchtext );
 
     void                    OnTrackListColClicked( wxListEvent &event );
 
+    void                    CreateControls( void );
 
   public :
-    guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, guLibPanel * libpanel );
+    guTreeViewPanel( wxWindow * parent, guMediaViewer * mediaviewer );
     ~guTreeViewPanel();
 
     virtual void            InitPanelData( void );
+
+    virtual int             GetContextMenuFlags( void );
+    virtual void            CreateCopyToMenu( wxMenu * menu );
+    virtual void            CreateContextMenu( wxMenu * menu, const int windowid );
 
     void                    GetTreeViewCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size ) { m_TVTracksListBox->GetCounters( count, len, size ); }
 
@@ -208,7 +222,14 @@ class guTreeViewPanel : public guAuiManagedPanel
 
     void                    GetAllTracks( guTrackArray * tracks ) { m_TVTracksListBox->GetAllSongs( tracks ); }
 
+    void                    RefreshAll( void );
+
+    void                    SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
+
+    wxString                ConfigPath( void ) { return m_ConfigPath; }
+
     friend class guTreeViewTreeCtrl;
+    friend class guMediaViewer;
 };
 
 #endif

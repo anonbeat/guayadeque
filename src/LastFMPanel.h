@@ -21,6 +21,7 @@
 #ifndef LASTFMPANEL_H
 #define LASTFMPANEL_H
 
+#include "AuiNotebook.h"
 #include "DbCache.h"
 #include "LastFM.h"
 #include "PlayerPanel.h"
@@ -361,29 +362,32 @@ class guFetchSimTracksInfoThread : public guFetchLastFMInfoThread
 class guLastFMInfoCtrl : public wxPanel
 {
   protected :
-    guDbLibrary *       m_Db;
+    guDbLibrary *       m_DefaultDb;
     guDbCache *         m_DbCache;
     guPlayerPanel *     m_PlayerPanel;
-    //wxStaticBitmap *    m_Bitmap;
     guStaticBitmap *    m_Bitmap;
 	wxStaticText *      m_Text;
 	wxColor             m_NormalColor;
 	wxColor             m_NotFoundColor;
+	guMediaViewer *     m_MediaViewer;
+    guDbLibrary *       m_Db;
+    wxMutex             m_DbMutex;
 
     virtual void        OnContextMenu( wxContextMenuEvent& event );
     virtual void        CreateContextMenu( wxMenu * Menu );
     virtual void        OnDoubleClicked( wxMouseEvent &event );
-    virtual wxString    GetSearchText( void );
-    virtual wxString    GetItemUrl( void );
+    virtual wxString    GetSearchText( void ) { return wxEmptyString; }
+    virtual wxString    GetItemUrl( void ) { return wxEmptyString; }
+
     virtual void        OnSearchLinkClicked( wxCommandEvent &event );
     virtual void        OnCopyToClipboard( wxCommandEvent &event );
     virtual void        CreateControls( wxWindow * parent );
     virtual void        OnPlayClicked( wxCommandEvent &event );
     virtual void        OnEnqueueClicked( wxCommandEvent &event );
-    virtual int         GetSelectedTracks( guTrackArray * tracks );
-    virtual void        OnSongSelectName( wxCommandEvent &event );
-    virtual void        OnArtistSelectName( wxCommandEvent &event );
-    virtual void        OnAlbumSelectName( wxCommandEvent &event );
+    virtual int         GetSelectedTracks( guTrackArray * tracks ) { return 0; }
+    virtual void        OnSongSelectName( wxCommandEvent &event ) {}
+    virtual void        OnArtistSelectName( wxCommandEvent &event ) {}
+    virtual void        OnAlbumSelectName( wxCommandEvent &event ) {}
 
     virtual void        OnBitmapMouseOver( wxCommandEvent &event );
     virtual wxString    GetBitmapImageUrl( void );
@@ -396,7 +400,9 @@ class guLastFMInfoCtrl : public wxPanel
 	guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel, bool createcontrols = true );
 	~guLastFMInfoCtrl();
 
-    virtual void        Clear( void );
+    virtual void        SetMediaViewer( guMediaViewer * mediaviewer );
+
+    virtual void        Clear( guMediaViewer * mediaviewer );
     virtual void        SetBitmap( const wxImage * image );
     virtual void        SetLabel( const wxString &label );
 
@@ -437,8 +443,10 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
     guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guArtistInfoCtrl();
 
+    virtual void        SetMediaViewer( guMediaViewer * mediaviewer );
+
     void SetInfo( guLastFMArtistInfo * info );
-    virtual void Clear( void );
+    virtual void Clear( guMediaViewer * mediaviewer );
     virtual void SetBitmap( const wxImage * image );
 
 };
@@ -464,8 +472,10 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
     guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guAlbumInfoCtrl();
 
+    virtual void        SetMediaViewer( guMediaViewer * mediaviewer );
+
     void SetInfo( guLastFMAlbumInfo * info );
-    virtual void Clear( void );
+    virtual void Clear( guMediaViewer * mediaviewer );
 
 };
 WX_DEFINE_ARRAY_PTR( guAlbumInfoCtrl *, guAlbumInfoCtrlArray );
@@ -493,8 +503,10 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guSimilarArtistInfoCtrl();
 
+    virtual void        SetMediaViewer( guMediaViewer * mediaviewer );
+
     void SetInfo( guLastFMSimilarArtistInfo * info );
-    virtual void Clear( void );
+    virtual void Clear( guMediaViewer * mediaviewer );
 
 };
 WX_DEFINE_ARRAY_PTR( guSimilarArtistInfoCtrl *, guSimilarArtistInfoCtrlArray );
@@ -523,8 +535,10 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
     guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guTrackInfoCtrl();
 
+    virtual void        SetMediaViewer( guMediaViewer * mediaviewer );
+
     void SetInfo( guLastFMTrackInfo * info );
-    virtual void Clear( void );
+    virtual void Clear( guMediaViewer * mediaviewer );
 
 };
 WX_DEFINE_ARRAY_PTR( guTrackInfoCtrl *, guTrackInfoCtrlArray );
@@ -553,8 +567,10 @@ class guTopTrackInfoCtrl : public guLastFMInfoCtrl
     guTopTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
     ~guTopTrackInfoCtrl();
 
+    virtual void        SetMediaViewer( guMediaViewer * mediaviewer );
+
     void SetInfo( guLastFMTopTrackInfo * info );
-    virtual void Clear( void );
+    virtual void Clear( guMediaViewer * mediaviewer );
 
 };
 WX_DEFINE_ARRAY_PTR( guTopTrackInfoCtrl *, guTopTrackInfoCtrlArray );
@@ -580,7 +596,7 @@ class guEventInfoCtrl : public guLastFMInfoCtrl
     ~guEventInfoCtrl();
 
     void SetInfo( guLastFMEventInfo * info );
-    virtual void Clear( void );
+    virtual void Clear( guMediaViewer * mediaviewer );
 
 };
 WX_DEFINE_ARRAY_PTR( guEventInfoCtrl *, guEventInfoCtrlArray );
@@ -589,6 +605,7 @@ WX_DEFINE_ARRAY_PTR( guEventInfoCtrl *, guEventInfoCtrlArray );
 class guLastFMPanel : public wxScrolledWindow
 {
   private :
+    guDbLibrary *           m_DefaultDb;
     guDbLibrary *           m_Db;
     guDbCache *             m_DbCache;
     guPlayerPanel *         m_PlayerPanel;
@@ -598,6 +615,7 @@ class guLastFMPanel : public wxScrolledWindow
 	wxString                m_LastArtistName;
 	wxString                m_TrackName;
 	wxString                m_LastTrackName;
+	guMediaViewer *         m_MediaViewer;
 	wxString                m_ShortBio;
 	wxString                m_LongBio;
 	bool                    m_UpdateEnabled;
@@ -767,12 +785,17 @@ class guLastFMPanel : public wxScrolledWindow
                 guDbCache * dbcache, guPlayerPanel * playerpanel );
             ~guLastFMPanel();
 
-    void    OnUpdatedTrack( wxCommandEvent &event );
-    void    AppendTrackChangeInfo( const guTrackChangeInfo * trackchangeinfo );
-	void    ShowCurrentTrack( void );
-	void    SetUpdateEnable( bool value );
-	void    UpdateLayout( void ) { m_MainSizer->FitInside( this ); }
-	void    OnDropFiles( const wxArrayString &files );
+    void                OnUpdatedTrack( wxCommandEvent &event );
+    void                AppendTrackChangeInfo( const guTrackChangeInfo * trackchangeinfo );
+	void                ShowCurrentTrack( void );
+	void                SetUpdateEnable( bool value );
+	void                UpdateLayout( void ) { m_MainSizer->FitInside( this ); }
+	void                OnDropFiles( const wxArrayString &files );
+
+	guMediaViewer *     GetMediaViewer( void ) { return m_MediaViewer; }
+	void                SetMediaViewer( guMediaViewer * mediaviewer );
+
+	void                MediaViewerClosed( guMediaViewer * mediaviewer );
 
     friend class guFetchLastFMInfoThread;
     friend class guFetchArtistInfoThread;

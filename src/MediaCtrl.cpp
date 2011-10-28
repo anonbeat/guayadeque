@@ -1116,17 +1116,17 @@ bool guMediaCtrl::Seek( wxFileOffset where )
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config  = ( guConfig * ) guConfig::Get();
-    m_ForceGapless          = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "Crossfader" ) );
-    m_FadeOutTime           = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
-    m_FadeInTime            = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "Crossfader" ) ) * 100;
-    m_FadeInVolStart        = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "Crossfader" ) ) ) / 100.0;
-    m_FadeInVolTriger       = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "Crossfader" ) ) ) / 100.0;
-    m_BufferSize            = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "General" ) );
-    m_ReplayGainMode        = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "General" ) );
-    m_ReplayGainPreAmp      = double( Config->ReadNum( wxT( "ReplayGainPreAmp" ), 6, wxT( "General" ) ) );
+    m_ForceGapless          = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "crossfader" ) );
+    m_FadeOutTime           = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
+    m_FadeInTime            = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "crossfader" ) ) * 100;
+    m_FadeInVolStart        = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "crossfader" ) ) ) / 100.0;
+    m_FadeInVolTriger       = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "crossfader" ) ) ) / 100.0;
+    m_BufferSize            = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "general" ) );
+    m_ReplayGainMode        = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "general" ) );
+    m_ReplayGainPreAmp      = double( Config->ReadNum( wxT( "ReplayGainPreAmp" ), 6, wxT( "general" ) ) );
     //m_ReplayGainFallback    = double( Config->ReadNum( wxT( "ReplayGainFallback" ), -6, wxT( "General" ) ) );
-    m_OutputDevice          = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "Playback" ) );
-    m_OutputDeviceName      = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "Playback" ) );
+    m_OutputDevice          = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "playback" ) );
+    m_OutputDeviceName      = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "playback" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2542,12 +2542,12 @@ guMediaRecordCtrl::~guMediaRecordCtrl()
 void guMediaRecordCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_MainPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/recordings" ), wxT( "Record" ) );
-    m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "Record" ) );
-    m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "Record" ) );
-    m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "Record" ) );
-    m_DeleteTracks = Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "Record" ) );
-    m_DeleteTime = Config->ReadNum( wxT( "DeleteTime" ), 55, wxT( "Record" ) );
+    m_MainPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/recordings" ), wxT( "record" ) );
+    m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "record" ) );
+    m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "record" ) );
+    m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "record" ) );
+    m_DeleteTracks = Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "record" ) );
+    m_DeleteTime = Config->ReadNum( wxT( "DeleteTime" ), 55, wxT( "record" ) );
 
     if( !m_MainPath.EndsWith( wxT( "/" ) ) )
         m_MainPath += wxT( "/" );

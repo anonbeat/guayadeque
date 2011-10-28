@@ -21,7 +21,7 @@
 #ifndef PLAYLISTPANEL_H
 #define PLAYLISTPANEL_H
 
-#include "AuiManagedPanel.h"
+#include "AuiManagerPanel.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 #include "PLSoListBox.h"
@@ -56,6 +56,7 @@
 
 class guPLNamesDropTarget;
 class guPlayListPanel;
+class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
 // guPLNamesTreeCtrl
@@ -138,23 +139,21 @@ class guPLNamesDropTarget : public wxFileDropTarget
 };
 
 // -------------------------------------------------------------------------------- //
-class guPlayListPanel : public guAuiManagedPanel
+class guPlayListPanel : public guAuiManagerPanel
 {
   protected :
+    guMediaViewer *     m_MediaViewer;
     guDbLibrary *       m_Db;
     guPlayerPanel *     m_PlayerPanel;
+    wxString            m_ConfigPath;
 
     wxSplitterWindow *  m_MainSplitter;
     guPLNamesTreeCtrl * m_NamesTreeCtrl;
     guPLSoListBox *     m_PLTracksListBox;
 
-    wxSearchCtrl *      m_InputTextCtrl;
-
-    wxTimer             m_TextChangedTimer;
     wxString            m_ExportLastFolder;
 
-    bool                m_InstantSearchEnabled;
-    bool                m_EnterSelectSearchEnabled;
+    wxString            m_LastSearchString;
 
     void                OnPLNamesSelected( wxTreeEvent &event );
     void                OnPLNamesActivated( wxTreeEvent &event );
@@ -187,29 +186,24 @@ class guPlayListPanel : public guAuiManagedPanel
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
 
-    void                OnSearchActivated( wxCommandEvent &event );
-    void                OnSearchSelected( wxCommandEvent &event );
-    void                OnSearchCancelled( wxCommandEvent &event );
-
-    void                OnTextChangedTimer( wxTimerEvent &event );
-
     void                DeleteCurrentPlayList( void );
 
     void                OnPLTracksDeleteLibrary( wxCommandEvent &event );
     void                OnPLTracksDeleteDrive( wxCommandEvent &event );
 
-    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
+    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
     virtual void        SendPlayListUpdatedEvent( void );
 
     void                OnGoToSearch( wxCommandEvent &event );
-    bool                DoTextSearch( void );
+    bool                DoTextSearch( const wxString &textsearch );
 
     void                OnSetAllowDenyFilter( wxCommandEvent &event );
 
-    void                OnConfigUpdated( wxCommandEvent &event );
+    void                CreateControls( void );
 
   public :
-    guPlayListPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guPlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer );
     ~guPlayListPanel();
 
     virtual void        InitPanelData( void );
@@ -225,7 +219,12 @@ class guPlayListPanel : public guAuiManagedPanel
     virtual bool        GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PLTracksListBox->GetColumnData( id, index, width, enabled ); }
     virtual bool        SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PLTracksListBox->SetColumnData( id, index, width, enabled, refresh ); }
 
+    void                SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
+
+    void                UpdatePlaylists( void );
+
     friend class guPLNamesTreeCtrl;
+    friend class guMediaViewer;
 };
 
 #endif

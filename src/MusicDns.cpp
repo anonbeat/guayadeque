@@ -465,6 +465,7 @@ bool guMusicDns::DoGetMetadata( void )
     }
     else
     {
+        guLogMessage( wxT( guMUSICDNS_BASEURL ) wxT( "%s" ), HtmlData.c_str() );
         m_Status = guMDNS_STATUS_ERROR_HTTP;
     }
     return false;

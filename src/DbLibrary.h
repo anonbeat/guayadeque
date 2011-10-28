@@ -73,6 +73,7 @@ enum guRandomMode {
     guRANDOM_MODE_ALBUM
 };
 
+class guMediaViewer;
 class guLibPanel;
 class guDbLibrary;
 
@@ -113,10 +114,10 @@ class guTrack
     wxString        m_Format;
     //
     guTrackMode     m_TrackMode;          // Indicate how the track was created
-    guLibPanel *    m_LibPanel;
+    guMediaViewer * m_MediaViewer;
 
     guTrack() {
-        m_LibPanel = NULL;
+        m_MediaViewer = NULL;
         m_Type = guTRACK_TYPE_DB;
         m_TrackMode = guTRACK_MODE_USER;
         m_Bitrate = 0;
@@ -180,14 +181,14 @@ class guCoverInfo
     int         m_AlbumId;
     wxString    m_AlbumName;
     wxString    m_ArtistName;
-    wxString    m_PathName;
+    wxString    m_AlbumPath;
 
     guCoverInfo( const int m_Id, const wxString &Album, const wxString &Artist, const wxString &Path )
     {
       m_AlbumId = m_Id;
       m_AlbumName = Album;
       m_ArtistName = Artist;
-      m_PathName = Path;
+      m_AlbumPath = Path;
     }
 };
 WX_DECLARE_OBJARRAY(guCoverInfo, guCoverInfos);
@@ -298,9 +299,27 @@ class guCurrentTrack;
 // -------------------------------------------------------------------------------- //
 class guDbLibrary : public guDb
 {
+  private :
+    wxString     m_LastAlbum;
+    int          m_LastAlbumId;
+    wxString     m_LastGenre;
+    int          m_LastGenreId;
+    int          m_LastCoverId;
+    wxString     m_LastCoverPath;
+    guListItems  m_LastItems;
+    wxString     m_LastPath;
+    int          m_LastPathId;
+    wxString     m_LastArtist;
+    int          m_LastArtistId;
+    wxString     m_LastAlbumArtist;
+    int          m_LastAlbumArtistId;
+    wxString     m_LastComposer;
+    int          m_LastComposerId;
+
   protected :
-    wxArrayString      m_LibPaths;
-    bool               m_NeedUpdate;
+    guMediaViewer *     m_MediaViewer;
+//    wxString            m_ConfigPath;
+    bool                m_NeedUpdate;
 
     // Library Filter Options
     wxArrayInt         m_GeFilters;
@@ -314,19 +333,13 @@ class guDbLibrary : public guDb
     wxArrayInt         m_RaFilters; // Ratting
     wxArrayInt         m_PcFilters; // PlayCount
 
-    guTRACKS_ORDER     m_TracksOrder;
+    int                m_TracksOrder;
     bool               m_TracksOrderDesc;
     int                m_AlbumsOrder;   // 0 ->
 
     wxArrayString       m_CoverSearchWords;
 
-    // Podcasts
-    //wxArrayInt          m_PodChFilters;
-    //int                 m_PodcastOrder;
-    //bool                m_PodcastOrderDesc;
-
     wxString            FiltersSQL( int Level );
-
 
     void inline         FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes );
 
@@ -338,9 +351,12 @@ class guDbLibrary : public guDb
 
     virtual int         GetDbVersion( void );
 
-    void                ConfigChanged( void );
+//    void                ConfigChanged( void );
 
     bool                NeedUpdate( void ) { return m_NeedUpdate; };
+
+    guMediaViewer *     GetMediaViewer( void ) { return m_MediaViewer; }
+    void                SetMediaViewer( guMediaViewer * mediaviewer );
 
     void                DoCleanUp( void );
     void                CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers );
@@ -356,7 +372,7 @@ class guDbLibrary : public guDb
     int                 AddCoverImage( const wxImage &image );
     int                 AddCoverFile( const wxString &coverfile, const wxString &coverhash = wxEmptyString );
     void                UpdateCoverFile( int coverid, const wxString &coverfile, const wxString &coverhash );
-    int                 FindCoverFile( const wxString &DirName );
+//    int                 FindCoverFile( const wxString &DirName );
     int                 SetAlbumCover( const int AlbumId, const wxString & CoverPath, const wxString &coverhash = wxEmptyString );
     int                 SetAlbumCover( const int AlbumId, const wxImage &image );
     bool                GetAlbumInfo( const int AlbumId, wxString * AlbumName, wxString * ArtistName, wxString * AlbumPath );
@@ -408,9 +424,12 @@ class guDbLibrary : public guDb
     void                DeleteLibraryTracks( const guTrackArray * tracks, const bool savedeleted );
     bool                FindDeletedFile( const wxString &file, const bool create );
 
-    void                SetSongsOrder( const guTRACKS_ORDER order );
-    guTRACKS_ORDER      GetSongsOrder( void ) const;
-    bool                GetSongsOrderDesc( void ) const;
+    int                 GetTracksOrder( void ) const { return m_TracksOrder; }
+    void                SetTracksOrder( const int order ) { m_TracksOrder = order; }
+    bool                GetTracksOrderDesc( void ) const { return m_TracksOrderDesc; }
+    void                SetTracksOrderDesc( const bool orderdesc ) { m_TracksOrderDesc = orderdesc; }
+
+
     void                UpdateSongs( const guTrackArray * Songs, const wxArrayInt &changedflags );
     void                UpdateTracksWithValue( guTrackArray * tracks, const int fieldid, void * value );
     void                UpdateTrackLength( const int trackid, const int length );
@@ -463,8 +482,8 @@ class guDbLibrary : public guDb
     wxString            GetPlayListQuery( const int plid );
     int                 GetPlayListType( const int plid );
 
-    void                SetLibPath( const wxArrayString &NewPaths );
-    int                 ReadFileTags( const wxString &filename, const bool allowratings = false );
+//    void                SetLibPath( const wxArrayString &NewPaths );
+    int                 ReadFileTags( const wxString &filename, const bool allowrating = false );
     void                UpdateImageFile( const char * filename, const char * saveto,
                                          const int type = wxBITMAP_TYPE_JPEG, const int maxsize = wxNOT_FOUND );
 
@@ -491,7 +510,8 @@ class guDbLibrary : public guDb
     virtual void        UpdateArtistsLabels( const guArrayListItems &labelsets );
     virtual void        UpdateAlbumsLabels( const guArrayListItems &labelsets );
     virtual void        UpdateSongsLabels( const guArrayListItems &labelsets );
-    virtual void        UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newlabel );
+    virtual void        UpdateSongLabel( const guTrack &tracks, const wxString &label, const wxString &newlabel );
+    virtual void        UpdateSongsLabel( const guTrackArray &tracks, const wxString &label, const wxString &newlabel );
 
     void                SetTrackRating( const int songid, const int rating, const bool writetags = false );
     void                SetTracksRating( const wxArrayInt &songids, const int rating, const bool writetags = false );
@@ -507,7 +527,7 @@ class guDbLibrary : public guDb
     int                 GetAlbumArtistsSongs( const wxArrayInt &albumartists, guTrackArray * tracks );
 
     wxBitmap *          GetCoverBitmap( const int coverid, const bool thumb = true );
-    guCoverInfos        GetEmptyCovers( void );
+    int                 GetEmptyCovers( guCoverInfos &coverinfos );
 
     // Smart Playlist and LastFM Panel support functions
     int                 FindArtist( const wxString &Artist );
@@ -525,40 +545,6 @@ class guDbLibrary : public guDb
     bool                    AddCachedPlayedSong( const guCurrentTrack &Song );
     guAS_SubmitInfoArray    GetCachedPlayedSongs( int MaxCount = 10 );
     bool                    DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInfo );
-
-    //
-    // Lyrics functions
-    //
-    wxString                SearchLyric( const wxString &artist, const wxString &trackname );
-    bool                    CreateLyric( const wxString &artist, const wxString &trackname, const wxString &text );
-
-    //
-    // Podcasts functions
-    //
-    int                     GetPodcastChannels( guPodcastChannelArray * channels );
-    void                    SavePodcastChannel( guPodcastChannel * channel, bool onlynew = false );
-    int                     SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew = false );
-    int                     GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel = NULL );
-    int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
-    void                    DelPodcastChannel( const int id );
-
-    int                     GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc );
-    void                    GetPodcastCounters( const wxArrayInt &filters, wxLongLong * count, wxLongLong * len, wxLongLong * size );
-    int                     GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc );
-    void                    SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew = false );
-    void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
-    void                    SetPodcastItemStatus( const int itemid, const int status );
-    void                    SetPodcastItemPlayCount( const int itemid, const int playcount );
-    void                    UpdatePodcastItemLength( const int itemid, const int length );
-    int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
-    int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
-    int                     GetPodcastItemFile( const wxString &filename, guPodcastItem * item = NULL );
-    void                    DelPodcastItem( const int itemid );
-    void                    DelPodcastItems( const int channelid );
-    //void                    SetPodcastChannelFilters( const wxArrayInt &filters );
-    //void                    SetPodcastOrder( int order );
-    int                     GetPendingPodcasts( guPodcastItemArray * items );
-    int                     GetPodcastFiles( const wxArrayInt &channelid, wxFileDataObject * files );
 
     // File Browser related functions
     void                    UpdateTrackFileName( const wxString &oldname, const wxString &newname );
@@ -643,6 +629,7 @@ void inline guDbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * d
   Song->m_AddedTime     = dbRes->GetInt( 26 );
   Song->m_LastPlay      = dbRes->GetInt( 27 );
   Song->m_FileSize      = dbRes->GetInt( 28 );
+  Song->m_MediaViewer   = m_MediaViewer;
 }
 
 #endif

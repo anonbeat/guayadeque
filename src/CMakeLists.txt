@@ -252,6 +252,8 @@ ADD_EXECUTABLE( guayadeque
 	Accelerators.h
 	AccelListBox.cpp
 	AccelListBox.h
+	AuiManagerPanel.cpp
+	AuiManagerPanel.h
 	AuiManagedPanel.cpp
 	AuiManagedPanel.h
 	EditWithOptions.cpp
@@ -264,6 +266,14 @@ ADD_EXECUTABLE( guayadeque
 	TVSoListBox.h
 	TreeViewFilterEditor.cpp
 	TreeViewFilterEditor.h
+	Collections.cpp
+	Collections.h
+	MediaViewer.cpp
+	MediaViewer.h
+	MediaViewerLibrary.cpp
+	MediaViewerLibrary.h
+	iPodMedia.cpp
+	iPodMedia.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

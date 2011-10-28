@@ -149,34 +149,6 @@ void guJamendoLibrary::CreateNewSong( guTrack * track )
 
     if( !dbRes.NextRow() )
     {
-//      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-//                                 "song_genreid = %u, song_genre = '%s', "
-//                                 "song_artistid = %u, song_artist = '%s', "
-//                                 "song_albumid = %u, song_album = '%s', "
-//                                 "song_pathid = %u, song_path = '%s', "
-//                                 "song_filename = '%s', "
-//                                 "song_number = %u, song_year = %u, "
-//                                 "song_length = %u "
-//                                 "WHERE song_id = %u;" ),
-//                    escape_query_str( track->m_SongName ).c_str(),
-//                    track->m_GenreId,
-//                    escape_query_str( track->m_GenreName ).c_str(),
-//                    track->m_ArtistId,
-//                    escape_query_str( track->m_ArtistName ).c_str(),
-//                    track->m_AlbumId,
-//                    escape_query_str( track->m_AlbumName ).c_str(),
-//                    track->m_PathId,
-//                    escape_query_str( track->m_Path ).c_str(),
-//                    escape_query_str( track->m_FileName ).c_str(),
-//                    track->m_Number,
-//                    track->m_Year,
-//                    track->m_Length,
-//                    track->m_SongId );
-//
-//        ExecuteUpdate( query );
-//    }
-//    else
-//    {
         wxString query = wxString::Format( wxT( "INSERT INTO songs( "
                     "song_id, song_playcount, song_addedtime, "
                     "song_name, song_genreid, song_genre, song_artistid, song_artist, "
@@ -222,334 +194,18 @@ void guJamendoLibrary::CreateNewSong( guTrack * track )
 // -------------------------------------------------------------------------------- //
 // guJamendoPanel
 // -------------------------------------------------------------------------------- //
-guJamendoPanel::guJamendoPanel( wxWindow * parent, guJamendoLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
-    guLibPanel( parent, db, playerpanel, prefix )
+guJamendoPanel::guJamendoPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guLibPanel( parent, mediaviewer )
 {
-    SetBaseCommand( ID_MENU_VIEW_JAMENDO );
-
-    InitPanelData();
-
-    m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS | guLIBRARY_CONTEXTMENU_LINKS );
-
-    m_DownloadThread = NULL;
-    m_UpdateThread = NULL;
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->RegisterObject( this ); // Get notified when configuration changes
-
-    Connect( ID_JAMENDO_EDIT_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnEditSetup ), NULL, this );
-    Connect( ID_JAMENDO_SETUP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnEditSetup ), NULL, this );
-    Connect( ID_JAMENDO_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnUpdate ), NULL, this );
-    Connect( ID_JAMENDO_UPGRADE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnUpgrade ), NULL, this );
     Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
     Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
     Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
     Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
-
-    Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnCoverDownloaded ), NULL, this );
-
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guJamendoPanel::OnConfigUpdated ), NULL, this );
-
-    wxArrayInt AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
-    if( AllowedGenres.IsEmpty() )
-    {
-        wxCommandEvent event;
-        OnEditSetup( event );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
 guJamendoPanel::~guJamendoPanel()
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->UnRegisterObject( this ); // Get notified when configuration changes
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::InitPanelData( void )
-{
-    m_PanelCmdIds.Empty();
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_TEXTSEARCH );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_LABELS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_GENRES );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_ARTISTS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_COMPOSERS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_ALBUMARTISTS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_ALBUMS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_YEARS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_RATINGS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_JAMENDO_PLAYCOUNT );
-}
-
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count;
-    if( tracks && ( Count = tracks->Count() ) )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Jamendo" ) );
-        for( Index = 0; Index < Count; Index++ )
-        {
-            guTrack * Track = &( * tracks )[ Index ];
-            Track->m_FileName = wxString::Format( guJAMENDO_FILE_STREAM_URL, Track->m_SongId );
-            Track->m_FileName += AudioFormat ? guJAMENDO_STREAM_FORMAT_OGG : guJAMENDO_STREAM_FORMAT_MP3;
-            Track->m_Type = guTRACK_TYPE_JAMENDO;
-            if( isdrag )
-                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::CreateContextMenu( wxMenu * menu, const int windowid )
-{
-    wxMenu *     SubMenu;
-    SubMenu = new wxMenu();
-
-    if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
-    {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        SubMenu->AppendSeparator();
-    }
-    else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
-    {
-        wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
-        SubMenu->Append( MenuItem );
-
-        SubMenu->AppendSeparator();
-    }
-
-    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_JAMENDO_UPDATE, _( "Update Database" ), _( "Download the latest Jamendo database" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_JAMENDO_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Jamendo genres" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_JAMENDO_SETUP, _( "Preferences" ), _( "Configure the Jamendo options" ) );
-    SubMenu->Append( MenuItem );
-
-    menu->AppendSeparator();
-    menu->AppendSubMenu( SubMenu, _( "Jamendo" ), _( "Global Jamendo options" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnEditSetup( wxCommandEvent &event )
-{
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
-    CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
-    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::StartUpdateTracks( const int action )
-{
-    wxMutexLocker Lock( m_UpdateThreadMutex );
-
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    guStatusBar * StatusBar = ( guStatusBar * ) MainFrame->GetStatusBar();
-    int GaugeId = StatusBar->AddGauge( _( "Jamendo" ) );
-    if( m_UpdateThread )
-    {
-        m_UpdateThread->Pause();
-        m_UpdateThread->Delete();
-    }
-
-    m_UpdateThread = new guJamendoUpdateThread( ( guJamendoLibrary * ) m_Db,
-                                action, GaugeId );
-    if( !m_UpdateThread )
-    {
-        guLogError( wxT( "Could not create the Jamendo update thread" ) );
-        StatusBar->RemoveGauge( GaugeId );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::EndUpdateThread( void )
-{
-    wxMutexLocker Lock( m_UpdateThreadMutex );
-    m_UpdateThread = NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnUpdate( wxCommandEvent &event )
-{
-    StartUpdateTracks( guJAMENDO_ACTION_UPDATE );
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnUpgrade( wxCommandEvent &event )
-{
-    StartUpdateTracks( guJAMENDO_ACTION_UPGRADE );
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnConfigUpdated( wxCommandEvent &event )
-{
-    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_JAMENDO )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Jamendo" ) );
-
-        if( DoUpgrade )
-        {
-            OnUpgrade( event );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::AddDownload( const int albumid, const bool iscover )
-{
-    wxMutexLocker Lock( m_DownloadThreadMutex );
-
-    if( !m_DownloadThread )
-    {
-        m_DownloadThread = new guJamendoDownloadThread( this );
-
-        if( !m_DownloadThread )
-        {
-            guLogMessage( wxT( "Could not create the jamendo download thread" ) );
-            return;
-        }
-    }
-
-    m_DownloadThread->AddAlbum( albumid, iscover );
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::AddDownloads( wxArrayInt &albumids, const bool iscover )
-{
-    wxMutexLocker Lock( m_DownloadThreadMutex );
-
-    if( !m_DownloadThread )
-    {
-        m_DownloadThread = new guJamendoDownloadThread( this );
-
-        if( !m_DownloadThread )
-        {
-            guLogMessage( wxT( "Could not create the jamendo download thread" ) );
-            return;
-        }
-    }
-
-    m_DownloadThread->AddAlbums( albumids, iscover );
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::EndDownloadThread( void )
-{
-    wxMutexLocker Lock( m_DownloadThreadMutex );
-    m_DownloadThread = NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-wxImage * guJamendoPanel::GetAlbumCover( const int albumid, wxString &coverpath )
-{
-    wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers/" );
-    CoverFile += wxString::Format( wxT( "%u.jpg" ), albumid );
-    if( wxFileExists( CoverFile ) )
-    {
-        wxImage * CoverImage = new wxImage( CoverFile, wxBITMAP_TYPE_JPEG );
-        if( CoverImage )
-        {
-            if( CoverImage->IsOk() )
-            {
-                coverpath = CoverFile;
-                return CoverImage;
-            }
-            delete CoverImage;
-        }
-    }
-    AddDownload( albumid );
-    return NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnCoverDownloaded( wxCommandEvent &event )
-{
-    int AlbumId =  event.GetInt();
-    if( AlbumId )
-    {
-        ReloadAlbums( false );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
-{
-    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( Albums.Count() )
-    {
-        AddDownloads( Albums );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guJamendoPanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
-{
-    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( Albums.Count() )
-    {
-        int AlbumId = Albums[ 0 ];
-        guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, AlbumId );
-        if( SelCoverFile )
-        {
-            if( SelCoverFile->ShowModal() == wxID_OK )
-            {
-                wxString CoverFile = SelCoverFile->GetSelFile();
-                if( !CoverFile.IsEmpty() )
-                {
-                    guConfig * Config = ( guConfig * ) guConfig::Get();
-                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-                    wxString CoverName = wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers/" );
-                    CoverName += wxString::Format( wxT( "%u.jpg" ), AlbumId );
-
-                    wxURI Uri( CoverFile );
-                    if( Uri.IsReference() )
-                    {
-                        wxImage CoverImage( CoverFile );
-                        if( CoverImage.IsOk() )
-                        {
-                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
-                            {
-                                m_Db->SetAlbumCover( AlbumId, CoverName );
-                                ReloadAlbums( false );
-                            }
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                    else
-                    {
-                        if( DownloadImage( CoverFile, CoverName ) )
-                        {
-                            m_Db->SetAlbumCover( AlbumId, CoverName );
-                            ReloadAlbums( false );
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                }
-            }
-            delete SelCoverFile;
-        }
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -557,45 +213,15 @@ void guJamendoPanel::OnDownloadAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadAlbum" ) );
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
-    if( TorrentCmd.IsEmpty() )
-    {
-        OnEditSetup( event );
-        return;
-    }
-
-    int Index;
-    int Count;
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( ( Count = Albums.Count() ) )
-    {
-        if( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM )
-        {
-            AddDownloads( Albums, false );
-        }
-        else
-        {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, Albums[ Index ] ) );
-            }
-        }
-    }
+
+    ( ( guMediaViewerJamendo * ) m_MediaViewer )->DownloadAlbums( Albums, ( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM ) );
 }
 
 // -------------------------------------------------------------------------------- //
 void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
-    if( TorrentCmd.IsEmpty() )
-    {
-        OnEditSetup( event );
-        return;
-    }
 
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
@@ -608,29 +234,20 @@ void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
     }
-    if( ( Count = Albums.Count() ) )
-    {
-        if( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM )
-        {
-            AddDownloads( Albums, false );
-        }
-        else
-        {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, Albums[ Index ] ) );
-            }
-        }
-    }
+
+    ( ( guMediaViewerJamendo * ) m_MediaViewer )->DownloadAlbums( Albums, ( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM ) );
 }
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guJamendoDownloadThread
 // -------------------------------------------------------------------------------- //
-guJamendoDownloadThread::guJamendoDownloadThread( guJamendoPanel * jamendopanel )
+guJamendoDownloadThread::guJamendoDownloadThread( guMediaViewerJamendo * mediaviewer )
 {
-    m_JamendoPanel = jamendopanel;
-    m_Db = jamendopanel->GetJamendoDb();
+    m_MediaViewer = mediaviewer;
+    m_Db = ( guJamendoLibrary * ) mediaviewer->GetDb();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -644,7 +261,7 @@ guJamendoDownloadThread::~guJamendoDownloadThread()
 {
     if( !TestDestroy() )
     {
-        m_JamendoPanel->EndDownloadThread();
+        m_MediaViewer->EndDownloadThread();
     }
 }
 
@@ -666,7 +283,7 @@ void guJamendoDownloadThread::AddAlbum( const int albumid, const bool iscover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guJamendoDownloadThread::AddAlbums( wxArrayInt &albumids, const bool iscover )
+void guJamendoDownloadThread::AddAlbums( const wxArrayInt &albumids, const bool iscover )
 {
     int Index;
     int Count = albumids.Count();
@@ -697,8 +314,8 @@ guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
     int Count;
     int LoopCount = 0;
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Jamendo" ) );
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "Jamendo" ) );
+    int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) );
+    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "jamendo" ) );
     while( !TestDestroy() )
     {
         m_CoversMutex.Lock();
@@ -709,7 +326,7 @@ guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
         if( Count )
         {
             LoopCount = 0;
-            wxString CoverFile = wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers/" );
+            wxString CoverFile = guPATH_JAMENDO_COVERS;
             CoverFile += wxString::Format( wxT( "%u.jpg" ), m_Covers[ 0 ] );
 
             if( !wxFileExists( CoverFile ) )
@@ -734,7 +351,7 @@ guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
                 // Notify the panel that the cover is downloaded
                 wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_JAMENDO_COVER_DOWNLAODED );
                 event.SetInt( m_Covers[ 0 ] );
-                wxPostEvent( m_JamendoPanel, event );
+                wxPostEvent( m_MediaViewer, event );
             }
             else
             {
@@ -821,16 +438,16 @@ guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guJamendoUpdateThread
 // -------------------------------------------------------------------------------- //
-guJamendoUpdateThread::guJamendoUpdateThread( guJamendoLibrary * db, int action, int gaugeid )
+guJamendoUpdateThread::guJamendoUpdateThread( guMediaViewerJamendo * mediaviewer, int action, int gaugeid )
 {
-    m_Db = db;
+    m_MediaViewer = mediaviewer;
+    m_Db = ( guJamendoLibrary * ) mediaviewer->GetDb();
     m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     m_Action = action;
     m_GaugeId = gaugeid;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    //m_LastUpdate = Config->ReadNum( wxT( "JamendoLastUpdate" ), 0, wxT( "General" ) );
-    m_AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "JamendoGenres" ) );
+    m_AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "jamendo/genres" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -843,10 +460,9 @@ guJamendoUpdateThread::guJamendoUpdateThread( guJamendoLibrary * db, int action,
 guJamendoUpdateThread::~guJamendoUpdateThread()
 {
     //
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
-    wxPostEvent( MainFrame, event );
+    wxPostEvent( m_MainFrame, event );
 
     if( !TestDestroy() )
     {
@@ -854,15 +470,13 @@ guJamendoUpdateThread::~guJamendoUpdateThread()
         if( Config )
         {
             wxDateTime Now = wxDateTime::Now();
-            Config->WriteNum( wxT( "JamendoLastUpdate" ), Now.GetTicks(), wxT( "General" ) );
+            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "jamendo" ) );
             Config->Flush();
         }
 
         event.SetId( ID_JAMENDO_UPDATE_FINISHED );
         event.SetEventObject( ( wxObject * ) this );
-        wxPostEvent( MainFrame, event );
-
-        m_MainFrame->GetJamendoPanel()->EndUpdateThread();
+        wxPostEvent( m_MediaViewer, event );
     }
 }
 
@@ -1025,6 +639,8 @@ void ReadJamendoXmlAlbums( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, 
         if( xmlnode->GetName() == wxT( "album" ) )
         {
             track->m_CoverId = 0;
+            track->m_GenreName = _( "Unknown" );
+            track->m_GenreId = 10000;
             ReadJamendoXmlAlbum( xmlnode->GetChildren(), thread, track, db, genres );
         }
         xmlnode = xmlnode->GetNext();
@@ -1057,17 +673,17 @@ void ReadJamendoXmlArtist( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, 
 }
 
 // -------------------------------------------------------------------------------- //
-bool guJamendoUpdateThread::UpdateDatabase( void )
+bool guJamendoUpdateThread::UpgradeDatabase( void )
 {
-    if( DownloadFile( guJAMENDO_DATABASE_DUMP_URL, wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml.gz" ) ) )
+    if( DownloadFile( guJAMENDO_DATABASE_DUMP_URL, guPATH_JAMENDO wxT( "dbdump_artistalbumtrack.xml.gz" ) ) )
     {
-        wxFileInputStream Ins( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml.gz" ) );
+        wxFileInputStream Ins( guPATH_JAMENDO wxT( "dbdump_artistalbumtrack.xml.gz" ) );
         if( Ins.IsOk() )
         {
             wxZlibInputStream ZIn( Ins );
             if( ZIn.IsOk() )
             {
-                wxFileOutputStream ZOuts( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml" ) );
+                wxFileOutputStream ZOuts( guPATH_JAMENDO wxT( "dbdump_artistalbumtrack.xml" ) );
                 if( ZOuts.IsOk() )
                 {
                     ZIn.Read( ZOuts );
@@ -1094,16 +710,16 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
     wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
-    if( m_Action == guJAMENDO_ACTION_UPGRADE &&
-        !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml" ) ) )
+    if( m_Action == guJAMENDO_ACTION_UPDATE &&
+        !wxFileExists( guPATH_JAMENDO wxT( "dbdump_artistalbumtrack.xml" ) ) )
     {
-        m_Action = guJAMENDO_ACTION_UPDATE;
+        m_Action = guJAMENDO_ACTION_UPGRADE;
     }
 
     guLogMessage( wxT( "Starting the Jamendo Update process..." ) );
-    if( !TestDestroy() && ( m_Action == guJAMENDO_ACTION_UPGRADE || UpdateDatabase() ) )
+    if( !TestDestroy() && ( m_Action == guJAMENDO_ACTION_UPDATE || UpgradeDatabase() ) )
     {
-        wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/dbdump_artistalbumtrack.xml" ), wxFile::read );
+        wxFile XmlFile( guPATH_JAMENDO wxT( "dbdump_artistalbumtrack.xml" ), wxFile::read );
         if( XmlFile.IsOpened() )
         {
             guListItems CurrentGenres;
@@ -1118,10 +734,13 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
                     GenresToDel.Add( CurrentGenres[ Index ].m_Id );
             }
 
+            query = wxT( "BEGIN TRANSACTION" );
+            m_Db->ExecuteUpdate( query );
+
             if( GenresToDel.Count() )
             {
+                guLogMessage( wxT( "Deleting old jamendo genres" ) );
                 query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( GenresToDel, wxT( "song_genreid" ) );
-                //guLogMessage( wxT( "%s" ), query.c_str() );
                 m_Db->ExecuteUpdate( query );
             }
 
@@ -1129,8 +748,6 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
             wxPostEvent( wxTheApp->GetTopWindow(), evtmax );
 
             wxFileOffset CurPos;
-            query = wxT( "BEGIN TRANSACTION" );
-            m_Db->ExecuteUpdate( query );
 
             if( m_AllowedGenres.Count() )
             {
@@ -1176,9 +793,491 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
 
             XmlFile.Close();
         }
+        else
+        {
+            guLogMessage( wxT( "Could not open the file %s" ), wxString( guPATH_JAMENDO wxT( "dbdump_artistalbumtrack.xml" ) ).c_str() );
+        }
     }
 
     return 0;
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guJamendoAlbumBrowser
+// -------------------------------------------------------------------------------- //
+guJamendoAlbumBrowser::guJamendoAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guAlbumBrowser( parent, mediaviewer )
+{
+    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoAlbumBrowser::OnDownloadAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoAlbumBrowser::OnDownloadAlbum ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guJamendoAlbumBrowser::~guJamendoAlbumBrowser()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guJamendoAlbumBrowser::OnDownloadAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadAlbum" ) );
+    if( m_LastAlbumBrowserItem )
+    {
+        wxArrayInt Albums;
+        Albums.Add( m_LastAlbumBrowserItem->m_AlbumId );
+        ( ( guMediaViewerJamendo * ) m_MediaViewer )->DownloadAlbums( Albums, ( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM ) );
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guJamendoTreePanel
+// -------------------------------------------------------------------------------- //
+guJamendoTreePanel::guJamendoTreePanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guTreeViewPanel( parent, mediaviewer )
+{
+    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadTrackAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadTrackAlbum ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guJamendoTreePanel::~guJamendoTreePanel()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guJamendoTreePanel::OnDownloadAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadAlbum" ) );
+    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetSelection();
+    guTreeViewData * TreeViewData = ( guTreeViewData * ) m_TreeViewCtrl->GetItemData( CurItemId );
+    int ItemType = TreeViewData->GetType();
+
+    if( ItemType == guLIBRARY_ELEMENT_ALBUMS )
+    {
+        wxArrayInt Albums;
+        Albums.Add( TreeViewData->m_Id );
+        ( ( guMediaViewerJamendo * ) m_MediaViewer )->DownloadAlbums( Albums, ( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guJamendoTreePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+
+    guTrackArray Tracks;
+    m_TVTracksListBox->GetSelectedSongs( &Tracks );
+
+    wxArrayInt Albums;
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
+            Albums.Add( Tracks[ Index ].m_AlbumId );
+    }
+
+    ( ( guMediaViewerJamendo * ) m_MediaViewer )->DownloadAlbums( Albums, ( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM ) );
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guJamendoPlayListPanel
+// -------------------------------------------------------------------------------- //
+guJamendoPlayListPanel::guJamendoPlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guPlayListPanel( parent, mediaviewer )
+{
+    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPlayListPanel::OnDownloadTrackAlbum ), NULL, this );
+    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPlayListPanel::OnDownloadTrackAlbum ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guJamendoPlayListPanel::~guJamendoPlayListPanel()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guJamendoPlayListPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+
+    wxArrayInt Albums;
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
+            Albums.Add( Tracks[ Index ].m_AlbumId );
+    }
+
+    ( ( guMediaViewerJamendo * ) m_MediaViewer )->DownloadAlbums( Albums, ( event.GetId() == ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM ) );
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guMediaVIewerJamendo
+// -------------------------------------------------------------------------------- //
+guMediaViewerJamendo::guMediaViewerJamendo( wxWindow * parent, guMediaCollection &mediacollection,
+        const int basecmd, guMainFrame * mainframe, const int mode, guPlayerPanel * playerpanel ) :
+    guMediaViewer( parent, mediacollection, basecmd, mainframe, mode, playerpanel )
+{
+    m_DownloadThread = NULL;
+    m_ContextMenuFlags = ( guCONTEXTMENU_DOWNLOAD_COVERS | guCONTEXTMENU_LINKS );
+
+    Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerJamendo::OnCoverDownloaded ), NULL, this );
+    Connect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerJamendo::OnUpdateFinished ), NULL, this );
+
+    InitMediaViewer( mode );
+}
+
+// -------------------------------------------------------------------------------- //
+guMediaViewerJamendo::~guMediaViewerJamendo()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::LoadMediaDb( void )
+{
+    guLogMessage( wxT( "LoadMediaDb... JAMENDO..." ) );
+    m_Db = new guJamendoLibrary( guPATH_COLLECTIONS + m_MediaCollection->m_UniqueId + wxT( "/guayadeque.db" ) );
+    m_Db->SetMediaViewer( this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::OnConfigUpdated( wxCommandEvent &event )
+{
+    guMediaViewer::OnConfigUpdated( event );
+
+    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_JAMENDO )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        if( Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "jamendo" ) ) )
+        {
+            UpdateLibrary();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::UpdateLibrary( void )
+{
+    int GaugeId;
+    GaugeId = m_MainFrame->AddGauge( m_MediaCollection->m_Name );
+
+    if( m_UpdateThread )
+    {
+        m_UpdateThread->Pause();
+        m_UpdateThread->Delete();
+    }
+
+    m_UpdateThread = new guJamendoUpdateThread( this, guJAMENDO_ACTION_UPDATE, GaugeId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::UpgradeLibrary( void )
+{
+    int GaugeId;
+    GaugeId = m_MainFrame->AddGauge( m_MediaCollection->m_Name );
+
+    if( m_UpdateThread )
+    {
+        m_UpdateThread->Pause();
+        m_UpdateThread->Delete();
+    }
+
+    m_UpdateThread = new guJamendoUpdateThread( this, guJAMENDO_ACTION_UPGRADE, GaugeId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+{
+    int Index;
+    int Count;
+    if( tracks && ( Count = tracks->Count() ) )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guTrack * Track = &( * tracks )[ Index ];
+            Track->m_FileName = wxString::Format( guJAMENDO_FILE_STREAM_URL, Track->m_SongId );
+            Track->m_FileName += AudioFormat ? guJAMENDO_STREAM_FORMAT_OGG : guJAMENDO_STREAM_FORMAT_MP3;
+            Track->m_Type = guTRACK_TYPE_JAMENDO;
+            if( isdrag )
+                Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::AddDownload( const int albumid, const bool iscover )
+{
+    //guLogMessage( wxT( "Error... %i" ), 1000 / 0 );
+    wxMutexLocker Lock( m_DownloadThreadMutex );
+
+    if( !m_DownloadThread )
+    {
+        m_DownloadThread = new guJamendoDownloadThread( this );
+
+        if( !m_DownloadThread )
+        {
+            guLogMessage( wxT( "Could not create the jamendo download thread" ) );
+            return;
+        }
+    }
+
+    m_DownloadThread->AddAlbum( albumid, iscover );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::AddDownloads( const wxArrayInt &albumids, const bool iscover )
+{
+    wxMutexLocker Lock( m_DownloadThreadMutex );
+
+    if( !m_DownloadThread )
+    {
+        m_DownloadThread = new guJamendoDownloadThread( this );
+
+        if( !m_DownloadThread )
+        {
+            guLogMessage( wxT( "Could not create the jamendo download thread" ) );
+            return;
+        }
+    }
+
+    m_DownloadThread->AddAlbums( albumids, iscover );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::OnCoverDownloaded( wxCommandEvent &event )
+{
+    AlbumCoverChanged( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::EndUpdateThread( void )
+{
+    m_UpdateThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::EndDownloadThread( void )
+{
+    wxMutexLocker Lock( m_DownloadThreadMutex );
+    m_DownloadThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::OnUpdateFinished( wxCommandEvent &event )
+{
+    EndUpdateThread();
+
+    LibraryUpdated();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::DownloadAlbumCover( const int albumid )
+{
+    AddDownload( albumid, true );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::CreateContextMenu( wxMenu * menu, const int windowid )
+{
+    wxMenu * Menu = new wxMenu();
+    wxMenuItem * MenuItem;
+
+    int BaseCommand = GetBaseCommand();
+
+    if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
+    {
+        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
+    else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
+    {
+        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( menu, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, _( "Download Albums torrents" ), _( "Download the current selected album" ) );
+        Menu->Append( MenuItem );
+
+        Menu->AppendSeparator();
+    }
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY, _( "Update" ), _( "Update the collection library" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_RESCAN_LIBRARY, _( "Rescan" ), _( "Rescan the collection library" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_SEARCH_COVERS, _( "Search Covers" ), _( "Search the collection missing covers" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_VIEW_PROPERTIES, _( "Properties" ), _( "Show collection properties" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    menu->AppendSeparator();
+    menu->AppendSubMenu( Menu, wxT( "Jamendo" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerJamendo::CreateLibraryView( void )
+{
+    guLogMessage( wxT( "CreateLibraryView... Jamendo...") );
+    m_LibPanel = new guJamendoPanel( this, this );
+    m_LibPanel->SetBaseCommand( m_BaseCommand + 1 );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerJamendo::CreateAlbumBrowserView( void )
+{
+    m_AlbumBrowser = new guJamendoAlbumBrowser( this, this );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerJamendo::CreateTreeView( void )
+{
+    m_TreeViewPanel = new guJamendoTreePanel( this, this );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerJamendo::CreatePlayListView( void )
+{
+    m_PlayListPanel = new guJamendoPlayListPanel( this, this );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guMediaViewerJamendo::GetAlbumCover( const int albumid, int &coverid,
+                wxString &coverpath, const wxString &artistname, const wxString &albumname )
+{
+    wxImage * CoverImage = guMediaViewer::GetAlbumCover( albumid, coverid, coverpath, artistname, albumname );
+    if( CoverImage )
+        return CoverImage;
+
+    wxString CoverFile = guPATH_JAMENDO_COVERS + GetCoverName( albumid );
+    if( wxFileExists( CoverFile ) )
+    {
+        wxImage * CoverImage = new wxImage( CoverFile, wxBITMAP_TYPE_JPEG );
+        if( CoverImage )
+        {
+            if( CoverImage->IsOk() )
+            {
+                coverpath = CoverFile;
+
+                SetAlbumCover( albumid, guPATH_JAMENDO_COVERS, coverpath );
+
+                coverid = m_Db->GetAlbumCoverId( albumid );
+
+                return CoverImage;
+            }
+            delete CoverImage;
+        }
+    }
+
+    AddDownload( albumid );
+
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaViewerJamendo::GetCoverName( const int albumid )
+{
+    return wxString::Format( wxT( "%u.jpg" ), albumid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::SelectAlbumCover( const int albumid )
+{
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    if( SelCoverFile )
+    {
+        if( SelCoverFile->ShowModal() == wxID_OK )
+        {
+            wxString CoverFile = SelCoverFile->GetSelFile();
+            if( !CoverFile.IsEmpty() )
+            {
+                if( SetAlbumCover( albumid, guPATH_JAMENDO_COVERS, CoverFile ) )
+                {
+                    if( SelCoverFile->EmbedToFiles() )
+                    {
+                        EmbedAlbumCover( albumid );
+                    }
+                }
+            }
+        }
+        SelCoverFile->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::DownloadAlbums( const wxArrayInt &albums, const bool istorrent )
+{
+    int Index;
+    int Count;
+    if( ( Count = albums.Count() ) )
+    {
+        if( istorrent )
+        {
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "jamendo" ) );
+            if( TorrentCmd.IsEmpty() )
+            {
+                //OnEditSetup( event );
+                return;
+            }
+
+            AddDownloads( albums, false );
+        }
+        else
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, albums[ Index ] ) );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerJamendo::FindMissingCover( const int albumid, const wxString &artistname, const wxString &albumname, const wxString &albumpath )
+{
+    AddDownload( albumid, true );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerJamendo::EditProperties( void )
+{
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
+    wxPostEvent( m_MainFrame, CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //

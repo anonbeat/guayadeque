@@ -25,6 +25,7 @@
 #include "Commands.h"
 #include "Images.h"
 #include "MainApp.h"
+#include "MediaViewer.h"
 #include "OnlineLinks.h"
 #include "PlayList.h" // LenToString
 #include "RatingCtrl.h"
@@ -32,14 +33,12 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guTVSoListBox::guTVSoListBox( wxWindow * parent, guDbLibrary * db, wxString confname, int style ) :
-             guSoListBox( parent, NULL, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
+guTVSoListBox::guTVSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style ) :
+             guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
-    m_LibPanel = NULL;
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_TracksOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
-    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    m_TracksOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, confname );
+//    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, confname );
 
     CreateAcceleratorTable();
 
@@ -49,6 +48,9 @@ guTVSoListBox::guTVSoListBox( wxWindow * parent, guDbLibrary * db, wxString conf
 // -------------------------------------------------------------------------------- //
 guTVSoListBox::~guTVSoListBox()
 {
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    Config->WriteNum( wxT( "TracksOrder" ), m_TracksOrder, m_ConfName );
+//    Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, m_ConfName );
 }
 
 // -------------------------------------------------------------------------------- //

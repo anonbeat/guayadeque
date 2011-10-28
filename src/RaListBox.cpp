@@ -27,6 +27,7 @@
 #include "OnlineLinks.h"
 #include "RatingCtrl.h"
 #include "MainApp.h"
+#include "MediaViewer.h"
 #include "Utils.h"
 #include "LibPanel.h"
 
@@ -175,11 +176,11 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
-    Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+    Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
     if( SelCount )
     {
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
         {
             Menu->AppendSeparator();
 
@@ -193,15 +194,15 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_RATING_SAVETOPLAYLIST,
-                                wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                                _( "Save the selected tracks to PlayList" ) );
+                                wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                _( "Save the selected tracks to playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+        if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
         {
             Menu->AppendSeparator();
-            m_LibPanel->CreateCopyToMenu( Menu, ID_RATING_COPYTO );
+            m_LibPanel->CreateCopyToMenu( Menu );
         }
     }
     m_LibPanel->CreateContextMenu( Menu );

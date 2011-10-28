@@ -89,7 +89,7 @@ void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )
             if( m_MainFrame->IsIconized() )
                 m_MainFrame->Iconize( false );
         }
-        else if( Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+        else if( Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "general" ) ) )
         {
             m_MainFrame->Show( false );
         }
@@ -162,7 +162,7 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
         Menu->AppendSubMenu( RatingMenu, _( "Rating" ), _( "Set the current track rating" ) );
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, _( "&Smart Mode" ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, _( "&Smart Play" ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
         Menu->Append( MenuItem );
         MenuItem->Check( m_PlayerPanel->GetPlaySmart() );
 

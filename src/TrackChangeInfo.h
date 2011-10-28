@@ -21,22 +21,26 @@
 #ifndef TRACKCHANGEINFO_H
 #define TRACKCHANGEINFO_H
 
+
 #include <wx/dynarray.h>
 #include <wx/string.h>
 
+class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
 class guTrackChangeInfo
 {
   public :
-    wxString m_ArtistName;
-    wxString m_TrackName;
+    wxString            m_ArtistName;
+    wxString            m_TrackName;
+    guMediaViewer *     m_MediaViewer;
 
     guTrackChangeInfo() {};
-    guTrackChangeInfo( const wxString &artist, const wxString &track )
+    guTrackChangeInfo( const wxString &artist, const wxString &track, guMediaViewer * mediaviewer )
     {
         m_ArtistName = artist;
         m_TrackName = track;
+        m_MediaViewer = mediaviewer;
     };
 
     ~guTrackChangeInfo() {};

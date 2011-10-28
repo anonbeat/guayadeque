@@ -119,7 +119,7 @@ class guCurrentTrack : public guTrack
         m_Composer = Src.m_Composer;
         m_PlayTime = 0;
         m_ASRating = guAS_RATING_NONE;
-        m_LibPanel = Src.m_LibPanel;
+        m_MediaViewer = Src.m_MediaViewer;
 
         //CoverType = GU_SONGCOVER_NONE;
         if( m_Type == guTRACK_TYPE_RADIOSTATION )
@@ -182,7 +182,7 @@ class guCurrentTrack : public guTrack
         m_Comments = track.m_Comments;
         m_ComposerId = track.m_ComposerId;
         m_Composer = track.m_Composer;
-        m_LibPanel = track.m_LibPanel;
+        m_MediaViewer = track.m_MediaViewer;
         if( m_CoverImage )
         {
             delete m_CoverImage;
@@ -303,7 +303,7 @@ class guPlayerPanel : public wxPanel
     int                         m_SavedPlayedTrack;
 
     wxString                    m_LastTmpCoverFile;
-    guUpdatePlayerCoverThread * m_UpdateCoverThread;
+//    guUpdatePlayerCoverThread * m_UpdateCoverThread;
 
 	void                        OnVolumenButtonClick( wxCommandEvent &event );
 	void                        OnVolumenMouseWheel( wxMouseEvent &event );
@@ -441,12 +441,14 @@ class guPlayerPanel : public wxPanel
 
     bool                        GetAudioScrobbleEnabled( void ) { return m_AudioScrobbleEnabled; }
 
-    void                        UpdateCover( const bool shownotify = true );    // Start the thread that search for the cover
+    void                        UpdateCover( const bool shownotify = true, const bool deleted = false );    // Start the thread that search for the cover
 
     wxString                    LastTmpCoverFile( void ) { return m_LastTmpCoverFile; }
     void                        SetLastTmpCoverFile( const wxString &lastcoverfile ) { m_LastTmpCoverFile = lastcoverfile; }
 
     void                        StopAtEnd( void ) { m_MediaSong.m_Type = guTrackType( ( int ) m_MediaSong.m_Type ^ guTRACK_TYPE_STOP_HERE ); }
+
+    void                        MediaViewerClosed( guMediaViewer * mediaviewer );
 
     friend class guSmartAddTracksThread;
 };
@@ -488,9 +490,11 @@ class guUpdatePlayerCoverThread : public wxThread
     guCurrentTrack *    m_CurrentTrack;
     guMainFrame *       m_MainFrame;
     bool                m_ShowNotify;
+    bool                m_Deleted;
 
   public:
-    guUpdatePlayerCoverThread( guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack, const bool shownotify );
+    guUpdatePlayerCoverThread( guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel,
+                              guCurrentTrack * currenttrack, const bool shownotify, const bool deleted = false );
     ~guUpdatePlayerCoverThread();
 
     virtual ExitCode Entry();

@@ -26,6 +26,7 @@
 #include "DbLibrary.h"
 #include "GIO_Volume.h"
 #include "LibPanel.h"
+#include "MediaViewer.h"
 #include "PlayListPanel.h"
 #include "Preferences.h"
 
@@ -62,6 +63,7 @@
 #define guPORTABLEMEDIA_AUDIO_FORMAT_FLAC       ( 1 << 2 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_AAC        ( 1 << 3 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_WMA        ( 1 << 4 )
+#define guPORTABLEMEDIA_AUDIO_FORMAT_ALL        0xFFFFFFFF
 
 #define guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U     ( 1 << 0 )
 #define guPORTABLEMEDIA_PLAYLIST_FORMAT_PLS     ( 1 << 1 )
@@ -82,10 +84,14 @@ enum guPortableMediaTranscodeScope {
 };
 
 enum guPortableMediaType {
-    guPORTABLEMEDIA_TYPE_OTHER,
-    guPORTABLEMEDIA_TYPE_IPOD
+    guPORTABLE_MEDIA_TYPE_MSC,      // Regular Mass storage devices
+    guPORTABLE_MEDIA_TYPE_MTP,      // Media Transfer Protocol devices
+    guPORTABLE_MEDIA_TYPE_IPOD      // iPods
 };
 
+
+// -------------------------------------------------------------------------------- //
+int GetPortableMediaType( const wxString &path );
 
 // -------------------------------------------------------------------------------- //
 int guGetTranscodeFileFormat( const wxString &filetype );
@@ -155,6 +161,7 @@ class guPortableMediaDevice
 
     wxString                MountPath( void ) { return m_Mount->GetMountPath(); }
     wxString                Id( void ) { return m_Id; }
+    void                    SetId( const wxString &id ) { m_Id = id; }
     int                     Type( void ) { return m_Type; }
     void                    SetType( const int type ) { m_Type = type; }
     wxString                DevicePath( void ) { return m_Mount->GetName() + wxT( "-" ) + m_Id; }
@@ -203,8 +210,8 @@ class guPortableMediaDevice
     void                    SetCoverSize( const int size ) { m_CoverSize = size; }
     int                     CoverSize( void ) { return m_CoverSize; }
 
-    int                     PanelActive( void ) { return m_Mount->PanelActive(); }
-    void                    SetPanelActive( const int panelactive ) { m_Mount->SetPanelActive( panelactive ); }
+//    int                     PanelActive( void ) { return m_Mount->PanelActive(); }
+//    void                    SetPanelActive( const int panelactive ) { m_Mount->SetPanelActive( panelactive ); }
 
     bool                    IsMount( GMount * mount ) { return m_Mount->IsMount( mount ); }
     bool                    CanUnmount( void ) { return m_Mount->CanUnmount(); }
@@ -231,7 +238,7 @@ class guListCheckOptionsDialog : public wxDialog
 class guPortableMediaProperties : public wxDialog
 {
   protected:
-    guPortableMediaDevice *     m_PortableMediaDevice;
+    guPortableMediaDevice *     m_PortableDevice;
 
     wxStaticText *              m_NameText;
     wxStaticText *              m_MountPathText;
@@ -285,7 +292,7 @@ class guPortableMediaProperties : public wxDialog
 class guPortableMediaLibrary : public guDbLibrary
 {
   protected :
-    guPortableMediaDevice * m_PortableMediaDevice;
+    guPortableMediaDevice * m_PortableDevice;
 
   public :
     guPortableMediaLibrary( const wxString &libpath, guPortableMediaDevice * portablemediadevice );
@@ -298,267 +305,148 @@ class guPortableMediaLibrary : public guDbLibrary
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibrary *, guPortableMediaLibraryArray );
 
+class guMediaViewerPortableDevice;
+
 // -------------------------------------------------------------------------------- //
 class guPortableMediaLibPanel : public guLibPanel
 {
   protected :
-    guPortableMediaDevice *     m_PortableMediaDevice;
+    guPortableMediaDevice *     m_PortableDevice;
 
-    virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
-    virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
+//    virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
 
-    virtual void                OnPortableLibraryUpdate( wxCommandEvent &event );
-    virtual void                OnPortableUnmount( wxCommandEvent &event );
-    virtual void                OnPortableProperties( wxCommandEvent &event );
-
-    virtual bool                OnDropFiles( const wxArrayString &filenames );
-
-    virtual void                UpdatePlaylists( void );
+//    virtual void                OnPortableLibraryUpdate( wxCommandEvent &event );
+//    virtual void                OnPortableUnmount( wxCommandEvent &event );
+//    virtual void                OnPortableProperties( wxCommandEvent &event );
+//
+//    virtual bool                OnDropFiles( const wxArrayString &filenames );
+//
+//    virtual void                UpdatePlaylists( void );
 
   public :
-    guPortableMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "PMD" ) );
+    guPortableMediaLibPanel( wxWindow * parent, guMediaViewerPortableDevice * mediaviewer );
     ~guPortableMediaLibPanel();
 
-    wxString                    IconString( void ) { return m_PortableMediaDevice->IconString(); }
+    wxString                    IconString( void ) { return m_PortableDevice->IconString(); }
     virtual wxString            GetName( void );
-    virtual wxArrayString       GetLibraryPaths( void );
-    virtual wxString            GetPlaylistPath( void );
 
-    guPortableMediaDevice *     PortableMediaDevice( void ) { return m_PortableMediaDevice; }
-    virtual void                SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice ) { m_PortableMediaDevice = portablemediadevice; }
+//    virtual wxArrayString       GetLibraryPaths( void );
+//    virtual wxString            GetPlaylistPath( void );
 
-    int                         BaseCommand( void ) { return m_BaseCommand; }
+    guPortableMediaDevice *     PortableMediaDevice( void ) { return m_PortableDevice; }
+    virtual void                SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice ) { m_PortableDevice = portablemediadevice; }
 
-    int                         PanelActive( void ) { return m_PortableMediaDevice->PanelActive(); }
-    void                        SetPanelActive( const int panelactive ) { m_PortableMediaDevice->SetPanelActive( panelactive ); }
+//    virtual int                 LastUpdate( void );
+//    virtual void                SetLastUpdate( int lastupdate = wxNOT_FOUND );
 
-    bool                        IsMount( GMount * mount ) { return m_PortableMediaDevice->IsMount( mount ); }
+//    virtual wxArrayString       GetCoverSearchWords( void );
 
-    virtual int                 LastUpdate( void );
-    virtual void                SetLastUpdate( int lastupdate = wxNOT_FOUND );
+//    virtual wxString            GetCoverName( void );
+//    virtual int                 GetCoverMaxSize( void );
 
-    virtual wxArrayString       GetCoverSearchWords( void );
+//    virtual void                DoUpdate( const bool forced = false );
 
-    virtual wxString            GetCoverName( void );
-    virtual int                 GetCoverMaxSize( void );
-
-    virtual void                DoUpdate( const bool forced = false );
-
-    virtual int                 CopyTo( const guTrack * track, wxString &filename ) { return wxNOT_FOUND; }
+//    virtual int                 CopyTo( const guTrack * track, wxString &filename ) { return wxNOT_FOUND; }
 
 };
 WX_DEFINE_ARRAY_PTR( guPortableMediaLibPanel *, guPortableMediaPanelArray );
 
+//// -------------------------------------------------------------------------------- //
+//class guPortableMediaAlbumBrowser : public guAlbumBrowser
+//{
+//  protected :
+//    guPortableMediaLibPanel * m_LibPanel;
+//
+//    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+//
+//    virtual void            OnAlbumSelectName( const int albumid );
+//    virtual void            OnArtistSelectName( const int artistid );
+//
+//  public :
+//    guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
+//    ~guPortableMediaAlbumBrowser();
+//
+//
+//    virtual void            OnAlbumDownloadCoverClicked( const int albumid );
+//    virtual void            OnAlbumSelectCoverClicked( const int albumid );
+//
+//    virtual int             GetContextMenuFlags( void ) { return m_LibPanel->GetContextMenuFlags(); }
+//
+//};
+
+//// -------------------------------------------------------------------------------- //
+//class guPortableMediaPlayListPanel : public guPlayListPanel
+//{
+//  protected :
+//    guPortableMediaLibPanel * m_LibPanel;
+//
+//    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+//
+//    virtual void        SendPlayListUpdatedEvent( void );
+//
+//  public :
+//    guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
+//    ~guPortableMediaPlayListPanel();
+//
+//};
+
 // -------------------------------------------------------------------------------- //
-class guPortableMediaAlbumBrowser : public guAlbumBrowser
+class guMediaViewerPortableDeviceBase : public guMediaViewer
 {
   protected :
-    guPortableMediaLibPanel * m_LibPanel;
-
-    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
-
-    virtual void            OnAlbumSelectName( const int albumid );
-    virtual void            OnArtistSelectName( const int artistid );
+    guPortableMediaDevice * m_PortableDevice;
 
   public :
-    guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
-    ~guPortableMediaAlbumBrowser();
+    guMediaViewerPortableDeviceBase( wxWindow * parent, guMediaCollection &mediacollection,
+                          const int basecmd, guMainFrame * mainframe, const int mode,
+                          guPlayerPanel * playerpanel, guGIO_Mount * mount );
 
+    ~guMediaViewerPortableDeviceBase();
 
-    virtual void            OnAlbumDownloadCoverClicked( const int albumid );
-    virtual void            OnAlbumSelectCoverClicked( const int albumid );
+    guPortableMediaDevice * GetPortableMediaDevice( void ) { return m_PortableDevice; }
 
-    virtual int             GetContextMenuFlags( void ) { return m_LibPanel->GetContextMenuFlags(); }
+    virtual wxString        GetCoverName( const int albumid );
+    virtual int             GetCoverType( void ) { return m_PortableDevice->CoverFormats(); }
+    virtual int             GetCoverMaxSize( void ) { return m_PortableDevice->CoverSize(); }
 
+    virtual bool            IsMount( GMount * mount ) { return m_PortableDevice->IsMount( mount ); }
+
+    virtual wxString        AudioPath( void );
+    virtual wxString        Pattern( void ) { return m_PortableDevice->Pattern(); }
+    virtual int             AudioFormats( void ) { return m_PortableDevice->AudioFormats(); }
+    virtual int             TranscodeFormat( void ) { return m_PortableDevice->TranscodeFormat(); }
+    virtual int             TranscodeScope( void ) { return m_PortableDevice->TranscodeScope(); }
+    virtual int             TranscodeQuality( void ) { return m_PortableDevice->TranscodeQuality(); }
+    virtual int             PlaylistFormats( void ) { return m_PortableDevice->PlaylistFormats(); }
+    virtual wxString        PlaylistPath( void ) { return m_PortableDevice->MountPath() + m_PortableDevice->PlaylistFolder(); }
 };
 
 // -------------------------------------------------------------------------------- //
-class guPortableMediaPlayListPanel : public guPlayListPanel
+class guMediaViewerPortableDevice : public guMediaViewerPortableDeviceBase
 {
   protected :
-    guPortableMediaLibPanel * m_LibPanel;
+    virtual void            LoadMediaDb( void );
 
-    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
-
-    virtual void        SendPlayListUpdatedEvent( void );
+    void                    UpdateCollectionProperties( void );
 
   public :
-    guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel );
-    ~guPortableMediaPlayListPanel();
+    guMediaViewerPortableDevice( wxWindow * parent, guMediaCollection &mediacollection,
+                          const int basecmd, guMainFrame * mainframe, const int mode,
+                          guPlayerPanel * playerpanel, guGIO_Mount * mount );
+
+    ~guMediaViewerPortableDevice();
+
+    virtual void            HandleCommand( const int command );
+
+    virtual wxArrayString   GetPaths( void );
+
+    virtual void            CreateContextMenu( wxMenu * menu, const int windowid = wxNOT_FOUND );
+
+    virtual bool            CreateLibraryView( void );
+
+    virtual void            EditProperties( void );
 
 };
-
-#ifdef WITH_LIBGPOD_SUPPORT
-
-class guIpodMediaLibPanel;
-
-// -------------------------------------------------------------------------------- //
-class guIpodLibrary : public guPortableMediaLibrary
-{
-  protected :
-    Itdb_iTunesDB * m_iPodDb;
-
-  public :
-    guIpodLibrary( const wxString &libpath, guPortableMediaDevice * portablemediadevice, Itdb_iTunesDB * ipoddb );
-    ~guIpodLibrary();
-
-    Itdb_iTunesDB *     IpodDb( void ) { return m_iPodDb; }
-
-    virtual int         UpdateSong( const guTrack &track, const bool allowrating );
-
-    virtual int         CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks );
-    int                 CreateStaticPlayList( const wxString &name, const wxArrayInt &tracks, const bool indbonly ) { return guDbLibrary::CreateStaticPlayList( name, tracks ); }
-    virtual int         UpdateStaticPlayList( const int plid, const wxArrayInt &tracks );
-    virtual int         AppendStaticPlayList( const int plid, const wxArrayInt &tracks );
-    virtual int         DelPlaylistSetIds( const int plid, const wxArrayInt &tracks );
-    virtual void        SetPlayListName( const int plid, const wxString &newname );
-    virtual void        DeletePlayList( const int plid );
-
-    virtual void        UpdateStaticPlayListFile( const int plid );
-
-    virtual int         CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist );
-    int                 CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist, const bool indbonly ) { return guDbLibrary::CreateDynamicPlayList( name, playlist ); }
-    virtual void        UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist );
-
-    int GetAlbumId( const wxString &albumname, const wxString &artist, const wxString &albumartist, const wxString &disk );
-
-    Itdb_Playlist *     CreateiPodPlayList( const wxString &path, const wxArrayString &filenames );
-    Itdb_Track *        iPodFindTrack( const wxString &filename );
-    Itdb_Track *        iPodFindTrack( const wxString &artist, const wxString &albumartist, const wxString &album, const wxString &title );
-
-
-    void                iPodRemoveTrack( const wxString &filename );
-    void                iPodRemoveTrack( Itdb_Track * track );
-    bool                iPodFlush( void ) { return itdb_write( m_iPodDb, NULL ); }
-
-};
-
-// -------------------------------------------------------------------------------- //
-class guIpodLibraryUpdate : public wxThread
-{
-  protected :
-    guIpodMediaLibPanel * m_iPodPanel;
-    int                   m_GaugeId;
-
-  public :
-    guIpodLibraryUpdate( guIpodMediaLibPanel * libpanel, const int gaugeid );
-    ~guIpodLibraryUpdate();
-
-    ExitCode Entry();
-
-    guIpodMediaLibPanel *   LibPanel( void ) { return m_iPodPanel; }
-};
-
-
-// -------------------------------------------------------------------------------- //
-class guIpodMediaLibPanel : public guPortableMediaLibPanel
-{
-  protected :
-     guIpodLibraryUpdate *      m_UpdateThread;
-
-    virtual void                CreateContextMenu( wxMenu * menu, const int windowid = 0 );
-
-    virtual void                NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
-
-    virtual void                UpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
-                                const wxArrayString &lyrics, const wxArrayInt &changedflags );
-
-    virtual void                DoDeleteAlbumCover( const int albumid );
-
-    virtual bool                SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
-    virtual bool                SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
-
-    virtual void                DeleteTracks( guTrackArray * tracks );
-
-    void                        OnGaugeCreated( wxCommandEvent &event );
-
-  public :
-    guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel );
-    ~guIpodMediaLibPanel();
-
-    virtual void                DoUpdate( const bool forced = false );
-    virtual void                UpdateFinished( void );
-
-    virtual void                SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice );
-
-    virtual wxArrayString       GetLibraryPaths( void );
-
-    virtual int                 CopyTo( const guTrack * track, wxString &filename );
-
-};
-
-// -------------------------------------------------------------------------------- //
-class guIpodPlayListPanel : public guPortableMediaPlayListPanel
-{
-  protected :
-    //guIpodMediaLibPanel * m_LibPanel;
-
-    virtual void        NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
-
-  public :
-    guIpodPlayListPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel );
-    ~guIpodPlayListPanel();
-
-};
-
-// -------------------------------------------------------------------------------- //
-class guIpodAlbumBrowser : public guPortableMediaAlbumBrowser
-{
-  protected :
-
-    virtual void OnBitmapMouseOver( const int coverid, const wxPoint &position );
-
-  public :
-    guIpodAlbumBrowser( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel );
-    ~guIpodAlbumBrowser();
-
-};
-
-
-#endif
-
-// -------------------------------------------------------------------------------- //
-class guPortableMediaViewCtrl
-{
-  protected :
-    guMainFrame *                   m_MainFrame;
-
-    guPortableMediaDevice *         m_MediaDevice;
-    guPortableMediaLibrary *        m_Db;
-    guPortableMediaLibPanel *       m_LibPanel;
-    guPortableMediaPlayListPanel *  m_PlayListPanel;
-    guPortableMediaAlbumBrowser *   m_AlbumBrowserPanel;
-    int                             m_BaseCommand;
-    int                             m_VisiblePanels;
-
-  public :
-    guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO_Mount * mount, int basecommand );
-    ~guPortableMediaViewCtrl();
-
-    int                              BaseCommand( void ) { return m_BaseCommand; }
-    int                              VisiblePanels( void ) { return m_VisiblePanels; }
-
-    guPortableMediaDevice *          MediaDevice( void ) { return m_MediaDevice; }
-    guPortableMediaLibrary *         Db( void ) { return m_Db; }
-    guPortableMediaLibPanel *        LibPanel( void ) { return m_LibPanel; }
-    guPortableMediaPlayListPanel *   PlayListPanel( void ) { return m_PlayListPanel; }
-    guPortableMediaAlbumBrowser *    AlbumBrowserPanel( void ) { return m_AlbumBrowserPanel; }
-
-    guPortableMediaLibPanel *        CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel );
-    void                             DestroyLibPanel( void );
-    guPortableMediaAlbumBrowser *    CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel );
-    void                             DestroyAlbumBrowser( void );
-    guPortableMediaPlayListPanel *   CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel );
-    void                             DestroyPlayListPanel( void );
-
-    wxString                         DeviceName( void ) { return m_MediaDevice->DeviceName(); }
-    bool                             IsMount( GMount * mount ) { return m_MediaDevice->IsMount( mount ); }
-    wxString                         IconString( void ) { return m_MediaDevice->IconString(); }
-
-    int                              CopyTo( const guTrack * track, wxString &filename ) { return m_LibPanel ? m_LibPanel->CopyTo( track, filename ) : wxNOT_FOUND; }
-
-};
-WX_DEFINE_ARRAY_PTR( guPortableMediaViewCtrl *, guPortableMediaViewCtrlArray );
 
 #endif
 // -------------------------------------------------------------------------------- //

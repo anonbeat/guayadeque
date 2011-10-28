@@ -30,6 +30,7 @@
 #include <wx/dynarray.h>
 
 class guGIO_Mount;
+class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
 class guGIO_Volume
@@ -62,7 +63,8 @@ class guGIO_Mount
     GMount * m_Mount;
 
   protected :
-    int             m_PanelActive;
+//    int             m_PanelActive;
+    wxString        m_Id;
     bool            m_IsReadOnly;
     wxString        m_Name;
     wxString        m_MountPath;
@@ -77,8 +79,10 @@ class guGIO_Mount
 
     bool            IsReadOnly( void ) { return m_IsReadOnly; }
 
-    int             PanelActive( void ) { guLogMessage( wxT( "PanelActive: %i" ), m_PanelActive ); return m_PanelActive; }
-    void            SetPanelActive( int active ) { m_PanelActive = active; }
+//    int             PanelActive( void ) { guLogMessage( wxT( "PanelActive: %i" ), m_PanelActive ); return m_PanelActive; }
+//    void            SetPanelActive( int active ) { m_PanelActive = active; }
+    void            SetId( const wxString &id ) { m_Id = id; }
+    wxString        GetId( void ) { return m_Id; }
 
     wxString        GetName( void ) { return m_Name; }
     wxString        GetMountPath( void ) { return m_MountPath; }
@@ -102,6 +106,7 @@ class guGIO_VolumeMonitor
     int                 m_MountRemovedId;
 
   protected :
+    guMainFrame *       m_MainFrame;
     GVolumeMonitor *    m_VolumeMonitor;
     guGIO_MountArray *  m_MountedVolumes;
 
@@ -110,7 +115,7 @@ class guGIO_VolumeMonitor
     void                GetCurrentMounts( void );
 
   public :
-    guGIO_VolumeMonitor();
+    guGIO_VolumeMonitor( guMainFrame * mainframe );
     ~guGIO_VolumeMonitor();
 
     void                OnMountAdded( GMount * mount );
@@ -121,8 +126,11 @@ class guGIO_VolumeMonitor
     wxArrayString       GetMountNames( void );
     int                 GetMountCount( void ) { return m_MountedVolumes->Count(); }
     guGIO_Mount *       GetMount( const int index ) { return m_MountedVolumes->Item( index ); }
-    guGIO_Mount *       GetMount( const wxString &mountname );
-    int                 PanelActive( const int index ) { return m_MountedVolumes->Item( index )->PanelActive(); }
+    guGIO_Mount *       GetMountById( const wxString &id );
+    guGIO_Mount *       GetMountByPath( const wxString &path );
+    guGIO_Mount *       GetMountByName( const wxString &name );
+
+//    int                 PanelActive( const int index ) { return m_MountedVolumes->Item( index )->PanelActive(); }
 };
 
 #endif

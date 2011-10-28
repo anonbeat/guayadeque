@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "FileRenamer.h"    // NormalizeField
+#include "MediaViewer.h"
 
 #include <wx/curl/http.h>
 #include <wx/process.h>
@@ -128,7 +129,7 @@ wxString RemoveSearchFilters( const wxString &SearchStr )
     wxArrayString Filters;
     if( Config )
     {
-        Filters = Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "SearchFilters" ) );
+        Filters = Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "searchfilters" ) );
     }
     int Count = Filters.Count();
     for( int Index = 0; Index < Count; Index++ )
@@ -387,7 +388,7 @@ int guWebExecute( const wxString &Url )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        wxString BrowserCmd = Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "General" ) );
+        wxString BrowserCmd = Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "general" ) );
         wxString Cmd = Url;
         Cmd.Replace( wxT( "(" ), wxT( "%28" ) );
         Cmd.Replace( wxT( ")" ), wxT( "%29" ) );
@@ -589,7 +590,7 @@ bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwr
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr )
+wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr, const wxMBConv &conv )
 {
     #define XMLREAD_BUFFER_SIZE         10240
     wxString RetVal;
@@ -667,8 +668,8 @@ wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * 
                         if( ReadCount != wxInvalidOffset )
                         {
                             BufferString[ ReadCount ] = 0;
-                            RetVal = wxString( BufferString, wxConvUTF8 );
-                            //guLogMessage( wxT( "%s" ), RetVal.c_str() );
+                            RetVal = wxString( BufferString, conv );
+                            //guLogMessage( wxT( "%i %i" ), BufferSize, ReadCount );
                         }
 
                         free( BufferString );
@@ -757,6 +758,131 @@ wxString guExpandTrackMacros( const wxString &pattern, guTrack * track, const in
         RetVal.Replace( wxT( "{i}" ), wxString::Format( wxT( "%04u" ), indexpos ) );
 
     return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guIsValidImageFile( const wxString &filename )
+{
+    return filename.EndsWith( wxT( ".jpg" ) ) ||
+           filename.EndsWith( wxT( ".jpeg" ) ) ||
+           filename.EndsWith( wxT( ".png" ) ) ||
+           filename.EndsWith( wxT( ".bmp" ) ) ||
+           filename.EndsWith( wxT( ".gif" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guRemoveDir( const wxString &path )
+{
+    wxString CurPath = path;
+    if( !CurPath.EndsWith( wxT( "/" ) ) )
+        CurPath += wxT( "/" );
+
+    wxDir         Dir;
+    wxString      FileName;
+
+    Dir.Open( CurPath );
+
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+        {
+            do {
+                if( FileName == wxT( "." ) )
+                    continue;
+
+                if( FileName == wxT( ".." ) )
+                    continue;
+
+                if( Dir.Exists( CurPath + FileName ) )
+                {
+                    if( !guRemoveDir( CurPath + FileName ) )
+                    {
+                        guLogMessage( wxT( "Could not remove dir '%s'" ), wxString( CurPath + FileName ).c_str() );
+                        return false;
+                    }
+                }
+                else
+                {
+                    if( !wxRemoveFile( CurPath + FileName ) )
+                    {
+                        guLogMessage( wxT( "Could not remove file '%s'" ), wxString( CurPath + FileName ).c_str() );
+                        return false;
+                    }
+                }
+            } while( Dir.GetNext( &FileName ) );
+        }
+
+        return wxRmdir( CurPath );
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void GetMediaViewerTracks( const guTrackArray &sourcetracks, const wxArrayInt &sourceflags,
+                                 const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags )
+{
+    int Index;
+    int Count = sourcetracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack &Track = sourcetracks[ Index ];
+        if( Track.m_MediaViewer == mediaviewer )
+        {
+            tracks.Add( new guTrack( Track ) );
+            changedflags.Add( sourceflags[ Index ] );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void GetMediaViewerTracks( const guTrackArray &sourcetracks, const int flags,
+                                 const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags )
+{
+    int Index;
+    int Count = sourcetracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack &Track = sourcetracks[ Index ];
+        if( Track.m_MediaViewer == mediaviewer )
+        {
+            tracks.Add( new guTrack( Track ) );
+            changedflags.Add( flags );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks )
+{
+    int Index;
+    int Count = sourcetracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack &Track = sourcetracks[ Index ];
+        if( Track.m_MediaViewer == mediaviewer )
+        {
+            tracks.Add( new guTrack( Track ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs )
+{
+    int Index;
+    int Count = tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guTrack &Track = tracks[ Index ];
+        guMediaViewer * MediaViewer = Track.m_MediaViewer;
+        if( MediaViewer )
+        {
+            if( MediaViewerPtrs.Index( MediaViewer ) == wxNOT_FOUND )
+            {
+                MediaViewerPtrs.Add( MediaViewer );
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

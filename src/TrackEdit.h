@@ -80,8 +80,6 @@ class guTrackEditor : public wxDialog
 	wxColor                             m_ErrorColor;
     wxTimer                             m_SelectedTimer;
 
-    bool                                m_EmbeddRatings;
-
     void                                SetTagField( wxString &field, const wxString &newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
     void                                SetTagField( int &field, const int newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
 
@@ -112,6 +110,7 @@ class guTrackEditor : public wxDialog
     wxComboBox *                        m_CompComboBox;
     bool                                m_CompChanged;
     wxBitmapButton *                    m_NuCopyButton;
+    wxBitmapButton *                    m_NuOrderButton;
     wxTextCtrl *                        m_NumberTextCtrl;
     wxBitmapButton *                    m_DiCopyButton;
     wxTextCtrl *                        m_DiskTextCtrl;
@@ -197,6 +196,7 @@ class guTrackEditor : public wxDialog
 	void                                OnTiCopyButtonClicked( wxCommandEvent &event );
 	void                                OnCoCopyButtonClicked( wxCommandEvent &event );
 	void                                OnNuCopyButtonClicked( wxCommandEvent &event );
+	void                                OnNuOrderButtonClicked( wxCommandEvent &event );
 	void                                OnDiCopyButtonClicked( wxCommandEvent &event );
 	void                                OnGeCopyButtonClicked( wxCommandEvent &event );
 	void                                OnYeCopyButtonClicked( wxCommandEvent &event );

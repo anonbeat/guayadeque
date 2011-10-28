@@ -148,20 +148,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
 
 	m_ListBox->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-
-    //Connect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -181,19 +168,7 @@ guListView::~guListView()
 
 	m_ListBox->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_MIDDLE_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_MIDDLE_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_RIGHT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 	m_ListBox->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_MIDDLE_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_RIGHT_DCLICK, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	//m_ListBox->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-
-    //Disconnect( wxEVT_SYS_COLOUR_CHANGED, wxSysColourChangedEventHandler( guListView::OnSysColorChanged ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -211,8 +186,8 @@ void guListView::OnChangedSize( wxSizeEvent &event )
     int h = 0;
     int d;
     wxSize Size = event.GetSize();
-    Size.x -= 6;
-    Size.y -= 6;
+    //Size.x -= 4;
+    //Size.y -= 4;
     //guLogMessage( wxT( "ListView SetSize %i,%i" ), Size.x, Size.y );
     if( m_Header )
     {
@@ -902,7 +877,7 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
     wxRect rectUpdate = GetUpdateClientRect();
 
     // fill it with background colour
-    dc.SetBackground(GetBackgroundColour());
+    dc.SetBackground( GetBackgroundColour() );
     dc.Clear();
 
     AdjustDC( dc );
@@ -918,7 +893,7 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
     // iterate over all visible lines
     for( ; line < lineMax; line++ )
     {
-        const wxCoord hLine = OnGetLineHeight(line);
+        const wxCoord hLine = OnGetLineHeight( line );
 
         rectLine.height = hLine;
 
@@ -1527,12 +1502,15 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	StdBtnSizer->AddButton( StdBtnSizerOK );
 	StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	StdBtnSizer->AddButton( StdBtnSizerCancel );
+	StdBtnSizer->SetAffirmativeButton( StdBtnSizerOK );
+	StdBtnSizer->SetCancelButton( StdBtnSizerCancel );
 	StdBtnSizer->Realize();
 	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	StdBtnSizerOK->SetDefault();
 
     count = columns->Count();
     for( index = 0; index < count; index++ )
@@ -1547,6 +1525,8 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	m_ColumnsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guListViewColEdit::OnColumnSelected ), NULL, this );
 	m_UpBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnUpBtnClick ), NULL, this );
 	m_DownBitmapBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guListViewColEdit::OnDownBtnClick ), NULL, this );
+
+    m_ColumnsListBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

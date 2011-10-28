@@ -138,11 +138,15 @@ guNewPodcastChannelSelector::guNewPodcastChannelSelector( wxWindow * parent ) :
 	m_StandardButtons->AddButton( m_StandardButtonsOK );
 	m_StandardButtonsCancel = new wxButton( this, wxID_CANCEL );
 	m_StandardButtons->AddButton( m_StandardButtonsCancel );
+	m_StandardButtons->SetAffirmativeButton( m_StandardButtonsOK );
+	m_StandardButtons->SetCancelButton( m_StandardButtonsCancel );
 	m_StandardButtons->Realize();
 	DirectoryMainSizer->Add( m_StandardButtons, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( DirectoryMainSizer );
 	this->Layout();
+
+	m_StandardButtonsOK->SetDefault();
 
 	// Connect Events
 	m_FilterDirectory->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guNewPodcastChannelSelector::OnFilterDirectoryClicked ), NULL, this );
@@ -150,8 +154,11 @@ guNewPodcastChannelSelector::guNewPodcastChannelSelector( wxWindow * parent ) :
 	m_DirectoryTreeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guNewPodcastChannelSelector::OnDirectoryItemSelected ), NULL, this );
 	m_DirectoryTreeCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guNewPodcastChannelSelector::OnDirectoryItemChanged ), NULL, this );
 
+
 	//
 	LoadPodcastDirectory();
+
+	m_UrlTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -273,7 +280,7 @@ void guNewPodcastChannelSelector::LoadPodcastDirectory( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+                                wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "podcasts" ) );
 
     wxSetCursor( * wxHOURGLASS_CURSOR );
     wxTheApp->Yield();
@@ -377,7 +384,7 @@ void guNewPodcastChannelSelector::OnReloadDirectoryClicked( wxCommandEvent &even
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+                                wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "podcasts" ) );
 
     wxRemoveFile( PodcastsPath + wxT( "/Podcast.Directory.xml" ) );
 

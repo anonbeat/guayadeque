@@ -28,12 +28,15 @@
 // -------------------------------------------------------------------------------- //
 bool guIsValidImageFile( const wxString &filename );
 
+class guMediaViewer;
+
 // -------------------------------------------------------------------------------- //
 class guLibUpdateThread : public wxThread
 {
   private :
+    guMediaViewer *     m_MediaViewer;
     guDbLibrary *       m_Db;
-    guLibPanel *        m_LibPanel;
+    //guLibPanel *        m_LibPanel;
     guMainFrame *       m_MainFrame;
     wxArrayString       m_TrackFiles;
     wxArrayString       m_ImageFiles;
@@ -51,19 +54,17 @@ class guLibUpdateThread : public wxThread
     bool                ReadFileTags( const wxString &filename );
 
   public :
-    guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath = wxEmptyString );
-    guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath = wxEmptyString );
+    guLibUpdateThread( guMediaViewer * mediaviewer, int gaugeid, const wxString &scanpath = wxEmptyString );
     ~guLibUpdateThread();
 
     ExitCode Entry();
-
-    guLibPanel *        LibPanel( void ) { return m_LibPanel; }
 };
 
 // -------------------------------------------------------------------------------- //
 class guLibCleanThread : public wxThread
 {
   private :
+    guMediaViewer *     m_MediaViewer;
     guDbLibrary *       m_Db;
     guLibPanel *        m_LibPanel;
     guMainFrame *       m_MainFrame;
@@ -72,13 +73,10 @@ class guLibCleanThread : public wxThread
     void                OnTimer( wxTimerEvent &event );
 
   public :
-    guLibCleanThread( guLibPanel * libpanel );
-    guLibCleanThread( guDbLibrary * db );
+    guLibCleanThread( guMediaViewer * mediaviewer );
     ~guLibCleanThread();
 
     ExitCode            Entry();
-    guLibPanel *        LibPanel( void ) { return m_LibPanel; }
-
 };
 
 #endif

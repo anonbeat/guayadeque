@@ -43,48 +43,39 @@
 
 #include <wx/tokenzr.h>
 
-#define guTREEVIEW_TIMER_TEXTSEARCH        5
+//#define guTREEVIEW_TIMER_TEXTSEARCH        5
+//#define guTREEVIEW_TIMER_TEXTSEARCH_VALUE  500
 #define guTREEVIEW_TIMER_TREEITEMSELECTED  6
-#define guTREEVIEW_TIMER_TEXTSEARCH_VALUE  500
 #define guTREEVIEW_TIMER_TREEITEMSELECTED_VALUE  50
-
-// -------------------------------------------------------------------------------- //
-class guTreeViewData : public wxTreeItemData
-{
-  public :
-    int         m_Id;
-    int         m_Type;
-
-    guTreeViewData( const int id, const int type ) { m_Id = id; m_Type = type; };
-
-    int         GetData( void ) { return m_Id; };
-    void        SetData( int id ) { m_Id = id; };
-    int         GetType( void ) { return m_Type; };
-    void        SetType( int type ) { m_Type = type; };
-};
-
 
 BEGIN_EVENT_TABLE( guTreeViewTreeCtrl, wxTreeCtrl )
     EVT_TREE_BEGIN_DRAG( wxID_ANY, guTreeViewTreeCtrl::OnBeginDrag )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guTreeViewTreeCtrl::guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guTreeViewPanel * playlistpanel ) :
+guTreeViewTreeCtrl::guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guTreeViewPanel * treeviewpanel ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
         wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE|wxTR_TWIST_BUTTONS )
 {
     m_Db = db;
-    m_TreeViewPanel = playlistpanel;
+    m_TreeViewPanel = treeviewpanel;
+    m_ConfigPath = treeviewpanel->ConfigPath();
 
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_FilterEntries = Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "TreeViewFilters" ) );
-    m_CurrentFilter = Config->ReadNum( wxT( "TreeViewFilter" ), 0, wxT( "TreeView" ) );
+    m_FilterEntries = Config->ReadAStr( wxT( "Filter" ), wxEmptyString, m_ConfigPath + wxT( "/sortings" ) );
+    m_CurrentFilter = Config->ReadNum( wxT( "TreeViewFilter" ), 0, m_ConfigPath );
     if( !m_FilterEntries.Count() )
     {
-        m_FilterEntries.Add( wxString( _( "Genres,Artists,Albums" ) ) + wxT( ":3:4:7") );
+        m_FilterEntries.Add( wxString( _( "Genres,Artists,Albums" ) ) + wxT( ":2:3:6") );
+        m_FilterEntries.Add( wxString( _( "Genres,Year,Artists,Albums" ) ) + wxT( ":2:7:3:6") );
+        m_CurrentFilter = 0;
+    }
+
+    if( ( m_CurrentFilter < 0 ) || ( m_CurrentFilter >= ( int ) m_FilterEntries.Count() ) )
+    {
         m_CurrentFilter = 0;
     }
 
@@ -93,19 +84,17 @@ guTreeViewTreeCtrl::guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guT
     m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_filter ) ) );
     AssignImageList( m_ImageList );
 
-    m_RootId   = AddRoot( wxT( "Filters" ), -1, -1, NULL );
-    m_FiltersId = AppendItem( m_RootId, _( "Filters" ), 1, 1, NULL );
+    m_RootId   = AddRoot( wxT( "Sortings" ), -1, -1, NULL );
+    m_FiltersId = AppendItem( m_RootId, _( "Sortings" ), 1, 1, NULL );
     m_LibraryId = AppendItem( m_RootId, _( "Library" ), 0, 0, NULL );
 
     SetIndent( 10 );
 
 //    SetDropTarget( new guTreeViewDropTarget( this ) );
 
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnSearchLinkClicked ) );
+    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnSearchLinkClicked ) );
     Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guTreeViewTreeCtrl::OnContextMenu ), NULL, this );
-    Connect( ID_ARTIST_COMMANDS, ID_ARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnCommandClicked ) );
-    Connect( ID_ALBUM_COMMANDS, ID_ALBUM_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnCommandClicked ) );
-    Connect( ID_ALBUMARTIST_COMMANDS, ID_ALBUMARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnCommandClicked ) );
+    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnCommandClicked ) );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guTreeViewTreeCtrl::OnConfigUpdated ), NULL, this );
 
@@ -126,8 +115,8 @@ guTreeViewTreeCtrl::~guTreeViewTreeCtrl()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Config->WriteAStr( wxT( "Filter" ), m_FilterEntries, wxT( "TreeViewFilters" ) );
-    Config->WriteNum( wxT( "TreeViewFilter" ), m_CurrentFilter, wxT( "TreeView" ) );
+    Config->WriteAStr( wxT( "Filter" ), m_FilterEntries, m_ConfigPath + wxT( "/sortings" ) );
+    Config->WriteNum( wxT( "TreeViewFilter" ), m_CurrentFilter, m_ConfigPath );
 
     Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guTreeViewTreeCtrl::OnContextMenu ), NULL, this );
 
@@ -333,30 +322,26 @@ void AddTreeViewCommands( wxMenu * Menu, int ItemType )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
             {
-                if( ItemType == guLIBRARY_ELEMENT_ALBUMS )
+                if( ( ItemType == guLIBRARY_ELEMENT_ALBUMS ) ||
+                    ( ItemType == guLIBRARY_ELEMENT_ARTISTS ) ||
+                    ( ItemType == guLIBRARY_ELEMENT_ALBUMARTISTS ) )
                 {
-                    MenuItem = new wxMenuItem( Menu, ID_ALBUM_COMMANDS + index, Names[ index ], Commands[ index ] );
-                }
-                else if( ItemType == guLIBRARY_ELEMENT_ARTISTS )
-                {
-                    MenuItem = new wxMenuItem( Menu, ID_ARTIST_COMMANDS + index, Names[ index ], Commands[ index ] );
-                }
-                else if( ItemType == guLIBRARY_ELEMENT_ALBUMARTISTS )
-                {
-                    MenuItem = new wxMenuItem( Menu, ID_ALBUMARTIST_COMMANDS + index, Names[ index ], Commands[ index ] );
+                    MenuItem = new wxMenuItem( Menu, ID_COMMANDS_BASE + index, Names[ index ], Commands[ index ] );
                 }
                 SubMenu->Append( MenuItem );
             }
+
+            SubMenu->AppendSeparator();
         }
         else
         {
-            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            MenuItem = new wxMenuItem( Menu, ID_MENU_PREFERENCES_COMMANDS, _( "Preferences" ), _( "Add commands in preferences" ) );
             SubMenu->Append( MenuItem );
         }
 
@@ -400,6 +385,8 @@ void guTreeViewTreeCtrl::OnContextMenu( wxTreeEvent &event )
             ItemData = ( guTreeViewData * ) GetItemData( ItemId );
             if( ItemData )
             {
+                int ContextMenuFlags = GetContextMenuFlags();
+
                 MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_PLAY, _( "Play" ), _( "Play current selected songs" ) );
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
                 Menu.Append( MenuItem );
@@ -430,7 +417,7 @@ void guTreeViewTreeCtrl::OnContextMenu( wxTreeEvent &event )
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
                 EnqueueMenu->Append( MenuItem );
 
-                Menu.Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+                Menu.Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
                 Menu.AppendSeparator();
 
@@ -449,36 +436,54 @@ void guTreeViewTreeCtrl::OnContextMenu( wxTreeEvent &event )
                     }
                 }
 
-                MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_EDITTRACKS,
-                                    wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
-                                    _( "Edit the selected tracks" ) );
-                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
-                Menu.Append( MenuItem );
+                if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
+                {
+                    MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_EDITTRACKS,
+                                        wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
+                                        _( "Edit the selected tracks" ) );
+                    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+                    Menu.Append( MenuItem );
+                }
 
                 Menu.AppendSeparator();
 
                 MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_SAVETOPLAYLIST,
-                                        wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                                        _( "Save the selected tracks to PlayList" ) );
+                                        wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                        _( "Save the selected tracks to playlist" ) );
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
                 Menu.Append( MenuItem );
 
-                Menu.AppendSeparator();
-
-                guLibPanel * LibPanel = m_TreeViewPanel->GetLibPanel();
-                LibPanel->CreateCopyToMenu( &Menu, ID_TREEVIEW_COPYTO );
-
-                if( SelectCount == 1 )
+                if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
+                    ( ( SelectCount == 1 ) && ContextMenuFlags & ( guCONTEXTMENU_LINKS | guCONTEXTMENU_COMMANDS ) ) )
                 {
-                    if( ItemType == guLIBRARY_ELEMENT_ARTISTS ||
-                        ItemType == guLIBRARY_ELEMENT_ALBUMARTISTS ||
-                        ItemType == guLIBRARY_ELEMENT_ALBUMS )
-                    {
-                        AddOnlineLinksMenu( &Menu );
 
-                        AddTreeViewCommands( &Menu, ItemType );
+                    Menu.AppendSeparator();
+
+                    if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
+                    {
+                        m_TreeViewPanel->CreateCopyToMenu( &Menu );
+                    }
+
+                    if( SelectCount == 1 )
+                    {
+                        if( ItemType == guLIBRARY_ELEMENT_ARTISTS ||
+                            ItemType == guLIBRARY_ELEMENT_ALBUMARTISTS ||
+                            ItemType == guLIBRARY_ELEMENT_ALBUMS )
+                        {
+                            if( ContextMenuFlags & guCONTEXTMENU_LINKS )
+                            {
+                                AddOnlineLinksMenu( &Menu );
+                            }
+
+                            if( ContextMenuFlags & guCONTEXTMENU_COMMANDS )
+                            {
+                                AddTreeViewCommands( &Menu, ItemType );
+                            }
+                        }
                     }
                 }
+
+                m_TreeViewPanel->CreateContextMenu( &Menu, ItemType );
             }
             else
             {
@@ -682,32 +687,13 @@ void guTreeViewTreeCtrl::OnSearchLinkClicked( wxCommandEvent &event )
     guTreeViewData * TreeViewData = ( guTreeViewData * ) GetItemData( CurItemId );
     int ItemType = TreeViewData->GetType();
 
-
-    int index = event.GetId();
-
-    guConfig * Config = ( guConfig * ) Config->Get();
-    if( Config )
+    if( ItemType == guLIBRARY_ELEMENT_ALBUMS )
     {
-        wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-
-        index -= ID_LASTFM_SEARCH_LINK;
-        wxString SearchLink = Links[ index ];
-        wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
-        if( Lang.IsEmpty() )
-        {
-            Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
-            //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
-        }
-        SearchLink.Replace( wxT( "{lang}" ), Lang );
-        if( ItemType == guLIBRARY_ELEMENT_ALBUMS )
-        {
-            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetAlbumSearchText( m_Db, TreeViewData->GetData(), TreeViewData->GetType() ) ) );
-        }
-        else
-        {
-            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetItemText( CurItemId ) ) );
-        }
-        guWebExecute( SearchLink );
+        ExecuteOnlineLink( event.GetId(), GetAlbumSearchText( m_Db, TreeViewData->GetData(), TreeViewData->GetType() ) );
+    }
+    else
+    {
+        ExecuteOnlineLink( event.GetId(), GetItemText( CurItemId ) );
     }
 }
 
@@ -716,7 +702,7 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
 {
     const wxTreeItemId &CurItemId = GetSelection();
     guTreeViewData * TreeViewData = ( guTreeViewData * ) GetItemData( CurItemId );
-    int ItemType = TreeViewData->GetType();
+//    int ItemType = TreeViewData->GetType();
 
     int Index;
     int Count;
@@ -728,16 +714,10 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) Config->Get();
     if( Config )
     {
-        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
 
         //guLogMessage( wxT( "CommandId: %u" ), Index );
-        if( ItemType == guLIBRARY_ELEMENT_ARTISTS )
-            Index -= ID_ARTIST_COMMANDS;
-        else if( ItemType == guLIBRARY_ELEMENT_ALBUMS )
-            Index -= ID_ALBUM_COMMANDS;
-        else if( ItemType == guLIBRARY_ELEMENT_ALBUMARTISTS )
-            Index -= ID_ALBUMARTIST_COMMANDS;
-
+        Index -= ID_COMMANDS_BASE;
         wxString CurCmd = Commands[ Index ];
 
         if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
@@ -784,48 +764,54 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+int guTreeViewTreeCtrl::GetContextMenuFlags( void )
+{
+    return m_TreeViewPanel->GetContextMenuFlags();
+}
+
 
 
 
 // -------------------------------------------------------------------------------- //
 // guTreeViewPanel
 // -------------------------------------------------------------------------------- //
-guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, guLibPanel * libpanel ) :
-            guAuiManagedPanel( parent ),
-            m_TextChangedTimer( this, guTREEVIEW_TIMER_TEXTSEARCH ),
+guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
+            guAuiManagerPanel( parent ),
+            //m_TextChangedTimer( this, guTREEVIEW_TIMER_TEXTSEARCH ),
             m_TreeItemSelectedTimer( this, guTREEVIEW_TIMER_TREEITEMSELECTED )
-
 {
-    m_Db = db;
-    m_PlayerPanel = playerpanel;
-    m_LibPanel = libpanel;
+    m_MediaViewer = mediaviewer;
+    m_Db = mediaviewer->GetDb();
+    m_PlayerPanel = mediaviewer->GetPlayerPanel();
+    m_ConfigPath = m_MediaViewer->ConfigPath() + wxT( "/treeview" );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_VisiblePanels = Config->ReadNum( wxT( "TVVisiblePanels" ), guPANEL_PLAYLIST_VISIBLE_DEFAULT, wxT( "Positions" ) );
-    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
-    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_PLAYLIST_VISIBLE_DEFAULT, m_ConfigPath );
 
     InitPanelData();
 
-	wxBoxSizer * SearchSizer;
-	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
-    wxPanel * SearchPanel;
-	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+    CreateControls();
+}
 
-    m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER, 5 );
+// -------------------------------------------------------------------------------- //
+guTreeViewPanel::~guTreeViewPanel()
+{
+    // Save the Splitter positions into the main config
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    Config->UnRegisterObject( this );
 
-    SearchPanel->SetSizer( SearchSizer );
-    SearchPanel->Layout();
-	SearchSizer->Fit( SearchPanel );
+    Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, m_ConfigPath );
+    Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), m_ConfigPath );
 
-    m_AuiManager.AddPane( SearchPanel,
-            wxAuiPaneInfo().Name( wxT( "TreeViewTextSearch" ) ).Caption( _( "Text Search" ) ).
-            MinSize( 60, 28 ).MaxSize( -1, 28 ).Row( 0 ).Layer( 2 ).Position( 0 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
-            Dockable( true ).Top() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::CreateControls( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxPanel * NamesPanel;
 	NamesPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -851,7 +837,7 @@ guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
 	wxBoxSizer * DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_TVTracksListBox = new guTVSoListBox( DetailsPanel, m_Db, wxT( "TreeView" ), guLISTVIEW_COLUMN_SELECT|guLISTVIEW_COLUMN_SORTING );
+	m_TVTracksListBox = new guTVSoListBox( DetailsPanel, m_MediaViewer, m_ConfigPath, guLISTVIEW_COLUMN_SELECT|guLISTVIEW_COLUMN_SORTING );
 	DetailsSizer->Add( m_TVTracksListBox, 1, wxEXPAND, 5 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
@@ -862,13 +848,11 @@ guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
             MinSize( 50, 50 ).
             CenterPane() );
 
-    wxString TreeViewLayout = Config->ReadStr( wxT( "TreeView" ), wxEmptyString, wxT( "Positions" ) );
+    wxString TreeViewLayout = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, m_ConfigPath );
     if( Config->GetIgnoreLayouts() || TreeViewLayout.IsEmpty() )
     {
         m_VisiblePanels = guPANEL_TREEVIEW_VISIBLE_DEFAULT;
-        TreeViewLayout = wxT( "layout2|name=TreeViewTextSearch;caption=" ) + wxString( _( "Text Search" ) );
-        TreeViewLayout += wxT( ";state=2099196;dir=1;layer=2;row=0;pos=0;prop=100000;bestw=111;besth=28;minw=60;minh=28;maxw=-1;maxh=28;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
-        TreeViewLayout += wxT( "name=TreeViewFilters;caption=" ) + wxString( _( "Tree" ) );
+        TreeViewLayout = wxT( "layout2|name=TreeViewFilters;caption=" ) + wxString( _( "Tree" ) );
         TreeViewLayout += wxT( ";state=2044;dir=4;layer=0;row=0;pos=0;prop=100000;bestw=180;besth=350;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
         TreeViewLayout += wxT( "name=TreeViewTracks;caption=PlayList;state=768;dir=5;layer=0;row=0;pos=0;prop=100000;bestw=50;besth=50;minw=50;minh=50;maxw=-1;maxh=-1;floatx=-1;floaty=-1;floatw=-1;floath=-1|" );
         TreeViewLayout += wxT( "dock_size(1,2,0)=47|dock_size(4,0,0)=186|dock_size(5,0,0)=52|" );
@@ -889,7 +873,7 @@ guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_TREEVIEW_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewEditLabels ), NULL, this );
     Connect( ID_TREEVIEW_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewEditTracks ), NULL, this );
     Connect( ID_TREEVIEW_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewSaveToPlayList ), NULL, this );
-    Connect( ID_TREEVIEW_COPYTO, ID_TREEVIEW_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewCopyTo ), NULL, this );
+    m_TreeViewCtrl->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewCopyTo ), NULL, this );
 
     m_TVTracksListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guTreeViewPanel::OnTrackListColClicked ), NULL, this );
 
@@ -900,7 +884,7 @@ guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_ENQUEUE_AFTER_ALL, ID_SONG_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksQueueClicked ), NULL, this );
     Connect( ID_SONG_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditLabelsClicked ), NULL, this );
     Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditTracksClicked ), NULL, this );
-    Connect( ID_SONG_COPYTO, ID_SONG_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksCopyToClicked ), NULL, this );
+    m_TVTracksListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksCopyToClicked ), NULL, this );
     Connect( ID_SONG_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSavePlayListClicked ), NULL, this );
     Connect( ID_SONG_SET_RATING_0, ID_SONG_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetRating ), NULL, this );
     Connect( ID_SONG_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetField ), NULL, this );
@@ -912,118 +896,58 @@ guTreeViewPanel::guTreeViewPanel( wxWindow * parent, guDbLibrary * db, guPlayerP
     Connect( ID_SONG_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectComposer ), NULL, this );
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbum ), NULL, this );
 
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guTreeViewPanel::OnSearchSelected ), NULL, this );
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTreeViewPanel::OnSearchActivated ), NULL, this );
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guTreeViewPanel::OnSearchCancelled ), NULL, this );
-
-	Connect( guTREEVIEW_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guTreeViewPanel::OnTextChangedTimer ), NULL, this );
 	Connect( guTREEVIEW_TIMER_TREEITEMSELECTED, wxEVT_TIMER, wxTimerEventHandler( guTreeViewPanel::OnTreeItemSelectedTimer ), NULL, this );
-
-//    Connect( ID_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnGoToSearch ), NULL, this );
-
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guTreeViewPanel::OnConfigUpdated ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-guTreeViewPanel::~guTreeViewPanel()
-{
-    // Save the Splitter positions into the main config
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->UnRegisterObject( this );
-
-    Config->WriteNum( wxT( "TVVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
-    Config->WriteStr( wxT( "TreeView" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
-
 }
 
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::InitPanelData()
 {
-    m_PanelNames.Add( wxT( "TreeViewTextSearch" ) );
-
-    m_PanelIds.Add( guPANEL_TREEVIEW_TEXTSEARCH );
-
-    m_PanelCmdIds.Add( ID_MENU_VIEW_TV_TEXTSEARCH );
+//    m_PanelNames.Add( wxT( "TreeViewTextSearch" ) );
+//
+//    m_PanelIds.Add( guPANEL_TREEVIEW_TEXTSEARCH );
+//
+//    m_PanelCmdIds.Add( ID_MENU_VIEW_TV_TEXTSEARCH );
 }
 
 // -------------------------------------------------------------------------------- //
-void guTreeViewPanel::OnConfigUpdated( wxCommandEvent &event )
+int guTreeViewPanel::GetContextMenuFlags( void )
 {
-    int Flags = event.GetInt();
-    if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
+    return m_MediaViewer->GetContextMenuFlags();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTreeViewPanel::DoTextSearch( const wxString &textsearch )
+{
+    if( m_LastSearchString != textsearch )
     {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
-        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guTreeViewPanel::OnSearchActivated( wxCommandEvent& event )
-{
-    if( m_TextChangedTimer.IsRunning() )
-        m_TextChangedTimer.Stop();
-
-    if( !m_InstantSearchEnabled )
-        return;
-
-    m_TextChangedTimer.Start( guTREEVIEW_TIMER_TEXTSEARCH_VALUE, wxTIMER_ONE_SHOT );
-}
-
-// -------------------------------------------------------------------------------- //
-void guTreeViewPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH STR
-{
-    m_InputTextCtrl->Clear();
-
-    if( !m_InstantSearchEnabled )
-        DoTextSearch();
-}
-
-// -------------------------------------------------------------------------------- //
-void guTreeViewPanel::OnSearchSelected( wxCommandEvent &event )
-{
-    if( !m_InstantSearchEnabled )
-    {
-        DoTextSearch();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-bool guTreeViewPanel::DoTextSearch( void )
-{
-    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
-    if( !SearchString.IsEmpty() )
-    {
-        if( SearchString.Length() > 1 )
+        m_LastSearchString = textsearch; //m_InputTextCtrl->GetLineText( 0 );
+        if( !m_LastSearchString.IsEmpty() )
         {
-            wxArrayString TextFilters = guSplitWords( SearchString );
-            m_TreeViewCtrl->SetTextFilters( TextFilters );
-//            m_TreeViewCtrl->ExpandAll();
-            m_TreeViewCtrl->ReloadItems();
-            m_TVTracksListBox->SetTextFilters( TextFilters );
-            m_TVTracksListBox->ReloadItems( false );
+            if( m_LastSearchString.Length() > 1 )
+            {
+                wxArrayString TextFilters = guSplitWords( m_LastSearchString );
+                m_TreeViewCtrl->SetTextFilters( TextFilters );
+    //            m_TreeViewCtrl->ExpandAll();
+                m_TreeViewCtrl->ReloadItems();
+                m_TVTracksListBox->SetTextFilters( TextFilters );
+                m_TVTracksListBox->ReloadItems( false );
+            }
+    //        m_InputTextCtrl->ShowCancelButton( true );
+            return true;
         }
-        m_InputTextCtrl->ShowCancelButton( true );
-        return true;
-    }
-    else
-    {
-        m_TreeViewCtrl->ClearTextFilters();
-//        m_TreeViewCtrl->ExpandAll();
-        m_TreeViewCtrl->ReloadItems();
+        else
+        {
+            m_TreeViewCtrl->ClearTextFilters();
+    //        m_TreeViewCtrl->ExpandAll();
+            m_TreeViewCtrl->ReloadItems();
 
-        m_TVTracksListBox->ClearTextFilters();
-        m_TVTracksListBox->ReloadItems( false );
+            m_TVTracksListBox->ClearTextFilters();
+            m_TVTracksListBox->ReloadItems( false );
 
-        m_InputTextCtrl->ShowCancelButton( false );
+    //        m_InputTextCtrl->ShowCancelButton( false );
+        }
     }
     return false;
-}
-
-// -------------------------------------------------------------------------------- //
-void guTreeViewPanel::OnTextChangedTimer( wxTimerEvent &event )
-{
-    DoTextSearch();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1152,6 +1076,9 @@ void guTreeViewPanel::OnTreeViewEditLabels( wxCommandEvent &event )
                     }
 
                     LabelEditor->Destroy();
+
+                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LABEL_UPDATELABELS );
+                    wxPostEvent( m_MediaViewer, event );
                 }
             }
         }
@@ -1180,13 +1107,14 @@ void guTreeViewPanel::OnTreeViewEditTracks( wxCommandEvent &event )
             {
                 if( TrackEditor->ShowModal() == wxID_OK )
                 {
-                    guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
-                    m_Db->UpdateSongs( &Tracks, ChangedFlags );
+                    //guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+                    //m_Db->UpdateSongs( &Tracks, ChangedFlags );
+                    m_MediaViewer->UpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
 
                     m_TVTracksListBox->ReloadItems();
 
                     // Update the track in database, playlist, etc
-                    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_TREEVIEW, &Tracks );
+                    m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
                 }
 
                 guImagePtrArrayClean( &Images );
@@ -1304,7 +1232,7 @@ void guTreeViewPanel::OnTreeViewDeleteFilter( wxCommandEvent &event )
         {
             if( wxMessageBox( _( "Are you sure to delete the selected filter?" ),
                               _( "Confirm" ),
-                              wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                              wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
             {
                 m_TreeViewCtrl->DeleteFilterEntry( ItemData->GetData() );
             }
@@ -1321,11 +1249,12 @@ void guTreeViewPanel::OnTreeViewCopyTo( wxCommandEvent &event )
     {
         guTrackArray * Tracks = new guTrackArray();
         m_TVTracksListBox->GetAllSongs( Tracks );
+        NormalizeTracks( Tracks );
 
-        int Index = event.GetId() - ID_TREEVIEW_COPYTO;
-        if( Index > 99 )
+        int Index = event.GetId() - ID_COPYTO_BASE;
+        if( Index >= guCOPYTO_DEVICE_BASE )
         {
-            Index -= 100;
+            Index -= guCOPYTO_DEVICE_BASE;
             event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
         }
         else
@@ -1345,10 +1274,12 @@ void guTreeViewPanel::OnTVTracksActivated( wxListEvent &event )
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     if( Tracks.Count() )
     {
+        NormalizeTracks( &Tracks );
+
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) )
+            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
             {
                 m_PlayerPanel->AddToPlayList( Tracks );
             }
@@ -1367,6 +1298,7 @@ void guTreeViewPanel::OnTVTracksPlayClicked( wxCommandEvent &event )
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         m_TVTracksListBox->GetAllSongs( &Tracks );
+    NormalizeTracks( &Tracks );
     m_PlayerPanel->SetPlayList( Tracks );
 }
 
@@ -1377,6 +1309,7 @@ void guTreeViewPanel::OnTVTracksQueueClicked( wxCommandEvent &event )
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     if( !Tracks.Count() )
         m_TVTracksListBox->GetAllSongs( &Tracks );
+    NormalizeTracks( &Tracks );
     m_PlayerPanel->AddToPlayList( Tracks, true, event.GetId() - ID_SONG_ENQUEUE_AFTER_ALL );
 }
 
@@ -1420,13 +1353,14 @@ void guTreeViewPanel::OnTVTracksEditTracksClicked( wxCommandEvent &event )
     {
         if( TrackEditor->ShowModal() == wxID_OK )
         {
-            guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
-            m_Db->UpdateSongs( &Tracks, ChangedFlags );
+            //guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+            //m_Db->UpdateSongs( &Tracks, ChangedFlags );
+            m_MediaViewer->UpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
 
             m_TVTracksListBox->ReloadItems();
 
             // Update the track in database, playlist, etc
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_TREEVIEW, &Tracks );
+//            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_TREEVIEW, &Tracks );
         }
         guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
@@ -1439,10 +1373,10 @@ void guTreeViewPanel::OnTVTracksCopyToClicked( wxCommandEvent &event )
     guTrackArray * Tracks = new guTrackArray();
     m_TVTracksListBox->GetSelectedSongs( Tracks );
 
-    int Index = event.GetId() - ID_SONG_COPYTO;
-    if( Index > 99 )
+    int Index = event.GetId() - ID_COPYTO_BASE;
+    if( Index >= guCOPYTO_DEVICE_BASE )
     {
-        Index -= 100;
+        Index -= guCOPYTO_DEVICE_BASE;
         event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
@@ -1525,34 +1459,13 @@ void guTreeViewPanel::OnTVTracksSavePlayListClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTVTracksSetRating( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
     int Rating = event.GetId() - ID_SONG_SET_RATING_0;
+    //guLogMessage( wxT( "OnSongSetRating( %i )" ), Rating );
 
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
 
-    if( ( Count = Tracks.Count() ) )
-    {
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Tracks[ Index ].m_Rating = Rating;
-        }
-
-        guConfig * Config = ( guConfig * ) Config->Get();
-        if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
-        {
-            guImagePtrArray Images;
-            wxArrayString Lyrics;
-            wxArrayInt ChangedFlags;
-            ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING, Count );
-            guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
-        }
-
-        m_Db->SetTracksRating( &Tracks, Rating );
-
-        ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
-    }
+    m_MediaViewer->SetTracksRating( Tracks, Rating );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1619,7 +1532,7 @@ void guTreeViewPanel::OnTVTracksSetField( wxCommandEvent &event )
 
     m_Db->UpdateSongs( &Tracks, ChangedFlags );
 
-    ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+    m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1745,7 +1658,7 @@ void guTreeViewPanel::OnTVTracksEditField( wxCommandEvent &event )
 
             m_Db->UpdateSongs( &Tracks, ChangedFlags );
 
-            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
+            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         FieldEditor->Destroy();
     }
@@ -1769,7 +1682,7 @@ void guTreeViewPanel::OnTVTracksSelectGenre( wxCommandEvent &event )
 
     event.SetId( ID_GENRE_SETSELECTION );
     event.SetClientData( ( void * ) Genres );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MediaViewer, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1789,7 +1702,7 @@ void guTreeViewPanel::OnTVTracksSelectArtist( wxCommandEvent &event )
     }
     event.SetId( ID_ARTIST_SETSELECTION );
     event.SetClientData( ( void * ) Artists );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MediaViewer, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1809,7 +1722,7 @@ void guTreeViewPanel::OnTVTracksSelectAlbumArtist( wxCommandEvent &event )
     }
     event.SetId( ID_ALBUMARTIST_SETSELECTION );
     event.SetClientData( ( void * ) Ids );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MediaViewer, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1829,7 +1742,7 @@ void guTreeViewPanel::OnTVTracksSelectComposer( wxCommandEvent &event )
     }
     event.SetId( ID_COMPOSER_SETSELECTION );
     event.SetClientData( ( void * ) Ids );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MediaViewer, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1850,7 +1763,7 @@ void guTreeViewPanel::OnTVTracksSelectAlbum( wxCommandEvent &event )
     }
     event.SetId( ID_ALBUM_SETSELECTION );
     event.SetClientData( ( void * ) Albums );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MediaViewer, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1859,7 +1772,7 @@ void guTreeViewPanel::OnTVTracksDeleteLibrary( wxCommandEvent &event )
     if( m_TVTracksListBox->GetSelectedCount() )
     {
         if( wxMessageBox( wxT( "Are you sure to remove the selected tracks from your library?" ),
-            wxT( "Remove tracks from library" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
+            wxT( "Remove tracks from library" ), wxICON_QUESTION|wxYES|wxNO|wxNO_DEFAULT ) == wxYES )
         {
             guTrackArray Tracks;
             m_TVTracksListBox->GetSelectedSongs( &Tracks );
@@ -1877,7 +1790,7 @@ void guTreeViewPanel::OnTVTracksDeleteDrive( wxCommandEvent &event )
     if( m_TVTracksListBox->GetSelectedCount() )
     {
         if( wxMessageBox( wxT( "Are you sure to delete the selected tracks from your drive?\nThis will permanently erase the selected tracks." ),
-            wxT( "Remove tracks from drive" ), wxICON_QUESTION | wxYES | wxNO | wxCANCEL | wxNO_DEFAULT ) == wxYES )
+            wxT( "Remove tracks from drive" ), wxICON_QUESTION|wxYES|wxNO|wxNO_DEFAULT ) == wxYES )
         {
             guTrackArray Tracks;
             m_TVTracksListBox->GetSelectedSongs( &Tracks );
@@ -1909,14 +1822,7 @@ void guTreeViewPanel::SendPlayListUpdatedEvent( void )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnGoToSearch( wxCommandEvent &event )
 {
-    if( !( m_VisiblePanels & guPANEL_PLAYLIST_TEXTSEARCH ) )
-    {
-        ShowPanel( guPANEL_PLAYLIST_TEXTSEARCH, true );
-    }
-
-    if( FindFocus() != m_InputTextCtrl )
-        m_InputTextCtrl->SetFocus();
-
+    m_MediaViewer->GoToSearch();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1942,5 +1848,31 @@ void guTreeViewPanel::OnTrackListColClicked( wxListEvent &event )
     m_TVTracksListBox->ReloadItems( false );
 }
 
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::RefreshAll( void )
+{
+    m_TreeViewCtrl->ReloadItems();
+
+    m_TVTracksListBox->ReloadItems( false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+{
+    m_MediaViewer->NormalizeTracks( tracks, isdrag );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::CreateCopyToMenu( wxMenu * menu )
+{
+    m_MediaViewer->CreateCopyToMenu( menu );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::CreateContextMenu( wxMenu * menu, const int windowid )
+{
+    m_MediaViewer->CreateContextMenu( menu, windowid );
+}
 
 // -------------------------------------------------------------------------------- //

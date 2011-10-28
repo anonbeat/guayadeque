@@ -55,14 +55,14 @@ void inline InitArrayStrings( void )
         m_FilterFieldChoices.Add( _( "Year" ) );
         m_FilterFieldChoices.Add( _( "Rating" ) );
         m_FilterFieldChoices.Add( _( "Length" ) );
-        m_FilterFieldChoices.Add( _( "Play Count" ) );
-        m_FilterFieldChoices.Add( _( "Last Play Time" ) );
-        m_FilterFieldChoices.Add( _( "Added Date" ) );
+        m_FilterFieldChoices.Add( _( "Plays" ) );
+        m_FilterFieldChoices.Add( _( "Last Played" ) );
+        m_FilterFieldChoices.Add( _( "Added" ) );
         m_FilterFieldChoices.Add( _( "Track Number" ) );
-        m_FilterFieldChoices.Add( _( "Bitrate" ) );
+        m_FilterFieldChoices.Add( _( "Bit Rate" ) );
         m_FilterFieldChoices.Add( _( "Size" ) );
-        m_FilterFieldChoices.Add( _( "Disk" ) );
-        m_FilterFieldChoices.Add( _( "With Cover" ) );
+        m_FilterFieldChoices.Add( _( "Disc" ) );
+        m_FilterFieldChoices.Add( _( "Has Cover" ) );
 //    }
 //
 //    if( !m_FilterTextOptionChoices.Count() )
@@ -96,8 +96,8 @@ void inline InitArrayStrings( void )
 //
 //    if( !m_FilterYearOptionChoices.Count() )
 //    {
-        m_FilterYearOptionChoices.Add( _( "in" ) );
-        m_FilterYearOptionChoices.Add( _( "not in" ) );
+        m_FilterYearOptionChoices.Add( _( "is" ) );
+        m_FilterYearOptionChoices.Add( _( "is not" ) );
         m_FilterYearOptionChoices.Add( _( "after" ) );
         m_FilterYearOptionChoices.Add( _( "before" ) );
 //    }
@@ -133,9 +133,9 @@ void inline InitArrayStrings( void )
         m_SortChoices.Add( _( "Year" ) );
         m_SortChoices.Add( _( "Rating" ) );
         m_SortChoices.Add( _( "Length" ) );
-        m_SortChoices.Add( _( "Play Count" ) );
-        m_SortChoices.Add( _( "Last Play Time" ) );
-        m_SortChoices.Add( _( "Added Time" ) );
+        m_SortChoices.Add( _( "Plays" ) );
+        m_SortChoices.Add( _( "Last Played" ) );
+        m_SortChoices.Add( _( "Added" ) );
         m_SortChoices.Add( _( "Random" ) );
 //    }
 //
@@ -451,11 +451,20 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer * MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer* CurFiltersSizer;
-	CurFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Current Filters " ) ), wxVERTICAL );
+	wxBoxSizer * NameSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * NameStaticText = new wxStaticText( this, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	NameStaticText->Wrap( -1 );
+	NameSizer->Add( NameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+	m_NameTextCtrl = new wxTextCtrl( this, wxID_ANY, playlist->m_Name, wxDefaultPosition, wxDefaultSize, 0 );
+	NameSizer->Add( m_NameTextCtrl, 1, wxALL|wxEXPAND, 5 );
+
+	MainSizer->Add( NameSizer, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	wxStaticBoxSizer * CurFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Current Filters " ) ), wxVERTICAL );
 
 	m_FiltersListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_FiltersListBox->SetMinSize( wxSize( -1,80 ) );
@@ -493,7 +502,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_FilterEditSizer->Add( m_FilterRating, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	m_FilterDateOption2Choice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_FilterDateOption2Choices, 0 );
-	m_FilterDateOption2Choice->SetSelection( 0 );
+	m_FilterDateOption2Choice->SetSelection( 2 );
 	m_FilterDateOption2Choice->Show( false );
 	m_FilterEditSizer->Add( m_FilterDateOption2Choice, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -561,8 +570,9 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
         LimitSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-        m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Any filter selects tracks"), wxDefaultPosition, wxDefaultSize, 0 );
         m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
+        m_AddOnAnyCheckBox->Enable( m_FiltersListBox->GetCount() > 1 );
 
         LimitSizer->Add( m_AddOnAnyCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -601,6 +611,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
         m_AddOnAnyCheckBox = new wxCheckBox( this, wxID_ANY, _("Add tracks on any criteria"), wxDefaultPosition, wxDefaultSize, 0 );
         m_AddOnAnyCheckBox->SetValue( m_PlayList->m_AnyOption );
+        m_AddOnAnyCheckBox->Enable( m_FiltersListBox->GetCount() > 1 );
         LimitSizer->Add( m_AddOnAnyCheckBox, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
         MainSizer->Add( LimitSizer, 0, wxEXPAND, 5 );
     }
@@ -610,15 +621,19 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	ButtonsSizer = new wxStdDialogButtonSizer();
 	m_BtnOk = new wxButton( this, wxID_OK );
-	m_BtnOk->Enable( m_Filters->Count() );
+    m_BtnOk->Enable( m_Filters->Count() && !m_NameTextCtrl->IsEmpty() );
 	ButtonsSizer->AddButton( m_BtnOk );
 	BtnCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( BtnCancel );
+	ButtonsSizer->SetAffirmativeButton( m_BtnOk );
+	ButtonsSizer->SetCancelButton( BtnCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
+	m_BtnOk->SetDefault();
 
 	// Connect Events
 	m_FiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFiltersSelected ), NULL, this );
@@ -637,6 +652,9 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
         m_LimitCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
         m_SortCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
 	}
+	m_NameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guDynPlayListEditor::OnNameChanged ), NULL, this );
+
+	m_FiltersListBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -663,6 +681,7 @@ guDynPlayListEditor::~guDynPlayListEditor()
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::FillPlayListEditData( void )
 {
+    m_PlayList->m_Name = m_NameTextCtrl->GetValue();
     if( !m_AlbumFilter )
     {
         m_PlayList->m_Limited = m_LimitCheckBox->IsChecked();
@@ -751,16 +770,17 @@ bool guDynPlayListEditor::FilterHasChanged( void )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::UpdateEditor( int FilterType )
 {
-    if( ( FilterType == guDYNAMIC_FILTER_TYPE_LENGTH ) ||
-        ( FilterType == guDYNAMIC_FILTER_TYPE_HASARTWORK ) )
+    switch( FilterType )
     {
-        //
-        m_FilterAdd->Enable( true );
-    }
-    else
-    {
-        //
-        m_FilterAdd->Enable( false );
+        case guDYNAMIC_FILTER_TYPE_RATING :
+        case guDYNAMIC_FILTER_TYPE_LENGTH :
+        case guDYNAMIC_FILTER_TYPE_HASARTWORK :
+            m_FilterAdd->Enable( true );
+            break;
+
+        default :
+            m_FilterAdd->Enable( false );
+            break;
     }
 
     m_FilterText->Enable( FilterType != guDYNAMIC_FILTER_TYPE_HASARTWORK );
@@ -771,6 +791,7 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_FilterTextOptionChoice->Show( true );
         m_FilterLabelOptionChoice->Show( false );
         m_FilterRating->Show( true );
+        m_FilterRating->SetRating( 0 );
         m_FilterDateOption2Choice->Show( false );
         m_LengthHours->Show( false );
         m_LengthSeparator1->Show( false );
@@ -790,7 +811,6 @@ void guDynPlayListEditor::UpdateEditor( int FilterType )
         m_LengthMinutes->Show( true );
         m_LengthSeparator2->Show( true );
         m_LengthSeconds->Show( true );
-
     }
     else if( ( FilterType == guDYNAMIC_FILTER_TYPE_LASTPLAY ) ||
              ( FilterType == guDYNAMIC_FILTER_TYPE_ADDEDDATE ) )
@@ -1022,7 +1042,9 @@ void guDynPlayListEditor::OnFilterAddClicked( wxCommandEvent& event )
     m_FiltersListBox->Append( FilterItem.GetLabel() );
     m_FiltersListBox->Refresh();
 
-    m_BtnOk->Enable( m_Filters->Count() );
+    m_BtnOk->Enable( m_Filters->Count() && !m_NameTextCtrl->IsEmpty() );
+
+    m_AddOnAnyCheckBox->Enable( m_FiltersListBox->GetCount() > 1 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1035,6 +1057,8 @@ void guDynPlayListEditor::OnFilterDelClicked( wxCommandEvent& event )
         m_CurFilter = wxNOT_FOUND;
 
         m_BtnOk->Enable( m_Filters->Count() );
+
+        m_AddOnAnyCheckBox->Enable( m_FiltersListBox->GetCount() > 1 );
     }
 }
 
@@ -1062,6 +1086,12 @@ void guDynPlayListEditor::OnSortChecked( wxCommandEvent &event )
 {
 	m_DescCheckBox->Enable( m_SortCheckBox->IsChecked() );
 	m_SortChoice->Enable( m_SortCheckBox->IsChecked() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDynPlayListEditor::OnNameChanged( wxCommandEvent &event )
+{
+    m_BtnOk->Enable( m_Filters->Count() && !m_NameTextCtrl->IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //

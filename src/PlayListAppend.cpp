@@ -36,14 +36,11 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer * MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
-
+	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
 
-	wxFlexGridSizer * FieldsSizer;
-	FieldsSizer = new wxFlexGridSizer( 3, 2, 0, 0 );
+	wxFlexGridSizer * FieldsSizer = new wxFlexGridSizer( 3, 2, 0, 0 );
 	FieldsSizer->AddGrowableCol( 1 );
 	FieldsSizer->AddGrowableRow( 2 );
 	FieldsSizer->SetFlexibleDirection( wxBOTH );
@@ -61,13 +58,15 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
     {
         m_PlayListComboBox->Append( plitems->Item( index ).m_Name );
     }
+    m_PlayListComboBox->SetValue( _( "New playlist" ) );
+
 	FieldsSizer->Add( m_PlayListComboBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	PosLabel = new wxStaticText( this, wxID_ANY, _( "Where:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	PosLabel->Wrap( -1 );
 	FieldsSizer->Add( PosLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-	wxString m_PosChoiceChoices[] = { _("Begin"), _("End") };
+	wxString m_PosChoiceChoices[] = { _("Beginning"), _("End") };
 	int m_PosChoiceNChoices = sizeof( m_PosChoiceChoices ) / sizeof( wxString );
 	m_PosChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PosChoiceNChoices, m_PosChoiceChoices, 0 );
 	m_PosChoice->SetSelection( 1 );
@@ -88,11 +87,17 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
 	StdBtnSizer->AddButton( StdBtnSizerOK );
 	StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	StdBtnSizer->AddButton( StdBtnSizerCancel );
+	StdBtnSizer->SetAffirmativeButton( StdBtnSizerOK );
+	StdBtnSizer->SetCancelButton( StdBtnSizerCancel );
 	StdBtnSizer->Realize();
 	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
+	StdBtnSizerOK->SetDefault();
+
+    m_PlayListComboBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

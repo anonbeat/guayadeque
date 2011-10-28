@@ -26,6 +26,8 @@
 #include <wx/dynarray.h>
 #include <wx/xml/xml.h>
 
+class guDbPodcasts;
+
 // -------------------------------------------------------------------------------- //
 typedef enum {
     guPODCAST_STATUS_NORMAL,
@@ -109,8 +111,8 @@ class guPodcastChannel
     bool        ReadXml( wxXmlNode * XmlNode );
     void        ReadXmlOwner( wxXmlNode * XmlNode );
 
-    int         GetUpdateItems( guDbLibrary * db, guPodcastItemArray * items );
-    int         GetPendingChannelItems( guDbLibrary * db, int channelid, guPodcastItemArray * items );
+    int         GetUpdateItems( guDbPodcasts * db, guPodcastItemArray * items );
+    int         GetPendingChannelItems( guDbPodcasts * db, int channelid, guPodcastItemArray * items );
     void        CheckDir( void );
 
   public :
@@ -133,10 +135,10 @@ class guPodcastChannel
 
                 guPodcastChannel() {};
                 guPodcastChannel( const wxString &url );
-    void        Update( guDbLibrary * db, guMainFrame * mainframe );
+    void        Update( guDbPodcasts * db, guMainFrame * mainframe );
     void        CheckLogo( void );
-    int         CheckDownloadItems( guDbLibrary * db, guMainFrame * mainframe );
-    void        CheckDeleteItems( guDbLibrary * db );
+    int         CheckDownloadItems( guDbPodcasts * db, guMainFrame * mainframe );
+    void        CheckDeleteItems( guDbPodcasts * db );
 
 };
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);

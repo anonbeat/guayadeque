@@ -65,11 +65,15 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 	TagEditorBtnSizer->AddButton( TagEditorBtnSizerOK );
 	TagEditorBtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	TagEditorBtnSizer->AddButton( TagEditorBtnSizerCancel );
+	TagEditorBtnSizer->SetAffirmativeButton( TagEditorBtnSizerOK );
+	TagEditorBtnSizer->SetCancelButton( TagEditorBtnSizerCancel );
 	TagEditorBtnSizer->Realize();
 	MainSizer->Add( TagEditorBtnSizer, 0, wxRIGHT|wxBOTTOM|wxEXPAND, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
+	TagEditorBtnSizerOK->SetDefault();
 
     // By default enable already added items
     m_Db->GetRadioGenres( guRADIO_SOURCE_GENRE, &m_AddedGenres, false );
@@ -83,7 +87,7 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
             m_CheckListBox->Check( item );
     }
 
-
+    m_CheckListBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

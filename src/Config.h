@@ -21,45 +21,110 @@
 #ifndef GUCONFIG_H
 #define GUCONFIG_H
 
+#include "Collections.h"
+#include "Settings.h"
+
 #include <wx/wx.h>
 #include <wx/fileconf.h>
+#include <wx/tokenzr.h>
+#include <wx/xml/xml.h>
 
 WX_DEFINE_ARRAY_PTR( wxEvtHandler *, guEvtHandlerArray );
 extern const wxEventType guConfigUpdatedEvent;
 
+class guMediaCollectionArray;
 
 // -------------------------------------------------------------------------------- //
-class guConfig : public wxConfig
+class guConfig
 {
   protected :
+    wxXmlDocument *     m_XmlDocument;
+    wxXmlNode *         m_RootNode;
+    wxString            m_FileName;
     wxMutex             m_ConfigMutex;
     guEvtHandlerArray   m_Objects;
+    wxMutex             m_ObjectsMutex;
+
     bool                m_IgnoreLayouts;
+    int                 m_Version;
+
+    inline wxXmlNode *  FindNode( const wxString &category );
+    bool                LoadFile( const wxString &filename );
+    bool                LoadWithBackup( const wxString &filename );
+    bool                AddBackupFile( const wxString &filename );
+
+    void                LoadOldConfig( const wxString &conffile );
+    void                LoadOldAccelerators( wxFileConfig * fileconfig );
+    void                LoadOldAlbumBrowser( wxFileConfig * fileconfig, const wxString &uniqueid );
+    void                LoadOldAlbumBrowserFilters( wxFileConfig * fileconfig, const wxString &uniqueid );
+    void                LoadOldCommands( wxFileConfig * fileconfig );
+    void                LoadOldCopyTo( wxFileConfig * fileconfig );
+    void                LoadOldCoverSearch( wxFileConfig * fileconfig, guMediaCollection * collection );
+    void                LoadOldCrossfader( wxFileConfig * fileconfig );
+    void                LoadOldEqualizer( wxFileConfig * fileconfig );
+    void                LoadOldFileBrowser( wxFileConfig * fileconfig );
+    void                LoadOldFileRenamer( wxFileConfig * fileconfig );
+    void                LoadOldGeneral( wxFileConfig * fileconfig, guMediaCollection * collection, const wxString &uniqueid );
+    void                LoadOldJamendo( wxFileConfig * fileconfig );
+    void                LoadOldJamendoGenres( wxFileConfig * fileconfig );
+    void                LoadOldLastFM( wxFileConfig * fileconfig );
+    void                LoadOldLibPaths( wxFileConfig * fileconfig, guMediaCollection * collection );
+    void                LoadOldLibreFM( wxFileConfig * fileconfig );
+    void                LoadOldLyrics( wxFileConfig * fileconfig );
+    void                LoadOldMagnatune( wxFileConfig * fileconfig );
+    void                LoadOldMagnatuneGenreList( wxFileConfig * fileconfig );
+    void                LoadOldMagnatuneGenres( wxFileConfig * fileconfig );
+    void                LoadOldMainSources( wxFileConfig * fileconfig );
+    void                LoadOldPlayback( wxFileConfig * fileconfig );
+    void                LoadOldPlayList( wxFileConfig * fileconfig );
+    void                LoadOldPodcasts( wxFileConfig * fileconfig );
+    void                LoadOldPositions( wxFileConfig * fileconfig );
+    void                LoadOldRadios( wxFileConfig * fileconfig );
+    void                LoadOldRecord( wxFileConfig * fileconfig );
+    void                LoadOldSearchFilters( wxFileConfig * fileconfig );
+    void                LoadOldSearchLinks( wxFileConfig * fileconfig );
+    void                LoadOldTreeView( wxFileConfig * fileconfig, const wxString &uniqueid );
+    void                LoadOldTreeViewFilters( wxFileConfig * fileconfig, const wxString &uniqueid );
 
   public :
-    guConfig( const wxString &conffile = wxT( ".guayadeque/guayadeque.conf" ) );
+    guConfig( const wxString &conffile = guPATH_CONFIG_FILENAME );
     ~guConfig();
 
-    long            ReadNum( const wxString &KeyName, long Default = 0, const wxString &Category = wxEmptyString );
-    bool            WriteNum( const wxString &KeyName, long Value = 0, const wxString &Category = wxEmptyString );
-    bool            ReadBool( const wxString &KeyName, bool Default = true, const wxString &Category = wxEmptyString );
-    bool            WriteBool( const wxString &KeyName, bool Value, const wxString &Category = wxEmptyString );
-    wxString        ReadStr( const wxString &KeyName, const wxString &Default, const wxString &Category = wxEmptyString );
-    bool            WriteStr( const wxString &KeyName, const wxString &Value, const wxString &Category = wxEmptyString );
-    wxArrayString   ReadAStr( const wxString &Key, const wxString &Default, const wxString &Category = wxEmptyString );
-    bool            WriteAStr( const wxString &Key, const wxArrayString &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
+    static guConfig *   Get( void );
+    void                Set( guConfig * config );
+
+
+    int                 Version( void ) { return m_Version; }
+    void                Flush( void );
+
+    long                ReadNum( const wxString &keyname, long defval = 0, const wxString &category = wxEmptyString );
+    bool                WriteNum( const wxString &keyname, long value = 0, const wxString &category = wxEmptyString );
+
+    bool                ReadBool( const wxString &keyname, bool defval = true, const wxString &category = wxEmptyString );
+    bool                WriteBool( const wxString &keyname, bool value, const wxString &category = wxEmptyString );
+
+    wxString            ReadStr( const wxString &keyname, const wxString &defval, const wxString &category = wxEmptyString );
+    bool                WriteStr( const wxString &keyname, const wxString &value, const wxString &category = wxEmptyString );
+
+    wxArrayString       ReadAStr( const wxString &Key, const wxString &defval, const wxString &category = wxEmptyString );
+    bool                WriteAStr( const wxString &Key, const wxArrayString &value, const wxString &category = wxEmptyString, bool ResetGroup = true );
 #if wxUSE_STL
-    bool            WriteAStr( const wxString &Key, const wxSortedArrayString &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
+    bool                WriteAStr( const wxString &Key, const wxSortedArrayString &value, const wxString &category = wxEmptyString, bool ResetGroup = true );
 #endif
-    wxArrayInt      ReadANum( const wxString &Key, const int Default, const wxString &Category = wxEmptyString );
-    bool            WriteANum( const wxString &Key, const wxArrayInt &Value, const wxString &Category = wxEmptyString, bool ResetGroup = true );
+    wxArrayInt          ReadANum( const wxString &Key, const int defval, const wxString &category = wxEmptyString );
+    bool                WriteANum( const wxString &Key, const wxArrayInt &value, const wxString &category = wxEmptyString, bool ResetGroup = true );
 
-    void            RegisterObject( wxEvtHandler * object );
-    void            UnRegisterObject( wxEvtHandler * object );
-    void            SendConfigChangedEvent( const int flags = 0 );
+    void                DeleteCategory( const wxString &category );
 
-    bool            GetIgnoreLayouts( void ) { return m_IgnoreLayouts; }
-    void            SetIgnoreLayouts( const bool ignorelayouts ) { m_IgnoreLayouts = ignorelayouts; };
+    int                 LoadCollections( guMediaCollectionArray * collections, const int type = wxNOT_FOUND );
+    void                SaveCollections( guMediaCollectionArray * collections, const bool resetgroup = true );
+
+    void                RegisterObject( wxEvtHandler * object );
+    void                UnRegisterObject( wxEvtHandler * object );
+    void                SendConfigChangedEvent( const int flags = 0 );
+
+    bool                GetIgnoreLayouts( void ) { return m_IgnoreLayouts; }
+    void                SetIgnoreLayouts( const bool ignorelayouts ) { m_IgnoreLayouts = ignorelayouts; };
 
 };
 

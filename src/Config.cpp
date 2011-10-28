@@ -21,145 +21,579 @@
 #include "Config.h"
 
 #include "Commands.h"
+#include "Utils.h"
+#include "Preferences.h"
+
+#include <wx/wfstream.h>
+
+static guConfig * m_Config = NULL;
 
 const wxEventType guConfigUpdatedEvent = wxNewEventType();
 
+#define guCONFIG_DEFAULT_VERSION    1
+
 // -------------------------------------------------------------------------------- //
-guConfig::guConfig( const wxString &conffile ) :
-          wxFileConfig( wxT( "guayadeque" ), wxEmptyString, conffile, wxEmptyString, wxCONFIG_USE_SUBDIR )
+guConfig::guConfig( const wxString &conffile )
 {
     m_IgnoreLayouts = false;
-    //SetRecordDefaults( true );
+    m_Version = guCONFIG_DEFAULT_VERSION;
+    m_FileName = conffile;
+    m_XmlDocument = NULL;
+    m_RootNode = NULL;
+
+    if( LoadWithBackup( m_FileName ) )
+        return;
+
+    // The file could not be read so create it
+    guLogMessage( wxT( "Could not read the conf file '%s'" ), conffile.c_str() );
+
+    if( wxFileExists( conffile ) )
+    {
+        wxRenameFile( conffile, conffile + wxT( ".old" ) );
+    }
+
+    m_XmlDocument = new wxXmlDocument();
+
+    m_RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "config" ) );
+
+    wxXmlProperty * Version = new wxXmlProperty( wxT( "version" ), wxString::Format( wxT( "%i" ), m_Version ),
+                               NULL );
+
+    m_RootNode->SetProperties( Version );
+
+    m_XmlDocument->SetRoot( m_RootNode );
+
+    LoadOldConfig( conffile + wxT( ".old" ) );
+
+    m_XmlDocument->Save( conffile );
 }
 
 // -------------------------------------------------------------------------------- //
 guConfig::~guConfig()
 {
-    //printf( "guConfig Deleted\n" );
     Flush();
-}
 
-// -------------------------------------------------------------------------------- //
-long guConfig::ReadNum( const wxString &KeyName, const long Default, const wxString &Category )
-{
-    wxMutexLocker Locker( m_ConfigMutex );
-    long RetVal;
-    if( !Category.IsEmpty() )
+    if( m_XmlDocument )
     {
-        SetPath( wxT( "/" ) + Category );
+        delete m_XmlDocument;
     }
-    Read( KeyName, &RetVal, Default );
-    SetPath( wxT( "/" ) );
-    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guConfig::WriteNum( const wxString &KeyName, long Value, const wxString &Category )
+bool guConfig::LoadFile( const wxString &filename )
 {
-    wxMutexLocker Locker( m_ConfigMutex );
-    bool RetVal;
-    if( !Category.IsEmpty() )
+    wxFileInputStream Ins( filename );
+    if( Ins.IsOk() )
     {
-        SetPath( wxT( "/" ) + Category );
+        m_XmlDocument = new wxXmlDocument( Ins );
+        if( m_XmlDocument )
+        {
+            if( m_XmlDocument->IsOk() )
+            {
+                m_RootNode = m_XmlDocument->GetRoot();
+
+                if( m_RootNode && m_RootNode->GetName() == wxT( "config" ) )
+                {
+                    wxString VersionStr;
+                    m_RootNode->GetPropVal( wxT( "version" ), &VersionStr );
+                    long Version;
+                    if( VersionStr.ToLong( &Version ) )
+                    {
+                        m_Version = Version;
+                    }
+                    return true;
+                }
+            }
+            delete m_XmlDocument;
+            m_XmlDocument = NULL;
+        }
     }
-    RetVal = Write( KeyName, Value );
-    SetPath( wxT( "/" ) );
-    return RetVal;
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guConfig::ReadBool( const wxString &KeyName, bool Default, const wxString &Category )
+bool guConfig::AddBackupFile( const wxString &filename )
 {
-    wxMutexLocker Locker( m_ConfigMutex );
-    bool RetVal;
-    if( !Category.IsEmpty() )
+    if( wxFileExists( filename + wxT( ".00" ) ) )
     {
-        SetPath( wxT( "/" ) + Category );
+        if( !wxCopyFile( filename + wxT( ".00" ), filename + wxT( ".01" ), true ) )
+        {
+            guLogMessage( wxT( "Could not create the 01 backup conf file" ) );
+            return false;
+        }
     }
-    Read( KeyName, &RetVal, Default );
-    SetPath( wxT( "/" ) );
-    return RetVal;
-}
 
-// -------------------------------------------------------------------------------- //
-bool guConfig::WriteBool( const wxString &KeyName, bool Value, const wxString &Category  )
-{
-    wxMutexLocker Locker( m_ConfigMutex );
-    bool RetVal;
-    if( !Category.IsEmpty() )
+    if( !wxCopyFile( filename, filename + wxT( ".00" ), true ) )
     {
-        SetPath( wxT( "/" ) + Category );
+        guLogMessage( wxT( "Could not create the 00 backup conf file" ) );
+        return false;
     }
-    RetVal = Write( KeyName, Value );
-    SetPath( wxT( "/" ) );
-    return RetVal;
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guConfig::ReadStr( const wxString &KeyName, const wxString &Default, const wxString &Category  )
+bool guConfig::LoadWithBackup( const wxString &conffile )
 {
-    wxMutexLocker Locker( m_ConfigMutex );
-    wxString RetVal;
-    if( !Category.IsEmpty() )
+    if( LoadFile( m_FileName ) )
     {
-        SetPath( wxT( "/" ) + Category );
+        AddBackupFile( m_FileName );
+        return true;
     }
-    RetVal = Read( KeyName, Default );
-    SetPath( wxT( "/" ) );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-bool guConfig::WriteStr( const wxString &KeyName, const wxString &Value, const wxString &Category  )
-{
-    wxMutexLocker Locker( m_ConfigMutex );
-    bool RetVal;
-    if( !Category.IsEmpty() )
+    else
     {
-        SetPath( wxT( "/" ) + Category );
+        if( LoadFile( conffile + wxT( ".00" ) ) )
+        {
+            m_FileName = conffile;
+            Flush();
+            AddBackupFile( m_FileName );
+            return true;
+        }
+        else
+        {
+            if( LoadFile( conffile + wxT( ".01" ) ) )
+            {
+                m_FileName = conffile;
+                Flush();
+                AddBackupFile( m_FileName );
+                return true;
+            }
+        }
     }
-    RetVal = Write( KeyName, Value );
-    SetPath( wxT( "/" ) );
-    return RetVal;
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
-wxArrayString guConfig::ReadAStr( const wxString &Key, const wxString &Default, const wxString &Category  )
+void guConfig::Set( guConfig * config )
 {
-    wxMutexLocker Locker( m_ConfigMutex );
-    wxString Entry;
-    wxArrayString RetVal;
-    if( HasGroup( Category ) )
+    m_Config = config;
+}
+
+// -------------------------------------------------------------------------------- //
+guConfig * guConfig::Get( void )
+{
+    return m_Config;
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::Flush( void )
+{
+    if( m_XmlDocument )
     {
-        RetVal.Empty();
-        SetPath( Category );
-        int index = 0;
+        if( !m_XmlDocument->Save( m_FileName ) )
+        {
+            guLogMessage( wxT( "Error saving the configuration file '%s'" ), m_FileName.c_str() );
+            return;
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+long guConfig::ReadNum( const wxString &keyname, const long defval, const wxString &category )
+{
+    wxString KeyValue = ReadStr( keyname, wxEmptyString, category );
+    if( !KeyValue.IsEmpty() )
+    {
+        long RetVal;
+        if( KeyValue.ToLong( &RetVal ) )
+        {
+            return RetVal;
+        }
+    }
+    return defval;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::WriteNum( const wxString &keyname, long value, const wxString &category )
+{
+    return WriteStr( keyname, wxString::Format( wxT( "%ld" ), value ), category );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::ReadBool( const wxString &keyname, bool defval, const wxString &category )
+{
+    return ReadNum( keyname, defval, category );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::WriteBool( const wxString &keyname, bool value, const wxString &category )
+{
+    return WriteStr( keyname, wxString::Format( wxT( "%i" ), value ), category );
+}
+
+// -------------------------------------------------------------------------------- //
+inline wxXmlNode * FindNodeByName( wxXmlNode * xmlnode, const wxString &category )
+{
+    wxXmlNode * XmlNode = xmlnode;
+    while( XmlNode )
+    {
+        if( XmlNode->GetName() == category )
+        {
+            return XmlNode;
+        }
+        XmlNode = XmlNode->GetNext();
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+inline wxXmlNode * guConfig::FindNode( const wxString &category )
+{
+    wxArrayString Keys;
+    Keys = wxStringTokenize( category, wxT( "/" ) );
+    int Index;
+    int Count = Keys.Count();
+    if( Count && m_RootNode )
+    {
+        Index = 0;
+        wxXmlNode * XmlNode = FindNodeByName( m_RootNode->GetChildren(), Keys[ Index ] );
+        while( XmlNode )
+        {
+            Index++;
+            if( Index >= Count )
+                return XmlNode;
+            XmlNode = FindNodeByName( XmlNode->GetChildren(), Keys[ Index ] );
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+inline wxXmlProperty * FindPropertyByName( wxXmlProperty * property, const wxString &category )
+{
+    wxXmlProperty * Property = property;
+    while( Property )
+    {
+        if( Property->GetName() == category )
+        {
+            return Property;
+        }
+        Property = Property->GetNext();
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guConfig::ReadStr( const wxString &keyname, const wxString &defval, const wxString &category  )
+{
+    //guLogMessage( wxT( "ReadStr( '%s', '%s', '%s' ) " ), keyname.c_str(), defval.c_str(), category.c_str() );
+    wxMutexLocker Locker( m_ConfigMutex );
+
+    wxXmlNode * XmlNode = category.IsEmpty() ? m_RootNode : FindNode( category );
+
+    if( XmlNode )
+    {
+        XmlNode = FindNodeByName( XmlNode->GetChildren(), keyname );
+        if( XmlNode )
+        {
+            wxString RetVal;
+            XmlNode->GetPropVal( wxT( "value" ), &RetVal );
+            //guLogMessage( wxT( "ReadStr( '%s/%s' (%s) => '%s'" ), category.c_str(), keyname.c_str(), defval.c_str(), RetVal.c_str() );
+            return RetVal;
+        }
+    }
+    //guLogMessage( wxT( "******************** FAILED!!!!!!!!!!!!" ) );
+    return defval;
+}
+
+// -------------------------------------------------------------------------------- //
+inline wxXmlNode * CreateCategoryNode( wxXmlNode * xmlnode, const wxString &category )
+{
+    //guLogMessage( wxT( "CreateCategoryNode( '%s' )" ), category.c_str() );
+    wxArrayString Keys;
+    Keys = wxStringTokenize( category, wxT( "/" ) );
+    int Index;
+    int Count = Keys.Count();
+    if( Count && xmlnode )
+    {
+        Index = 0;
+        wxXmlNode * ParentNode = xmlnode;
+        wxXmlNode * XmlNode;
         do {
-            if( !Read( wxString::Format( Key + wxT( "%i" ), index++ ), &Entry, Default ) )
+            XmlNode = FindNodeByName( ParentNode->GetChildren(), Keys[ Index ] );
+            if( !XmlNode )
+            {
+                XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, Keys[ Index ] );
+                ParentNode->AddChild( XmlNode );
+            }
+
+            Index++;
+            if( Index >= Count )
+                return XmlNode;
+
+            ParentNode = XmlNode;
+        } while( true );
+    }
+    return xmlnode;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::WriteStr( const wxString &keyname, const wxString &value, const wxString &category )
+{
+    wxMutexLocker Locker( m_ConfigMutex );
+
+    wxXmlNode * CatNode = category.IsEmpty() ? m_RootNode : CreateCategoryNode( m_RootNode, category );
+
+    wxXmlNode * XmlNode = FindNodeByName( CatNode->GetChildren(), keyname );
+    if( !XmlNode )
+    {
+        XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, keyname );
+
+        wxXmlProperty * Properties = new wxXmlProperty( wxT( "value" ), value, NULL );
+
+        XmlNode->SetProperties( Properties );
+
+        CatNode->AddChild( XmlNode );
+    }
+    else
+    {
+        wxXmlProperty * Property = FindPropertyByName( XmlNode->GetProperties(), wxT( "value" ) );
+        if( !Property )
+        {
+            Property = new wxXmlProperty( wxT( "value" ), value, NULL );
+
+            XmlNode->SetProperties( Property );
+        }
+        else
+        {
+            Property->SetValue( value );
+        }
+    }
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayString guConfig::ReadAStr( const wxString &keyname, const wxString &defval, const wxString &category )
+{
+    wxMutexLocker Locker( m_ConfigMutex );
+
+    wxArrayString RetVal;
+    wxXmlNode * XmlNode = FindNode( category );
+    if( XmlNode )
+    {
+        int Index = 0;
+        do {
+            wxXmlNode * EntryNode = FindNodeByName( XmlNode->GetChildren(), keyname + wxString::Format( wxT( "%i" ), Index++ ) );
+            if( !EntryNode )
                 break;
+            wxString Entry;
+            EntryNode->GetPropVal( wxT( "value" ), &Entry );
             RetVal.Add( Entry );
-        } while( 1 );
-        SetPath( wxT( "/" ) );
+        } while( true );
     }
     return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guConfig::WriteAStr( const wxString &Key, const wxArrayString &Value, const wxString &Category, bool ResetGroup )
+void guConfig::DeleteCategory( const wxString &category )
 {
-    wxMutexLocker Locker( m_ConfigMutex );
-    int index;
-    int count = Value.Count();
-    if( ResetGroup )
-        DeleteGroup( Category );
-    SetPath( Category );
-    for( index = 0; index < count; index++ )
+    wxXmlNode * CatNode = FindNode( category );
+    if( CatNode )
     {
-        if( !Write( wxString::Format( Key + wxT( "%i" ), index ), Value[ index ] ) )
+        wxXmlNode * XmlNode;
+        do {
+            XmlNode = CatNode->GetChildren();
+            if( !XmlNode )
+                break;
+            CatNode->RemoveChild( XmlNode );
+            delete XmlNode;
+        } while( XmlNode );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void LoadCollectionWordList( wxXmlNode * xmlnode, wxArrayString * wordlist )
+{
+    while( xmlnode )
+    {
+        wxString Value;
+        xmlnode->GetPropVal( wxT( "value" ), &Value );
+        if( !Value.IsEmpty() )
+            wordlist->Add( Value );
+        xmlnode = xmlnode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+int LoadCollectionInt( wxXmlNode * xmlnode )
+{
+    wxString ValueStr;
+    long ValueNum;
+    xmlnode->GetPropVal( wxT( "value" ), &ValueStr );
+    if( !ValueStr.IsEmpty() && ValueStr.ToLong( &ValueNum ) )
+        return ValueNum;
+    return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+void LoadCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
+{
+    while( xmlnode )
+    {
+        wxString Name = xmlnode->GetName();
+        if( Name == wxT( "paths" ) )
+        {
+            LoadCollectionWordList( xmlnode->GetChildren(), &collection->m_Paths );
+        }
+        else if( Name == wxT( "covers" ) )
+        {
+            LoadCollectionWordList( xmlnode->GetChildren(), &collection->m_CoverWords );
+        }
+        else if( Name == wxT( "UniqueId" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &collection->m_UniqueId );
+        }
+        else if( Name == wxT( "Type" ) )
+        {
+            collection->m_Type = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "Name" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &collection->m_Name );
+        }
+        else if( Name == wxT( "LastUpdate" ) )
+        {
+            collection->m_LastUpdate = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "UpdateOnStart" ) )
+        {
+            collection->m_UpdateOnStart = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "ScanPlaylists" ) )
+        {
+            collection->m_ScanPlaylists = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "ScanFollowSymLinks" ) )
+        {
+            collection->m_ScanFollowSymLinks = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "ScanEmbeddedCovers" ) )
+        {
+            collection->m_ScanEmbeddedCovers = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "EmbeddMetadata" ) )
+        {
+            collection->m_EmbeddMetadata = LoadCollectionInt( xmlnode );
+        }
+        else if( Name == wxT( "DefaultCopyAction" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &collection->m_DefaultCopyAction );
+        }
+
+        xmlnode = xmlnode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+int guConfig::LoadCollections( guMediaCollectionArray * collections, const int type )
+{
+    int LoadCount = 0;
+    wxXmlNode * XmlNode = FindNode( wxT( "collections" ) );
+    if( XmlNode )
+    {
+        XmlNode = XmlNode->GetChildren();
+        while( XmlNode )
+        {
+            guMediaCollection * Collection = new guMediaCollection();
+            LoadCollection( XmlNode->GetChildren(), Collection );
+            if( ( type == wxNOT_FOUND ) || ( Collection->m_Type == type ) )
+            {
+                collections->Add( Collection );
+                LoadCount++;
+            }
+            else
+            {
+                delete Collection;
+            }
+            XmlNode = XmlNode->GetNext();
+        }
+    }
+    return LoadCount;
+}
+
+// -------------------------------------------------------------------------------- //
+void WriteStr( wxXmlNode * xmlnode, const wxString &name, const wxString &value )
+{
+    wxXmlNode * XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, name );
+    wxXmlProperty * Properties = new wxXmlProperty( wxT( "value" ), value, NULL );
+    XmlNode->SetProperties( Properties );
+    xmlnode->AddChild( XmlNode );
+}
+
+// -------------------------------------------------------------------------------- //
+void SaveCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
+{
+    wxXmlNode * XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "collection" ) );
+
+    WriteStr( XmlNode, wxT( "UniqueId" ), collection->m_UniqueId );
+    WriteStr( XmlNode, wxT( "Type" ), wxString::Format( wxT( "%i" ), collection->m_Type ) );
+    WriteStr( XmlNode, wxT( "Name" ), collection->m_Name );
+    WriteStr( XmlNode, wxT( "UpdateOnStart" ), wxString::Format( wxT( "%i" ), collection->m_UpdateOnStart ) );
+    WriteStr( XmlNode, wxT( "ScanPlaylists" ), wxString::Format( wxT( "%i" ), collection->m_ScanPlaylists ) );
+    WriteStr( XmlNode, wxT( "ScanFollowSymLinks" ), wxString::Format( wxT( "%i" ), collection->m_ScanFollowSymLinks ) );
+    WriteStr( XmlNode, wxT( "ScanEmbeddedCovers" ), wxString::Format( wxT( "%i" ), collection->m_ScanEmbeddedCovers ) );
+    WriteStr( XmlNode, wxT( "EmbeddMetadata" ), wxString::Format( wxT( "%i" ), collection->m_EmbeddMetadata ) );
+    WriteStr( XmlNode, wxT( "DefaultCopyAction" ), collection->m_DefaultCopyAction );
+    WriteStr( XmlNode, wxT( "LastUpdate" ), wxString::Format( wxT( "%i" ), collection->m_LastUpdate ) );
+
+    wxXmlNode * ParentNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "paths" ) );
+    int Index;
+    int Count = collection->m_Paths.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        WriteStr( ParentNode, wxString::Format( wxT( "Path%i" ), Index ), collection->m_Paths[ Index ] );
+    }
+
+    XmlNode->AddChild( ParentNode );
+
+    ParentNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "covers" ) );
+    Count = collection->m_CoverWords.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        WriteStr( ParentNode, wxString::Format( wxT( "Cover%i" ), Index ), collection->m_CoverWords[ Index ] );
+    }
+
+    XmlNode->AddChild( ParentNode );
+
+
+    xmlnode->AddChild( XmlNode );
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::SaveCollections( guMediaCollectionArray * collections, const bool resetgroup )
+{
+    if( resetgroup )
+        DeleteCategory( wxT( "collections" ) );
+
+    wxXmlNode * XmlNode = FindNode( wxT( "collections" ) );
+    if( !XmlNode )
+    {
+        XmlNode = CreateCategoryNode( m_RootNode, wxT( "collections" ) );
+    }
+
+    int Index;
+    int Count = collections->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        SaveCollection( XmlNode, &collections->Item( Index ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::WriteAStr( const wxString &keyname, const wxArrayString &value, const wxString &category, bool resetgroup )
+{
+    int Index;
+    int Count = value.Count();
+
+    if( resetgroup )
+        DeleteCategory( category );
+
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( !WriteStr( keyname + wxString::Format( wxT( "%i" ), Index ), value[ Index ], category ) )
             break;
     }
-    SetPath( wxT( "/" ) );
-    return ( index = count );
+    return ( Index = Count );
 }
 
 #if wxUSE_STL
@@ -178,47 +612,50 @@ bool guConfig::WriteAStr( const wxString &Key, const wxSortedArrayString &Value,
 #endif
 
 // -------------------------------------------------------------------------------- //
-wxArrayInt guConfig::ReadANum( const wxString &Key, const int Default, const wxString &Category  )
+wxArrayInt guConfig::ReadANum( const wxString &keyname, const int defval, const wxString &category )
 {
+    //guLogMessage( wxT( "ReadANum( '%s', %i, '%s'" ), keyname.c_str(), defval, category.c_str() );
     wxMutexLocker Locker( m_ConfigMutex );
-    int Entry;
     wxArrayInt RetVal;
-    if( HasGroup( Category ) )
+    wxXmlNode * XmlNode = FindNode( category );
+    if( XmlNode )
     {
-        RetVal.Empty();
-        SetPath( Category );
-        int index = 0;
+        int Index = 0;
         do {
-            if( !Read( wxString::Format( Key + wxT( "%i" ), index++ ), &Entry, Default ) )
+            wxXmlNode * EntryNode = FindNodeByName( XmlNode->GetChildren(), keyname + wxString::Format( wxT( "%i" ), Index++ ) );
+            if( !EntryNode )
                 break;
+            wxString EntryStr;
+            long Entry;
+            EntryNode->GetPropVal( wxT( "value" ), &EntryStr );
+            EntryStr.ToLong( &Entry );
             RetVal.Add( Entry );
-        } while( 1 );
-        SetPath( wxT( "/" ) );
+        } while( true );
     }
     return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guConfig::WriteANum( const wxString &Key, const wxArrayInt &Value, const wxString &Category, bool ResetGroup )
+bool guConfig::WriteANum( const wxString &keyname, const wxArrayInt &value, const wxString &category, bool resetgroup )
 {
-    wxMutexLocker Locker( m_ConfigMutex );
-    int index;
-    int count = Value.Count();
-    if( ResetGroup )
-        DeleteGroup( Category );
-    SetPath( Category );
-    for( index = 0; index < count; index++ )
+    int Index;
+    int Count = value.Count();
+
+    if( resetgroup )
+        DeleteCategory( category );
+
+    for( Index = 0; Index < Count; Index++ )
     {
-        if( !Write( wxString::Format( Key + wxT( "%i" ), index ), Value[ index ] ) )
+        if( !WriteNum( keyname + wxString::Format( wxT( "%i" ), Index ), value[ Index ], category ) )
             break;
     }
-    SetPath( wxT( "/" ) );
-    return ( index = count );
+    return ( Index = Count );
 }
 
 // -------------------------------------------------------------------------------- //
 void guConfig::RegisterObject( wxEvtHandler * object )
 {
+    wxMutexLocker Lock( m_ObjectsMutex );
     if( m_Objects.Index( object ) == wxNOT_FOUND )
     {
         m_Objects.Add( object );
@@ -228,6 +665,7 @@ void guConfig::RegisterObject( wxEvtHandler * object )
 // -------------------------------------------------------------------------------- //
 void guConfig::UnRegisterObject( wxEvtHandler * object )
 {
+    wxMutexLocker Lock( m_ObjectsMutex );
     int Index = m_Objects.Index( object );
     if( Index != wxNOT_FOUND )
     {
@@ -238,6 +676,7 @@ void guConfig::UnRegisterObject( wxEvtHandler * object )
 // -------------------------------------------------------------------------------- //
 void guConfig::SendConfigChangedEvent( const int flags )
 {
+    wxMutexLocker Lock( m_ObjectsMutex );
     wxCommandEvent event( guConfigUpdatedEvent, ID_CONFIG_UPDATED );
     event.SetInt( flags );
 
@@ -246,6 +685,651 @@ void guConfig::SendConfigChangedEvent( const int flags )
     for( Index = 0; Index < Count; Index++ )
     {
         m_Objects[ Index ]->AddPendingEvent( event );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldAccelerators( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        wxArrayString Accelerators;
+        do {
+            Accelerators.Add( fileconfig->Read( EntryName, wxT( "0" ) ) );
+            //WriteStr( EntryName, fileconfig->Read( EntryName, wxT( "0" ) ), wxT( "Accelerators" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+        if( Accelerators.Count() == 61 )
+        {
+            Accelerators.RemoveAt( 37 );
+            Accelerators.RemoveAt( 41 );
+            WriteAStr( wxT( "AccelKey" ), Accelerators, wxT( "accelerators" ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldAlbumBrowser( wxFileConfig * fileconfig, const wxString &uniqueid )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            //guLogMessage( wxT( "Reading Entry '%s'" ), EntryName.c_str() );
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxT( "0" ) ), wxT( "mediaviewers/mediaviewer_" ) + uniqueid + wxT( "/albumbrowser" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldAlbumBrowserFilters( wxFileConfig * fileconfig, const wxString &uniqueid )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "mediaviewers/mediaviewer_" ) + uniqueid + wxT( "/albumbrowser/filters" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldCommands( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            wxString Value = fileconfig->Read( EntryName, wxEmptyString );
+            if( EntryName.StartsWith( wxT( "Cmd" ) ) )
+            {
+                EntryName.Replace( wxT( "Cmd" ), wxT( "Exec" ) );
+                WriteStr( EntryName, Value, wxT( "commands/execs" ) );
+            }
+            else
+            {
+                WriteStr( EntryName, Value, wxT( "commands/names" ) );
+            }
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldCopyTo( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "copyto/options" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldCoverSearch( wxFileConfig * fileconfig, guMediaCollection * mediacollection )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            mediacollection->m_CoverWords.Add( fileconfig->Read( EntryName, wxEmptyString ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldCrossfader( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "crossfader" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldEqualizer( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "equalizer" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldFileBrowser( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "filebrowser" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldFileRenamer( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "filebrowser/filerenamer" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldGeneral( wxFileConfig * fileconfig, guMediaCollection * mediacollection, const wxString &uniqueid )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            if( EntryName == wxT( "AlbumYearOrder" ) )
+            {
+                WriteStr( wxT( "AlbumsOrder" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "mediaviewers/mediaviewer_" ) + uniqueid );
+            }
+            else if( EntryName == wxT( "BrowserCommand" ) ||
+                    EntryName == wxT( "BufferSize" ) ||
+                    EntryName == wxT( "CloseToTaskBar" ) ||
+                    EntryName == wxT( "CoverSearchEngine" ) ||
+                    EntryName == wxT( "DefaultActionEnqueue" ) ||
+                    EntryName == wxT( "DropFilesClearPlaylist" ) ||
+                    EntryName == wxT( "InstantTextSearchEnabled" ) ||
+                    EntryName == wxT( "LoadDefaultLayouts" ) ||
+                    EntryName == wxT( "MinSavePlayPosLength" ) ||
+                    EntryName == wxT( "PlayerCurVol" ) ||
+                    EntryName == wxT( "PlayerLoop" ) ||
+                    EntryName == wxT( "PlayerSmart" ) ||
+                    EntryName == wxT( "ReplayGainMode" ) ||
+                    EntryName == wxT( "ReplayGainPreAmp" ) ||
+                    EntryName == wxT( "RndModeOnEmptyPlayList" ) ||
+                    EntryName == wxT( "RndPlayOnEmptyPlayList" ) ||
+                    EntryName == wxT( "SaveCurrentTrackPos" ) ||
+                    EntryName == wxT( "ShowCloseConfirm" ) ||
+                    EntryName == wxT( "ShowNotifications" ) ||
+                    EntryName == wxT( "ShowRevTime" ) ||
+                    EntryName == wxT( "ShowSplashScreen" ) ||
+                    EntryName == wxT( "ShowTaskBarIcon" ) ||
+                    EntryName == wxT( "SoundMenuIntegration" ) ||
+                    EntryName == wxT( "StartMinimized" ) ||
+                    EntryName == wxT( "TextSearchEnterRelax" ) )
+            {
+                WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "general" ) );
+            }
+            else if( EntryName == wxT( "EmbedToFiles" ) )
+            {
+                mediacollection->m_EmbeddMetadata = ( fileconfig->Read( EntryName, wxEmptyString ) == wxT( "1" ) );
+            }
+            else if( EntryName == wxT( "JamendoLastUpdate" ) )
+            {
+                WriteStr( wxT( "LastUpdate" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "jamendo" ) );
+            }
+            else if( EntryName == wxT( "LasPreferencePage" ) ) // * Yes there was a typo and the name is missing a 't'
+            {
+                WriteStr( wxT( "LastPage" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "preferences" ) );
+            }
+            else if( EntryName == wxT( "LastUpdate" ) )
+            {
+                long LastUpdate = 0;
+                fileconfig->Read( EntryName, wxEmptyString ).ToLong( &LastUpdate );
+                mediacollection->m_LastUpdate = LastUpdate;
+            }
+            else if( EntryName.StartsWith( wxT( "LFM" ) ) )
+            {
+                wxString Value = fileconfig->Read( EntryName, wxEmptyString );
+                EntryName.Replace( wxT( "LFM" ), wxEmptyString );
+                WriteStr( EntryName, Value, wxT( "lastfm" ) );
+            }
+            else if( EntryName == wxT( "MagnatuneLastUpdate" ) )
+            {
+                WriteStr( wxT( "LastUpdate" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "magnatune" ) );
+            }
+            else if( EntryName == wxT( "PlayerCurItem" ) )
+            {
+                WriteStr( wxT( "CurItem" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "playlist" ) );
+            }
+            else if( EntryName == wxT( "SavePlayListOnClose" ) )
+            {
+                WriteStr( wxT( "SaveOnClose" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "playlist" ) );
+            }
+            else if( EntryName == wxT( "EmbedToFiles" ) )
+            {
+                mediacollection->m_EmbeddMetadata = ( fileconfig->Read( EntryName, wxEmptyString ) == wxT( "1" ) );
+            }
+            else if( EntryName == wxT( "ScanAddPlayLists" ) )
+            {
+                mediacollection->m_ScanPlaylists = ( fileconfig->Read( EntryName, wxEmptyString ) == wxT( "1" ) );
+            }
+            else if( EntryName == wxT( "ScanEmbeddedCovers" ) )
+            {
+                mediacollection->m_ScanEmbeddedCovers = ( fileconfig->Read( EntryName, wxEmptyString ) == wxT( "1" ) );
+            }
+            else if( EntryName == wxT( "ScanSymlinks" ) )
+            {
+                mediacollection->m_ScanFollowSymLinks = ( fileconfig->Read( EntryName, wxEmptyString ) == wxT( "1" ) );
+            }
+            else if( EntryName == wxT( "ShowFullScreen" ) )
+            {
+                WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "mainwindow" ) );
+            }
+            else if( EntryName == wxT( "ShowStatusBar" ) )
+            {
+                WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "mainwindow" ) );
+            }
+            else if( EntryName == wxT( "StationsOrder" ) || EntryName == wxT( "StationsOrderDesc" ) )
+            {
+                WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "radios" ) );
+            }
+            else if( EntryName == wxT( "UpdateLibOnStart" ) )
+            {
+                mediacollection->m_UpdateOnStart = ( fileconfig->Read( EntryName, wxEmptyString ) == wxT( "1" ) );
+            }
+
+            //WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "filebrowser/filerenamer" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldJamendo( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "jamendo" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldJamendoGenres( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "jamendo/genres" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldLastFM( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "lastfm" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldLibPaths( wxFileConfig * fileconfig, guMediaCollection * collection )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            wxString Value = fileconfig->Read( EntryName, wxEmptyString );
+            //guLogMessage( wxT( "Reading '%s' : '%s'" ), EntryName.c_str(), Value.c_str() );
+            collection->m_Paths.Add( Value );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldLibreFM( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "librefm" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldLyrics( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "lyrics" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldMagnatune( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "magnatune" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldMagnatuneGenres( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "magnatune/genres" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldMagnatuneGenreList( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "magnatune/genrelist" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldMainSources( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "mainsources" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldPlayback( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "playback" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldPlayList( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "playlist/nowplaying" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldPodcasts( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "podcasts" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldPositions( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            if( EntryName.StartsWith( wxT( "MainWindow" ) ) )
+            {
+                wxString Value = fileconfig->Read( EntryName, wxEmptyString );
+                EntryName.Replace( wxT( "MainWindowSize" ), wxEmptyString );
+                EntryName.Replace( wxT( "MainWindow" ), wxEmptyString );
+                WriteStr( EntryName, Value, wxT( "mainwindow/positions" ) );
+            }
+            else if( EntryName.StartsWith( wxT( "Preferences" ) ) )
+            {
+                wxString Value = fileconfig->Read( EntryName, wxEmptyString );
+                EntryName.Replace( wxT( "PreferencesSize" ), wxEmptyString );
+                EntryName.Replace( wxT( "Preferences" ), wxEmptyString );
+                WriteStr( EntryName, Value, wxT( "preferences" ) );
+            }
+            else if( EntryName.StartsWith( wxT( "TrackEdit" ) ) ||
+                     EntryName.StartsWith( wxT( "PMProperties" ) ) ||
+                     EntryName.StartsWith( wxT( "LabelEdit" ) ) )
+            {
+                WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "positions" ) );
+            }
+            //WriteStr( EntryName, , wxT( "podcasts" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldRadios( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "radios" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldRecord( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "record" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldSearchFilters( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "searchfilters" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldSearchLinks( wxFileConfig * fileconfig )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            wxString Value = fileconfig->Read( EntryName, wxEmptyString );
+            if( EntryName.StartsWith( wxT( "Link" ) ) )
+            {
+                WriteStr( EntryName, Value, wxT( "searchlinks/links" ) );
+            }
+            else
+            {
+                WriteStr( EntryName, Value, wxT( "searchlinks/names" ) );
+            }
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldTreeView( wxFileConfig * fileconfig, const wxString &uniqueid )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "mediaviewers/mediaviewer_" ) + uniqueid + wxT( "/treeview" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldTreeViewFilters( wxFileConfig * fileconfig, const wxString &uniqueid )
+{
+    wxString EntryName;
+    long EntryIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    {
+        do {
+            WriteStr( EntryName, fileconfig->Read( EntryName, wxEmptyString ), wxT( "mediaviewers/mediaviewer_" ) + uniqueid + wxT( "/treeview/sortings" ) );
+        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void GetGroupNames( wxFileConfig * fileconfig, wxArrayString &groupnames )
+{
+    wxString    GroupName;
+    long GroupIndex = wxNOT_FOUND;
+    if( fileconfig->GetFirstGroup( GroupName, GroupIndex ) )
+    {
+        do {
+            //guLogMessage( wxT( "Reading entries from [%s]" ), GroupName.c_str() );
+            groupnames.Add( GroupName );
+        } while( fileconfig->GetNextGroup( GroupName, GroupIndex ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guConfig::LoadOldConfig( const wxString &conffile )
+{
+    guLogMessage( wxT( "Reading old configuration from file '%s'" ), conffile.c_str() );
+
+    wxFileConfig * FileConfig = new wxFileConfig( wxEmptyString, wxEmptyString, conffile );
+    if( FileConfig )
+    {
+        wxArrayString GroupNames;
+        GetGroupNames( FileConfig, GroupNames );
+
+        wxString UniqueId = wxString::Format( wxT( "%08X" ), wxGetLocalTime() );
+
+        guMediaCollectionArray MediaCollections;
+
+        guMediaCollection * MediaCollection = new guMediaCollection( guMEDIA_COLLECTION_TYPE_NORMAL );
+        MediaCollection->m_Name = _( "My Music" );
+        MediaCollections.Add( MediaCollection );
+
+        int Index;
+        int Count = GroupNames.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            wxString GroupName = GroupNames[ Index ];
+
+            //guLogMessage( wxT( "Reading entries from [%s]" ), GroupName.c_str() );
+
+            FileConfig->SetPath( wxT( "/" ) + GroupName );
+
+            if(      GroupName == wxT( "Accelerators" ) )           { LoadOldAccelerators( FileConfig ); }
+            else if( GroupName == wxT( "AlbumBrowser" ) )           { LoadOldAlbumBrowser( FileConfig, UniqueId ); }
+            else if( GroupName == wxT( "AlbumBrowserFilters" ) )    { LoadOldAlbumBrowserFilters( FileConfig, UniqueId ); }
+            else if( GroupName == wxT( "Commands" ) )               { LoadOldCommands( FileConfig ); }
+            else if( GroupName == wxT( "CopyTo" ) )                 { LoadOldCopyTo( FileConfig ); }
+            else if( GroupName == wxT( "CoverSearch" ) )            { LoadOldCoverSearch( FileConfig, MediaCollection ); }
+            else if( GroupName == wxT( "Crossfader" ) )             { LoadOldCrossfader( FileConfig ); }
+            else if( GroupName == wxT( "Equalizer" ) )              { LoadOldEqualizer( FileConfig ); }
+            else if( GroupName == wxT( "FileBrowser" ) )            { LoadOldFileBrowser( FileConfig ); }
+            else if( GroupName == wxT( "FileRenamer" ) )            { LoadOldFileRenamer( FileConfig ); }
+            else if( GroupName == wxT( "General" ) )                { LoadOldGeneral( FileConfig, MediaCollection, UniqueId ); }
+            else if( GroupName == wxT( "Jamendo" ) )                { LoadOldJamendo( FileConfig ); }
+            else if( GroupName == wxT( "JamendoGenres" ) )          { LoadOldJamendoGenres( FileConfig ); }
+            else if( GroupName == wxT( "LastFM" ) )                 { LoadOldLastFM( FileConfig ); }
+            else if( GroupName == wxT( "LibPaths" ) )               { LoadOldLibPaths( FileConfig, MediaCollection ); }
+            else if( GroupName == wxT( "LibreFM" ) )                { LoadOldLibreFM( FileConfig ); }
+            else if( GroupName == wxT( "Lyrics" ) )                 { LoadOldLyrics( FileConfig ); }
+            else if( GroupName == wxT( "Magnatune" ) )              { LoadOldMagnatune( FileConfig ); }
+            else if( GroupName == wxT( "MagnatuneGenreList" ) )     { LoadOldMagnatuneGenreList( FileConfig ); }
+            else if( GroupName == wxT( "MagnatuneGenres" ) )        { LoadOldMagnatuneGenres( FileConfig ); }
+            else if( GroupName == wxT( "MainSources" ) )            { LoadOldMainSources( FileConfig ); }
+            else if( GroupName == wxT( "Playback" ) )               { LoadOldPlayback( FileConfig ); }
+            else if( GroupName == wxT( "PlayList" ) )               { LoadOldPlayList( FileConfig ); }
+            else if( GroupName == wxT( "Podcasts" ) )               { LoadOldPodcasts( FileConfig ); }
+            else if( GroupName == wxT( "Positions" ) )              { LoadOldPositions( FileConfig ); }
+            else if( GroupName == wxT( "Radios" ) )                 { LoadOldRadios( FileConfig ); }
+            else if( GroupName == wxT( "Record" ) )                 { LoadOldRecord( FileConfig ); }
+            else if( GroupName == wxT( "SearchFilters" ) )          { LoadOldSearchFilters( FileConfig ); }
+            else if( GroupName == wxT( "SearchLinks" ) )            { LoadOldSearchLinks( FileConfig ); }
+            else if( GroupName == wxT( "TreeView" ) )               { LoadOldTreeView( FileConfig, UniqueId ); }
+            else if( GroupName == wxT( "TreeViewFilters" ) )        { LoadOldTreeViewFilters( FileConfig, UniqueId ); }
+
+        }
+
+        MediaCollection = new guMediaCollection( guMEDIA_COLLECTION_TYPE_JAMENDO );
+        MediaCollection->m_Name = wxT( "Jamendo" );
+        MediaCollection->m_UniqueId = wxT( "Jamendo" );
+        MediaCollections.Add( MediaCollection );
+
+        MediaCollection = new guMediaCollection( guMEDIA_COLLECTION_TYPE_MAGNATUNE );
+        MediaCollection->m_Name = wxT( "Magnatune" );
+        MediaCollection->m_UniqueId = wxT( "Magnatune" );
+        MediaCollections.Add( MediaCollection );
+
+        SaveCollections( &MediaCollections );
+
+        delete FileConfig;
     }
 }
 

@@ -20,10 +20,10 @@
 // -------------------------------------------------------------------------------- //
 #include "Magnatune.h"
 
-#include "TagInfo.h"
 #include "MainFrame.h"
 #include "SelCoverFile.h"
 #include "StatusBar.h"
+#include "TagInfo.h"
 #include "Utils.h"
 
 #include <wx/wfstream.h>
@@ -242,438 +242,29 @@ wxString guMagnatuneLibrary::GetAlbumSku( const int albumid )
 }
 
 
+
+
 // -------------------------------------------------------------------------------- //
 // guMagnatunePanel
 // -------------------------------------------------------------------------------- //
-guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMagnatuneLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
-    guLibPanel( parent, db, playerpanel, prefix )
+guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMediaViewerMagnatune * mediaviewer ) :
+    guLibPanel( parent, mediaviewer )
 {
-    SetBaseCommand( ID_MENU_VIEW_MAGNATUNE );
-
-    InitPanelData();
-
-    m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS | guLIBRARY_CONTEXTMENU_LINKS );
-
-    m_UpdateThread = NULL;
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->RegisterObject( this ); // Get notified when configuration changes
-
-    Connect( ID_MAGNATUNE_EDIT_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnEditSetup ), NULL, this );
-    Connect( ID_MAGNATUNE_SETUP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnEditSetup ), NULL, this );
-    Connect( ID_MAGNATUNE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnUpdate ), NULL, this );
-    Connect( ID_MAGNATUNE_UPGRADE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnUpgrade ), NULL, this );
     Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnDownloadAlbum ), NULL, this );
     Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnDownloadTrackAlbum ), NULL, this );
-
-    Connect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnCoverDownloaded ), NULL, this );
-
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMagnatunePanel::OnConfigUpdated ), NULL, this );
-
-    m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "Magnatune" ) );
-    m_UserName = Config->ReadStr( wxT( "Username" ), wxEmptyString, wxT( "Magnatune" ) );
-    m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "Magnatune" ) );
-    if( m_UserName.IsEmpty() || m_Password.IsEmpty() )
-    {
-        m_Membership = 0;
-    }
-    wxArrayString AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
-    if( AllowedGenres.IsEmpty() )
-    {
-        wxCommandEvent event;
-        OnEditSetup( event );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
 guMagnatunePanel::~guMagnatunePanel()
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->UnRegisterObject( this );
 }
 
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::InitPanelData( void )
-{
-    m_PanelCmdIds.Empty();
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_TEXTSEARCH );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_LABELS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_GENRES );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_ARTISTS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_COMPOSERS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_ALBUMARTISTS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_ALBUMS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_YEARS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_RATINGS );
-    m_PanelCmdIds.Add( ID_MENU_VIEW_MAGNATUNE_PLAYCOUNT );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count;
-    if( tracks && ( Count = tracks->Count() ) )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) );
-        for( Index = 0; Index < Count; Index++ )
-        {
-            guTrack * Track = &( * tracks )[ Index ];
-            //guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
-            if( !Track->m_FileName.EndsWith( AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3 ) )
-            {
-                Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3." ) ) );
-                if( m_Membership > guMAGNATUNE_MEMBERSHIP_FREE ) // Streaming or Downloading
-                {
-                    Track->m_FileName.Replace( wxT( "//he3." ), wxT( "//" ) + m_UserName + wxT( ":" ) +
-                        m_Password + ( ( m_Membership == guMAGNATUNE_MEMBERSHIP_STREAM ) ? wxT( "@stream." ) : wxT( "@download." ) ) );
-
-                    Track->m_FileName += wxT( "_nospeech" );
-                }
-
-                Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
-                Track->m_Type = guTRACK_TYPE_MAGNATUNE;
-                if( isdrag )
-                    Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
-            }
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::CreateContextMenu( wxMenu * menu, const int windowid )
-{
-    wxMenu *     SubMenu;
-    SubMenu = new wxMenu();
-
-    if( m_Membership == guMAGNATUNE_MEMBERSHIP_DOWNLOAD )
-    {
-        if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
-        {
-            wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-            SubMenu->Append( MenuItem );
-
-            SubMenu->AppendSeparator();
-        }
-        else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
-        {
-            wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
-            SubMenu->Append( MenuItem );
-
-            SubMenu->AppendSeparator();
-        }
-    }
-
-    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_UPDATE, _( "Update Database" ), _( "Download the latest Magnatune database" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_EDIT_GENRES, _( "Select Genres" ), _( "Selects the enabled Magnatune genres" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_SETUP, _( "Preferences" ), _( "Configure the Magnatune options" ) );
-    SubMenu->Append( MenuItem );
-
-    menu->AppendSeparator();
-    menu->AppendSubMenu( SubMenu, _( "Magnatune" ), _( "Global Magnatune options" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnEditSetup( wxCommandEvent &event )
-{
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
-    CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
-    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::StartUpdateTracks( const int action )
-{
-    wxMutexLocker Lock( m_UpdateThreadMutex );
-
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    guStatusBar * StatusBar = ( guStatusBar * ) MainFrame->GetStatusBar();
-    int GaugeId = StatusBar->AddGauge( _( "Magnatune" ) );
-    if( m_UpdateThread )
-    {
-        m_UpdateThread->Pause();
-        m_UpdateThread->Delete();
-    }
-
-    m_UpdateThread = new guMagnatuneUpdateThread( ( guMagnatuneLibrary * ) m_Db,
-                                action, GaugeId );
-    if( !m_UpdateThread )
-    {
-        guLogError( wxT( "Could not create the Magnatune update thread" ) );
-        StatusBar->RemoveGauge( GaugeId );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::EndUpdateThread( void )
-{
-    wxMutexLocker Lock( m_UpdateThreadMutex );
-    m_UpdateThread = NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnUpdate( wxCommandEvent &event )
-{
-    StartUpdateTracks( guMAGNATUNE_ACTION_UPDATE );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnUpgrade( wxCommandEvent &event )
-{
-    StartUpdateTracks( guMAGNATUNE_ACTION_UPGRADE );
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnConfigUpdated( wxCommandEvent &event )
-{
-    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "Magnatune" ) );
-        m_UserName = Config->ReadStr( wxT( "Username" ), wxEmptyString, wxT( "Magnatune" ) );
-        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "Magnatune" ) );
-        if( m_UserName.IsEmpty() || m_Password.IsEmpty() )
-        {
-            m_Membership = 0;
-        }
-        bool DoUpgrade = Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "Magnatune" ) );
-
-        if( DoUpgrade )
-        {
-            OnUpgrade( event );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::AddDownload( const int albumid, const wxString &artist, const wxString &album )
-{
-    guMagnatuneDownloadThread * DownloadThread = new guMagnatuneDownloadThread( this, albumid, artist, album );
-
-    if( !DownloadThread )
-    {
-        guLogMessage( wxT( "Could not create the magnatune download thread" ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-wxImage * guMagnatunePanel::GetAlbumCover( const int albumid, const wxString &artist, const wxString &album, wxString &coverpath )
-{
-    wxFileName CoverFile = wxFileName( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" ) +
-                 wxString::Format( wxT( "%s-%s.jpg" ), artist.c_str(), album.c_str() ) );
-
-    if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
-    {
-        if( CoverFile.FileExists() )
-        {
-            wxImage * CoverImage = new wxImage( CoverFile.GetFullPath(), wxBITMAP_TYPE_JPEG );
-            if( CoverImage )
-            {
-                if( CoverImage->IsOk() )
-                {
-                    coverpath = CoverFile.GetFullPath();
-                    return CoverImage;
-                }
-                delete CoverImage;
-            }
-        }
-    }
-    AddDownload( albumid, artist, album );
-    return NULL;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnCoverDownloaded( wxCommandEvent &event )
-{
-    int AlbumId =  event.GetInt();
-    if( AlbumId )
-    {
-        ReloadAlbums( false );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )
-{
-    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( Albums.Count() )
-    {
-        wxString Artist;
-        wxString Album;
-        if( m_Db->GetAlbumInfo( Albums[ 0 ], &Album, &Artist, NULL ) )
-        {
-            AddDownload( Albums[ 0 ], Artist, Album );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::OnAlbumSelectCoverClicked( wxCommandEvent &event )
-{
-    wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    if( Albums.Count() )
-    {
-        int AlbumId = Albums[ 0 ];
-        guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, AlbumId );
-        if( SelCoverFile )
-        {
-            if( SelCoverFile->ShowModal() == wxID_OK )
-            {
-                wxString CoverFile = SelCoverFile->GetSelFile();
-                if( !CoverFile.IsEmpty() )
-                {
-                    guConfig * Config = ( guConfig * ) guConfig::Get();
-                    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-                    wxString CoverName = wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" );
-                    CoverName += wxString::Format( wxT( "%u.jpg" ), AlbumId );
-
-                    wxURI Uri( CoverFile );
-                    if( Uri.IsReference() )
-                    {
-                        wxImage CoverImage( CoverFile );
-                        if( CoverImage.IsOk() )
-                        {
-                            if( ( CoverFile == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
-                            {
-                                m_Db->SetAlbumCover( AlbumId, CoverName );
-                                ReloadAlbums( false );
-                            }
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Could not load the imate '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                    else
-                    {
-                        if( DownloadImage( CoverFile, CoverName ) )
-                        {
-                            m_Db->SetAlbumCover( AlbumId, CoverName );
-                            ReloadAlbums( false );
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Failed to download file '%s'" ), CoverFile.c_str() );
-                        }
-                    }
-                }
-            }
-            delete SelCoverFile;
-        }
-    }
-}
-
-//<RESULT>
-//  <CC_AMOUNT>$</CC_AMOUNT>
-//  <CC_TRANSID></CC_TRANSID>
-//  <DL_PAGE>http://download.magnatune.com/artists/albums/satori-rainsleep/download</DL_PAGE>
-//  <URL_WAVZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=wav.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/wav.zip</URL_WAVZIP>
-//  <URL_128KMP3ZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=mp3.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/mp3.zip</URL_128KMP3ZIP>
-//  <URL_OGGZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20ogg.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-ogg.zip</URL_OGGZIP>
-//  <URL_VBRZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20vbr.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-vbr.zip</URL_VBRZIP>
-//  <URL_FLACZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20flac.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-flac.zip</URL_FLACZIP>
-//  <DL_MSG>
-//Go here to download your music:
-//http://download.magnatune.com/artists/albums/satori-rainsleep/download
-//----------
-//Give this album away for free!
-//You can pass these download instructions on to 3 friends. It's completely legal
-//and you'll be helping us fight the evil music industry!  Complete details here:
-//http://magnatune.com/info/give
-//Help spread the word of Magnatune, with our free recruiting cards!
-//http://magnatune.com/cards
-//Podcasters, use our music:<br>
-//http://magnatune.com/info/podcast
-//To send us email:
-//https://magnatune.com/info/email_us
-//  </DL_MSG>
-//</RESULT>
-
-// -------------------------------------------------------------------------------- //
-void guMagnatunePanel::DownloadAlbums( const wxArrayInt &albumids )
-{
-    wxString StartLabel[] = {
-        wxT( "<DL_PAGE>" ),
-        wxT( "<URL_VBRZIP>" ),
-        wxT( "<URL_128KMP3ZIP>" ),
-        wxT( "<URL_OGGZIP>" ),
-        wxT( "<URL_FLACZIP>" ),
-        wxT( "<URL_WAVZIP>" ),
-    };
-    wxString EndLabel[] = {
-        wxT( "</DL_PAGE>" ),
-        wxT( "</URL_VBRZIP>" ),
-        wxT( "</URL_128KMP3ZIP>" ),
-        wxT( "</URL_OGGZIP>" ),
-        wxT( "</URL_FLACZIP>" ),
-        wxT( "</URL_WAVZIP>" ),
-    };
-
-    int Index;
-    int Count;
-    if( ( Count = albumids.Count() ) )
-    {
-        for( Index = 0; Index < Count; Index++ )
-        {
-            wxString DownloadUrl = wxString::Format( guMAGNATUNE_DOWNLOAD_URL,
-                                m_UserName.c_str(), m_Password.c_str(),
-                                ( ( guMagnatuneLibrary * ) m_Db )->GetAlbumSku( albumids[ Index ] ).c_str() );
-
-            //guLogMessage( wxT( "Trying to download %s" ), DownloadUrl.c_str() );
-            wxString Content = GetUrlContent( DownloadUrl );
-            if( !Content.IsEmpty() )
-            {
-                //guLogMessage( wxT( "Result:\n%s" ), Content.c_str() );
-                guConfig * Config = ( guConfig * ) guConfig::Get();
-                int DownloadFormat = Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "Magnatune" ) );
-                //guLogMessage( wxT( "DownloadFormat: %i %s  %s" ), DownloadFormat,
-                //             StartLabel[ DownloadFormat ].c_str(),
-                //             EndLabel[ DownloadFormat ].c_str() );
-
-                if( ( DownloadFormat < 0 ) || ( DownloadFormat > 5 ) )
-                {
-                    DownloadFormat = 0;
-                }
-
-                DownloadUrl = wxEmptyString;
-
-                int Pos = Content.Find( StartLabel[ DownloadFormat ] );
-                if( Pos != wxNOT_FOUND )
-                {
-                    DownloadUrl = Content.Mid( Pos );
-
-                    if( DownloadFormat > 0 )
-                        DownloadUrl = DownloadUrl.Mid( DownloadUrl.Find( wxT( "path=http://" ) ) + 12 );
-                    else
-                        DownloadUrl = DownloadUrl.Mid( StartLabel[ DownloadFormat ].Length() + 7 );
-                    DownloadUrl = DownloadUrl.Mid( 0, DownloadUrl.Find( EndLabel[ DownloadFormat ] ) );
-                }
-
-                if( !DownloadUrl.IsEmpty() )
-                {
-                    DownloadUrl = wxString::Format( wxT( "http://%s:%s@" ), m_UserName.c_str(), m_Password.c_str() ) + DownloadUrl;
-                    //guLogMessage( wxT( "Trying to download the url : '%s'" ), DownloadUrl.c_str() );
-                    guWebExecute( DownloadUrl );
-                }
-            }
-            else
-            {
-                guLogError( wxT( "Could not get the album download info" ) );
-            }
-        }
-    }
-}
 // -------------------------------------------------------------------------------- //
 void guMagnatunePanel::OnDownloadAlbum( wxCommandEvent &event )
 {
     wxArrayInt Albums = m_AlbumListCtrl->GetSelectedItems();
-    DownloadAlbums( Albums );
+
+    ( ( guMediaViewerMagnatune * ) m_MediaViewer )->DownloadAlbums( Albums );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -691,17 +282,135 @@ void guMagnatunePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
             Albums.Add( Tracks[ Index ].m_AlbumId );
     }
 
-    DownloadAlbums( Albums );
+    ( ( guMediaViewerMagnatune * ) m_MediaViewer )->DownloadAlbums( Albums );
 }
+
+
+
+// -------------------------------------------------------------------------------- //
+// guMagnatuneAlbumBrowser
+// -------------------------------------------------------------------------------- //
+guMagnatuneAlbumBrowser::guMagnatuneAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guAlbumBrowser( parent, mediaviewer )
+{
+    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatuneAlbumBrowser::OnDownloadAlbum ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guMagnatuneAlbumBrowser::~guMagnatuneAlbumBrowser()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guMagnatuneAlbumBrowser::OnDownloadAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadAlbum" ) );
+    if( m_LastAlbumBrowserItem )
+    {
+        wxArrayInt Albums;
+        Albums.Add( m_LastAlbumBrowserItem->m_AlbumId );
+        ( ( guMediaViewerMagnatune * ) m_MediaViewer )->DownloadAlbums( Albums );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+// guMagnatuneTreePanel
+// -------------------------------------------------------------------------------- //
+guMagnatuneTreePanel::guMagnatuneTreePanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guTreeViewPanel( parent, mediaviewer )
+{
+    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatuneTreePanel::OnDownloadAlbum ), NULL, this );
+    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatuneTreePanel::OnDownloadTrackAlbum ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guMagnatuneTreePanel::~guMagnatuneTreePanel()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guMagnatuneTreePanel::OnDownloadAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadAlbum" ) );
+    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetSelection();
+    guTreeViewData * TreeViewData = ( guTreeViewData * ) m_TreeViewCtrl->GetItemData( CurItemId );
+    int ItemType = TreeViewData->GetType();
+
+    if( ItemType == guLIBRARY_ELEMENT_ALBUMS )
+    {
+        wxArrayInt Albums;
+        Albums.Add( TreeViewData->m_Id );
+        ( ( guMediaViewerMagnatune * ) m_MediaViewer )->DownloadAlbums( Albums );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMagnatuneTreePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+
+    guTrackArray Tracks;
+    m_TVTracksListBox->GetSelectedSongs( &Tracks );
+
+    wxArrayInt Albums;
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
+            Albums.Add( Tracks[ Index ].m_AlbumId );
+    }
+
+    ( ( guMediaViewerMagnatune * ) m_MediaViewer )->DownloadAlbums( Albums );
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guMagnatunePlayListPanel
+// -------------------------------------------------------------------------------- //
+guMagnatunePlayListPanel::guMagnatunePlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
+    guPlayListPanel( parent, mediaviewer )
+{
+    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePlayListPanel::OnDownloadTrackAlbum ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guMagnatunePlayListPanel::~guMagnatunePlayListPanel()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guMagnatunePlayListPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnDownloadTrackAlbum" ) );
+
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+
+    wxArrayInt Albums;
+    int Index;
+    int Count = Tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
+            Albums.Add( Tracks[ Index ].m_AlbumId );
+    }
+
+    ( ( guMediaViewerMagnatune * ) m_MediaViewer )->DownloadAlbums( Albums );
+}
+
+
 
 // -------------------------------------------------------------------------------- //
 // guMagnatuneDownloadThread
 // -------------------------------------------------------------------------------- //
-guMagnatuneDownloadThread::guMagnatuneDownloadThread( guMagnatunePanel * magnatunepanel,
+guMagnatuneDownloadThread::guMagnatuneDownloadThread( guMediaViewerMagnatune * mediaviewer,
                 const int albumid, const wxString &artist, const wxString &album )
 {
-    m_MagnatunePanel = magnatunepanel;
-    m_Db = magnatunepanel->GetMagnatuneDb();
+    m_MediaViewer = mediaviewer;
+    m_Db = ( guMagnatuneLibrary * ) mediaviewer->GetDb();
     m_ArtistName = artist;
     m_AlbumName = album;
     m_AlbumId = albumid;
@@ -721,7 +430,7 @@ guMagnatuneDownloadThread::~guMagnatuneDownloadThread()
 // -------------------------------------------------------------------------------- //
 guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
 {
-    wxFileName CoverFile = wxFileName( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers/" ) +
+    wxFileName CoverFile = wxFileName( guPATH_MAGNATUNE_COVERS +
                  wxString::Format( wxT( "%s-%s.jpg" ), m_ArtistName.c_str(), m_AlbumName.c_str() ) );
 
     if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
@@ -735,7 +444,11 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
             wxMkdir( wxPathOnly( CoverFile.GetFullPath() ) + wxT( "/" ), 0770 );
         }
 
-        DownloadImage( CoverUrl, CoverFile.GetFullPath(), 300 );
+        if( !CoverFile.FileExists() )
+        {
+            guLogMessage( wxT( "Downloading: '%s'" ), CoverUrl.c_str() );
+            DownloadImage( CoverUrl, CoverFile.GetFullPath(), 300 );
+        }
 
         if( CoverFile.FileExists() )
         {
@@ -749,7 +462,7 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
             // Notify the panel that the cover is downloaded
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAGNATUNE_COVER_DOWNLAODED );
             event.SetInt( m_AlbumId );
-            wxPostEvent( m_MagnatunePanel, event );
+            wxPostEvent( m_MediaViewer, event );
         }
         else
         {
@@ -763,16 +476,16 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guMagnatuneUpdateThread
 // -------------------------------------------------------------------------------- //
-guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMagnatuneLibrary * db, int action, int gaugeid )
+guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMediaViewer * mediaviewer, int action, int gaugeid )
 {
-    m_Db = db;
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    m_MediaViewer = mediaviewer;
+    m_Db = ( guMagnatuneLibrary * ) mediaviewer->GetDb();
+    m_MainFrame = mediaviewer->GetMainFrame();
     m_Action = action;
     m_GaugeId = gaugeid;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    //m_LastUpdate = Config->ReadNum( wxT( "MagnatuneLastUpdate" ), 0, wxT( "General" ) );
-    m_AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "MagnatuneGenres" ) );
+    m_AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genres" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -784,11 +497,9 @@ guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMagnatuneLibrary * db, int a
 // -------------------------------------------------------------------------------- //
 guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
 {
-    //
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
-    wxPostEvent( MainFrame, event );
+    wxPostEvent( m_MainFrame, event );
 
     if( !TestDestroy() )
     {
@@ -796,15 +507,13 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
         if( Config )
         {
             wxDateTime Now = wxDateTime::Now();
-            Config->WriteNum( wxT( "MagnatuneLastUpdate" ), Now.GetTicks(), wxT( "General" ) );
+            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "magnatune" ) );
             Config->Flush();
         }
 
         event.SetId( ID_MAGNATUNE_UPDATE_FINISHED );
         event.SetEventObject( ( wxObject * ) this );
-        wxPostEvent( MainFrame, event );
-
-        m_MainFrame->GetMagnatunePanel()->EndUpdateThread();
+        wxPostEvent( m_MediaViewer, event );
     }
 }
 
@@ -850,6 +559,7 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
     ...
 </AllAlbums>
 #endif
+
 // -------------------------------------------------------------------------------- //
 bool inline IsGenreEnabled( const wxArrayString &genrelist, const wxString &current )
 {
@@ -985,17 +695,17 @@ void guMagnatuneUpdateThread::ReadMagnatuneXmlAlbum( wxXmlNode * xmlnode )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMagnatuneUpdateThread::UpdateDatabase( void )
+bool guMagnatuneUpdateThread::UpgradeDatabase( void )
 {
-    if( DownloadFile( guMAGNATUNE_DATABASE_DUMP_URL, wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info_xml.gz" ) ) )
+    if( DownloadFile( guMAGNATUNE_DATABASE_DUMP_URL, guPATH_MAGNATUNE wxT( "album_info_xml.gz" ) ) )
     {
-        wxFileInputStream Ins( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info_xml.gz" ) );
+        wxFileInputStream Ins( guPATH_MAGNATUNE wxT( "album_info_xml.gz" ) );
         if( Ins.IsOk() )
         {
             wxZlibInputStream ZIn( Ins );
             if( ZIn.IsOk() )
             {
-                wxFileOutputStream ZOuts( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ) );
+                wxFileOutputStream ZOuts( guPATH_MAGNATUNE wxT( "album_info.xml" ) );
                 if( ZOuts.IsOk() )
                 {
                     ZIn.Read( ZOuts );
@@ -1022,16 +732,16 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
     wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
-    if( m_Action == guMAGNATUNE_ACTION_UPGRADE &&
-        !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ) ) )
+    if( m_Action == guMAGNATUNE_ACTION_UPDATE &&
+        !wxFileExists( guPATH_MAGNATUNE wxT( "album_info.xml" ) ) )
     {
-        m_Action = guMAGNATUNE_ACTION_UPDATE;
+        m_Action = guMAGNATUNE_ACTION_UPGRADE;
     }
 
     guLogMessage( wxT( "Starting the Magnatune Update process..." ) );
-    if( !TestDestroy() && ( m_Action == guMAGNATUNE_ACTION_UPGRADE || UpdateDatabase() ) )
+    if( !TestDestroy() && ( m_Action == guMAGNATUNE_ACTION_UPDATE || UpgradeDatabase() ) )
     {
-        wxFile XmlFile( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/album_info.xml" ), wxFile::read );
+        wxFile XmlFile( guPATH_MAGNATUNE wxT( "album_info.xml" ), wxFile::read );
         if( XmlFile.IsOpened() )
         {
             guListItems CurrentGenres;
@@ -1048,6 +758,9 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
                 }
             }
 
+            query = wxT( "BEGIN TRANSACTION" );
+            m_Db->ExecuteUpdate( query );
+
             if( GenresToDel.Count() )
             {
                 query = wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( GenresToDel, wxT( "song_genreid" ) );
@@ -1060,20 +773,15 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
             wxPostEvent( wxTheApp->GetTopWindow(), evtmax );
 
             wxFileOffset CurPos;
-            query = wxT( "BEGIN TRANSACTION" );
-            m_Db->ExecuteUpdate( query );
-
-            //query = wxT( "DELETE FROM songs" );
-            //m_Db->ExecuteUpdate( query );
 
             if( m_AllowedGenres.Count() )
             {
-                wxString AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
+                wxString AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>", wxConvISO8859_1 );
                 while( !TestDestroy() && !AlbumChunk.IsEmpty() )
                 {
-                    wxHtmlEntitiesParser EntitiesParser;
-                    AlbumChunk = EntitiesParser.Parse( AlbumChunk );
-                    AlbumChunk.Replace( wxT( "&" ), wxT( "&amp;" ) );
+//                    wxHtmlEntitiesParser EntitiesParser;
+//                    AlbumChunk = EntitiesParser.Parse( AlbumChunk );
+//                    AlbumChunk.Replace( wxT( "&" ), wxT( "&amp;" ) );
 
                     wxStringInputStream Ins( AlbumChunk );
                     wxXmlDocument XmlDoc( Ins );
@@ -1091,7 +799,10 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
                         guLogMessage( wxT( "Error in album chunk:\n%s" ), AlbumChunk.c_str() );
                     }
 
-                    AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>" );
+                    AlbumChunk = guGetNextXMLChunk( XmlFile, CurPos, "<Album>", "</Album>", wxConvISO8859_1 );
+
+                    //guLogMessage( wxT( "Chunk : '%s ... %s'" ), AlbumChunk.Left( 35 ).c_str(), AlbumChunk.Right( 35 ).c_str() );
+
                     evtup.SetExtraLong( CurPos );
                     wxPostEvent( wxTheApp->GetTopWindow(), evtup );
                 }
@@ -1099,7 +810,7 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
                 if( m_GenreList.Count() )
                 {
                     guConfig * Config = ( guConfig * ) guConfig::Get();
-                    Config->WriteAStr( wxT( "Genre" ), m_GenreList, wxT( "MagnatuneGenreList" ) );
+                    Config->WriteAStr( wxT( "Genre" ), m_GenreList, wxT( "magnatune/genrelist" ) );
                     Config->Flush();
                 }
             }
@@ -1112,6 +823,440 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
     }
 
     return 0;
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+//
+// -------------------------------------------------------------------------------- //
+guMediaViewerMagnatune::guMediaViewerMagnatune( wxWindow * parent, guMediaCollection &mediacollection,
+        const int basecmd, guMainFrame * mainframe, const int mode, guPlayerPanel * playerpanel ) :
+    guMediaViewer( parent, mediacollection, basecmd, mainframe, mode, playerpanel )
+{
+//    m_DownloadThread = NULL;
+    m_ContextMenuFlags = ( guCONTEXTMENU_DOWNLOAD_COVERS | guCONTEXTMENU_LINKS );
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
+    m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) );
+    m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) );
+
+    Connect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerMagnatune::OnCoverDownloaded ), NULL, this );
+    Connect( ID_MAGNATUNE_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerMagnatune::OnUpdateFinished ), NULL, this );
+
+    InitMediaViewer( mode );
+}
+
+// -------------------------------------------------------------------------------- //
+guMediaViewerMagnatune::~guMediaViewerMagnatune()
+{
+    guLogMessage( wxT( "Destroying MediaViewerMagnatune Object..." ) );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::LoadMediaDb( void )
+{
+    guLogMessage( wxT( "LoadMediaDb... MAGNATUNE..." ) );
+    m_Db = new guJamendoLibrary( guPATH_COLLECTIONS + m_MediaCollection->m_UniqueId + wxT( "/guayadeque.db" ) );
+    m_Db->SetMediaViewer( this );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::OnConfigUpdated( wxCommandEvent &event )
+{
+    guMediaViewer::OnConfigUpdated( event );
+
+    if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
+        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) );
+        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) );
+        if( m_UserName.IsEmpty() || m_Password.IsEmpty() )
+        {
+            m_Membership = 0;
+        }
+
+        if( Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "magnatune" ) ) )
+        {
+            UpdateLibrary();
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::UpdateLibrary( void )
+{
+    int GaugeId;
+    GaugeId = m_MainFrame->AddGauge( m_MediaCollection->m_Name );
+
+    if( m_UpdateThread )
+    {
+        m_UpdateThread->Pause();
+        m_UpdateThread->Delete();
+    }
+
+    m_UpdateThread = new guMagnatuneUpdateThread( this, guMAGNATUNE_ACTION_UPDATE, GaugeId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::UpgradeLibrary( void )
+{
+    int GaugeId;
+    GaugeId = m_MainFrame->AddGauge( m_MediaCollection->m_Name );
+
+    if( m_UpdateThread )
+    {
+        m_UpdateThread->Pause();
+        m_UpdateThread->Delete();
+    }
+
+    m_UpdateThread = new guMagnatuneUpdateThread( this, guMAGNATUNE_ACTION_UPGRADE, GaugeId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+{
+    int Index;
+    int Count;
+    if( tracks && ( Count = tracks->Count() ) )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "magnatune" ) );
+        for( Index = 0; Index < Count; Index++ )
+        {
+            guTrack * Track = &( * tracks )[ Index ];
+            //guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
+            guLogMessage( wxT( "The AlbumName: '%s'" ), Track->m_AlbumName.c_str() );
+            if( !Track->m_FileName.EndsWith( AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3 ) )
+            {
+                Track->m_FileName = Track->m_FileName.Mid( Track->m_FileName.Find( wxT( "http://he3." ) ) );
+                if( m_Membership > guMAGNATUNE_MEMBERSHIP_FREE ) // Streaming or Downloading
+                {
+                    Track->m_FileName.Replace( wxT( "//he3." ), wxT( "//" ) + m_UserName + wxT( ":" ) +
+                        m_Password + ( ( m_Membership == guMAGNATUNE_MEMBERSHIP_STREAM ) ? wxT( "@stream." ) : wxT( "@download." ) ) );
+
+                    Track->m_FileName += wxT( "_nospeech" );
+                }
+
+                Track->m_FileName += AudioFormat ? guMAGNATUNE_STREAM_FORMAT_OGG : guMAGNATUNE_STREAM_FORMAT_MP3;
+                Track->m_Type = guTRACK_TYPE_MAGNATUNE;
+                if( isdrag )
+                    Track->m_FileName.Replace( wxT( "http://" ), wxT( "/" ) );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::AddDownload( const int albumid, const wxString &artist, const wxString &album )
+{
+    guMagnatuneDownloadThread * DownloadThread = new guMagnatuneDownloadThread( this, albumid, artist, album );
+
+    if( !DownloadThread )
+    {
+        guLogMessage( wxT( "Could not create the magnatune download thread" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::OnCoverDownloaded( wxCommandEvent &event )
+{
+    AlbumCoverChanged( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::EndUpdateThread( void )
+{
+    m_UpdateThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::OnUpdateFinished( wxCommandEvent &event )
+{
+    EndUpdateThread();
+
+    LibraryUpdated();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::DownloadAlbumCover( const int albumid )
+{
+    wxString Artist;
+    wxString Album;
+    if( m_Db->GetAlbumInfo( albumid, &Album, &Artist, NULL ) )
+    {
+        guLogMessage( wxT( "Starting download for %i '%s' '%s'" ), albumid, Artist.c_str(), Album.c_str() );
+        AddDownload( albumid, Artist, Album );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::CreateContextMenu( wxMenu * menu, const int windowid )
+{
+    wxMenu * Menu = new wxMenu();
+    wxMenuItem * MenuItem;
+
+    int BaseCommand = GetBaseCommand();
+
+    if( m_Membership == guMAGNATUNE_MEMBERSHIP_DOWNLOAD )
+    {
+        if( ( windowid == guLIBRARY_ELEMENT_ALBUMS ) )
+        {
+            MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+            Menu->Append( MenuItem );
+
+            Menu->AppendSeparator();
+        }
+        else if( ( windowid == guLIBRARY_ELEMENT_TRACKS ) )
+        {
+            MenuItem = new wxMenuItem( menu, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, _( "Download Albums" ), _( "Download the current selected album" ) );
+            Menu->Append( MenuItem );
+
+            Menu->AppendSeparator();
+        }
+    }
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY, _( "Update" ), _( "Update the collection library" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_RESCAN_LIBRARY, _( "Rescan" ), _( "Rescan the collection library" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_SEARCH_COVERS, _( "Search Covers" ), _( "Search the collection missing covers" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_VIEW_PROPERTIES, _( "Properties" ), _( "Show collection properties" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    menu->AppendSeparator();
+    menu->AppendSubMenu( Menu, wxT( "Magnatune" ) );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerMagnatune::CreateLibraryView( void )
+{
+    guLogMessage( wxT( "CreateLibraryView... Magnatune...") );
+    m_LibPanel = new guMagnatunePanel( this, this );
+    m_LibPanel->SetBaseCommand( m_BaseCommand + 1 );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerMagnatune::CreateAlbumBrowserView( void )
+{
+    m_AlbumBrowser = new guMagnatuneAlbumBrowser( this, this );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerMagnatune::CreateTreeView( void )
+{
+    m_TreeViewPanel = new guMagnatuneTreePanel( this, this );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerMagnatune::CreatePlayListView( void )
+{
+    m_PlayListPanel = new guMagnatunePlayListPanel( this, this );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guMediaViewerMagnatune::GetAlbumCover( const int albumid, int &coverid,
+            wxString &coverpath, const wxString &artistname, const wxString &albumname )
+{
+    wxImage * CoverImage = guMediaViewer::GetAlbumCover( albumid, coverid, coverpath, artistname, albumname );
+    if( CoverImage )
+        return CoverImage;
+
+    wxFileName CoverFile = wxFileName( guPATH_MAGNATUNE_COVERS +
+                 wxString::Format( wxT( "%s-%s.jpg" ), artistname.c_str(), albumname.c_str() ) );
+
+    if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+    {
+        if( CoverFile.FileExists() )
+        {
+            wxImage * CoverImage = new wxImage( CoverFile.GetFullPath(), wxBITMAP_TYPE_JPEG );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
+                {
+                    coverpath = CoverFile.GetFullPath();
+
+                    SetAlbumCover( albumid, guPATH_MAGNATUNE_COVERS, coverpath );
+
+                    coverid = m_Db->GetAlbumCoverId( albumid );
+
+                    return CoverImage;
+                }
+                delete CoverImage;
+            }
+        }
+    }
+
+    AddDownload( albumid, artistname, albumname );
+
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaViewerMagnatune::GetCoverName( const int albumid )
+{
+    wxString Artist;
+    wxString Album;
+    if( m_Db->GetAlbumInfo( albumid, &Album, &Artist, NULL ) )
+    {
+        return wxString::Format( wxT( "%s-%s.jpg" ), Artist.c_str(), Album.c_str() );
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::SelectAlbumCover( const int albumid )
+{
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    if( SelCoverFile )
+    {
+        if( SelCoverFile->ShowModal() == wxID_OK )
+        {
+            wxString CoverFile = SelCoverFile->GetSelFile();
+            if( !CoverFile.IsEmpty() )
+            {
+                if( SetAlbumCover( albumid, guPATH_MAGNATUNE_COVERS, CoverFile ) )
+                {
+                    if( SelCoverFile->EmbedToFiles() )
+                    {
+                        EmbedAlbumCover( albumid );
+                    }
+                }
+            }
+        }
+        SelCoverFile->Destroy();
+    }
+}
+
+
+//<RESULT>
+//  <CC_AMOUNT>$</CC_AMOUNT>
+//  <CC_TRANSID></CC_TRANSID>
+//  <DL_PAGE>http://download.magnatune.com/artists/albums/satori-rainsleep/download</DL_PAGE>
+//  <URL_WAVZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=wav.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/wav.zip</URL_WAVZIP>
+//  <URL_128KMP3ZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=mp3.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/mp3.zip</URL_128KMP3ZIP>
+//  <URL_OGGZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20ogg.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-ogg.zip</URL_OGGZIP>
+//  <URL_VBRZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20vbr.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-vbr.zip</URL_VBRZIP>
+//  <URL_FLACZIP>http://download.magnatune.com/member/api_download.php?sku=satori-rainsleep&amp;filename=Satori%20-%20Sleep%20Under%20The%20Rain%20-%20flac.zip&amp;path=http://download.magnatune.com/artists/music/Ambient/Satori/Sleep%20Under%20The%20Rain/satori-rainsleep-flac.zip</URL_FLACZIP>
+//  <DL_MSG>
+//Go here to download your music:
+//http://download.magnatune.com/artists/albums/satori-rainsleep/download
+//----------
+//Give this album away for free!
+//You can pass these download instructions on to 3 friends. It's completely legal
+//and you'll be helping us fight the evil music industry!  Complete details here:
+//http://magnatune.com/info/give
+//Help spread the word of Magnatune, with our free recruiting cards!
+//http://magnatune.com/cards
+//Podcasters, use our music:<br>
+//http://magnatune.com/info/podcast
+//To send us email:
+//https://magnatune.com/info/email_us
+//  </DL_MSG>
+//</RESULT>
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
+{
+    wxString StartLabel[] = {
+        wxT( "<DL_PAGE>" ),
+        wxT( "<URL_VBRZIP>" ),
+        wxT( "<URL_128KMP3ZIP>" ),
+        wxT( "<URL_OGGZIP>" ),
+        wxT( "<URL_FLACZIP>" ),
+        wxT( "<URL_WAVZIP>" ),
+    };
+    wxString EndLabel[] = {
+        wxT( "</DL_PAGE>" ),
+        wxT( "</URL_VBRZIP>" ),
+        wxT( "</URL_128KMP3ZIP>" ),
+        wxT( "</URL_OGGZIP>" ),
+        wxT( "</URL_FLACZIP>" ),
+        wxT( "</URL_WAVZIP>" ),
+    };
+
+    int Index;
+    int Count;
+    if( ( Count = albumids.Count() ) )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        int DownloadFormat = Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "magnatune" ) );
+
+        //guLogMessage( wxT( "DownloadFormat: %i %s  %s" ), DownloadFormat,
+        //             StartLabel[ DownloadFormat ].c_str(),
+        //             EndLabel[ DownloadFormat ].c_str() );
+
+        if( ( DownloadFormat < 0 ) || ( DownloadFormat > 5 ) )
+        {
+            DownloadFormat = 0;
+        }
+
+        for( Index = 0; Index < Count; Index++ )
+        {
+            wxString DownloadUrl = wxString::Format( guMAGNATUNE_DOWNLOAD_URL,
+                                m_UserName.c_str(), m_Password.c_str(),
+                                ( ( guMagnatuneLibrary * ) m_Db )->GetAlbumSku( albumids[ Index ] ).c_str() );
+
+            //guLogMessage( wxT( "Trying to download %s" ), DownloadUrl.c_str() );
+            wxString Content = GetUrlContent( DownloadUrl );
+            if( !Content.IsEmpty() )
+            {
+                //guLogMessage( wxT( "Result:\n%s" ), Content.c_str() );
+                DownloadUrl = wxEmptyString;
+
+                int Pos = Content.Find( StartLabel[ DownloadFormat ] );
+                if( Pos != wxNOT_FOUND )
+                {
+                    DownloadUrl = Content.Mid( Pos );
+
+                    if( DownloadFormat > 0 )
+                        DownloadUrl = DownloadUrl.Mid( DownloadUrl.Find( wxT( "path=http://" ) ) + 12 );
+                    else
+                        DownloadUrl = DownloadUrl.Mid( StartLabel[ DownloadFormat ].Length() + 7 );
+                    DownloadUrl = DownloadUrl.Mid( 0, DownloadUrl.Find( EndLabel[ DownloadFormat ] ) );
+                }
+
+                if( !DownloadUrl.IsEmpty() )
+                {
+                    DownloadUrl = wxString::Format( wxT( "http://%s:%s@" ), m_UserName.c_str(), m_Password.c_str() ) + DownloadUrl;
+                    //guLogMessage( wxT( "Trying to download the url : '%s'" ), DownloadUrl.c_str() );
+                    guWebExecute( DownloadUrl );
+                }
+            }
+            else
+            {
+                guLogError( wxT( "Could not get the album download info" ) );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerMagnatune::FindMissingCover( const int albumid, const wxString &artistname, const wxString &albumname, const wxString &albumpath )
+{
+    AddDownload( albumid, artistname, albumname );
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerMagnatune::EditProperties( void )
+{
+    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
+    wxPostEvent( m_MainFrame, CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //

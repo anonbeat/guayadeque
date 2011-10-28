@@ -229,20 +229,20 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
     wxString                Content;
     guStationPlayList       RetVal;
     guStationPlayListItem * NewStation;
-    wxFileConfig *          Config;
+    wxFileConfig *          PlayList;
     Content = GetUrlContent( stationurl );
     if( Content.Length() )
     {
         //guLogMessage( Content );
         wxStringInputStream ConfigData( Content );
-        Config = new wxFileConfig( ConfigData );
-        if( Config )
+        PlayList = new wxFileConfig( ConfigData );
+        if( PlayList )
         {
-            if( Config->HasGroup( wxT( "playlist" ) ) )
+            if( PlayList->HasGroup( wxT( "playlist" ) ) )
             {
-                Config->SetPath( wxT( "playlist" ) );
+                PlayList->SetPath( wxT( "playlist" ) );
                 int count;
-                if( Config->Read( wxT( "numberofentries" ), &count ) )
+                if( PlayList->Read( wxT( "numberofentries" ), &count ) )
                 {
                     if( !count )
                     {
@@ -254,8 +254,8 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
                         {
                             NewStation = new guStationPlayListItem();
 
-                            Config->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
-                            Config->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
+                            PlayList->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
+                            PlayList->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );
                             if( NewStation->m_Name.IsEmpty() )
                                 NewStation->m_Name = NewStation->m_Location;
                             RetVal.Add( NewStation );
@@ -267,7 +267,7 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
             {
                 guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
             }
-            delete Config;
+            delete PlayList;
         }
         else
           guLogError( wxT( "ee: Station Playlist empty" ) );

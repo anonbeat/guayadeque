@@ -18,39 +18,25 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AUIMANAGEDPANEL_H
-#define AUIMANAGEDPANEL_H
+#ifndef guAUIMANAGEDPANEL_H
+#define guAUIMANAGEDPANEL_H
 
+#include <wx/wx.h>
 #include <wx/aui/aui.h>
-#include <wx/string.h>
 
 // -------------------------------------------------------------------------------- //
 class guAuiManagedPanel : public wxPanel
 {
   protected :
-    wxArrayString       m_PanelNames;
-    wxArrayInt          m_PanelIds;
-    wxArrayInt          m_PanelCmdIds;
-    wxAuiManager        m_AuiManager;
-    unsigned int        m_VisiblePanels;
+    wxAuiManager *  m_Manager;
+
+    void            OnChangedSize( wxSizeEvent &event );
 
   public :
-    guAuiManagedPanel( wxWindow * parent );
+    guAuiManagedPanel( wxWindow * parent, wxAuiManager * manager );
     ~guAuiManagedPanel();
 
-    virtual void        InitPanelData( void ) {}
-
-    bool                IsPanelShown( const int panelid ) const { return ( m_VisiblePanels & panelid ); }
-    virtual void        ShowPanel( const int panelid, bool show );
-    virtual void        OnPaneClose( wxAuiManagerEvent &event );
-
-    int                 VisiblePanels( void ) { return m_VisiblePanels; }
-    virtual wxString    SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-    virtual void        LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
-
-    virtual int         GetListViewColumnCount( void ) { return 0; }
-    virtual bool        GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return false; }
-    virtual bool        SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return false; }
+    virtual void    CreateShowHideMenu( wxMenu * menu ) {};
 
 };
 

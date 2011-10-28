@@ -25,6 +25,8 @@
 #include "Utils.h"
 #include "Version.h"
 
+#include <wx/uri.h>
+
 extern "C" {
 
 // -------------------------------------------------------------------------------- //
@@ -336,10 +338,29 @@ void guTranscodeThread::BuildPipeline( void )
   if( GST_IS_ELEMENT( m_Pipeline ) )
   {
     GstElement * src;
-    src = gst_element_factory_make( "filesrc", "guTransSource" );
+    //src = gst_element_factory_make( "filesrc", "guTransSource" );
+    src = gst_element_factory_make( "giosrc", "guTransSource" );
     if( GST_IS_ELEMENT( src ) )
     {
-      g_object_set( G_OBJECT( src ), "location", ( const char * ) m_Source.mb_str( wxConvFile ), NULL );
+      wxString Location;
+      wxURI URI( m_Source );
+      if( URI.IsReference() )
+      {
+          Location = wxT( "file://" ) + m_Source;
+      }
+      else
+      {
+          if( !URI.HasScheme() )
+          {
+              Location = wxT( "http://" ) + m_Source;
+          }
+          else
+          {
+            Location = m_Source;
+          }
+      }
+
+      g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
 
       GstElement * dec;
       dec = gst_element_factory_make( "decodebin2", "guTransDecoder" );
@@ -489,7 +510,21 @@ void guTranscodeThread::Stop( void )
             OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
             OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
             OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
-            OutTagInfo->Write( guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_RATING | guTRACK_CHANGED_DATA_LABELS );
+            int WriteFlags = guTRACK_CHANGED_DATA_TAGS;
+
+            if( !InTagInfo->m_TrackLabelsStr.IsEmpty() ||
+                !InTagInfo->m_ArtistLabelsStr.IsEmpty() ||
+                !InTagInfo->m_AlbumLabelsStr.IsEmpty() )
+            {
+                WriteFlags |= guTRACK_CHANGED_DATA_LABELS;
+            }
+
+            if( InTagInfo->m_Rating != wxNOT_FOUND )
+            {
+                WriteFlags |= guTRACK_CHANGED_DATA_RATING;
+            }
+
+            OutTagInfo->Write( WriteFlags );
 
             delete OutTagInfo;
         }

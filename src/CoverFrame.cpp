@@ -23,6 +23,7 @@
 #include "Images.h"
 #include "TagInfo.h"
 #include "Utils.h"
+#include "Config.h"
 
 // -------------------------------------------------------------------------------- //
 guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & title, const wxPoint & pos, const wxSize & size, long style ) :
@@ -82,7 +83,7 @@ void guCoverFrame::OnTimer( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guCoverFrame::OnClick( wxMouseEvent &event )
 {
-    guLogMessage( wxT( "OnClick...." ) );
+    //guLogMessage( wxT( "OnClick...." ) );
     Close();
 }
 
@@ -120,22 +121,36 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
     //
     if( CoverImage.IsOk() )
     {
-        wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
-        if( BlankCD )
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
+        if( CoverFrame == guCOVERFRAME_DEFAULT )
         {
-            if( BlankCD->IsOk() )
+            wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
+            if( BlankCD )
             {
-                // 38,6
-                wxMemoryDC MemDC;
-                MemDC.SelectObject( * BlankCD );
-                CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
-                MemDC.DrawBitmap( wxBitmap( CoverImage ), 34, 4, false );
-                m_CoverBitmap->SetBitmap( * BlankCD );
-                //m_CoverBitmap->SetBitmap( wxBitmap( CoverImage ) );
-                m_CoverBitmap->Refresh();
+                if( BlankCD->IsOk() )
+                {
+                    // 38,6
+                    wxMemoryDC MemDC;
+                    MemDC.SelectObject( * BlankCD );
+                    CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
+                    MemDC.DrawBitmap( wxBitmap( CoverImage ), 34, 4, false );
+                    m_CoverBitmap->SetBitmap( * BlankCD );
+                    //m_CoverBitmap->SetBitmap( wxBitmap( CoverImage ) );
+                    m_CoverBitmap->Refresh();
+                }
+                delete BlankCD;
             }
-            delete BlankCD;
         }
+        else //if( CoverFrame == guCOVERFRAME_NONE )
+        {
+            CoverImage.Rescale( 300, 300, wxIMAGE_QUALITY_HIGH );
+            m_CoverBitmap->SetBitmap( CoverImage );
+            m_CoverBitmap->Refresh();
+        }
+//        else    // guCOVERFRAME_CUSTOM
+//        {
+//        }
     }
 }
 

@@ -33,10 +33,12 @@
 #include <popularimeterframe.h>
 
 wxArrayString guSupportedFormats;
+wxMutex       guSupportedFormatsMutex;
 
 // -------------------------------------------------------------------------------- //
 bool guIsValidAudioFile( const wxString &filename )
 {
+    guSupportedFormatsMutex.Lock();
     if( !guSupportedFormats.Count() )
     {
         guSupportedFormats.Add( wxT( "mp3"  ) );
@@ -69,13 +71,19 @@ bool guIsValidAudioFile( const wxString &filename )
         //guSupportedFormats.Add( wxT( "rmj"  ) );
     }
 
-    return ( guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) ) != wxNOT_FOUND );
+    int Position = ( guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) ) != wxNOT_FOUND );
+
+    guSupportedFormatsMutex.Unlock();
+
+    return Position;
 }
 
 // -------------------------------------------------------------------------------- //
 guTagInfo * guGetTagInfoHandler( const wxString &filename )
 {
+    guSupportedFormatsMutex.Lock();
     int FormatIndex = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
+    guSupportedFormatsMutex.Unlock();
     switch( FormatIndex )
     {
         case  0 : return new guMp3TagInfo( filename );
@@ -657,6 +665,9 @@ bool SetASFImage( ASF::Tag * asftag, const wxImage * image )
 // -------------------------------------------------------------------------------- //
 guTagInfo::guTagInfo( const wxString &filename )
 {
+    m_TagFile = NULL;
+    m_Tag = NULL;
+
     SetFileName( filename );
 
     m_Track = 0;
@@ -683,10 +694,6 @@ void guTagInfo::SetFileName( const wxString &filename )
     {
         m_TagFile = new TagLib::FileRef( filename.mb_str( wxConvFile ), true, TagLib::AudioProperties::Fast );
     }
-    else
-    {
-        m_TagFile = NULL;
-    }
 
     if( m_TagFile && !m_TagFile->isNull() )
     {
@@ -695,10 +702,6 @@ void guTagInfo::SetFileName( const wxString &filename )
         {
             guLogWarning( wxT( "Cant get tag object from '%s'" ), filename.c_str() );
         }
-    }
-    else
-    {
-        m_Tag = NULL;
     }
 }
 
@@ -712,7 +715,7 @@ bool guTagInfo::Read( void )
         m_ArtistName = TStringTowxString( m_Tag->artist() );
         m_AlbumName = TStringTowxString( m_Tag->album() );
         m_GenreName = TStringTowxString( m_Tag->genre() );
-        m_Comments = TStringTowxString( m_Tag->comment() );
+        //m_Comments = TStringTowxString( m_Tag->comment() );
         m_Track = m_Tag->track();
         m_Year = m_Tag->year();
     }
@@ -858,8 +861,12 @@ bool guMp3TagInfo::Read( void )
                 {
                     //guLogMessage( wxT( "*Track Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
                     // [guTRLABELS] guTRLABELS labels
-                    m_TrackLabelsStr = TStringTowxString( Frame->fieldList()[ 1 ] );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+                    StringList TrLabelsList = Frame->fieldList();
+                    if( TrLabelsList.size() )
+                    {
+                        m_TrackLabelsStr = TStringTowxString( TrLabelsList[ 1 ] );
+                        m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+                    }
                 }
             }
 
@@ -871,8 +878,12 @@ bool guMp3TagInfo::Read( void )
                 if( Frame )
                 {
                     //guLogMessage( wxT( "*Artist Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    m_ArtistLabelsStr = TStringTowxString( Frame->fieldList()[ 1 ] );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+                    StringList ArLabelsList = Frame->fieldList();
+                    if( ArLabelsList.size() )
+                    {
+                        m_ArtistLabelsStr = TStringTowxString( ArLabelsList[ 1 ] );
+                        m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+                    }
                 }
             }
 
@@ -884,8 +895,12 @@ bool guMp3TagInfo::Read( void )
                 if( Frame )
                 {
                     //guLogMessage( wxT( "*Album Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    m_AlbumLabelsStr = TStringTowxString( Frame->fieldList()[ 1 ] );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+                    StringList AlLabelsList = Frame->fieldList();
+                    if( AlLabelsList.size() )
+                    {
+                        m_AlbumLabelsStr = TStringTowxString( AlLabelsList[ 1 ] );
+                        m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+                    }
                 }
             }
         }
@@ -2768,6 +2783,60 @@ bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
     return RetVal;
 }
 
+//// -------------------------------------------------------------------------------- //
+//void guUpdateTrack( const guTrack &track, const wxImage * image,
+//                    const wxString &lyrics, const int &changedflags )
+//{
+//    if( wxFileExists( track.m_FileName ) )
+//    {
+//        guTagInfo * TagInfo = guGetTagInfoHandler( track.m_FileName );
+//
+//        if( !TagInfo )
+//        {
+//            guLogError( wxT( "There is no handler for the file '%s'" ), track.m_FileName.c_str() );
+//            return;
+//        }
+//
+//        if( changedflags & guTRACK_CHANGED_DATA_TAGS )
+//        {
+//            TagInfo->m_TrackName = track.m_SongName;
+//            TagInfo->m_AlbumArtist = track.m_AlbumArtist;
+//            TagInfo->m_ArtistName = track.m_ArtistName;
+//            TagInfo->m_AlbumName = track.m_AlbumName;
+//            TagInfo->m_GenreName = track.m_GenreName;
+//            TagInfo->m_Track = track.m_Number;
+//            TagInfo->m_Year = track.m_Year;
+//            TagInfo->m_Composer = track.m_Composer;
+//            TagInfo->m_Comments = track.m_Comments;
+//            TagInfo->m_Disk = track.m_Disk;
+//        }
+//
+//        if( changedflags & guTRACK_CHANGED_DATA_RATING )
+//        {
+//            TagInfo->m_Rating = track.m_Rating;
+//            TagInfo->m_PlayCount = track.m_PlayCount;
+//        }
+//
+//        if( ( changedflags & guTRACK_CHANGED_DATA_LYRICS ) && TagInfo->CanHandleLyrics() )
+//        {
+//            TagInfo->SetLyrics( lyrics );
+//        }
+//
+//        if( ( changedflags & guTRACK_CHANGED_DATA_IMAGES ) && TagInfo->CanHandleImages() )
+//        {
+//            TagInfo->SetImage( image );
+//        }
+//
+//        TagInfo->Write( changedflags );
+//
+//        delete TagInfo;
+//    }
+//    else
+//    {
+//        guLogMessage( wxT( "File not found for edition: '%s'" ), track.m_FileName.c_str() );
+//    }
+//}
+
 // -------------------------------------------------------------------------------- //
 void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
                     const wxArrayString &lyrics, const wxArrayInt &changedflags )
@@ -2783,36 +2852,36 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
         if( !ChangedFlag )
             continue;
 
-        guTrack &Song = tracks[ Index ];
+        const guTrack &Track = tracks[ Index ];
 
-        if( wxFileExists( Song.m_FileName ) )
+        if( wxFileExists( Track.m_FileName ) )
         {
-            guTagInfo * TagInfo = guGetTagInfoHandler( Song.m_FileName );
+            guTagInfo * TagInfo = guGetTagInfoHandler( Track.m_FileName );
 
             if( !TagInfo )
             {
-                guLogError( wxT( "There is no handler for the file '%s'" ), Song.m_FileName.c_str() );
-                continue;
+                guLogError( wxT( "There is no handler for the file '%s'" ), Track.m_FileName.c_str() );
+                return;
             }
 
             if( ChangedFlag & guTRACK_CHANGED_DATA_TAGS )
             {
-                TagInfo->m_TrackName = Song.m_SongName;
-                TagInfo->m_AlbumArtist = Song.m_AlbumArtist;
-                TagInfo->m_ArtistName = Song.m_ArtistName;
-                TagInfo->m_AlbumName = Song.m_AlbumName;
-                TagInfo->m_GenreName = Song.m_GenreName;
-                TagInfo->m_Track = Song.m_Number;
-                TagInfo->m_Year = Song.m_Year;
-                TagInfo->m_Composer = Song.m_Composer;
-                TagInfo->m_Comments = Song.m_Comments;
-                TagInfo->m_Disk = Song.m_Disk;
+                TagInfo->m_TrackName = Track.m_SongName;
+                TagInfo->m_AlbumArtist = Track.m_AlbumArtist;
+                TagInfo->m_ArtistName = Track.m_ArtistName;
+                TagInfo->m_AlbumName = Track.m_AlbumName;
+                TagInfo->m_GenreName = Track.m_GenreName;
+                TagInfo->m_Track = Track.m_Number;
+                TagInfo->m_Year = Track.m_Year;
+                TagInfo->m_Composer = Track.m_Composer;
+                TagInfo->m_Comments = Track.m_Comments;
+                TagInfo->m_Disk = Track.m_Disk;
             }
 
             if( ChangedFlag & guTRACK_CHANGED_DATA_RATING )
             {
-                TagInfo->m_Rating = Song.m_Rating;
-                TagInfo->m_PlayCount = Song.m_PlayCount;
+                TagInfo->m_Rating = Track.m_Rating;
+                TagInfo->m_PlayCount = Track.m_PlayCount;
             }
 
             if( ( ChangedFlag & guTRACK_CHANGED_DATA_LYRICS ) && TagInfo->CanHandleLyrics() )
@@ -2831,7 +2900,7 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
         }
         else
         {
-            guLogMessage( wxT( "File not found for edition: '%s'" ), Song.m_FileName.c_str() );
+            guLogMessage( wxT( "File not found for edition: '%s'" ), Track.m_FileName.c_str() );
         }
     }
 }

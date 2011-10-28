@@ -51,7 +51,7 @@ class guLibPanel;
 class guSoListBox : public guListView
 {
   protected :
-    guLibPanel *                m_LibPanel;
+    guMediaViewer *             m_MediaViewer;
 
     guDbLibrary *               m_Db;
     guTrackArray                m_Items;
@@ -61,6 +61,8 @@ class guSoListBox : public guListView
     wxString                    m_ConfName;
     int                         m_LastColumnRightClicked;
     int                         m_LastRowRightClicked;
+    int                         m_TracksOrder;
+    bool                        m_TracksOrderDesc;
 
     wxBitmap *                  m_NormalStar;
     wxBitmap *                  m_SelectStar;
@@ -89,7 +91,7 @@ class guSoListBox : public guListView
     virtual void                CreateAcceleratorTable();
 
   public :
-    guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, wxString confname, long style = 0 );
+    guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, long style = 0 );
     ~guSoListBox();
 
     virtual void                ReloadItems( bool reset = true );
@@ -109,6 +111,11 @@ class guSoListBox : public guListView
     int                         GetLastColumnClicked( void ) { return m_LastColumnRightClicked; }
     int                         GetLastRowClicked( void ) { return m_LastRowRightClicked; }
     wxVariant                   GetLastDataClicked( void );
+
+    virtual int                 GetTracksOrder( void ) { return m_TracksOrder; }
+    virtual void                SetTracksOrder( const int order );
+    virtual bool                GetTracksOrderDesc( void ) { return m_TracksOrderDesc; }
+    virtual void                SetTracksOrderDesc( const bool orderdesc ) { m_TracksOrderDesc = orderdesc; }
 
 };
 

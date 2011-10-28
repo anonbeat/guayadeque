@@ -21,6 +21,7 @@
 #include "CopyTo.h"
 
 #include "Images.h"
+#include "iPodMedia.h"
 #include "TagInfo.h"
 #include "Transcode.h"
 
@@ -41,75 +42,86 @@ guCopyToAction::guCopyToAction()
     m_Quality = wxNOT_FOUND;
     m_MoveFiles = false;
     m_Db = NULL;
-    m_PortableMediaViewCtrl = NULL;
+//    m_PortableMediaViewCtrl = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
-guCopyToAction::guCopyToAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
+guCopyToAction::guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
 {
     m_Type = guCOPYTO_ACTION_COPYTO;
     m_Tracks = tracks;
-    m_LibPanel = libpanel;
-    m_Db = libpanel->GetDb();
+    m_MediaViewer = mediaviewer;
+    m_Db = mediaviewer ? mediaviewer->GetDb() : NULL;
     m_PlayListFile = NULL;
     m_DestDir = destdir;
     m_Pattern = pattern;
     m_Format = format;
     m_Quality = quality;
     m_MoveFiles = movefiles;
-    m_PortableMediaViewCtrl = NULL;
+//    m_PortableMediaViewCtrl = NULL;
 
     if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
 }
 
 // -------------------------------------------------------------------------------- //
-guCopyToAction::guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
+guCopyToAction::guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaviewer )
 {
     m_Type = guCOPYTO_ACTION_COPYTODEVICE;
     m_Tracks = tracks;
     m_MoveFiles = false;
-    m_Db = db;
+    m_Db = mediaviewer->GetDb();
     m_PlayListFile = NULL;
-    m_PortableMediaViewCtrl = portablemediaviewctrl;
-    guPortableMediaDevice * PortableMediaDevice = m_PortableMediaViewCtrl->MediaDevice();
-    if( PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
+    m_MediaViewer = mediaviewer;
+//    if( PortableMediaDevice->Type() == guPORTABLE_MEDIA_TYPE_IPOD )
+//        m_Type = guCOPYTO_ACTION_COPYTOIPOD;
+    if( mediaviewer->GetType() == guMEDIA_COLLECTION_TYPE_IPOD )
+    {
         m_Type = guCOPYTO_ACTION_COPYTOIPOD;
-    m_Format = PortableMediaDevice->TranscodeFormat();
-    m_Quality = PortableMediaDevice->TranscodeQuality();
-    m_Pattern = PortableMediaDevice->Pattern();
-    m_DestDir = PortableMediaDevice->MountPath();
-    wxArrayString AudioFolders = wxStringTokenize( PortableMediaDevice->AudioFolders(), wxT( "," ) );
-    m_DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
+        guLogMessage( wxT( "Its a iPod Device" ) );
+    }
+
+    m_Pattern = mediaviewer->Pattern();
+    m_Format = mediaviewer->TranscodeFormat();
+    m_Quality = mediaviewer->TranscodeQuality();
+    m_DestDir = mediaviewer->AudioPath();
     if( m_DestDir.EndsWith( wxT( "//" ) ) )
         m_DestDir.RemoveLast();
     else if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
+
+    m_CoverFormats = mediaviewer->CoverFormats();
+    m_CoverSize = mediaviewer->CoverSize();
+    m_CoverName = mediaviewer->CoverName();
 }
 
 // -------------------------------------------------------------------------------- //
-guCopyToAction::guCopyToAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
+guCopyToAction::guCopyToAction( wxString * playlistpath, guMediaViewer * mediaviewer )
 {
     m_Type = guCOPYTO_ACTION_COPYTODEVICE;
     m_Tracks = new guTrackArray();
     m_MoveFiles = false;
-    m_Db = db;
-    m_PortableMediaViewCtrl = portablemediaviewctrl;
+    m_MediaViewer = mediaviewer;
+    m_Db = mediaviewer->GetDb();
     m_PlayListFile = new guPlayListFile( * playlistpath );
     m_PlayListFile->SetName( * playlistpath );
-    guPortableMediaDevice * PortableMediaDevice = m_PortableMediaViewCtrl->MediaDevice();
-    if( PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
+
+//    guPortableMediaDevice * PortableMediaDevice = mediaviewer->GetPortableMediaDevice();
+    if( mediaviewer->GetType() == guMEDIA_COLLECTION_TYPE_IPOD )
         m_Type = guCOPYTO_ACTION_COPYTOIPOD;
-    m_Format = PortableMediaDevice->TranscodeFormat();
-    m_Quality = PortableMediaDevice->TranscodeQuality();
-    m_Pattern = PortableMediaDevice->Pattern();
-    m_DestDir = PortableMediaDevice->MountPath();
-    wxArrayString AudioFolders = wxStringTokenize( PortableMediaDevice->AudioFolders(), wxT( "," ) );
-    m_DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
+    m_Format = mediaviewer->TranscodeFormat();
+    m_Quality = mediaviewer->TranscodeQuality();
+    m_Pattern = mediaviewer->Pattern();
+    m_DestDir = mediaviewer->AudioPath();
+//    wxArrayString AudioFolders = wxStringTokenize( PortableMediaDevice->AudioFolders(), wxT( "," ) );
+//    m_DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
     if( m_DestDir.EndsWith( wxT( "//" ) ) )
         m_DestDir.RemoveLast();
     else if( !m_DestDir.EndsWith( wxT( "/" ) ) )
         m_DestDir.Append( wxT( "/" ) );
+    m_CoverFormats = mediaviewer->CoverFormats();
+    m_CoverSize = mediaviewer->CoverSize();
+    m_CoverName = mediaviewer->CoverName();
 
     int Index;
     int Count = m_PlayListFile->Count();
@@ -181,9 +193,9 @@ guCopyToThread::~guCopyToThread()
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::AddAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
+void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
 {
-    guCopyToAction * CopyToAction = new guCopyToAction( tracks, libpanel, destdir, pattern, format, quality, movefiles );
+    guCopyToAction * CopyToAction = new guCopyToAction( tracks, mediaviewer, destdir, pattern, format, quality, movefiles );
     if( CopyToAction )
     {
         m_CopyToActionsMutex.Lock();
@@ -199,9 +211,9 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guLibPanel * libpanel, co
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
+void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewerPortableDevice * mediaviewer )
 {
-    guCopyToAction * CopyToAction = new guCopyToAction( tracks, db, portablemediaviewctrl );
+    guCopyToAction * CopyToAction = new guCopyToAction( tracks, mediaviewer );
     if( CopyToAction )
     {
         m_CopyToActionsMutex.Lock();
@@ -217,9 +229,9 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guDbLibrary * db, guPorta
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::AddAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl )
+void guCopyToThread::AddAction( wxString * playlistpath, guMediaViewerPortableDevice * mediaviewer )
 {
-    guCopyToAction * CopyToAction = new guCopyToAction( playlistpath, db, portablemediaviewctrl );
+    guCopyToAction * CopyToAction = new guCopyToAction( playlistpath, mediaviewer );
     if( CopyToAction )
     {
         m_CopyToActionsMutex.Lock();
@@ -280,6 +292,25 @@ bool guCopyToThread::TranscodeFile( const wxString &source, const wxString &targ
     return RetVal;
 }
 
+#ifdef WITH_LIBGPOD_SUPPORT
+// -------------------------------------------------------------------------------- //
+bool guMoreCopyToIpodActions( guCopyToActionArray * actions )
+{
+    if( actions->Count() > 1 )
+    {
+        int Index;
+        int Count = actions->Count();
+        for( Index = 1; Index < Count; Index++ )
+        {
+            guCopyToAction &CopyToAction = actions->Item( Index );
+            if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
+                return true;
+        }
+    }
+    return false;
+}
+#endif
+
 // -------------------------------------------------------------------------------- //
 void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 {
@@ -326,7 +357,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #ifdef WITH_LIBGPOD_SUPPORT
         if( copytoaction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
         {
-            int FileSize = copytoaction.PortableMediaViewCtrl()->CopyTo( CurTrack, FileName );
+            int FileSize = ( ( guMediaVieweriPodDevice * ) copytoaction.GetMediaViewer() )->CopyTo( CurTrack, FileName );
 
             if( FileSize == wxNOT_FOUND )
                 Result = false;
@@ -415,7 +446,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                 else
                 {
                     //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), m_Device->AudioFormats(), FileFormat );
-                    guPortableMediaDevice * MediaDevice  = copytoaction.PortableMediaDevice();
+                    guPortableMediaDevice * MediaDevice  = copytoaction.GetPortableMediaDevice();
                     // If the file is not supported then need to transcode it
                     if( !( MediaDevice->AudioFormats() & FileFormat ) )
                     {
@@ -504,10 +535,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             // If have cover assigned
             if( CurTrack->m_CoverId )
             {
-                guDbLibrary * Db = copytoaction.Db();
-
                 if( copytoaction.Type() == guCOPYTO_ACTION_COPYTO )
                 {
+                    guDbLibrary * Db = copytoaction.GetDb();
                     wxString CoverPath = Db->GetCoverPath( CurTrack->m_CoverId );
                     wxString NewCoverFile = wxPathOnly( FileName ) + wxT( "/" ) + CoverPath.AfterLast( wxT( '/' ) );
                     //guLogMessage( wxT( "COpying file %s" ), NewCoverFile.c_str() );
@@ -525,107 +555,112 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                 }
                 else
                 {
-                    guPortableMediaDevice * MediaDevice  = copytoaction.PortableMediaDevice();
-                    //
-                    // If the device supports covers
-                    //
-                    int DevCoverFormats = MediaDevice->CoverFormats();
-                    if( DevCoverFormats ) // if has cover handling enabled
+                    guMediaViewer * MediaViewer = CurTrack->m_MediaViewer;
+                    guDbLibrary * Db = MediaViewer ? MediaViewer->GetDb() : NULL;
+                    if( Db )
                     {
-                        wxString CoverPath = Db->GetCoverPath( CurTrack->m_CoverId );
-                        wxImage * CoverImage = new wxImage( CoverPath );
-                        if( CoverImage )
+                        //
+                        // If the device supports covers
+                        //
+                        int DevCoverFormats = copytoaction.CoverFormats();
+                        if( DevCoverFormats ) // if has cover handling enabled
                         {
-                            if( CoverImage->IsOk() )
+                            wxString CoverPath = Db->GetCoverPath( CurTrack->m_CoverId );
+                            guLogMessage( wxT( "Original Cover Path %i = '%s'" ), CurTrack->m_CoverId, CoverPath.c_str() );
+                            wxImage * CoverImage = new wxImage( CoverPath );
+                            if( CoverImage )
                             {
-                                int DevCoverSize = MediaDevice->CoverSize();
-                                if( DevCoverSize && ( ( CoverImage->GetWidth() != DevCoverSize ) || ( CoverImage->GetHeight() != DevCoverSize ) ) )
+                                if( CoverImage->IsOk() )
                                 {
-                                    CoverImage->Rescale( DevCoverSize, DevCoverSize, wxIMAGE_QUALITY_HIGH );
-                                }
-
-                                bool CoverAdded = false;
-                                if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
-                                {
-                                    if( !guTagSetPicture( FileName, CoverImage ) )
+                                    int DevCoverSize = copytoaction.CoverSize();
+                                    if( DevCoverSize && ( ( CoverImage->GetWidth() != DevCoverSize ) || ( CoverImage->GetHeight() != DevCoverSize ) ) )
                                     {
-                                        guLogMessage( wxT( "Couldnt set the picture to %s" ), FileName.c_str() );
+                                        CoverImage->Rescale( DevCoverSize, DevCoverSize, wxIMAGE_QUALITY_HIGH );
+                                    }
+
+                                    bool CoverAdded = false;
+                                    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
+                                    {
+                                        if( !guTagSetPicture( FileName, CoverImage ) )
+                                        {
+                                            guLogMessage( wxT( "Couldnt set the picture to '%s'" ), FileName.c_str() );
+                                        }
+                                    }
+
+                                    wxString DevCoverName = copytoaction.CoverName();
+                                    if( DevCoverName.IsEmpty() )
+                                    {
+                                        DevCoverName = wxT( "cover" );
+                                    }
+                                    DevCoverName = wxPathOnly( FileName ) + wxT( "/" ) + DevCoverName;
+
+                                    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
+                                    {
+                                        if( !wxFileExists( DevCoverName + wxT( ".jpg" ) ) )
+                                        {
+                                            if( !CoverImage->SaveFile( DevCoverName + wxT( ".jpg" ), wxBITMAP_TYPE_JPEG ) )
+                                            {
+                                                guLogError( wxT( "Could not copy the cover to '%s'" ), DevCoverName.c_str() );
+                                            }
+                                            else
+                                            {
+                                                m_CoversToAdd.Add( DevCoverName + wxT( ".jpg" ) );
+                                                CoverAdded = true;
+                                            }
+                                        }
+                                    }
+
+                                    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
+                                    {
+                                        if( !wxFileExists( DevCoverName + wxT( ".png" ) ) )
+                                        {
+                                            if( !CoverImage->SaveFile( DevCoverName + wxT( ".png" ), wxBITMAP_TYPE_PNG ) )
+                                            {
+                                                guLogError( wxT( "Could not copy the cover to '%s'" ), DevCoverName.c_str() );
+                                            }
+                                            else if( !CoverAdded )
+                                            {
+                                                m_CoversToAdd.Add( DevCoverName + wxT( ".png" ) );
+                                                CoverAdded = true;
+                                            }
+                                        }
+                                    }
+
+                                    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
+                                    {
+                                        if( !wxFileExists( DevCoverName + wxT( ".gif" ) ) )
+                                        {
+                                            if( !CoverImage->SaveFile( DevCoverName + wxT( ".gif" ), wxBITMAP_TYPE_GIF ) )
+                                            {
+                                                guLogError( wxT( "Could not copy the cover to '%s'" ), DevCoverName.c_str() );
+                                            }
+                                            else if( !CoverAdded )
+                                            {
+                                                m_CoversToAdd.Add( DevCoverName + wxT( ".gif" ) );
+                                                CoverAdded = true;
+                                            }
+                                        }
+                                    }
+
+                                    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
+                                    {
+                                        if( !wxFileExists( DevCoverName + wxT( ".bmp" ) ) )
+                                        {
+                                            if( !CoverImage->SaveFile( DevCoverName + wxT( ".bmp" ), wxBITMAP_TYPE_BMP ) )
+                                            {
+                                                guLogError( wxT( "Could not copy the cover to '%s'" ), DevCoverName.c_str() );
+                                            }
+                                            else if( !CoverAdded )
+                                            {
+                                                m_CoversToAdd.Add( DevCoverName + wxT( ".bmp" ) );
+                                                //CoverAdded = true;
+                                            }
+                                        }
                                     }
                                 }
 
-                                wxString DevCoverName = MediaDevice->CoverName();
-                                if( DevCoverName.IsEmpty() )
-                                {
-                                    DevCoverName = wxT( "cover" );
-                                }
-                                DevCoverName = wxPathOnly( FileName ) + wxT( "/" ) + DevCoverName;
-
-                                if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
-                                {
-                                    if( !wxFileExists( DevCoverName + wxT( ".jpg" ) ) )
-                                    {
-                                        if( !CoverImage->SaveFile( DevCoverName + wxT( ".jpg" ), wxBITMAP_TYPE_JPEG ) )
-                                        {
-                                            guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                        }
-                                        else
-                                        {
-                                            m_CoversToAdd.Add( DevCoverName + wxT( ".jpg" ) );
-                                            CoverAdded = true;
-                                        }
-                                    }
-                                }
-
-                                if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
-                                {
-                                    if( !wxFileExists( DevCoverName + wxT( ".png" ) ) )
-                                    {
-                                        if( !CoverImage->SaveFile( DevCoverName + wxT( ".png" ), wxBITMAP_TYPE_PNG ) )
-                                        {
-                                            guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                        }
-                                        else if( !CoverAdded )
-                                        {
-                                            m_CoversToAdd.Add( DevCoverName + wxT( ".png" ) );
-                                            CoverAdded = true;
-                                        }
-                                    }
-                                }
-
-                                if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
-                                {
-                                    if( !wxFileExists( DevCoverName + wxT( ".gif" ) ) )
-                                    {
-                                        if( !CoverImage->SaveFile( DevCoverName + wxT( ".gif" ), wxBITMAP_TYPE_GIF ) )
-                                        {
-                                            guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                        }
-                                        else if( !CoverAdded )
-                                        {
-                                            m_CoversToAdd.Add( DevCoverName + wxT( ".gif" ) );
-                                            CoverAdded = true;
-                                        }
-                                    }
-                                }
-
-                                if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
-                                {
-                                    if( !wxFileExists( DevCoverName + wxT( ".bmp" ) ) )
-                                    {
-                                        if( !CoverImage->SaveFile( DevCoverName + wxT( ".bmp" ), wxBITMAP_TYPE_BMP ) )
-                                        {
-                                            guLogError( wxT( "Could not copy the cover to %s" ), DevCoverName.c_str() );
-                                        }
-                                        else if( !CoverAdded )
-                                        {
-                                            m_CoversToAdd.Add( DevCoverName + wxT( ".bmp" ) );
-                                            //CoverAdded = true;
-                                        }
-                                    }
-                                }
+                                delete CoverImage;
                             }
-
-                            delete CoverImage;
                         }
                     }
                 }
@@ -639,26 +674,93 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             m_DeleteTracks.Add( new guTrack( * CurTrack ) );
         }
     }
-}
 
 #ifdef WITH_LIBGPOD_SUPPORT
-// -------------------------------------------------------------------------------- //
-bool guMoreCopyToIpodActions( guCopyToActionArray * actions )
-{
-    if( actions->Count() > 1 )
+    if( copytoaction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
     {
-        int Index;
-        int Count = actions->Count();
-        for( Index = 1; Index < Count; Index++ )
+        guPlayListFile * PlayListFile = copytoaction.PlayListFile();
+        guMediaViewer * MediaViewer = copytoaction.GetMediaViewer();
+        guIpodLibrary * IpodDb = ( guIpodLibrary *  ) MediaViewer->GetDb();
+        if( PlayListFile )
         {
-            guCopyToAction &CopyToAction = actions->Item( Index );
-            if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
-                return true;
+            guLogMessage( wxT( "It was a playlist...") );
+            IpodDb->CreateiPodPlayList( PlayListFile->GetName(), m_FilesToAdd );
+        }
+        if( !guMoreCopyToIpodActions( m_CopyToActions ) )
+        {
+            IpodDb->iPodFlush();
+            MediaViewer->UpdateLibrary();
         }
     }
-    return false;
-}
+    else
 #endif
+    if( copytoaction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
+    {
+        int Index;
+        int Count;
+        // Update the files
+        guPortableMediaLibrary * PortableMediaDb = ( guPortableMediaLibrary * ) copytoaction.GetDb();
+        PortableMediaDb->AddFiles( m_FilesToAdd );
+
+        guPlayListFile * PlayListFile = copytoaction.PlayListFile();
+        if( PlayListFile )
+        {
+            guLogMessage( wxT( "Normal device and is from a playlist..." ) );
+            wxArrayInt TrackIds;
+            // The tracks just copied was part of a playlist we need to create too
+            Count = m_FilesToAdd.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                int TrackId = PortableMediaDb->FindTrackFile( m_FilesToAdd[ Index ], NULL );
+                if( TrackId )
+                    TrackIds.Add( TrackId );
+            }
+            if( TrackIds.Count() )
+            {
+                int PLId = PortableMediaDb->CreateStaticPlayList( PlayListFile->GetName(), TrackIds );
+                PortableMediaDb->UpdateStaticPlayListFile( PLId );
+
+                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                wxPostEvent( m_MainFrame, evt );
+            }
+        }
+
+        if( copytoaction.GetMediaViewer() )
+        {
+            guDbLibrary * Db = copytoaction.GetMediaViewer()->GetDb();
+            if( Db )
+            {
+                // Update the covers
+                wxString DevCoverName = copytoaction.CoverName();
+                if( DevCoverName.IsEmpty() )
+                {
+                    DevCoverName = wxT( "cover" );
+                }
+                DevCoverName += wxT( ".jpg" );
+                Count = m_CoversToAdd.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    Db->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
+                }
+            }
+
+            //copytoaction.GetMediaViewer()->LibraryUpdated();
+            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+            wxPostEvent( copytoaction.GetMediaViewer(), evt );
+        }
+    }
+
+    if( m_DeleteTracks.Count() )
+    {
+        // Need to delete the old files
+        //CopyToAction.LibPanel()->DeleteTracks( &m_DeleteTracks );
+        if( copytoaction.GetMediaViewer() )
+        {
+            copytoaction.GetMediaViewer()->DeleteTracks( &m_DeleteTracks );
+        }
+    }
+
+}
 
 // -------------------------------------------------------------------------------- //
 guCopyToThread::ExitCode guCopyToThread::Entry()
@@ -688,84 +790,6 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
             DoCopyToAction( CopyToAction );
 
             FileCounter += CopyToAction.Count();
-
-
-#ifdef WITH_LIBGPOD_SUPPORT
-            if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
-            {
-                guPlayListFile * PlayListFile = CopyToAction.PlayListFile();
-                guIpodLibrary * IpodDb = ( guIpodLibrary *  ) ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->GetDb();
-                if( PlayListFile )
-                {
-                    guLogMessage( wxT( "It was a playlist...") );
-                    IpodDb->CreateiPodPlayList( PlayListFile->GetName(), m_FilesToAdd );
-                }
-                if( !guMoreCopyToIpodActions( m_CopyToActions ) )
-                {
-                    IpodDb->iPodFlush();
-                    ( ( guIpodMediaLibPanel * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() )->DoUpdate( true );
-                }
-            }
-            else
-#endif
-            if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
-            {
-                int Index;
-                int Count;
-                // Update the files
-                guPortableMediaLibrary * PortableMediaDb = CopyToAction.PortableMediaViewCtrl()->Db();
-                PortableMediaDb->AddFiles( m_FilesToAdd );
-
-                guPlayListFile * PlayListFile = CopyToAction.PlayListFile();
-                if( PlayListFile )
-                {
-                    guLogMessage( wxT( "Normal device and is from a playlist..." ) );
-                    wxArrayInt TrackIds;
-                    // The tracks just copied was part of a playlist we need to create too
-                    Count = m_FilesToAdd.Count();
-                    for( Index = 0; Index < Count; Index++ )
-                    {
-                        int TrackId = PortableMediaDb->FindTrackFile( m_FilesToAdd[ Index ], NULL );
-                        if( TrackId )
-                            TrackIds.Add( TrackId );
-                    }
-                    if( TrackIds.Count() )
-                    {
-                        int PLId = PortableMediaDb->CreateStaticPlayList( PlayListFile->GetName(), TrackIds );
-                        PortableMediaDb->UpdateStaticPlayListFile( PLId );
-
-                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-                        evt.SetClientData( ( void * ) CopyToAction.PortableMediaViewCtrl()->LibPanel() );
-                        wxPostEvent( wxTheApp->GetTopWindow(), evt );
-                    }
-                }
-
-                // Update the covers
-                wxString DevCoverName = CopyToAction.PortableMediaDevice()->CoverName();
-                if( DevCoverName.IsEmpty() )
-                {
-                    DevCoverName = wxT( "cover" );
-                }
-                DevCoverName += wxT( ".jpg" );
-                Count = m_CoversToAdd.Count();
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    CopyToAction.PortableMediaViewCtrl()->Db()->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
-                }
-
-                if( CopyToAction.PortableMediaViewCtrl()->LibPanel() )
-                {
-                    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
-                    Event.SetClientData( CopyToAction.PortableMediaViewCtrl()->LibPanel() );
-                    m_MainFrame->AddPendingEvent( Event );
-                }
-            }
-
-            if( m_DeleteTracks.Count() )
-            {
-                // Need to delete the old files
-                CopyToAction.LibPanel()->DeleteTracks( &m_DeleteTracks );
-            }
 
             m_CopyToActionsMutex.Lock();
             m_CopyToActions->RemoveAt( 0 );

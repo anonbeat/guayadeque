@@ -20,8 +20,8 @@
 // -------------------------------------------------------------------------------- //
 #include "AuiNotebook.h"
 
-#include "Utils.h"
 #include "Images.h"
+#include "Utils.h"
 
 #include <wx/dc.h>
 
@@ -304,6 +304,9 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     dc.DestroyClippingRegion();
 }
 
+
+
+
 // -------------------------------------------------------------------------------- //
 // guAuiNotebook
 // -------------------------------------------------------------------------------- //
@@ -356,47 +359,27 @@ void guAuiNotebook::UpdateTabCtrlHeight()
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guAuiNotebook::GetPageId( wxAuiNotebookPage &page )
+void guAuiNotebook::AddId( wxWindow * ptr, const wxString &id )
 {
-    static wxArrayString Names;
-    static wxArrayString Ids;
-
-    if( !Names.Count() )
+    if( m_PagePtrs.Index( ptr ) == wxNOT_FOUND )
     {
-        Names.Add( _( "Library" ) );
-        Names.Add( _( "Radio" ) );
-        Names.Add( _( "Last.fm" ) );
-        Names.Add( _( "Lyrics" ) );
-        Names.Add( _( "PlayLists" ) );
-        Names.Add( _( "Podcasts" ) );
-        Names.Add( _( "Browser" ) );
-        Names.Add( _( "Files" ) );
-        Names.Add( wxT( "Jamendo" ) );
-        Names.Add( wxT( "Magnatune" ) );
-        Names.Add( _( "Tree" ) );
+        m_PageIds.Add( id );
+        m_PagePtrs.Add( ptr );
     }
+}
 
-    if( !Ids.Count() )
+// -------------------------------------------------------------------------------- //
+wxString guAuiNotebook::GetPageId( const wxWindow * ptr )
+{
+    int Index;
+    int Count = m_PagePtrs.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-        Ids.Add( wxT( "Library" ) );
-        Ids.Add( wxT( "Radio" ) );
-        Ids.Add( wxT( "Last.fm" ) );
-        Ids.Add( wxT( "Lyrics" ) );
-        Ids.Add( wxT( "PlayLists" ) );
-        Ids.Add( wxT( "Podcasts" ) );
-        Ids.Add( wxT( "Browser" ) );
-        Ids.Add( wxT( "Files" ) );
-        Ids.Add( wxT( "Jamendo" ) );
-        Ids.Add( wxT( "Magnatune" ) );
-        Ids.Add( wxT( "TreeView" ) );
+        if( m_PagePtrs[ Index ] == ptr )
+        {
+            return m_PageIds[ Index ];
+        }
     }
-
-    int Index = Names.Index( page.caption );
-    if( Index != wxNOT_FOUND )
-    {
-        return Ids[ Index ];
-    }
-
     return wxEmptyString;
 }
 
@@ -436,7 +419,7 @@ wxString guAuiNotebook::SavePerspective( void )
             else if( ( int ) p == tabframe->m_tabs->GetActivePage() )
                 tabs += wxT( "+" );
             //tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, page.caption.c_str() );
-            tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, GetPageId( page ).c_str() );
+            tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, GetPageId( page.window ).c_str() );
         }
     }
     tabs += wxT( "@" );

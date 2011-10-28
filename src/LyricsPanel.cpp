@@ -57,14 +57,15 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
     m_LyricSearchEngine = lyricsearchengine;
     m_LyricSearchContext = NULL;
     m_CurrentTrack = NULL;
+    m_MediaViewer = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_UpdateEnabled = Config->ReadBool( wxT( "FollowPlayer" ), true, wxT( "Lyrics" ) );
-    m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
+    m_UpdateEnabled = Config->ReadBool( wxT( "FollowPlayer" ), true, wxT( "lyrics" ) );
+    m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "lyrics" ) ) ];
     wxFont CurrentFont;
-	CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "Lyrics" ) ) );
+	CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "lyrics" ) ) );
 	if( !CurrentFont.IsOk() )
         CurrentFont = GetFont();
 
@@ -187,7 +188,7 @@ guLyricsPanel::~guLyricsPanel()
 {
 //    // Save the current selected server
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "FollowPlayer" ), m_UpdateEnabled, wxT( "Lyrics" ) );
+    Config->WriteBool( wxT( "FollowPlayer" ), m_UpdateEnabled, wxT( "lyrics" ) );
 //    Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
     Config->UnRegisterObject( this );
 
@@ -232,12 +233,12 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
         if( Config )
         {
             wxFont CurrentFont;
-            CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "Lyrics" ) ) );
+            CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "lyrics" ) ) );
             if( !CurrentFont.IsOk() )
                 CurrentFont = GetFont();
 
             m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() ^ m_LyricAlign );
-            m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "Lyrics" ) ) ];
+            m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "lyrics" ) ) ];
             m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() | m_LyricAlign );
 
             m_LyricText->SetDefaultStyle( wxTextAttr( m_LyricTitle->GetForegroundColour(),
@@ -282,7 +283,7 @@ void guLyricsPanel::OnContextMenu( wxContextMenuEvent &event )
 void guLyricsPanel::CreateContextMenu( wxMenu * menu )
 {
     wxMenuItem * MenuItem;
-    MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy to clipboard" ), _( "Copy the content of the lyric to clipboard" ) );
+    MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy to Clipboard" ), _( "Copy the content of the lyric to clipboard" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
     menu->Append( MenuItem );
 
@@ -324,6 +325,7 @@ void guLyricsPanel::SetCurrentTrack( const guTrack * track )
         {
             ChangeInfo.m_ArtistName = track->m_ArtistName;
             ChangeInfo.m_TrackName = track->m_SongName;
+            ChangeInfo.m_MediaViewer = track->m_MediaViewer;
 
             m_CurrentTrack = new guTrack( * track );
         }
@@ -419,7 +421,7 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
         wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHNEXT );
         wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 
-        guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue() );
+        guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue(), m_MediaViewer );
         SetTrack( &TrackChangeInfo, true );
 
         m_ReloadButton->Enable( false );
@@ -2042,7 +2044,7 @@ void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
 // -------------------------------------------------------------------------------- //
 guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyricsource, const bool istarget ) :
     //wxDialog( parent, wxID_ANY, _( "Lyric Source Editor" ), wxDefaultPosition, wxSize( 500, 425 ), wxDEFAULT_DIALOG_STYLE )
-    wxDialog( parent, wxID_ANY, istarget ? _( "Lyrics Target Editor" ) : _( "Lyrics Source Editor" ), wxDefaultPosition, wxSize( 500, 450 - ( istarget * 200 ) ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, istarget ? _( "Lyrics Target Editor" ) : _( "Lyrics Source Editor" ), wxDefaultPosition, wxSize( 500, 450 - ( istarget * 235 ) ), wxDEFAULT_DIALOG_STYLE )
 {
     m_LyricSource = lyricsource;
     m_IsTarget = istarget;
@@ -2226,11 +2228,15 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 	ButtonsSizer->AddButton( ButtonsSizerOK );
 	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	SetSizer( MainSizer );
 	Layout();
+
+	ButtonsSizerOK->SetDefault();
 
 	// Connect Events
 	m_TypeChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnTypeChanged ), NULL, this );
@@ -2560,11 +2566,15 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 	ButtonsSizer->AddButton( ButtonsSizerOK );
 	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	SetSizer( MainSizer );
 	Layout();
+
+	ButtonsSizerOK->SetDefault();
 
 	m_SearchTextCtrl->SetFocus();
 }
