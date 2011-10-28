@@ -57,12 +57,17 @@ guExitConfirmDlg::guExitConfirmDlg( wxWindow * parent ) :
 	ButtonsSizer->AddButton( ButtonsSizerOK );
 	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND | wxALL, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
-	MainSizer->Fit( this );
+	SetSizer( MainSizer );
+	Layout();
+
+	ButtonsSizerCancel->SetDefault();
+
+    m_AskAgainCheckBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

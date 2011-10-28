@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "MainFrame.h"
+#include "PodcastsPanel.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -202,7 +203,7 @@ void guPodcastChannel::CheckLogo( void )
         guConfig * Config = ( guConfig * ) guConfig::Get();
 
         wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                    wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+                                    guPATH_PODCASTS, wxT( "podcasts" ) );
 
         //guLogMessage( wxT( "Downloading the Image..." ) );
         wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
@@ -228,7 +229,7 @@ void guPodcastChannel::CheckLogo( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastChannel::GetUpdateItems( guDbLibrary * db, guPodcastItemArray * items )
+int guPodcastChannel::GetUpdateItems( guDbPodcasts * db, guPodcastItemArray * items )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -303,7 +304,7 @@ int guPodcastChannel::GetUpdateItems( guDbLibrary * db, guPodcastItemArray * ite
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastChannel::GetPendingChannelItems( guDbLibrary * db, int channelid, guPodcastItemArray * items )
+int guPodcastChannel::GetPendingChannelItems( guDbPodcasts * db, int channelid, guPodcastItemArray * items )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -349,7 +350,7 @@ int guPodcastChannel::GetPendingChannelItems( guDbLibrary * db, int channelid, g
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastChannel::CheckDownloadItems( guDbLibrary * db, guMainFrame * mainframe )
+int guPodcastChannel::CheckDownloadItems( guDbPodcasts * db, guMainFrame * mainframe )
 {
     if( m_DownloadType != guPODCAST_DOWNLOAD_MANUALLY )
     {
@@ -384,7 +385,7 @@ int guPodcastChannel::CheckDownloadItems( guDbLibrary * db, guMainFrame * mainfr
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::CheckDeleteItems( guDbLibrary * db )
+void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
 {
     wxString query;
     //wxSQLite3ResultSet dbRes;
@@ -392,18 +393,18 @@ void guPodcastChannel::CheckDeleteItems( guDbLibrary * db )
     // Get the config object
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    if( Config->ReadBool( wxT( "Delete" ), false, wxT( "Podcasts" ) ) )
+    if( Config->ReadBool( wxT( "Delete" ), false, wxT( "podcasts" ) ) )
     {
         query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( "
             "SELECT podcastitem_id FROM podcastitems, podcastchs "
             "WHERE podcastitem_chid = podcastch_id AND podcastch_allowdel = 1 " );
 
-        int TimeOption = Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "Podcasts" ) );
+        int TimeOption = Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "podcasts" ) );
 
         wxDateTime DeleteTime = wxDateTime::Now();
 
         //
-        switch( Config->ReadNum( wxT( "DeletePeriod" ), guPODCAST_DELETE_DAY, wxT( "Podcasts" ) ) )
+        switch( Config->ReadNum( wxT( "DeletePeriod" ), guPODCAST_DELETE_DAY, wxT( "podcasts" ) ) )
         {
             case guPODCAST_DELETE_DAY :
                 DeleteTime.Subtract( wxDateSpan::Days( TimeOption ) );
@@ -425,7 +426,7 @@ void guPodcastChannel::CheckDeleteItems( guDbLibrary * db )
         query += wxString::Format( wxT( "AND podcastitem_time < %u " ), DeleteTime.GetTicks() );
 
         //
-        if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "Podcasts" ) ) )
+        if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) )
         {
             query += wxT( "AND podcastitem_playcount > 0" );
         }
@@ -440,7 +441,7 @@ void guPodcastChannel::CheckDeleteItems( guDbLibrary * db )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastChannel::Update( guDbLibrary * db, guMainFrame * mainframe )
+void guPodcastChannel::Update( guDbPodcasts * db, guMainFrame * mainframe )
 {
     //guLogMessage( wxT( "The address is %s" ), m_Url.c_str() );
 
@@ -466,7 +467,7 @@ void guPodcastChannel::CheckDir( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     // Check that the directory to store podcasts are created
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
 
     // Create the channel dir
     wxFileName ChannelDir = wxFileName( PodcastsPath + wxT( "/" ) + m_Title );
@@ -551,7 +552,7 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainfr
     m_GaugeId = wxNOT_FOUND;
 
     // Check that the directory to store podcasts are created
-    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {

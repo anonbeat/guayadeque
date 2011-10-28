@@ -21,7 +21,8 @@
 #ifndef PODCASTSPANEL_H
 #define PODCASTSPANEL_H
 
-#include "AuiManagedPanel.h"
+#include "AuiManagerPanel.h"
+#include "AuiNotebook.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 
@@ -52,6 +53,42 @@
 #define guPODCASTS_COLUMN_COUNT         10
 
 // -------------------------------------------------------------------------------- //
+class guDbPodcasts : public guDb
+{
+  protected :
+
+  public :
+    guDbPodcasts( const wxString &dbname );
+    ~guDbPodcasts();
+
+    int                     GetPodcastChannels( guPodcastChannelArray * channels );
+    void                    SavePodcastChannel( guPodcastChannel * channel, bool onlynew = false );
+    int                     SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew = false );
+    int                     GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel = NULL );
+    int                     GetPodcastChannelId( const int id, guPodcastChannel * channel = NULL );
+    void                    DelPodcastChannel( const int id );
+
+    int                     GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc );
+    void                    GetPodcastCounters( const wxArrayInt &filters, wxLongLong * count, wxLongLong * len, wxLongLong * size );
+    int                     GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc );
+    void                    SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew = false );
+    void                    SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew = false );
+    void                    SetPodcastItemStatus( const int itemid, const int status );
+    void                    SetPodcastItemPlayCount( const int itemid, const int playcount );
+    void                    UpdatePodcastItemLength( const int itemid, const int length );
+    int                     GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item = NULL );
+    int                     GetPodcastItemId( const int itemid, guPodcastItem * item = NULL );
+    int                     GetPodcastItemFile( const wxString &filename, guPodcastItem * item = NULL );
+    void                    DelPodcastItem( const int itemid );
+    void                    DelPodcastItems( const int channelid );
+    //void                    SetPodcastChannelFilters( const wxArrayInt &filters );
+    //void                    SetPodcastOrder( int order );
+    int                     GetPendingPodcasts( guPodcastItemArray * items );
+    int                     GetPodcastFiles( const wxArrayInt &channelid, wxFileDataObject * files );
+
+};
+
+// -------------------------------------------------------------------------------- //
 class guChannelsListBox : public guListBox
 {
   protected :
@@ -64,8 +101,8 @@ class guChannelsListBox : public guListBox
     virtual void    OnKeyDown( wxKeyEvent &event );
 
   public :
-    guChannelsListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
-      guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
+    guChannelsListBox( wxWindow * parent, guDbPodcasts * db, const wxString &label ) :
+      guListBox( parent, ( guDbLibrary * ) db, label, wxLB_MULTIPLE | guLISTVIEW_HIDE_HEADER )
     {
         ReloadItems();
     };
@@ -80,7 +117,7 @@ class guPodcastPanel;
 class guPodcastListBox : public guListView
 {
   protected :
-    guDbLibrary *               m_Db;
+    guDbPodcasts *              m_Db;
     guPodcastItemArray          m_PodItems;
     wxArrayInt                  m_PodChFilters;
     int                         m_Order;
@@ -101,7 +138,7 @@ class guPodcastListBox : public guListView
     void                        CreateAcceleratorTable();
 
   public :
-    guPodcastListBox( wxWindow * parent, guDbLibrary * NewDb );
+    guPodcastListBox( wxWindow * parent, guDbPodcasts * NewDb );
     ~guPodcastListBox();
 
     virtual void                ReloadItems( bool reset = true );
@@ -123,7 +160,7 @@ class guPodcastListBox : public guListView
 class guMainFrame;
 
 // -------------------------------------------------------------------------------- //
-class guPodcastPanel : public guAuiManagedPanel
+class guPodcastPanel : public guAuiManagerPanel
 {
   private:
     void                MainSplitterOnIdle( wxIdleEvent& );
@@ -144,7 +181,7 @@ class guPodcastPanel : public guAuiManagedPanel
 
 
   protected:
-    guDbLibrary *               m_Db;
+    guDbPodcasts *              m_Db;
     guMainFrame *               m_MainFrame;
     guPlayerPanel *             m_PlayerPanel;
     wxString                    m_PodcastsPath;
@@ -182,16 +219,15 @@ class guPodcastPanel : public guAuiManagedPanel
     void OnConfigUpdated( wxCommandEvent &event );
 
 public:
-    guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
+    guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFrame * mainframe, guPlayerPanel * playerpanel );
     ~guPodcastPanel();
 
     virtual void                InitPanelData( void );
-    void                        SelectPodcast( const int podcastid );
-    void                        SelectChannel( const int channelid );
+    void                        SetSelection( const int type, const int id );
 
     void GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
     {
-        m_Db->GetPodcastCounters( m_PodcastsListBox->GetFilters(), count, len, size );
+        ( ( guDbPodcasts * ) m_Db )->GetPodcastCounters( m_PodcastsListBox->GetFilters(), count, len, size );
     }
 
     virtual int                 GetListViewColumnCount( void ) { return guPODCASTS_COLUMN_COUNT; }

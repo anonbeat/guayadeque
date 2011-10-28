@@ -32,13 +32,9 @@
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
-guPLSoListBox::guPLSoListBox( wxWindow * parent, guDbLibrary * db, wxString confname, int style ) :
-             guSoListBox( parent, NULL, db, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
+guPLSoListBox::guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style ) :
+             guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
 {
-    //m_PLId = wxNOT_FOUND;
-    //m_PLType = wxNOT_FOUND;
-    m_LibPanel = NULL;
-
     CreateAcceleratorTable();
 
     ReloadItems();
@@ -325,8 +321,8 @@ int guPLSoListBox::GetItemId( const int row ) const
 wxString guPLSoListBox::GetSearchText( int item ) const
 {
     return wxString::Format( wxT( "\"%s\" \"%s\"" ),
-            m_Items[ item ].m_ArtistName.c_str(),
-            m_Items[ item ].m_SongName.c_str() );
+        m_Items[ item - m_ItemsFirst ].m_ArtistName.c_str(),
+        m_Items[ item - m_ItemsFirst ].m_SongName.c_str() );
 }
 
 // -------------------------------------------------------------------------------- //

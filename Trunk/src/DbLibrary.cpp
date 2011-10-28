@@ -26,6 +26,7 @@
 #include "DynamicPlayList.h"
 #include "LibUpdate.h"
 #include "MainFrame.h"
+#include "MediaViewer.h"
 #include "MD5.h"
 #include "PlayerPanel.h"
 #include "TagInfo.h"
@@ -34,23 +35,6 @@
 
 #include <wx/mstream.h>
 #include <wx/wfstream.h>
-
-static wxString     LastAlbum       = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
-static int          LastAlbumId;
-//static int          LastAlbumCoverId;
-static wxString     LastGenre       = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
-static int          LastGenreId;
-static int          LastCoverId = wxNOT_FOUND;
-static wxString     LastCoverPath;
-static guListItems  LastItems;
-static wxString     LastPath;
-static int          LastPathId;
-static wxString     LastArtist = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
-static int          LastArtistId = wxNOT_FOUND;
-static wxString     LastAlbumArtist = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
-static int          LastAlbumArtistId = wxNOT_FOUND;
-static wxString     LastComposer = wxT( "__Gu4y4d3qu3__" );  // Make sure its not the same.
-static int          LastComposerId = wxNOT_FOUND;
 
 WX_DEFINE_OBJARRAY(guTrackArray);
 WX_DEFINE_OBJARRAY(guListItems);
@@ -64,8 +48,8 @@ WX_DEFINE_OBJARRAY(guAS_SubmitInfoArray);
 // -------------------------------------------------------------------------------- //
 // Various functions
 // -------------------------------------------------------------------------------- //
-wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order );
-wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc );
+wxString GetSongsDBNamesSQL( const int order );
+wxString GetSongsSortSQL( const int order, const bool orderdesc );
 
 // -------------------------------------------------------------------------------- //
 int guAlbumItemSearch( const guAlbumItems &items, int start, int end, int id )
@@ -343,80 +327,69 @@ bool guTrack::ReadFromFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary() : guDb()
 {
+  m_MediaViewer = NULL;
   m_NeedUpdate = false;
+  m_LastAlbum = wxT( "__Gu4y4d3qu3__" );
+  m_LastGenre = wxT( "__Gu4y4d3qu3__" );
+  m_LastCoverId = wxNOT_FOUND;
+  m_LastArtist = wxT( "__Gu4y4d3qu3__" );
+  m_LastArtistId = wxNOT_FOUND;
+  m_LastAlbumArtist = wxT( "__Gu4y4d3qu3__" );
+  m_LastAlbumArtistId = wxNOT_FOUND;
+  m_LastComposer = wxT( "__Gu4y4d3qu3__" );
+  m_LastComposerId = wxNOT_FOUND;
+
   CheckDbVersion();
 
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-    m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
-    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
-    m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-    //m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
-    //m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
-  }
-
-  //LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary( const wxString &dbname ) : guDb( dbname )
 {
+  m_MediaViewer = NULL;
   m_NeedUpdate = false;
+  m_LastAlbum = wxT( "__Gu4y4d3qu3__" );
+  m_LastGenre = wxT( "__Gu4y4d3qu3__" );
+  m_LastCoverId = wxNOT_FOUND;
+  m_LastArtist = wxT( "__Gu4y4d3qu3__" );
+  m_LastArtistId = wxNOT_FOUND;
+  m_LastAlbumArtist = wxT( "__Gu4y4d3qu3__" );
+  m_LastAlbumArtistId = wxNOT_FOUND;
+  m_LastComposer = wxT( "__Gu4y4d3qu3__" );
+  m_LastComposerId = wxNOT_FOUND;
+
   CheckDbVersion();
-
-  //
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-    m_TracksOrder = ( guTRACKS_ORDER ) Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
-    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), false, wxT( "General" ) );
-    m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-    //m_PodcastOrder = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
-    //m_PodcastOrderDesc = Config->ReadBool( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
-  }
-
-  //LoadCache();
 }
 
 // -------------------------------------------------------------------------------- //
 guDbLibrary::guDbLibrary( guDb * db ) : guDb()
 {
-    m_Db = db->GetDb();
+  m_MediaViewer = NULL;
+  m_NeedUpdate = false;
+  m_LastAlbum = wxT( "__Gu4y4d3qu3__" );
+  m_LastGenre = wxT( "__Gu4y4d3qu3__" );
+  m_LastCoverId = wxNOT_FOUND;
+  m_LastArtist = wxT( "__Gu4y4d3qu3__" );
+  m_LastArtistId = wxNOT_FOUND;
+  m_LastAlbumArtist = wxT( "__Gu4y4d3qu3__" );
+  m_LastAlbumArtistId = wxNOT_FOUND;
+  m_LastComposer = wxT( "__Gu4y4d3qu3__" );
+  m_LastComposerId = wxNOT_FOUND;
+
+  m_Db = db->GetDb();
 }
 
 // -------------------------------------------------------------------------------- //
 guDbLibrary::~guDbLibrary()
 {
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-    Config->WriteNum( wxT( "TracksOrder" ), m_TracksOrder, wxT( "General" ) );
-    Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, wxT( "General" ) );
-    //Config->WriteNum( wxT( "Order" ), m_PodcastOrder, wxT( "Podcasts" ) );
-    //Config->WriteBool( wxT( "OrderDesc" ), m_PodcastOrderDesc, wxT( "Podcasts" ) );
-    Config->WriteNum( wxT( "AlbumYearOrder" ), m_AlbumsOrder, wxT( "General" ) );
-  }
-
   Close();
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guDbLibrary::LoadCache( void )
-//{
-////    Labels.Empty();
-////    GetLabels( &Labels );
-////    m_GenresCache.Empty();
-////    GetGenres( &m_GenresCache, true );
-////    m_ArtistsCache.Empty();
-////    GetArtists( &m_ArtistsCache, true );
-////    m_ComposersCache.Empty();
-////    GetComposers( &m_ComposersCache, true );
-////    m_AlbumsCache.Empty();
-////    GetAlbums( &m_AlbumsCache , true );
-////    m_PathsCache.Empty();
-////    GetPaths( &m_PathsCache, true );
-//}
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::SetMediaViewer( guMediaViewer * mediaviewer )
+{
+  m_MediaViewer = mediaviewer;
+}
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetDbVersion( void )
@@ -460,7 +433,7 @@ void guDbLibrary::DoCleanUp( void )
   wxString FileName;
 
   guConfig * Config = ( guConfig * ) guConfig::Get();
-  wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
+  wxArrayString LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "libpaths" ) );
 
   CheckSymLinks( LibPaths );
 
@@ -594,43 +567,8 @@ bool guDbLibrary::CheckDbVersion( void )
       guConfig * Config = ( guConfig * ) guConfig::Get();
       if( Config )
       {
-        Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "General" ) );
+        Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "general" ) );
       }
-
-//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS genres( genre_id INTEGER PRIMARY KEY AUTOINCREMENT,genre_name varchar(255) );" ) );
-//      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'genre_id' on genres (genre_id ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'genre_name' on genres (genre_name ASC);" ) );
-//
-//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS albums( album_id INTEGER PRIMARY KEY AUTOINCREMENT, album_artistid INTEGER, album_pathid INTEGER, album_name varchar(255), album_coverid INTEGER );" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'album_id' on albums (album_id ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'album_artistid' on albums (album_artistid ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'album_pathid' on albums (album_pathid ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'album_name' on albums (album_name ASC);" ) );
-//
-//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS artists( artist_id INTEGER  PRIMARY KEY AUTOINCREMENT, artist_name varchar(255) );" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'artist_id' on artists (artist_id ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'artist_name' on artists (artist_name ASC);" ) );
-//
-//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS composers( composer_id INTEGER  PRIMARY KEY AUTOINCREMENT, composer_name varchar(512) );" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'composer_id' on composers (composer_id ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'composer_name' on composers (composer_name ASC);" ) );
-//
-//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS paths( path_id INTEGER PRIMARY KEY AUTOINCREMENT,path_value varchar(1024) );" ) );
-//      query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'path_id' on paths (path_id ASC);" ) );
-//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'path_value' on paths (path_value ASC);" ) );
-
-
-//CREATE TABLE IF NOT EXISTS songs1( song_id INTEGER PRIMARY KEY AUTOINCREMENT, song_name VARCHAR COLLATE NOCASE, song_genreid INTEGER, song_genre VARCHAR COLLATE NOCASE, song_artistid INTEGER, song_artist VARCHAR COLLATE NOCASE, song_albumartistid INTEGER, song_albumartist VARCHAR COLLATE NOCASE, song_composerid INTEGER, song_composer VARCHAR COLLATE NOCASE, song_albumid INTEGER, song_album VARCHAR COLLATE NOCASE, song_pathid INTEGER, song_path VARCHAR, song_filename VARCHAR, song_format VARCHAR(8) COLLATE NOCASE, song_disk VARCHAR COLLATE NOCASE, song_number INTEGER(3), song_year INTEGER(4), song_comment VARCHAR COLLATE NOCASE, song_coverid INTEGER, song_offset INTEGER, song_length INTEGER, song_bitrate INTEGER, song_rating INTEGER DEFAULT -1, song_playcount INTEGER DEFAULT 0, song_addedtime INTEGER, song_lastplay INTEGER, song_filesize INTEGER );
-//INSERT INTO songs1( song_id, song_name, song_albumid, song_artistid, song_genreid, song_filename, song_pathid, song_number, song_disk, song_year, song_comment, song_composerid, song_length, song_bitrate, song_rating, song_playcount, song_addedtime, song_lastplay, song_filesize ) SELECT song_id, song_name, song_albumid, song_artistid, song_genreid, song_filename, song_pathid, song_number, song_disk, song_year, song_comment, song_composerid, song_length, song_bitrate, song_rating, song_playcount, song_addedtime, song_lastplay, song_filesize FROM songs
-//UPDATE songs1 SET song_genre = ( SELECT genre_name FROM songs, genres WHERE songs1.song_id = song_id AND song_genreid = genreid )
-//UPDATE songs1 SET song_genre = ( SELECT genre_name FROM genres WHERE song_genreid = genre_id )
-//UPDATE songs1 SET song_artist = ( SELECT artist_name FROM artists WHERE song_artistid = artist_id )
-//UPDATE songs1 SET song_album = ( SELECT album_name FROM albums WHERE song_albumid = album_id )
-//UPDATE songs1 SET song_composer = ( SELECT composer_name FROM composers WHERE song_composerid = composer_id )
-//UPDATE songs1 SET song_path = ( SELECT path_name FROM paths WHERE song_pathid = path_id )
-//UPDATE songs1 SET song_path = ( SELECT path_value FROM paths WHERE song_pathid = path_id )
-//UPDATE songs1 SET song_coverid = ( SELECT album_coverid FROM albums WHERE song_albumid = album_id )
-//UPDATE songs1 SET song_offset = 0
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "song_name VARCHAR COLLATE NOCASE, song_genreid INTEGER, song_genre VARCHAR COLLATE NOCASE, "
@@ -702,7 +640,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
                       "VALUES( NULL, '" );
-      querystr += _( "Recent Added Tracks" );
+      querystr += _( "Recently added tracks" );
       querystr += wxT( "', 1, 0, 0, 0, 1, 12, 1, 0 );" );
       query.Add( querystr );
       querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
@@ -710,14 +648,14 @@ bool guDbLibrary::CheckDbVersion( void )
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
                       "VALUES( NULL, '" );
 
-      querystr += _( "Last Played Tracks" );
+      querystr += _( "Last played tracks" );
       querystr += wxT( "', 1, 0, 0, 0, 1, 11, 1, 0 );" );
       query.Add( querystr );
       querystr = wxT( "INSERT INTO playlists( playlist_id, playlist_name, playlist_type, "
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
                       "VALUES( NULL, '" );
-      querystr += _( "Most Rated Tracks" );
+      querystr += _( "Most rated tracks" );
       querystr += wxT( "', 1, 0, 0, 0, 1, 8, 1, 0 );" );
       query.Add( querystr );
 
@@ -742,55 +680,6 @@ bool guDbLibrary::CheckDbVersion( void )
       //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'audiosc_id' on audioscs (audiosc_id ASC);" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'audiosc_playedtime' on audioscs (audiosc_playedtime ASC);" ) );
 
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "radiogenre_name VARCHAR COLLATE NOCASE, radiogenre_source INTEGER, radiogenre_flags INTEGER );" ) );
-      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '60s', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '80s', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, '90s', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Alternative', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Ambient', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Blues', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Chill', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Classical', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Country', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Dance', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Downtempo', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Easy Listening', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Electronic', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Funk', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Heavy Metal', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'House', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Jazz', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'New Age', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Oldies', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Pop', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Reggae', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'R&B/Urban', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Rock', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Smooth Jazz', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Slow', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Techno', 0, 0 );" ) );
-      query.Add( wxT( "INSERT INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( NULL, 'Top 40', 0, 0 );" ) );
-
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
-                      "radiostation_name VARCHAR COLLATE NOCASE, radiostation_link VARCHAR, radiostation_type VARCHAR, "
-                      "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
-      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_id' on radiostations (radiostation_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_ct' on radiostations (radiostation_ct ASC);" ) );
-
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiolabels( radiolabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiolabel_name VARCHAR COLLATE NOCASE);" ) );
-      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiolabel_id' on radiolabels (radiolabel_id ASC);" ) );
-
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiosetlabels( radiosetlabel_id INTEGER PRIMARY KEY AUTOINCREMENT, radiosetlabel_labelid INTEGER, radiosetlabel_stationid INTEGER);" ) );
-      //query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_id' on radiosetlabels (radiosetlabel_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_labelid' on radiosetlabels (radiosetlabel_labelid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_stationidid' on radiosetlabels (radiosetlabel_stationid ASC);" ) );
-
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS deleted( delete_id INTEGER PRIMARY KEY AUTOINCREMENT, "
                       "delete_path VARCHAR, delete_date INTEGER );" ) );
       query.Add( wxT( "CREATE INDEX IF NOT EXISTS delete_path on deleted(delete_path ASC);" ) );
@@ -799,30 +688,30 @@ bool guDbLibrary::CheckDbVersion( void )
 
     case 5 :
     {
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastchs( podcastch_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "podcastch_url VARCHAR, podcastch_title VARCHAR COLLATE NOCASE, podcastch_description VARCHAR, "
-                      "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, "
-                      "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
-                      "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, "
-                      "podcastch_downtext VARCHAR, podcastch_allowdel BOOLEAN );" ) );
-      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_url' on podcastchs(podcastch_url ASC);" ) );
-
-      query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                      "podcastitem_chid INTEGER, podcastitem_title VARCHAR COLLATE NOCASE, podcastitem_summary VARCHAR, "
-                      "podcastitem_author VARCHAR COLLATE NOCASE, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, "
-                      "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, "
-                      "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, "
-                      "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
-      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_file' on podcastitems(podcastitem_file ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_chid' on podcastitems(podcastitem_chid ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_time' on podcastitems(podcastitem_time ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_enclosure' on podcastitems(podcastitem_enclosure ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_author' on podcastitems(podcastitem_author ASC);" ) );
-      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_length' on podcastitems(podcastitem_length ASC);" ) );
+//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastchs( podcastch_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                      "podcastch_url VARCHAR, podcastch_title VARCHAR COLLATE NOCASE, podcastch_description VARCHAR, "
+//                      "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, "
+//                      "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
+//                      "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, "
+//                      "podcastch_downtext VARCHAR, podcastch_allowdel BOOLEAN );" ) );
+//      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_url' on podcastchs(podcastch_url ASC);" ) );
+//
+//      query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+//                      "podcastitem_chid INTEGER, podcastitem_title VARCHAR COLLATE NOCASE, podcastitem_summary VARCHAR, "
+//                      "podcastitem_author VARCHAR COLLATE NOCASE, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, "
+//                      "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, "
+//                      "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, "
+//                      "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
+//      //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_file' on podcastitems(podcastitem_file ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_chid' on podcastitems(podcastitem_chid ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_time' on podcastitems(podcastitem_time ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_enclosure' on podcastitems(podcastitem_enclosure ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_author' on podcastitems(podcastitem_author ASC);" ) );
+//      query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_length' on podcastitems(podcastitem_length ASC);" ) );
     }
 
     case 6 :
@@ -1099,16 +988,16 @@ bool guDbLibrary::CheckDbVersion( void )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetGenreId( wxString &genrename )
 {
-  if( LastGenre == genrename )
+  if( m_LastGenre == genrename )
   {
-      return LastGenreId;
+      return m_LastGenreId;
   }
 
   wxString query;
   wxSQLite3ResultSet dbRes;
   int RetVal = wxNOT_FOUND;
 
-  LastGenre = genrename;
+  m_LastGenre = genrename;
 
   query = wxString::Format( wxT( "SELECT song_genreid FROM songs "
                                  "WHERE song_genre = '%s' LIMIT 1;" ),
@@ -1117,7 +1006,7 @@ int guDbLibrary::GetGenreId( wxString &genrename )
   dbRes = ExecuteQuery( query );
   if( dbRes.NextRow() )
   {
-    RetVal = LastGenreId = dbRes.GetInt( 0 );
+    RetVal = m_LastGenreId = dbRes.GetInt( 0 );
   }
   else
   {
@@ -1126,11 +1015,11 @@ int guDbLibrary::GetGenreId( wxString &genrename )
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
-      RetVal = LastGenreId = dbRes.GetInt( 0 ) + 1;
+      RetVal = m_LastGenreId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        RetVal = LastGenreId = 1;
+        RetVal = m_LastGenreId = 1;
     }
   }
   dbRes.Finalize();
@@ -1141,9 +1030,9 @@ int guDbLibrary::GetGenreId( wxString &genrename )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetComposerId( wxString &composername, bool create )
 {
-  if( LastComposer == composername )
+  if( m_LastComposer == composername )
   {
-      return LastComposerId;
+      return m_LastComposerId;
   }
 
   wxString query;
@@ -1151,7 +1040,7 @@ int guDbLibrary::GetComposerId( wxString &composername, bool create )
   int RetVal = wxNOT_FOUND;
 //  printf( "GetArtistId\n" );
 
-  LastComposer = composername;
+  m_LastComposer = composername;
 
   query = wxString::Format( wxT( "SELECT song_composerid FROM songs "
                                  "WHERE song_composer = '%s' LIMIT 1;" ),
@@ -1161,7 +1050,7 @@ int guDbLibrary::GetComposerId( wxString &composername, bool create )
 
   if( dbRes.NextRow() )
   {
-    RetVal = LastComposerId = dbRes.GetInt( 0 );
+    RetVal = m_LastComposerId = dbRes.GetInt( 0 );
   }
   else if( create )
   {
@@ -1170,11 +1059,11 @@ int guDbLibrary::GetComposerId( wxString &composername, bool create )
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
-      RetVal = LastComposerId = dbRes.GetInt( 0 ) + 1;
+      RetVal = m_LastComposerId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        RetVal = LastComposerId = 1;
+        RetVal = m_LastComposerId = 1;
     }
   }
   dbRes.Finalize();
@@ -1394,75 +1283,74 @@ void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const
   }
 }
 
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::FindCoverFile( const wxString &dirname )
-{
-    wxString query;
-    wxSQLite3ResultSet dbRes;
-    wxDir Dir;
-    wxString FileName;
-    wxString CurFile;
-    wxString DirName = dirname;
-    int CoverId = 0;
-
-    if( !DirName.EndsWith( wxT( "/" ) ) )
-        DirName += wxT( "/" );
-
-    Dir.Open( DirName );
-    //wxSetWorkingDirectory( DirName );
-
-    if( Dir.IsOpened() )
-    {
-        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES ) )
-        {
-            do {
-                CurFile = FileName.Lower();
-                //guLogMessage( wxT( "FindCoverFile: Found file '%s'" ), FileName.c_str() );
-                if( SearchCoverWords( CurFile, m_CoverSearchWords ) )
-                {
-                    //guLogMessage( wxT( "FindCoverFile: This file have been detected as a Cover" ) );
-                    if( CurFile.EndsWith( wxT( ".jpg" ) ) ||
-                        CurFile.EndsWith( wxT( ".jpeg" ) ) ||
-                        CurFile.EndsWith( wxT( ".png" ) ) ||
-                        CurFile.EndsWith( wxT( ".bmp" ) ) ||
-                        CurFile.EndsWith( wxT( ".gif" ) ) )
-                    {
-                        //guLogMessage( wxT( "FindCoverFile: This file looks like an image file" ) );
-                        CurFile = DirName + FileName;
-                        //guLogMessage( wxT( "Found Cover: %s" ), CurFile.c_str() );
-                        guMD5 md5;
-                        wxString CoverHash = md5.MD5File( CurFile );
-
-                        escape_query_str( &CurFile );
-
-                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_hash FROM covers " \
-                                    "WHERE cover_path = '%s' LIMIT 1;" ), CurFile.c_str() );
-
-                        dbRes = ExecuteQuery( query );
-
-                        if( dbRes.NextRow() ) // The cover is found in the database
-                        {
-                            CoverId = dbRes.GetInt( 0 );
-                            // Check if the file have been changed
-                            if( dbRes.GetString( 2 ) != CoverHash )
-                            {
-                                // The cover is different. Update the thumb is needed
-                                UpdateCoverFile( CoverId, DirName + FileName, CoverHash );
-                            }
-                        }
-                        else
-                        {
-                            CoverId = AddCoverFile( DirName + FileName, CoverHash );
-                        }
-                        break;
-                    }
-                }
-            } while( Dir.GetNext( &FileName ) );
-        }
-    }
-    //wxSetWorkingDirectory( SavedDir );
-    return CoverId;
-}
+//// -------------------------------------------------------------------------------- //
+//int guDbLibrary::FindCoverFile( const wxString &dirname )
+//{
+//    wxString query;
+//    wxSQLite3ResultSet dbRes;
+//    wxDir Dir;
+//    wxString FileName;
+//    wxString CurFile;
+//    wxString DirName = dirname;
+//    int CoverId = 0;
+//
+//    if( !DirName.EndsWith( wxT( "/" ) ) )
+//        DirName += wxT( "/" );
+//
+//    Dir.Open( DirName );
+//    //wxSetWorkingDirectory( DirName );
+//
+//    if( Dir.IsOpened() )
+//    {
+//        if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES ) )
+//        {
+//            do {
+//                CurFile = FileName.Lower();
+//                //guLogMessage( wxT( "FindCoverFile: Found file '%s'" ), FileName.c_str() );
+//                if( SearchCoverWords( CurFile, m_CoverSearchWords ) )
+//                {
+//                    //guLogMessage( wxT( "FindCoverFile: This file have been detected as a Cover" ) );
+//                    if( CurFile.EndsWith( wxT( ".jpg" ) ) ||
+//                        CurFile.EndsWith( wxT( ".jpeg" ) ) ||
+//                        CurFile.EndsWith( wxT( ".png" ) ) ||
+//                        CurFile.EndsWith( wxT( ".bmp" ) ) ||
+//                        CurFile.EndsWith( wxT( ".gif" ) ) )
+//                    {
+//                        //guLogMessage( wxT( "FindCoverFile: This file looks like an image file" ) );
+//                        CurFile = DirName + FileName;
+//                        //guLogMessage( wxT( "Found Cover: %s" ), CurFile.c_str() );
+//                        guMD5 md5;
+//                        wxString CoverHash = md5.MD5File( CurFile );
+//
+//                        escape_query_str( &CurFile );
+//
+//                        query = wxString::Format( wxT( "SELECT cover_id, cover_path, cover_hash FROM covers ""WHERE cover_path = '%s' LIMIT 1;" ), CurFile.c_str() );
+//
+//                        dbRes = ExecuteQuery( query );
+//
+//                        if( dbRes.NextRow() ) // The cover is found in the database
+//                        {
+//                            CoverId = dbRes.GetInt( 0 );
+//                            // Check if the file have been changed
+//                            if( dbRes.GetString( 2 ) != CoverHash )
+//                            {
+//                                // The cover is different. Update the thumb is needed
+//                                UpdateCoverFile( CoverId, DirName + FileName, CoverHash );
+//                            }
+//                        }
+//                        else
+//                        {
+//                            CoverId = AddCoverFile( DirName + FileName, CoverHash );
+//                        }
+//                        break;
+//                    }
+//                }
+//            } while( Dir.GetNext( &FileName ) );
+//        }
+//    }
+//    //wxSetWorkingDirectory( SavedDir );
+//    return CoverId;
+//}
 
 // -------------------------------------------------------------------------------- //
 wxString guDbLibrary::GetCoverPath( const int CoverId )
@@ -1472,25 +1360,25 @@ wxString guDbLibrary::GetCoverPath( const int CoverId )
   wxString RetVal = wxEmptyString;
   int count;
   int index;
-  if( LastCoverId != CoverId )
+  if( m_LastCoverId != CoverId )
   {
-    count = LastItems.Count();
+    count = m_LastItems.Count();
     if( count )
     {
       for( index = 0; index < count; index++ )
       {
-        if( LastItems[ index ].m_Id == CoverId )
+        if( m_LastItems[ index ].m_Id == CoverId )
         {
-          LastCoverId = CoverId;
-          LastCoverPath = LastItems[ index ].m_Name;
-          return LastCoverPath;
+          m_LastCoverId = CoverId;
+          m_LastCoverPath = m_LastItems[ index ].m_Name;
+          return m_LastCoverPath;
         }
       }
     }
 
     if( count > 25 ) // MAX_CACHE_ITEMS
     {
-        LastItems.RemoveAt( 0 );
+        m_LastItems.RemoveAt( 0 );
     }
 
     query = wxString::Format( wxT( "SELECT cover_path, cover_hash FROM covers "\
@@ -1511,13 +1399,13 @@ wxString guDbLibrary::GetCoverPath( const int CoverId )
           }
       }
     }
-    LastCoverId = CoverId;
-    LastCoverPath = RetVal;
-    LastItems.Add( new guListItem( CoverId, LastCoverPath ) );
+    m_LastCoverId = CoverId;
+    m_LastCoverPath = RetVal;
+    m_LastItems.Add( new guListItem( CoverId, m_LastCoverPath ) );
     dbRes.Finalize();
   }
   else
-    RetVal = LastCoverPath;
+    RetVal = m_LastCoverPath;
   return RetVal;
 }
 
@@ -1547,7 +1435,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxImage &image )
   else
   {
     query = wxString::Format( wxT( "UPDATE songs SET song_coverid = 0 WHERE song_albumid = %i;" ), AlbumId );
-    ExecuteUpdate( query );
+    guLogMessage( query );
     CoverId = 0;
   }
 
@@ -1604,11 +1492,11 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, co
 int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int pathid,
     const wxString &pathname, const int coverid )
 {
-  //guLogMessage( wxT( "GetAlbumId : %s" ), LastAlbum.c_str() );
-  if( LastAlbum == albumname )
+  //guLogMessage( wxT( "GetAlbumId : %s" ), m_LastAlbum.c_str() );
+  if( m_LastAlbum == albumname )
   {
       //guLogMessage( wxT( "Album was found in cache" ) );
-      return LastAlbumId;
+      return m_LastAlbumId;
   }
 
   wxString query;
@@ -1627,7 +1515,7 @@ int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int 
 
   if( dbRes.NextRow() )
   {
-    RetVal = LastAlbumId = dbRes.GetInt( 0 );
+    RetVal = m_LastAlbumId = dbRes.GetInt( 0 );
 
 //    // Now check if the artist id changed and if so update it
 //    if( dbRes.GetInt( 1 ) != artistid )
@@ -1645,11 +1533,11 @@ int guDbLibrary::GetAlbumId( wxString &albumname, const int artistid, const int 
 
     if( dbRes.NextRow() )
     {
-      RetVal = LastAlbumId = dbRes.GetInt( 0 ) + 1;
+      RetVal = m_LastAlbumId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        RetVal = LastAlbumId = 1;
+        RetVal = m_LastAlbumId = 1;
     }
   }
   dbRes.Finalize();
@@ -1736,9 +1624,9 @@ int guDbLibrary::PathExists( const wxString &path )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPathId( wxString &PathValue )
 {
-  if( PathValue == LastPath )
+  if( PathValue == m_LastPath )
   {
-      return LastPathId;
+      return m_LastPathId;
   }
 
   int RetVal = 0;
@@ -1747,7 +1635,7 @@ int guDbLibrary::GetPathId( wxString &PathValue )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  LastPath = PathValue;
+  m_LastPath = PathValue;
 
   if( !PathValue.EndsWith( wxT( "/" ) ) )
     PathValue += '/';
@@ -1759,7 +1647,7 @@ int guDbLibrary::GetPathId( wxString &PathValue )
 
   if( dbRes.NextRow() )
   {
-    RetVal = LastPathId = dbRes.GetInt( 0 );
+    RetVal = m_LastPathId = dbRes.GetInt( 0 );
   }
   else
   {
@@ -1768,11 +1656,11 @@ int guDbLibrary::GetPathId( wxString &PathValue )
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
-        RetVal = LastPathId = dbRes.GetInt( 0 ) + 1;
+        RetVal = m_LastPathId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        RetVal = LastPathId = 1;
+        RetVal = m_LastPathId = 1;
     }
   }
   dbRes.Finalize();
@@ -1825,7 +1713,7 @@ int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath, bool * creat
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowratings )
+int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating )
 {
   guTagInfo * TagInfo = guGetTagInfoHandler( filename );
   if( TagInfo )
@@ -1858,6 +1746,7 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowratings
       else
       {
           guLogError( wxT( "Cant read tags from '%s'" ), filename.c_str() );
+
       }
 
       CurTrack.m_PathId = GetPathId( CurTrack.m_Path );
@@ -1916,9 +1805,9 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowratings
         SetAlbumsLabels( ArrayIds, AlbumLabelIds );
       }
 
-      delete TagInfo;
+      UpdateSong( CurTrack, IsNewTrack || allowrating );
 
-      UpdateSong( CurTrack, IsNewTrack || allowratings );
+      delete TagInfo;
 
       return 1;
   }
@@ -1960,8 +1849,7 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
   guTrack * Song;
   int index;
   int count = Songs->Count();
-  wxArrayPtrVoid PanelPtrs;
-  bool SendMainLibPanel = false;
+  wxArrayPtrVoid MediaViewerPtrs;
 
   // Process each Track
   for( index = 0; index < count; index++ )
@@ -2007,14 +1895,10 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
 
         if( Song->m_Type == guTRACK_TYPE_DB )
         {
-            if( Song->m_LibPanel )
+            if( Song->m_MediaViewer )
             {
-                if( PanelPtrs.Index( Song->m_LibPanel ) == wxNOT_FOUND )
-                    PanelPtrs.Add( Song->m_LibPanel );
-            }
-            else if( !SendMainLibPanel )
-            {
-                SendMainLibPanel = true;
+                if( MediaViewerPtrs.Index( Song->m_MediaViewer ) == wxNOT_FOUND )
+                    MediaViewerPtrs.Add( Song->m_MediaViewer );
             }
 
             //
@@ -2078,16 +1962,11 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
   // We added in PanelPtr all panels we are updating tracks
   // And send the clean db event to all of them
   wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_DOCLEANDB );
-  event.SetEventObject( ( wxObject * ) this );
-
-  if( SendMainLibPanel )
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
-
-  count = PanelPtrs.Count();
+  count = MediaViewerPtrs.Count();
   for( index = 0; index < count; index++ )
   {
-    event.SetClientData( ( void * ) PanelPtrs[ index ] );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+//    event.SetClientData( ( void * ) MediaViewerPtrs[ index ] );
+    wxPostEvent( ( guMediaViewer * ) MediaViewerPtrs[ index ], event );
   }
 
 }
@@ -2174,7 +2053,7 @@ void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, c
             return;
         }
 
-        if( maxsize != wxNOT_FOUND )
+        if( maxsize )
         {
             Image->Rescale( maxsize, maxsize, wxIMAGE_QUALITY_HIGH );
         }
@@ -2243,38 +2122,6 @@ void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, c
 //      guLogError( wxT( "The image '%s' with no album set" ), FileName.c_str() );
 //  }
   dbRes.Finalize();
-}
-
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::ConfigChanged( void )
-{
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-    SetLibPath( Config->ReadAStr( wxT( "LibPath" ), wxGetHomeDir() + wxT( "/Music" ),
-                                      wxT( "LibPaths" ) ) );
-    //m_AlbumsOrder = Config->ReadNum( wxT( "AlbumYearOrder" ), 0, wxT( "General" ) );
-  }
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SetLibPath( const wxArrayString &NewPaths )
-{
-  m_LibPaths = NewPaths;
-  //
-  guLogMessage( wxT( "Library Paths: " ) );
-  for( unsigned int Index = 0; Index < m_LibPaths.Count(); Index++ )
-  {
-    guLogMessage( m_LibPaths[ Index ] );
-  }
-
-  // Refresh the SearchCoverWords array
-  guConfig * Config = ( guConfig * ) guConfig::Get();
-  if( Config )
-  {
-      m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-  }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2624,16 +2471,16 @@ int guDbLibrary::SetLabelName( const int labelid, const wxString &oldlabel, cons
 {
   wxString query;
 
-  guConfig * Config = ( guConfig * ) Config->Get();
-  if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+  if( m_MediaViewer->GetEmbeddMetadata() )
   {
       guTrackArray  Tracks;
       wxArrayInt    Labels;
       Labels.Add( labelid );
 
       GetLabelsSongs( Labels, &Tracks );
-      UpdateSongsLabel( &Tracks, oldlabel, newlabel );
+      UpdateSongsLabel( Tracks, oldlabel, newlabel );
   }
+
 
   wxString LabelName = newlabel;
   escape_query_str( &LabelName );
@@ -2652,8 +2499,7 @@ int guDbLibrary::DelLabel( const int LabelId )
 {
   wxString      query;
 
-  guConfig * Config = ( guConfig * ) Config->Get();
-  if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+  if( m_MediaViewer->GetEmbeddMetadata() )
   {
       guListItems   LaItems;
       guTrackArray  Tracks;
@@ -2663,7 +2509,7 @@ int guDbLibrary::DelLabel( const int LabelId )
       GetLabels( &LaItems, true );
 
       GetLabelsSongs( Labels, &Tracks );
-      UpdateSongsLabel( &Tracks, guListItemsGetName( LaItems, LabelId ), wxEmptyString );
+      UpdateSongsLabel( Tracks, guListItemsGetName( LaItems, LabelId ), wxEmptyString );
   }
 
   query = query.Format( wxT( "DELETE FROM tags WHERE tag_id = %u;" ), LabelId );
@@ -3255,7 +3101,6 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       query += wxT( "song_artist, song_year DESC" );
       break;
 
-
   }
 
   query += wxString::Format( wxT( " LIMIT %i, %i" ), start, count );
@@ -3542,7 +3387,7 @@ void guDbLibrary::GetPlayLists( guListItems &playlists )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT playlist_id, playlist_name FROM playlists" );
+  query = wxT( "SELECT playlist_id, playlist_name FROM playlists ORDER BY playlist_name" );
 
   dbRes = ExecuteQuery( query );
 
@@ -4203,20 +4048,21 @@ void guDbLibrary::GetDynamicPlayList( const int plid, guDynPlayList * playlist )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT playlist_limited, playlist_limitvalue, playlist_limittype, "
+  query = wxString::Format( wxT( "SELECT playlist_name, playlist_limited, playlist_limitvalue, playlist_limittype, "
                "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption "
                "FROM playlists WHERE playlist_id = %u LIMIT 1;" ), plid );
   dbRes = ExecuteQuery( query );
   if( dbRes.NextRow() )
   {
     playlist->m_Id = plid;
-    playlist->m_Limited = dbRes.GetBool( 0 );
-    playlist->m_LimitValue = dbRes.GetInt( 1 );
-    playlist->m_LimitType = dbRes.GetInt( 2 );
-    playlist->m_Sorted = dbRes.GetBool( 3 );
-    playlist->m_SortType = dbRes.GetInt( 4 );
-    playlist->m_SortDesc = dbRes.GetBool( 5 );
-    playlist->m_AnyOption = dbRes.GetBool( 6 );
+    playlist->m_Name = dbRes.GetString( 0 );
+    playlist->m_Limited = dbRes.GetBool( 1 );
+    playlist->m_LimitValue = dbRes.GetInt( 2 );
+    playlist->m_LimitType = dbRes.GetInt( 3 );
+    playlist->m_Sorted = dbRes.GetBool( 4 );
+    playlist->m_SortType = dbRes.GetInt( 5 );
+    playlist->m_SortDesc = dbRes.GetBool( 6 );
+    playlist->m_AnyOption = dbRes.GetBool( 7 );
   }
   dbRes.Finalize();
 
@@ -4245,10 +4091,10 @@ void guDbLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * p
 {
   wxString query;
 
-  query = wxString::Format( wxT( "UPDATE playlists SET "
+  query = wxString::Format( wxT( "UPDATE playlists SET playlist_name = '%s', "
                "playlist_limited = %u, playlist_limitvalue = %u, playlist_limittype = %u, "
                "playlist_sorted = %u, playlist_sorttype = %u, playlist_sortdesc = %u, "
-               "playlist_anyoption = %u WHERE playlist_id = %u;" ),
+               "playlist_anyoption = %u WHERE playlist_id = %u;" ), playlist->m_Name.c_str(),
                playlist->m_Limited, playlist->m_LimitValue, playlist->m_LimitType,
                playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc,
                playlist->m_AnyOption,
@@ -4822,16 +4668,16 @@ const wxString guDbLibrary::GetArtistName( const int ArtistId )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetArtistId( wxString &artistname, bool create )
 {
-  if( LastArtist == artistname )
+  if( m_LastArtist == artistname )
   {
-      return LastArtistId;
+      return m_LastArtistId;
   }
 
   // TODO Add a Lock
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  LastArtist = artistname;
+  m_LastArtist = artistname;
 
   query = wxString::Format( wxT( "SELECT song_artistid FROM songs "
                                  "WHERE song_artist = '%s' LIMIT 1;" ),
@@ -4841,7 +4687,7 @@ int guDbLibrary::GetArtistId( wxString &artistname, bool create )
 
   if( dbRes.NextRow() )
   {
-    return LastArtistId = dbRes.GetInt( 0 );
+    return m_LastArtistId = dbRes.GetInt( 0 );
   }
   else if( create )
   {
@@ -4850,11 +4696,11 @@ int guDbLibrary::GetArtistId( wxString &artistname, bool create )
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
-      return LastArtistId = dbRes.GetInt( 0 ) + 1;
+      return m_LastArtistId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        return LastArtistId = 1;
+        return m_LastArtistId = 1;
     }
   }
 
@@ -4864,16 +4710,16 @@ int guDbLibrary::GetArtistId( wxString &artistname, bool create )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetAlbumArtistId( wxString &albumartist, bool create )
 {
-  if( LastAlbumArtist == albumartist )
+  if( m_LastAlbumArtist == albumartist )
   {
-      return LastAlbumArtistId;
+      return m_LastAlbumArtistId;
   }
 
   // TODO Add a Lock
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  LastAlbumArtist = albumartist;
+  m_LastAlbumArtist = albumartist;
 
   query = wxString::Format( wxT( "SELECT song_albumartistid FROM songs "
                                  "WHERE song_albumartist = '%s' LIMIT 1;" ),
@@ -4883,7 +4729,7 @@ int guDbLibrary::GetAlbumArtistId( wxString &albumartist, bool create )
 
   if( dbRes.NextRow() )
   {
-    return LastAlbumArtistId = dbRes.GetInt( 0 );
+    return m_LastAlbumArtistId = dbRes.GetInt( 0 );
   }
   else if( create )
   {
@@ -4892,11 +4738,11 @@ int guDbLibrary::GetAlbumArtistId( wxString &albumartist, bool create )
     dbRes = ExecuteQuery( query );
     if( dbRes.NextRow() )
     {
-      return LastAlbumArtistId = dbRes.GetInt( 0 ) + 1;
+      return m_LastAlbumArtistId = dbRes.GetInt( 0 ) + 1;
     }
     else
     {
-        return LastAlbumArtistId = 1;
+        return m_LastAlbumArtistId = 1;
     }
   }
 
@@ -5107,7 +4953,7 @@ int guDbLibrary::FindTrackId( const int trackid, guTrack * track )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
+wxString GetSongsDBNamesSQL( const int order )
 {
   wxString query = wxEmptyString;
   //
@@ -5150,7 +4996,7 @@ wxString GetSongsDBNamesSQL( const guTRACKS_ORDER order )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString GetSongsSortSQL( const guTRACKS_ORDER order, const bool orderdesc )
+wxString GetSongsSortSQL( const int order, const bool orderdesc )
 {
   wxString query = wxT( " ORDER BY " );
   //
@@ -5431,7 +5277,7 @@ int guDbLibrary::GetSongs( const guTreeViewFilterArray &filters, guTrackArray * 
   {
     query += wxT( " AND " ) + TextFilterToSQL( textfilters );
   }
-  query += GetSongsSortSQL( ( guTRACKS_ORDER ) order, orderdesc );
+  query += GetSongsSortSQL( order, orderdesc );
 
   //guLogMessage( wxT( "%s" ), query.c_str() );
 
@@ -5617,31 +5463,6 @@ bool guDbLibrary::FindDeletedFile( const wxString &file, const bool create )
     return true;
   }
   return false;
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SetSongsOrder( const guTRACKS_ORDER order )
-{
-    if( m_TracksOrder != order )
-    {
-        m_TracksOrder = order;
-    }
-    else
-    {
-        m_TracksOrderDesc = !m_TracksOrderDesc;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guTRACKS_ORDER guDbLibrary::GetSongsOrder( void ) const
-{
-    return m_TracksOrder;
-}
-
-// -------------------------------------------------------------------------------- //
-bool guDbLibrary::GetSongsOrderDesc( void ) const
-{
-    return m_TracksOrderDesc;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -5941,8 +5762,7 @@ void guDbLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
     Artists.Add( labelsets[ ArIndex ].GetId() );
     SetArtistsLabels( Artists, ArLabels );
 
-    guConfig * Config = ( guConfig * ) Config->Get();
-    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+    if( m_MediaViewer->GetEmbeddMetadata() )
     {
       // Get the affected tracks
       GetArtistsSongs( Artists, &Songs );
@@ -6008,8 +5828,7 @@ void guDbLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
     ItemIds.Add( labelsets[ ItemIndex ].GetId() );
     SetAlbumsLabels( ItemIds, ItemLabels );
 
-    guConfig * Config = ( guConfig * ) Config->Get();
-    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+    if( m_MediaViewer->GetEmbeddMetadata() )
     {
         // Get the affected tracks
         GetAlbumsSongs( ItemIds, &Songs );
@@ -6076,8 +5895,7 @@ void guDbLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
     ItemIds.Add( labelsets[ ItemIndex ].GetId() );
     SetSongsLabels( ItemIds, ItemLabels );
 
-    guConfig * Config = ( guConfig * ) Config->Get();
-    if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+    if( m_MediaViewer->GetEmbeddMetadata() )
     {
         // Get the affected tracks
         GetSongs( ItemIds, &Songs );
@@ -6124,22 +5942,13 @@ void inline RemoveLabel( wxString * labelstr, const wxString * labelname, const 
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString &label, const wxString &newname )
+void guDbLibrary::UpdateSongLabel( const guTrack &track, const wxString &label, const wxString &newname )
 {
-  guTrack *     Song;
-  int           index;
-  int           count;
-
-  count = tracks->Count();
-  for( index = 0; index < count; index++ )
-  {
-    Song = &( * tracks )[ index ];
-    if( wxFileExists( Song->m_FileName ) )
+    if( wxFileExists( track.m_FileName ) )
     {
-      guTagInfo * TagInfo;
-      TagInfo = guGetTagInfoHandler( Song->m_FileName );
+      guTagInfo * TagInfo = guGetTagInfoHandler( track.m_FileName );
       if( !TagInfo )
-        continue;
+        return;
 
       TagInfo->Read();
 
@@ -6153,9 +5962,19 @@ void guDbLibrary::UpdateSongsLabel( const guTrackArray * tracks, const wxString 
     }
     else
     {
-        guLogError( wxT( "The file '%s' could not be found" ), Song->m_FileName.c_str() );
+        guLogError( wxT( "The file '%s' could not be found" ), track.m_FileName.c_str() );
     }
-  }
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbLibrary::UpdateSongsLabel( const guTrackArray &tracks, const wxString &label, const wxString &newname )
+{
+    int Index;
+    int Count = tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        UpdateSongLabel( tracks[ Index ], label, newname );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -6220,11 +6039,10 @@ void guDbLibrary::SetTrackPlayCount( const int songid, const int playcount, cons
 }
 
 // -------------------------------------------------------------------------------- //
-guCoverInfos guDbLibrary::GetEmptyCovers( void )
+int guDbLibrary::GetEmptyCovers( guCoverInfos &coverinfos )
 {
     wxString query;
     wxSQLite3ResultSet dbRes;
-    guCoverInfos RetVal;
 
     query = wxT( "SELECT DISTINCT song_albumid, song_album, song_artist, song_path "
                  "FROM songs WHERE song_coverid ISNULL OR song_coverid < 1 GROUP BY song_albumid" );
@@ -6233,10 +6051,11 @@ guCoverInfos guDbLibrary::GetEmptyCovers( void )
 
     while( dbRes.NextRow() )
     {
-        RetVal.Add( new guCoverInfo( dbRes.GetInt( 0 ), dbRes.GetString( 1 ), dbRes.GetString( 2 ), dbRes.GetString( 3 ) ) );
+        coverinfos.Add( new guCoverInfo( dbRes.GetInt( 0 ), dbRes.GetString( 1 ), dbRes.GetString( 2 ), dbRes.GetString( 3 ) ) );
     }
     dbRes.Finalize();
-    return RetVal;
+
+    return coverinfos.Count();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -6383,834 +6202,6 @@ bool guDbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInf
         return true;
   }
   return false;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guDbLibrary::SearchLyric( const wxString &artist, const wxString &trackname )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-  wxString RetVal = wxEmptyString;
-  wxString Artist;
-  wxString TrackName;
-
-  Artist = artist;
-  escape_query_str( &Artist );
-
-  TrackName = trackname;
-  escape_query_str( &TrackName );
-
-  query = wxString::Format( wxT( "SELECT lyric_text FROM lyrics "
-                                 "WHERE lyric_artist = '%s' AND lyric_title = '%s' LIMIT 1;" ),
-                                 Artist.c_str(), TrackName.c_str() );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-      RetVal = dbRes.GetString( 0 );
-  }
-  dbRes.Finalize();
-
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-bool guDbLibrary::CreateLyric( const wxString &artist, const wxString &trackname, const wxString &text )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-  wxString RetVal = wxEmptyString;
-  wxString Artist;
-  wxString TrackName;
-  wxString Text;
-
-  Artist = artist;
-  escape_query_str( &Artist );
-
-  TrackName = trackname;
-  escape_query_str( &TrackName );
-
-  Text = text;
-  escape_query_str( &Text );
-
-  query = wxString::Format( wxT( "INSERT INTO lyrics( lyric_id, lyric_artist, lyric_title, lyric_text ) "
-                                 "VALUES( NULL, '%s', '%s', '%s' );" ),
-                                 Artist.c_str(), TrackName.c_str(), Text.c_str() );
-
-  return ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastChannels( guPodcastChannelArray * channels )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_sumary, "
-               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image, "
-               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs" );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    guPodcastChannel * Channel = new guPodcastChannel();
-    Channel->m_Id = dbRes.GetInt( 0 );
-    Channel->m_Url = dbRes.GetString( 1 );
-    Channel->m_Title = dbRes.GetString( 2 );
-    Channel->m_Description = dbRes.GetString( 3 );
-    Channel->m_Lang = dbRes.GetString( 4 );
-    Channel->m_Summary = dbRes.GetString( 5 );
-    Channel->m_Author = dbRes.GetString( 6 );
-    Channel->m_OwnerName = dbRes.GetString( 7 );
-    Channel->m_OwnerEmail = dbRes.GetString( 8 );
-    Channel->m_Category = dbRes.GetString( 9 );
-    Channel->m_Image = dbRes.GetString( 10 );
-    Channel->m_DownloadType = dbRes.GetInt( 11 );
-    Channel->m_DownloadText = dbRes.GetString( 12 );
-    Channel->m_AllowDelete = dbRes.GetBool( 13 );
-    channels->Add( Channel );
-  }
-  dbRes.Finalize();
-  return channels->Count();
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
-{
-  wxString query;
-  int ChannelId;
-  if( ( ChannelId = GetPodcastChannelUrl( channel->m_Url ) ) == wxNOT_FOUND )
-  {
-    query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, "
-        "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
-        "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-        "podcastch_category, podcastch_image, "
-        "podcastch_downtype, podcastch_downtext, podcastch_allowdel ) "
-        "VALUES( NULL, '%s', '%s', "
-        "'%s', '%s', 0, '%s', "
-        "'%s', '%s', '%s', "
-        "'%s', '%s', %u, '%s', %u );" ),
-        escape_query_str( channel->m_Url ).c_str(),
-        escape_query_str( channel->m_Title ).c_str(),
-        escape_query_str( channel->m_Description ).c_str(),
-        escape_query_str( channel->m_Lang ).c_str(),
-        escape_query_str( channel->m_Summary ).c_str(),
-        escape_query_str( channel->m_Author ).c_str(),
-        escape_query_str( channel->m_OwnerName ).c_str(),
-        escape_query_str( channel->m_OwnerEmail ).c_str(),
-        escape_query_str( channel->m_Category ).c_str(),
-        escape_query_str( channel->m_Image ).c_str(),
-        channel->m_DownloadType,
-        escape_query_str( channel->m_DownloadText ).c_str(),
-        channel->m_AllowDelete );
-
-    ExecuteUpdate( query );
-    ChannelId = GetLastRowId();
-    channel->m_Id = ChannelId;
-  }
-  else if( !onlynew )
-  {
-    query = wxString::Format( wxT( "UPDATE podcastchs "
-        "SET podcastch_url = '%s', podcastch_title = '%s', "
-        "podcastch_description = '%s', podcastch_language = '%s', podcastch_sumary = '%s', "
-        "podcastch_author = '%s', podcastch_ownername = '%s', podcastch_owneremail = '%s', "
-        "podcastch_category = '%s', podcastch_image  = '%s', "
-        "podcastch_downtype = %u, podcastch_downtext = '%s', podcastch_allowdel = %u "
-        "WHERE podcastch_id = %u" ),
-        escape_query_str( channel->m_Url ).c_str(),
-        escape_query_str( channel->m_Title ).c_str(),
-        escape_query_str( channel->m_Description ).c_str(),
-        escape_query_str( channel->m_Lang ).c_str(),
-        escape_query_str( channel->m_Summary ).c_str(),
-        escape_query_str( channel->m_Author ).c_str(),
-        escape_query_str( channel->m_OwnerName ).c_str(),
-        escape_query_str( channel->m_OwnerEmail ).c_str(),
-        escape_query_str( channel->m_Category ).c_str(),
-        escape_query_str( channel->m_Image ).c_str(),
-        channel->m_DownloadType,
-        escape_query_str( channel->m_DownloadText ).c_str(),
-        channel->m_AllowDelete,
-        channel->m_Id );
-    ExecuteUpdate( query );
-
-    ChannelId = channel->m_Id;
-  }
-
-  // Save the Items
-  SavePodcastItems( ChannelId, &channel->m_Items, onlynew );
-
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
-{
-    int Index;
-    int Count = channels->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        SavePodcastChannel( &channels->Item( Index ), onlynew );
-    }
-    return 1;
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel )
-{
-  int RetVal = wxNOT_FOUND;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_sumary, "
-               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image, "
-               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs "
-               "WHERE podcastch_url = '%s' LIMIT 1;" ),
-               escape_query_str( url ).c_str() );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    RetVal = dbRes.GetInt( 0 );
-    if( channel )
-    {
-      channel->m_Id = RetVal;
-      channel->m_Url = dbRes.GetString( 1 );
-      channel->m_Title = dbRes.GetString( 2 );
-      channel->m_Description = dbRes.GetString( 3 );
-      channel->m_Lang = dbRes.GetString( 4 );
-      channel->m_Summary = dbRes.GetString( 5 );
-      channel->m_Author = dbRes.GetString( 6 );
-      channel->m_OwnerName = dbRes.GetString( 7 );
-      channel->m_OwnerEmail = dbRes.GetString( 8 );
-      channel->m_Category = dbRes.GetString( 9 );
-      channel->m_Image = dbRes.GetString( 10 );
-      channel->m_DownloadType = dbRes.GetInt( 11 );
-      channel->m_DownloadText = dbRes.GetString( 12 );
-      channel->m_AllowDelete = dbRes.GetBool( 13 );
-    }
-  }
-  dbRes.Finalize();
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastChannelId( const int id, guPodcastChannel * channel )
-{
-  int RetVal = wxNOT_FOUND;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_sumary, "
-               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image, "
-               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs "
-               "WHERE podcastch_id = %u LIMIT 1;" ),
-               id );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    RetVal = dbRes.GetInt( 0 );
-    if( channel )
-    {
-      channel->m_Id = RetVal;
-      channel->m_Url = dbRes.GetString( 1 );
-      channel->m_Title = dbRes.GetString( 2 );
-      channel->m_Description = dbRes.GetString( 3 );
-      channel->m_Lang = dbRes.GetString( 4 );
-      channel->m_Summary = dbRes.GetString( 5 );
-      channel->m_Author = dbRes.GetString( 6 );
-      channel->m_OwnerName = dbRes.GetString( 7 );
-      channel->m_OwnerEmail = dbRes.GetString( 8 );
-      channel->m_Category = dbRes.GetString( 9 );
-      channel->m_Image = dbRes.GetString( 10 );
-      channel->m_DownloadType = dbRes.GetInt( 11 );
-      channel->m_DownloadText = dbRes.GetString( 12 );
-      channel->m_AllowDelete = dbRes.GetBool( 13 );
-    }
-  }
-  dbRes.Finalize();
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::DelPodcastChannel( const int id )
-{
-  wxString query;
-
-  query = wxString::Format( wxT( "DELETE FROM podcastchs WHERE podcastch_id = %u;" ), id );
-
-  ExecuteUpdate( query );
-
-  DelPodcastItems( id );
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
-
-  if( filters.Count() )
-  {
-        query += wxT( " AND " ) + ArrayToFilter( filters, wxT( "podcastitem_chid" ) );
-  }
-
-  query += wxT( " ORDER BY " );
-
-  switch( order )
-  {
-      case guPODCASTS_COLUMN_TITLE :
-        query += wxT( "podcastitem_title COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_CHANNEL :
-        query += wxT( "podcastch_title COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_CATEGORY :
-        query += wxT( "podcastch_category COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_DATE :
-        query += wxT( "podcastitem_time" );
-        break;
-      case guPODCASTS_COLUMN_LENGTH :
-        query += wxT( "podcastitem_length" );
-        break;
-      case guPODCASTS_COLUMN_AUTHOR :
-        query += wxT( "podcastitem_author COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_PLAYCOUNT :
-        query += wxT( "podcastitem_playcount" );
-        break;
-      case guPODCASTS_COLUMN_LASTPLAY :
-        query += wxT( "podcastitem_lastplay" );
-        break;
-      case guPODCASTS_COLUMN_ADDEDDATE :
-        query += wxT( "podcastitem_addeddate" );
-        break;
-      case guPODCASTS_COLUMN_STATUS :
-        query += wxT( "podcastitem_status" );
-        break;
-  }
-
-  if( desc )
-    query += wxT( " DESC;" );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    guPodcastItem * Item = new guPodcastItem();
-    Item->m_Id = dbRes.GetInt( 0 );
-    Item->m_ChId = dbRes.GetInt( 1 );
-    Item->m_Title = dbRes.GetString( 2 );
-    Item->m_Summary = dbRes.GetString( 3 );
-    Item->m_Author = dbRes.GetString( 4 );
-    Item->m_Enclosure = dbRes.GetString( 5 );
-    Item->m_Time = dbRes.GetInt( 6 );
-    Item->m_FileName = dbRes.GetString( 7 );
-    Item->m_FileSize = dbRes.GetInt( 8 );
-    Item->m_Length = dbRes.GetInt( 9 );
-    Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_AddedDate = dbRes.GetInt( 11 );
-    Item->m_LastPlay = dbRes.GetInt( 12 );
-    Item->m_Status = dbRes.GetInt( 13 );
-
-    Item->m_Channel = dbRes.GetString( 14 );
-    Item->m_Category = dbRes.GetString( 15 );
-    items->Add( Item );
-  }
-  dbRes.Finalize();
-  return items->Count();
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::GetPodcastCounters( const wxArrayInt &filters, wxLongLong * count, wxLongLong * len, wxLongLong * size )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxT( "SELECT COUNT(), SUM( podcastitem_length ), SUM( podcastitem_filesize ) "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
-
-  if( filters.Count() )
-  {
-        query += wxT( " AND " ) + ArrayToFilter( filters, wxT( "podcastitem_chid" ) );
-  }
-
-  dbRes = ExecuteQuery( query );
-
-  if( dbRes.NextRow() )
-  {
-      * count = dbRes.GetInt64( 0 );
-      * len   = dbRes.GetInt64( 1 );
-      * size  = dbRes.GetInt64( 2 );
-  }
-  dbRes.Finalize();
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id "
-            "AND " ) + ArrayToFilter( ids, wxT( "podcastitem_id" ) );
-
-  query += wxT( " ORDER BY " );
-
-  switch( order )
-  {
-      case guPODCASTS_COLUMN_TITLE :
-        query += wxT( "podcastitem_title COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_CHANNEL :
-        query += wxT( "podcastch_title COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_CATEGORY :
-        query += wxT( "podcastch_category COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_DATE :
-        query += wxT( "podcastitem_time" );
-        break;
-      case guPODCASTS_COLUMN_LENGTH :
-        query += wxT( "podcastitem_length" );
-        break;
-      case guPODCASTS_COLUMN_AUTHOR :
-        query += wxT( "podcastitem_author COLLATE NOCASE" );
-        break;
-      case guPODCASTS_COLUMN_PLAYCOUNT :
-        query += wxT( "podcastitem_playcount" );
-        break;
-      case guPODCASTS_COLUMN_LASTPLAY :
-        query += wxT( "podcastitem_lastplay" );
-        break;
-      case guPODCASTS_COLUMN_ADDEDDATE :
-        query += wxT( "podcastitem_addeddate" );
-        break;
-      case guPODCASTS_COLUMN_STATUS :
-        query += wxT( "podcastitem_status" );
-        break;
-  }
-
-  if( desc )
-    query += wxT( " DESC;" );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    guPodcastItem * Item = new guPodcastItem();
-    Item->m_Id = dbRes.GetInt( 0 );
-    Item->m_ChId = dbRes.GetInt( 1 );
-    Item->m_Title = dbRes.GetString( 2 );
-    Item->m_Summary = dbRes.GetString( 3 );
-    Item->m_Author = dbRes.GetString( 4 );
-    Item->m_Enclosure = dbRes.GetString( 5 );
-    Item->m_Time = dbRes.GetInt( 6 );
-    Item->m_FileName = dbRes.GetString( 7 );
-    Item->m_FileSize = dbRes.GetInt( 8 );
-    Item->m_Length = dbRes.GetInt( 9 );
-    Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_AddedDate = dbRes.GetInt( 11 );
-    Item->m_LastPlay = dbRes.GetInt( 12 );
-    Item->m_Status = dbRes.GetInt( 13 );
-
-    Item->m_Channel = dbRes.GetString( 14 );
-    Item->m_Category = dbRes.GetString( 15 );
-    items->Add( Item );
-  }
-  dbRes.Finalize();
-  return items->Count();
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew )
-{
-  wxString query;
-  int ItemId;
-  if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
-  {
-    //guLogMessage( wxT( "Inserting podcastitem '%s'" ), item->m_Title.c_str() );
-    query = wxString::Format( wxT( "INSERT INTO podcastitems( "
-                "podcastitem_id, podcastitem_chid, podcastitem_title, "
-                "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-                "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-                "podcastitem_addeddate, podcastitem_playcount, podcastitem_lastplay, "
-                "podcastitem_status ) "
-                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, "
-                "'%s', %u, %u, %u, %u, %u, %u );" ),
-                channelid,
-                escape_query_str( item->m_Title ).c_str(),
-                escape_query_str( item->m_Summary ).c_str(),
-                escape_query_str( item->m_Author ).c_str(),
-                escape_query_str( item->m_Enclosure ).c_str(),
-                item->m_Time,
-                escape_query_str( item->m_FileName ).c_str(),
-                item->m_FileSize,
-                item->m_Length,
-                wxDateTime::GetTimeNow(),
-                0, 0, 0 );
-
-    ExecuteUpdate( query );
-    ItemId = GetLastRowId();
-  }
-  else if( !onlynew )
-  {
-    query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_chid = %u, podcastitem_title = '%s', "
-                "podcastitem_summary = '%s', podcastitem_author = '%s', "
-                "podcastitem_enclosure = '%s', podcastitem_time = %u, "
-                "podcastitem_file = '%s', podcastitem_filesize = %u, podcastitem_length = %u, "
-                "podcastitem_status = %u "
-                "WHERE podcastitem_id = %u;" ),
-                channelid,
-                escape_query_str( item->m_Title ).c_str(),
-                escape_query_str( item->m_Summary ).c_str(),
-                escape_query_str( item->m_Author ).c_str(),
-                escape_query_str( item->m_Enclosure ).c_str(),
-                item->m_Time,
-                escape_query_str( item->m_FileName ).c_str(),
-                item->m_FileSize,
-                item->m_Length,
-                item->m_Status,
-                ItemId );
-
-    ExecuteUpdate( query );
-  }
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
-{
-    int Index;
-    int Count = items->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        SavePodcastItem( channelid, &items->Item( Index ), onlynew );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SetPodcastItemStatus( const int itemid, const int status )
-{
-  wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
-            status, itemid );
-
-  ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::SetPodcastItemPlayCount( const int itemid, const int playcount )
-{
-  wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_playcount = %u, podcastitem_lastplay = %u WHERE podcastitem_id = %u;" ),
-            playcount, wxDateTime::GetTimeNow(), itemid );
-
-  ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdatePodcastItemLength( const int itemid, const int length )
-{
-  wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_length = %u WHERE podcastitem_id = %u;" ),
-            length, itemid );
-
-  ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
-{
-  int RetVal = wxNOT_FOUND;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND "
-            "podcastitem_enclosure = '%s';" ),
-            escape_query_str( enclosure ).c_str() );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    RetVal = dbRes.GetInt( 0 );
-    if( item )
-    {
-      item->m_Id = RetVal;
-      item->m_ChId = dbRes.GetInt( 1 );
-      item->m_Title = dbRes.GetString( 2 );
-      item->m_Summary = dbRes.GetString( 3 );
-      item->m_Author = dbRes.GetString( 4 );
-      item->m_Enclosure = dbRes.GetString( 5 );
-      item->m_Time = dbRes.GetInt( 6 );
-      item->m_FileName = dbRes.GetString( 7 );
-      item->m_FileSize = dbRes.GetInt( 8 );
-      item->m_Length = dbRes.GetInt( 9 );
-      item->m_PlayCount = dbRes.GetInt( 10 );
-      item->m_AddedDate = dbRes.GetInt( 11 );
-      item->m_LastPlay = dbRes.GetInt( 12 );
-      item->m_Status = dbRes.GetInt( 13 );
-
-      item->m_Channel = dbRes.GetString( 14 );
-      item->m_Category = dbRes.GetString( 15 );
-    }
-  }
-  dbRes.Finalize();
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItemId( const int itemid, guPodcastItem * item )
-{
-  int RetVal = wxNOT_FOUND;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND "
-            "podcastitem_id = %u LIMIT 1;" ),
-            itemid );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    RetVal = dbRes.GetInt( 0 );
-    if( item )
-    {
-      item->m_Id = RetVal;
-      item->m_ChId = dbRes.GetInt( 1 );
-      item->m_Title = dbRes.GetString( 2 );
-      item->m_Summary = dbRes.GetString( 3 );
-      item->m_Author = dbRes.GetString( 4 );
-      item->m_Enclosure = dbRes.GetString( 5 );
-      item->m_Time = dbRes.GetInt( 6 );
-      item->m_FileName = dbRes.GetString( 7 );
-      item->m_FileSize = dbRes.GetInt( 8 );
-      item->m_Length = dbRes.GetInt( 9 );
-      item->m_PlayCount = dbRes.GetInt( 10 );
-      item->m_AddedDate = dbRes.GetInt( 11 );
-      item->m_LastPlay = dbRes.GetInt( 12 );
-      item->m_Status = dbRes.GetInt( 13 );
-
-      item->m_Channel = dbRes.GetString( 14 );
-      item->m_Category = dbRes.GetString( 15 );
-    }
-  }
-  dbRes.Finalize();
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastItemFile( const wxString &filename, guPodcastItem * item )
-{
-  int RetVal = 0;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND "
-            "podcastitem_file = '%s' LIMIT 1;" ),
-            escape_query_str( filename ).c_str() );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    RetVal = dbRes.GetInt( 0 );
-    if( item )
-    {
-      item->m_Id = RetVal;
-      item->m_ChId = dbRes.GetInt( 1 );
-      item->m_Title = dbRes.GetString( 2 );
-      item->m_Summary = dbRes.GetString( 3 );
-      item->m_Author = dbRes.GetString( 4 );
-      item->m_Enclosure = dbRes.GetString( 5 );
-      item->m_Time = dbRes.GetInt( 6 );
-      item->m_FileName = dbRes.GetString( 7 );
-      item->m_FileSize = dbRes.GetInt( 8 );
-      item->m_Length = dbRes.GetInt( 9 );
-      item->m_PlayCount = dbRes.GetInt( 10 );
-      item->m_AddedDate = dbRes.GetInt( 11 );
-      item->m_LastPlay = dbRes.GetInt( 12 );
-      item->m_Status = dbRes.GetInt( 13 );
-
-      item->m_Channel = dbRes.GetString( 14 );
-      item->m_Category = dbRes.GetString( 15 );
-    }
-  }
-  dbRes.Finalize();
-  return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::DelPodcastItem( const int itemid )
-{
-  wxString query;
-
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
-            "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
-            guPODCAST_STATUS_DELETED, itemid );
-
-  ExecuteUpdate( query );
-}
-
-// -------------------------------------------------------------------------------- //
-void guDbLibrary::DelPodcastItems( const int channelid )
-{
-  wxString query;
-
-  query = wxString::Format( wxT( "DELETE FROM podcastitems "
-            "WHERE podcastitem_chid = %u;" ), channelid );
-
-  ExecuteUpdate( query );
-}
-
-//// -------------------------------------------------------------------------------- //
-//void guDbLibrary::SetPodcastChannelFilters( const wxArrayInt &filters )
-//{
-//    if( filters.Index( 0 ) != wxNOT_FOUND )
-//    {
-//        m_PodChFilters.Empty();
-//    }
-//    else
-//    {
-//        m_PodChFilters = filters;
-//    }
-//}
-
-//// -------------------------------------------------------------------------------- //
-//void guDbLibrary::SetPodcastOrder( int order )
-//{
-//    if( m_PodcastOrder != order )
-//    {
-//        m_PodcastOrder = order;
-//        m_PodcastOrderDesc = ( order != 0 );
-//    }
-//    else
-//        m_PodcastOrderDesc = !m_PodcastOrderDesc;
-//}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPendingPodcasts( guPodcastItemArray * items )
-{
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id "
-            "AND podcastitem_status IN ( 1, 2 ) "
-            "ORDER BY podcastitem_status DESC;" );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-    guPodcastItem * Item = new guPodcastItem();
-    Item->m_Id = dbRes.GetInt( 0 );
-    Item->m_ChId = dbRes.GetInt( 1 );
-    Item->m_Title = dbRes.GetString( 2 );
-    Item->m_Summary = dbRes.GetString( 3 );
-    Item->m_Author = dbRes.GetString( 4 );
-    Item->m_Enclosure = dbRes.GetString( 5 );
-    Item->m_Time = dbRes.GetInt( 6 );
-    Item->m_FileName = dbRes.GetString( 7 );
-    Item->m_FileSize = dbRes.GetInt( 8 );
-    Item->m_Length = dbRes.GetInt( 9 );
-    Item->m_PlayCount = dbRes.GetInt( 10 );
-    Item->m_AddedDate = dbRes.GetInt( 11 );
-    Item->m_LastPlay = dbRes.GetInt( 12 );
-    Item->m_Status = dbRes.GetInt( 13 );
-
-    Item->m_Channel = dbRes.GetString( 14 );
-    Item->m_Category = dbRes.GetString( 15 );
-    items->Add( Item );
-  }
-  dbRes.Finalize();
-  return items->Count();
-}
-
-// -------------------------------------------------------------------------------- //
-int guDbLibrary::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject * files )
-{
-  int Count = 0;
-  wxString query;
-  wxSQLite3ResultSet dbRes;
-
-  query = wxT( "SELECT podcastitem_file FROM podcastitems WHERE " ) +
-          ArrayToFilter( channels, wxT( "podcastitem_chid" ) );
-
-  dbRes = ExecuteQuery( query );
-
-  while( dbRes.NextRow() )
-  {
-      wxString FileName = guFileDnDEncode( dbRes.GetString( 0 ) );
-      //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
-      files->AddFile( FileName );
-      Count++;
-  }
-
-  dbRes.Finalize();
-  return Count;
 }
 
 // -------------------------------------------------------------------------------- //

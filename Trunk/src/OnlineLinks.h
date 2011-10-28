@@ -24,6 +24,7 @@
 #include <wx/menu.h>
 
 void AddOnlineLinksMenu( wxMenu * Menu );
+void ExecuteOnlineLink( const int linkid, const wxString &text );
 
 #endif
 // -------------------------------------------------------------------------------- //

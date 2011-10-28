@@ -32,7 +32,6 @@
 class guMainApp : public wxApp
 {
   protected :
-    guDbLibrary *               m_Db;
     guDbCache *                 m_DbCache;
     guConfig *                  m_Config;
     wxSingleInstanceChecker *   m_SingleInstanceChecker;

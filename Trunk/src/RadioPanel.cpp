@@ -32,6 +32,7 @@
 #include "RadioGenreEditor.h"
 #include "RadioEditor.h"
 #include "StatusBar.h"
+#include "Settings.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -123,13 +124,19 @@ guShoutcastSearch::guShoutcastSearch( wxWindow * parent, guShoutcastItemData * i
 	ButtonsSizer->AddButton( ButtonsSizerOK );
 	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	ButtonsSizerOK->SetDefault();
+
 	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guShoutcastSearch::OnOkButton ) );
+
+	m_SearchTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -552,7 +559,7 @@ void guRadioGenreTreeCtrl::OnRadioGenreDelete( wxCommandEvent &event )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected radio genres?" ),
                           _( "Confirm" ),
-                          wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                          wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
         {
             guShoutcastItemData * RadioGenreData;
             for( index = 0; index < count; index++ )
@@ -619,8 +626,8 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "General" ) );
-    m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "General" ) );;
+    m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "radios" ) );
+    m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "radios" ) );;
 
     wxArrayString ColumnNames = GetColumnNames();
     // Create the Columns
@@ -630,7 +637,7 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db
     int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
-        ColId = Config->ReadNum( wxString::Format( wxT( "RadioCol%u" ), index ), index, wxT( "RadioColumns" ) );
+        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, wxT( "radios/columns/ids" ) );
 
         ColName = ColumnNames[ ColId ];
 
@@ -639,8 +646,8 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guDbRadios * db
         guListViewColumn * Column = new guListViewColumn(
             ColName,
             ColId,
-            Config->ReadNum( wxString::Format( wxT( "RadioColWidth%u" ), index ), 80, wxT( "RadioColumns" ) ),
-            Config->ReadBool( wxString::Format( wxT( "RadioColShow%u" ), index ), true, wxT( "RadioColumns" ) )
+            Config->ReadNum( wxString::Format( wxT( "width%u" ), index ), 80, wxT( "radios/columns/widths" ) ),
+            Config->ReadBool( wxString::Format( wxT( "show%u" ), index ), true, wxT( "radios/columns/shows" ) )
             );
         InsertColumn( Column );
     }
@@ -664,13 +671,13 @@ guRadioStationListBox::~guRadioStationListBox()
     int count = guRADIOSTATIONS_COLUMN_COUNT;
     for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( wxT( "RadioCol%u" ), index ), ( * m_Columns )[ index ].m_Id, wxT( "RadioColumns" ) );
-        Config->WriteNum( wxString::Format( wxT( "RadioColWidth%u" ), index ), ( * m_Columns )[ index ].m_Width, wxT( "RadioColumns" ) );
-        Config->WriteBool( wxString::Format( wxT( "RadioColShow%u" ), index ), ( * m_Columns )[ index ].m_Enabled, wxT( "RadioColumns" ) );
+        Config->WriteNum( wxString::Format( wxT( "id%u" ), index ), ( * m_Columns )[ index ].m_Id, wxT( "radios/columns/ids" ) );
+        Config->WriteNum( wxString::Format( wxT( "width%u" ), index ), ( * m_Columns )[ index ].m_Width, wxT( "radios/columns/widths" ) );
+        Config->WriteBool( wxString::Format( wxT( "show%u" ), index ), ( * m_Columns )[ index ].m_Enabled, wxT( "radios/columns/shows" ) );
     }
 
-    Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "General" ) );
-    Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "General" ) );;
+    Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "radios" ) );
+    Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "radios" ) );;
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioStationListBox::OnConfigUpdated ), NULL, this );
 }
@@ -858,7 +865,7 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
         EnqueueMenu->Append( MenuItem );
         MenuItem->Enable( SelCount );
 
-        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+        Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -1019,7 +1026,7 @@ void guRadioLabelListBox::DelLabel( wxCommandEvent &event )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected labels?" ),
                           _( "Confirm" ),
-                          wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                          wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
         {
             for( int Index = 0; Index < Count; Index++ )
             {
@@ -1072,10 +1079,10 @@ void guRadioLabelListBox::CreateAcceleratorTable( void )
 // guRadioPanel
 // -------------------------------------------------------------------------------- //
 guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel ) :
-                guAuiManagedPanel( parent ),
+                guAuiManagerPanel( parent ),
                 m_TextChangedTimer( this, guRADIO_TIMER_TEXTSEARCH )
 {
-    m_Db = new guDbRadios( db );
+    m_Db = new guDbRadios( guPATH_RADIOS_DBNAME );
     m_PlayerPanel = playerpanel;
     m_RadioPlayListLoadThread = NULL;
 
@@ -1084,9 +1091,9 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
     InitPanelData();
 
-    m_VisiblePanels = Config->ReadNum( wxT( "RadVisiblePanels" ), guPANEL_RADIO_VISIBLE_DEFAULT, wxT( "Positions" ) );
-    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
-    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_RADIO_VISIBLE_DEFAULT, wxT( "radios" ) );
+    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) );
 
 
 	wxBoxSizer * SearchSizer;
@@ -1109,7 +1116,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "RadioTextSearch" ) ).Caption( _( "Text Search" ) ).
             Direction( 1 ).Layer( 2 ).Row( 0 ).Position( 0 ).BestSize( 111, 26 ).MinSize( 60, 26 ).MaxSize( -1, 26 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
             Dockable( true ).Top() );
 
     wxPanel * GenrePanel;
@@ -1127,7 +1134,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 	m_AuiManager.AddPane( GenrePanel,
             wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genre" ) ).
             Direction( 4 ).Layer( 1 ).Row( 0 ).Position( 0 ).BestSize( 220, 60 ).MinSize( 60, 60 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
             Dockable( true ).Left() );
 
     wxPanel * LabelsPanel;
@@ -1145,7 +1152,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 	m_AuiManager.AddPane( LabelsPanel,
             wxAuiPaneInfo().Name( wxT( "RadioLabels" ) ).Caption( _( "Labels" ) ).
             Direction( 4 ).Layer( 1 ).Row( 0 ).Position( 1 ).BestSize( 220, 60 ).MinSize( 60, 60 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
             Dockable( true ).Left() );
 
 
@@ -1169,7 +1176,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
 
 
-    wxString RadioLayout = Config->ReadStr( wxT( "Radio" ), wxEmptyString, wxT( "Positions" ) );
+    wxString RadioLayout = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "radios" ) );
     if( Config->GetIgnoreLayouts() || RadioLayout.IsEmpty() )
     {
         m_VisiblePanels = guPANEL_RADIO_VISIBLE_DEFAULT;
@@ -1234,8 +1241,8 @@ guRadioPanel::~guRadioPanel()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Config->WriteNum( wxT( "RadVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
-    Config->WriteStr( wxT( "Radio" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
+    Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "radios" ) );
+    Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "radios" ) );
 
     m_RadioPlayListLoadThreadMutex.Lock();
     if( m_RadioPlayListLoadThread )
@@ -1313,8 +1320,8 @@ void guRadioPanel::OnConfigUpdated( wxCommandEvent &event )
     if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "General" ) );
-        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "General" ) );
+        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) );
     }
 }
 
@@ -1341,7 +1348,7 @@ void guRadioPanel::OnSearchSelected( wxCommandEvent& event )
     if( !DoTextSearch() || !m_EnterSelectSearchEnabled || !m_InstantSearchEnabled )
         return;
 
-    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1426,7 +1433,7 @@ void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
 void guRadioPanel::OnStationListActivated( wxListEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1754,7 +1761,7 @@ void guRadioPanel::OnRadioSearchDel( wxCommandEvent &event )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected radio searches?" ),
                           _( "Confirm" ),
-                          wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                          wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
         {
             guShoutcastItemData * RadioGenreData;
             for( index = 0; index < count; index++ )
@@ -2117,7 +2124,7 @@ guUpdateRadiosThread::ExitCode guUpdateRadiosThread::Entry()
         //
         guConfig * Config = ( guConfig * ) guConfig::Get();
         long MinBitRate;
-        Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "Radios" ) ).ToLong( &MinBitRate );
+        Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "radios" ) ).ToLong( &MinBitRate );
 
 //        m_Db->GetRadioGenres( &Genres, false );
 //        guLogMessage( wxT ( "Loaded the genres" ) );

@@ -50,6 +50,9 @@ inline const T &guBound( const T &min, const T &val, const T &max ) { return guM
 
 #define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; U; Linux x86_64; es-AR; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13" )
 
+class guTrackArray;
+class guMediaViewer;
+
 // -------------------------------------------------------------------------------- //
 void inline guImageResize( wxImage * image, int maxsize, bool forceresize = false )
 {
@@ -88,8 +91,16 @@ bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
 int guGetFileMode( const wxString &filepath );
 bool guSetFileMode( const wxString &filepath, int mode, bool adding = false );
 bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
-wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr );
+wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr, const wxMBConv &conv = wxConvUTF8 );
 wxString guExpandTrackMacros( const wxString &pattern, guTrack * track, const int indexpos = 0 );
+bool guIsValidImageFile( const wxString &filename );
+bool guRemoveDir( const wxString &path );
+void GetMediaViewerTracks( const guTrackArray &sourcetracks, const wxArrayInt &sourceflags,
+                                 const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags );
+void GetMediaViewerTracks( const guTrackArray &sourcetracks, const int flags,
+                                 const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags );
+void GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks );
+void GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs );
 
 // -------------------------------------------------------------------------------- //
 #endif

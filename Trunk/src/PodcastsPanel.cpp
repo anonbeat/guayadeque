@@ -38,10 +38,804 @@
 #include <wx/zstream.h>
 
 // -------------------------------------------------------------------------------- //
+// guDbPodcasts
+// -------------------------------------------------------------------------------- //
+guDbPodcasts::guDbPodcasts( const wxString &dbname ) : guDb( dbname )
+{
+    wxArrayString query;
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastchs( podcastch_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                  "podcastch_url VARCHAR, podcastch_title VARCHAR COLLATE NOCASE, podcastch_description VARCHAR, "
+                  "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, "
+                  "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
+                  "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, "
+                  "podcastch_downtext VARCHAR, podcastch_allowdel BOOLEAN );" ) );
+    //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_url' on podcastchs(podcastch_url ASC);" ) );
+
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                  "podcastitem_chid INTEGER, podcastitem_title VARCHAR COLLATE NOCASE, podcastitem_summary VARCHAR, "
+                  "podcastitem_author VARCHAR COLLATE NOCASE, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, "
+                  "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, "
+                  "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, "
+                  "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
+    //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_file' on podcastitems(podcastitem_file ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_chid' on podcastitems(podcastitem_chid ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_time' on podcastitems(podcastitem_time ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_enclosure' on podcastitems(podcastitem_enclosure ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_author' on podcastitems(podcastitem_author ASC);" ) );
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_length' on podcastitems(podcastitem_length ASC);" ) );
+
+
+    int Index;
+    int Count = query.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        ExecuteUpdate( query[ Index ] );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+guDbPodcasts::~guDbPodcasts()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastChannels( guPodcastChannelArray * channels )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
+               "podcastch_language, podcastch_sumary, "
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+               "podcastch_category, podcastch_image, "
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
+               "FROM podcastchs" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastChannel * Channel = new guPodcastChannel();
+    Channel->m_Id = dbRes.GetInt( 0 );
+    Channel->m_Url = dbRes.GetString( 1 );
+    Channel->m_Title = dbRes.GetString( 2 );
+    Channel->m_Description = dbRes.GetString( 3 );
+    Channel->m_Lang = dbRes.GetString( 4 );
+    Channel->m_Summary = dbRes.GetString( 5 );
+    Channel->m_Author = dbRes.GetString( 6 );
+    Channel->m_OwnerName = dbRes.GetString( 7 );
+    Channel->m_OwnerEmail = dbRes.GetString( 8 );
+    Channel->m_Category = dbRes.GetString( 9 );
+    Channel->m_Image = dbRes.GetString( 10 );
+    Channel->m_DownloadType = dbRes.GetInt( 11 );
+    Channel->m_DownloadText = dbRes.GetString( 12 );
+    Channel->m_AllowDelete = dbRes.GetBool( 13 );
+    channels->Add( Channel );
+  }
+  dbRes.Finalize();
+  return channels->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::SavePodcastChannel( guPodcastChannel * channel, bool onlynew )
+{
+  wxString query;
+  int ChannelId;
+  if( ( ChannelId = GetPodcastChannelUrl( channel->m_Url ) ) == wxNOT_FOUND )
+  {
+    query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, "
+        "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
+        "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+        "podcastch_category, podcastch_image, "
+        "podcastch_downtype, podcastch_downtext, podcastch_allowdel ) "
+        "VALUES( NULL, '%s', '%s', "
+        "'%s', '%s', 0, '%s', "
+        "'%s', '%s', '%s', "
+        "'%s', '%s', %u, '%s', %u );" ),
+        escape_query_str( channel->m_Url ).c_str(),
+        escape_query_str( channel->m_Title ).c_str(),
+        escape_query_str( channel->m_Description ).c_str(),
+        escape_query_str( channel->m_Lang ).c_str(),
+        escape_query_str( channel->m_Summary ).c_str(),
+        escape_query_str( channel->m_Author ).c_str(),
+        escape_query_str( channel->m_OwnerName ).c_str(),
+        escape_query_str( channel->m_OwnerEmail ).c_str(),
+        escape_query_str( channel->m_Category ).c_str(),
+        escape_query_str( channel->m_Image ).c_str(),
+        channel->m_DownloadType,
+        escape_query_str( channel->m_DownloadText ).c_str(),
+        channel->m_AllowDelete );
+
+    ExecuteUpdate( query );
+    ChannelId = GetLastRowId();
+    channel->m_Id = ChannelId;
+  }
+  else if( !onlynew )
+  {
+    query = wxString::Format( wxT( "UPDATE podcastchs "
+        "SET podcastch_url = '%s', podcastch_title = '%s', "
+        "podcastch_description = '%s', podcastch_language = '%s', podcastch_sumary = '%s', "
+        "podcastch_author = '%s', podcastch_ownername = '%s', podcastch_owneremail = '%s', "
+        "podcastch_category = '%s', podcastch_image  = '%s', "
+        "podcastch_downtype = %u, podcastch_downtext = '%s', podcastch_allowdel = %u "
+        "WHERE podcastch_id = %u" ),
+        escape_query_str( channel->m_Url ).c_str(),
+        escape_query_str( channel->m_Title ).c_str(),
+        escape_query_str( channel->m_Description ).c_str(),
+        escape_query_str( channel->m_Lang ).c_str(),
+        escape_query_str( channel->m_Summary ).c_str(),
+        escape_query_str( channel->m_Author ).c_str(),
+        escape_query_str( channel->m_OwnerName ).c_str(),
+        escape_query_str( channel->m_OwnerEmail ).c_str(),
+        escape_query_str( channel->m_Category ).c_str(),
+        escape_query_str( channel->m_Image ).c_str(),
+        channel->m_DownloadType,
+        escape_query_str( channel->m_DownloadText ).c_str(),
+        channel->m_AllowDelete,
+        channel->m_Id );
+    ExecuteUpdate( query );
+
+    ChannelId = channel->m_Id;
+  }
+
+  // Save the Items
+  SavePodcastItems( ChannelId, &channel->m_Items, onlynew );
+
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
+{
+    int Index;
+    int Count = channels->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        SavePodcastChannel( &channels->Item( Index ), onlynew );
+    }
+    return 1;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * channel )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
+               "podcastch_language, podcastch_sumary, "
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+               "podcastch_category, podcastch_image, "
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
+               "FROM podcastchs "
+               "WHERE podcastch_url = '%s' LIMIT 1;" ),
+               escape_query_str( url ).c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( channel )
+    {
+      channel->m_Id = RetVal;
+      channel->m_Url = dbRes.GetString( 1 );
+      channel->m_Title = dbRes.GetString( 2 );
+      channel->m_Description = dbRes.GetString( 3 );
+      channel->m_Lang = dbRes.GetString( 4 );
+      channel->m_Summary = dbRes.GetString( 5 );
+      channel->m_Author = dbRes.GetString( 6 );
+      channel->m_OwnerName = dbRes.GetString( 7 );
+      channel->m_OwnerEmail = dbRes.GetString( 8 );
+      channel->m_Category = dbRes.GetString( 9 );
+      channel->m_Image = dbRes.GetString( 10 );
+      channel->m_DownloadType = dbRes.GetInt( 11 );
+      channel->m_DownloadText = dbRes.GetString( 12 );
+      channel->m_AllowDelete = dbRes.GetBool( 13 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastChannelId( const int id, guPodcastChannel * channel )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
+               "podcastch_language, podcastch_sumary, "
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
+               "podcastch_category, podcastch_image, "
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
+               "FROM podcastchs "
+               "WHERE podcastch_id = %u LIMIT 1;" ),
+               id );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( channel )
+    {
+      channel->m_Id = RetVal;
+      channel->m_Url = dbRes.GetString( 1 );
+      channel->m_Title = dbRes.GetString( 2 );
+      channel->m_Description = dbRes.GetString( 3 );
+      channel->m_Lang = dbRes.GetString( 4 );
+      channel->m_Summary = dbRes.GetString( 5 );
+      channel->m_Author = dbRes.GetString( 6 );
+      channel->m_OwnerName = dbRes.GetString( 7 );
+      channel->m_OwnerEmail = dbRes.GetString( 8 );
+      channel->m_Category = dbRes.GetString( 9 );
+      channel->m_Image = dbRes.GetString( 10 );
+      channel->m_DownloadType = dbRes.GetInt( 11 );
+      channel->m_DownloadText = dbRes.GetString( 12 );
+      channel->m_AllowDelete = dbRes.GetBool( 13 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::DelPodcastChannel( const int id )
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "DELETE FROM podcastchs WHERE podcastch_id = %u;" ), id );
+
+  ExecuteUpdate( query );
+
+  DelPodcastItems( id );
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastItems( guPodcastItemArray * items, const wxArrayInt &filters, const int order, const bool desc )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
+
+  if( filters.Count() )
+  {
+        query += wxT( " AND " ) + ArrayToFilter( filters, wxT( "podcastitem_chid" ) );
+  }
+
+  query += wxT( " ORDER BY " );
+
+  switch( order )
+  {
+      case guPODCASTS_COLUMN_TITLE :
+        query += wxT( "podcastitem_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CHANNEL :
+        query += wxT( "podcastch_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CATEGORY :
+        query += wxT( "podcastch_category COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_DATE :
+        query += wxT( "podcastitem_time" );
+        break;
+      case guPODCASTS_COLUMN_LENGTH :
+        query += wxT( "podcastitem_length" );
+        break;
+      case guPODCASTS_COLUMN_AUTHOR :
+        query += wxT( "podcastitem_author COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_PLAYCOUNT :
+        query += wxT( "podcastitem_playcount" );
+        break;
+      case guPODCASTS_COLUMN_LASTPLAY :
+        query += wxT( "podcastitem_lastplay" );
+        break;
+      case guPODCASTS_COLUMN_ADDEDDATE :
+        query += wxT( "podcastitem_addeddate" );
+        break;
+      case guPODCASTS_COLUMN_STATUS :
+        query += wxT( "podcastitem_status" );
+        break;
+  }
+
+  if( desc )
+    query += wxT( " DESC;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_FileSize = dbRes.GetInt( 8 );
+    Item->m_Length = dbRes.GetInt( 9 );
+    Item->m_PlayCount = dbRes.GetInt( 10 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
+
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::GetPodcastCounters( const wxArrayInt &filters, wxLongLong * count, wxLongLong * len, wxLongLong * size )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT COUNT(), SUM( podcastitem_length ), SUM( podcastitem_filesize ) "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
+
+  if( filters.Count() )
+  {
+        query += wxT( " AND " ) + ArrayToFilter( filters, wxT( "podcastitem_chid" ) );
+  }
+
+  dbRes = ExecuteQuery( query );
+
+  if( dbRes.NextRow() )
+  {
+      * count = dbRes.GetInt64( 0 );
+      * len   = dbRes.GetInt64( 1 );
+      * size  = dbRes.GetInt64( 2 );
+  }
+  dbRes.Finalize();
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * items, const int order, const bool desc )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id "
+            "AND " ) + ArrayToFilter( ids, wxT( "podcastitem_id" ) );
+
+  query += wxT( " ORDER BY " );
+
+  switch( order )
+  {
+      case guPODCASTS_COLUMN_TITLE :
+        query += wxT( "podcastitem_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CHANNEL :
+        query += wxT( "podcastch_title COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_CATEGORY :
+        query += wxT( "podcastch_category COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_DATE :
+        query += wxT( "podcastitem_time" );
+        break;
+      case guPODCASTS_COLUMN_LENGTH :
+        query += wxT( "podcastitem_length" );
+        break;
+      case guPODCASTS_COLUMN_AUTHOR :
+        query += wxT( "podcastitem_author COLLATE NOCASE" );
+        break;
+      case guPODCASTS_COLUMN_PLAYCOUNT :
+        query += wxT( "podcastitem_playcount" );
+        break;
+      case guPODCASTS_COLUMN_LASTPLAY :
+        query += wxT( "podcastitem_lastplay" );
+        break;
+      case guPODCASTS_COLUMN_ADDEDDATE :
+        query += wxT( "podcastitem_addeddate" );
+        break;
+      case guPODCASTS_COLUMN_STATUS :
+        query += wxT( "podcastitem_status" );
+        break;
+  }
+
+  if( desc )
+    query += wxT( " DESC;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_FileSize = dbRes.GetInt( 8 );
+    Item->m_Length = dbRes.GetInt( 9 );
+    Item->m_PlayCount = dbRes.GetInt( 10 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
+
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::SavePodcastItem( const int channelid, guPodcastItem * item, bool onlynew )
+{
+  wxString query;
+  int ItemId;
+  if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
+  {
+    //guLogMessage( wxT( "Inserting podcastitem '%s'" ), item->m_Title.c_str() );
+    query = wxString::Format( wxT( "INSERT INTO podcastitems( "
+                "podcastitem_id, podcastitem_chid, podcastitem_title, "
+                "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+                "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+                "podcastitem_addeddate, podcastitem_playcount, podcastitem_lastplay, "
+                "podcastitem_status ) "
+                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, "
+                "'%s', %u, %u, %u, %u, %u, %u );" ),
+                channelid,
+                escape_query_str( item->m_Title ).c_str(),
+                escape_query_str( item->m_Summary ).c_str(),
+                escape_query_str( item->m_Author ).c_str(),
+                escape_query_str( item->m_Enclosure ).c_str(),
+                item->m_Time,
+                escape_query_str( item->m_FileName ).c_str(),
+                item->m_FileSize,
+                item->m_Length,
+                wxDateTime::GetTimeNow(),
+                0, 0, 0 );
+
+    ExecuteUpdate( query );
+    ItemId = GetLastRowId();
+  }
+  else if( !onlynew )
+  {
+    query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_chid = %u, podcastitem_title = '%s', "
+                "podcastitem_summary = '%s', podcastitem_author = '%s', "
+                "podcastitem_enclosure = '%s', podcastitem_time = %u, "
+                "podcastitem_file = '%s', podcastitem_filesize = %u, podcastitem_length = %u, "
+                "podcastitem_status = %u "
+                "WHERE podcastitem_id = %u;" ),
+                channelid,
+                escape_query_str( item->m_Title ).c_str(),
+                escape_query_str( item->m_Summary ).c_str(),
+                escape_query_str( item->m_Author ).c_str(),
+                escape_query_str( item->m_Enclosure ).c_str(),
+                item->m_Time,
+                escape_query_str( item->m_FileName ).c_str(),
+                item->m_FileSize,
+                item->m_Length,
+                item->m_Status,
+                ItemId );
+
+    ExecuteUpdate( query );
+  }
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
+{
+    int Index;
+    int Count = items->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        SavePodcastItem( channelid, &items->Item( Index ), onlynew );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::SetPodcastItemStatus( const int itemid, const int status )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
+            status, itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::SetPodcastItemPlayCount( const int itemid, const int playcount )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_playcount = %u, podcastitem_lastplay = %u WHERE podcastitem_id = %u;" ),
+            playcount, wxDateTime::GetTimeNow(), itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::UpdatePodcastItemLength( const int itemid, const int length )
+{
+  wxString query;
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+                "podcastitem_length = %u WHERE podcastitem_id = %u;" ),
+            length, itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastItem * item )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND "
+            "podcastitem_enclosure = '%s';" ),
+            escape_query_str( enclosure ).c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( item )
+    {
+      item->m_Id = RetVal;
+      item->m_ChId = dbRes.GetInt( 1 );
+      item->m_Title = dbRes.GetString( 2 );
+      item->m_Summary = dbRes.GetString( 3 );
+      item->m_Author = dbRes.GetString( 4 );
+      item->m_Enclosure = dbRes.GetString( 5 );
+      item->m_Time = dbRes.GetInt( 6 );
+      item->m_FileName = dbRes.GetString( 7 );
+      item->m_FileSize = dbRes.GetInt( 8 );
+      item->m_Length = dbRes.GetInt( 9 );
+      item->m_PlayCount = dbRes.GetInt( 10 );
+      item->m_AddedDate = dbRes.GetInt( 11 );
+      item->m_LastPlay = dbRes.GetInt( 12 );
+      item->m_Status = dbRes.GetInt( 13 );
+
+      item->m_Channel = dbRes.GetString( 14 );
+      item->m_Category = dbRes.GetString( 15 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastItemId( const int itemid, guPodcastItem * item )
+{
+  int RetVal = wxNOT_FOUND;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND "
+            "podcastitem_id = %u LIMIT 1;" ),
+            itemid );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( item )
+    {
+      item->m_Id = RetVal;
+      item->m_ChId = dbRes.GetInt( 1 );
+      item->m_Title = dbRes.GetString( 2 );
+      item->m_Summary = dbRes.GetString( 3 );
+      item->m_Author = dbRes.GetString( 4 );
+      item->m_Enclosure = dbRes.GetString( 5 );
+      item->m_Time = dbRes.GetInt( 6 );
+      item->m_FileName = dbRes.GetString( 7 );
+      item->m_FileSize = dbRes.GetInt( 8 );
+      item->m_Length = dbRes.GetInt( 9 );
+      item->m_PlayCount = dbRes.GetInt( 10 );
+      item->m_AddedDate = dbRes.GetInt( 11 );
+      item->m_LastPlay = dbRes.GetInt( 12 );
+      item->m_Status = dbRes.GetInt( 13 );
+
+      item->m_Channel = dbRes.GetString( 14 );
+      item->m_Category = dbRes.GetString( 15 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastItemFile( const wxString &filename, guPodcastItem * item )
+{
+  int RetVal = 0;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id AND "
+            "podcastitem_file = '%s' LIMIT 1;" ),
+            escape_query_str( filename ).c_str() );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal = dbRes.GetInt( 0 );
+    if( item )
+    {
+      item->m_Id = RetVal;
+      item->m_ChId = dbRes.GetInt( 1 );
+      item->m_Title = dbRes.GetString( 2 );
+      item->m_Summary = dbRes.GetString( 3 );
+      item->m_Author = dbRes.GetString( 4 );
+      item->m_Enclosure = dbRes.GetString( 5 );
+      item->m_Time = dbRes.GetInt( 6 );
+      item->m_FileName = dbRes.GetString( 7 );
+      item->m_FileSize = dbRes.GetInt( 8 );
+      item->m_Length = dbRes.GetInt( 9 );
+      item->m_PlayCount = dbRes.GetInt( 10 );
+      item->m_AddedDate = dbRes.GetInt( 11 );
+      item->m_LastPlay = dbRes.GetInt( 12 );
+      item->m_Status = dbRes.GetInt( 13 );
+
+      item->m_Channel = dbRes.GetString( 14 );
+      item->m_Category = dbRes.GetString( 15 );
+    }
+  }
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::DelPodcastItem( const int itemid )
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+            "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
+            guPODCAST_STATUS_DELETED, itemid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::DelPodcastItems( const int channelid )
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "DELETE FROM podcastitems "
+            "WHERE podcastitem_chid = %u;" ), channelid );
+
+  ExecuteUpdate( query );
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPendingPodcasts( guPodcastItemArray * items )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
+            "podcastitem_status, "
+            "podcastch_title, podcastch_category "
+            "FROM podcastitems, podcastchs "
+            "WHERE podcastitem_chid = podcastch_id "
+            "AND podcastitem_status IN ( 1, 2 ) "
+            "ORDER BY podcastitem_status DESC;" );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    guPodcastItem * Item = new guPodcastItem();
+    Item->m_Id = dbRes.GetInt( 0 );
+    Item->m_ChId = dbRes.GetInt( 1 );
+    Item->m_Title = dbRes.GetString( 2 );
+    Item->m_Summary = dbRes.GetString( 3 );
+    Item->m_Author = dbRes.GetString( 4 );
+    Item->m_Enclosure = dbRes.GetString( 5 );
+    Item->m_Time = dbRes.GetInt( 6 );
+    Item->m_FileName = dbRes.GetString( 7 );
+    Item->m_FileSize = dbRes.GetInt( 8 );
+    Item->m_Length = dbRes.GetInt( 9 );
+    Item->m_PlayCount = dbRes.GetInt( 10 );
+    Item->m_AddedDate = dbRes.GetInt( 11 );
+    Item->m_LastPlay = dbRes.GetInt( 12 );
+    Item->m_Status = dbRes.GetInt( 13 );
+
+    Item->m_Channel = dbRes.GetString( 14 );
+    Item->m_Category = dbRes.GetString( 15 );
+    items->Add( Item );
+  }
+  dbRes.Finalize();
+  return items->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject * files )
+{
+  int Count = 0;
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+
+  query = wxT( "SELECT podcastitem_file FROM podcastitems WHERE " ) +
+          ArrayToFilter( channels, wxT( "podcastitem_chid" ) );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+      wxString FileName = guFileDnDEncode( dbRes.GetString( 0 ) );
+      //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
+      files->AddFile( FileName );
+      Count++;
+  }
+
+  dbRes.Finalize();
+  return Count;
+}
+
+
+// -------------------------------------------------------------------------------- //
 // guPostcastPanel
 // -------------------------------------------------------------------------------- //
-guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame * mainframe, guPlayerPanel * playerpanel ) :
-    guAuiManagedPanel( parent )
+guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFrame * mainframe, guPlayerPanel * playerpanel ) :
+    guAuiManagerPanel( parent )
 {
     m_Db = db;
     m_MainFrame = mainframe;
@@ -69,13 +863,13 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     InitPanelData();
 
     // Check that the directory to store podcasts are created
-    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
     if( !wxDirExists( m_PodcastsPath ) )
     {
         wxMkdir( m_PodcastsPath, 0770 );
     }
 
-    m_VisiblePanels = Config->ReadNum( wxT( "PodVisiblePanels" ), guPANEL_PODCASTS_VISIBLE_DEFAULT, wxT( "Positions" ) );
+    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_PODCASTS_VISIBLE_DEFAULT, wxT( "podcasts" ) );
 
 	ChannelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * ChannelsMainSizer;
@@ -91,7 +885,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     m_AuiManager.AddPane( ChannelsPanel,
             wxAuiPaneInfo().Name( wxT( "PodcastsChannels" ) ).Caption( _( "Channels" ) ).
             MinSize( 50, 50 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
             Dockable( true ).Left() );
 
 
@@ -238,10 +1032,10 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
 
     m_AuiManager.AddPane( DetailsPanel, wxAuiPaneInfo().Name( wxT( "PodcastsDetails" ) ).Caption( _( "Podcast Details" ) ).
             MinSize( 100, 100 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "General" ) ) ).
+            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
             Dockable( true ).Bottom() );
 
-    wxString PodcastLayout = Config->ReadStr( wxT( "Podcasts" ), wxEmptyString, wxT( "Positions" ) );
+    wxString PodcastLayout = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "podcasts" ) );
     if( Config->GetIgnoreLayouts() || PodcastLayout.IsEmpty() )
     {
         m_VisiblePanels = guPANEL_PODCASTS_VISIBLE_DEFAULT;
@@ -261,7 +1055,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
     Connect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ), NULL, this );
-    Connect( ID_PODCASTS_CHANNEL_COPYTO, ID_PODCASTS_CHANNEL_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
+    m_ChannelsListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
 
     Connect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
 
@@ -275,7 +1069,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbLibrary * db, guMainFrame
     Connect( ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ), NULL, this );
     Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
     Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
-    Connect( ID_PODCASTS_ITEM_COPYTO, ID_PODCASTS_ITEM_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
+    m_PodcastsListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
 
@@ -290,14 +1084,14 @@ guPodcastPanel::~guPodcastPanel()
     {
         Config->UnRegisterObject( this );
 
-        Config->WriteNum( wxT( "PodVisiblePanels" ), m_VisiblePanels, wxT( "Positions" ) );
-        Config->WriteStr( wxT( "Podcasts" ), m_AuiManager.SavePerspective(), wxT( "Positions" ) );
+        Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "podcasts" ) );
+        Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "podcasts" ) );
     }
 
     Disconnect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
-    Disconnect( ID_PODCASTS_CHANNEL_COPYTO, ID_PODCASTS_CHANNEL_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
+    m_ChannelsListBox->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
     Disconnect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ), NULL, this );
 
     Disconnect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
@@ -312,7 +1106,7 @@ guPodcastPanel::~guPodcastPanel()
     Disconnect( ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
     Disconnect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
-    Disconnect( ID_PODCASTS_ITEM_COPYTO, ID_PODCASTS_ITEM_COPYTO + 199, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
+    m_PodcastsListBox->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
 
@@ -340,7 +1134,7 @@ void guPodcastPanel::OnConfigUpdated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
 
         // Check that the directory to store podcasts are created
-        m_PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+        m_PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
         if( !wxDirExists( m_PodcastsPath ) )
         {
             wxMkdir( m_PodcastsPath, 0770 );
@@ -429,7 +1223,7 @@ void guPodcastPanel::DeleteChannels( wxCommandEvent &event )
 {
     if( wxMessageBox( _( "Are you sure to delete the selected podcast channel?" ),
                       _( "Confirm" ),
-                      wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                      wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
     {
         wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
         int Index;
@@ -523,10 +1317,10 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
         }
     }
 
-    Index = event.GetId() - ID_PODCASTS_CHANNEL_COPYTO;
-    if( Index > 99 )
+    Index = event.GetId() - ID_COPYTO_BASE;
+    if( Index >= guCOPYTO_DEVICE_BASE )
     {
-        Index -= 100;
+        Index -= guCOPYTO_DEVICE_BASE;
         event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
@@ -795,7 +1589,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue, const int aftercurrent )
 void guPodcastPanel::OnPodcastItemActivated( wxListEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    OnSelectPodcasts( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+    OnSelectPodcasts( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -815,7 +1609,7 @@ void guPodcastPanel::OnPodcastItemDelete( wxCommandEvent &event )
 {
     if( wxMessageBox( _( "Are you sure to delete the selected podcast item?" ),
                       _( "Confirm" ),
-                      wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                      wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
     {
         wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
         int Index;
@@ -859,10 +1653,10 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
     m_PodcastsListBox->GetSelectedSongs( Tracks );
 
 
-    int Index = event.GetId() - ID_PODCASTS_ITEM_COPYTO;
-    if( Index > 99 )
+    int Index = event.GetId() - ID_COPYTO_BASE;
+    if( Index >= guCOPYTO_DEVICE_BASE )
     {
-        Index -= 100;
+        Index -= guCOPYTO_DEVICE_BASE;
         event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
@@ -875,17 +1669,18 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::SelectPodcast( const int podcastid )
+void guPodcastPanel::SetSelection( const int type, const int id )
 {
-    m_ChannelsListBox->SetSelection( wxNOT_FOUND );
-    m_PodcastsListBox->SetSelection( m_PodcastsListBox->FindItem( podcastid ) );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPodcastPanel::SelectChannel( const int channelid )
-{
-    m_ChannelsListBox->SetSelection( wxNOT_FOUND );
-    m_ChannelsListBox->SetSelection( m_ChannelsListBox->FindItem( channelid ) );
+    if( type == guMEDIAVIEWER_SELECT_TRACK )
+    {
+        m_ChannelsListBox->SetSelection( wxNOT_FOUND );
+        m_PodcastsListBox->SetSelection( m_PodcastsListBox->FindItem( id ) );
+    }
+    else if( type == guMEDIAVIEWER_SELECT_ALBUM )
+    {
+        m_ChannelsListBox->SetSelection( wxNOT_FOUND );
+        m_ChannelsListBox->SetSelection( m_ChannelsListBox->FindItem( id ) );
+    }
 }
 
 
@@ -898,7 +1693,7 @@ void guChannelsListBox::GetItemsList( void )
     m_PodChannels.Empty();
     int Index;
     int Count;
-    Count = m_Db->GetPodcastChannels( &m_PodChannels );
+    Count = ( ( guDbPodcasts * ) m_Db )->GetPodcastChannels( &m_PodChannels );
     for( Index = 0; Index < Count; Index++ )
     {
         m_Items->Add( new guListItem( m_PodChannels[ Index ].m_Id, m_PodChannels[ Index ].m_Title ) );
@@ -926,7 +1721,7 @@ int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs ) const
 // -------------------------------------------------------------------------------- //
 int guChannelsListBox::GetDragFiles( wxFileDataObject * files )
 {
-    return m_Db->GetPodcastFiles( GetSelectedItems(), files );
+    return ( ( guDbPodcasts * ) m_Db )->GetPodcastFiles( GetSelectedItems(), files );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -961,7 +1756,7 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->AppendSeparator();
 
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-        MainFrame->CreateCopyToMenu( Menu, ID_PODCASTS_CHANNEL_COPYTO );
+        MainFrame->CreateCopyToMenu( Menu );
     }
 }
 
@@ -983,7 +1778,7 @@ int guChannelsListBox::FindItem( const int channelid )
 // -------------------------------------------------------------------------------- //
 // guPodcastListBox
 // -------------------------------------------------------------------------------- //
-guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
+guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbPodcasts * db ) :
     guListView( parent, wxLB_MULTIPLE | guLISTVIEW_COLUMN_SELECT | guLISTVIEW_COLUMN_SORTING | guLISTVIEW_ALLOWDRAG )
 {
     m_Db = db;
@@ -998,12 +1793,12 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
     m_ColumnNames.Add( _( "Date" ) );
     m_ColumnNames.Add( _( "Length" ) );
     m_ColumnNames.Add( _( "Author" ) );
-    m_ColumnNames.Add( _( "PlayCount" ) );
-    m_ColumnNames.Add( _( "LastPlay" ) );
+    m_ColumnNames.Add( _( "Plays" ) );
+    m_ColumnNames.Add( _( "Last Played" ) );
     m_ColumnNames.Add( _( "Added" ) );
 
-    m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "Podcasts" ) );
-    m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "Podcasts" ) );
+    m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "podcasts" ) );
+    m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "podcasts" ) );
 
     // Construct the images for the status
     m_Images[ guPODCAST_STATUS_NORMAL ] = NULL;
@@ -1019,7 +1814,7 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
     int count = m_ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
-        ColId = Config->ReadNum( wxString::Format( wxT( "PodcastsCol%u" ), index ), index, wxT( "PodcastsColumns" ) );
+        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, wxT( "podcasts/columns/ids" ) );
 
         ColName = m_ColumnNames[ ColId ];
 
@@ -1028,8 +1823,8 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbLibrary * db ) :
         guListViewColumn * Column = new guListViewColumn(
             ColName,
             ColId,
-            Config->ReadNum( wxString::Format( wxT( "PodcastsColWidth%u" ), index ), 80, wxT( "PodcastsColumns" ) ),
-            Config->ReadBool( wxString::Format( wxT( "PodcastsColShow%u" ), index ), true, wxT( "PodcastsColumns" ) )
+            Config->ReadNum( wxString::Format( wxT( "width%u" ), index ), 80, wxT( "podcasts/columns/widths" ) ),
+            Config->ReadBool( wxString::Format( wxT( "show%u" ), index ), true, wxT( "podcasts/columns/shows" ) )
             );
         InsertColumn( Column );
     }
@@ -1052,16 +1847,16 @@ guPodcastListBox::~guPodcastListBox()
     int count = m_ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( wxString::Format( wxT( "PodcastsCol%u" ), index ),
-                          ( * m_Columns )[ index ].m_Id, wxT( "PodcastsColumns" ) );
-        Config->WriteNum( wxString::Format( wxT( "PodcastsColWidth%u" ), index ),
-                          ( * m_Columns )[ index ].m_Width, wxT( "PodcastsColumns" ) );
-        Config->WriteBool( wxString::Format( wxT( "PodcastsColShow%u" ), index ),
-                           ( * m_Columns )[ index ].m_Enabled, wxT( "PodcastsColumns" ) );
+        Config->WriteNum( wxString::Format( wxT( "id%u" ), index ),
+                          ( * m_Columns )[ index ].m_Id, wxT( "podcasts/columns/ids" ) );
+        Config->WriteNum( wxString::Format( wxT( "width%u" ), index ),
+                          ( * m_Columns )[ index ].m_Width, wxT( "podcasts/columns/widths" ) );
+        Config->WriteBool( wxString::Format( wxT( "show%u" ), index ),
+                           ( * m_Columns )[ index ].m_Enabled, wxT( "podcasts/columns/shows" ) );
     }
 
-    Config->WriteNum( wxT( "Order" ), m_Order, wxT( "Podcasts" ) );
-    Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "Podcasts" ) );
+    Config->WriteNum( wxT( "Order" ), m_Order, wxT( "podcasts" ) );
+    Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "podcasts" ) );
 
 
     for( index = 0; index < guPODCAST_STATUS_ERROR + 1; index++ )
@@ -1271,7 +2066,7 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
-        Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+        Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
         Menu->AppendSeparator();
 
@@ -1288,7 +2083,7 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->AppendSeparator();
 
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-        MainFrame->CreateCopyToMenu( Menu, ID_PODCASTS_ITEM_COPYTO );
+        MainFrame->CreateCopyToMenu( Menu );
     }
     else
     {

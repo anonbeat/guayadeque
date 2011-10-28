@@ -31,55 +31,13 @@ guMMKeys::guMMKeys( guDBusServer * server, guPlayerPanel * playerpanel ) : guDBu
     RegisterClient();
 
     // Support for the MultimediaKeys
-//    AddMatch( "type='signal',interface='org.gnome.SettingsDaemon'" );
+    AddMatch( "type='signal',interface='org.gnome.SettingsDaemon'" );
     AddMatch( "type='signal',interface='org.gnome.SettingsDaemon.MediaKeys'" );
-
-    GrabMediaPlayerKeys( 0 );
 }
 
 // -------------------------------------------------------------------------------- //
 guMMKeys::~guMMKeys()
 {
-    ReleaseMediaPlayerKeys();
-}
-
-// -------------------------------------------------------------------------------- //
-void guMMKeys::GrabMediaPlayerKeys( const unsigned int time )
-{
-    guDBusMethodCall * Msg = new guDBusMethodCall( "org.gnome.SettingsDaemon",
-            "/org/gnome/SettingsDaemon/MediaKeys",
-			"org.gnome.SettingsDaemon.MediaKeys",
-			"GrabMediaPlayerKeys" );
-
-    const char * AppId = "Guayadeque";
-
-    dbus_message_append_args( Msg->GetMessage(),
-                              DBUS_TYPE_STRING, &AppId,
-                              DBUS_TYPE_UINT32, &time,
-                              DBUS_TYPE_INVALID );
-
-    SendWithReply( Msg );
-
-    delete Msg;
-}
-
-// -------------------------------------------------------------------------------- //
-void guMMKeys::ReleaseMediaPlayerKeys( void )
-{
-    guDBusMethodCall * Msg = new guDBusMethodCall( "org.gnome.SettingsDaemon",
-            "/org/gnome/SettingsDaemon/MediaKeys",
-			"org.gnome.SettingsDaemon.MediaKeys",
-			"ReleaseMediaPlayerKeys" );
-
-    const char * AppId = "Guayadeque";
-
-    dbus_message_append_args( Msg->GetMessage(),
-                              DBUS_TYPE_STRING, &AppId,
-                              DBUS_TYPE_INVALID );
-
-    SendWithReply( Msg );
-
-    delete Msg;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -96,13 +54,8 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
     // MULTIMEDIA KEYS
     if( Type == DBUS_MESSAGE_TYPE_SIGNAL )  // If its a Signal message
     {
-        //guLogMessage( wxT( "**** Received Signal ****\n" )
-        //              wxT( "Path   : '%s'\n" )
-        //              wxT( "Member : '%s'" ),
-        //             wxString( Path, wxConvUTF8 ).c_str(),
-        //             wxString( Member, wxConvUTF8 ).c_str()
-        //            );
-        if( !strcmp( Path, "/org/gnome/SettingsDaemon/MediaKeys" ) )
+        if( !strcmp( Path, "/org/gnome/SettingsDaemon" ) ||
+            !strcmp( Path, "/org/gnome/SettingsDaemon/MediaKeys" ) )
         {
             if( !strcmp( Member, "MediaPlayerKeyPressed" ) )
             {

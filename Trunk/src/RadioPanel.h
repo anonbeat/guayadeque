@@ -21,7 +21,8 @@
 #ifndef RADIOPANEL_H
 #define RADIOPANEL_H
 
-#include "AuiManagedPanel.h"
+#include "AuiManagerPanel.h"
+#include "AuiNotebook.h"
 #include "DbRadios.h"
 #include "PlayerPanel.h"
 #include "ItemListBox.h"
@@ -121,7 +122,7 @@ class guRadioPlayListLoadThread : public wxThread
 // -------------------------------------------------------------------------------- //
 // Class guRadioPanel
 // -------------------------------------------------------------------------------- //
-class guRadioPanel : public guAuiManagedPanel
+class guRadioPanel : public guAuiManagerPanel
 {
   private:
 	guDbRadios *                    m_Db;

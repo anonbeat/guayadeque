@@ -61,6 +61,21 @@ wxString guPortableCoverFormatString[] = {
 
 
 // -------------------------------------------------------------------------------- //
+int GetPortableMediaType( const wxString &path )
+{
+#ifdef WITH_LIBGPOD_SUPPORT
+    Itdb_iTunesDB * iPodDb = itdb_parse( path.mb_str( wxConvFile ), NULL );
+    if( iPodDb )
+    {
+        itdb_free( iPodDb );
+        return guPORTABLE_MEDIA_TYPE_IPOD;
+    }
+    else
+#endif
+    return guPORTABLE_MEDIA_TYPE_MSC;
+}
+
+// -------------------------------------------------------------------------------- //
 int guGetTranscodeFileFormat( const wxString &filetype )
 {
     if( filetype == wxT( "mp3" ) )
@@ -353,26 +368,25 @@ wxString CoverFormatsToMimeStr( const int formats )
 guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
 {
     m_Mount = mount;
-    m_Type = guPORTABLEMEDIA_TYPE_OTHER;
+    m_Type = guPORTABLE_MEDIA_TYPE_MSC;
 
-    guConfig * Config = new guConfig( m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
-    guMD5 MD5;
-    m_Id = Config->ReadStr( wxT( "audio_player_id" ), MD5.MD5( wxString::Format( wxT( "%i" ), wxGetLocalTime() ) ).Right( 6 ) );
-    m_Pattern = Config->ReadStr( wxT( "audio_file_pattern" ), wxT( "{a} - {b}/{n} - {a} - {t}" ) );
-    m_AudioFormats = MimeStrToAudioFormat( Config->ReadStr( wxT( "output_formats" ), wxT( "mp3" ) ) );
-    m_TranscodeFormat = Config->ReadNum( wxT( "transcode_format" ), guTRANSCODE_FORMAT_KEEP );
-    m_TranscodeScope = Config->ReadNum( wxT( "transcode_scope" ), guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
-    m_TranscodeQuality = Config->ReadNum( wxT( "transcode_quality" ), guTRANSCODE_QUALITY_KEEP );
-    m_AudioFolders = Config->ReadStr( wxT( "audio_folders" ), wxT( "/" ) );
-    m_PlaylistFormats = MimeStrToPlaylistFormat( Config->ReadStr( wxT( "playlist_format" ), wxEmptyString ) );
-    m_PlaylistFolder = Config->ReadStr( wxT( "playlist_path" ), wxEmptyString );
-    m_CoverFormats = MimeStrToCoverFormat( Config->ReadStr( wxT( "cover_art_file_type" ), wxT( "jpeg" ) ) );
-    m_CoverName = Config->ReadStr( wxT( "cover_art_file_name" ), wxT( "cover" ) );
-    m_CoverSize = Config->ReadNum( wxT( "cover_art_size" ), 100 );
+    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
+    m_Id = mount->GetId(); //Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08X" ), wxGetLocalTime() ) );
+    m_Pattern = Config->Read( wxT( "audio_file_pattern" ), wxT( "{a} - {b}/{n} - {a} - {t}" ) );
+    m_AudioFormats = MimeStrToAudioFormat( Config->Read( wxT( "output_formats" ), wxT( "mp3" ) ) );
+    m_TranscodeFormat = Config->Read( wxT( "transcode_format" ), guTRANSCODE_FORMAT_KEEP );
+    m_TranscodeScope = Config->Read( wxT( "transcode_scope" ), guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
+    m_TranscodeQuality = Config->Read( wxT( "transcode_quality" ), guTRANSCODE_QUALITY_KEEP );
+    m_AudioFolders = Config->Read( wxT( "audio_folders" ), wxT( "/" ) );
+    m_PlaylistFormats = MimeStrToPlaylistFormat( Config->Read( wxT( "playlist_format" ), wxEmptyString ) );
+    m_PlaylistFolder = Config->Read( wxT( "playlist_path" ), wxEmptyString );
+    m_CoverFormats = MimeStrToCoverFormat( Config->Read( wxT( "cover_art_file_type" ), wxT( "jpeg" ) ) );
+    m_CoverName = Config->Read( wxT( "cover_art_file_name" ), wxT( "cover" ) );
+    m_CoverSize = Config->Read( wxT( "cover_art_size" ), 100 );
 
     UpdateDiskFree();
 
-    Config->WriteStr( wxT( "audio_player_id" ), m_Id );
+    Config->Write( wxT( "audio_player_id" ), m_Id );
     Config->Flush();
 
     delete Config;
@@ -386,18 +400,18 @@ guPortableMediaDevice::~guPortableMediaDevice()
 // -------------------------------------------------------------------------------- //
 void guPortableMediaDevice::WriteConfig( void )
 {
-    guConfig * Config = new guConfig( m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
-    Config->WriteStr( wxT( "audio_file_pattern" ), m_Pattern );
-    Config->WriteStr( wxT( "output_formats" ), AudioFormatsToMimeStr( m_AudioFormats ) );
-    Config->WriteNum( wxT( "transcode_format" ), m_TranscodeFormat );
-    Config->WriteNum( wxT( "transcode_scope" ), m_TranscodeScope );
-    Config->WriteNum( wxT( "transcode_quality" ), m_TranscodeQuality );
-    Config->WriteStr( wxT( "audio_folders" ), m_AudioFolders );
-    Config->WriteStr( wxT( "playlist_format" ), PlaylistFormatsToMimeStr( m_PlaylistFormats ) );
-    Config->WriteStr( wxT( "playlist_path" ), m_PlaylistFolder );
-    Config->WriteStr( wxT( "cover_art_file_type" ), CoverFormatsToMimeStr( m_CoverFormats ) );
-    Config->WriteStr( wxT( "cover_art_file_name" ), m_CoverName );
-    Config->WriteNum( wxT( "cover_art_size" ), m_CoverSize );
+    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
+    Config->Write( wxT( "audio_file_pattern" ), m_Pattern );
+    Config->Write( wxT( "output_formats" ), AudioFormatsToMimeStr( m_AudioFormats ) );
+    Config->Write( wxT( "transcode_format" ), m_TranscodeFormat );
+    Config->Write( wxT( "transcode_scope" ), m_TranscodeScope );
+    Config->Write( wxT( "transcode_quality" ), m_TranscodeQuality );
+    Config->Write( wxT( "audio_folders" ), m_AudioFolders );
+    Config->Write( wxT( "playlist_format" ), PlaylistFormatsToMimeStr( m_PlaylistFormats ) );
+    Config->Write( wxT( "playlist_path" ), m_PlaylistFolder );
+    Config->Write( wxT( "cover_art_file_type" ), CoverFormatsToMimeStr( m_CoverFormats ) );
+    Config->Write( wxT( "cover_art_file_name" ), m_CoverName );
+    Config->Write( wxT( "cover_art_size" ), m_CoverSize );
     Config->Flush();
 
     delete Config;
@@ -524,7 +538,7 @@ wxString guPortableMediaDevice::CoverFormatsStr( const int formats )
 guPortableMediaLibrary::guPortableMediaLibrary( const wxString &dbname, guPortableMediaDevice * portablemediadevice ) :
     guDbLibrary( dbname )
 {
-    m_PortableMediaDevice = portablemediadevice;
+    m_PortableDevice = portablemediadevice;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -535,12 +549,12 @@ guPortableMediaLibrary::~guPortableMediaLibrary()
 // -------------------------------------------------------------------------------- //
 void guPortableMediaLibrary::DeletePlayList( const int plid )
 {
-    int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
+    int PlayListFormats = m_PortableDevice->PlaylistFormats();
     if( PlayListFormats )
     {
         wxString PlayListName = GetPlayListName( plid );
 
-        wxString PlayListFile = m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
+        wxString PlayListFile = m_PortableDevice->MountPath() + m_PortableDevice->PlaylistFolder();
         PlayListFile += wxT( "/" ) + PlayListName;
         if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U )
         {
@@ -583,12 +597,12 @@ void guPortableMediaLibrary::DeletePlayList( const int plid )
 void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
 {
     guLogMessage( wxT( "guPortableMediaLibrary::UpdateStaticPlayListFile" ) );
-    int PlayListFormats = m_PortableMediaDevice->PlaylistFormats();
+    int PlayListFormats = m_PortableDevice->PlaylistFormats();
     if( PlayListFormats )
     {
         wxString PlayListName = GetPlayListName( plid );
 
-        wxString PlayListFile = m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
+        wxString PlayListFile = m_PortableDevice->MountPath() + m_PortableDevice->PlaylistFolder();
         PlayListFile += wxT( "/" ) + PlayListName;
         if( PlayListFormats & guPORTABLEMEDIA_PLAYLIST_FORMAT_M3U )
         {
@@ -622,8 +636,11 @@ void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
             int Count = Tracks.Count();
             for( Index = 0; Index < Count; Index++ )
             {
-                PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+                const guTrack &Track = Tracks[ Index ];
+
+                PlayListFile.AddItem( Track.m_FileName,
+                    Track.m_ArtistName + wxT( " - " ) + Track.m_SongName,
+                    Track.m_Length );
             }
 
             PlayListFile.Save( FileName.GetFullPath(), true );
@@ -634,395 +651,323 @@ void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
 // -------------------------------------------------------------------------------- //
 // guPortableMediaLibPanel
 // -------------------------------------------------------------------------------- //
-guPortableMediaLibPanel::guPortableMediaLibPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix ) :
-    guLibPanel( parent, db, playerpanel, prefix )
+guPortableMediaLibPanel::guPortableMediaLibPanel( wxWindow * parent, guMediaViewerPortableDevice * mediaviewer ) :
+    guLibPanel( parent, mediaviewer )
 {
     //SetBaseCommand( ID_MENU_VIEW_PORTABLE_DEVICES );
 
-    m_ContextMenuFlags = guLIBRARY_CONTEXTMENU_DEFAULT ^ guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY;
+    //m_ContextMenuFlags = guCONTEXTMENU_DEFAULT ^ guCONTEXTMENU_DELETEFROMLIBRARY;
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->RegisterObject( this ); // Get notified when configuration changes
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    Config->RegisterObject( this ); // Get notified when configuration changes
 
-    Connect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
-    Connect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
-    Connect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
+//    Connect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
+//    Connect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
+//    Connect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
 
 }
 
 // -------------------------------------------------------------------------------- //
 guPortableMediaLibPanel::~guPortableMediaLibPanel()
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->UnRegisterObject( this );
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    Config->UnRegisterObject( this );
 
-    Disconnect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
-    Disconnect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
-    Disconnect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
+//    Disconnect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
+//    Disconnect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
+//    Disconnect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
 }
 
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count;
-    if( tracks && ( Count = tracks->Count() ) )
-    {
-        for( Index = 0; Index < Count; Index++ )
-        {
-            guTrack * Track = &( * tracks )[ Index ];
-            Track->m_LibPanel = this;
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
-{
-    wxMenu *     SubMenu = new wxMenu();
-
-    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UPDATE, _( "Update" ), _( "Update the device library" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
-    SubMenu->Append( MenuItem );
-
-    menu->AppendSeparator();
-    menu->AppendSubMenu( SubMenu, _( "Portable Device" ), _( "Global Jamendo options" ) );
-}
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
+//{
+//    wxMenu *     SubMenu = new wxMenu();
+//
+//    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UPDATE, _( "Update" ), _( "Update the device library" ) );
+//    SubMenu->Append( MenuItem );
+//
+//    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
+//    SubMenu->Append( MenuItem );
+//
+//    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
+//    SubMenu->Append( MenuItem );
+//
+//    menu->AppendSeparator();
+//    menu->AppendSubMenu( SubMenu, _( "Portable Device" ), _( "Global Jamendo options" ) );
+//}
 
 // -------------------------------------------------------------------------------- //
 wxString guPortableMediaLibPanel::GetName( void )
 {
-    return m_PortableMediaDevice->DeviceName();
+    return m_PortableDevice->DeviceName();
 }
 
-// -------------------------------------------------------------------------------- //
-wxArrayString guPortableMediaLibPanel::GetLibraryPaths( void )
-{
-    wxArrayString Paths = wxStringTokenize( m_PortableMediaDevice->AudioFolders(), wxT( "," ) );
-    int Index;
-    int Count = Paths.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        Paths[ Index ] = m_PortableMediaDevice->MountPath() + Paths[ Index ];
-        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
-        {
-            Paths[ Index ].RemoveLast();
-        }
-    }
-    return Paths;
-}
+//// -------------------------------------------------------------------------------- //
+//wxArrayString guPortableMediaLibPanel::GetLibraryPaths( void )
+//{
+//    wxArrayString Paths = wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) );
+//    int Index;
+//    int Count = Paths.Count();
+//    for( Index = 0; Index < Count; Index++ )
+//    {
+//        Paths[ Index ] = m_PortableDevice->MountPath() + Paths[ Index ];
+//        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
+//        {
+//            Paths[ Index ].RemoveLast();
+//        }
+//    }
+//    return Paths;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//wxString guPortableMediaLibPanel::GetPlaylistPath( void )
+//{
+//    return m_PortableDevice->MountPath() + m_PortableDevice->PlaylistFolder();
+//}
 
-// -------------------------------------------------------------------------------- //
-wxString guPortableMediaLibPanel::GetPlaylistPath( void )
-{
-    return m_PortableMediaDevice->MountPath() + m_PortableMediaDevice->PlaylistFolder();
-}
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaLibPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
+//{
+//    DoUpdate();
+//}
 
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
-{
-    DoUpdate();
-}
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaLibPanel::OnPortableProperties( wxCommandEvent &event )
+//{
+//    guPortableMediaProperties * PortableMediaProperties = new guPortableMediaProperties( this, m_PortableDevice );
+//    if( PortableMediaProperties )
+//    {
+//        if( PortableMediaProperties->ShowModal() == wxID_OK )
+//        {
+//            PortableMediaProperties->WriteConfig();
+//        }
+//        PortableMediaProperties->Destroy();
+//    }
+//}
 
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::OnPortableProperties( wxCommandEvent &event )
-{
-    guPortableMediaProperties * PortableMediaProperties = new guPortableMediaProperties( this, m_PortableMediaDevice );
-    if( PortableMediaProperties )
-    {
-        if( PortableMediaProperties->ShowModal() == wxID_OK )
-        {
-            PortableMediaProperties->WriteConfig();
-        }
-        PortableMediaProperties->Destroy();
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaLibPanel::OnPortableUnmount( wxCommandEvent &event )
+//{
+//    if( m_PortableDevice->CanUnmount() )
+//    {
+//        m_PortableDevice->Unmount();
+//    }
+//}
 
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::OnPortableUnmount( wxCommandEvent &event )
-{
-    if( m_PortableMediaDevice->CanUnmount() )
-    {
-        m_PortableMediaDevice->Unmount();
-    }
-}
+//// -------------------------------------------------------------------------------- //
+//int guPortableMediaLibPanel::LastUpdate( void )
+//{
+//    return 0;
+//}
 
-// -------------------------------------------------------------------------------- //
-int guPortableMediaLibPanel::LastUpdate( void )
-{
-    return 0;
-}
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaLibPanel::SetLastUpdate( int lastupdate )
+//{
+//    // The portable media devices cant set lastupdate
+//}
 
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::SetLastUpdate( int lastupdate )
-{
-    // The portable media devices cant set lastupdate
-}
+//// -------------------------------------------------------------------------------- //
+//wxArrayString guPortableMediaLibPanel::GetCoverSearchWords( void )
+//{
+//    wxArrayString CoverWords = guLibPanel::GetCoverSearchWords();
+//    if( CoverWords.Index( m_PortableDevice->CoverName() ) == wxNOT_FOUND )
+//    {
+//        CoverWords.Add( m_PortableDevice->CoverName() );
+//    }
+//    return CoverWords;
+//}
 
-// -------------------------------------------------------------------------------- //
-wxArrayString guPortableMediaLibPanel::GetCoverSearchWords( void )
-{
-    wxArrayString CoverWords = guLibPanel::GetCoverSearchWords();
-    if( CoverWords.Index( m_PortableMediaDevice->CoverName() ) == wxNOT_FOUND )
-    {
-        CoverWords.Add( m_PortableMediaDevice->CoverName() );
-    }
-    return CoverWords;
-}
-
-// -------------------------------------------------------------------------------- //
-bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
-{
-    guTrackArray * CopyTracks = new guTrackArray();
-    int Index;
-    int Count = filenames.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        wxString CurFile = filenames[ Index ];
-
-        if( guPlayListFile::IsValidPlayList( CurFile ) )
-        {
-            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
-            Event.SetClientData( new wxString( CurFile ) );
-            Event.SetInt( PanelActive() );
-            wxPostEvent( wxTheApp->GetTopWindow(), Event );
-        }
-        else if( guIsValidAudioFile( CurFile ) )
-        {
-            guTrack * CurTrack = new guTrack();
-            if( CurTrack->ReadFromFile( CurFile ) )
-            {
-                CurTrack->m_Type = guTRACK_TYPE_NOTDB;
-
-                CopyTracks->Add( CurTrack );
-            }
-            else
-            {
-                delete CurTrack;
-                guLogError( wxT( "Could not read tags from file '%s'" ), CurFile.c_str() );
-            }
-        }
-    }
-
-    if( CopyTracks->Count() )
-    {
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_TRACKS );
-        Event.SetClientData( CopyTracks );
-        Event.SetInt( PanelActive() );
-        wxPostEvent( wxTheApp->GetTopWindow(), Event );
-    }
-    else
-    {
-        delete CopyTracks;
-    }
-
-    return true;
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guPortableMediaLibPanel::GetCoverName( void )
-{
-    wxString CoverName = m_PortableMediaDevice->CoverName();
-    if( CoverName.IsEmpty() )
-    {
-        CoverName = wxT( "cover" );
-    }
-
-    int DevCoverFormats = m_PortableMediaDevice->CoverFormats();
-
-    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
-    {
-        CoverName += wxT( ".jpg" );
-    }
-    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
-    {
-        CoverName += wxT( ".png" );
-    }
-    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
-    {
-        CoverName += wxT( ".gif" );
-    }
-    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
-    {
-        CoverName += wxT( ".bmp" );
-    }
-    else
-    {
-        CoverName += wxT( ".jpg" );
-    }
-
-    return CoverName;
-}
-
-// -------------------------------------------------------------------------------- //
-int guPortableMediaLibPanel::GetCoverMaxSize( void )
-{
-    int CoverSize = m_PortableMediaDevice->CoverSize();
-    if( !CoverSize )
-        CoverSize = wxNOT_FOUND;
-    return CoverSize;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::UpdatePlaylists( void )
-{
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-    evt.SetClientData( this );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaLibPanel::DoUpdate( const bool forced )
-{
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, forced ? ID_MENU_UPDATE_LIBRARYFORCED : ID_MENU_UPDATE_LIBRARY );
-    event.SetClientData( this );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
-}
+//// -------------------------------------------------------------------------------- //
+//bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
+//{
+//    guTrackArray * CopyTracks = new guTrackArray();
+//    int Index;
+//    int Count = filenames.Count();
+//    for( Index = 0; Index < Count; Index++ )
+//    {
+//        wxString CurFile = filenames[ Index ];
+//
+//        if( guPlayListFile::IsValidPlayList( CurFile ) )
+//        {
+////            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
+////            Event.SetClientData( new wxString( CurFile ) );
+////            Event.SetInt( PanelActive() );
+////            wxPostEvent( wxTheApp->GetTopWindow(), Event );
+//        }
+//        else if( guIsValidAudioFile( CurFile ) )
+//        {
+//            guTrack * CurTrack = new guTrack();
+//            if( CurTrack->ReadFromFile( CurFile ) )
+//            {
+//                CurTrack->m_Type = guTRACK_TYPE_NOTDB;
+//
+//                CopyTracks->Add( CurTrack );
+//            }
+//            else
+//            {
+//                delete CurTrack;
+//                guLogError( wxT( "Could not read tags from file '%s'" ), CurFile.c_str() );
+//            }
+//        }
+//    }
+//
+//    if( CopyTracks->Count() )
+//    {
+////        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_TRACKS );
+////        Event.SetClientData( CopyTracks );
+////        Event.SetInt( PanelActive() );
+////        wxPostEvent( wxTheApp->GetTopWindow(), Event );
+//    }
+//    else
+//    {
+//        delete CopyTracks;
+//    }
+//
+//    return true;
+//}
 
 
 
 
-// -------------------------------------------------------------------------------- //
-// guPortableMediaAlbumBrowser
-// -------------------------------------------------------------------------------- //
-guPortableMediaAlbumBrowser::guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
-    guAlbumBrowser( parent, db, playerpanel )
-{
-    m_LibPanel = libpanel;
-}
-
-// -------------------------------------------------------------------------------- //
-guPortableMediaAlbumBrowser::~guPortableMediaAlbumBrowser()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaAlbumBrowser::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        tracks->Item( Index ).m_LibPanel = m_LibPanel;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
-{
-    wxString AlbumName;
-    wxString ArtistName;
-    wxString AlbumPath;
-    if( !m_Db->GetAlbumInfo( albumid, &AlbumName, &ArtistName, &AlbumPath ) )
-    {
-        wxMessageBox( _( "Could not find the Album in the songs library.\n"\
-                         "You should update the library." ), _( "Error" ), wxICON_ERROR | wxOK );
-        return;
-    }
-
-    AlbumName = RemoveSearchFilters( AlbumName );
-
-    guCoverEditor * CoverEditor = new guCoverEditor( this, ArtistName, AlbumName );
-    if( CoverEditor )
-    {
-        if( CoverEditor->ShowModal() == wxID_OK )
-        {
-            //guLogMessage( wxT( "About to download cover from selected url" ) );
-            wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
-            if( CoverImage )
-            {
-                m_LibPanel->SetAlbumCover( albumid, AlbumPath, CoverImage );
-
-                ReloadItems();
-                RefreshAll();
-            }
-        }
-        CoverEditor->Destroy();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
-{
-    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
-    if( SelCoverFile )
-    {
-        if( SelCoverFile->ShowModal() == wxID_OK )
-        {
-            wxString CoverFile = SelCoverFile->GetSelFile();
-            if( !CoverFile.IsEmpty() )
-            {
-                if( m_LibPanel->SetAlbumCover( albumid, SelCoverFile->GetAlbumPath(), CoverFile ) )
-                {
-                    ReloadItems();
-                    RefreshAll();
-                }
-            }
-        }
-        delete SelCoverFile;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaAlbumBrowser::OnAlbumSelectName( const int albumid )
-{
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
-    evt.SetInt( albumid );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_LibPanel );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaAlbumBrowser::OnArtistSelectName( const int artistid )
-{
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
-    evt.SetInt( artistid );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_LibPanel );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-}
 
 
+//// -------------------------------------------------------------------------------- //
+//// guPortableMediaAlbumBrowser
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaAlbumBrowser::guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
+//    guAlbumBrowser( parent, db, playerpanel )
+//{
+//    m_LibPanel = libpanel;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaAlbumBrowser::~guPortableMediaAlbumBrowser()
+//{
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaAlbumBrowser::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+//{
+////    int Index;
+////    int Count = tracks->Count();
+////    for( Index = 0; Index < Count; Index++ )
+////    {
+////        tracks->Item( Index ).m_LibPanel = m_LibPanel;
+////    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
+//{
+//    wxString AlbumName;
+//    wxString ArtistName;
+//    wxString AlbumPath;
+//    if( !m_Db->GetAlbumInfo( albumid, &AlbumName, &ArtistName, &AlbumPath ) )
+//    {
+//        wxMessageBox( _( "Could not find the Album in the songs library.\n"
+//                         "You should update the library." ), _( "Error" ), wxICON_ERROR | wxOK );
+//        return;
+//    }
+//
+//    AlbumName = RemoveSearchFilters( AlbumName );
+//
+//    guCoverEditor * CoverEditor = new guCoverEditor( this, ArtistName, AlbumName );
+//    if( CoverEditor )
+//    {
+//        if( CoverEditor->ShowModal() == wxID_OK )
+//        {
+//            //guLogMessage( wxT( "About to download cover from selected url" ) );
+//            wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
+//            if( CoverImage )
+//            {
+//                m_LibPanel->SetAlbumCover( albumid, AlbumPath, CoverImage );
+//
+//                ReloadItems();
+//                RefreshAll();
+//            }
+//        }
+//        CoverEditor->Destroy();
+//    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
+//{
+//    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+//    if( SelCoverFile )
+//    {
+//        if( SelCoverFile->ShowModal() == wxID_OK )
+//        {
+//            wxString CoverFile = SelCoverFile->GetSelFile();
+//            if( !CoverFile.IsEmpty() )
+//            {
+//                if( m_LibPanel->SetAlbumCover( albumid, SelCoverFile->GetAlbumPath(), CoverFile ) )
+//                {
+//                    ReloadItems();
+//                    RefreshAll();
+//                }
+//            }
+//        }
+//        delete SelCoverFile;
+//    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaAlbumBrowser::OnAlbumSelectName( const int albumid )
+//{
+//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+//    evt.SetInt( albumid );
+//    evt.SetExtraLong( guTRACK_TYPE_DB );
+//    evt.SetClientData( m_LibPanel );
+//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaAlbumBrowser::OnArtistSelectName( const int artistid )
+//{
+//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+//    evt.SetInt( artistid );
+//    evt.SetExtraLong( guTRACK_TYPE_DB );
+//    evt.SetClientData( m_LibPanel );
+//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//}
 
 
-// -------------------------------------------------------------------------------- //
-// guPortableMediaPlayListPanel
-// -------------------------------------------------------------------------------- //
-guPortableMediaPlayListPanel::guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
-    guPlayListPanel( parent, db, playerpanel )
-{
-    m_LibPanel = libpanel;
-}
 
-// -------------------------------------------------------------------------------- //
-guPortableMediaPlayListPanel::~guPortableMediaPlayListPanel()
-{
-}
 
-// -------------------------------------------------------------------------------- //
-void guPortableMediaPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        tracks->Item( Index ).m_LibPanel = m_LibPanel;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaPlayListPanel::SendPlayListUpdatedEvent( void )
-{
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-    evt.SetClientData( m_LibPanel );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-}
+//// -------------------------------------------------------------------------------- //
+//// guPortableMediaPlayListPanel
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaPlayListPanel::guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
+//    //guPlayListPanel( parent, db, playerpanel )
+//    guPlayListPanel( parent, NULL )
+//{
+//    m_LibPanel = libpanel;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaPlayListPanel::~guPortableMediaPlayListPanel()
+//{
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
+//{
+////    int Index;
+////    int Count = tracks->Count();
+////    for( Index = 0; Index < Count; Index++ )
+////    {
+////        tracks->Item( Index ).m_LibPanel = m_LibPanel;
+////    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaPlayListPanel::SendPlayListUpdatedEvent( void )
+//{
+//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+//    evt.SetClientData( m_LibPanel );
+//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//}
 
 
 
@@ -1035,16 +980,16 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
     wxStaticText *              MountPathLabel;
     wxStaticText *              UsedLabel;
     wxNotebook *                PMNotebook;
-    wxPanel *                   PMAudioPanel;
+    wxScrolledWindow *          PMAudioPanel;
     wxStaticText *              NamePatternLabel;
 
     wxStaticText *              AudioFolderLabel;
     wxStaticText *              AudioFormatLabel;
 
-    wxPanel *                   PMPlaylistPanel;
+    wxScrolledWindow *          PMPlaylistPanel;
     wxStaticText *              PlaylistFormatLabel;
     wxStaticText *              PlaylistFolderLabel;
-    wxPanel *                   PMCoversPanel;
+    wxScrolledWindow *          PMCoversPanel;
     wxStaticText *              CoverFormatLabel;
     wxStaticText *              CoverNameLabel;
 
@@ -1054,29 +999,26 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
     wxButton *                  BtnSizerCancel;
 
 
-    m_PortableMediaDevice = mediadevice;
-    m_PortableMediaDevice->UpdateDiskFree();
+    m_PortableDevice = mediadevice;
+    m_PortableDevice->UpdateDiskFree();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "PMPropertiesPosX" ), -1, wxT( "Positions" ) );
-    WindowPos.y = Config->ReadNum( wxT( "PMPropertiesPosY" ), -1, wxT( "Positions" ) );
+    WindowPos.x = Config->ReadNum( wxT( "PMPropertiesPosX" ), -1, wxT( "positions" ) );
+    WindowPos.y = Config->ReadNum( wxT( "PMPropertiesPosY" ), -1, wxT( "positions" ) );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "PMPropertiesWidth" ), 570, wxT( "Positions" ) );
-    WindowSize.y = Config->ReadNum( wxT( "PMPropertiesHeight" ), 420, wxT( "Positions" ) );
+    WindowSize.x = Config->ReadNum( wxT( "PMPropertiesWidth" ), 570, wxT( "positions" ) );
+    WindowSize.y = Config->ReadNum( wxT( "PMPropertiesHeight" ), 420, wxT( "positions" ) );
 
     Create( parent, wxID_ANY, _( "Portable Media Properties" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer* PMBoxSizer;
-	PMBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Properties " ) ), wxVERTICAL );
+	wxStaticBoxSizer * PMBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Properties " ) ), wxVERTICAL );
 
-	wxFlexGridSizer* PMFlexSizer;
-	PMFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+	wxFlexGridSizer * PMFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1104,28 +1046,30 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->Add( UsedLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxRIGHT|wxBOTTOM, 5 );
 
 	m_UsedGauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1, 17 ), wxGA_HORIZONTAL );
-	m_UsedGauge->SetValue( ( m_PortableMediaDevice->DiskSize() - m_PortableMediaDevice->DiskFree() ) * double( 100 ) / m_PortableMediaDevice->DiskSize() );
+	m_UsedGauge->SetValue( ( m_PortableDevice->DiskSize() - m_PortableDevice->DiskFree() ) * double( 100 ) / m_PortableDevice->DiskSize() );
 	PMFlexSizer->Add( m_UsedGauge, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
-	//guLogMessage( wxT( "Disk %.0f free of %.0f" ), m_PortableMediaDevice->DiskFree(), m_PortableMediaDevice->DiskSize() );
+	//guLogMessage( wxT( "Disk %.0f free of %.0f" ), m_PortableDevice->DiskFree(), m_PortableDevice->DiskSize() );
 
 	PMFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	m_UsedLabel = new wxStaticText( this, wxID_ANY, wxString::Format( _( "%s free of %s" ),
-                                    SizeToString( m_PortableMediaDevice->DiskFree() ).c_str(),
-                                    SizeToString( m_PortableMediaDevice->DiskSize() ).c_str() ), wxDefaultPosition, wxDefaultSize, 0 );
+                                    SizeToString( m_PortableDevice->DiskFree() ).c_str(),
+                                    SizeToString( m_PortableDevice->DiskSize() ).c_str() ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_UsedLabel->Wrap( -1 );
 	PMFlexSizer->Add( m_UsedLabel, 0, wxRIGHT|wxALIGN_RIGHT, 5 );
 
 	PMBoxSizer->Add( PMFlexSizer, 0, wxEXPAND, 5 );
 
 	PMNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
-	PMAudioPanel = new wxPanel( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
+	PMAudioPanel = new wxScrolledWindow( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+
 	PMFlexSizer = new wxFlexGridSizer( 5, 3, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-    m_IsIpod = ( m_PortableMediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD );
+    m_IsIpod = ( m_PortableDevice->Type() == guPORTABLE_MEDIA_TYPE_IPOD );
 
     if( !m_IsIpod )
     {
@@ -1203,8 +1147,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	m_TransQualityChoice->SetSelection( mediadevice->TranscodeQuality() );
 	if( !m_IsIpod )
 	{
-        m_TransQualityChoice->Enable( ( m_PortableMediaDevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP ) &&
-                                      ( m_PortableMediaDevice->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP ) );
+        m_TransQualityChoice->Enable( ( m_PortableDevice->TranscodeFormat() != guTRANSCODE_FORMAT_KEEP ) );
 	}
 	PMFlexSizer->Add( m_TransQualityChoice, 0, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -1216,16 +1159,17 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->Fit( PMAudioPanel );
 	PMNotebook->AddPage( PMAudioPanel, _("Audio"), true );
 
+    PMAudioPanel->SetScrollRate( 20, 20 );
 
     if( !m_IsIpod )
     {
-        PMPlaylistPanel = new wxPanel( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+        PMPlaylistPanel = new wxScrolledWindow( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
         PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
         PMFlexSizer->AddGrowableCol( 1 );
         PMFlexSizer->SetFlexibleDirection( wxBOTH );
         PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-        PlaylistFolderLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("PlayList Folders:"), wxDefaultPosition, wxDefaultSize, 0 );
+        PlaylistFolderLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("Playlist Folders:"), wxDefaultPosition, wxDefaultSize, 0 );
         PlaylistFolderLabel->Wrap( -1 );
         PMFlexSizer->Add( PlaylistFolderLabel, 0, wxALIGN_CENTER_VERTICAL|wxALL|wxALIGN_RIGHT, 5 );
 
@@ -1235,7 +1179,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
         m_PlaylistFolderBtn = new wxButton( PMPlaylistPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
         PMFlexSizer->Add( m_PlaylistFolderBtn, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-        PlaylistFormatLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("PlayList Format:"), wxDefaultPosition, wxDefaultSize, 0 );
+        PlaylistFormatLabel = new wxStaticText( PMPlaylistPanel, wxID_ANY, _("Playlist Format:"), wxDefaultPosition, wxDefaultSize, 0 );
         PlaylistFormatLabel->Wrap( -1 );
         PMFlexSizer->Add( PlaylistFormatLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
@@ -1250,9 +1194,10 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
         PMPlaylistPanel->Layout();
         PMFlexSizer->Fit( PMPlaylistPanel );
         PMNotebook->AddPage( PMPlaylistPanel, _("Playlists"), false );
+        PMPlaylistPanel->SetScrollRate( 20, 20 );
     }
 
-	PMCoversPanel = new wxPanel( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	PMCoversPanel = new wxScrolledWindow( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
@@ -1294,6 +1239,8 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	PMFlexSizer->Fit( PMCoversPanel );
 	PMNotebook->AddPage( PMCoversPanel, _("Covers"), false );
 
+    PMCoversPanel->SetScrollRate( 20, 20 );
+
 	PMBoxSizer->Add( PMNotebook, 1, wxEXPAND | wxLEFT|wxRIGHT|wxBOTTOM, 5 );
 
 	MainSizer->Add( PMBoxSizer, 1, wxEXPAND|wxALL, 5 );
@@ -1303,11 +1250,15 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	BtnSizer->AddButton( BtnSizerOK );
 	BtnSizerCancel = new wxButton( this, wxID_CANCEL );
 	BtnSizer->AddButton( BtnSizerCancel );
+	BtnSizer->SetAffirmativeButton( BtnSizerOK );
+	BtnSizer->SetCancelButton( BtnSizerCancel );
 	BtnSizer->Realize();
 	MainSizer->Add( BtnSizer, 0, wxEXPAND|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
+	BtnSizerOK->SetDefault();
 
 	if( !m_IsIpod )
         m_AudioFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnAudioFolderBtnClick ), NULL, this );
@@ -1321,9 +1272,9 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
         m_PlaylistFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFormatBtnClick ), NULL, this );
     }
 
-
 	m_CoverFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnCoverFormatBtnClick ), NULL, this );
 
+    m_NameText->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1331,11 +1282,11 @@ guPortableMediaProperties::~guPortableMediaProperties()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PMPropertiesPosX" ), WindowPos.x, wxT( "Positions" ) );
-    Config->WriteNum( wxT( "PMPropertiesPosY" ), WindowPos.y, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PMPropertiesPosX" ), WindowPos.x, wxT( "positions" ) );
+    Config->WriteNum( wxT( "PMPropertiesPosY" ), WindowPos.y, wxT( "positions" ) );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "PMPropertiesWidth" ), WindowSize.x, wxT( "Positions" ) );
-    Config->WriteNum( wxT( "PMPropertiesHeight" ), WindowSize.y, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PMPropertiesWidth" ), WindowSize.x, wxT( "positions" ) );
+    Config->WriteNum( wxT( "PMPropertiesHeight" ), WindowSize.y, wxT( "positions" ) );
     Config->Flush();
 
 }
@@ -1345,41 +1296,41 @@ void guPortableMediaProperties::WriteConfig( void )
 {
     if( !m_IsIpod )
     {
-        m_PortableMediaDevice->SetPattern( m_NamePatternText->GetValue() );
-        m_PortableMediaDevice->SetAudioFolders( m_AudioFolderText->GetValue() );
+        m_PortableDevice->SetPattern( m_NamePatternText->GetValue() );
+        m_PortableDevice->SetAudioFolders( m_AudioFolderText->GetValue() );
     }
-    m_PortableMediaDevice->SetAudioFormats( m_AudioFormats );
+    m_PortableDevice->SetAudioFormats( m_AudioFormats );
     if( !m_IsIpod )
     {
-        m_PortableMediaDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() );
+        m_PortableDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() );
     }
     else
     {
-        m_PortableMediaDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() ? guTRANSCODE_FORMAT_AAC : guTRANSCODE_FORMAT_MP3 );
+        m_PortableDevice->SetTranscodeFormat( m_TransFormatChoice->GetSelection() ? guTRANSCODE_FORMAT_AAC : guTRANSCODE_FORMAT_MP3 );
     }
-    m_PortableMediaDevice->SetTranscodeScope( m_TransScopeChoice->GetSelection() );
-    m_PortableMediaDevice->SetTranscodeQuality( m_TransQualityChoice->GetSelection() );
+    m_PortableDevice->SetTranscodeScope( m_TransScopeChoice->GetSelection() );
+    m_PortableDevice->SetTranscodeQuality( m_TransQualityChoice->GetSelection() );
     if( !m_IsIpod )
     {
-        m_PortableMediaDevice->SetPlaylistFormats( m_PlaylistFormats );
-        m_PortableMediaDevice->SetPlaylistFolder( m_PlaylistFolderText->GetValue() );
+        m_PortableDevice->SetPlaylistFormats( m_PlaylistFormats );
+        m_PortableDevice->SetPlaylistFolder( m_PlaylistFolderText->GetValue() );
     }
-    m_PortableMediaDevice->SetCoverFormats( m_CoverFormats );
+    m_PortableDevice->SetCoverFormats( m_CoverFormats );
     if( !m_IsIpod )
     {
-        m_PortableMediaDevice->SetCoverName( m_CoverNameText->GetValue() );
+        m_PortableDevice->SetCoverName( m_CoverNameText->GetValue() );
     }
     long CoverSize;
     m_CoverSizeText->GetValue().ToLong( &CoverSize );
-    m_PortableMediaDevice->SetCoverSize( CoverSize );
+    m_PortableDevice->SetCoverSize( CoverSize );
 
-    m_PortableMediaDevice->WriteConfig();
+    m_PortableDevice->WriteConfig();
 }
 
 // -------------------------------------------------------------------------------- //
 void guPortableMediaProperties::OnAudioFolderBtnClick( wxCommandEvent &event )
 {
-    wxString MountPath = m_PortableMediaDevice->MountPath();
+    wxString MountPath = m_PortableDevice->MountPath();
     if( !MountPath.EndsWith( wxT( "/" ) ) )
         MountPath.Append( wxT( "/" ) );
 
@@ -1465,7 +1416,7 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
             {
                 m_AudioFormats |= ItemFlags[ Selection[ Index ] ];
             }
-            m_AudioFormatText->SetValue( m_PortableMediaDevice->AudioFormatsStr( m_AudioFormats ) );
+            m_AudioFormatText->SetValue( m_PortableDevice->AudioFormatsStr( m_AudioFormats ) );
         }
         ListCheckOptionsDialog->Destroy();
     }
@@ -1474,7 +1425,7 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPortableMediaProperties::OnPlaylistFolderBtnClick( wxCommandEvent &event )
 {
-    wxString MountPath = m_PortableMediaDevice->MountPath();
+    wxString MountPath = m_PortableDevice->MountPath();
     if( !MountPath.EndsWith( wxT( "/" ) ) )
         MountPath.Append( wxT( "/" ) );
 
@@ -1540,7 +1491,7 @@ void guPortableMediaProperties::OnPlaylistFormatBtnClick( wxCommandEvent &event 
             {
                 m_PlaylistFormats |= ItemFlags[ Selection[ Index ] ];
             }
-            m_PlaylistFormatText->SetValue( m_PortableMediaDevice->PlaylistFormatsStr( m_PlaylistFormats ) );
+            m_PlaylistFormatText->SetValue( m_PortableDevice->PlaylistFormatsStr( m_PlaylistFormats ) );
         }
         ListCheckOptionsDialog->Destroy();
     }
@@ -1592,7 +1543,7 @@ void guPortableMediaProperties::OnCoverFormatBtnClick( wxCommandEvent &event )
             {
                 m_CoverFormats |= ItemFlags[ Selection[ Index ] ];
             }
-            m_CoverFormatText->SetValue( m_PortableMediaDevice->CoverFormatsStr( m_CoverFormats ) );
+            m_CoverFormatText->SetValue( m_PortableDevice->CoverFormatsStr( m_CoverFormats ) );
         }
         ListCheckOptionsDialog->Destroy();
     }
@@ -1636,12 +1587,17 @@ guListCheckOptionsDialog::guListCheckOptionsDialog( wxWindow * parent, const wxS
 	ButtonSizer->AddButton( ButtonSizerOK );
 	ButtonSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonSizer->AddButton( ButtonSizerCancel );
+	ButtonSizer->SetAffirmativeButton( ButtonSizerOK );
+	ButtonSizer->SetCancelButton( ButtonSizerCancel );
 	ButtonSizer->Realize();
 	MainSizer->Add( ButtonSizer, 0, wxEXPAND|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	ButtonSizerOK->SetDefault();
+
+	m_CheckListBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1664,2075 +1620,354 @@ int guListCheckOptionsDialog::GetSelectedItems( wxArrayInt &selection )
 }
 
 
-#ifdef WITH_LIBGPOD_SUPPORT
+
+
+//// -------------------------------------------------------------------------------- //
+//// guPortableMediaViewCtrl
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO_Mount * mount, int basecommand )
+//{
+//    m_MainFrame = mainframe;
+//    m_BaseCommand = basecommand;
+//    m_PortableDevice = new guPortableMediaDevice( mount );
+//
+//    wxString DeviceDbPath = wxGetHomeDir() + wxT( "/.guayadeque/Devices/" ) + m_PortableDevice->DevicePath() + wxT( "/guayadeque.db" );
+//    wxFileName::Mkdir( wxPathOnly( DeviceDbPath ), 0775, wxPATH_MKDIR_FULL );
+//
+////////#ifdef WITH_LIBGPOD_SUPPORT
+////////    Itdb_iTunesDB * iPodDb = itdb_parse( m_PortableDevice->MountPath().mb_str( wxConvFile ), NULL );
+////////    if( iPodDb )
+////////    {
+////////        m_PortableDevice->SetType( guPORTABLE_MEDIA_TYPE_IPOD );
+////////        m_Db = ( guPortableMediaLibrary * ) new guIpodLibrary( DeviceDbPath, m_PortableDevice, iPodDb );
+////////
+////////        guLogMessage( wxT( "Detected an Ipod with %i tracks and %i playlists" ),  itdb_tracks_number( iPodDb ), itdb_playlists_number( iPodDb ) );
+////////        Itdb_Device * iPodDevice = iPodDb->device;
+////////        if( iPodDevice )
+////////        {
+////////            //guLogMessage( wxT( "Artwork support : %i" ), itdb_device_supports_artwork( iPodDevice ) );
+////////            const Itdb_IpodInfo * iPodInfo = itdb_device_get_ipod_info( iPodDevice );
+////////            if( iPodInfo )
+////////            {
+////////                guLogMessage( wxT( "Model Number    : %s" ), wxString( iPodInfo->model_number, wxConvUTF8 ).c_str() );
+////////                guLogMessage( wxT( "Capacity        : %.0f" ), iPodInfo->capacity );
+////////                guLogMessage( wxT( "Model Name      : %s" ), wxString( itdb_info_get_ipod_model_name_string( iPodInfo->ipod_model ), wxConvUTF8 ).c_str() );
+////////                guLogMessage( wxT( "Generation      : %s" ), wxString( itdb_info_get_ipod_generation_string( iPodInfo->ipod_generation ), wxConvUTF8 ).c_str() );
+////////            }
+////////        }
+////////    }
+////////    else
+////////#endif
+//    {
+//        m_Db = new guPortableMediaLibrary( DeviceDbPath, m_PortableDevice );
+////        m_Db->SetLibPath( wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) ) );
+//    }
+//
+//    m_LibPanel = NULL;
+//
+//    m_PlayListPanel = NULL;
+//    m_AlbumBrowserPanel = NULL;
+//    m_VisiblePanels = 0;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaViewCtrl::~guPortableMediaViewCtrl()
+//{
+//    if( m_LibPanel )
+//        delete m_LibPanel;
+//
+//    if( m_PlayListPanel )
+//        delete m_PlayListPanel;
+//
+//    if( m_AlbumBrowserPanel )
+//        delete m_AlbumBrowserPanel;
+//
+//    if( m_PortableDevice )
+//        delete m_PortableDevice;
+//
+//    if( m_Db )
+//        delete m_Db;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel )
+//{
+//    if( !m_LibPanel )
+//    {
+////////#ifdef WITH_LIBGPOD_SUPPORT
+////////        if( m_PortableDevice->Type() == guPORTABLE_MEDIA_TYPE_IPOD )
+////////        {
+////////            m_LibPanel = new guIpodMediaLibPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel );
+////////        }
+////////        else
+////////#endif
+//        {
+////            m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel );
+//        }
+//        m_LibPanel->SetPortableMediaDevice( m_PortableDevice );
+//        m_LibPanel->SetBaseCommand( m_BaseCommand );
+//    }
+//    m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
+//    return m_LibPanel;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaViewCtrl::DestroyLibPanel( void )
+//{
+////    if( m_LibPanel )
+////    {
+////        delete m_LibPanel;
+////        m_LibPanel = NULL;
+//        m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
+////        m_LibPanel->SetPanelActive( wxNOT_FOUND );
+////    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaAlbumBrowser * guPortableMediaViewCtrl::CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel )
+//{
+////////#ifdef WITH_LIBGPOD_SUPPORT
+////////    if( m_PortableDevice->Type() == guPORTABLE_MEDIA_TYPE_IPOD )
+////////    {
+////////        m_AlbumBrowserPanel = new guIpodAlbumBrowser( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
+////////    }
+////////    else
+////////#endif
+//    {
+//        m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel, m_LibPanel );
+//    }
+//    //m_AlbumBrowserPanel->SetPortableMediaDevice( m_PortableDevice );
+//    //m_LibPanel->SetBaseCommand( m_BaseCommand );
+//    m_VisiblePanels |= guPANEL_MAIN_ALBUMBROWSER;
+//    return m_AlbumBrowserPanel;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaViewCtrl::DestroyAlbumBrowser( void )
+//{
+//    if( m_AlbumBrowserPanel )
+//    {
+//        delete m_AlbumBrowserPanel;
+//        m_AlbumBrowserPanel = NULL;
+//        m_VisiblePanels ^= guPANEL_MAIN_ALBUMBROWSER;
+//    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guPortableMediaPlayListPanel * guPortableMediaViewCtrl::CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel )
+//{
+////////#ifdef WITH_LIBGPOD_SUPPORT
+////////    if( m_PortableDevice->Type() == guPORTABLE_MEDIA_TYPE_IPOD )
+////////    {
+////////        m_PlayListPanel = new guIpodPlayListPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
+////////    }
+////////    else
+////////#endif
+//    {
+//        m_PlayListPanel = new guPortableMediaPlayListPanel( parent, m_Db, playerpanel, m_LibPanel );
+//    }
+//    m_VisiblePanels |= guPANEL_MAIN_PLAYLISTS;
+//    return m_PlayListPanel;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//void guPortableMediaViewCtrl::DestroyPlayListPanel( void )
+//{
+//    if( m_PlayListPanel )
+//    {
+//        delete m_PlayListPanel;
+//        m_PlayListPanel = NULL;
+//        m_VisiblePanels ^= guPANEL_MAIN_PLAYLISTS;
+//    }
+//}
+
 
 // -------------------------------------------------------------------------------- //
-void inline CheckUpdateField( gchar ** fieldptr, const wxString &newval )
+// guMediaViewerPortableDeviceBase
+// -------------------------------------------------------------------------------- //
+guMediaViewerPortableDeviceBase::guMediaViewerPortableDeviceBase( wxWindow * parent, guMediaCollection &mediacollection,
+                          const int basecmd, guMainFrame * mainframe, const int mode,
+                          guPlayerPanel * playerpanel, guGIO_Mount * mount ) :
+    guMediaViewer( parent, mediacollection, basecmd, mainframe, mode, playerpanel )
 {
-    if( wxString( * fieldptr, wxConvUTF8 ) != newval )
-    {
-        free( * fieldptr );
-        * fieldptr = strdup( newval.ToUTF8() );
-    }
+    m_PortableDevice = new guPortableMediaDevice( mount );
+    //m_PortableDevice->SetId( m_MediaCollection->m_UniqueId );
+    //m_PortableDevice->WriteConfig();
+
 }
 
 // -------------------------------------------------------------------------------- //
-// guIpodLibrary
-// -------------------------------------------------------------------------------- //
-guIpodLibrary::guIpodLibrary( const wxString &dbpath, guPortableMediaDevice * portablemediadevice, Itdb_iTunesDB * ipoddb )
-    : guPortableMediaLibrary( dbpath, portablemediadevice )
+guMediaViewerPortableDeviceBase::~guMediaViewerPortableDeviceBase()
 {
-    m_iPodDb = ipoddb;
+    if( m_PortableDevice )
+        delete m_PortableDevice;
 }
 
 // -------------------------------------------------------------------------------- //
-guIpodLibrary::~guIpodLibrary()
+wxString guMediaViewerPortableDeviceBase::GetCoverName( const int albumid )
 {
-    if( m_iPodDb )
+    wxString CoverName = m_PortableDevice->CoverName();
+    if( CoverName.IsEmpty() )
     {
-        itdb_free( m_iPodDb );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-int guIpodLibrary::GetAlbumId( const wxString &album, const wxString &artist, const wxString &albumartist, const wxString &disk )
-{
-    //guLogMessage( wxT( "guIpodLibrary::GetAlbumId" ) );
-    wxString query;
-    wxSQLite3ResultSet dbRes;
-    int RetVal = 0;
-
-    query = wxString::Format( wxT( "SELECT song_albumid FROM songs WHERE song_album = '%s' " ), escape_query_str( album ).c_str() );
-
-    if( !albumartist.IsEmpty() )
-    {
-        query += wxString::Format( wxT( "AND song_albumartist = '%s' " ), escape_query_str( albumartist ).c_str() );
-    }
-    else
-    {
-        query += wxString::Format( wxT( "AND song_artist = '%s' " ), escape_query_str( artist ).c_str() );
+        CoverName = wxT( "cover" );
     }
 
-    if( !disk.IsEmpty() )
+    int DevCoverFormats = m_PortableDevice->CoverFormats();
+
+    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
     {
-        query += wxString::Format( wxT( "AND song_disk = '%s' " ), escape_query_str( disk ).c_str() );
+        CoverName += wxT( ".jpg" );
     }
-
-    query += wxT( "LIMIT 1;" );
-
-    dbRes = m_Db->ExecuteQuery( query );
-
-    if( dbRes.NextRow() )
+    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
     {
-        RetVal = dbRes.GetInt( 0 );
+        CoverName += wxT( ".png" );
     }
-    else
+    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
     {
-        dbRes.Finalize();
-
-        query = wxT( "SELECT MAX(song_albumid) FROM songs;" );
-
-        dbRes = ExecuteQuery( query );
-
-        if( dbRes.NextRow() )
-        {
-          RetVal = dbRes.GetInt( 0 ) + 1;
-        }
-        else
-        {
-            RetVal = 1;
-        }
+        CoverName += wxT( ".gif" );
     }
-    dbRes.Finalize();
-
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-int guIpodLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt &trackids )
-{
-    guLogMessage( wxT( "guIpodMediaLibPanel::CreateStaticPlayList( '%s' )" ), name.c_str() );
-
-    wxString PlayListName = name;
-    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
-    if( OldPlayList )
+    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
     {
-        guLogMessage( wxT( "Playlist with same name exists so delete it" ) );
-        itdb_playlist_remove( OldPlayList );
-    }
-
-    Itdb_Playlist * iPodPlayList = itdb_playlist_new( name.mb_str( wxConvFile ), false );
-    if( iPodPlayList )
-    {
-        guLogMessage( wxT( "Created the playlist" ) );
-        itdb_playlist_add( m_iPodDb, iPodPlayList, wxNOT_FOUND );
-        guLogMessage( wxT( "Attached to the database" ) );
-        int Index;
-        int Count = trackids.Count();
-        guTrackArray Tracks;
-        GetSongs( trackids, &Tracks );
-        for( Index = 0; Index < Count; Index++ )
-        {
-            guLogMessage( wxT( "Searching for track %s" ), Tracks[ Index ].m_FileName.c_str() );
-            Itdb_Track * iPodTrack = iPodFindTrack( Tracks[ Index ].m_FileName );
-            if( iPodTrack )
-            {
-                guLogMessage( wxT( "Adding track %s" ), Tracks[ Index ].m_FileName.c_str() );
-                itdb_playlist_add_track( iPodPlayList, iPodTrack, wxNOT_FOUND );
-            }
-        }
-        guLogMessage( wxT( "Savint the database" ) );
-        iPodFlush();
-    }
-    else
-    {
-        guLogMessage( wxT( "Could not create the playlist " ) );
-    }
-    return guDbLibrary::CreateStaticPlayList( name, trackids );
-}
-
-// -------------------------------------------------------------------------------- //
-int guIpodLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &trackids )
-{
-    guLogMessage( wxT( "guIpodLibrary::UpdateStaticPlayList" ) );
-    wxString PlayListName = GetPlayListName( plid );
-    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
-    if( OldPlayList )
-    {
-        GList * Tracks = OldPlayList->members;
-        while( Tracks )
-        {
-            Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
-            if( CurTrack )
-                itdb_playlist_remove_track( OldPlayList, CurTrack );
-
-            Tracks = Tracks->next;
-        }
-
-        int Index;
-        int Count = trackids.Count();
-        guTrackArray PlayListTracks;
-        GetSongs( trackids, &PlayListTracks );
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
-            if( iPodTrack )
-            {
-                itdb_playlist_add_track( OldPlayList, iPodTrack, wxNOT_FOUND );
-            }
-        }
-        iPodFlush();
-    }
-
-    return guDbLibrary::UpdateStaticPlayList( plid, trackids );
-}
-
-// -------------------------------------------------------------------------------- //
-int guIpodLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &trackids )
-{
-    guLogMessage( wxT( "guIpodLibrary::AppendStaticPlayList" ) );
-    wxString PlayListName = GetPlayListName( plid );
-    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
-    if( OldPlayList )
-    {
-        int Index;
-        int Count = trackids.Count();
-        guTrackArray PlayListTracks;
-        GetSongs( trackids, &PlayListTracks );
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
-            if( iPodTrack )
-            {
-                itdb_playlist_add_track( OldPlayList, iPodTrack, wxNOT_FOUND );
-            }
-        }
-        iPodFlush();
-    }
-    return guDbLibrary::AppendStaticPlayList( plid, trackids );
-}
-
-// -------------------------------------------------------------------------------- //
-int guIpodLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &trackids )
-{
-    guLogMessage( wxT( "guIpodLibrary::DelPlaylistSetIds" ) );
-    wxString PlayListName = GetPlayListName( plid );
-    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
-    if( OldPlayList )
-    {
-        int Index;
-        int Count;
-        guTrackArray PlayListTracks;
-        GetSongs( trackids, &PlayListTracks );
-	Count = PlayListTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
-            if( iPodTrack )
-            {
-                itdb_playlist_remove_track( OldPlayList, iPodTrack );
-            }
-        }
-        iPodFlush();
-    }
-    return guDbLibrary::DelPlaylistSetIds( plid, trackids );
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodLibrary::SetPlayListName( const int plid, const wxString &newname )
-{
-    guLogMessage( wxT( "guIpodLibrary::SetPlayListName" ) );
-    wxString PlayListName = GetPlayListName( plid );
-    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
-    if( OldPlayList )
-    {
-        CheckUpdateField( &OldPlayList->name, newname );
-        iPodFlush();
+        CoverName += wxT( ".bmp" );
     }
     else
     {
-        guLogMessage( wxT( "Could not find the playlist '%s'" ), PlayListName.c_str() );
+        CoverName += wxT( ".jpg" );
     }
 
-    guDbLibrary::SetPlayListName( plid, newname );
+    return CoverName;
 }
 
 // -------------------------------------------------------------------------------- //
-void guIpodLibrary::DeletePlayList( const int plid )
+wxString guMediaViewerPortableDeviceBase::AudioPath( void )
 {
-    guLogMessage( wxT( "guIpodLibrary::DeletePlayList" ) );
-    wxString PlayListName = GetPlayListName( plid );
-    Itdb_Playlist * OldPlayList = itdb_playlist_by_name( m_iPodDb, PlayListName.char_str( wxConvUTF8 ) );
-    if( OldPlayList )
+    wxString Path =  m_PortableDevice->MountPath();
+    wxArrayString AudioFolders = wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) );
+    if( AudioFolders.Count() )
     {
-        itdb_playlist_remove( OldPlayList );
-        iPodFlush();
+        Path += AudioFolders[ 0 ].Trim( true ).Trim( false );;
     }
-
-    guDbLibrary::DeletePlayList( plid );
+    return Path;
 }
 
 // -------------------------------------------------------------------------------- //
-void guIpodLibrary::UpdateStaticPlayListFile( const int plid )
+// guMediaViewerPortableDevice
+// -------------------------------------------------------------------------------- //
+guMediaViewerPortableDevice::guMediaViewerPortableDevice( wxWindow * parent, guMediaCollection &mediacollection,
+                          const int basecmd, guMainFrame * mainframe, const int mode,
+                          guPlayerPanel * playerpanel, guGIO_Mount * mount ) :
+    guMediaViewerPortableDeviceBase( parent, mediacollection, basecmd, mainframe, mode, playerpanel, mount )
+{
+    UpdateCollectionProperties();
+
+    InitMediaViewer( mode );
+}
+
+// -------------------------------------------------------------------------------- //
+guMediaViewerPortableDevice::~guMediaViewerPortableDevice()
 {
 }
 
 // -------------------------------------------------------------------------------- //
-Itdb_Playlist * guIpodLibrary::CreateiPodPlayList( const wxString &path, const wxArrayString &filenames )
+void guMediaViewerPortableDevice::LoadMediaDb( void )
 {
-    guLogMessage( wxT( "guIpodLibrary::CreateiPodPlayList( '%s' )" ), wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) ).c_str() );
-
-    Itdb_Playlist * iPodPlayList = itdb_playlist_new( wxFileNameFromPath( path ).BeforeLast( wxT( '.' ) ).mb_str( wxConvFile ), false );
-    if( iPodPlayList )
-    {
-        itdb_playlist_add( m_iPodDb, iPodPlayList, wxNOT_FOUND );
-        int Index;
-        int Count = filenames.Count();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            guLogMessage( wxT( "Trying to search for: '%s'" ), filenames[ Index ].c_str() );
-            Itdb_Track * iPodTrack = iPodFindTrack( filenames[ Index ] );
-            if( iPodTrack )
-            {
-                guLogMessage( wxT( "Found the track" ) );
-                itdb_playlist_add_track( iPodPlayList, iPodTrack, wxNOT_FOUND );
-            }
-        }
-        guLogMessage( wxT( "Playlist: '%s' with %i tracks" ), wxString( iPodPlayList->name, wxConvUTF8 ).c_str(), iPodPlayList->num );
-        iPodFlush();
-    }
-    else
-    {
-        guLogMessage( wxT( "Could not create the playlist " ) );
-    }
-    return iPodPlayList;
+    m_Db = new guPortableMediaLibrary( guPATH_COLLECTIONS + m_MediaCollection->m_UniqueId + wxT( "/guayadeque.db" ), m_PortableDevice );
+    m_Db->SetMediaViewer( this );
 }
 
 // -------------------------------------------------------------------------------- //
-int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayList * playlist )
+void guMediaViewerPortableDevice::UpdateCollectionProperties( void )
 {
-    guLogMessage( wxT( "CreateDynamicPlaylist..." ) );
-    Itdb_Playlist * DynPlayList = itdb_playlist_new( name.mb_str( wxConvFile ), true );
-    if( DynPlayList )
-    {
-        itdb_playlist_add( m_iPodDb, DynPlayList, wxNOT_FOUND );
-
-        if( !playlist->m_Sorted )
-        {
-            DynPlayList->sortorder = ITDB_PSO_MANUAL;
-        }
-        else
-        {
-            switch( playlist->m_SortType )
-            {
-                case guDYNAMIC_FILTER_ORDER_TITLE :
-                    DynPlayList->sortorder = ITDB_PSO_TITLE;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_ARTIST :
-                    DynPlayList->sortorder = ITDB_PSO_ARTIST;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_ALBUMARTIST :
-                    DynPlayList->sortorder = ITDB_PSO_MANUAL;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_ALBUM :
-                    DynPlayList->sortorder = ITDB_PSO_ALBUM;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_GENRE :
-                    DynPlayList->sortorder = ITDB_PSO_GENRE;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_LABEL :
-                    DynPlayList->sortorder = ITDB_PSO_GROUPING;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_COMPOSER :
-                    DynPlayList->sortorder = ITDB_PSO_COMPOSER;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_YEAR :
-                    DynPlayList->sortorder = ITDB_PSO_YEAR;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_RATING :
-                    DynPlayList->sortorder = ITDB_PSO_RATING;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_LENGTH :
-                    DynPlayList->sortorder = ITDB_PSO_TIME;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_PLAYCOUNT :
-                    DynPlayList->sortorder = ITDB_PSO_PLAYCOUNT;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_LASTPLAY :
-                    DynPlayList->sortorder = ITDB_PSO_TIME_PLAYED;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_ADDEDDATE :
-                    DynPlayList->sortorder = ITDB_PSO_TIME_ADDED;
-                    break;
-
-                case guDYNAMIC_FILTER_ORDER_RANDOM :
-                    DynPlayList->sortorder = ITDB_PSO_MANUAL;
-                    break;
-            }
-        }
-
-        Itdb_SPLPref * PlaylistPref = &DynPlayList->splpref;
-        PlaylistPref->liveupdate = true;
-        PlaylistPref->checkrules = playlist->m_Filters.Count();
-        PlaylistPref->checklimits = playlist->m_Limited;
-        if( playlist->m_Limited )
-        {
-            PlaylistPref->limitvalue = playlist->m_LimitValue;
-
-            switch( playlist->m_LimitType )
-            {
-                case guDYNAMIC_FILTER_LIMIT_TRACKS :
-                    PlaylistPref->limittype = ITDB_LIMITTYPE_SONGS;
-                    break;
-
-                case guDYNAMIC_FILTER_LIMIT_MINUTES :
-                    PlaylistPref->limittype = ITDB_LIMITTYPE_MINUTES;
-                    break;
-
-                case guDYNAMIC_FILTER_LIMIT_MEGABYTES :
-                    PlaylistPref->limittype = ITDB_LIMITTYPE_MB;
-                    break;
-
-                case guDYNAMIC_FILTER_LIMIT_GIGABYTES :
-                    PlaylistPref->limittype = ITDB_LIMITTYPE_GB;
-                    break;
-            }
-        }
-
-        Itdb_SPLRules * PlaylistRules = &DynPlayList->splrules;
-
-        PlaylistRules->match_operator = playlist->m_AnyOption ? ITDB_SPLMATCH_OR : ITDB_SPLMATCH_AND;
-
-        guLogMessage( wxT( "*** Creating new Playlist : '%s'" ), name.c_str() );
-        guLogMessage( wxT( "liveupdate  : %i" ), PlaylistPref->liveupdate );
-        guLogMessage( wxT( "checkrules  : %i" ), PlaylistPref->checkrules );
-        guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
-        guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
-
-        int Index;
-        int Count = playlist->m_Filters.Count();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Itdb_SPLRule * PlaylistRule;
-            if( Index > 0 )
-                PlaylistRule = itdb_splr_add_new( DynPlayList, wxNOT_FOUND );
-            else
-                PlaylistRule = ( Itdb_SPLRule * ) PlaylistRules->rules->data;
-            if( PlaylistRule )
-            {
-                guFilterItem * FilterItem = &playlist->m_Filters[ Index ];
-
-                switch( FilterItem->m_Type )
-                {
-                    case guDYNAMIC_FILTER_TYPE_TITLE :
-                        PlaylistRule->field = ITDB_SPLFIELD_SONG_NAME;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_ARTIST :
-                        PlaylistRule->field = ITDB_SPLFIELD_ARTIST;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_ALBUMARTIST :
-                        PlaylistRule->field = ITDB_SPLFIELD_ALBUMARTIST;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_ALBUM :
-                        PlaylistRule->field = ITDB_SPLFIELD_ALBUM;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_GENRE :
-                        PlaylistRule->field = ITDB_SPLFIELD_GENRE;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_LABEL :
-                        PlaylistRule->field = ITDB_SPLFIELD_GROUPING;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_COMPOSER :
-                        PlaylistRule->field = ITDB_SPLFIELD_COMPOSER;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_COMMENT :
-                        PlaylistRule->field = ITDB_SPLFIELD_COMMENT;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_PATH :
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_YEAR :
-                        PlaylistRule->field = ITDB_SPLFIELD_YEAR;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_RATING :
-                        PlaylistRule->field = ITDB_SPLFIELD_RATING;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_LENGTH :
-                        PlaylistRule->field = ITDB_SPLFIELD_TIME;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
-                        PlaylistRule->field = ITDB_SPLFIELD_PLAYCOUNT;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_LASTPLAY :
-                        PlaylistRule->field = ITDB_SPLFIELD_LAST_PLAYED;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
-                        PlaylistRule->field = ITDB_SPLFIELD_DATE_ADDED;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_TRACKNUMBER :
-                        PlaylistRule->field = ITDB_SPLFIELD_TRACKNUMBER;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_BITRATE :
-                        PlaylistRule->field = ITDB_SPLFIELD_BITRATE;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_SIZE :
-                        PlaylistRule->field = ITDB_SPLFIELD_SIZE;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_DISK :
-                        PlaylistRule->field = ITDB_SPLFIELD_DISC_NUMBER;
-                        break;
-
-                    case guDYNAMIC_FILTER_TYPE_HASARTWORK :
-                        break;
-                }
-
-                switch( FilterItem->m_Type )
-                {
-                    case guDYNAMIC_FILTER_TYPE_TITLE : // String
-                    case guDYNAMIC_FILTER_TYPE_ARTIST :
-                    case guDYNAMIC_FILTER_TYPE_ALBUMARTIST :
-                    case guDYNAMIC_FILTER_TYPE_ALBUM :
-                    case guDYNAMIC_FILTER_TYPE_GENRE :
-                    case guDYNAMIC_FILTER_TYPE_COMPOSER :
-                    case guDYNAMIC_FILTER_TYPE_COMMENT :
-                    case guDYNAMIC_FILTER_TYPE_PATH :
-                    case guDYNAMIC_FILTER_TYPE_DISK :
-                    case guDYNAMIC_FILTER_TYPE_LABEL :
-                    {
-                        switch( FilterItem->m_Option )
-                        {
-                            case guDYNAMIC_FILTER_OPTION_STRING_CONTAINS :
-                                PlaylistRule->action = ITDB_SPLACTION_CONTAINS;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS :
-                                PlaylistRule->action = ITDB_SPLACTION_DOES_NOT_CONTAIN;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_STRING_IS :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_STRING;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_STRING_ISNOT :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_NOT;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_STRING_START_WITH :
-                                PlaylistRule->action = ITDB_SPLACTION_STARTS_WITH;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH :
-                                PlaylistRule->action = ITDB_SPLACTION_ENDS_WITH;
-                                break;
-                        }
-                        PlaylistRule->string = strdup( FilterItem->m_Text.ToUTF8() );
-                        PlaylistRule->fromvalue = 0;
-                        PlaylistRule->tovalue = 0;
-                        PlaylistRule->fromdate = 0;
-                        PlaylistRule->todate = 0;
-                        PlaylistRule->fromunits = 0;
-                        PlaylistRule->tounits = 0;
-                        break;
-                    }
-
-                    case guDYNAMIC_FILTER_TYPE_YEAR : // Year
-                    case guDYNAMIC_FILTER_TYPE_RATING : // Numbers
-                    case guDYNAMIC_FILTER_TYPE_PLAYCOUNT :
-                    case guDYNAMIC_FILTER_TYPE_TRACKNUMBER :
-                    case guDYNAMIC_FILTER_TYPE_BITRATE :
-                    case guDYNAMIC_FILTER_TYPE_SIZE :
-                    case guDYNAMIC_FILTER_TYPE_LENGTH : // Time
-                    {
-                        switch( FilterItem->m_Option )
-                        {
-                            case guDYNAMIC_FILTER_OPTION_NUMERIC_IS :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_INT;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_NUMERIC_ISNOT :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_NOT_INT;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_GREATER_THAN;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_LESS_THAN;
-                                break;
-                        }
-                        PlaylistRule->fromvalue = FilterItem->m_Number;
-                        PlaylistRule->tovalue = FilterItem->m_Number;
-                        PlaylistRule->fromdate = 0;
-                        PlaylistRule->todate = 0;
-                        PlaylistRule->fromunits = 1;
-                        PlaylistRule->tounits = 1;
-                        break;
-                    }
-
-                    case guDYNAMIC_FILTER_TYPE_LASTPLAY :
-                    case guDYNAMIC_FILTER_TYPE_ADDEDDATE :
-                    {
-                        switch( FilterItem->m_Option )
-                        {
-                            case guDYNAMIC_FILTER_OPTION_DATE_IN_THE_LAST :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_IN_THE_LAST;
-                                break;
-
-                            case guDYNAMIC_FILTER_OPTION_DATE_BEFORE_THE_LAST :
-                                PlaylistRule->action = ITDB_SPLACTION_IS_NOT_IN_THE_LAST;
-                                break;
-                        }
-                        PlaylistRule->fromvalue = ITDB_SPL_DATE_IDENTIFIER;
-                        PlaylistRule->tovalue   = ITDB_SPL_DATE_IDENTIFIER;
-                        PlaylistRule->fromdate  = FilterItem->m_Number * -1;
-                        PlaylistRule->todate    = 0;
-                        PlaylistRule->fromunits = DynPLDateOption2[ FilterItem->m_Option2 ];
-                        PlaylistRule->tounits   = 1;
-                        break;
-                    }
-
-                    //case guDYNAMIC_FILTER_TYPE_HASARTWORK :
-                }
-
-                guLogMessage( wxT( "field   : %i" ), PlaylistRule->field );
-                guLogMessage( wxT( "action  : %08X" ), PlaylistRule->action );
-                if( PlaylistRule->string )
-                    guLogMessage( wxT( "String  : '%s'" ), wxString( PlaylistRule->string, wxConvUTF8 ).c_str() );
-                guLogMessage( wxT( "Values  : %016llX %016llX" ), PlaylistRule->fromvalue, PlaylistRule->tovalue );
-                guLogMessage( wxT( "Dates   : %016llX %016llX" ), PlaylistRule->fromdate, PlaylistRule->todate);
-                guLogMessage( wxT( "Units   : %016llX %016llX" ), PlaylistRule->fromunits, PlaylistRule->tounits);
-
-                itdb_splr_validate( PlaylistRule );
-                guLogMessage( wxT( "Validated the Rule" ) );
-            }
-        }
-
-        itdb_spl_update( DynPlayList );
-
-        iPodFlush();
-    }
-    else
-    {
-        guLogMessage( wxT( "Could not create the playlist " ) );
-    }
-
-    return guDbLibrary::CreateDynamicPlayList( name, playlist );
+    m_MediaCollection->m_CoverWords.Empty();
+    m_MediaCollection->m_CoverWords.Add( m_PortableDevice->CoverName() );
+    m_MediaCollection->m_UpdateOnStart = true;
 }
 
 // -------------------------------------------------------------------------------- //
-void guIpodLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * playlist )
+wxArrayString guMediaViewerPortableDevice::GetPaths( void )
 {
-    wxString PlayListName = GetPlayListName( plid );
-    DeletePlayList( plid );
-
-    CreateDynamicPlayList( PlayListName, playlist );
-}
-
-// -------------------------------------------------------------------------------- //
-Itdb_Track * guIpodLibrary::iPodFindTrack( const wxString &filename )
-{
-    Itdb_Track * Track = NULL;
-    wxString FileName = filename;
-
-    if( FileName.StartsWith( m_PortableMediaDevice->MountPath() ) )
-    {
-        FileName = FileName.Mid( m_PortableMediaDevice->MountPath().Length() - 1 );
-    }
-    FileName.Replace( wxT( "/" ), wxT( ":" ) );
-    //guLogMessage( wxT( "Trying to find %s" ), FileName.c_str() );
-
-    GList * Tracks = m_iPodDb->tracks;
-    while( Tracks )
-    {
-        Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
-        //guLogMessage( wxT( "Checking: '%s" ), wxString( CurTrack->ipod_path, wxConvUTF8 ).c_str() );
-        if( wxString( CurTrack->ipod_path, wxConvUTF8 ) == FileName )
-        {
-            Track = CurTrack;
-            break;
-        }
-        Tracks = Tracks->next;
-    }
-    return Track;
-}
-
-// -------------------------------------------------------------------------------- //
-Itdb_Track * guIpodLibrary::iPodFindTrack( const wxString &artist, const wxString &albumartist, const wxString &album, const wxString &title )
-{
-    Itdb_Track * Track = NULL;
-    GList * Tracks = m_iPodDb->tracks;
-    while( Tracks )
-    {
-        Itdb_Track * CurTrack = ( Itdb_Track * ) Tracks->data;
-        if( ( albumartist.IsEmpty() ? ( wxString( CurTrack->artist, wxConvUTF8 ) == artist ) :
-                                    ( wxString( CurTrack->albumartist, wxConvUTF8 ) == albumartist ) ) &&
-            ( wxString( CurTrack->album, wxConvUTF8 ) == album ) &&
-            ( wxString( CurTrack->title, wxConvUTF8 ) == title ) )
-        {
-            Track = CurTrack;
-            break;
-        }
-        Tracks = Tracks->next;
-    }
-    return Track;
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodLibrary::iPodRemoveTrack( Itdb_Track * track )
-{
-    if( track )
-    {
-        GList * Playlists = m_iPodDb->playlists;
-        while( Playlists )
-        {
-            Itdb_Playlist * CurPlaylist = ( Itdb_Playlist * ) Playlists->data;
-            if( itdb_playlist_contains_track( CurPlaylist, track ) )
-            {
-                itdb_playlist_remove_track( CurPlaylist, track );
-            }
-            Playlists = Playlists->next;
-        }
-
-        itdb_track_remove_thumbnails( track );
-
-        itdb_track_remove( track );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodLibrary::iPodRemoveTrack( const wxString &filename )
-{
-    Itdb_Track * Track = iPodFindTrack( filename );
-
-    iPodRemoveTrack( Track );
-
-    if( !wxRemoveFile( filename ) )
-        guLogMessage( wxT( "Couldnt remove the file '%s'" ), filename.c_str() );
-}
-
-// -------------------------------------------------------------------------------- //
-int guIpodLibrary::UpdateSong( const guTrack &track, const bool allowrating )
-{
-    wxString query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-            "song_genreid = %u, song_genre = '%s', "
-            "song_artistid = %u, song_artist = '%s', "
-            "song_albumartistid = %u, song_albumartist = '%s', "
-            "song_albumid = %u, song_album = '%s', "
-            "song_pathid = %u, song_path = '%s', "
-            "song_filename = '%s', song_format = '%s', "
-            "song_number = %u, song_year = %u, "
-            "song_composerid = %u, song_composer = '%s', "
-            "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
-            "song_length = %u, song_offset = %u, song_bitrate = %u, "
-            "song_rating = %i, song_filesize = %u, "
-            "song_lastplay = %u, song_addedtime = %u, "
-            "song_playcount = %u "
-            "WHERE song_id = %u;" ),
-            escape_query_str( track.m_SongName ).c_str(),
-            track.m_GenreId,
-            escape_query_str( track.m_GenreName ).c_str(),
-            track.m_ArtistId,
-            escape_query_str( track.m_ArtistName ).c_str(),
-            track.m_AlbumArtistId,
-            escape_query_str( track.m_AlbumArtist ).c_str(),
-            track.m_AlbumId,
-            escape_query_str( track.m_AlbumName ).c_str(),
-            track.m_PathId,
-            escape_query_str( track.m_Path ).c_str(),
-            escape_query_str( track.m_FileName ).c_str(),
-            escape_query_str( track.m_FileName.AfterLast( '.' ) ).c_str(),
-            track.m_Number,
-            track.m_Year,
-            track.m_ComposerId, //escape_query_str( track.m_Composer ).c_str(),
-            escape_query_str( track.m_Composer ).c_str(),
-            escape_query_str( track.m_Comments ).c_str(),
-            track.m_CoverId,
-            escape_query_str( track.m_Disk ).c_str(),
-            track.m_Length,
-            0, //track.m_Offset,
-            track.m_Bitrate,
-            track.m_Rating,
-            track.m_FileSize,
-            track.m_LastPlay,
-            track.m_AddedTime,
-            track.m_PlayCount,
-            track.m_SongId );
-
-  //guLogMessage( wxT( "%s" ), query.c_str() );
-  return ExecuteUpdate( query );
-}
-
-
-// -------------------------------------------------------------------------------- //
-// guIpodLibraryUpdate
-// -------------------------------------------------------------------------------- //
-guIpodLibraryUpdate::guIpodLibraryUpdate( guIpodMediaLibPanel * ipodpanel, const int gaugeid )
-{
-    m_iPodPanel = ipodpanel;
-    m_GaugeId = gaugeid;
-
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
-        Run();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guIpodLibraryUpdate::~guIpodLibraryUpdate()
-{
-    if( !TestDestroy() )
-    {
-        m_iPodPanel->UpdateFinished();
-    }
-
-    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
-    GaugeEvent.SetInt( m_GaugeId );
-    wxPostEvent( wxTheApp->GetTopWindow(), GaugeEvent );
-}
-
-extern "C" {
-extern gboolean gdk_pixbuf_save_to_buffer( GdkPixbuf *pixbuf,
-                                           gchar **buffer,
-                                           gsize *buffer_size,
-                                           const char *type,
-                                           GError **error,
-                                           ... );
-}
-
-// -------------------------------------------------------------------------------- //
-guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
-{
-    wxArrayPtrVoid CoveriPodTracks;
-    wxArrayInt     CoverAlbumIds;
-    guIpodLibrary * Db = ( guIpodLibrary * ) m_iPodPanel->GetDb();
-    Itdb_iTunesDB * iPodDb = Db->IpodDb();
-    if( iPodDb )
-    {
-        //Db->ExecuteUpdate( wxT( "DELETE FROM songs" ) );
-        guPortableMediaDevice * PortableMediaDevice = m_iPodPanel->PortableMediaDevice();
-
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-
-        wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
-        GaugeEvent.SetInt( m_GaugeId );
-        GaugeEvent.SetExtraLong( itdb_tracks_number( iPodDb ) );
-        wxPostEvent( MainFrame, GaugeEvent );
-
-        GaugeEvent.SetId( ID_STATUSBAR_GAUGE_UPDATE );
-
-        int TrackIndex = 0;
-
-        // Add any missing track to the database or update the existing ones
-        GList * Tracks = iPodDb->tracks;
-        while( !TestDestroy() && Tracks )
-        {
-            Itdb_Track * iPodTrack = ( Itdb_Track * ) Tracks->data;
-            if( iPodTrack )
-            {
-                guTrack Track;
-                Track.m_SongName = wxString( iPodTrack->title, wxConvUTF8 );
-                Track.m_ArtistName = wxString( iPodTrack->artist, wxConvUTF8 );
-                Track.m_ArtistId = Db->GetArtistId( Track.m_ArtistName );
-                Track.m_GenreName = wxString( iPodTrack->genre, wxConvUTF8 );
-                Track.m_GenreId = Db->GetGenreId( Track.m_GenreName );
-                Track.m_Composer = wxString( iPodTrack->composer, wxConvUTF8 );
-                Track.m_ComposerId = Db->GetComposerId( Track.m_Composer );
-                Track.m_Comments = wxString( iPodTrack->comment, wxConvUTF8 );
-                Track.m_AlbumArtist = wxString( iPodTrack->albumartist, wxConvUTF8 );
-                Track.m_AlbumArtistId = Db->GetAlbumArtistId( Track.m_AlbumArtist );
-                Track.m_AlbumName = wxString( iPodTrack->album, wxConvUTF8 );
-                Track.m_FileSize = iPodTrack->size;
-                Track.m_Length = iPodTrack->tracklen / 1000;
-                if( iPodTrack->cd_nr || iPodTrack->cds )
-                {
-                    Track.m_Disk = wxString::Format( wxT( "%u/%u" ), iPodTrack->cd_nr, iPodTrack->cds );
-                }
-                Track.m_Number = iPodTrack->track_nr;
-                Track.m_Bitrate = iPodTrack->bitrate;
-                Track.m_Year = iPodTrack->year;
-                Track.m_Rating = iPodTrack->rating / ITDB_RATING_STEP;
-                Track.m_PlayCount = iPodTrack->playcount;
-                Track.m_AddedTime = iPodTrack->time_added;
-                Track.m_LastPlay = iPodTrack->time_played;
-
-                Track.m_Path = PortableMediaDevice->MountPath() + wxString( iPodTrack->ipod_path, wxConvUTF8 ).Mid( 1 );
-                Track.m_Path.Replace( wxT( ":" ), wxT( "/" ) );
-                Track.m_FileName = Track.m_Path.AfterLast( wxT( '/' ) );
-                Track.m_Path = wxPathOnly( Track.m_Path ) + wxT( "/" );
-
-                Track.m_PathId = Db->GetPathId( Track.m_Path );
-
-                Track.m_SongId = Db->GetSongId( Track.m_FileName, Track.m_PathId );
-
-                Track.m_AlbumId = Db->GetAlbumId( Track.m_AlbumName, Track.m_ArtistName, Track.m_AlbumArtist, Track.m_Disk );
-
-                Db->UpdateSong( Track, true );
-
-                if( itdb_track_has_thumbnails( iPodTrack ) )
-                {
-                    if( CoverAlbumIds.Index( Track.m_AlbumId ) == wxNOT_FOUND )
-                    {
-                        CoveriPodTracks.Add( iPodTrack );
-                        CoverAlbumIds.Add( Track.m_AlbumId );
-                    }
-                }
-            }
-            Tracks = Tracks->next;
-
-            //
-            TrackIndex++;
-            GaugeEvent.SetExtraLong( TrackIndex );
-            wxPostEvent( MainFrame, GaugeEvent );
-        }
-
-        // Find all tracks that have been removed
-        wxString FileName;
-        wxArrayInt SongsToDel;
-        wxSQLite3ResultSet dbRes;
-
-        dbRes = Db->ExecuteQuery( wxT( "SELECT DISTINCT song_id, song_filename, song_path FROM songs " ) );
-
-        while( !TestDestroy() && dbRes.NextRow() )
-        {
-            FileName = dbRes.GetString( 2 ) + dbRes.GetString( 1 );
-
-            if( !wxFileExists( FileName ) )
-            {
-                SongsToDel.Add( dbRes.GetInt( 0 ) );
-            }
-        }
-        dbRes.Finalize();
-
-        // Add the covers to the albums
-        int Index;
-        int Count;
-        if( ( Count = CoveriPodTracks.Count() ) )
-        {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                if( TestDestroy() )
-                    break;
-
-                Itdb_Track * iPodTrack = ( Itdb_Track * ) CoveriPodTracks[ Index ];
-                int AlbumId = CoverAlbumIds[ Index ];
-
-                GdkPixbuf * Pixbuf = ( GdkPixbuf * ) itdb_track_get_thumbnail( iPodTrack, -1, -1 );
-                if( Pixbuf )
-                {
-                    void * Buffer = NULL;
-                    gsize BufferSize = 0;
-                    if( gdk_pixbuf_save_to_buffer( Pixbuf, ( gchar ** ) &Buffer, &BufferSize, "jpeg", NULL, "quality", "100", NULL ) )
-                    {
-                        wxMemoryInputStream ImageStream( Buffer, BufferSize );
-                        wxImage CoverImage( ImageStream, wxBITMAP_TYPE_JPEG );
-                        if( CoverImage.IsOk() )
-                        {
-                            Db->SetAlbumCover( AlbumId, CoverImage );
-                        }
-                        else
-                        {
-                            guLogMessage( wxT( "Error in image from ipod..." ) );
-                        }
-                        g_free( Buffer );
-                    }
-                    else
-                    {
-                        guLogMessage( wxT( "Couldnt save to a buffer the pixbuf for album %i" ), AlbumId );
-                    }
-                    g_object_unref( Pixbuf );
-                }
-                else
-                {
-                    guLogMessage( wxT( "Couldnt get the pixbuf for album %i" ), AlbumId );
-                }
-            }
-        }
-
-        // Delete all playlists
-        Db->ExecuteUpdate( wxT( "DELETE FROM playlists;" ) );
-        Db->ExecuteUpdate( wxT( "DELETE FROM plsets;" ) );
-
-        GList * Playlists = iPodDb->playlists;
-        while( !TestDestroy() && Playlists )
-        {
-            Itdb_Playlist * Playlist = ( Itdb_Playlist * ) Playlists->data;
-            if( Playlist && !Playlist->podcastflag && !Playlist->type )
-            {
-                wxString PlaylistName = wxString( Playlist->name, wxConvUTF8 );
-                guLogMessage( wxT( "Playlist: '%s'" ), PlaylistName.c_str() );
-
-                if( !Playlist->is_spl ) // Its not a smart playlist
-                {
-                    wxArrayInt PlaylistTrackIds;
-                    Tracks = Playlist->members;
-                    while( Tracks )
-                    {
-                        Itdb_Track * PlaylistTrack = ( Itdb_Track * ) Tracks->data;
-                        if( PlaylistTrack )
-                        {
-                            wxString Path = PortableMediaDevice->MountPath() + wxString( PlaylistTrack->ipod_path, wxConvUTF8 ).Mid( 1 );
-                            Path.Replace( wxT( ":" ), wxT( "/" ) );
-                            wxString FileName = Path.AfterLast( wxT( '/' ) );
-                            Path = wxPathOnly( Path ) + wxT( "/" );
-
-                            int PathId = Db->GetPathId( Path );
-
-                            int TrackId = Db->GetSongId( FileName, PathId );
-                            if( TrackId )
-                            {
-                                PlaylistTrackIds.Add( TrackId );
-                            }
-                        }
-                        Tracks = Tracks->next;
-                    }
-
-                    Db->CreateStaticPlayList( PlaylistName, PlaylistTrackIds, true );
-                }
-                else                // Its a dynamic playlist
-                {
-                    guDynPlayList NewPlayList;
-                    bool ErrorInPlaylist = false;
-
-                    guLogMessage( wxT( "Found a dynamic playlist '%s' with %i tracks" ), PlaylistName.c_str(), Playlist->num );
-                    guLogMessage( wxT( "id          : %i" ), Playlist->id );
-                    guLogMessage( wxT( "sortorder   : %i" ), Playlist->sortorder );
-
-                    NewPlayList.m_Sorted = ( Playlist->sortorder != ITDB_PSO_MANUAL );
-
-
-                    switch( Playlist->sortorder )
-                    {
-                        case ITDB_PSO_MANUAL :
-                            break;
-
-//                        case ITDB_PSO_BIRATE :
-//                        case ITDB_PSO_FILETYPE :
-//                        case ITDB_PSO_TRACK_NR :
-//                        case ITDB_PSO_SIZE :
-//                        case ITDB_PSO_SAMPLERATE :
-//                        case ITDB_PSO_COMMENT :
-//                        case ITDB_PSO_EQUALIZER :
-//                        case ITDB_PSO_CD_NR :
-//                        case ITDB_PSO_BPM :
-                        case ITDB_PSO_GROUPING :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_LABEL;
-                            break;
-
-//                        case ITDB_PSO_CATEGORY :
-//                        case ITDB_PSO_DESCRIPTION :
-//                            break;
-
-                        case ITDB_PSO_TITLE :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_TITLE;
-                            break;
-
-                        case ITDB_PSO_ALBUM :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_ALBUM;
-                            break;
-
-                        case ITDB_PSO_ARTIST :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_ARTIST;
-                            break;
-
-                        case ITDB_PSO_GENRE :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_GENRE;
-                            break;
-
-                        case ITDB_PSO_TIME_MODIFIED :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_GENRE;
-                            break;
-
-                        case ITDB_PSO_TIME :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_LENGTH;
-                            break;
-
-                        case ITDB_PSO_YEAR :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_YEAR;
-                            break;
-
-                        case ITDB_PSO_TIME_ADDED :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_ADDEDDATE;
-                            break;
-
-                        case ITDB_PSO_COMPOSER :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_COMPOSER;
-                            break;
-
-                        case ITDB_PSO_PLAYCOUNT :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_PLAYCOUNT;
-                            break;
-
-                        case ITDB_PSO_TIME_PLAYED :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_LASTPLAY;
-                            break;
-
-                        case ITDB_PSO_RATING :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_RATING;
-                            break;
-
-                        case ITDB_PSO_RELEASE_DATE :
-                            NewPlayList.m_SortType = guDYNAMIC_FILTER_ORDER_YEAR;
-                            break;
-
-                        default :
-                            ErrorInPlaylist = true;
-                            guLogMessage( wxT( "Sorting not supported %i" ), Playlist->sortorder );
-                            break;
-                    }
-
-                    Itdb_SPLPref * PlaylistPref = &Playlist->splpref;
-                    guLogMessage( wxT( "liveupdate  : %i" ), PlaylistPref->liveupdate );
-                    guLogMessage( wxT( "checkrules  : %i" ), PlaylistPref->checkrules );
-                    guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
-                    guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
-                    if( PlaylistPref->checklimits )
-                    {
-                        NewPlayList.m_Limited = true;
-                        NewPlayList.m_LimitValue = PlaylistPref->limitvalue;
-
-                        switch( PlaylistPref->limittype )
-                        {
-                            case ITDB_LIMITTYPE_MINUTES :
-                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_MINUTES;
-                                break;
-
-                            case ITDB_LIMITTYPE_MB      :
-                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_MEGABYTES;
-                                break;
-
-                            case ITDB_LIMITTYPE_SONGS   :
-                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_TRACKS;
-                                break;
-
-                            case ITDB_LIMITTYPE_HOURS   :
-                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_MINUTES;
-                                NewPlayList.m_LimitValue *= 60;
-                                break;
-
-                            case ITDB_LIMITTYPE_GB      :
-                                NewPlayList.m_LimitType = guDYNAMIC_FILTER_LIMIT_GIGABYTES;
-                                break;
-                        }
-                    }
-
-                    Itdb_SPLRules * PlaylistRules = &Playlist->splrules;
-                    guLogMessage( wxT( "operator    : %i" ), PlaylistRules->match_operator );
-                    if( PlaylistRules->match_operator == ITDB_SPLMATCH_OR )
-                        NewPlayList.m_AnyOption = true;
-
-                    GList * Rules = PlaylistRules->rules;
-                    int RuleCount = 0;
-                    while( !ErrorInPlaylist && Rules && ( RuleCount < PlaylistPref->checkrules ) )
-                    {
-                        guLogMessage( wxT( "###===---Rule---===###" ) );
-                        Itdb_SPLRule * PlaylistRule = ( Itdb_SPLRule * ) Rules->data;
-                        if( PlaylistRule )
-                        {
-                            guFilterItem * FilterItem = new guFilterItem();
-                            guLogMessage( wxT( "field       : %i" ), PlaylistRule->field );
-                            guLogMessage( wxT( "action      : %08X" ), PlaylistRule->action );
-                            if( PlaylistRule->string )
-                                guLogMessage( wxT( "String  : '%s'" ), wxString( PlaylistRule->string, wxConvUTF8 ).c_str() );
-                            guLogMessage( wxT( "Values  : %016llX %016llX" ), PlaylistRule->fromvalue, PlaylistRule->tovalue );
-                            guLogMessage( wxT( "Dates   : %016llX %016llX" ), PlaylistRule->fromdate, PlaylistRule->todate);
-                            guLogMessage( wxT( "Units   : %016llX %016llX" ), PlaylistRule->fromunits, PlaylistRule->tounits);
-
-                            switch( PlaylistRule->field )
-                            {
-                                case ITDB_SPLFIELD_SONG_NAME :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_TITLE;
-                                    break;
-
-                                case ITDB_SPLFIELD_ALBUM :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ALBUM;
-                                    break;
-
-                                case ITDB_SPLFIELD_ARTIST :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ARTIST;
-                                    break;
-
-                                case ITDB_SPLFIELD_BITRATE :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_BITRATE;
-                                    break;
-
-                                case ITDB_SPLFIELD_YEAR :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_YEAR;
-                                    break;
-
-                                case ITDB_SPLFIELD_GENRE :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_GENRE;
-                                    break;
-
-                                case ITDB_SPLFIELD_TRACKNUMBER :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_TRACKNUMBER;
-                                    break;
-
-                                case ITDB_SPLFIELD_SIZE :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_SIZE;
-                                    break;
-
-                                case ITDB_SPLFIELD_TIME :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_LENGTH;
-                                    break;
-
-                                case ITDB_SPLFIELD_COMMENT :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_COMMENT;
-                                    break;
-
-                                case ITDB_SPLFIELD_DATE_ADDED :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ADDEDDATE;
-                                    break;
-
-                                case ITDB_SPLFIELD_COMPOSER :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_COMPOSER;
-                                    break;
-
-                                case ITDB_SPLFIELD_PLAYCOUNT :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_PLAYCOUNT;
-                                    break;
-
-                                case ITDB_SPLFIELD_LAST_PLAYED :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_LASTPLAY;
-                                    break;
-
-                                case ITDB_SPLFIELD_DISC_NUMBER :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_DISK;
-                                    break;
-
-                                case ITDB_SPLFIELD_RATING :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_RATING;
-                                    break;
-
-                                case ITDB_SPLFIELD_ALBUMARTIST :
-                                    FilterItem->m_Type = guDYNAMIC_FILTER_TYPE_ALBUMARTIST;
-                                    break;
-
-                                default :
-                                    ErrorInPlaylist = true;
-                                    break;
-                            }
-
-                            switch( PlaylistRule->action )
-                            {
-                                case ITDB_SPLACTION_IS_INT :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_IS;
-                                    FilterItem->m_Number = PlaylistRule->fromvalue;
-                                    break;
-
-                                case ITDB_SPLACTION_IS_GREATER_THAN :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST;
-                                    FilterItem->m_Number = PlaylistRule->fromvalue;
-                                    break;
-
-                                case ITDB_SPLACTION_IS_LESS_THAN :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST;
-                                    FilterItem->m_Number = PlaylistRule->fromvalue;
-                                    break;
-
-                                //case ITDB_SPLACTION_IS_IN_THE_RANGE :
-
-                                //case ITDB_SPLACTION_IS_IN_THE_LAST :
-                                //    break;
-
-                                //case ITDB_SPLACTION_BINARY_AND :
-
-                                case ITDB_SPLACTION_IS_STRING :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_IS;
-                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
-                                    break;
-
-                                case ITDB_SPLACTION_CONTAINS :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_CONTAINS;
-                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
-                                    break;
-
-                                case ITDB_SPLACTION_STARTS_WITH :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_START_WITH;
-                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
-                                    break;
-
-                                case ITDB_SPLACTION_ENDS_WITH :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_ENDS_WITH;
-                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
-                                    break;
-
-                                case ITDB_SPLACTION_IS_NOT_INT :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_ISNOT;
-                                    FilterItem->m_Number = PlaylistRule->fromvalue;
-                                    break;
-
-                                case ITDB_SPLACTION_IS_NOT_GREATER_THAN :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_MOST;
-                                    FilterItem->m_Number = PlaylistRule->fromvalue;
-                                    break;
-
-                                case ITDB_SPLACTION_IS_NOT_LESS_THAN :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_NUMERIC_AT_LEAST;
-                                    FilterItem->m_Number = PlaylistRule->fromvalue;
-                                    break;
-
-                                //case ITDB_SPLACTION_IS_NOT_IN_THE_RANGE :
-                                //case ITDB_SPLACTION_IS_NOT_IN_THE_LAST :
-
-                                case ITDB_SPLACTION_IS_NOT :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_ISNOT;
-                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
-                                    break;
-
-                                case ITDB_SPLACTION_DOES_NOT_CONTAIN :
-                                    FilterItem->m_Option = guDYNAMIC_FILTER_OPTION_STRING_NOT_CONTAINS;
-                                    FilterItem->m_Text = wxString( PlaylistRule->string, wxConvUTF8 );
-                                    break;
-
-                                //case ITDB_SPLACTION_DOES_NOT_START_WITH :
-                                //case ITDB_SPLACTION_DOES_NOT_END_WITH :
-
-                                default :
-                                    ErrorInPlaylist = true;
-                                    break;
-                            }
-
-                            if( !ErrorInPlaylist )
-                            {
-                                NewPlayList.m_Filters.Add( FilterItem );
-                            }
-                            else
-                            {
-                                guLogMessage( wxT( "The playlist have been discarded by rule %08X %08X" ), PlaylistRule->field, PlaylistRule->action );
-                                guLogMessage( wxT( "Value: %016llX %016llX" ), PlaylistRule->fromvalue, PlaylistRule->tovalue );
-                                guLogMessage( wxT( "Dates: %016llX %016llX" ), PlaylistRule->fromdate, PlaylistRule->todate);
-                                guLogMessage( wxT( "Units: %016llX %016llX" ), PlaylistRule->fromunits, PlaylistRule->tounits);
-                                delete FilterItem;
-                            }
-                        }
-
-                        Rules = Rules->next;
-                        RuleCount++;
-                    }
-
-                    if( !ErrorInPlaylist )
-                    {
-                        // Save the dynamic playlist now
-                        Db->CreateDynamicPlayList( PlaylistName, &NewPlayList, true );
-                    }
-
-                }
-            }
-            else
-            {
-                guLogMessage( wxT( "Playlist was podcast or master" ) );
-            }
-
-            Playlists = Playlists->next;
-        }
-
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-        evt.SetClientData( ( void * ) m_iPodPanel );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
-
-        // Clean all the deleted items
-        if( !TestDestroy() )
-        {
-            wxArrayString Queries;
-
-            if( SongsToDel.Count() )
-            {
-                Queries.Add( wxT( "DELETE FROM songs WHERE " ) + ArrayToFilter( SongsToDel, wxT( "song_id" ) ) );
-            }
-
-            // Delete all posible orphan entries
-            Queries.Add( wxT( "DELETE FROM covers WHERE cover_id NOT IN ( SELECT DISTINCT song_coverid FROM songs );" ) );
-            Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
-            Queries.Add( wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
-
-            int Index;
-            int Count = Queries.Count();
-            for( Index = 0; Index < Count; Index++ )
-            {
-                if( TestDestroy() )
-                    break;
-                //guLogMessage( wxT( "Executing: '%s'" ), Queries[ Index ].c_str() );
-                Db->ExecuteUpdate( Queries[ Index ] );
-            }
-        }
-
-    }
-    return 0;
-}
-
-
-
-
-// -------------------------------------------------------------------------------- //
-// guIpodMediaLibPanel
-// -------------------------------------------------------------------------------- //
-guIpodMediaLibPanel::guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel ) :
-    guPortableMediaLibPanel( parent, db, playerpanel )
-{
-    m_UpdateThread = NULL;
-    m_PortableMediaDevice = NULL;
-
-    m_ContextMenuFlags = ( guLIBRARY_CONTEXTMENU_EDIT_TRACKS |
-                           guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS |
-                           guLIBRARY_CONTEXTMENU_COPY_TO |
-                           guLIBRARY_CONTEXTMENU_LINKS );
-
-    Connect( ID_STATUSBAR_GAUGE_CREATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guIpodMediaLibPanel::OnGaugeCreated ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-guIpodMediaLibPanel::~guIpodMediaLibPanel()
-{
-    if( m_UpdateThread )
-    {
-        m_UpdateThread->Pause();
-        m_UpdateThread->Delete();
-    }
-
-    Disconnect( ID_STATUSBAR_GAUGE_CREATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guIpodMediaLibPanel::OnGaugeCreated ), NULL, this );
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
-{
-    wxMenu *     SubMenu = new wxMenu();
-
-    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UPDATE, _( "Update" ), _( "Update the device library" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
-    SubMenu->Append( MenuItem );
-
-    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
-    SubMenu->Append( MenuItem );
-
-    menu->AppendSeparator();
-    menu->AppendSubMenu( SubMenu, _( "Portable Device" ), _( "Global Jamendo options" ) );
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::OnGaugeCreated( wxCommandEvent &event )
-{
-    m_UpdateThread = new guIpodLibraryUpdate( this, event.GetInt() );
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::DoUpdate( const bool forced )
-{
-    if( m_UpdateThread )
-        return;
-//    m_UpdateThread = new guIpodLibraryUpdate( this );
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_CREATE );
-    Event.SetClientData( new wxString( m_PortableMediaDevice->DeviceName() ) );
-    Event.SetEventObject( this );
-    Event.SetInt( 0 );
-    wxPostEvent( wxTheApp->GetTopWindow(), Event );
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::UpdateFinished( void )
-{
-    m_UpdateThread = NULL;
-
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
-    Event.SetClientData( ( void * ) this );
-    wxPostEvent( wxTheApp->GetTopWindow(), Event );
-}
-
-// -------------------------------------------------------------------------------- //
-wxArrayString guIpodMediaLibPanel::GetLibraryPaths( void )
-{
-    wxArrayString RetVal;
-    RetVal.Add( m_PortableMediaDevice->MountPath() );
-    return RetVal;
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice )
-{
-    m_PortableMediaDevice = portablemediadevice;
-
-    m_PortableMediaDevice->SetPattern( wxEmptyString );
-    if( !m_PortableMediaDevice->AudioFormats() )
-    {
-        m_PortableMediaDevice->SetAudioFormats( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 | guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
-        m_PortableMediaDevice->SetTranscodeFormat( guTRANSCODE_FORMAT_MP3 );
-        m_PortableMediaDevice->SetTranscodeScope( guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
-        m_PortableMediaDevice->SetTranscodeQuality( guTRANSCODE_QUALITY_KEEP );
-        //m_PortableMediaDevice->SetAudioFolders( wxT( "/" ) );
-        //m_PortableMediaDevice->SetPlaylistFormats( 0 );
-        //m_PortableMediaDevice->SetPlaylistFolder( wxEmptyString );
-        m_PortableMediaDevice->SetCoverFormats( guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED );
-        //m_PortableMediaDevice->SetCoverName( wxEmptyString );
-        m_PortableMediaDevice->SetCoverSize( 0 );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::UpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
-                                const wxArrayString &lyrics, const wxArrayInt &changedflags )
-{
+    wxArrayString Paths = wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) );
     int Index;
-    int Count = tracks.Count();
+    int Count = Paths.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        guTrack &Track = tracks[ Index ];
-        Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Track.m_FileName );
-        if( iPodTrack )
+        Paths[ Index ] = m_PortableDevice->MountPath() + Paths[ Index ];
+        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
         {
-            CheckUpdateField( &iPodTrack->title, Track.m_SongName );
-            CheckUpdateField( &iPodTrack->album, Track.m_AlbumName );
-            CheckUpdateField( &iPodTrack->artist, Track.m_ArtistName );
-            CheckUpdateField( &iPodTrack->genre, Track.m_GenreName );
-            CheckUpdateField( &iPodTrack->comment, Track.m_Comments );
-            CheckUpdateField( &iPodTrack->composer, Track.m_Composer );
-            CheckUpdateField( &iPodTrack->albumartist, Track.m_AlbumArtist );
-            iPodTrack->size = Track.m_FileSize;
-            iPodTrack->tracklen = Track.m_Length * 1000;
-            iPodTrack->track_nr = Track.m_Number;
-            guStrDiskToDiskNum( Track.m_Disk, iPodTrack->cd_nr, iPodTrack->cds );
-            iPodTrack->bitrate = Track.m_Bitrate;
-            iPodTrack->year = Track.m_Year;
-            iPodTrack->BPM = 0;
-            iPodTrack->rating = ( Track.m_Rating == wxNOT_FOUND ) ? 0 : Track.m_Rating * ITDB_RATING_STEP;
-            iPodTrack->type2 = Track.m_Format == wxT( "mp3" ) ? 1 : 0;
+            Paths[ Index ].RemoveLast();
         }
     }
-    ( ( guIpodLibrary * ) m_Db )->iPodFlush();
-
-    guPortableMediaLibPanel::UpdateTracks( tracks, images, lyrics, changedflags );
+    return Paths;
 }
 
 // -------------------------------------------------------------------------------- //
-int guIpodMediaLibPanel::CopyTo( const guTrack * track, wxString &filename )
+bool guMediaViewerPortableDevice::CreateLibraryView( void )
 {
-    if( !track )
-        return false;
-
-    Itdb_Track * iPodTrack = itdb_track_new();
-
-    iPodTrack->title = strdup( track->m_SongName.ToUTF8() );
-    iPodTrack->album = strdup( track->m_AlbumName.ToUTF8() );
-    iPodTrack->artist = strdup( track->m_ArtistName.ToUTF8() );
-    iPodTrack->genre = strdup( track->m_GenreName.ToUTF8() );
-    iPodTrack->comment = strdup( track->m_Comments.ToUTF8() );
-    iPodTrack->composer = strdup( track->m_Composer.ToUTF8() );
-    iPodTrack->albumartist = strdup( track->m_AlbumArtist.ToUTF8() );
-    iPodTrack->size = track->m_FileSize;
-    iPodTrack->tracklen = track->m_Length * 1000;
-    iPodTrack->track_nr = track->m_Number;
-    guStrDiskToDiskNum( track->m_Disk, iPodTrack->cd_nr, iPodTrack->cds );
-    iPodTrack->bitrate = track->m_Bitrate;
-    iPodTrack->year = track->m_Year;
-    iPodTrack->BPM = 0;
-    iPodTrack->rating = ( track->m_Rating == wxNOT_FOUND ) ? 0 : track->m_Rating * ITDB_RATING_STEP;
-    iPodTrack->playcount = 0;
-    iPodTrack->type1 = 0;
-    iPodTrack->type2 = track->m_Format == wxT( "mp3" ) ? 1 : 0;
-    iPodTrack->compilation = 0; //!track->m_AlbumArtist.IsEmpty();
-    iPodTrack->mediatype = ITDB_MEDIATYPE_AUDIO;
-
-    wxString CoverPath;
-    if( track->m_CoverId )
-    {
-        guDbLibrary * TrackDb;
-        if( track->m_LibPanel )
-        {
-            TrackDb = track->m_LibPanel->GetDb();
-        }
-        else
-        {
-            TrackDb = ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->GetDb();
-        }
-        if( TrackDb )
-        {
-            CoverPath = TrackDb->GetCoverPath( track->m_CoverId );
-        }
-
-        if( wxFileExists( CoverPath ) )
-        {
-            if( !itdb_track_set_thumbnails( iPodTrack, CoverPath.mb_str( wxConvFile ) ) )
-                guLogMessage( wxT( "Could not add cover to the ipod track" ) );
-        }
-    }
-
-    Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
-    // Add the track to the iPod Database
-    itdb_track_add( iPodDb, iPodTrack, wxNOT_FOUND );
-    // Add th etrack to the master playlist
-    Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( iPodDb );
-    itdb_playlist_add_track( MasterPlaylist, iPodTrack, wxNOT_FOUND );
-
-    int FileFormat = guGetTranscodeFileFormat( track->m_FileName.Lower().AfterLast( wxT( '.' ) ) );
-
-    wxString TmpFile;
-
-    // Copy the track file
-    if( !( m_PortableMediaDevice->AudioFormats() & FileFormat ) ||
-         ( m_PortableMediaDevice->TranscodeScope() == guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS ) )
-    {
-        // We need to transcode the file to a temporary file and then copy it
-        guLogMessage( wxT( "guIpodMediaLibPanel Transcode File start" ) );
-        TmpFile = wxFileName::CreateTempFileName( wxT( "guTrcde_" ) );
-        wxRemoveFile( TmpFile );
-        TmpFile += wxT( "." ) + guTranscodeFormatString( m_PortableMediaDevice->TranscodeFormat() );
-
-        guTranscodeThread * TranscodeThread = new guTranscodeThread( track->m_FileName, TmpFile, m_PortableMediaDevice->TranscodeFormat(), m_PortableMediaDevice->TranscodeQuality() );
-        if( TranscodeThread && TranscodeThread->IsOk() )
-        {
-                // TODO : Make a better aproach to be sure its running
-                // This need to be called from a thread
-                wxThread::Sleep( 1000 );
-                while( TranscodeThread->IsTranscoding() )
-                {
-                    wxThread::Sleep( 200 );
-                }
-        }
-
-        if( !TranscodeThread->IsOk() )
-        {
-            guLogMessage( wxT( "Error transcoding the file '%s'" ), track->m_FileName.c_str() );
-            wxRemoveFile( TmpFile );
-            return wxNOT_FOUND;
-        }
-
-        iPodTrack->bitrate = guGetMp3QualityBitRate( m_PortableMediaDevice->TranscodeQuality() );
-        iPodTrack->size = guGetFileSize( TmpFile );
-    }
-    else    // The file is supported
-    {
-        TmpFile = wxFileName::CreateTempFileName( wxT( "guTrcde_" ) );
-        wxRemoveFile( TmpFile );
-        TmpFile += wxT( "." ) + track->m_FileName.Lower().AfterLast( wxT( '.' ) );
-        if( !wxCopyFile( track->m_FileName, TmpFile ) )
-        {
-            guLogMessage( wxT( "Error copying file '%s' into '%s'" ), track->m_FileName.c_str(), TmpFile.c_str() );
-            wxRemoveFile( TmpFile );
-            return wxNOT_FOUND;
-        }
-    }
-
-    //if( !CoverPath.IsEmpty() )
-    if( m_PortableMediaDevice->CoverFormats() & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
-    {
-        guTagSetPicture( TmpFile, CoverPath );
-    }
-
-    if( !itdb_cp_track_to_ipod( iPodTrack, TmpFile.mb_str( wxConvFile ), NULL ) )
-    {
-        guLogMessage( wxT( "Error trying to copy the file '%s'" ), TmpFile.c_str() );
-        wxRemoveFile( TmpFile );
-        return wxNOT_FOUND;
-    }
-
-    wxRemoveFile( TmpFile );
-
-    filename = wxString( iPodTrack->ipod_path, wxConvUTF8 );
-    return iPodTrack->size;
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        guTrack &Track = tracks->Item( Index );
-        Track.m_LibPanel = this;
-        Track.m_Type = guTRACK_TYPE_IPOD;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-bool guIpodMediaLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg )
-{
-    guTrackArray Tracks;
-    wxArrayInt   Albums;
-    Albums.Add( albumid );
-    m_Db->GetAlbumsSongs( Albums, &Tracks );
-    int Index;
-    int Count;
-    if( ( Count = Tracks.Count() ) )
-    {
-        int MaxSize = GetCoverMaxSize();
-        if( MaxSize != wxNOT_FOUND )
-        {
-            coverimg->Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
-        }
-
-        wxString TmpFile = wxFileName::CreateTempFileName( wxT( "guTmpImg_" ) );
-        wxRemoveFile( TmpFile );
-        TmpFile += wxT( ".jpg" );
-        if( coverimg->SaveFile( TmpFile, wxBITMAP_TYPE_JPEG ) )
-        {
-            for( Index = 0; Index < Count; Index++ )
-            {
-                Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Tracks[ Index ].m_FileName );
-                if( iPodTrack )
-                {
-                    if( itdb_track_has_thumbnails( iPodTrack ) )
-                    {
-                        itdb_artwork_remove_thumbnails( iPodTrack->artwork );
-                    }
-
-
-                    if( !itdb_track_set_thumbnails( iPodTrack, TmpFile.mb_str( wxConvFile ) ) )
-                        guLogMessage( wxT( "Couldnt set the cover image %s" ), TmpFile.c_str() );
-                }
-
-                if( m_PortableMediaDevice->CoverFormats() & guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED )
-                {
-                    guTagSetPicture( Tracks[ Index ].m_FileName, coverimg );
-                }
-            }
-            ( ( guIpodLibrary * ) m_Db )->iPodFlush();
-            wxRemoveFile( TmpFile );
-
-            m_Db->SetAlbumCover( albumid, * coverimg );
-        }
-        else
-        {
-            guLogMessage( wxT( "Couldnt save the temporary image file" ) );
-        }
-    }
-
+    m_LibPanel = new guPortableMediaLibPanel( this, this );
+    m_LibPanel->SetBaseCommand( m_BaseCommand + 1 );
     return true;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guIpodMediaLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath )
+void guMediaViewerPortableDevice::CreateContextMenu( wxMenu * menu, const int windowid )
 {
-    wxURI Uri( coverpath );
-    if( Uri.IsReference() )
+    wxMenu * Menu = new wxMenu();
+    wxMenuItem * MenuItem;
+
+    int BaseCommand = GetBaseCommand();
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY, _( "Update" ), _( "Update the collection library" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_RESCAN_LIBRARY, _( "Rescan" ), _( "Rescan the collection library" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_SEARCH_COVERS, _( "Search Covers" ), _( "Search the collection missing covers" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( menu, BaseCommand + guCOLLECTION_ACTION_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
+    Menu->Append( MenuItem );
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_VIEW_PROPERTIES, _( "Properties" ), _( "Show collection properties" ), wxITEM_NORMAL );
+    Menu->Append( MenuItem );
+
+    menu->AppendSeparator();
+    menu->AppendSubMenu( Menu, m_MediaCollection->m_Name );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewerPortableDevice::HandleCommand( const int command )
+{
+    if( command == guCOLLECTION_ACTION_UNMOUNT )
     {
-        wxImage CoverImage( coverpath );
-        if( CoverImage.IsOk() )
+        if( m_PortableDevice->CanUnmount() )
         {
-            return SetAlbumCover( albumid, albumpath, &CoverImage );
-        }
-        else
-        {
-            guLogError( wxT( "Could not load the imate '%s'" ), coverpath.c_str() );
+            m_PortableDevice->Unmount();
         }
     }
     else
     {
-        wxString TmpFile = wxFileName::CreateTempFileName( wxT( "guTmpImg_" ) );
-        wxRemoveFile( TmpFile );
-        TmpFile += wxT( ".jpg" );
-        if( DownloadImage( coverpath, TmpFile, wxBITMAP_TYPE_JPEG ) )
-        {
-            bool Result = SetAlbumCover( albumid, albumpath, TmpFile );
-            wxRemoveFile( TmpFile );
-            return Result;
-        }
-        else
-        {
-            guLogError( wxT( "Failed to download file '%s'" ), coverpath.c_str() );
-        }
+        guMediaViewer::HandleCommand( command );
     }
-
-    return false;
 }
 
 // -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::DoDeleteAlbumCover( const int albumid )
+void guMediaViewerPortableDevice::EditProperties( void )
 {
-    guTrackArray Tracks;
-    wxArrayInt   Albums;
-    Albums.Add( albumid );
-    m_Db->GetAlbumsSongs( Albums, &Tracks );
-    int Index;
-    int Count;
-    if( ( Count = Tracks.Count() ) )
+    guPortableMediaProperties * PortableMediaProperties = new guPortableMediaProperties( this, m_PortableDevice );
+    if( PortableMediaProperties )
     {
-        for( Index = 0; Index < Count; Index++ )
+        if( PortableMediaProperties->ShowModal() == wxID_OK )
         {
-            Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Tracks[ Index ].m_FileName );
-            if( iPodTrack )
-            {
-                guLogMessage( wxT( "Deleting cover for track '%s'" ), wxString( iPodTrack->ipod_path, wxConvUTF8 ).c_str() );
-                itdb_artwork_remove_thumbnails( iPodTrack->artwork );
-            }
-        }
-        ( ( guIpodLibrary * ) m_Db )->iPodFlush();
-    }
-
-    guPortableMediaLibPanel::DoDeleteAlbumCover( albumid );
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodMediaLibPanel::DeleteTracks( guTrackArray * tracks )
-{
-    int Index;
-    int Count;
-    if( ( Count = tracks->Count() ) )
-    {
-        m_Db->DeleteLibraryTracks( tracks, false );
-        Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
-
-        Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( iPodDb );
-
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( tracks->Item( Index ).m_FileName );
-            if( iPodTrack )
-            {
-                itdb_playlist_remove_track( MasterPlaylist, iPodTrack );
-                itdb_track_remove( iPodTrack );
-            }
+            PortableMediaProperties->WriteConfig();
             //
-            if( !wxRemoveFile( tracks->Item( Index ).m_FileName ) )
-            {
-                guLogMessage( wxT( "Couldnt remove file %s" ), tracks->Item( Index ).m_FileName.c_str() );
-            }
+            UpdateCollectionProperties();
         }
-        ( ( guIpodLibrary * ) m_Db )->iPodFlush();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-// guIpodPlayListPanel
-// -------------------------------------------------------------------------------- //
-guIpodPlayListPanel::guIpodPlayListPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel ) :
-    guPortableMediaPlayListPanel( parent, db, playerpanel, libpanel )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-guIpodPlayListPanel::~guIpodPlayListPanel()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-{
-    int Index;
-    int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        tracks->Item( Index ).m_LibPanel = m_LibPanel;
-    }
-}
-
-
-// -------------------------------------------------------------------------------- //
-// guIpodAlbumBrowser
-// -------------------------------------------------------------------------------- //
-guIpodAlbumBrowser::guIpodAlbumBrowser( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel ) :
-    guPortableMediaAlbumBrowser( parent, db, playerpanel, libpanel )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-guIpodAlbumBrowser::~guIpodAlbumBrowser()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guIpodAlbumBrowser::OnBitmapMouseOver( const int coverid, const wxPoint &position )
-{
-    //guLogMessage( wxT( "guIpodAlbumBrowser::OnBitmapMouseOver" ) );
-
-    guIpodLibrary * Db = ( guIpodLibrary * ) m_Db;
-    Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
-
-    if( iPodDb )
-    {
-        wxString SongPath;
-        wxString query = wxString::Format( wxT( "SELECT song_path, song_filename FROM songs WHERE song_coverid = %i LIMIT 1;" ), coverid );
-        wxSQLite3ResultSet dbRes;
-
-        dbRes = Db->ExecuteQuery( query );
-
-        if( dbRes.NextRow() )
-        {
-            SongPath = dbRes.GetString( 0 ) + dbRes.GetString( 1 );
-        }
-        dbRes.Finalize();
-
-        Itdb_Track * iPodTrack = Db->iPodFindTrack( SongPath );
-        if( iPodTrack )
-        {
-            GdkPixbuf * Pixbuf = ( GdkPixbuf * ) itdb_track_get_thumbnail( iPodTrack, -1, -1 );
-            if( Pixbuf )
-            {
-                void * Buffer = NULL;
-                gsize BufferSize = 0;
-                if( gdk_pixbuf_save_to_buffer( Pixbuf, ( gchar ** ) &Buffer, &BufferSize, "jpeg", NULL, "quality", "100", NULL ) )
-                {
-                    wxMemoryInputStream ImageStream( Buffer, BufferSize );
-                    wxImage * CoverImage = new wxImage( ImageStream, wxBITMAP_TYPE_JPEG );
-                    if( CoverImage )
-                    {
-                        if( CoverImage->IsOk() )
-                        {
-                            guImageResize( CoverImage, 300, true );
-
-                            guShowImage * ShowImage = new guShowImage( this, CoverImage, position );
-                            if( ShowImage )
-                            {
-                                ShowImage->Show();
-                            }
-                        }
-                        else
-                        {
-                            delete CoverImage;
-                            guLogMessage( wxT( "Error in image from ipod..." ) );
-                        }
-                    }
-                    g_free( Buffer );
-                }
-                else
-                {
-                    guLogMessage( wxT( "Couldnt save to a buffer the pixbuf for cover %i" ), coverid );
-                }
-                g_object_unref( Pixbuf );
-            }
-            else
-            {
-                guLogMessage( wxT( "Couldnt get the pixbuf for cover %i" ), coverid );
-            }
-        }
-    }
-}
-
-
-
-
-#endif
-
-
-
-
-// -------------------------------------------------------------------------------- //
-// guPortableMediaViewCtrl
-// -------------------------------------------------------------------------------- //
-guPortableMediaViewCtrl::guPortableMediaViewCtrl( guMainFrame * mainframe, guGIO_Mount * mount, int basecommand )
-{
-    m_MainFrame = mainframe;
-    m_BaseCommand = basecommand;
-    m_MediaDevice = new guPortableMediaDevice( mount );
-
-    wxString DeviceDbPath = wxGetHomeDir() + wxT( "/.guayadeque/Devices/" ) + m_MediaDevice->DevicePath() + wxT( "/guayadeque.db" );
-    wxFileName::Mkdir( wxPathOnly( DeviceDbPath ), 0775, wxPATH_MKDIR_FULL );
-
-#ifdef WITH_LIBGPOD_SUPPORT
-    Itdb_iTunesDB * iPodDb = itdb_parse( m_MediaDevice->MountPath().mb_str( wxConvFile ), NULL );
-    if( iPodDb )
-    {
-        m_MediaDevice->SetType( guPORTABLEMEDIA_TYPE_IPOD );
-        m_Db = ( guPortableMediaLibrary * ) new guIpodLibrary( DeviceDbPath, m_MediaDevice, iPodDb );
-
-        guLogMessage( wxT( "Detected an Ipod with %i tracks and %i playlists" ),  itdb_tracks_number( iPodDb ), itdb_playlists_number( iPodDb ) );
-        Itdb_Device * iPodDevice = iPodDb->device;
-        if( iPodDevice )
-        {
-            //guLogMessage( wxT( "Artwork support : %i" ), itdb_device_supports_artwork( iPodDevice ) );
-            const Itdb_IpodInfo * iPodInfo = itdb_device_get_ipod_info( iPodDevice );
-            if( iPodInfo )
-            {
-                guLogMessage( wxT( "Model Number    : %s" ), wxString( iPodInfo->model_number, wxConvUTF8 ).c_str() );
-                guLogMessage( wxT( "Capacity        : %.0f" ), iPodInfo->capacity );
-                guLogMessage( wxT( "Model Name      : %s" ), wxString( itdb_info_get_ipod_model_name_string( iPodInfo->ipod_model ), wxConvUTF8 ).c_str() );
-                guLogMessage( wxT( "Generation      : %s" ), wxString( itdb_info_get_ipod_generation_string( iPodInfo->ipod_generation ), wxConvUTF8 ).c_str() );
-            }
-        }
-    }
-    else
-#endif
-    {
-        m_Db = new guPortableMediaLibrary( DeviceDbPath, m_MediaDevice );
-        m_Db->SetLibPath( wxStringTokenize( m_MediaDevice->AudioFolders(), wxT( "," ) ) );
-    }
-
-    m_LibPanel = NULL;
-
-    m_PlayListPanel = NULL;
-    m_AlbumBrowserPanel = NULL;
-    m_VisiblePanels = 0;
-}
-
-// -------------------------------------------------------------------------------- //
-guPortableMediaViewCtrl::~guPortableMediaViewCtrl()
-{
-    if( m_LibPanel )
-        delete m_LibPanel;
-
-    if( m_PlayListPanel )
-        delete m_PlayListPanel;
-
-    if( m_AlbumBrowserPanel )
-        delete m_AlbumBrowserPanel;
-
-    if( m_MediaDevice )
-        delete m_MediaDevice;
-
-    if( m_Db )
-        delete m_Db;
-}
-
-// -------------------------------------------------------------------------------- //
-guPortableMediaLibPanel * guPortableMediaViewCtrl::CreateLibPanel( wxWindow * parent, guPlayerPanel * playerpanel )
-{
-    if( !m_LibPanel )
-    {
-#ifdef WITH_LIBGPOD_SUPPORT
-        if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
-        {
-            m_LibPanel = new guIpodMediaLibPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel );
-        }
-        else
-#endif
-        {
-            m_LibPanel = new guPortableMediaLibPanel( parent, m_Db, playerpanel, wxT( "PMD" ) );
-        }
-        m_LibPanel->SetPortableMediaDevice( m_MediaDevice );
-        m_LibPanel->SetBaseCommand( m_BaseCommand );
-    }
-    m_VisiblePanels |= guPANEL_MAIN_LIBRARY;
-    return m_LibPanel;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaViewCtrl::DestroyLibPanel( void )
-{
-//    if( m_LibPanel )
-//    {
-//        delete m_LibPanel;
-//        m_LibPanel = NULL;
-        m_VisiblePanels ^= guPANEL_MAIN_LIBRARY;
-        m_LibPanel->SetPanelActive( wxNOT_FOUND );
-//    }
-}
-
-// -------------------------------------------------------------------------------- //
-guPortableMediaAlbumBrowser * guPortableMediaViewCtrl::CreateAlbumBrowser( wxWindow * parent, guPlayerPanel * playerpanel )
-{
-#ifdef WITH_LIBGPOD_SUPPORT
-    if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
-    {
-        m_AlbumBrowserPanel = new guIpodAlbumBrowser( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
-    }
-    else
-#endif
-    {
-        m_AlbumBrowserPanel = new guPortableMediaAlbumBrowser( parent, m_Db, playerpanel, m_LibPanel );
-    }
-    //m_AlbumBrowserPanel->SetPortableMediaDevice( m_MediaDevice );
-    //m_LibPanel->SetBaseCommand( m_BaseCommand );
-    m_VisiblePanels |= guPANEL_MAIN_ALBUMBROWSER;
-    return m_AlbumBrowserPanel;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaViewCtrl::DestroyAlbumBrowser( void )
-{
-    if( m_AlbumBrowserPanel )
-    {
-        delete m_AlbumBrowserPanel;
-        m_AlbumBrowserPanel = NULL;
-        m_VisiblePanels ^= guPANEL_MAIN_ALBUMBROWSER;
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guPortableMediaPlayListPanel * guPortableMediaViewCtrl::CreatePlayListPanel( wxWindow * parent, guPlayerPanel * playerpanel )
-{
-#ifdef WITH_LIBGPOD_SUPPORT
-    if( m_MediaDevice->Type() == guPORTABLEMEDIA_TYPE_IPOD )
-    {
-        m_PlayListPanel = new guIpodPlayListPanel( parent, ( guIpodLibrary * ) m_Db, playerpanel, ( guIpodMediaLibPanel * ) m_LibPanel );
-    }
-    else
-#endif
-    {
-        m_PlayListPanel = new guPortableMediaPlayListPanel( parent, m_Db, playerpanel, m_LibPanel );
-    }
-    m_VisiblePanels |= guPANEL_MAIN_PLAYLISTS;
-    return m_PlayListPanel;
-}
-
-// -------------------------------------------------------------------------------- //
-void guPortableMediaViewCtrl::DestroyPlayListPanel( void )
-{
-    if( m_PlayListPanel )
-    {
-        delete m_PlayListPanel;
-        m_PlayListPanel = NULL;
-        m_VisiblePanels ^= guPANEL_MAIN_PLAYLISTS;
+        PortableMediaProperties->Destroy();
     }
 }
 

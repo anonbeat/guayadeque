@@ -21,6 +21,7 @@
 #include "GIO_Volume.h"
 
 #include "Commands.h"
+#include "MainFrame.h"
 #include "Utils.h"
 
 
@@ -63,7 +64,7 @@ guGIO_Mount::guGIO_Mount( GMount * mount )
 {
     m_Mount = mount;
     g_object_ref( mount );
-    m_PanelActive = wxNOT_FOUND;
+//    m_PanelActive = wxNOT_FOUND;
 
     char * mount_name = g_mount_get_name( m_Mount );
     if( mount_name )
@@ -93,6 +94,9 @@ guGIO_Mount::guGIO_Mount( GMount * mount )
         }
         g_object_unref( Icon );
     }
+
+    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_MountPath + wxT( ".is_audio_player" ) );
+    m_Id = Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08X" ), wxGetLocalTime() ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -100,7 +104,7 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
 {
     m_Mount = mount;
     g_object_ref( mount );
-    m_PanelActive = wxNOT_FOUND;
+//    m_PanelActive = wxNOT_FOUND;
     m_MountPath = mountpath;
     if( !m_MountPath.EndsWith( wxT( "/" ) ) )
         m_MountPath.Append( wxT( "/" ) );
@@ -125,6 +129,9 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
         }
         g_object_unref( Icon );
     }
+
+    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_MountPath + wxT( ".is_audio_player" ) );
+    m_Id = Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08X" ), wxGetLocalTime() ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -179,8 +186,9 @@ void guGIO_Mount::Unmount( void )
 // -------------------------------------------------------------------------------- //
 //
 // -------------------------------------------------------------------------------- //
-guGIO_VolumeMonitor::guGIO_VolumeMonitor( void )
+guGIO_VolumeMonitor::guGIO_VolumeMonitor( guMainFrame * mainframe )
 {
+    m_MainFrame = mainframe;
     m_MountedVolumes = new guGIO_MountArray();
 
     m_VolumeMonitor = g_volume_monitor_get();
@@ -260,7 +268,7 @@ void guGIO_VolumeMonitor::OnMountAdded( GMount * mount )
 
                     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_VOLUMEMANAGER_MOUNT_CHANGED );
                     event.SetInt( 1 );
-                    wxPostEvent( wxTheApp->GetTopWindow(), event );
+                    wxPostEvent( m_MainFrame, event );
                 }
 
                 g_free( mount_path );
@@ -294,7 +302,8 @@ void guGIO_VolumeMonitor::OnMountRemoved( GMount * mount )
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_VOLUMEMANAGER_MOUNT_CHANGED );
         event.SetClientData( ( void * ) mount );
         event.SetInt( 0 );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( m_MainFrame, event );
+        //guLogMessage( wxT( "Posted mount changed event..." ) );
     }
 }
 
@@ -350,14 +359,42 @@ void guGIO_VolumeMonitor::GetCurrentMounts( void )
 }
 
 // -------------------------------------------------------------------------------- //
-guGIO_Mount * guGIO_VolumeMonitor::GetMount( const wxString &mountname )
+guGIO_Mount * guGIO_VolumeMonitor::GetMountById( const wxString &id )
 {
     int Index;
     int Count = m_MountedVolumes->Count();
     for( Index = 0; Index < Count; Index++ )
     {
         guGIO_Mount * Mount = ( * m_MountedVolumes )[ Index ];
-        if( Mount->GetName() == mountname )
+        if( Mount->GetId() == id )
+            return Mount;
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+guGIO_Mount * guGIO_VolumeMonitor::GetMountByPath( const wxString &path )
+{
+    int Index;
+    int Count = m_MountedVolumes->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guGIO_Mount * Mount = ( * m_MountedVolumes )[ Index ];
+        if( Mount->GetMountPath() == path )
+            return Mount;
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
+guGIO_Mount * guGIO_VolumeMonitor::GetMountByName( const wxString &name )
+{
+    int Index;
+    int Count = m_MountedVolumes->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        guGIO_Mount * Mount = ( * m_MountedVolumes )[ Index ];
+        if( Mount->GetName() == name )
             return Mount;
     }
     return NULL;

@@ -177,8 +177,9 @@ class guDynPlayList
                       m_Sorted = false; m_SortType = 0; m_SortDesc = false; m_AnyOption = false; };
     ~guDynPlayList() {};
 
-    wxString ToString( void );
-    void     FromString( const wxString &playlist );
+    wxString            ToString( void );
+    void                FromString( const wxString &playlist );
+    bool                IsEmpty( void ) { return m_Filters.IsEmpty(); }
 };
 WX_DECLARE_OBJARRAY(guDynPlayList, guDynPlayListArray);
 
@@ -190,63 +191,65 @@ class guDynPlayListEditor : public wxDialog
 	protected:
         guDynPlayList *     m_PlayList;
         guFilterItemArray * m_Filters;
-        //guFilterItem        m_FilterEdit;
         int                 m_CurFilter;
         bool                m_HasChanged;
         bool                m_AlbumFilter;
 
-		wxListBox * m_FiltersListBox;
-		wxChoice * m_FilterFieldChoice;
-		wxChoice * m_FilterTextOptionChoice;
-		wxChoice * m_FilterLabelOptionChoice;
-		wxTextCtrl * m_FilterText;
-		guRating * m_FilterRating;
-		wxChoice * m_FilterDateOption2Choice;
-		wxSpinCtrl * m_LengthHours;
-		wxStaticText * m_LengthSeparator1;
-		wxSpinCtrl * m_LengthMinutes;
-		wxStaticText * m_LengthSeparator2;
-		wxSpinCtrl * m_LengthSeconds;
-        wxBoxSizer * m_FilterEditSizer;
-		wxBitmapButton * m_FilterAdd;
-		wxBitmapButton * m_FilterDel;
-		wxBitmapButton * m_FilterAccept;
-		wxCheckBox * m_LimitCheckBox;
-		wxSpinCtrl * m_LimitSpinCtrl;
-		wxChoice * m_LimitChoice;
-		wxCheckBox * m_SortCheckBox;
-		wxChoice * m_SortChoice;
-		wxCheckBox * m_DescCheckBox;
+        wxTextCtrl *        m_NameTextCtrl;
+		wxListBox *         m_FiltersListBox;
+		wxChoice *          m_FilterFieldChoice;
+		wxChoice *          m_FilterTextOptionChoice;
+		wxChoice *          m_FilterLabelOptionChoice;
+		wxTextCtrl *        m_FilterText;
+		guRating *          m_FilterRating;
+		wxChoice *          m_FilterDateOption2Choice;
+		wxSpinCtrl *        m_LengthHours;
+		wxStaticText *      m_LengthSeparator1;
+		wxSpinCtrl *        m_LengthMinutes;
+		wxStaticText *      m_LengthSeparator2;
+		wxSpinCtrl *        m_LengthSeconds;
+        wxBoxSizer *        m_FilterEditSizer;
+		wxBitmapButton *    m_FilterAdd;
+		wxBitmapButton *    m_FilterDel;
+		wxBitmapButton *    m_FilterAccept;
+		wxCheckBox *        m_LimitCheckBox;
+		wxSpinCtrl *        m_LimitSpinCtrl;
+		wxChoice *          m_LimitChoice;
+		wxCheckBox *        m_SortCheckBox;
+		wxChoice *          m_SortChoice;
+		wxCheckBox *        m_DescCheckBox;
 
-		wxCheckBox * m_AddOnAnyCheckBox;
+		wxCheckBox *        m_AddOnAnyCheckBox;
 
-		wxButton * m_BtnOk;
+		wxButton *          m_BtnOk;
 
 		// event handlers, overide them in your derived class
-		void OnFiltersSelected( wxCommandEvent &event );
-		void OnFilterFieldSelected( wxCommandEvent& event );
-		void OnFilterOptionSelected( wxCommandEvent& event );
-		void OnFilterTextChanged( wxCommandEvent& event );
-        void OnFilterDateOption2Selected( wxCommandEvent &event );
-		void OnFilterAddClicked( wxCommandEvent& event );
-		void OnFilterDelClicked( wxCommandEvent& event );
-		void OnFilterUpdateClicked( wxCommandEvent& event );
-		void OnLImitChecked( wxCommandEvent& event );
-		void OnSortChecked( wxCommandEvent& event );
-		void OnRatingChanged( guRatingEvent &event );
+		void                OnFiltersSelected( wxCommandEvent &event );
+		void                OnFilterFieldSelected( wxCommandEvent& event );
+		void                OnFilterOptionSelected( wxCommandEvent& event );
+		void                OnFilterTextChanged( wxCommandEvent& event );
+        void                OnFilterDateOption2Selected( wxCommandEvent &event );
+		void                OnFilterAddClicked( wxCommandEvent& event );
+		void                OnFilterDelClicked( wxCommandEvent& event );
+		void                OnFilterUpdateClicked( wxCommandEvent& event );
+		void                OnLImitChecked( wxCommandEvent& event );
+		void                OnSortChecked( wxCommandEvent& event );
+		void                OnRatingChanged( guRatingEvent &event );
+		void                OnNameChanged( wxCommandEvent &event );
 
-		bool FilterHasChanged( void );
-		guFilterItem GetFilterItem( void );
-		void UpdateEditor( int FilterType );
+		bool                FilterHasChanged( void );
+		guFilterItem        GetFilterItem( void );
+		void                UpdateEditor( int FilterType );
 
 
 	public:
 		guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist, const bool albumfilter = false );
 		~guDynPlayListEditor();
 
-		void FillPlayListEditData( void );
+		void                FillPlayListEditData( void );
 
 };
 
 #endif
+
 // -------------------------------------------------------------------------------- //

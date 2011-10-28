@@ -66,7 +66,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	FlexGridSizer->Add( m_Image, 0, wxALL, 5 );
 
     // Check that the directory to store podcasts are created
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "Podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "podcasts" ) );
     wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
                                        channel->m_Title + wxT( "/" ) +
                                        channel->m_Title + wxT( ".jpg" ) );
@@ -170,15 +170,21 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	ButtonsSizer->AddButton( ButtonsSizerOK );
 	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
+	ButtonsSizerOK->SetDefault();
+
 	// Connect Events
 	m_DownloadChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guChannelEditor::OnDownloadChoice ), NULL, this );
     Connect( guCHANNELEDITOR_EVENT_UPDATE_IMAGE, guChannelEditorEvent, wxCommandEventHandler( guChannelEditor::OnChannelImageUpdated ), NULL, this );
+
+    m_DescText->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

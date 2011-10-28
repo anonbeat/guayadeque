@@ -170,14 +170,14 @@ bool guPlayListFile::Save( const wxString &filename, const bool relative )
 // -------------------------------------------------------------------------------- //
 bool guPlayListFile::ReadPlsStream( wxInputStream &playlist, const wxString &path )
 {
-    wxFileConfig * Config = new wxFileConfig( playlist );
-    if( Config )
+    wxFileConfig * PlayList = new wxFileConfig( playlist );
+    if( PlayList )
     {
-        if( Config->HasGroup( wxT( "playlist" ) ) )
+        if( PlayList->HasGroup( wxT( "playlist" ) ) )
         {
-            Config->SetPath( wxT( "playlist" ) );
+            PlayList->SetPath( wxT( "playlist" ) );
             int Count;
-            if( Config->Read( wxT( "numberofentries" ), &Count ) )
+            if( PlayList->Read( wxT( "numberofentries" ), &Count ) )
             {
                 if( !Count )
                 {
@@ -190,10 +190,10 @@ bool guPlayListFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
                         wxString Location;
                         wxString Title;
 
-                        if( Config->Read( wxString::Format( wxT( "File%u" ), Index ), &Location ) &&
+                        if( PlayList->Read( wxString::Format( wxT( "File%u" ), Index ), &Location ) &&
                             !Location.IsEmpty() )
                         {
-                            Config->Read( wxString::Format( wxT( "Title%u" ), Index ), &Title );
+                            PlayList->Read( wxString::Format( wxT( "Title%u" ), Index ), &Title );
 
                             wxURI Uri( Location );
                             if( Location.StartsWith( wxT( "/" ) ) || Uri.HasScheme() || path.IsEmpty() )
@@ -217,7 +217,7 @@ bool guPlayListFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
         {
             guLogError( wxT( "ee: Station Playlist without 'playlist' group" ) );
         }
-        delete Config;
+        delete PlayList;
     }
     else
     {
@@ -493,6 +493,7 @@ bool guPlayListFile::WriteM3uFile( const wxString &filename, const bool relative
         int Count = m_PlayList.Count();
         for( int Index = 0; Index < Count; Index++ )
         {
+            M3uFile.Write( wxString::Format( wxT( "#EXTINF:%i,%s\n" ), m_PlayList[ Index ].m_Length, m_PlayList[ Index ].m_Name.c_str() ) );
             M3uFile.Write( m_PlayList[ Index ].GetLocation( relative, wxPathOnly( filename ) ) );
             M3uFile.Write( wxT( "\n" ) );
         }

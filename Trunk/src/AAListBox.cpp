@@ -27,6 +27,8 @@
 #include "LibPanel.h"
 #include "OnlineLinks.h"
 #include "MainApp.h"
+#include "MediaViewer.h"
+#include "Settings.h"
 #include "Utils.h"
 
 // -------------------------------------------------------------------------------- //
@@ -35,8 +37,8 @@ guAAListBox::guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 {
     m_LibPanel = libpanel;
 
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
-    Connect( ID_ARTIST_COMMANDS, ID_ALBUMARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
+    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
+    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
 
     CreateAcceleratorTable();
 
@@ -46,8 +48,8 @@ guAAListBox::guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 // -------------------------------------------------------------------------------- //
 guAAListBox::~guAAListBox()
 {
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_ARTIST_COMMANDS, ID_ARTIST_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
+    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
+    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -107,22 +109,24 @@ void AddAlbumArtistCommands( wxMenu * Menu, int SelCount )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
             {
                 if( ( Commands[ index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
                 {
-                    MenuItem = new wxMenuItem( Menu, ID_ALBUMARTIST_COMMANDS + index, Names[ index ], Commands[ index ] );
+                    MenuItem = new wxMenuItem( Menu, ID_COMMANDS_BASE + index, Names[ index ], Commands[ index ] );
                     SubMenu->Append( MenuItem );
                 }
             }
+
+            SubMenu->AppendSeparator();
         }
         else
         {
-            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            MenuItem = new wxMenuItem( Menu, ID_MENU_PREFERENCES_COMMANDS, _( "Preferences" ), _( "Add commands in preferences" ) );
             SubMenu->Append( MenuItem );
         }
         Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
@@ -174,11 +178,11 @@ void guAAListBox::CreateContextMenu( wxMenu * Menu ) const
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
-    Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+    Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
     if( SelCount )
     {
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
         {
             Menu->AppendSeparator();
 
@@ -192,28 +196,28 @@ void guAAListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_ALBUMARTIST_SAVETOPLAYLIST,
-                                wxString( _( "Save to PlayList" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                                _( "Save the selected tracks to PlayList" ) );
+                                wxString( _( "Save to Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                _( "Save the selected tracks to Playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
-            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
-            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_COMMANDS ) )
         {
             Menu->AppendSeparator();
 
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+            if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
             {
-                m_LibPanel->CreateCopyToMenu( Menu, ID_ALBUMARTIST_COPYTO );
+                m_LibPanel->CreateCopyToMenu( Menu );
             }
 
-            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            if( SelCount == 1 && ( ContextMenuFlags & guCONTEXTMENU_LINKS ) )
             {
                 AddOnlineLinksMenu( Menu );
             }
 
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+            if( ContextMenuFlags & guCONTEXTMENU_COMMANDS )
                 AddAlbumArtistCommands( Menu, SelCount );
         }
     }
@@ -262,30 +266,11 @@ int guAAListBox::FindAlbumArtist( const wxString &albumartist )
 // -------------------------------------------------------------------------------- //
 void guAAListBox::OnSearchLinkClicked( wxCommandEvent &event )
 {
-    int Item = wxNOT_FOUND;
     unsigned long cookie;
-    Item = GetFirstSelected( cookie );
+    int Item = GetFirstSelected( cookie );
     if( Item != wxNOT_FOUND )
     {
-        int index = event.GetId();
-
-        guConfig * Config = ( guConfig * ) Config->Get();
-        if( Config )
-        {
-            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-
-            index -= ID_LASTFM_SEARCH_LINK;
-            wxString SearchLink = Links[ index ];
-            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
-            if( Lang.IsEmpty() )
-            {
-                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
-                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
-            }
-            SearchLink.Replace( wxT( "{lang}" ), Lang );
-            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
-            guWebExecute( SearchLink );
-        }
+        ExecuteOnlineLink( event.GetId(), GetSearchText( Item ) );
     }
 }
 
@@ -302,10 +287,10 @@ void guAAListBox::OnCommandClicked( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) Config->Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
 
             //guLogMessage( wxT( "CommandId: %u" ), index );
-            index -= ID_ALBUMARTIST_COMMANDS;
+            index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ index ];
 
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )

@@ -52,10 +52,10 @@ enum guRADIOSTATION_ORDER {
 };
 
 // -------------------------------------------------------------------------------- //
-class guDbRadios
+class guDbRadios : public guDb
 {
   protected :
-    guDb *              m_Db;
+//    guDb *              m_Db;
 
     int                 m_StationsOrder; // 0 -> Name, 1 -> BitRate, 2 -> Listeners
     bool                m_StationsOrderDesc;
@@ -70,7 +70,7 @@ class guDbRadios
     wxString            RadioFiltersSQL( void );
 
   public :
-    guDbRadios( guDb * db );
+    guDbRadios( const wxString &dbname );
     ~guDbRadios();
 
     int                 GetRadioLabelsSongs( const wxArrayInt &Labels, guTrackArray * Songs );

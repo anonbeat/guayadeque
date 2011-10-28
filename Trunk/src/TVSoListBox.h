@@ -34,8 +34,8 @@ class guTVSoListBox : public guSoListBox
     wxLongLong              m_TracksLength;
 
     wxArrayString           m_TextFilters;
-    int                     m_TracksOrder;
-    bool                    m_TracksOrderDesc;
+//    int                     m_TracksOrder;
+//    bool                    m_TracksOrderDesc;
 
     virtual void        GetItemsList( void );
     //virtual void        CreateContextMenu( wxMenu * Menu ) const;
@@ -49,7 +49,7 @@ class guTVSoListBox : public guSoListBox
     virtual void        CreateAcceleratorTable();
 
   public :
-    guTVSoListBox( wxWindow * parent, guDbLibrary * NewDb, wxString confname, int style = 0 );
+    guTVSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style = 0 );
     ~guTVSoListBox();
 
     void                SetFilters( guTreeViewFilterArray &filters );
@@ -62,7 +62,7 @@ class guTVSoListBox : public guSoListBox
 
     void                GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
 
-    void                SetTracksOrder( const int order )
+    virtual void        SetTracksOrder( const int order )
     {
         if( m_TracksOrder != order )
             m_TracksOrder = order;
@@ -70,8 +70,8 @@ class guTVSoListBox : public guSoListBox
             m_TracksOrderDesc = !m_TracksOrderDesc;
     }
 
-    int                 GetTracksOrder( void ) { return m_TracksOrder; }
-    bool                GetTracksOrderDesc( void ) { return m_TracksOrderDesc; }
+    //int                 GetTracksOrder( void ) { return m_TracksOrder; }
+    //bool                GetTracksOrderDesc( void ) { return m_TracksOrderDesc; }
 
     void                SetTextFilters( const wxArrayString &textfilters ) { m_TextFilters = textfilters; }
     void                ClearTextFilters( void ) { m_TextFilters.Clear(); }

@@ -47,11 +47,19 @@ guEditWithOptions::guEditWithOptions( wxWindow * parent, const wxString &title, 
 	ButtonFrame->AddButton( ButtonOK );
 	wxButton * ButtonCancel = new wxButton( this, wxID_CANCEL );
 	ButtonFrame->AddButton( ButtonCancel );
+	ButtonFrame->SetAffirmativeButton( ButtonOK );
+	ButtonFrame->SetCancelButton( ButtonCancel );
 	ButtonFrame->Realize();
+
 	MainFrame->Add( ButtonFrame, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	SetSizer( MainFrame );
 	Layout();
+
+	ButtonOK->SetDefault();
+//	SetEscapeId( wxID_CANCEL );
+
+	m_EditComboBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //

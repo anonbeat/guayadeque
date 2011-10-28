@@ -120,47 +120,47 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Config->RegisterObject( this );
 
     //guLogDebug( wxT( "Reading PlayerPanel Config" ) );
-    SavedVol = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "General" ) );
+    SavedVol = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "general" ) );
     //guLogDebug( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
-    m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "General" )  );
-    m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "General" )  );
-    m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
-    m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "General" ) );
-    m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
-    m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
+    m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "general" )  );
+    m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "general" )  );
+    m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "general" ) );
+    m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "general" ) );
+    m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "general" ) );
+    m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "general" ) );
 
-    m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
-    m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
-    m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
-	m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "Playback" ) );
-	m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "Playback" ) );
+    m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "playback" ) );
+    m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) );
+    m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) );
+	m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "playback" ) );
+	m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "playback" ) );
 
-    m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
-                             Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
-    Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "Equalizer" ) );
+    m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) ||
+                             Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) );
+    Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "equalizer" ) );
     if( Equalizer.Count() != guEQUALIZER_BAND_COUNT )
     {
         Equalizer.Empty();
         Equalizer.Add( 0, guEQUALIZER_BAND_COUNT );
     }
 
-    m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
-    m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
-    if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
+    m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "playback" ) );
+    m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "playback" ) );
+    if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "playback" ) ) )
     {
-        m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
+        m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "playback" ) ) * 1000;
     }
 
-    m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "General" ) );
+    m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "general" ) );
 
-    m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "Crossfader" ) );
-    m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+    m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "crossfader" ) );
+    m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
 //        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
 
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
     m_SmartAddTracksThread = NULL;
-    m_UpdateCoverThread = NULL;
+//    m_UpdateCoverThread = NULL;
 
     // ---------------------------------------------------------------------------- //
     // The player controls
@@ -174,17 +174,17 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	//m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_prev ), wxDefaultPosition, wxDefaultSize, 0 ); //wxBU_AUTODRAW );
 	m_PrevTrackButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_prev ), guImage( guIMAGE_INDEX_player_highlight_prev ), 0 );
-	m_PrevTrackButton->SetToolTip( _( "Go to Previous Track in Playlist" ) );
+	m_PrevTrackButton->SetToolTip( _( "Go to the playlist previous track" ) );
 	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
 	//m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_play ), guImage( guIMAGE_INDEX_player_highlight_play ), 0 );
-	m_PlayButton->SetToolTip( _( "Play or pause current track in Playlist" ) );
+	m_PlayButton->SetToolTip( _( "Play or pause the current track" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
 	//m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_next ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_NextTrackButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_next ), guImage( guIMAGE_INDEX_player_highlight_next ), 0 );
-	m_NextTrackButton->SetToolTip( _( "Go to Next Track in Playlist" ) );
+	m_NextTrackButton->SetToolTip( _( "Go to the playlist next track" ) );
 	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
 	//m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_stop ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -193,9 +193,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerBtnSizer->Add( m_StopButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
     m_RecordButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_record ), guImage( guIMAGE_INDEX_player_normal_record ), guImage( guIMAGE_INDEX_player_highlight_record ) );
-    m_RecordButton->SetToolTip( _( "Record to a file" ) );
+    m_RecordButton->SetToolTip( _( "Record to file" ) );
     m_RecordButton->Enable( false );
-    m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
+    m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "record" ) ) );
     PlayerBtnSizer->Add( m_RecordButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
 	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
@@ -215,14 +215,14 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_SmartPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_smart ), guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
 	//m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
-    wxString TipText = _( "Smart Mode: " );
+    wxString TipText = _( "Smart Play: " );
     if( !m_PlaySmart )
     {
-        TipText += _( "Off" );
+        TipText += _( "Disabled" );
     }
     else
     {
-        TipText += _( "On" );
+        TipText += _( "Enabled" );
     }
     m_SmartPlayButton->SetToolTip( TipText );
 	// Get PlayerPanel value from config file
@@ -231,10 +231,10 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
 	//m_RepeatPlayButton->SetToolTip( _( "Select the repeat mode" ) );
-    TipText = _( "Repeat Mode: " );
+    TipText = _( "Repeat: " );
     if( !m_PlayLoop )
     {
-        TipText += _( "Off" );
+        TipText += _( "Disabled" );
     }
     else if( m_PlayLoop == guPLAYER_PLAYLOOP_TRACK )
     {
@@ -323,7 +323,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 2 );
 
 	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_BitRateLabel->SetToolTip( _( "Show the bitrate of the current track" ) );
+	m_BitRateLabel->SetToolTip( _( "Show the bit rate of the current track" ) );
 	CurrentFont.SetPointSize( 8 );
 	m_BitRateLabel->SetFont( CurrentFont );
 
@@ -398,13 +398,13 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     }
     else
     {
-        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) )
+        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
         {
-            m_TrackStartPos = wxMax( 0, Config->ReadNum( wxT( "CurrentTrackPos" ), 0, wxT( "General" ) ) - 500 );
+            m_TrackStartPos = wxMax( 0, Config->ReadNum( wxT( "CurrentTrackPos" ), 0, wxT( "general" ) ) - 500 );
             if( m_TrackStartPos > 0 )
             {
                 wxCommandEvent event;
-                event.SetInt( Config->ReadNum( wxT( "PlayerCurItem" ), 0, wxT( "General" ) ) );
+                event.SetInt( Config->ReadNum( wxT( "PlayerCurItem" ), 0, wxT( "general" ) ) );
                 //OnPlayButtonClick( event );
                 OnPlayListDClick( event );
             }
@@ -506,11 +506,11 @@ guPlayerPanel::~guPlayerPanel()
         m_SmartAddTracksThread->Delete();
     }
 
-    if( m_UpdateCoverThread )
-    {
-        m_UpdateCoverThread->Pause();
-        m_UpdateCoverThread->Delete();
-    }
+//    if( m_UpdateCoverThread )
+//    {
+//        m_UpdateCoverThread->Pause();
+//        m_UpdateCoverThread->Delete();
+//    }
 
     if( m_AudioScrobble )
         delete m_AudioScrobble;
@@ -524,21 +524,21 @@ guPlayerPanel::~guPlayerPanel()
         Config->UnRegisterObject( this );
 
         //printf( "guPlayerPanel::guConfig Save\n" );
-        Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != guMEDIASTATE_PLAYING, wxT( "General" ) );
-        Config->WriteNum( wxT( "PlayerCurVol" ), m_CurVolume, wxT( "General" ) );
-        Config->WriteNum( wxT( "PlayerLoop" ), m_PlayLoop, wxT( "General" ) );
-        Config->WriteBool( wxT( "PlayerSmart" ), m_PlaySmart, wxT( "General" ) );
+        //Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != guMEDIASTATE_PLAYING, wxT( "general" ) );
+        Config->WriteNum( wxT( "PlayerCurVol" ), m_CurVolume, wxT( "general" ) );
+        Config->WriteNum( wxT( "PlayerLoop" ), m_PlayLoop, wxT( "general" ) );
+        Config->WriteBool( wxT( "PlayerSmart" ), m_PlaySmart, wxT( "general" ) );
         // If the track length is at least the configured minimun track length save the pos offset
-        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "General" ) ) )
+        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
         {
             if( ( m_LastPlayState != guMEDIASTATE_STOPPED ) &&
-                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "General" ) ) * 60 ) ) )
+                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "general" ) ) * 60 ) ) )
             {
-                Config->WriteNum( wxT( "CurrentTrackPos" ), m_LastCurPos, wxT( "General" ) );
+                Config->WriteNum( wxT( "CurrentTrackPos" ), m_LastCurPos, wxT( "general" ) );
             }
             else
             {
-                Config->WriteNum( wxT( "CurrentTrackPos" ), 0, wxT( "General" ) );
+                Config->WriteNum( wxT( "CurrentTrackPos" ), 0, wxT( "general" ) );
             }
         }
         //printf( PlaySmart ? "Smart Enabled" : "Smart Disabled" );  printf( "\n" );
@@ -549,9 +549,9 @@ guPlayerPanel::~guPlayerPanel()
         {
             Equalizer.Add( m_MediaCtrl->GetEqualizerBand( index ) );
         }
-        Config->WriteANum( wxT( "Band" ), Equalizer, wxT( "Equalizer" ) );
+        Config->WriteANum( wxT( "Band" ), Equalizer, wxT( "equalizer" ) );
 
-        Config->WriteBool( wxT( "ShowRevTime" ), m_ShowRevTime, wxT( "General" ) );
+        Config->WriteBool( wxT( "ShowRevTime" ), m_ShowRevTime, wxT( "general" ) );
     }
 
 	// Disconnect Events
@@ -632,16 +632,16 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         Config = ( guConfig * ) guConfig::Get();
 
         //guLogDebug( wxT( "Reading PlayerPanel Config Updated" ) );
-        m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "General" ) );
-        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "General" ) );
-        m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "General" ) );
-        m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "General" ) );
+        m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "general" ) );
+        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "general" ) );
+        m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "general" ) );
+        m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "general" ) );
 
-        m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "Playback" ) );
-        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "Playback" ) );
-        m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "Playback" ) );
-        m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "Playback" ) );
-        m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "Playback" ) );
+        m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "playback" ) );
+        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) );
+        m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) );
+        m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "playback" ) );
+        m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "playback" ) );
 
         // We only insert the last CACHEITEMS as the rest should be forgiven
         while( ( int ) m_SmartAddedTracks.Count() > m_SmartMaxTracksList )
@@ -650,11 +650,11 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         while( ( int ) m_SmartAddedArtists.Count() > m_SmartMaxArtistsList )
             m_SmartAddedArtists.RemoveAt( 0 );
 
-        m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "Playback" ) );
-        m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "Playback" ) );
-        if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "Playback" ) ) )
+        m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "playback" ) );
+        m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "playback" ) );
+        if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "playback" ) ) )
         {
-            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "Playback" ) ) * 1000;
+            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "playback" ) ) * 1000;
         }
 
         MediaCtrlNeedUpdated = true;
@@ -665,7 +665,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "Record" ) ) );
+        m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "record" ) ) );
         Layout();
 
         if( m_MediaRecordCtrl )
@@ -679,8 +679,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "Crossfader" ) );
-        m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "Crossfader" ) ) * 100;
+        m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "crossfader" ) );
+        m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
 
         MediaCtrlNeedUpdated = true;
     }
@@ -690,8 +690,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LastFM" ) ) ||
-                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "LibreFM" ) );
+        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) ||
+                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) );
 
         if( m_AudioScrobbleEnabled )
         {
@@ -818,9 +818,9 @@ void guPlayerPanel::SetBitRate( int bitrate )
         {
             m_MediaSong.m_Bitrate = bitrate;
 
-            if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+            if( m_MediaSong.m_MediaViewer )
             {
-                guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+                guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
                 Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
             }
 
@@ -1639,14 +1639,15 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
             if( m_MediaSong.m_SongId )
             {
-                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+                if( m_MediaSong.m_MediaViewer )
                 {
-                    guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+                    guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
                     Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
                 }
                 else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
                 {
-                    m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                    guDbPodcasts * DbPodcasts = m_MainFrame->GetPodcastsDb();
+                    DbPodcasts->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
                 }
             }
 
@@ -2044,21 +2045,27 @@ void guPlayerPanel::UpdateCoverImage( const bool shownotify )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::UpdateCover( const bool shownotify )
+void guPlayerPanel::UpdateCover( const bool shownotify, const bool deleted )
 {
-    if( m_UpdateCoverThread )
-    {
-        m_UpdateCoverThread->Pause();
-        m_UpdateCoverThread->Delete();
-    }
+//    if( m_UpdateCoverThread )
+//    {
+//        m_UpdateCoverThread->Pause();
+//        m_UpdateCoverThread->Delete();
+//    }
 
-    m_UpdateCoverThread = new guUpdatePlayerCoverThread( m_Db, m_MainFrame, this, &m_MediaSong, shownotify );
+    guLogMessage( wxT( "UpdateCover: '%s'  /// '%s'  %i" ), m_MediaSong.m_ArtistName.c_str(), m_MediaSong.m_AlbumName.c_str(), deleted );
+
+    guUpdatePlayerCoverThread * UpdateCoverThread = new guUpdatePlayerCoverThread( m_Db, m_MainFrame, this, &m_MediaSong, shownotify, deleted );
+    if( !UpdateCoverThread )
+    {
+        guLogError( wxT( "Could not create the UpdateCover thread." ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnCoverUpdated( wxCommandEvent &event )
 {
-    m_UpdateCoverThread = NULL;
+//    m_UpdateCoverThread = NULL;
 
     UpdateCoverImage( event.GetInt() );
 }
@@ -2111,26 +2118,29 @@ void guPlayerPanel::SavePlayedTrack( void )
                 m_MediaSong.m_PlayCount++;
                 guLogDebug( wxT( "Increased PlayCount to %i" ), m_MediaSong.m_PlayCount );
 
-                guConfig * Config = ( guConfig * ) Config->Get();
-                if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+                if( m_MediaSong.m_MediaViewer && m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
                 {
                     guTrackArray Tracks;
+                    Tracks.Add( m_MediaSong );
                     guImagePtrArray Images;
                     wxArrayString Lyrics;
                     wxArrayInt ChangedFlags;
-                    Tracks.Add( m_MediaSong );
                     ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING );
                     guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
                 }
 
                 if( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST )
                 {
-                    guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
-                    Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+                    if( m_MediaSong.m_MediaViewer )
+                    {
+                        guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
+                        Db->SetTrackPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+                    }
                 }
                 else
                 {
-                    m_Db->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
+                    guDbPodcasts * DbPodcasts = m_MainFrame->GetPodcastsDb();
+                    DbPodcasts->SetPodcastItemPlayCount( m_MediaSong.m_SongId, m_MediaSong.m_PlayCount );
                 }
 
                 // Update the track in database, playlist, etc
@@ -2228,14 +2238,14 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
     CheckFiltersEnable();
 
     // Send a notification
-    wxString TipText = _( "Smart Mode: " );
+    wxString TipText = _( "Smart Play: " );
     if( !playsmart )
     {
-        TipText += _( "Off" );
+        TipText += _( "Disabled" );
     }
     else
     {
-        TipText += _( "On" );
+        TipText += _( "Enabled" );
     }
     m_SmartPlayButton->SetToolTip( TipText );
 
@@ -2813,15 +2823,15 @@ void guPlayerPanel::OnPlayerPositionSliderBeginSeek( wxScrollEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayerPositionSliderEndSeek( wxScrollEvent &event )
 {
-    wxFileOffset NewPos;
-    if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
-    {
-        NewPos = event.GetPosition();
+//    wxFileOffset NewPos;
+//    if( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+//    {
+//        NewPos = event.GetPosition();
 //        guLogDebug( wxT( "Slider EndSeek Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
 //        //printf( "SetPos: %llu\n", ( long long int ) NewPos * m_MediaSong.Length );
 //        //m_MediaCtrl->Seek( NewPos * m_MediaSong.m_Length );
 //        SetPosition( NewPos * m_MediaSong.m_Length );
-    }
+//    }
     m_SliderIsDragged = false;
 }
 
@@ -2912,26 +2922,13 @@ int guPlayerPanel::GetPosition()
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
 {
-    int TrackId = wxNOT_FOUND;
-    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
-        ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
-        ( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE ) ||
+    if( ( m_MediaSong.m_MediaViewer && m_MediaSong.m_SongId ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
-        TrackId = m_MediaSong.m_SongId;
-    }
-    else
-    {
-        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
-        TrackId = Db->FindTrack( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
-    }
-
-    if( TrackId != wxNOT_FOUND )
-    {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
-        evt.SetInt( TrackId );
+        evt.SetInt( m_MediaSong.m_SongId );
         evt.SetExtraLong( m_MediaSong.m_Type );
-        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
+        evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2939,26 +2936,13 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
 {
-    int AlbumId = wxNOT_FOUND;
-    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
-        ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
-        ( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE ) ||
+    if( ( m_MediaSong.m_MediaViewer && m_MediaSong.m_SongId ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
-        AlbumId = m_MediaSong.m_AlbumId;
-    }
-    else
-    {
-        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
-        AlbumId = Db->FindAlbum( m_MediaSong.m_ArtistName, m_MediaSong.m_AlbumName );
-    }
-
-    if( AlbumId != wxNOT_FOUND )
-    {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
-        evt.SetInt( AlbumId );
+        evt.SetInt( m_MediaSong.m_AlbumId );
         evt.SetExtraLong( m_MediaSong.m_Type );
-        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
+        evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2966,26 +2950,13 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 {
-    int ArtistId = wxNOT_FOUND;
-    if( ( m_MediaSong.m_Type == guTRACK_TYPE_DB ) ||
-        ( m_MediaSong.m_Type == guTRACK_TYPE_JAMENDO ) ||
-        ( m_MediaSong.m_Type == guTRACK_TYPE_MAGNATUNE ) ||
+    if( ( m_MediaSong.m_MediaViewer && m_MediaSong.m_SongId ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
-        ArtistId = m_MediaSong.m_ArtistId;
-    }
-    else
-    {
-        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
-        ArtistId = Db->FindArtist( m_MediaSong.m_ArtistName );
-    }
-
-    if( ArtistId != wxNOT_FOUND )
-    {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
-        evt.SetInt( ArtistId );
+        evt.SetInt( m_MediaSong.m_ArtistId );
         evt.SetExtraLong( m_MediaSong.m_Type );
-        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
+        evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2993,14 +2964,11 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
 {
-    int Year = m_MediaSong.m_Year;
-
-    if( Year )
+    if( m_MediaSong.m_MediaViewer && m_MediaSong.m_Year )
     {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
-        evt.SetInt( Year );
-        evt.SetExtraLong( m_MediaSong.m_Type );
-        evt.SetClientData( ( void * ) m_MediaSong.m_LibPanel );
+        evt.SetInt( m_MediaSong.m_Year );
+        evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -3009,31 +2977,33 @@ void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
 void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 {
     m_MediaSong.m_Rating = event.GetInt();
-    if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+
+    //if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
+    if( m_MediaSong.m_MediaViewer )
     {
-        guConfig * Config = ( guConfig * ) Config->Get();
-        if( Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) ) )
+        if( m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
         {
             guTrackArray Tracks;
+            Tracks.Add( m_MediaSong );
             guImagePtrArray Images;
             wxArrayString Lyrics;
             wxArrayInt ChangedFlags;
-            Tracks.Add( m_MediaSong );
             ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING );
             guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
         }
 
-        guDbLibrary * Db = m_MediaSong.m_LibPanel ? m_MediaSong.m_LibPanel->GetDb() : m_Db;
+        guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
         Db->SetTrackRating( m_MediaSong.m_SongId, m_MediaSong.m_Rating );
-
-        // Update the track in database, playlist, etc
-        m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
     }
-    else
+    else if( ( m_MediaSong.m_Type == guTRACK_TYPE_RADIOSTATION ) ||
+             ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
         m_MediaSong.m_Rating = -1;
         m_Rating->SetRating( -1 );
     }
+
+    // Update the track in database, playlist, etc
+    m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3189,6 +3159,20 @@ void guPlayerPanel::OnRandom( wxCommandEvent &event )
 void guPlayerPanel::OnSetVolume( wxCommandEvent &event )
 {
     SetVolume( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::MediaViewerClosed( guMediaViewer * mediaviewer )
+{
+    if( m_MediaSong.m_MediaViewer == mediaviewer )
+    {
+        m_MediaSong.m_MediaViewer = NULL;
+    }
+
+    if( m_NextSong.m_MediaViewer == mediaviewer )
+    {
+        m_NextSong.m_MediaViewer = NULL;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3427,13 +3411,15 @@ guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
 // guUpdatePlayerCoverThread
 // -------------------------------------------------------------------------------- //
 guUpdatePlayerCoverThread::guUpdatePlayerCoverThread( guDbLibrary * db,
-    guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack, const bool shownotify ) : wxThread()
+    guMainFrame * mainframe, guPlayerPanel * playerpanel, guCurrentTrack * currenttrack,
+    const bool shownotify, const bool deleted ) : wxThread()
 {
     m_Db = db;
     m_MainFrame = mainframe;
     m_PlayerPanel = playerpanel;
     m_CurrentTrack = currenttrack;
     m_ShowNotify = shownotify;
+    m_Deleted = deleted;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -3455,7 +3441,13 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
 
     wxImage * CoverImage = NULL;
 
-    if( m_CurrentTrack->m_Type == guTRACK_TYPE_RADIOSTATION )
+    guLogMessage( wxT( "UpdatePlayerCover( %i )" ), m_Deleted );
+    if( m_Deleted )
+    {
+        m_CurrentTrack->m_CoverPath = wxEmptyString;
+        // As it was deleted we dont try to get a new one...
+    }
+    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_RADIOSTATION )
     {
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
         m_CurrentTrack->m_CoverType = GU_SONGCOVER_RADIO;
@@ -3465,41 +3457,18 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
         m_CurrentTrack->m_CoverType = GU_SONGCOVER_PODCAST;
     }
-    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_JAMENDO )
+    else if( m_CurrentTrack->m_MediaViewer )
     {
-        guJamendoPanel * JamendoPanel = m_MainFrame->GetJamendoPanel();
-        if( JamendoPanel )
-        {
-            //guLogDebug( wxT( "Tried to get the CoverImage for the jamendo album %i" ), m_CurrentTrack->m_AlbumId );
-            CoverImage = JamendoPanel->GetAlbumCover( m_CurrentTrack->m_AlbumId, m_CurrentTrack->m_CoverPath );
-            m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
-        }
-    }
-    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_MAGNATUNE )
-    {
-        guMagnatunePanel * MagnatunePanel = m_MainFrame->GetMagnatunePanel();
-        if( MagnatunePanel )
-        {
-            //guLogDebug( wxT( "Tried to get the CoverImage for the magnatune album %i" ), m_CurrentTrack->m_AlbumId );
-            CoverImage = MagnatunePanel->GetAlbumCover( m_CurrentTrack->m_AlbumId, m_CurrentTrack->m_ArtistName,
-                                                        m_CurrentTrack->m_AlbumName, m_CurrentTrack->m_CoverPath );
-            m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
-        }
+        guMediaViewer * MediaViewer = m_CurrentTrack->m_MediaViewer;
+
+        CoverImage = MediaViewer->GetAlbumCover( m_CurrentTrack->m_AlbumId, m_CurrentTrack->m_CoverId,
+                            m_CurrentTrack->m_CoverPath, m_CurrentTrack->m_ArtistName, m_CurrentTrack->m_AlbumName );
+        m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
     }
     else if( ( CoverImage = guTagGetPicture( m_CurrentTrack->m_FileName ) ) )
     {
         m_CurrentTrack->m_CoverType = GU_SONGCOVER_ID3TAG;
         m_CurrentTrack->m_CoverPath = m_CurrentTrack->m_FileName;
-    }
-    else if( m_CurrentTrack->m_Type == guTRACK_TYPE_IPOD )
-    {
-    }
-    else if( m_CurrentTrack->m_CoverId )
-    {
-        //guLogDebug( wxT( "CoverId %i" ), m_CurrentTrack->m_CoverId );
-        guDbLibrary * Db = m_CurrentTrack->m_LibPanel ? m_CurrentTrack->m_LibPanel->GetDb() : m_Db;
-        m_CurrentTrack->m_CoverPath = Db->GetCoverPath( m_CurrentTrack->m_CoverId );
-        m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
     }
     else
     {

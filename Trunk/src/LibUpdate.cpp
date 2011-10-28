@@ -23,10 +23,12 @@
 #include "Commands.h"
 #include "Config.h"
 #include "MainApp.h"
+#include "MediaViewer.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
 #include <unistd.h>
+#include <wx/event.h>
 
 // -------------------------------------------------------------------------------- //
 int inline GetFileLastChangeTime( const wxString &FileName )
@@ -44,72 +46,105 @@ bool inline IsFileSymbolicLink( const wxString &FileName )
     return S_ISLNK( St.st_mode );
 }
 
+//// -------------------------------------------------------------------------------- //
+//guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath )
+//{
+//    m_MediaViewer = NULL;
+//    m_LibPanel = libpanel;
+//    m_Db = libpanel->GetDb();
+//    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+//    m_GaugeId = gaugeid;
+//    m_ScanPath = scanpath;
+//
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    //m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
+//    m_CoverSearchWords = libpanel->GetCoverSearchWords();
+//    int Index;
+//    int Count = m_CoverSearchWords.Count();
+//    for( Index = 0; Index < Count; Index++ )
+//    {
+//        m_CoverSearchWords[ Index ].MakeLower();
+//    }
+//
+//    if( scanpath.IsEmpty() )
+//    {
+//        m_LibPaths = libpanel->GetLibraryPaths();
+//        wxString PlaylistPath = libpanel->GetPlaylistPath();
+//        if( !PlaylistPath.IsEmpty() )
+//            m_LibPaths.Add( PlaylistPath );
+//
+//        CheckSymLinks( m_LibPaths );
+//    }
+//
+//    m_LastUpdate = libpanel->LastUpdate();
+//    //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
+//    m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "general" ) );
+//    m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "general" ) );
+//    m_ScanSymlinks = Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "general" ) );
+//
+//    if( Create() == wxTHREAD_NO_ERROR )
+//    {
+//        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
+//        Run();
+//    }
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath )
+//{
+//    m_MediaViewer = NULL;
+//    m_LibPanel = NULL;
+//    m_Db = db;
+//    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+//    m_GaugeId = gaugeid;
+//    m_ScanPath = scanpath;
+//
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
+//
+//    if( scanpath.IsEmpty() )
+//    {
+//        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "libpaths" ) );
+//
+//        CheckSymLinks( m_LibPaths );
+//    }
+//
+//    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "general" ) );
+//    //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
+//    m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "general" ) );
+//    m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "general" ) );
+//    m_ScanSymlinks = Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "general" ) );
+//
+//    if( Create() == wxTHREAD_NO_ERROR )
+//    {
+//        SetPriority( WXTHREAD_DEFAULT_PRIORITY + 10 );
+//        Run();
+//    }
+//}
+
 // -------------------------------------------------------------------------------- //
-guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath )
+guLibUpdateThread::guLibUpdateThread( guMediaViewer * mediaviewer, int gaugeid, const wxString &scanpath )
 {
-    m_LibPanel = libpanel;
-    m_Db = libpanel->GetDb();
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    m_MediaViewer = mediaviewer;
+//    m_LibPanel = mediaviewer->GetLibPanel();
+    m_Db = mediaviewer->GetDb();
+    m_MainFrame = mediaviewer->GetMainFrame();
     m_GaugeId = gaugeid;
     m_ScanPath = scanpath;
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    //m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-    m_CoverSearchWords = libpanel->GetCoverSearchWords();
-    int Index;
-    int Count = m_CoverSearchWords.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        m_CoverSearchWords[ Index ].MakeLower();
-    }
+    m_CoverSearchWords = mediaviewer->GetCoverWords();
 
     if( scanpath.IsEmpty() )
     {
-        m_LibPaths = libpanel->GetLibraryPaths();
-        wxString PlaylistPath = libpanel->GetPlaylistPath();
-        if( !PlaylistPath.IsEmpty() )
-            m_LibPaths.Add( PlaylistPath );
+        m_LibPaths = mediaviewer->GetPaths();
 
         CheckSymLinks( m_LibPaths );
     }
 
-    m_LastUpdate = libpanel->LastUpdate();
-    //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
-    m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
-    m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
-    m_ScanSymlinks = Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) );
-
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
-        Run();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxString &scanpath )
-{
-    m_LibPanel = NULL;
-    m_Db = db;
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    m_GaugeId = gaugeid;
-    m_ScanPath = scanpath;
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_CoverSearchWords = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-
-    if( scanpath.IsEmpty() )
-    {
-        m_LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
-
-        CheckSymLinks( m_LibPaths );
-    }
-
-    m_LastUpdate = Config->ReadNum( wxT( "LastUpdate" ), 0, wxT( "General" ) );
-    //guLogMessage( wxT( "LastUpdate: %s" ), LastTime.Format().c_str() );
-    m_ScanAddPlayLists = Config->ReadBool( wxT( "ScanAddPlayLists" ), true, wxT( "General" ) );
-    m_ScanEmbeddedCovers = Config->ReadBool( wxT( "ScanEmbeddedCovers" ), true, wxT( "General" ) );
-    m_ScanSymlinks = Config->ReadBool( wxT( "ScanSymlinks" ), false, wxT( "General" ) );
+    m_LastUpdate = mediaviewer->GetLastUpdate();
+    m_ScanAddPlayLists = mediaviewer->GetScanPlaylists();
+    m_ScanEmbeddedCovers = mediaviewer->GetScanEmbeddedCovers();
+    m_ScanSymlinks = mediaviewer->GetScanFollowSymLinks();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -121,39 +156,37 @@ guLibUpdateThread::guLibUpdateThread( guDbLibrary * db, int gaugeid, const wxStr
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::~guLibUpdateThread()
 {
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
     if( !TestDestroy() )
     {
-        if( m_LibPanel )
+        if( m_MediaViewer )
         {
-            m_LibPanel->SetLastUpdate();
+            m_MediaViewer->UpdateFinished();
         }
-        else
-        {
-            guConfig * Config = ( guConfig * ) guConfig::Get();
-            wxDateTime Now = wxDateTime::Now();
-            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "General" ) );
-            Config->Flush();
-        }
-
-        event.SetEventObject( ( wxObject * ) this );
-        event.SetClientData( ( void * ) m_LibPanel );
-        wxPostEvent( m_MainFrame, event );
+//        else
+//        {
+//            if( m_LibPanel )
+//            {
+//                m_LibPanel->SetLastUpdate();
+//            }
+//            else
+//            {
+//                guConfig * Config = ( guConfig * ) guConfig::Get();
+//                wxDateTime Now = wxDateTime::Now();
+//                Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "general" ) );
+//                Config->Flush();
+//            }
+//
+//            //event.SetEventObject( ( wxObject * ) this );
+//            event.SetClientData( ( void * ) m_LibPanel );
+//            wxPostEvent( m_MainFrame, event );
+//        }
     }
     //
-    event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
+//    event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
-}
-
-// -------------------------------------------------------------------------------- //
-bool guIsValidImageFile( const wxString &filename )
-{
-    return filename.EndsWith( wxT( ".jpg" ) ) ||
-           filename.EndsWith( wxT( ".jpeg" ) ) ||
-           filename.EndsWith( wxT( ".png" ) ) ||
-           filename.EndsWith( wxT( ".bmp" ) ) ||
-           filename.EndsWith( wxT( ".gif" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -246,8 +279,9 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 {
-    int index;
-    int count;
+    int Index;
+    int Count;
+    int LastIndex;
     wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
@@ -256,20 +290,20 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 
     if( m_ScanPath.IsEmpty() )
     {
-        count = m_LibPaths.Count();
-        if( !count )
+        Count = m_LibPaths.Count();
+        if( !Count )
         {
             guLogError( wxT( "No library directories to scan" ) );
             return 0;
         }
 
         // For every directory in the library scan for new files and add them to m_TrackFiles
-        index = 0;
-        while( !TestDestroy() && ( index < count ) )
+        Index = 0;
+        while( !TestDestroy() && ( Index < Count ) )
         {
-            guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ index ].c_str() );
-            ScanDirectory( m_LibPaths[ index ] );
-            index++;
+            guLogMessage( wxT( "Doing Library Update in %s" ), m_LibPaths[ Index ].c_str() );
+            ScanDirectory( m_LibPaths[ Index ] );
+            Index++;
         }
     }
     else
@@ -277,93 +311,86 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         ScanDirectory( m_ScanPath, true );
     }
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    bool EmbeddedRatings = Config->ReadBool( wxT( "SaveRatingMetadata" ), false, wxT( "General" ) );
+    bool AllowGenres = m_MediaViewer->GetMediaCollection()->m_EmbeddMetadata;
     // For every new track file update it in the database
-    count = m_TrackFiles.Count();
-    if( count )
+    Count = m_TrackFiles.Count();
+    if( Count )
     {
         m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
 
-        index = 0;
-        evtmax.SetExtraLong( count );
+        Index = 0;
+        evtmax.SetExtraLong( Count );
         wxPostEvent( m_MainFrame, evtmax );
+        LastIndex = -1;
         while( !TestDestroy() )
         {
-            //guLogMessage( wxT( "%i - %i" ), index, count );
-            if( ( index >= count ) )
+            //guLogMessage( wxT( "%i - %i" ), Index, Count );
+            if( ( Index >= Count ) )
                 break;
 
-            //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ index ].c_str() );
-            m_Db->ReadFileTags( m_TrackFiles[ index ], EmbeddedRatings );
+            //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ Index ].c_str() );
+            m_Db->ReadFileTags( m_TrackFiles[ Index ], AllowGenres );
             //Sleep( 1 );
-            index++;
-            evtup.SetExtraLong( index );
-            wxPostEvent( m_MainFrame, evtup );
+            Index++;
+            if( Index > LastIndex )
+            {
+                evtup.SetExtraLong( Index );
+                wxPostEvent( m_MainFrame, evtup );
+                LastIndex = Index + 5;
+            }
         }
 
         m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
     }
 
 
-    wxString CoverName;
-    if( m_LibPanel )
-    {
-        CoverName = m_LibPanel->GetCoverName();
-    }
-    else
-    {
-        wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "CoverSearch" ) );
-        CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
-    }
-    int CoverType = wxBITMAP_TYPE_JPEG;
-    if( m_LibPanel )
-    {
-        CoverType = m_LibPanel->GetCoverType();
-    }
-    int CoverMaxSize = wxNOT_FOUND;
-    if( m_LibPanel )
-    {
-        CoverMaxSize = m_LibPanel->GetCoverMaxSize();
-    }
+    wxString CoverName = m_MediaViewer->GetCoverName( wxNOT_FOUND );
+    int CoverType = m_MediaViewer->GetCoverType();
+    int CoverMaxSize = m_MediaViewer->GetCoverMaxSize();
 
-    count = m_ImageFiles.Count();
-    if( count )
+    Count = m_ImageFiles.Count();
+    if( Count )
     {
         m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
-        index = 0;
-        evtmax.SetExtraLong( count );
+        Index = 0;
+        evtmax.SetExtraLong( Count );
         wxPostEvent( m_MainFrame, evtmax );
+        LastIndex = -1;
         while( !TestDestroy() )
         {
-            //guLogMessage( wxT( "%i - %i" ), index, count );
-            if( ( index >= count ) )
+            //guLogMessage( wxT( "%i - %i" ), Index, Count );
+            if( ( Index >= Count ) )
                 break;
 
-            m_Db->UpdateImageFile( m_ImageFiles[ index ].ToUTF8(), CoverName.ToUTF8(), CoverType, CoverMaxSize );
-            index++;
-            evtup.SetExtraLong( index );
-            wxPostEvent( m_MainFrame, evtup );
+            m_Db->UpdateImageFile( m_ImageFiles[ Index ].ToUTF8(), CoverName.ToUTF8(), CoverType, CoverMaxSize );
+            Index++;
+            if( Index > LastIndex )
+            {
+                evtup.SetExtraLong( Index );
+                wxPostEvent( m_MainFrame, evtup );
+                LastIndex = Index + 5;
+            }
         }
 
         m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
     }
 
-    count = m_PlayListFiles.Count();
-    if( count )
+    Count = m_PlayListFiles.Count();
+    if( Count )
     {
         m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
 
-        index = 0;
-        evtmax.SetExtraLong( count );
+        Index = 0;
+        evtmax.SetExtraLong( Count );
         wxPostEvent( m_MainFrame, evtmax );
+        LastIndex = -1;
         while( !TestDestroy() )
         {
-            //guLogMessage( wxT( "%i - %i" ), index, count );
-            if( ( index >= count ) )
+            //guLogMessage( wxT( "%i - %i" ), Index, Count );
+            if( ( Index >= Count ) )
                 break;
 
-            guPlayListFile PlayList( m_PlayListFiles[ index ] );
+            guPlayListFile PlayList( m_PlayListFiles[ Index ] );
             wxArrayInt PlayListIds;
             int ItemTrackId;
             int ItemIndex;
@@ -380,20 +407,24 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 }
                 if( PlayListIds.Count() )
                 {
-                    if( m_Db->GetStaticPlayList( m_PlayListFiles[ index ] ) == wxNOT_FOUND )
+                    if( m_Db->GetStaticPlayList( m_PlayListFiles[ Index ] ) == wxNOT_FOUND )
                     {
-                        m_Db->CreateStaticPlayList( m_PlayListFiles[ index ], PlayListIds );
+                        m_Db->CreateStaticPlayList( m_PlayListFiles[ Index ], PlayListIds );
 
                         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-                        evt.SetClientData( ( void * ) m_LibPanel );
-                        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+                        evt.SetClientData( ( void * ) m_MediaViewer );
+                        wxPostEvent( m_MainFrame, evt );
                     }
                 }
             }
 
-            index++;
-            evtup.SetExtraLong( index );
-            wxPostEvent( m_MainFrame, evtup );
+            Index++;
+            if( Index > LastIndex )
+            {
+                evtup.SetExtraLong( Index );
+                wxPostEvent( m_MainFrame, evtup );
+                LastIndex = Index + 5;
+            }
         }
 
         m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
@@ -413,25 +444,11 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guLibCleanThread
 // -------------------------------------------------------------------------------- //
-guLibCleanThread::guLibCleanThread( guLibPanel * libpanel )
+guLibCleanThread::guLibCleanThread( guMediaViewer * mediaviewer )
 {
-    m_LibPanel = libpanel;
-    m_Db = libpanel->GetDb();
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY );
-        Run();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guLibCleanThread::guLibCleanThread( guDbLibrary * db )
-{
-    m_LibPanel = NULL;
-    m_Db = db;
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    m_MediaViewer = mediaviewer;
+    m_Db = mediaviewer->GetDb();
+    m_MainFrame = mediaviewer->GetMainFrame();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -446,9 +463,9 @@ guLibCleanThread::~guLibCleanThread()
     if( !TestDestroy() )
     {
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_CLEANFINISHED );
-        event.SetEventObject( ( wxObject * ) this );
-        event.SetClientData( ( void * ) m_LibPanel );
-        wxPostEvent( m_MainFrame, event );
+        //event.SetEventObject( ( wxObject * ) this );
+        //event.SetClientData( ( void * ) m_LibPanel );
+        wxPostEvent( m_MediaViewer, event );
     }
 }
 
@@ -461,16 +478,7 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
     wxSQLite3ResultSet dbRes;
     wxString FileName;
 
-    wxArrayString LibPaths;
-    if( m_LibPanel )
-    {
-        LibPaths = m_LibPanel->GetLibraryPaths();
-    }
-    else
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        LibPaths = Config->ReadAStr( wxT( "LibPath" ), wxEmptyString, wxT( "LibPaths" ) );
-    }
+    wxArrayString LibPaths = m_MediaViewer->GetPaths();
 
     if( !TestDestroy() )
     {

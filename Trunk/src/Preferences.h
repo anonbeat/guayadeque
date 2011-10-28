@@ -21,9 +21,11 @@
 #ifndef PREFERENCES_H
 #define PREFERENCES_H
 
+#include "Collections.h"
 #include "Config.h"
 #include "DbLibrary.h"
 #include "LyricsPanel.h"
+
 
 #include <wx/string.h>
 #include <wx/checkbox.h>
@@ -53,6 +55,7 @@
 #include <wx/imaglist.h>
 #include <wx/dialog.h>
 #include <wx/dynarray.h>
+#include <wx/splitter.h>
 
 #define  guPREFERENCE_PAGE_FLAG_GENERAL          ( 1 << 0 )
 #define  guPREFERENCE_PAGE_FLAG_LIBRARY          ( 1 << 1 )
@@ -71,6 +74,7 @@
 #define  guPREFERENCE_PAGE_FLAG_ACCELERATORS     ( 1 << 14 )
 
 enum guPreference_Page {
+    guPREFERENCE_PAGE_LASTUSED = -1,
     guPREFERENCE_PAGE_GENERAL,
     guPREFERENCE_PAGE_LIBRARY,
     guPREFERENCE_PAGE_PLAYBACK,
@@ -85,8 +89,7 @@ enum guPreference_Page {
     guPREFERENCE_PAGE_LINKS,
     guPREFERENCE_PAGE_COMMANDS,
     guPREFERENCE_PAGE_COPYTO,
-    guPREFERENCE_PAGE_ACCELERATORS,
-    guPREFERENCE_PAGE_LASTUSED = -1
+    guPREFERENCE_PAGE_ACCELERATORS
 };
 
 // -------------------------------------------------------------------------------- //
@@ -95,6 +98,7 @@ class guCopyToPattern
   public :
     wxString    m_Name;
     wxString    m_Pattern;
+    wxString    m_Path;
     int         m_Format;
     int         m_Quality;
     bool        m_MoveFiles;
@@ -108,6 +112,8 @@ class guCopyToPattern
 };
 WX_DECLARE_OBJARRAY( guCopyToPattern, guCopyToPatternArray );
 
+
+
 // -------------------------------------------------------------------------------- //
 class guPrefDialog : public wxDialog
 {
@@ -118,7 +124,7 @@ class guPrefDialog : public wxDialog
     wxListbook *                m_MainNotebook;
     wxImageList *               m_ImageList;
 
-    wxPanel *                   m_GenPanel;
+    wxScrolledWindow *                   m_GenPanel;
     wxCheckBox *                m_ShowSplashChkBox;
     wxCheckBox *                m_MinStartChkBox;
     wxCheckBox *                m_TaskIconChkBox;
@@ -127,6 +133,7 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_DropFilesChkBox;
     wxCheckBox *                m_InstantSearchChkBox;
     wxCheckBox *                m_EnterSearchChkBox;
+    wxCheckBox *                m_ShowCDFrameChkBox;
     wxCheckBox *                m_EnqueueChkBox;
     wxChoice *                  m_AlYearOrderChoice;
     wxCheckBox *                m_SavePlayListChkBox;
@@ -135,22 +142,33 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_CloseTaskBarChkBox;
     wxCheckBox *                m_ExitConfirmChkBox;
 
-    wxPanel *                   m_LibPanel;
-    wxListBox *                 m_PathsListBox;
-    wxBitmapButton *            m_AddPathButton;
-    wxBitmapButton *            m_DelPathButton;
-    wxListBox *                 m_CoversListBox;
-    wxBitmapButton *            m_AddCoverButton;
-    wxBitmapButton *            m_UpCoverButton;
-    wxBitmapButton *            m_DownCoverButton;
-    wxBitmapButton *            m_DelCoverButton;
-    wxCheckBox *                m_UpdateLibChkBox;
-    wxCheckBox *                m_LibScanPlayListChkBox;
-    wxCheckBox *                m_LibScanSymlinksChkBox;
-    wxCheckBox *                m_LibScanEmbCoversChkBox;
-    wxCheckBox *                m_LibSaveRatingsChkBox;
+    wxScrolledWindow *          m_LibPanel;
+    wxSplitterWindow *          m_LibSplitter;
+    wxListBox *                 m_LibCollectListBox;
+    wxBitmapButton *            m_LibCollectAddBtn;
+    wxBitmapButton *            m_LibCollectDelBtn;
+    wxBitmapButton *            m_LibCollectUpBtn;
+    wxBitmapButton *            m_LibCollectDownBtn;
+    wxScrolledWindow *          m_LibOptPanel;
+	wxStaticBoxSizer *          m_LibOptSizer;
+    wxStaticBoxSizer *          m_LibOptPathSizer;
+    wxListBox *                 m_LibPathListBox;
+    wxBitmapButton *            m_LibOptAddPathBtn;
+    wxBitmapButton *            m_LibOptDelPathBtn;
+    wxListBox *                 m_LibCoverListBox;
+    wxBitmapButton *            m_LibOptAddCoverBtn;
+    wxBitmapButton *            m_LibOptUpCoverBtn;
+    wxBitmapButton *            m_LibOptDownCoverBtn;
+    wxBitmapButton *            m_LibOptDelCoverBtn;
+    wxStaticBoxSizer *          m_LibOptionsSizer;
+    wxCheckBox *                m_LibOptAutoUpdateChkBox;
+    wxCheckBox *                m_LibOptCreatePlayListChkBox;
+    wxCheckBox *                m_LibOptFollowLinksChkBox;
+    wxCheckBox *                m_LibOptCheckEmbeddedChkBox;
+    wxCheckBox *                m_LibOptEmbedTagsChkBox;
+    wxChoice *                  m_LibOptCopyToChoice;
 
-    wxPanel *                   m_PlayPanel;
+    wxScrolledWindow *          m_PlayPanel;
     wxCheckBox *                m_RndPlayChkBox;
     wxChoice *                  m_RndModeChoice;
     wxCheckBox *                m_DelPlayChkBox;
@@ -169,7 +187,7 @@ class guPrefDialog : public wxDialog
     wxStaticText *              m_PlayPreAmpLevelVal;
     wxSlider *                  m_PlayPreAmpLevelSlider;
 
-    wxPanel *                   m_XFadePanel;
+    wxScrolledWindow *          m_XFadePanel;
     wxStaticText *              m_XFadeOutLenVal;
 	wxStaticText *              m_XFadeInLenVal;
 	wxStaticText *              m_XFadeInStartVal;
@@ -180,7 +198,7 @@ class guPrefDialog : public wxDialog
     wxSlider *                  m_XFadeInTrigerSlider;
     wxStaticBitmap *            m_FadeBitmap;
 
-    wxPanel *                   m_RecordPanel;
+    wxScrolledWindow *          m_RecordPanel;
     wxCheckBox *                m_RecordChkBox;
     wxDirPickerCtrl *           m_RecSelDirPicker;
     wxChoice *                  m_RecFormatChoice;
@@ -189,7 +207,7 @@ class guPrefDialog : public wxDialog
     wxCheckBox *                m_RecDelTracks;
     wxSpinCtrl *                m_RecDelTime;
 
-    wxPanel *                   m_LastFMPanel;
+    wxScrolledWindow *          m_LastFMPanel;
     wxCheckBox *                m_LastFMASEnableChkBox;
     wxTextCtrl *                m_LastFMUserNameTextCtrl;
     wxTextCtrl *                m_LastFMPasswdTextCtrl;
@@ -205,7 +223,7 @@ class guPrefDialog : public wxDialog
     wxSpinCtrl *                m_NumTracksSpinCtrl;
     wxSpinCtrl *                m_MaxTracksPlayed;
 
-    wxPanel *                   m_LyricsPanel;
+    wxScrolledWindow *          m_LyricsPanel;
     wxCheckListBox *            m_LyricsSrcListBox;
     wxBitmapButton *            m_LyricsAddButton;
     wxBitmapButton *            m_LyricsUpButton;
@@ -219,12 +237,12 @@ class guPrefDialog : public wxDialog
     wxFontPickerCtrl *          m_LyricFontPicker;
     wxChoice *                  m_LyricsAlignChoice;
 
-    wxPanel *                   m_OnlinePanel;
+    wxScrolledWindow *          m_OnlinePanel;
     wxListBox *                 m_OnlineFiltersListBox;
     wxBitmapButton *            m_OnlineAddBtn;
     wxBitmapButton *            m_OnlineDelBtn;
 
-    wxPanel *                   m_LinksPanel;
+    wxScrolledWindow *          m_LinksPanel;
     wxListBox *                 m_LinksListBox;
     wxBitmapButton *            m_LinksAddBtn;
     wxBitmapButton *            m_LinksDelBtn;
@@ -235,7 +253,7 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_LinksAcceptBtn;
     wxArrayString               m_LinksNames;
 
-    wxPanel *                   m_CmdPanel;
+    wxScrolledWindow *          m_CmdPanel;
     wxListBox *                 m_CmdListBox;
     wxBitmapButton *            m_CmdAddBtn;
     wxBitmapButton *            m_CmdDelBtn;
@@ -246,13 +264,15 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_CmdAcceptBtn;
     wxArrayString               m_CmdNames;
 
-	wxPanel *                   m_CopyPanel;
+	wxScrolledWindow *          m_CopyPanel;
     wxListBox *                 m_CopyToListBox;
     wxBitmapButton *            m_CopyToAddBtn;
     wxBitmapButton *            m_CopyToUpBtn;
     wxBitmapButton *            m_CopyToDownBtn;
     wxBitmapButton *            m_CopyToDelBtn;
     wxTextCtrl *                m_CopyToPatternTextCtrl;
+    wxTextCtrl *                m_CopyToPathTextCtrl;
+    wxButton *                  m_CopyToPathBtn;
     wxTextCtrl *                m_CopyToNameTextCtrl;
     wxChoice *                  m_CopyToFormatChoice;
     wxChoice *                  m_CopyToQualityChoice;
@@ -261,11 +281,13 @@ class guPrefDialog : public wxDialog
 
     wxTextCtrl *                m_BrowserCmdTextCtrl;
 
-    wxRadioBox *                m_RadioMinBitRateRadBox;
+    //wxRadioBox *                m_RadioMinBitRateRadBox;
+    wxSlider *                  m_RadioMinBitRateSlider;
     wxArrayString               m_RadioMinBitRateRadBoxChoices;
     wxSlider *                  m_BufferSizeSlider;
+    int                         m_LastMinBitRate;
 
-    wxPanel *                   m_PodcastPanel;
+    wxScrolledWindow *          m_PodcastPanel;
     wxDirPickerCtrl *           m_PodcastPath;
     wxCheckBox *                m_PodcastUpdate;
     wxChoice *                  m_PodcastUpdatePeriod;
@@ -275,7 +297,7 @@ class guPrefDialog : public wxDialog
 
     wxCheckBox *                m_PodcastDeletePlayed;
 
-    wxPanel *                   m_JamendoPanel;
+    wxScrolledWindow *          m_JamendoPanel;
     wxCheckListBox *            m_JamGenresListBox;
     wxButton *                  m_JamSelAllBtn;
     wxButton *                  m_JamSelNoneBtn;
@@ -284,7 +306,7 @@ class guPrefDialog : public wxDialog
     wxTextCtrl *                m_JamBTCmd;
     wxArrayInt                  m_LastJamendoGenres;
 
-    wxPanel *                   m_MagnatunePanel;
+    wxScrolledWindow *          m_MagnatunePanel;
     wxCheckListBox *            m_MagGenresListBox;
     wxButton *                  m_MagSelAllBtn;
     wxButton *                  m_MagSelNoneBtn;
@@ -298,12 +320,9 @@ class guPrefDialog : public wxDialog
     wxChoice *                  m_MagDownFormatChoice;
     wxArrayString               m_LastMagnatuneGenres;
 
-    wxPanel *                   m_AccelPanel;
+    wxScrolledWindow *          m_AccelPanel;
     wxListCtrl *                m_AccelListCtrl;
     bool                        m_AccelItemNeedClear;
-    //wxTextCtrl *                m_AccelKeyTextCtrl;
-    //wxBitmapButton *            m_AccelDelBtn;
-    //wxBitmapButton *            m_AccelSetBtn;
 
 	wxArrayString               m_AccelActionNames;
 	wxArrayString               m_AccelKeyNames;
@@ -313,6 +332,8 @@ class guPrefDialog : public wxDialog
 
 
     guConfig *                  m_Config;
+    guMediaCollectionArray      m_Collections;
+    int                         m_CollectSelected;
     int                         m_PathSelected;
     int                         m_CoverSelected;
     int                         m_FilterSelected;
@@ -344,16 +365,35 @@ class guPrefDialog : public wxDialog
 
     // Event Handlers
     void OnPageChanged( wxCommandEvent &event );
-    void OnActivateTaskBarIcon( wxCommandEvent& event );
-    void OnActivateSoundMenuIntegration( wxCommandEvent& event );
-    void OnActivateInstantSearch( wxCommandEvent& event );
-    void OnRndPlayClicked( wxCommandEvent& event );
-    void OnDelPlayedTracksChecked( wxCommandEvent& event );
-    void OnPathsListBoxSelected( wxCommandEvent& event );
-    void OnAddPathBtnClick( wxCommandEvent& event );
-	void OnDelPathBtnClick( wxCommandEvent& event );
-	void OnPathsListBoxDClicked( wxCommandEvent &event );
-	void OnCoverListBoxDClicked( wxCommandEvent &event );
+    void OnActivateTaskBarIcon( wxCommandEvent &event );
+    void OnActivateSoundMenuIntegration( wxCommandEvent &event );
+    void OnActivateInstantSearch( wxCommandEvent &event );
+    void OnRndPlayClicked( wxCommandEvent &event );
+    void OnDelPlayedTracksChecked( wxCommandEvent &event );
+
+    void OnLibCollectSelected( wxCommandEvent &event );
+    void OnLibCollectDClicked( wxCommandEvent &event );
+    void OnLibAddCollectClick( wxCommandEvent &event );
+    void OnLibUpCollectClick( wxCommandEvent &event );
+    void OnLibDownCollectClick( wxCommandEvent &event );
+    void OnLibDelCollectClick( wxCommandEvent &event );
+    void OnLibPathSelected( wxCommandEvent &event );
+    void OnLibPathDClicked( wxCommandEvent &event );
+    void OnLibAddPathBtnClick( wxCommandEvent &event );
+    void OnLibDelPathBtnClick( wxCommandEvent &event );
+    void OnLibCoverSelected( wxCommandEvent &event );
+    void OnLibCoverDClicked( wxCommandEvent &event );
+    void OnLibAddCoverBtnClick( wxCommandEvent &event );
+    void OnLibUpCoverBtnClick( wxCommandEvent &event );
+    void OnLibDownCoverBtnClick( wxCommandEvent &event );
+    void OnLibDelCoverBtnClick( wxCommandEvent &event );
+    void OnLibOptionsLoadControls( void );
+    void OnLibAutoUpdateChanged( wxCommandEvent& event );
+    void OnLibCreatePlayListsChanged( wxCommandEvent& event );
+    void OnLibFollowSymLinksChanged( wxCommandEvent& event );
+    void OnLibCheckEmbeddedChanged( wxCommandEvent& event );
+    void OnLibEmbeddMetadataChanged( wxCommandEvent& event );
+    void OnLibDefaultCopyToChanged( wxCommandEvent& event );
 
     void OnLyricSourceSelected( wxCommandEvent &event );
     void OnLyricSourceDClicked( wxCommandEvent &event );
@@ -371,58 +411,56 @@ class guPrefDialog : public wxDialog
     void OnLyricSaveDelBtnClick( wxCommandEvent &event );
 
 
-    void OnCoversListBoxSelected( wxCommandEvent& event );
-    void OnAddCoverBtnClick( wxCommandEvent& event );
-    void OnUpCoverBtnClick( wxCommandEvent& event );
-    void OnDownCoverBtnClick( wxCommandEvent& event );
-	void OnDelCoverBtnClick( wxCommandEvent& event );
-    void OnPlayLevelEnabled( wxCommandEvent& event );
+    void OnPlayLevelEnabled( wxCommandEvent &event );
     void OnReplayGainModeChanged( wxCommandEvent &event );
     void OnPlayPreAmpLevelValueChanged( wxScrollEvent &event );
     void OnPlayLevelValueChanged( wxScrollEvent &event );
-    void OnPlayEndTimeEnabled( wxCommandEvent& event );
-    void OnPlayOutDevChanged( wxCommandEvent& event );
-    void OnCrossFadeChanged( wxScrollEvent& event );
-    void OnRecEnableClicked( wxCommandEvent& event );
-    void OnRecDelTracksClicked( wxCommandEvent& event );
+    void OnPlayEndTimeEnabled( wxCommandEvent &event );
+    void OnPlayOutDevChanged( wxCommandEvent &event );
+    void OnCrossFadeChanged( wxScrollEvent &event );
+    void OnRecEnableClicked( wxCommandEvent &event );
+    void OnRecDelTracksClicked( wxCommandEvent &event );
 	void OnFiltersListBoxSelected( wxCommandEvent &event );
 	void OnLastFMASUserNameChanged( wxCommandEvent &event );
 	void OnLibreFMASUserNameChanged( wxCommandEvent &event );
-    void OnOnlineAddBtnClick( wxCommandEvent& event );
-	void OnOnlineDelBtnClick( wxCommandEvent& event );
+
+    void OnOnlineAddBtnClick( wxCommandEvent &event );
+	void OnOnlineDelBtnClick( wxCommandEvent &event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
+	void OnOnlineMinBitRateChanged( wxScrollEvent &event );
 
-    void OnJamendoSelectAll( wxCommandEvent& event );
-    void OnJamendoSelectNone( wxCommandEvent& event );
-    void OnJamendoInvertSelection( wxCommandEvent& event );
+    void OnJamendoSelectAll( wxCommandEvent &event );
+    void OnJamendoSelectNone( wxCommandEvent &event );
+    void OnJamendoInvertSelection( wxCommandEvent &event );
 
-    void OnMagnatuneSelectAll( wxCommandEvent& event );
-    void OnMagnatuneSelectNone( wxCommandEvent& event );
-    void OnMagnatuneInvertSelection( wxCommandEvent& event );
-    void OnMagNoRadioItemChanged( wxCommandEvent& event );
+    void OnMagnatuneSelectAll( wxCommandEvent &event );
+    void OnMagnatuneSelectNone( wxCommandEvent &event );
+    void OnMagnatuneInvertSelection( wxCommandEvent &event );
+    void OnMagNoRadioItemChanged( wxCommandEvent &event );
 
     void OnLinksListBoxSelected( wxCommandEvent &event );
-    void OnLinksAddBtnClick( wxCommandEvent& event );
-	void OnLinksDelBtnClick( wxCommandEvent& event );
+    void OnLinksAddBtnClick( wxCommandEvent &event );
+	void OnLinksDelBtnClick( wxCommandEvent &event );
 	void OnLinkMoveUpBtnClick( wxCommandEvent &event );
 	void OnLinkMoveDownBtnClick( wxCommandEvent &event );
 	void OnLinksTextChanged( wxCommandEvent &event );
 	void OnLinksSaveBtnClick( wxCommandEvent &event );
 
     void OnCmdListBoxSelected( wxCommandEvent &event );
-    void OnCmdAddBtnClick( wxCommandEvent& event );
-	void OnCmdDelBtnClick( wxCommandEvent& event );
+    void OnCmdAddBtnClick( wxCommandEvent &event );
+	void OnCmdDelBtnClick( wxCommandEvent &event );
 	void OnCmdMoveUpBtnClick( wxCommandEvent &event );
 	void OnCmdMoveDownBtnClick( wxCommandEvent &event );
 	void OnCmdTextChanged( wxCommandEvent &event );
 	void OnCmdSaveBtnClick( wxCommandEvent &event );
 
     void OnCopyToListBoxSelected( wxCommandEvent &event );
-    void OnCopyToAddBtnClick( wxCommandEvent& event );
-	void OnCopyToDelBtnClick( wxCommandEvent& event );
+    void OnCopyToAddBtnClick( wxCommandEvent &event );
+	void OnCopyToDelBtnClick( wxCommandEvent &event );
 	void OnCopyToMoveUpBtnClick( wxCommandEvent &event );
 	void OnCopyToMoveDownBtnClick( wxCommandEvent &event );
 	void OnCopyToTextChanged( wxCommandEvent &event );
+    void OnCopyToPathBtnClick( wxCommandEvent &event );
 	void OnCopyToFormatChanged( wxCommandEvent &event );
 	void OnCopyToQualityChanged( wxCommandEvent &event );
 	void OnCopyToMoveFilesChanged( wxCommandEvent &event );
@@ -430,6 +468,13 @@ class guPrefDialog : public wxDialog
 
 	void OnAccelSelected( wxListEvent &event );
     void OnAccelKeyDown( wxKeyEvent &event );
+
+    void LibSplitterOnIdle( wxIdleEvent &event )
+    {
+        m_LibSplitter->SetSashPosition( 170 );
+        m_LibSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPrefDialog::LibSplitterOnIdle ), NULL, this );
+    }
+
 
   public:
     guPrefDialog( wxWindow * parent, guDbLibrary * db, int pagenum = guPREFERENCE_PAGE_LASTUSED );

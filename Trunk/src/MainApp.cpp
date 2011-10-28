@@ -25,6 +25,7 @@
 #include "MainFrame.h"
 #include "mpris.h"
 #include "SplashWin.h"
+#include "Settings.h"
 #include "Utils.h"
 
 #include "wx/clipbrd.h"
@@ -41,98 +42,116 @@ IMPLEMENT_APP(guMainApp);
 // -------------------------------------------------------------------------------- //
 guMainApp::guMainApp() : wxApp()
 {
-    m_Db = NULL;
+//    m_Db = NULL;
     m_DbCache = NULL;
 
 #if wxUSE_ON_FATAL_EXCEPTION    // Thanks TheBigRed
         wxHandleFatalExceptions();
 #endif
 
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque" ) ) )
+    if( !wxDirExists( guPATH_CONFIG ) )
     {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque" ), 0770 );
-        guLogMessage( wxT( "Created the configuration directory" ) );
+        wxMkdir( guPATH_CONFIG, 0770 );
+        guLogMessage( wxT( "Created the configuration folder" ) );
     }
 
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ) ) )
+    if( !wxDirExists( guPATH_LYRICS ) )
     {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/lyrics" ), 0770 );
-        guLogMessage( wxT( "Created the lyrics directory" ) );
+        wxMkdir( guPATH_LYRICS, 0770 );
+        guLogMessage( wxT( "Created the lyrics folder" ) );
     }
 
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo" ) ) )
+    if( !wxDirExists( guPATH_COLLECTIONS ) )
     {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo" ), 0770 );
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Jamendo/Covers" ), 0770 );
-        guLogMessage( wxT( "Created the Jamendo directory" ) );
+        wxMkdir( guPATH_COLLECTIONS, 0770 );
+        guLogMessage( wxT( "Created the collections folder" ) );
     }
 
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune" ) ) )
+    if( !wxDirExists( guPATH_RADIOS ) )
     {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune" ), 0770 );
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Magnatune/Covers" ), 0770 );
-        guLogMessage( wxT( "Created the Magnatune directory" ) );
+        wxMkdir( guPATH_RADIOS, 0770 );
+        guLogMessage( wxT( "Created the Radios folder" ) );
     }
 
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Devices" ) ) )
+    if( !wxDirExists( guPATH_JAMENDO ) )
     {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Devices" ), 0770 );
-        guLogMessage( wxT( "Created the Devices directory" ) );
+        wxMkdir( guPATH_JAMENDO, 0770 );
+        wxMkdir( guPATH_JAMENDO_COVERS, 0770 );
+        guLogMessage( wxT( "Created the Jamendo folder" ) );
     }
 
-    if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ) ) )
+    if( !wxDirExists( guPATH_MAGNATUNE ) )
+    {
+        wxMkdir( guPATH_MAGNATUNE, 0770 );
+        wxMkdir( guPATH_MAGNATUNE_COVERS, 0770 );
+        guLogMessage( wxT( "Created the Magnatune folder" ) );
+    }
+
+    if( !wxDirExists( guPATH_PODCASTS ) )
+    {
+        wxMkdir( guPATH_PODCASTS, 0770 );
+        guLogMessage( wxT( "Created the Podcasts folder" ) );
+    }
+
+    if( !wxDirExists( guPATH_DEVICES ) )
+    {
+        wxMkdir( guPATH_DEVICES, 0770 );
+        guLogMessage( wxT( "Created the Devices folder" ) );
+    }
+
+    if( !wxDirExists( guPATH_LAYOUTS ) )
+    {
+        wxMkdir( guPATH_LAYOUTS, 0770 );
+        guLogMessage( wxT( "Created the Layouts folder" ) );
+    }
+
+    if( !wxFileExists( guPATH_CONFIG_FILENAME ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )
         {
             wxCopyFile( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ),
-                        wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ), false );
+                        guPATH_CONFIG_FILENAME, false );
         }
         else if( wxFileExists( wxT( "/usr/local/share/guayadeque/guayadeque.default.conf" ) ) )
         {
             wxCopyFile( wxT( "/usr/local/share/guayadeque/guayadeque.default.conf" ),
-                        wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.conf" ), false );
+                        guPATH_CONFIG_FILENAME, false );
         }
         guLogMessage( wxT( "Created the default configuration file" ) );
     }
 
-    if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ) ) )
+    if( !wxFileExists( guPATH_EQUALIZERS_FILENAME ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/equalizers.default.conf" ) ) )
         {
             wxCopyFile( wxT( "/usr/share/guayadeque/equalizers.default.conf" ),
-                        wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ), false );
+                        guPATH_EQUALIZERS_FILENAME, false );
         }
         else if( wxFileExists( wxT( "/usr/local/share/guayadeque/equalizers.default.conf" ) ) )
         {
             wxCopyFile( wxT( "/usr/local/share/guayadeque/equalizers.default.conf" ),
-                        wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ), false );
+                        guPATH_EQUALIZERS_FILENAME, false );
         }
         guLogMessage( wxT( "Created the default equalizers file" ) );
     }
 
-    if( !wxFileExists( wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" ) ) )
+    if( !wxFileExists( guPATH_LYRICS_SOURCES_FILENAME ) )
     {
         if( wxFileExists( wxT( "/usr/share/guayadeque/lyrics_sources.xml" ) ) )
         {
             wxCopyFile( wxT( "/usr/share/guayadeque/lyrics_sources.xml" ),
-                        wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" ), false );
+                        guPATH_LYRICS_SOURCES_FILENAME, false );
         }
         else if( wxFileExists( wxT( "/usr/local/share/guayadeque/lyrics_sources.xml" ) ) )
         {
             wxCopyFile( wxT( "/usr/local/share/guayadeque/lyrics_sources.xml" ),
-                        wxGetHomeDir() + wxT( "/.guayadeque/lyrics_sources.xml" ), false );
+                        guPATH_LYRICS_SOURCES_FILENAME, false );
         }
         guLogMessage( wxT( "Created the default lyrics sources file" ) );
     }
 
-    if( !wxDirExists( wxGetHomeDir() + wxT( "/.guayadeque/Layouts" ) ) )
-    {
-        wxMkdir( wxGetHomeDir() + wxT( "/.guayadeque/Layouts" ), 0770 );
-        guLogMessage( wxT( "Created the Layouts directory" ) );
-    }
-
     m_Config = new guConfig();
-    guConfig::Set( m_Config );
+    m_Config->Set( m_Config );
 
 }
 
@@ -142,11 +161,11 @@ guMainApp::~guMainApp()
     if( m_SingleInstanceChecker )
         delete m_SingleInstanceChecker;
 
-    if( m_Db )
-    {
-        m_Db->Close();
-        delete m_Db;
-    }
+//    if( m_Db )
+//    {
+//        m_Db->Close();
+//        delete m_Db;
+//    }
 
     if( m_DbCache )
     {
@@ -318,7 +337,7 @@ bool guMainApp::OnInit()
     wxInitAllImageHandlers();
 
     // If enabled Show the Splash Screen on Startup
-    if( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "General" ) ) )
+    if( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "general" ) ) )
     {
         guSplashFrame * SplashFrame = new guSplashFrame( 0 );
         if( !SplashFrame )
@@ -361,14 +380,14 @@ bool guMainApp::OnInit()
     // Enable tooltips
     wxToolTip::Enable( true );
 
-    //
-    // Init the Database Object
-    //
-    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
-    if( !m_Db )
-    {
-        guLogError( wxT( "Could not open the guayadeque database" ) );
-    }
+//    //
+//    // Init the Database Object
+//    //
+//    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
+//    if( !m_Db )
+//    {
+//        guLogError( wxT( "Could not open the guayadeque database" ) );
+//    }
 
     m_DbCache = new guDbCache( wxGetHomeDir() + wxT( "/.guayadeque/cache.db" ) );
     if( !m_DbCache )
@@ -380,16 +399,16 @@ bool guMainApp::OnInit()
 
 
     // Initialize the MainFrame object
-    guMainFrame* Frame = new guMainFrame( 0, m_Db, m_DbCache );
+    guMainFrame* Frame = new guMainFrame( 0, m_DbCache );
     wxIcon MainIcon;
     MainIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
     Frame->SetIcon( MainIcon );
 
     // If Minimize is enabled minimized or hide it if Taskbar Icon is enabled
-    if( m_Config->ReadBool( wxT( "StartMinimized" ), false, wxT( "General" ) ) )
+    if( m_Config->ReadBool( wxT( "StartMinimized" ), false, wxT( "general" ) ) )
     {
-        if( m_Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "General" ) ) &&
-            m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "General" ) ) )
+        if( m_Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "general" ) ) &&
+            m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "general" ) ) )
         {
             Frame->Show( false );
             //Frame->Hide();

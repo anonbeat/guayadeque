@@ -30,26 +30,30 @@
 #include "PlayList.h" // LenToString
 #include "Utils.h"
 #include "RatingCtrl.h"
+#include "MediaViewer.h"
 
 #include <wx/imaglist.h>
 
 // -------------------------------------------------------------------------------- //
-guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, wxString confname, long style ) :
+guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, long style ) :
     guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG|guLISTVIEW_COLUMN_CLICK_EVENTS,
         wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_LibPanel = libpanel;
-    m_Db = NewDb;
+    m_MediaViewer = mediaviewer;
+    m_Db = mediaviewer->GetDb();
     m_ConfName = confname;
     m_ItemsFirst = wxNOT_FOUND;
     m_ItemsLast = wxNOT_FOUND;
     m_LastColumnRightClicked = wxNOT_FOUND;
 
-    int ColOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, wxT( "General" ) );
-    bool ColOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, wxT( "General" ) );
+    m_TracksOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, confname );
+    m_TracksOrderDesc = Config->ReadBool( wxT( "TracksOrderDesc" ), 0, confname );
+
+    m_Db->SetTracksOrder( m_TracksOrder );
+    m_Db->SetTracksOrderDesc( m_TracksOrderDesc );
 
     wxArrayString ColumnNames = GetColumnNames();
 
@@ -59,18 +63,18 @@ guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     int count = ColumnNames.Count();
     for( index = 0; index < count; index++ )
     {
-        ColId = Config->ReadNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ), index, m_ConfName + wxT( "Columns" ) );
+        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, m_ConfName + wxT( "/columns/ids" ) );
 
         ColName = ColumnNames[ ColId ];
 
         if( style & guLISTVIEW_COLUMN_SORTING )
-            ColName += ( ( ColId == ColOrder ) ? ( ColOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
+            ColName += ( ( ColId == m_TracksOrder ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
 
         guListViewColumn * Column = new guListViewColumn(
             ColName,
             ColId,
-            Config->ReadNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ), 80, m_ConfName + wxT( "Columns" ) ),
-            Config->ReadBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ), true, m_ConfName + wxT( "Columns" ) )
+            Config->ReadNum( wxString::Format( wxT( "width%u" ), index ), 80, m_ConfName + wxT( "/columns/widths" ) ),
+            Config->ReadBool( wxString::Format( wxT( "show%u" ), index ), true, m_ConfName + wxT( "/columns/shows" ) )
             );
         InsertColumn( Column );
     }
@@ -78,8 +82,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + GURATING_STYLE_MID ) ) );
     m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + GURATING_STYLE_MID ) ) );
 
-    Connect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ), NULL, this );
-    Connect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ), NULL, this );
+    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ), NULL, this );
+    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ), NULL, this );
     Connect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
     Connect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
 
@@ -97,20 +101,23 @@ guSoListBox::~guSoListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
+    Config->WriteNum( wxT( "TracksOrder" ), m_TracksOrder, m_ConfName );
+    Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, m_ConfName );
+
     //int ColId;
     int index;
     int count = guSONGS_COLUMN_COUNT;
     for( index = 0; index < count; index++ )
     {
-        Config->WriteNum( m_ConfName + wxString::Format( wxT( "Col%u" ), index ),
+        Config->WriteNum( wxString::Format( wxT( "id%u" ), index ),
                           ( * m_Columns )[ index ].m_Id,
-                          m_ConfName + wxT( "Columns" ) );
-        Config->WriteNum( m_ConfName + wxString::Format( wxT( "ColWidth%u" ), index ),
+                          m_ConfName + wxT( "/columns/ids" ) );
+        Config->WriteNum( wxString::Format( wxT( "width%u" ), index ),
                           ( * m_Columns )[ index ].m_Width,
-                          m_ConfName + wxT( "Columns" ) );
-        Config->WriteBool( m_ConfName + wxString::Format( wxT( "ColShow%u" ), index ),
+                          m_ConfName + wxT( "/columns/widths" ) );
+        Config->WriteBool( wxString::Format( wxT( "show%u" ), index ),
                            ( * m_Columns )[ index ].m_Enabled,
-                           m_ConfName + wxT( "Columns" ) );
+                           m_ConfName + wxT( "/columns/shows" ) );
     }
 
     if( m_NormalStar )
@@ -118,8 +125,8 @@ guSoListBox::~guSoListBox()
     if( m_SelectStar )
         delete m_SelectStar;
 
-    Disconnect( ID_LASTFM_SEARCH_LINK, ID_LASTFM_SEARCH_LINK + 999, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_SONGS_COMMANDS, ID_SONGS_COMMANDS + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
+    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
+    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
     Disconnect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
     Disconnect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
 
@@ -357,8 +364,9 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
         item = GetNextSelected( cookie );
     }
     m_ItemsMutex.Unlock();
-    if( m_LibPanel )
-        m_LibPanel->NormalizeTracks( tracks );
+
+    m_MediaViewer->NormalizeTracks( tracks );
+
     return tracks->Count();
 }
 
@@ -389,8 +397,9 @@ int guSoListBox::GetDragFiles( wxFileDataObject * files )
     guTrackArray Songs;
     int index;
     int count = GetSelectedSongs( &Songs );
-    if( m_LibPanel )
-        m_LibPanel->NormalizeTracks( &Songs, true );
+
+    m_MediaViewer->NormalizeTracks( &Songs, true );
+
     for( index = 0; index < count; index++ )
     {
        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
@@ -413,16 +422,16 @@ wxArrayString guSoListBox::GetColumnNames( void ) const
     ColumnNames.Add( _( "Album" ) );
     ColumnNames.Add( _( "Genre" ) );
     ColumnNames.Add( _( "Composer" ) );
-    ColumnNames.Add( _( "Disk" ) );
+    ColumnNames.Add( _( "Disc" ) );
     ColumnNames.Add( _( "Length" ) );
     ColumnNames.Add( _( "Year" ) );
-    ColumnNames.Add( _( "BitRate" ) );
+    ColumnNames.Add( _( "Bit Rate" ) );
     ColumnNames.Add( _( "Rating" ) );
-    ColumnNames.Add( _( "PlayCount" ) );
-    ColumnNames.Add( _( "Last Play" ) );
-    ColumnNames.Add( _( "Added Date" ) );
+    ColumnNames.Add( _( "Plays" ) );
+    ColumnNames.Add( _( "Last Played" ) );
+    ColumnNames.Add( _( "Added" ) );
     ColumnNames.Add( _( "Format" ) );
-    ColumnNames.Add( _( "Filepath" ) );
+    ColumnNames.Add( _( "Path" ) );
     return ColumnNames;
 }
 
@@ -438,8 +447,8 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "Commands" ) );
+        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
@@ -450,13 +459,15 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
                 {
                     continue;
                 }
-                MenuItem = new wxMenuItem( Menu, ID_SONGS_COMMANDS + index, Names[ index ], Commands[ index ] );
+                MenuItem = new wxMenuItem( Menu, ID_COMMANDS_BASE + index, Names[ index ], Commands[ index ] );
                 SubMenu->Append( MenuItem );
             }
+
+            SubMenu->AppendSeparator();
         }
         else
         {
-            MenuItem = new wxMenuItem( Menu, -1, _( "No commands defined" ), _( "Add commands in preferences" ) );
+            MenuItem = new wxMenuItem( Menu, ID_MENU_PREFERENCES_COMMANDS, _( "Preferences" ), _( "Add commands in preferences" ) );
             SubMenu->Append( MenuItem );
         }
         Menu->AppendSubMenu( SubMenu, _( "Commands" ) );
@@ -516,7 +527,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 {
     wxMenuItem * MenuItem;
     int SelCount = GetSelectedCount();
-    int ContextMenuFlags = m_LibPanel ? m_LibPanel->GetContextMenuFlags() : guLIBRARY_CONTEXTMENU_DEFAULT;
+    int ContextMenuFlags = m_MediaViewer->GetContextMenuFlags();
 
     MenuItem = new wxMenuItem( Menu, ID_SONG_PLAY,
                             wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_PLAY ),
@@ -555,7 +566,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
-    Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+    Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
     if( SelCount )
     {
@@ -567,7 +578,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_EDIT_TRACKS )
+        if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
         {
             MenuItem = new wxMenuItem( Menu, ID_SONG_EDITTRACKS,
                                 wxString( _( "Edit Songs" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
@@ -626,7 +637,7 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY )
+        if( ContextMenuFlags & guCONTEXTMENU_DELETEFROMLIBRARY )
         {
             MenuItem = new wxMenuItem( Menu, ID_SONG_DELETE_LIBRARY, _( "Remove from Library" ), _( "Remove the current selected tracks from library" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
@@ -659,39 +670,30 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSubMenu( SubMenu, _( "Select" ), _( "Search in the library" ) );
 
-        if( ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO ) ||
-            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) ||
-            ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS ) )
+        if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_COMMANDS ) )
         {
             Menu->AppendSeparator();
 
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COPY_TO )
+            if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
             {
-                if( m_LibPanel )
-                {
-                    m_LibPanel->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
-                }
-                else
-                {
-                    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-                    MainFrame->CreateCopyToMenu( Menu, ID_SONG_COPYTO );
-                }
+                m_MediaViewer->CreateCopyToMenu( Menu );
             }
 
-            if( SelCount == 1 && ( ContextMenuFlags & guLIBRARY_CONTEXTMENU_LINKS ) )
+            if( SelCount == 1 && ( ContextMenuFlags & guCONTEXTMENU_LINKS ) )
             {
                 AddOnlineLinksMenu( Menu );
             }
 
-            if( ContextMenuFlags & guLIBRARY_CONTEXTMENU_COMMANDS )
+            if( ContextMenuFlags & guCONTEXTMENU_COMMANDS )
             {
                 AddSongsCommands( Menu, SelCount );
             }
         }
     }
 
-    if( m_LibPanel )
-        m_LibPanel->CreateContextMenu( Menu, guLIBRARY_ELEMENT_TRACKS );
+    m_MediaViewer->CreateContextMenu( Menu, guLIBRARY_ELEMENT_TRACKS );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -701,25 +703,7 @@ void guSoListBox::OnSearchLinkClicked( wxCommandEvent &event )
     int Item = GetFirstSelected( cookie );
     if( Item != wxNOT_FOUND )
     {
-        int index = event.GetId();
-
-        guConfig * Config = ( guConfig * ) Config->Get();
-        if( Config )
-        {
-            wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "SearchLinks" ) );
-
-            index -= ID_LASTFM_SEARCH_LINK;
-            wxString SearchLink = Links[ index ];
-            wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "LastFM" ) );
-            if( Lang.IsEmpty() )
-            {
-                Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
-                //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
-            }
-            SearchLink.Replace( wxT( "{lang}" ), Lang );
-            SearchLink.Replace( wxT( "{text}" ), guURLEncode( GetSearchText( Item ) ) );
-            guWebExecute( SearchLink );
-        }
+        ExecuteOnlineLink( event.GetId(), GetSearchText( Item ) );
     }
 }
 
@@ -736,9 +720,9 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) Config->Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Cmd" ), wxEmptyString, wxT( "Commands" ) );
+            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
 
-            index -= ID_SONGS_COMMANDS;
+            index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ index ];
 
             if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
@@ -840,6 +824,11 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
     if( ColId == guSONGS_COLUMN_RATING )
     {
         //guLogMessage( wxT( "The rating have been clicked... %i" ), event.GetPoint().x );
+        int Row = event.GetInt();
+        Row -= m_ItemsFirst;
+        if( ( Row < 0 ) || ( Row >= ( int ) m_Items.Count() ) )
+            return;
+
         int w = ( ( GURATING_STYLE_MID * 2 ) + GURATING_IMAGE_SIZE );
         int MouseX = event.GetPoint().x;
         int Rating;
@@ -849,8 +838,7 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
         else
             Rating = wxMin( 5, ( wxMax( 0, MouseX - 3 ) / w ) + 1 );
 
-        int Row = event.GetInt();
-        if( m_Items[ Row - m_ItemsFirst ].m_Rating == Rating )
+        if( m_Items[ Row ].m_Rating == Rating )
             Rating = 0;
 
         wxCommandEvent RatingEvent( wxEVT_COMMAND_MENU_SELECTED, ID_SONG_SET_RATING_0 + Rating );
@@ -970,6 +958,21 @@ int guSoListBox::FindItem( const int trackid )
         }
     }
     return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::SetTracksOrder( const int order )
+{
+    if( m_TracksOrder != order )
+    {
+        m_TracksOrder = order;
+        m_Db->SetTracksOrder( m_TracksOrder );
+    }
+    else
+    {
+        m_TracksOrderDesc = !m_TracksOrderDesc;
+        m_Db->SetTracksOrderDesc( m_TracksOrderDesc );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

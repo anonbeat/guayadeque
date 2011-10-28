@@ -33,6 +33,8 @@ class guAlListBox : public  guListView
     guDbLibrary *       m_Db;
     guAlbumItems *      m_Items;
     guLibPanel *        m_LibPanel;
+    int                 m_AlbumsOrder;
+    wxString            m_ConfigPath;
 
     void                OnAlbumListActivated( wxListEvent &event );
     void                OnAlbumListSelected( wxListEvent &event );
@@ -40,7 +42,7 @@ class guAlListBox : public  guListView
     wxCoord             OnMeasureItem( size_t n ) const;
     virtual void        CreateContextMenu( wxMenu * menu ) const;
 
-    virtual void        GetItemsList( void );
+    virtual void        GetItemsList( void ) { m_Db->GetAlbums( ( guAlbumItems * ) m_Items ); }
     void                OnSearchLinkClicked( wxCommandEvent &event );
     void                OnCommandClicked( wxCommandEvent &event );
     void                OnOrderSelected( wxCommandEvent &event );
@@ -55,13 +57,11 @@ class guAlListBox : public  guListView
                         guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                         ~guAlListBox();
     bool                SelectAlbumName( const wxString &AlbumName );
-//    void                ReloadItems( const bool reset = true );
-//    wxArrayInt          GetSelection() const;
-    virtual int             GetSelectedSongs( guTrackArray * tracks ) const;
-    virtual wxString inline GetItemName( const int item ) const;
-    virtual int inline      GetItemId( const int item ) const;
-    virtual void            ReloadItems( bool reset = true );
-    virtual void            SetSelectedItems( const wxArrayInt &selection );
+    virtual int         GetSelectedSongs( guTrackArray * tracks ) const;
+    virtual wxString    GetItemName( const int item ) const { return ( * m_Items )[ item ].m_Name; }
+
+    virtual int         GetItemId( const int item ) const { return ( * m_Items )[ item ].m_Id; }
+    virtual void        ReloadItems( bool reset = true );
 
     int                 FindAlbum( const int albumid );
 

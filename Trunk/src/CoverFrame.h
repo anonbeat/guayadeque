@@ -21,8 +21,13 @@
 #ifndef COVERFRAME_H
 #define COVERFRAME_H
 
-#include <wx/wx.h>
 #include "PlayerPanel.h"
+
+#include <wx/wx.h>
+
+#define guCOVERFRAME_NONE       0
+#define guCOVERFRAME_DEFAULT    1
+#define guCOVERFRAME_CUSTOM     2
 
 // -------------------------------------------------------------------------------- //
 class guCoverFrame : public wxFrame

@@ -50,16 +50,17 @@ class guCopyToAction
     int                         m_Format;
     int                         m_Quality;
     bool                        m_MoveFiles;
-    guLibPanel *                m_LibPanel;
+    int                         m_CoverFormats;
+    int                         m_CoverSize;
+    wxString                    m_CoverName;
+    guMediaViewer *             m_MediaViewer;
     guDbLibrary *               m_Db;
-    guPortableMediaViewCtrl *   m_PortableMediaViewCtrl;
 
   public :
     guCopyToAction();
-    guCopyToAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir,
-            const wxString &pattern, int format, int quality, bool movefiles );
-    guCopyToAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
-    guCopyToAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
+    guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles );
+    guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaviewer );
+    guCopyToAction( wxString * playlistpath, guMediaViewer * mediaviewer );
     ~guCopyToAction();
 
     int                         Type( void ) { return m_Type; }
@@ -69,16 +70,19 @@ class guCopyToAction
     int                         Format( void ) { return m_Format; }
     int                         Quality( void ) { return m_Quality; };
     bool                        MoveFiles( void ) { return m_MoveFiles; }
+    int                         CoverFormats( void ) { return m_CoverFormats; }
+    int                         CoverSize( void ) { return m_CoverSize; }
+    wxString                    CoverName( void ) { return m_CoverName; }
     guPlayListFile *            PlayListFile( void ) { return m_PlayListFile; }
 
     size_t                      Count( void  ) { return m_Tracks->Count(); }
     guTrack *                   Track( const int index ) { return &m_Tracks->Item( index ); }
 
-    guPortableMediaViewCtrl *   PortableMediaViewCtrl( void ) { return m_PortableMediaViewCtrl; }
-    guPortableMediaDevice *     PortableMediaDevice( void ) { return m_PortableMediaViewCtrl->MediaDevice(); }
+    //guPortableMediaViewCtrl *   PortableMediaViewCtrl( void ) { return m_PortableMediaViewCtrl; }
+    guPortableMediaDevice *     GetPortableMediaDevice( void ) { return ( ( guMediaViewerPortableDevice * ) m_MediaViewer )->GetPortableMediaDevice(); }
 
-    guDbLibrary *               Db( void ) { return m_Db; }
-    guLibPanel *                LibPanel( void ) { return m_LibPanel; }
+    guDbLibrary *               GetDb( void ) { return m_Db; }
+    guMediaViewer *             GetMediaViewer( void ) { return m_MediaViewer; }
 
 };
 WX_DECLARE_OBJARRAY( guCopyToAction, guCopyToActionArray );
@@ -108,10 +112,12 @@ class guCopyToThread : public wxThread
     guCopyToThread( guMainFrame * mainframe, int gaugeid );
     ~guCopyToThread();
 
-    void    AddAction( guTrackArray * tracks, guLibPanel * libpanel, const wxString &destdir,
+    void    AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir,
                     const wxString &pattern, int format, int quality, bool movefiles );
-    void    AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
-    void    AddAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
+//    void    AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
+    void    AddAction( guTrackArray * tracks, guMediaViewerPortableDevice * mediaviewer );
+//    void    AddAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
+    void    AddAction( wxString * playlistpath, guMediaViewerPortableDevice * mediaviewer );
 
     virtual ExitCode Entry();
 

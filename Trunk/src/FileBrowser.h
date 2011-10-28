@@ -21,7 +21,8 @@
 #ifndef FILEBROWSER_H
 #define FILEBROWSER_H
 
-#include "AuiManagedPanel.h"
+#include "AuiManagerPanel.h"
+#include "AuiNotebook.h"
 #include "DbLibrary.h"
 #include "PlayerPanel.h"
 
@@ -51,9 +52,7 @@ enum guFILEITEM_TYPE {
 };
 
 #define     guFILEBROWSER_SHOWPATH_SYSTEM           ( 1 << 0 )
-#define     guFILEBROWSER_SHOWPATH_LIBRARY          ( 1 << 1 )
-#define     guFILEBROWSER_SHOWPATH_RECORDS          ( 1 << 2 )
-#define     guFILEBROWSER_SHOWPATH_PODCASTS         ( 1 << 3 )
+#define     guFILEBROWSER_SHOWPATH_LOCATIONS        ( 1 << 1 )
 
 #define guDIR_IMAGE_INDEX_FOLDER        0
 #define guDIR_IMAGE_INDEX_OTHER         7
@@ -87,8 +86,10 @@ class guFileBrowserDirCtrl;
 class guGenericDirCtrl : public wxGenericDirCtrl
 {
   protected :
+    guMainFrame *           m_MainFrame;
     guFileBrowserDirCtrl *  m_FileBrowserDirCtrl;
     wxString                m_RenameName;
+    wxTreeItemId            m_RenameItemId;
     int                     m_ShowPaths;
 
     void            OnBeginRenameDir( wxTreeEvent &event );
@@ -96,7 +97,7 @@ class guGenericDirCtrl : public wxGenericDirCtrl
 
   public :
     guGenericDirCtrl() : wxGenericDirCtrl() { m_FileBrowserDirCtrl = NULL; };
-    guGenericDirCtrl( wxWindow * parent, const int showpaths  );
+    guGenericDirCtrl( wxWindow * parent, guMainFrame * mainframe, const int showpaths  );
     ~guGenericDirCtrl();
 
     void            OnConfigUpdated( wxCommandEvent &event );
@@ -105,7 +106,8 @@ class guGenericDirCtrl : public wxGenericDirCtrl
 
     void            FolderRename( void );
 
-    void            SetShowLibPaths( int showlibpaths ) { m_ShowPaths = showlibpaths; }
+    void            SetShowPaths( int showpaths ) { m_ShowPaths = showpaths; }
+    int             GetShowPaths( void ) { return m_ShowPaths; }
 
     DECLARE_EVENT_TABLE()
 };
@@ -114,11 +116,12 @@ class guGenericDirCtrl : public wxGenericDirCtrl
 class guFileBrowserDirCtrl : public wxPanel
 {
   protected :
+    guMainFrame *       m_MainFrame;
+    guDbLibrary *       m_DefaultDb;
     guDbLibrary *       m_Db;
+    guMediaViewer *     m_MediaViewer;
     guGenericDirCtrl *  m_DirCtrl;
     bool                m_AddingFolder;
-    wxToggleBitmapButton *  m_ShowRecPathsBtn;
-    wxToggleBitmapButton *  m_ShowPodPathsBtn;
     wxToggleBitmapButton *  m_ShowLibPathsBtn;
 
     void                OnShowLibPathsClick( wxCommandEvent& event );
@@ -131,7 +134,7 @@ class guFileBrowserDirCtrl : public wxPanel
     void                CreateAcceleratorTable();
 
   public :
-    guFileBrowserDirCtrl( wxWindow * parent, guDbLibrary * db, const wxString &dirpath );
+    guFileBrowserDirCtrl( wxWindow * parent, guMainFrame * mainframe, guDbLibrary * db, const wxString &dirpath );
     ~guFileBrowserDirCtrl();
 
     wxString            GetPath( void )
@@ -142,7 +145,8 @@ class guFileBrowserDirCtrl : public wxPanel
         return DirPath;
     }
 
-    void                SetPath( const wxString &path ) { m_DirCtrl->SetPath( path ); }
+    void                SetPath( const wxString &path, guMediaViewer * mediaviewer );
+    void                SetMediaViewer( guMediaViewer * mediaviewer );
 
     void                RenamedDir( const wxString &oldname, const wxString &newname );
     void                FolderRename( void ) { m_DirCtrl->FolderRename(); };
@@ -150,6 +154,10 @@ class guFileBrowserDirCtrl : public wxPanel
     void                FolderDelete( void );
     bool                ExpandPath( const wxString &path ) { return m_DirCtrl->ExpandPath( path ); }
     bool                CollapsePath( const wxString &path ) { return m_DirCtrl->CollapsePath( path ); }
+
+    void                CollectionsUpdated( void );
+
+    int                 GetShowPaths( void ) { return m_DirCtrl->GetShowPaths(); }
 
   friend class guFileBrowserFileCtrl;
   friend class guFileBrowser;
@@ -159,12 +167,14 @@ class guFileBrowserDirCtrl : public wxPanel
 class guFilesListBox : public guListView
 {
   protected :
+    guDbLibrary *               m_DefaultDb;
     guDbLibrary *               m_Db;
     wxString                    m_CurDir;
     guFileItemArray             m_Files;
     wxImageList *               m_TreeImageList;
     int                         m_Order;
     bool                        m_OrderDesc;
+    guMediaViewer *             m_MediaViewer;
 
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
@@ -195,7 +205,7 @@ class guFilesListBox : public guListView
     virtual int inline          GetItemId( const int item ) const;
 
     void                        SetOrder( int order );
-    void                        SetPath( const wxString &path );
+    void                        SetPath( const wxString &path, guMediaViewer * mediaviewer );
     wxString                    GetPath( const int item, const bool absolute = true ) const;
     int                         GetType( const int item ) const;
     void                        SetTreeImageList( wxImageList * imagelist ) { m_TreeImageList = imagelist; }
@@ -212,15 +222,17 @@ class guFilesListBox : public guListView
 class guFileBrowserFileCtrl : public wxPanel
 {
   protected :
+    guDbLibrary *           m_DefaultDb;
     guDbLibrary *           m_Db;
     guFilesListBox *        m_FilesListBox;
     guFileBrowserDirCtrl *  m_DirCtrl;
+    guMediaViewer *         m_MediaViewer;
 
   public :
     guFileBrowserFileCtrl( wxWindow * parent, guDbLibrary * db, guFileBrowserDirCtrl * dirctrl );
     ~guFileBrowserFileCtrl();
 
-    void                    SetPath( const wxString &path ) { m_FilesListBox->SetPath( path ); }
+    void                    SetPath( const wxString &path, guMediaViewer * mediaviewer );
     const wxString          GetPath( const int item, const bool absolute = true ) const { return m_FilesListBox->GetPath( item, absolute ); }
     int                     GetType( const int item ) const { return m_FilesListBox->GetType( item ); }
     wxArrayInt              GetSelectedItems( const bool convertall = true ) { return m_FilesListBox->GetSelectedItems( convertall ); }
@@ -241,10 +253,13 @@ class guFileBrowserFileCtrl : public wxPanel
 };
 
 // -------------------------------------------------------------------------------- //
-class guFileBrowser : public guAuiManagedPanel
+class guFileBrowser : public guAuiManagerPanel
 {
   protected :
+    guMainFrame *           m_MainFrame;
+	guDbLibrary *           m_DefaultDb;
 	guDbLibrary *           m_Db;
+	guMediaViewer *         m_MediaViewer;
 	guPlayerPanel *         m_PlayerPanel;
 
 	guFileBrowserDirCtrl *  m_DirCtrl;
@@ -281,7 +296,7 @@ class guFileBrowser : public guAuiManagedPanel
     DECLARE_EVENT_TABLE()
 
   public :
-    guFileBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLibrary * db, guPlayerPanel * playerpanel );
     ~guFileBrowser();
 
     //virtual void            InitPanelData();
@@ -294,6 +309,7 @@ class guFileBrowser : public guAuiManagedPanel
     virtual bool            GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_FilesCtrl->GetColumnData( id, index, width, enabled ); }
     virtual bool            SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_FilesCtrl->SetColumnData( id, index, width, enabled, refresh ); }
 
+    virtual void            CollectionsUpdated( void ) { m_DirCtrl->CollectionsUpdated(); }
 };
 
 #endif

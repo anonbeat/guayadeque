@@ -58,12 +58,12 @@ class guTreeViewFilterEditor : public wxDialog
     int                 m_CurrentItem;
     wxArrayInt          m_FilterItems;
 
-    virtual void OnFilterListBoxSelected( wxCommandEvent& event );
-    virtual void OnUpFilterBtnClick( wxCommandEvent& event );
-    virtual void OnDownFilterBtnClick( wxCommandEvent& event );
-    virtual void OnDelFilterBtnClick( wxCommandEvent& event );
-    virtual void OnAddFilterBtnClick( wxCommandEvent& event );
-    virtual void OnCheckAcceptButton( wxCommandEvent& event );
+    virtual void        OnFilterListBoxSelected( wxCommandEvent& event );
+    virtual void        OnUpFilterBtnClick( wxCommandEvent& event );
+    virtual void        OnDownFilterBtnClick( wxCommandEvent& event );
+    virtual void        OnDelFilterBtnClick( wxCommandEvent& event );
+    virtual void        OnAddFilterBtnClick( wxCommandEvent& event );
+    virtual void        OnCheckAcceptButton( wxCommandEvent& event );
 
   public :
     guTreeViewFilterEditor( wxWindow * parent, const wxString &filterentry );

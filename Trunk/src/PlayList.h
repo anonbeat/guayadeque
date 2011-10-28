@@ -21,6 +21,7 @@
 #ifndef PLAYLIST_H
 #define PLAYLIST_H
 
+#include "AuiManagedPanel.h"
 #include "DbLibrary.h"
 #include "ListView.h"
 
@@ -64,6 +65,8 @@ class guPlayList : public guListView
 
 //    wxColor         m_PlayedColor;
 
+    wxArrayString   m_PendingLoadIds;
+
     virtual wxCoord             OnMeasureItem( size_t row ) const;
 
 //    void                        OnDragOver( const wxCoord x, const wxCoord y );
@@ -82,7 +85,6 @@ class guPlayList : public guListView
     void                        OnClearClicked( wxCommandEvent &event );
     void                        OnRemoveClicked( wxCommandEvent &event );
     void                        OnSaveClicked( wxCommandEvent &event );
-    void                        OnAppendToPlaylistClicked( wxCommandEvent &event );
     void                        OnCopyToClicked( wxCommandEvent &event );
     void                        OnEditLabelsClicked( wxCommandEvent &event );
     void                        OnEditTracksClicked( wxCommandEvent &event );
@@ -120,6 +122,8 @@ class guPlayList : public guListView
 
     void                        SetTrackRating( const guTrack &track, const int rating );
     void                        SetTracksRating( const guTrackArray &tracks, const int rating );
+
+    void                        CheckPendingLoadItems( const wxString &uniqueid, guMediaViewer * mediaviewer );
 
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL, guMainFrame * mainframe = NULL );
@@ -164,6 +168,8 @@ class guPlayList : public guListView
     void                        StopAtEnd( void );
     void                        ClearStopAtEnd( void );
 
+    void                        MediaViewerCreated( const wxString &uniqueid, guMediaViewer * mediaviewer );
+    void                        MediaViewerClosed( guMediaViewer * mediaviewer );
 
   friend class guAddDropFilesThread;
   friend class guPlayListDropTarget;
@@ -171,13 +177,13 @@ class guPlayList : public guListView
 };
 
 // -------------------------------------------------------------------------------- //
-class guPlayerPlayList : public wxPanel
+class guPlayerPlayList : public guAuiManagedPanel
 {
   protected :
     guPlayList * m_PlayListCtrl;
 
   public :
-    guPlayerPlayList( wxWindow * parent, guDbLibrary * db );
+    guPlayerPlayList( wxWindow * parent, guDbLibrary * db, wxAuiManager * manager );
     ~guPlayerPlayList() {}
 
     guPlayList *    GetPlayListCtrl( void ) { return m_PlayListCtrl; }
@@ -185,6 +191,9 @@ class guPlayerPlayList : public wxPanel
 
     void inline     UpdatedTracks( const guTrackArray * tracks ) { m_PlayListCtrl->UpdatedTracks( tracks ); };
     void inline     UpdatedTrack( const guTrack * track ) { m_PlayListCtrl->UpdatedTrack( track ); };
+
+    void inline     MediaViewerCreated( const wxString &uniqueid, guMediaViewer * mediaviewer ) { m_PlayListCtrl->MediaViewerCreated( uniqueid, mediaviewer ); }
+    void inline     MediaViewerClosed( guMediaViewer * mediaviewer ) { m_PlayListCtrl->MediaViewerClosed( mediaviewer ); }
 
 };
 

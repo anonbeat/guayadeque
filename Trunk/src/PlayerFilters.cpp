@@ -65,8 +65,8 @@ guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 
     UpdateFilters();
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_FilterDenyChoice->SetSelection( Config->ReadNum( wxT( "PlayListDenyFilter" ), 0, wxT( "Playback" ) ) );
-    m_FilterAllowChoice->SetSelection( Config->ReadNum( wxT( "PlayListAllowFilter" ), 0, wxT( "Playback" ) ) );
+    m_FilterDenyChoice->SetSelection( Config->ReadNum( wxT( "PlayListDenyFilter" ), 0, wxT( "playback" ) ) );
+    m_FilterAllowChoice->SetSelection( Config->ReadNum( wxT( "PlayListAllowFilter" ), 0, wxT( "playback" ) ) );
 
 }
 
@@ -74,8 +74,8 @@ guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 guPlayerFilters::~guPlayerFilters()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "PlayListAllowFilter" ), m_FilterAllowChoice->GetSelection(), wxT( "Playback" ) );
-    Config->WriteNum( wxT( "PlayListDenyFilter" ), m_FilterDenyChoice->GetSelection(), wxT( "Playback" ) );
+    Config->WriteNum( wxT( "PlayListAllowFilter" ), m_FilterAllowChoice->GetSelection(), wxT( "playback" ) );
+    Config->WriteNum( wxT( "PlayListDenyFilter" ), m_FilterDenyChoice->GetSelection(), wxT( "playback" ) );
 }
 
 // -------------------------------------------------------------------------------- //

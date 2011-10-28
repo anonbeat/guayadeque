@@ -26,6 +26,7 @@
 #include "Images.h"
 #include "Utils.h"
 #include "LibPanel.h"
+#include "MediaViewer.h"
 
 // -------------------------------------------------------------------------------- //
 guTaListBox::guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
@@ -100,18 +101,18 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
 
     wxMenuItem * MenuItem;
 
-    MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Add Label" ), _( "Create a new label" ) );
+    MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Create" ), _( "Create a new label" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
     Menu->Append( MenuItem );
 
 
     if( SelCount )
     {
-        MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Edit Label" ), _( "Change selected label" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Rename" ), _( "Change selected label" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_LABEL_DELETE, _( "Delete label" ), _( "Delete selected labels" ) );
+        MenuItem = new wxMenuItem( Menu, ID_LABEL_DELETE, _( "Delete" ), _( "Delete selected labels" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
     }
@@ -155,22 +156,22 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
-    Menu->Append( wxID_ANY, _( "Enqueue after" ), EnqueueMenu );
+    Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
     if( SelCount )
     {
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_LABEL_SAVETOPLAYLIST,
-                                wxString( _( "Save to PlayList" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
-                                _( "Save the selected tracks to PlayList" ) );
+                                wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                                _( "Save the selected tracks to playlist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
-        if( m_LibPanel->GetContextMenuFlags() & guLIBRARY_CONTEXTMENU_COPY_TO )
+        if( m_LibPanel->GetContextMenuFlags() & guCONTEXTMENU_COPY_TO )
         {
             Menu->AppendSeparator();
-            m_LibPanel->CreateCopyToMenu( Menu, ID_LABEL_COPYTO );
+            m_LibPanel->CreateCopyToMenu( Menu );
         }
     }
 
@@ -200,7 +201,7 @@ void guTaListBox::DelLabel( wxCommandEvent &event )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected labels?" ),
                           _( "Confirm" ),
-                          wxICON_QUESTION | wxYES_NO | wxCANCEL, this ) == wxYES )
+                          wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
         {
             for( int Index = 0; Index < Count; Index++ )
             {
@@ -225,7 +226,7 @@ void guTaListBox::EditLabel( wxCommandEvent &event )
             wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Label Name: " ),
                                                     _( "Enter the new label name" ), ( * m_Items )[ Item ] .m_Name );
             if( EntryDialog->ShowModal() == wxID_OK &&
-                ( * m_Items )[ Selection[ Item ] ].m_Name != EntryDialog->GetValue() )
+                ( * m_Items )[ Item ].m_Name != EntryDialog->GetValue() )
             {
                 m_Db->SetLabelName( Selection[ 0 ], ( * m_Items )[ Item ].m_Name, EntryDialog->GetValue() );
                 ReloadItems();

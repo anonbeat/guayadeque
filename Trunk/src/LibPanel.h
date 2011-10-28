@@ -24,7 +24,7 @@
 #include "AAListBox.h"
 #include "AlListBox.h"
 #include "ArListBox.h"
-#include "AuiManagedPanel.h"
+#include "AuiManagerPanel.h"
 #include "CoListBox.h"
 #include "DbLibrary.h"
 #include "GeListBox.h"
@@ -44,8 +44,8 @@
 
 // -------------------------------------------------------------------------------- //
 enum guLibraryElement {
-    guLIBRARY_ELEMENT_TEXTSEARCH = 1,
-    guLIBRARY_ELEMENT_LABELS,
+    //guLIBRARY_ELEMENT_TEXTSEARCH = 1,
+    guLIBRARY_ELEMENT_LABELS = 1,
     guLIBRARY_ELEMENT_GENRES,
     guLIBRARY_ELEMENT_ARTISTS,
     guLIBRARY_ELEMENT_COMPOSERS,
@@ -69,26 +69,11 @@ enum guLibraryElement {
 #define     guPANEL_LIBRARY_COMPOSERS       ( 1 << 9 )
 #define     guPANEL_LIBRARY_ALBUMARTISTS    ( 1 << 10 )
 
-#define     guPANEL_LIBRARY_VISIBLE_DEFAULT ( guPANEL_LIBRARY_TEXTSEARCH | guPANEL_LIBRARY_LABELS |\
-                                              guPANEL_LIBRARY_GENRES | guPANEL_LIBRARY_ARTISTS |\
-                                              guPANEL_LIBRARY_ALBUMS )
-
-
-#define     guLIBRARY_CONTEXTMENU_EDIT_TRACKS       ( 1 << 0 )
-#define     guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS   ( 1 << 1 )
-#define     guLIBRARY_CONTEXTMENU_EMBED_COVERS      ( 1 << 2 )
-#define     guLIBRARY_CONTEXTMENU_COPY_TO           ( 1 << 3 )
-#define     guLIBRARY_CONTEXTMENU_LINKS             ( 1 << 4 )
-#define     guLIBRARY_CONTEXTMENU_COMMANDS          ( 1 << 5 )
-#define     guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY ( 1 << 6 )
-
-#define     guLIBRARY_CONTEXTMENU_DEFAULT           ( guLIBRARY_CONTEXTMENU_EDIT_TRACKS | guLIBRARY_CONTEXTMENU_DOWNLOAD_COVERS |\
-                                                    guLIBRARY_CONTEXTMENU_EMBED_COVERS | guLIBRARY_CONTEXTMENU_COPY_TO |\
-                                                    guLIBRARY_CONTEXTMENU_LINKS | guLIBRARY_CONTEXTMENU_COMMANDS |\
-                                                    guLIBRARY_CONTEXTMENU_DELETEFROMLIBRARY )
+#define     guPANEL_LIBRARY_VISIBLE_DEFAULT ( guPANEL_LIBRARY_GENRES | guPANEL_LIBRARY_ARTISTS | guPANEL_LIBRARY_ALBUMS )
 
 class guLibPanel;
 class guImagePtrArray;
+class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
 class guLibPanelDropTarget : public wxFileDropTarget
@@ -104,13 +89,11 @@ class guLibPanelDropTarget : public wxFileDropTarget
 };
 
 // -------------------------------------------------------------------------------- //
-class guLibPanel : public guAuiManagedPanel
+class guLibPanel : public guAuiManagerPanel
 {
   protected :
-//    wxAuiManager            m_AuiManager;
-//    unsigned int            m_VisiblePanels;
+    guMediaViewer *         m_MediaViewer;
 
-    wxSearchCtrl *          m_InputTextCtrl;
     guGeListBox *           m_GenreListCtrl;
     guTaListBox *           m_LabelsListCtrl;
     guArListBox *           m_ArtistListCtrl;
@@ -127,23 +110,16 @@ class guLibPanel : public guAuiManagedPanel
     bool                    m_UpdateLock;
     guPlayerPanel *         m_PlayerPanel;
     wxTimer                 m_SelChangedTimer;
-    wxTimer                 m_TextChangedTimer;
     int                     m_SelChangedObject;
-    bool                    m_DoneClearSearchText;
 
     int                     m_BaseCommand;
-    wxString                m_ConfigPrefixVarName;
-    int                     m_ContextMenuFlags;
+//    wxString                m_ConfigPrefixVarName;
+    wxString                m_ConfigPath;
 
-    bool                    m_InstantSearchEnabled;
-    bool                    m_EnterSelectSearchEnabled;
+    wxString                m_LastTextFilter;
 
-    // Search Str events
-    virtual void            OnSearchActivated( wxCommandEvent &event );
-    virtual void            OnSearchCancelled( wxCommandEvent &event );
-    virtual void            OnSearchSelected( wxCommandEvent &event );
-    virtual void            ClearSearchText( void );
-    bool                    DoTextSearch( void );
+    void                    ClearSearchText( void );
+    bool                    DoTextSearch( const wxString &searchtext );
 
     // LabelsListBox Events
     virtual void            OnLabelListActivated( wxListEvent &event );
@@ -235,7 +211,7 @@ class guLibPanel : public guAuiManagedPanel
     // SongsListBox Events
     virtual void            OnSongListActivated( wxListEvent &event );
     virtual void            OnSongPlayClicked( wxCommandEvent &event );
-    virtual void            OnSongPlayAllClicked( wxCommandEvent &event );
+//    virtual void            OnSongPlayAllClicked( wxCommandEvent &event );
     virtual void            OnSongQueueClicked( wxCommandEvent &event );
     virtual void            OnSongsEditLabelsClicked( wxCommandEvent &event );
     virtual void            OnSongsEditTracksClicked( wxCommandEvent &event );
@@ -255,7 +231,6 @@ class guLibPanel : public guAuiManagedPanel
 
     //
     void                    OnSelChangedTimer( wxTimerEvent &event );
-    void                    OnTextChangedTimer( wxTimerEvent &event );
     void                    DoSelectionChanged( void );
 
 
@@ -287,24 +262,37 @@ class guLibPanel : public guAuiManagedPanel
 
     virtual void            OnGoToSearch( wxCommandEvent &event );
 
-    void                    OnConfigUpdated( wxCommandEvent &event );
+//    void                    OnConfigUpdated( wxCommandEvent &event );
+
+    void                    PlayAllTracks( const bool enqueue );
+
+  private :
+    void                    CreateControls( void );
+    void                    LoadLastLayout( void );
 
   public :
-    guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel, const wxString &prefix = wxT( "Lib" ) );
+    //guLibPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
+    guLibPanel( wxWindow * parent, guMediaViewer * mediaviewer );
     ~guLibPanel();
 
     virtual void            InitPanelData( void );
 
-    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false ) {};
-    virtual wxString        GetName( void );
+    virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
+
+//    virtual wxString        GetName( void );
     virtual guDbLibrary *   GetDb( void ) { return m_Db; };
-    virtual wxArrayString   GetLibraryPaths( void );
+    void                    SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
+//    virtual wxArrayString   GetLibraryPaths( void );
     virtual wxString        GetPlaylistPath( void ) { return wxEmptyString; }
     void                    SetBaseCommand( int basecmd ) { m_BaseCommand = basecmd; InitPanelData(); }
 
     void                    ReloadControls( void );
     void                    UpdateLabels( void );
 
+    wxString                ConfigPath( void ) { return m_ConfigPath; }
+    guMediaViewer *         GetMediaViewer( void ) { return m_MediaViewer; }
+
+    void                    SetSelection( const int type, const int id );
     void                    SelectTrack( const int trackid );
     void                    SelectAlbum( const int albumid );
     void                    SelectAlbumArtist( const int albumid );
@@ -322,23 +310,16 @@ class guLibPanel : public guAuiManagedPanel
     void                    UpdatedTracks( const guTrackArray * tracks ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTracks( tracks ); }
     void                    UpdatedTrack( const guTrack * track ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTrack( track ); }
 
-    int                     GetContextMenuFlags( void ) { return m_ContextMenuFlags; }
-    virtual void            CreateContextMenu( wxMenu * menu, const int windowid = 0 );
-    virtual void            CreateCopyToMenu( wxMenu * menu, const int basecmd );
+    int                     GetContextMenuFlags( void );
+    virtual void            CreateContextMenu( wxMenu * menu, const int windowid = wxNOT_FOUND );
+    virtual void            CreateCopyToMenu( wxMenu * menu );
 
-    virtual int             LastUpdate( void );
-    virtual void            SetLastUpdate( int lastupdate = wxNOT_FOUND );
+//    virtual int             LastUpdate( void );
+//    virtual void            SetLastUpdate( int lastupdate = wxNOT_FOUND );
 
-    virtual void            DeleteTracks( guTrackArray * tracks );
+//    virtual void            DeleteTracks( guTrackArray * tracks );
 
-    virtual wxArrayString   GetCoverSearchWords( void );
-
-//    bool                    IsPanelShown( const int panelid ) const;
-//    void                    ShowPanel( const int panelid, bool show );
-//    void                    OnPaneClose( wxAuiManagerEvent &event );
-//    int                     VisiblePanels( void ) { return m_VisiblePanels; }
-//    wxString                SavePerspective( void ) { return m_AuiManager.SavePerspective(); }
-//    void                    LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels );
+//    virtual wxArrayString   GetCoverSearchWords( void );
 
     virtual wxString        GetCoverName( void );
     virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
@@ -347,14 +328,15 @@ class guLibPanel : public guAuiManagedPanel
     virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
     virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
 
-    virtual wxImage *       GetAlbumCover( const int albumid, wxString &coverpath );
-
     virtual int             GetListViewColumnCount( void ) { return guSONGS_COLUMN_COUNT; }
     virtual bool            GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_SongListCtrl->GetColumnData( id, index, width, enabled ); }
     virtual bool            SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_SongListCtrl->SetColumnData( id, index, width, enabled, refresh ); }
+    virtual void            AlbumCoverChanged( void );
 
     friend class guLibPanelDropTarget;
+    friend class guMediaViewer;
 };
 
 #endif
+
 // -------------------------------------------------------------------------------- //

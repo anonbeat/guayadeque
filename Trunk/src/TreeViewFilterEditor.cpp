@@ -58,7 +58,7 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
     if( !FilterItemNames.Count() )
     {
         FilterItemNames.Add( wxT( "Dummy" ) );
-        FilterItemNames.Add( wxT( "Text" ) );
+        //FilterItemNames.Add( wxT( "Text" ) );
         FilterItemNames.Add( wxT( "Labels" ) );
         FilterItemNames.Add( _( "Genre" ) );
         FilterItemNames.Add( _( "Artist" ) );
@@ -139,11 +139,15 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 	ButtonsSizer->AddButton( m_AcceptButton );
 	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+	ButtonsSizer->SetAffirmativeButton( m_AcceptButton );
+	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
 	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
+	m_AcceptButton->SetDefault();
 
 	// Connect Events
 	m_NameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTreeViewFilterEditor::OnCheckAcceptButton ), NULL, this );
@@ -152,6 +156,8 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 	m_DownFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnDownFilterBtnClick ), NULL, this );
 	m_DelFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnDelFilterBtnClick ), NULL, this );
 	m_AddFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnAddFilterBtnClick ), NULL, this );
+
+	m_NameTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -229,7 +235,7 @@ void guTreeViewFilterEditor::OnDelFilterBtnClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewFilterEditor::OnAddFilterBtnClick( wxCommandEvent& event )
 {
-    int SelectedItem = m_FiltersChoice->GetCurrentSelection() + 3;
+    int SelectedItem = m_FiltersChoice->GetCurrentSelection() + 2;
     if( m_FilterItems.Index( SelectedItem ) == wxNOT_FOUND )
     {
         m_FilterItems.Add( SelectedItem );

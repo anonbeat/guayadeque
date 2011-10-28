@@ -33,7 +33,7 @@
 // -------------------------------------------------------------------------------- //
 void inline escape_query_str( wxString * Str )
 {
-  Str->Replace( _T( "'" ), _T( "''" ) );
+  Str->Replace( wxT( "'" ), wxT( "''" ) );
   //Str->Replace( _T( "\"" ), _T( "\"\"" ) );
   //Str->Replace( _T( "\\" ), _T( "\\\\" ) );
 }

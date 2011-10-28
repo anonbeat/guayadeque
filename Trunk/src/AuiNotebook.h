@@ -21,6 +21,8 @@
 #ifndef guAUINOTEBOOK_H
 #define guAUINOTEBOOK_H
 
+#include "Utils.h"
+
 #include <wx/control.h>
 #include <wx/aui/auibook.h>
 #include <wx/aui/tabmdi.h>
@@ -43,6 +45,7 @@ extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
 // used to capture the dimensions/positioning of the internal tab control and
 // it's managed page windows
 
+// -------------------------------------------------------------------------------- //
 class wxTabFrame : public wxWindow
 {
 public:
@@ -180,15 +183,18 @@ class guAuiTabArt : public wxAuiDefaultTabArt
 
 };
 
+WX_DEFINE_ARRAY_PTR( wxWindow *, guWindowArray );
+
 // -------------------------------------------------------------------------------- //
 class guAuiNotebook : public wxAuiNotebook
 {
   protected :
-//    guAuiTabArt     m_AuiTabArt;
-    wxString    GetPageId( wxAuiNotebookPage &page );
+    wxArrayString   m_PageIds;
+    guWindowArray   m_PagePtrs;
+
+    wxString        GetPageId( const wxWindow * page );
 
   public:
-
     guAuiNotebook();
 
     guAuiNotebook(wxWindow* parent,
@@ -207,6 +213,8 @@ class guAuiNotebook : public wxAuiNotebook
     wxAuiPaneInfo & GetPane( wxWindow * window );
     wxAuiPaneInfo & GetPane( const wxString &name );
     wxAuiPaneInfoArray & GetAllPanes( void );
+
+    void        AddId( wxWindow * ptr, const wxString &id );
 };
 
 #endif

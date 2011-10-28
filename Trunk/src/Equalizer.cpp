@@ -61,15 +61,15 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "EqualizerPosX" ), -1, wxT( "Positions" ) );
-    WindowPos.y = Config->ReadNum( wxT( "EqualizerPosY" ), -1, wxT( "Positions" ) );
+    WindowPos.x = Config->ReadNum( wxT( "PosX" ), -1, wxT( "equalizer" ) );
+    WindowPos.y = Config->ReadNum( wxT( "PosY" ), -1, wxT( "equalizer" ) );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "EqualizerSizeWidth" ), 400, wxT( "Positions" ) );
-    WindowSize.y = Config->ReadNum( wxT( "EqualizerSizeHeight" ), 250, wxT( "Positions" ) );
+    WindowSize.x = Config->ReadNum( wxT( "Width" ), 400, wxT( "equalizer" ) );
+    WindowSize.y = Config->ReadNum( wxT( "Height" ), 250, wxT( "equalizer" ) );
 
     Create( parent, wxID_ANY, _( "Equalizer" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
 
-    guConfig * EqConfig = new guConfig( wxT( ".guayadeque/equalizers.conf" ) );
+    wxFileConfig * EqConfig = new wxFileConfig( wxEmptyString, wxEmptyString, guPATH_EQUALIZERS_FILENAME );
     if( EqConfig )
     {
         EqConfig->SetPath( wxT( "Equalizers" ) );
@@ -114,7 +114,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	TopSizer->Add( PresetLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_PresetComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
-	wxString LastPreset = Config->ReadStr( wxT( "LastEqPreset" ), wxEmptyString, wxT( "General" ) );
+	wxString LastPreset = Config->ReadStr( wxT( "LastEqPreset" ), wxEmptyString, wxT( "equalizer" ) );
 	int LastPresetIndex = wxNOT_FOUND;
 	int index;
 	int count = m_EQPresets.Count();
@@ -374,11 +374,14 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     wxButton * EQBtnOK;
 	EQBtnOK = new wxButton( this, wxID_OK );
 	EQBtnSizer->AddButton( EQBtnOK );
+	EQBtnSizer->SetAffirmativeButton( EQBtnOK );
 	EQBtnSizer->Realize();
 	MainSizer->Add( EQBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+
+	EQBtnOK->SetDefault();
 
 	// Connect Events
 	m_PresetComboBox->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( guEq10Band::OnPresetSelected ), NULL, this );
@@ -399,6 +402,8 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     {
         m_PresetComboBox->SetSelection( LastPresetIndex );
     }
+
+    m_PresetComboBox->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -406,15 +411,15 @@ guEq10Band::~guEq10Band()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "EqualizerPosX" ), WindowPos.x, wxT( "Positions" ) );
-    Config->WriteNum( wxT( "EqualizerPosY" ), WindowPos.y, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "PosX" ), WindowPos.x, wxT( "equalizer" ) );
+    Config->WriteNum( wxT( "PosY" ), WindowPos.y, wxT( "equalizer" ) );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "EqualizerSizeWidth" ), WindowSize.x, wxT( "Positions" ) );
-    Config->WriteNum( wxT( "EqualizerSizeHeight" ), WindowSize.y, wxT( "Positions" ) );
+    Config->WriteNum( wxT( "Width" ), WindowSize.x, wxT( "equalizer" ) );
+    Config->WriteNum( wxT( "Height" ), WindowSize.y, wxT( "equalizer" ) );
 
-    Config->WriteStr( wxT( "LastEqPreset" ), m_BandChanged ? wxT( "" ) : m_PresetComboBox->GetValue(), wxT( "General" ) );
+    Config->WriteStr( wxT( "LastEqPreset" ), m_BandChanged ? wxT( "" ) : m_PresetComboBox->GetValue(), wxT( "equalizer" ) );
 
-    guConfig * EqConfig = new guConfig( wxT( ".guayadeque/equalizers.conf" ) );
+    wxFileConfig * EqConfig = new wxFileConfig( wxEmptyString, wxEmptyString, wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ) );
     if( EqConfig )
     {
         EqConfig->DeleteGroup( wxT( "Equalizers" ) );

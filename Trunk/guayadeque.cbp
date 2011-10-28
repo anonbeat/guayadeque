@@ -91,6 +91,8 @@
 		<Unit filename="src/AuiDockArt.h" />
 		<Unit filename="src/AuiManagedPanel.cpp" />
 		<Unit filename="src/AuiManagedPanel.h" />
+		<Unit filename="src/AuiManagerPanel.cpp" />
+		<Unit filename="src/AuiManagerPanel.h" />
 		<Unit filename="src/AuiNotebook.cpp" />
 		<Unit filename="src/AuiNotebook.h" />
 		<Unit filename="src/AutoPulseGauge.cpp" />
@@ -224,6 +226,7 @@
 		<Unit filename="src/ChannelEditor.h" />
 		<Unit filename="src/CoListBox.cpp" />
 		<Unit filename="src/CoListBox.h" />
+		<Unit filename="src/Collections.cpp" />
 		<Unit filename="src/Commands.h" />
 		<Unit filename="src/Config.cpp" />
 		<Unit filename="src/Config.h" />
@@ -302,6 +305,12 @@
 		<Unit filename="src/Makefile" />
 		<Unit filename="src/MediaCtrl.cpp" />
 		<Unit filename="src/MediaCtrl.h" />
+		<Unit filename="src/MediaDb.cpp" />
+		<Unit filename="src/MediaDb.h" />
+		<Unit filename="src/MediaViewer.cpp" />
+		<Unit filename="src/MediaViewer.h" />
+		<Unit filename="src/MediaViewerLibrary.cpp" />
+		<Unit filename="src/MediaViewerLibrary.h" />
 		<Unit filename="src/MusicBrainz.cpp" />
 		<Unit filename="src/MusicBrainz.h" />
 		<Unit filename="src/MusicDns.cpp" />
@@ -348,6 +357,7 @@
 		<Unit filename="src/RoundButton.h" />
 		<Unit filename="src/SelCoverFile.cpp" />
 		<Unit filename="src/SelCoverFile.h" />
+		<Unit filename="src/Settings.h" />
 		<Unit filename="src/Shoutcast.cpp" />
 		<Unit filename="src/Shoutcast.h" />
 		<Unit filename="src/ShowImage.cpp" />
