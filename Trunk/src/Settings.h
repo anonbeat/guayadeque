@@ -25,6 +25,9 @@
 #define guPATH_CONFIG                       wxGetHomeDir() + wxT( "/.guayadeque/" )
 #define guPATH_CONFIG_FILENAME              guPATH_CONFIG wxT( "guayadeque.conf" )
 
+#define guPATH_OLD_DBNAME                   guPATH_CONFIG wxT( "guayadeque.db" )
+#define guPATH_DBNAME                       wxT( "guayadeque.db" )
+
 #define guPATH_COLLECTIONS                  guPATH_CONFIG wxT( "Collections/" )
 
 #define guPATH_LYRICS                       guPATH_CONFIG wxT( "Lyrics/" )

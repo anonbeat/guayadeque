@@ -1271,7 +1271,26 @@ void guConfig::LoadOldConfig( const wxString &conffile )
 
         guMediaCollection * MediaCollection = new guMediaCollection( guMEDIA_COLLECTION_TYPE_NORMAL );
         MediaCollection->m_Name = _( "My Music" );
+        MediaCollection->m_UniqueId = UniqueId;
         MediaCollections.Add( MediaCollection );
+
+        if( !wxDirExists( guPATH_COLLECTIONS ) )
+        {
+            wxMkdir( guPATH_COLLECTIONS, 0770 );
+            guLogMessage( wxT( "Created the collections folder" ) );
+        }
+
+        if( !wxDirExists( guPATH_COLLECTIONS + UniqueId ) )
+        {
+            wxMkdir( guPATH_COLLECTIONS + UniqueId, 0770 );
+        }
+
+        if( wxFileExists( guPATH_OLD_DBNAME ) )
+        {
+            wxCopyFile( guPATH_OLD_DBNAME, guPATH_COLLECTIONS + UniqueId + guPATH_DBNAME );
+            wxRenameFile( guPATH_OLD_DBNAME, guPATH_OLD_DBNAME + wxT( ".old" ) );
+        }
+
 
         int Index;
         int Count = GroupNames.Count();

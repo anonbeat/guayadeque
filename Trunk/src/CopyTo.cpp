@@ -73,13 +73,14 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaview
     m_Db = mediaviewer->GetDb();
     m_PlayListFile = NULL;
     m_MediaViewer = mediaviewer;
-//    if( PortableMediaDevice->Type() == guPORTABLE_MEDIA_TYPE_IPOD )
-//        m_Type = guCOPYTO_ACTION_COPYTOIPOD;
+
+#ifdef WITH_LIBGPOD_SUPPORT
     if( mediaviewer->GetType() == guMEDIA_COLLECTION_TYPE_IPOD )
     {
         m_Type = guCOPYTO_ACTION_COPYTOIPOD;
         guLogMessage( wxT( "Its a iPod Device" ) );
     }
+#endif
 
     m_Pattern = mediaviewer->Pattern();
     m_Format = mediaviewer->TranscodeFormat();
@@ -106,9 +107,10 @@ guCopyToAction::guCopyToAction( wxString * playlistpath, guMediaViewer * mediavi
     m_PlayListFile = new guPlayListFile( * playlistpath );
     m_PlayListFile->SetName( * playlistpath );
 
-//    guPortableMediaDevice * PortableMediaDevice = mediaviewer->GetPortableMediaDevice();
+#ifdef WITH_LIBGPOD_SUPPORT
     if( mediaviewer->GetType() == guMEDIA_COLLECTION_TYPE_IPOD )
         m_Type = guCOPYTO_ACTION_COPYTOIPOD;
+#endif
     m_Format = mediaviewer->TranscodeFormat();
     m_Quality = mediaviewer->TranscodeQuality();
     m_Pattern = mediaviewer->Pattern();
