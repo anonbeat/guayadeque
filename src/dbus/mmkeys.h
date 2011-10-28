@@ -28,13 +28,16 @@
 class guMMKeys : public guDBusClient
 {
   protected :
-    guPlayerPanel * m_PlayerPanel;
+    guPlayerPanel *                 m_PlayerPanel;
 
   public :
     guMMKeys( guDBusServer * server, guPlayerPanel * playerpanel );
     ~guMMKeys();
 
-    virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
+    virtual DBusHandlerResult       HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
+
+    void                            GrabMediaPlayerKeys( const unsigned int time );
+    void                            ReleaseMediaPlayerKeys( void );
 
 };
 
