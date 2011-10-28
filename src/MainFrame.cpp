@@ -2370,12 +2370,14 @@ void guMainFrame::OnCollectionCommand( wxCommandEvent &event )
                             break;
                         }
 
+#ifdef WITH_LIBGPOD_SUPPORT
                         case guMEDIA_COLLECTION_TYPE_IPOD :
                         {
                             guGIO_Mount * Mount = m_VolumeMonitor->GetMountById( Collection.m_UniqueId );
                             MediaViewer = ( guMediaViewer * ) new guMediaVieweriPodDevice( m_MainNotebook, Collection, event.GetId(), this, -1, m_PlayerPanel, Mount );
                             break;
                         }
+#endif
                     }
 
                     m_MediaViewers.Add( MediaViewer );
