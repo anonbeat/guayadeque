@@ -813,7 +813,7 @@ void guPrefDialog::BuildLibraryPage( void )
 	m_LibOptCopyToChoice = new wxChoice( m_LibOptPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, CopyToChoices, 0 );
 	m_LibOptCopyToChoice->SetSelection( 0 );
 	m_LibOptCopyToChoice->Enable( false );
-	LibOptCopyToSizer->Add( m_LibOptCopyToChoice, 1, wxEXPAND|wxRIGHT, 5 );
+	LibOptCopyToSizer->Add( m_LibOptCopyToChoice, 1, wxEXPAND, 5 );
 
 	m_LibOptionsSizer->Add( LibOptCopyToSizer, 0, wxEXPAND, 5 );
 
@@ -2234,20 +2234,6 @@ void guPrefDialog::BuildCopyToPage( void )
 	wxArrayString Names;
     int Index;
     int Count;
-//	if( !Options.Count() )
-//	{
-//        wxArrayString Patterns = m_Config->ReadAStr( wxT( "Pattern" ), wxEmptyString, wxT( "copyto/options" ) );
-//        wxArrayString PatNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "copyto/options" ) );
-//        Count = wxMin( Patterns.Count(), PatNames.Count() );
-//        for( Index = 0; Index < Count; Index++ )
-//        {
-//            Options.Add( wxString::Format( wxT( "%s:%s:%i:%i:%i" ),
-//                escape_configlist_str( PatNames[ Index ] ).c_str(),
-//                escape_configlist_str( Patterns[ Index ] ).c_str(),
-//                guTRANSCODE_FORMAT_KEEP, guTRANSCODE_QUALITY_KEEP, false ) );
-//        }
-//	}
-
 	if( ( Count = Options.Count() ) )
 	{
 	    for( Index = 0; Index < Count; Index++ )
@@ -4039,6 +4025,8 @@ void guPrefDialog::OnCopyToAddBtnClick( wxCommandEvent& event )
         CopyToPattern->m_MoveFiles = m_CopyToMoveFilesChkBox->GetValue();
         m_CopyToOptions->Add( CopyToPattern );
 
+        UpdateCopyToOptions();
+
         m_CopyToSelected = m_CopyToOptions->Count() - 1;
         m_CopyToListBox->SetSelection( m_CopyToSelected );
         event.SetInt( m_CopyToSelected );
@@ -4054,6 +4042,8 @@ void guPrefDialog::OnCopyToDelBtnClick( wxCommandEvent& event )
         m_CopyToOptions->RemoveAt( m_CopyToSelected );
         m_CopyToListBox->Delete( m_CopyToSelected );
         //m_CopyToSelected = wxNOT_FOUND;
+
+        UpdateCopyToOptions();
     }
 }
 
@@ -4068,6 +4058,8 @@ void guPrefDialog::OnCopyToMoveUpBtnClick( wxCommandEvent &event )
     m_CopyToListBox->SetString( m_CopyToSelected, CurName );
     m_CopyToOptions->Item( m_CopyToSelected ) = CopyToPattern;
     m_CopyToListBox->SetSelection( m_CopyToSelected );
+
+    UpdateCopyToOptions();
 
     event.SetInt( m_CopyToSelected );
     OnCopyToListBoxSelected( event );
@@ -4084,6 +4076,8 @@ void guPrefDialog::OnCopyToMoveDownBtnClick( wxCommandEvent &event )
     m_CopyToListBox->SetString( m_CopyToSelected, CurName );
     m_CopyToOptions->Item( m_CopyToSelected ) = CopyToPattern;
     m_CopyToListBox->SetSelection( m_CopyToSelected );
+
+    UpdateCopyToOptions();
 
     event.SetInt( m_CopyToSelected );
     OnCopyToListBoxSelected( event );
@@ -4181,6 +4175,42 @@ void guPrefDialog::OnCopyToSaveBtnClick( wxCommandEvent &event )
         m_CopyToNameTextCtrl->SetValue( CopyToPattern.m_Pattern );
     }
     m_CopyToAcceptBtn->Disable();
+
+    UpdateCopyToOptions();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::UpdateCopyToOptions( void )
+{
+    if( m_LibOptCopyToChoice )
+    {
+        wxString CurSelected = m_LibOptCopyToChoice->GetStringSelection();
+
+        m_LibOptCopyToChoice->Clear();
+        m_LibOptCopyToChoice->Append( wxEmptyString );
+
+        int Index;
+        int Count;
+        if( m_CopyToOptions )
+        {
+            Count = m_CopyToOptions->Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                m_LibOptCopyToChoice->Append( m_CopyToOptions->Item( Index ).m_Name );
+            }
+        }
+        else
+        {
+            wxArrayString CopyToOptions = m_Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+            Count = CopyToOptions.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                m_LibOptCopyToChoice->Append( CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) ) );
+            }
+        }
+
+        m_LibOptCopyToChoice->SetStringSelection( CurSelected );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

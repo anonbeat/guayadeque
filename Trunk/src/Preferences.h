@@ -394,6 +394,7 @@ class guPrefDialog : public wxDialog
     void OnLibCheckEmbeddedChanged( wxCommandEvent& event );
     void OnLibEmbeddMetadataChanged( wxCommandEvent& event );
     void OnLibDefaultCopyToChanged( wxCommandEvent& event );
+    void OnLibCopyToSetupBtnClicked( wxCommandEvent& event );
 
     void OnLyricSourceSelected( wxCommandEvent &event );
     void OnLyricSourceDClicked( wxCommandEvent &event );
@@ -465,6 +466,7 @@ class guPrefDialog : public wxDialog
 	void OnCopyToQualityChanged( wxCommandEvent &event );
 	void OnCopyToMoveFilesChanged( wxCommandEvent &event );
 	void OnCopyToSaveBtnClick( wxCommandEvent &event );
+	void UpdateCopyToOptions( void );
 
 	void OnAccelSelected( wxListEvent &event );
     void OnAccelKeyDown( wxKeyEvent &event );
