@@ -3441,7 +3441,7 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
 
     wxImage * CoverImage = NULL;
 
-    guLogMessage( wxT( "UpdatePlayerCover( %i )" ), m_Deleted );
+    guLogMessage( wxT( "()()()() UpdatePlayerCover( %i )  ()()()()" ), m_Deleted );
     if( m_Deleted )
     {
         m_CurrentTrack->m_CoverPath = wxEmptyString;
@@ -3465,15 +3465,19 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
                             m_CurrentTrack->m_CoverPath, m_CurrentTrack->m_ArtistName, m_CurrentTrack->m_AlbumName );
         m_CurrentTrack->m_CoverType = GU_SONGCOVER_FILE;
     }
-    else if( ( CoverImage = guTagGetPicture( m_CurrentTrack->m_FileName ) ) )
+
+    if( !CoverImage )
     {
-        m_CurrentTrack->m_CoverType = GU_SONGCOVER_ID3TAG;
-        m_CurrentTrack->m_CoverPath = m_CurrentTrack->m_FileName;
-    }
-    else
-    {
-        //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_CurrentTrack->m_FileName ).c_str() );
-        m_CurrentTrack->m_CoverPath = m_PlayerPanel->PlayListCtrl()->FindCoverFile( wxPathOnly( m_CurrentTrack->m_FileName ) );
+        if( ( CoverImage = guTagGetPicture( m_CurrentTrack->m_FileName ) ) )
+        {
+            m_CurrentTrack->m_CoverType = GU_SONGCOVER_ID3TAG;
+            m_CurrentTrack->m_CoverPath = m_CurrentTrack->m_FileName;
+        }
+        else
+        {
+            //guLogWarning( wxT( "Trying to find covers in %s" ), wxPathOnly( m_CurrentTrack->m_FileName ).c_str() );
+            m_CurrentTrack->m_CoverPath = m_PlayerPanel->PlayListCtrl()->FindCoverFile( wxPathOnly( m_CurrentTrack->m_FileName ) );
+        }
     }
 
     if( TestDestroy() )
@@ -3510,16 +3514,16 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
 
     CoverImage->Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
 
-//    guLogDebug( wxT( "   File : %s" ), m_CurrentTrack->m_FileName.c_str() );
-//    guLogDebug( wxT( " Loaded : %i" ), m_CurrentTrack->m_Loaded );
-//    guLogDebug( wxT( "   Type : %i" ), m_CurrentTrack->m_Type );
-//    guLogDebug( wxT( " SongId : %i" ), m_CurrentTrack->m_SongId );
-//    guLogDebug( wxT( "CoverId : %i" ), m_CurrentTrack->m_CoverId );
-//    guLogDebug( wxT( "Co.Type : %i" ), m_CurrentTrack->m_CoverType );
-//    guLogDebug( wxT( "  Cover : '%s'" ), m_CurrentTrack->m_CoverPath.c_str() );
-//    guLogDebug( wxT( "  Width : %u" ), CoverImage->GetWidth() );
-//    guLogDebug( wxT( " Height : %u" ), CoverImage->GetHeight() );
-//    guLogDebug( wxT( "===========================================" ) );
+    //guLogMessage( wxT( "   File : %s" ), m_CurrentTrack->m_FileName.c_str() );
+    //guLogMessage( wxT( " Loaded : %i" ), m_CurrentTrack->m_Loaded );
+    //guLogMessage( wxT( "   Type : %i" ), m_CurrentTrack->m_Type );
+    //guLogMessage( wxT( " SongId : %i" ), m_CurrentTrack->m_SongId );
+    //guLogMessage( wxT( "CoverId : %i" ), m_CurrentTrack->m_CoverId );
+    //guLogMessage( wxT( "Co.Type : %i" ), m_CurrentTrack->m_CoverType );
+    //guLogMessage( wxT( "  Cover : '%s'" ), m_CurrentTrack->m_CoverPath.c_str() );
+    //guLogMessage( wxT( "  Width : %u" ), CoverImage->GetWidth() );
+    //guLogMessage( wxT( " Height : %u" ), CoverImage->GetHeight() );
+    //guLogMessage( wxT( "===========================================" ) );
 
     if( ( ( m_CurrentTrack->m_CoverType != GU_SONGCOVER_NONE ) && m_CurrentTrack->m_CoverPath.IsEmpty() ) ||
         ( m_CurrentTrack->m_CoverType == GU_SONGCOVER_ID3TAG ) )

@@ -139,6 +139,8 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
                     //m_CoverBitmap->SetBitmap( wxBitmap( CoverImage ) );
                     m_CoverBitmap->Refresh();
                 }
+                SetSize( BlankCD->GetWidth(), BlankCD->GetHeight() );
+
                 delete BlankCD;
             }
         }
@@ -147,10 +149,12 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
             CoverImage.Rescale( 300, 300, wxIMAGE_QUALITY_HIGH );
             m_CoverBitmap->SetBitmap( CoverImage );
             m_CoverBitmap->Refresh();
+            SetSize( 300, 300 );
         }
 //        else    // guCOVERFRAME_CUSTOM
 //        {
 //        }
+        Layout();
     }
 }
 
