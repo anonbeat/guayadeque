@@ -501,4 +501,5 @@ class guUpdatePlayerCoverThread : public wxThread
 };
 
 #endif
+
 // -------------------------------------------------------------------------------- //

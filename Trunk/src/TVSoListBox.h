@@ -34,15 +34,10 @@ class guTVSoListBox : public guSoListBox
     wxLongLong              m_TracksLength;
 
     wxArrayString           m_TextFilters;
-//    int                     m_TracksOrder;
-//    bool                    m_TracksOrderDesc;
 
     virtual void        GetItemsList( void );
-    //virtual void        CreateContextMenu( wxMenu * Menu ) const;
+    virtual wxString    GetSearchText( int item ) const;
 
-//    virtual void        OnDropFile( const wxString &filename );
-//    virtual void        OnDropEnd( void );
-//    virtual void        MoveSelection( void );
 
     virtual void        ItemsCheckRange( const int start, const int end ) { m_ItemsFirst = 0; m_ItemsLast = 0; }
 
@@ -70,12 +65,8 @@ class guTVSoListBox : public guSoListBox
             m_TracksOrderDesc = !m_TracksOrderDesc;
     }
 
-    //int                 GetTracksOrder( void ) { return m_TracksOrder; }
-    //bool                GetTracksOrderDesc( void ) { return m_TracksOrderDesc; }
-
     void                SetTextFilters( const wxArrayString &textfilters ) { m_TextFilters = textfilters; }
     void                ClearTextFilters( void ) { m_TextFilters.Clear(); }
-
 };
 
 #endif

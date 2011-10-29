@@ -1360,7 +1360,7 @@ void guTreeViewPanel::OnTVTracksEditTracksClicked( wxCommandEvent &event )
             m_TVTracksListBox->ReloadItems();
 
             // Update the track in database, playlist, etc
-//            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_TREEVIEW, &Tracks );
+            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_NONE, &Tracks );
         }
         guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
@@ -1873,6 +1873,22 @@ void guTreeViewPanel::CreateCopyToMenu( wxMenu * menu )
 void guTreeViewPanel::CreateContextMenu( wxMenu * menu, const int windowid )
 {
     m_MediaViewer->CreateContextMenu( menu, windowid );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::UpdatedTracks( const guTrackArray * tracks )
+{
+    m_TreeViewCtrl->ReloadItems();
+
+    m_TVTracksListBox->UpdatedTracks( tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTreeViewPanel::UpdatedTrack( const guTrack * track )
+{
+    m_TreeViewCtrl->ReloadItems();
+
+    m_TVTracksListBox->UpdatedTrack( track );
 }
 
 // -------------------------------------------------------------------------------- //

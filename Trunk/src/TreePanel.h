@@ -213,8 +213,8 @@ class guTreeViewPanel : public guAuiManagerPanel
 
     void                    GetTreeViewCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size ) { m_TVTracksListBox->GetCounters( count, len, size ); }
 
-    void inline             UpdatedTracks( const guTrackArray * tracks ) { m_TVTracksListBox->UpdatedTracks( tracks ); };
-    void inline             UpdatedTrack( const guTrack * track ) { m_TVTracksListBox->UpdatedTrack( track ); };
+    void                    UpdatedTracks( const guTrackArray * tracks );
+    void                    UpdatedTrack( const guTrack * track );
 
     virtual int             GetListViewColumnCount( void ) { return guSONGS_COLUMN_COUNT; }
     virtual bool            GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_TVTracksListBox->GetColumnData( id, index, width, enabled ); }
