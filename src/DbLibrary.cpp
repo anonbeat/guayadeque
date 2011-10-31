@@ -4094,7 +4094,8 @@ void guDbLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * p
   query = wxString::Format( wxT( "UPDATE playlists SET playlist_name = '%s', "
                "playlist_limited = %u, playlist_limitvalue = %u, playlist_limittype = %u, "
                "playlist_sorted = %u, playlist_sorttype = %u, playlist_sortdesc = %u, "
-               "playlist_anyoption = %u WHERE playlist_id = %u;" ), playlist->m_Name.c_str(),
+               "playlist_anyoption = %u WHERE playlist_id = %u;" ),
+                escape_query_str( playlist->m_Name ).c_str(),
                playlist->m_Limited, playlist->m_LimitValue, playlist->m_LimitType,
                playlist->m_Sorted, playlist->m_SortType, playlist->m_SortDesc,
                playlist->m_AnyOption,
