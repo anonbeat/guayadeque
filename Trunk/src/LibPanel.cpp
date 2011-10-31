@@ -2946,6 +2946,23 @@ void guLibPanel::AlbumCoverChanged( void )
     ReloadAlbums( false );
 }
 
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdatedTracks( const guTrackArray * tracks )
+{
+//    if( m_SongListCtrl )
+//        m_SongListCtrl->UpdatedTracks( tracks );
+
+    ReloadControls();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::UpdatedTrack( const guTrack * track )
+{
+//    if( m_SongListCtrl )
+//        m_SongListCtrl->UpdatedTrack( track );
+
+    ReloadControls();
+}
 
 // -------------------------------------------------------------------------------- //
 // guLibPanelDropTarget

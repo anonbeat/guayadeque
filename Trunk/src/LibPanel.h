@@ -307,8 +307,8 @@ class guLibPanel : public guAuiManagerPanel
     void                    SelectComposers( wxArrayInt * ids );
     void                    SelectAlbums( wxArrayInt * albums );
 
-    void                    UpdatedTracks( const guTrackArray * tracks ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTracks( tracks ); }
-    void                    UpdatedTrack( const guTrack * track ) { if( m_SongListCtrl ) m_SongListCtrl->UpdatedTrack( track ); }
+    void                    UpdatedTracks( const guTrackArray * tracks );
+    void                    UpdatedTrack( const guTrack * track );
 
     int                     GetContextMenuFlags( void );
     virtual void            CreateContextMenu( wxMenu * menu, const int windowid = wxNOT_FOUND );
