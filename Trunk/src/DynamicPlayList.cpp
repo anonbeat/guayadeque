@@ -550,7 +550,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
         wxBoxSizer* LimitSizer;
         LimitSizer = new wxBoxSizer( wxHORIZONTAL );
 
-        m_LimitCheckBox = new wxCheckBox( this, wxID_ANY, _("Limit To"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_LimitCheckBox = new wxCheckBox( this, wxID_ANY, _("Limit to"), wxDefaultPosition, wxDefaultSize, 0 );
         m_LimitCheckBox->SetValue( m_PlayList->m_Limited );
 
         LimitSizer->Add( m_LimitCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -581,7 +581,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
         wxBoxSizer* SortSizer;
         SortSizer = new wxBoxSizer( wxHORIZONTAL );
 
-        m_SortCheckBox = new wxCheckBox( this, wxID_ANY, _("Sort By"), wxDefaultPosition, wxDefaultSize, 0 );
+        m_SortCheckBox = new wxCheckBox( this, wxID_ANY, _("Sort by"), wxDefaultPosition, wxDefaultSize, 0 );
         m_SortCheckBox->SetValue( m_PlayList->m_Sorted );
         SortSizer->Add( m_SortCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
@@ -1012,14 +1012,16 @@ void guDynPlayListEditor::OnFilterTextChanged( wxCommandEvent& event )
     }
 
 
-    m_FilterAdd->Enable( !m_FilterText->IsEmpty() ||
+    bool Enable = !m_FilterText->IsEmpty() ||
                          ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
-                         ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) ) );
+                         ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) );
+
+    m_FilterAdd->Enable( Enable );
 
     if( m_CurFilter != wxNOT_FOUND )
     {
         m_HasChanged = true;
-        m_FilterAccept->Enable( true );
+        m_FilterAccept->Enable( Enable );
     }
 }
 

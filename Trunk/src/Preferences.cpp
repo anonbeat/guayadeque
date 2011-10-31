@@ -239,7 +239,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
 	m_CmdPanel->SetScrollRate( PREFERENCES_SCROLL_STEP, PREFERENCES_SCROLL_STEP );
 
 	m_CopyPanel = new wxScrolledWindow( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHSCROLL|wxVSCROLL|wxTAB_TRAVERSAL );
-	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy To" ), false );
+	m_MainNotebook->AddPage( m_CopyPanel, _( "Copy to" ), false );
 	m_MainNotebook->SetPageImage( 13, 13 );
 	m_CopyPanel->SetScrollRate( PREFERENCES_SCROLL_STEP, PREFERENCES_SCROLL_STEP );
 
