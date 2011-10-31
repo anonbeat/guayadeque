@@ -1311,6 +1311,10 @@ void guMediaViewer::UpdatedTracks( const int updatedby, const guTrackArray * tra
     if( m_PlayListPanel )
             m_PlayListPanel->UpdatedTracks( tracks );
 
+    if( m_MainFrame )
+    {
+        m_MainFrame->UpdatedTracks( guUPDATED_TRACKS_MEDIAVIEWER, tracks );
+    }
     //if( m_AlbumBrowser )
     //        m_AlbumBrowser->UpdatedTracks( tracks );
 }

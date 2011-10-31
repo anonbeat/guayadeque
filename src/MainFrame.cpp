@@ -4239,28 +4239,10 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
         m_PlayerPanel->UpdatedTracks( tracks );
     }
 
-//    if( updatedby != guUPDATED_TRACKS_PLAYER_PLAYLIST )
-//    {
-//        m_PlayerPlayList->UpdatedTracks( tracks );
-//    }
-
-//    if( updatedby != guUPDATED_TRACKS_LIBRARY )
-//    {
-//        guLibPanel * LibPanel = tracks->Item( 0 ).m_LibPanel;
-//        if( !LibPanel )
-//            LibPanel = m_LibPanel;
-//        LibPanel->UpdatedTracks( tracks );
-//    }
-
-//    if( ( updatedby != guUPDATED_TRACKS_PLAYLISTS ) && m_PlayListPanel )
-//    {
-//        m_PlayListPanel->UpdatedTracks( tracks );
-//    }
-
-//    if( ( updatedby != guUPDATED_TRACKS_TREEVIEW ) && m_TreeViewPanel )
-//    {
-//        m_TreeViewPanel->UpdatedTracks( tracks );
-//    }
+    if( updatedby != guUPDATED_TRACKS_PLAYER_PLAYLIST )
+    {
+        m_PlayerPlayList->UpdatedTracks( tracks );
+    }
 
     if( updatedby != guUPDATED_TRACKS_MEDIAVIEWER )
     {
