@@ -51,7 +51,6 @@
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
 
-
 // -------------------------------------------------------------------------------- //
 guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 {
@@ -4164,7 +4163,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
                 m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "VU Meters" ) ).
                     DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
                     CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
-                    Bottom().Layer( 0 ).Row( 3 ).Position( 0 ).Hide() );
+                    Left().Layer( 0 ).Row( 1 ).Position( 1 ).Hide() );
                 if( m_PlayerPanel )
                     m_PlayerPanel->SetPlayerVumeters( m_PlayerVumeters );
             }
