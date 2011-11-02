@@ -299,7 +299,6 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
             guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( SelectedItems[ Index ] );
             if( ItemData )
             {
-
                 if( ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
                 {
                     wxString PlayListPath = m_Db->GetPlayListPath( ItemData->GetData() );
@@ -314,8 +313,9 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                         int Index;
                         int Count;
                         guTrackArray Tracks;
-                        m_Db->GetPlayListSongs( ItemData->GetData(), guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
+                        //m_Db->GetPlayListSongs( ItemData->GetData(), guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
                         //m_PLTracksListBox->GetAllSongs( &Tracks );
+                        m_PlayListPanel->GetPlaylistTracks( &Tracks );
                         if( ( Count = Tracks.Count() ) )
                         {
                             guPlayListFile PlayListFile;
@@ -323,13 +323,13 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                             for( Index = 0; Index < Count; Index++ )
                             {
                                 PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+                                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length );
                             }
 
                             wxString PlayListName = m_Db->GetPlayListName( ItemData->GetData() );
                             PlayListFile.SetName( PlayListName );
 
-                            PlayListPath = wxGetHomeDir() + wxT( "/.guayadeque/PlayLists/") + PlayListName + wxT( ".m3u" );
+                            PlayListPath = guPATH_PLAYLISTS + PlayListName + wxT( ".m3u" );
                             wxFileName::Mkdir( wxPathOnly( PlayListPath ), 0777, wxPATH_MKDIR_FULL );
                             PlayListFile.Save( PlayListPath );
                             m_Db->SetPlayListPath( ItemData->GetData(), PlayListPath );
@@ -382,7 +382,7 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
                 SetItemDropHighlight( m_DragOverItem, false );
             }
             guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( TreeItemId );
-            if( ItemData && ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
+            if( ItemData && ( ItemData->GetType() == guPLAYLIST_TYPE_STATIC ) )
             {
                 SetItemDropHighlight( TreeItemId, true );
                 m_DragOverItem = TreeItemId;
@@ -402,14 +402,30 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
 {
-    if( guIsValidAudioFile( filename ) )
+    guLogMessage( wxT( "OnDropFile: '%s'" ), filename.c_str() );
+
+    if( guPlayListFile::IsValidPlayList( filename ) )
+    {
+        guPlayListFile PlayList( filename );
+        int Index;
+        int Count;
+        if( ( Count = PlayList.Count() ) )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                OnDropFile( PlayList.GetItem( Index ).m_Location );
+            }
+        }
+    }
+    else if( guIsValidAudioFile( filename ) )
     {
         if( wxFileExists( filename ) )
         {
-            guTrack Track;
-            if( m_Db->FindTrackFile( filename, &Track ) )
+            int TrackId;
+            if( ( TrackId = m_Db->FindTrackFile( filename, NULL ) ) )
             {
-                m_DropIds.Add( Track.m_SongId );
+                guLogMessage( wxT( "Its track %i" ), TrackId );
+                m_DropIds.Add( TrackId );
             }
         }
     }
@@ -424,7 +440,7 @@ void guPLNamesTreeCtrl::OnDropEnd( void )
         if( m_DropIds.Count() )
         {
             guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( m_DragOverItem );
-            if( ItemData && ItemData->GetType() == guPLAYLIST_TYPE_STATIC )
+            if( ItemData && ( ItemData->GetType() == guPLAYLIST_TYPE_STATIC ) )
             {
                 m_Db->AppendStaticPlayList( ItemData->GetData(), m_DropIds );
                 m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
@@ -434,6 +450,10 @@ void guPLNamesTreeCtrl::OnDropEnd( void )
             SelectItem( m_DragOverItem );
         }
         m_DragOverItem = wxTreeItemId();
+    }
+    else
+    {
+        guLogMessage( wxT( "Not set item where was dragged..." ) );
     }
     m_DropIds.Clear();
 }
@@ -596,6 +616,7 @@ guPlayListPanel::guPlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer
     m_PlayerPanel = mediaviewer->GetPlayerPanel();
     m_ConfigPath = mediaviewer->ConfigPath() + wxT( "/playlists" );
     m_ExportLastFolder = wxGetHomeDir();
+    m_LockSelection = false;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -681,7 +702,7 @@ void guPlayListPanel::CreateControls( void )
 	wxBoxSizer * DetailsSizer;
 	DetailsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_PLTracksListBox = new guPLSoListBox( DetailsPanel, m_MediaViewer, wxT( "playlist" ), guLISTVIEW_COLUMN_SELECT );
+	m_PLTracksListBox = new guPLSoListBox( DetailsPanel, m_MediaViewer, m_ConfigPath, guLISTVIEW_COLUMN_SELECT );
 	DetailsSizer->Add( m_PLTracksListBox, 1, wxEXPAND, 5 );
 
 	DetailsPanel->SetSizer( DetailsSizer );
@@ -742,6 +763,8 @@ void guPlayListPanel::CreateControls( void )
     Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ), NULL, this );
 
     Connect( ID_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnGoToSearch ), NULL, this );
+
+    m_PLTracksListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPlayListPanel::OnPLTracksColClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -778,27 +801,62 @@ bool guPlayListPanel::DoTextSearch( const wxString &textsearch )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
 {
-    wxArrayTreeItemIds Selections;
-    if( m_NamesTreeCtrl->GetSelections( Selections ) )
+    if( m_LockSelection )
+        return;
+
+    if( m_LastSelectedItem != event.GetItem() )
     {
-        wxArrayInt Ids;
-        wxArrayInt Types;
-        int Index;
-        int Count = Selections.Count();
-        for( Index = 0; Index < Count; Index++ )
+        m_LastSelectedItem = event.GetItem();
+        guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( m_LastSelectedItem );
+        if( ItemData )
         {
-            guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( Selections[ Index ] );
-            if( ItemData )
+            if( ItemData->GetType() == guPLAYLIST_TYPE_DYNAMIC )
             {
-                Ids.Add( ItemData->GetData() );
-                Types.Add( ItemData->GetType() );
+                guDynPlayList DynPlayList;
+                m_Db->GetDynamicPlayList( ItemData->GetData(), &DynPlayList );
+                if( DynPlayList.m_Sorted )
+                    SetTracksOrder( wxNOT_FOUND, false );
+
+                m_PLTracksListBox->SetPlayList( ItemData->GetData(), ItemData->GetType() );
+                m_LockSelection = true;
+                m_NamesTreeCtrl->UnselectAll();
+                m_NamesTreeCtrl->SelectItem( m_LastSelectedItem );
+                m_LockSelection = false;
+            }
+            else
+            {
+                wxArrayTreeItemIds Selections;
+                m_NamesTreeCtrl->GetSelections( Selections );
+                wxArrayInt Ids;
+                wxArrayInt Types;
+                int Index;
+                int Count = Selections.Count();
+                for( Index = 0; Index < Count; Index++ )
+                {
+                    guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( Selections[ Index ] );
+                    if( ItemData && ( ItemData->GetType() == guPLAYLIST_TYPE_STATIC ) )
+                    {
+                        Ids.Add( ItemData->GetData() );
+                        Types.Add( ItemData->GetType() );
+                    }
+                    else
+                    {
+                        m_LockSelection = true;
+                        m_NamesTreeCtrl->SelectItem( Selections[ Index ], false );
+                        m_LockSelection = false;
+                    }
+                }
+                m_PLTracksListBox->SetPlayList( Ids, Types );
             }
         }
-        m_PLTracksListBox->SetPlayList( Ids, Types );
-    }
-    else
-    {
-        m_PLTracksListBox->SetPlayList( -1, -1 );
+        else
+        {
+            m_PLTracksListBox->SetPlayList( -1, -1 );
+            m_LockSelection = true;
+            m_NamesTreeCtrl->UnselectAll();
+            m_NamesTreeCtrl->SelectItem( m_LastSelectedItem );
+            m_LockSelection = false;
+        }
     }
 }
 
@@ -1705,11 +1763,6 @@ void guPlayListPanel::OnPLTracksDeleteDrive( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::SendPlayListUpdatedEvent( void )
 {
-////    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-////    wxPostEvent( m_MediaViewer, evt );
-//    m_NamesTreeCtrl->ReloadItems();
-//
-//    m_MediaViewer->PlayListUpdated();
     m_MediaViewer->UpdatePlaylists();
 }
 
@@ -1747,6 +1800,36 @@ void guPlayListPanel::UpdatePlaylists( void )
 {
     m_NamesTreeCtrl->ReloadItems();
     m_MediaViewer->PlayListUpdated();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::SetTracksOrder( const int order, const int reload )
+{
+    m_PLTracksListBox->SetTracksOrder( order );
+
+    int ColId = m_PLTracksListBox->GetTracksOrder();
+    // Create the Columns
+    wxArrayString ColumnNames = m_PLTracksListBox->GetColumnNames();
+    int CurColId;
+    int index;
+    int count = ColumnNames.Count();
+    for( index = 0; index < count; index++ )
+    {
+        CurColId = m_PLTracksListBox->GetColumnId( index );
+        m_PLTracksListBox->SetColumnLabel( index,
+            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_PLTracksListBox->GetTracksOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+    }
+
+    if( reload )
+        m_PLTracksListBox->ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksColClicked( wxListEvent &event )
+{
+    int ColId = m_PLTracksListBox->GetColumnId( event.m_col );
+
+    SetTracksOrder( ColId );
 }
 
 // -------------------------------------------------------------------------------- //

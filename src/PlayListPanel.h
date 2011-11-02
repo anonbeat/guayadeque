@@ -155,6 +155,9 @@ class guPlayListPanel : public guAuiManagerPanel
 
     wxString            m_LastSearchString;
 
+    wxTreeItemId        m_LastSelectedItem;
+    bool                m_LockSelection;
+
     void                OnPLNamesSelected( wxTreeEvent &event );
     void                OnPLNamesActivated( wxTreeEvent &event );
     void                OnPLNamesPlay( wxCommandEvent &event );
@@ -185,6 +188,8 @@ class guPlayListPanel : public guAuiManagerPanel
     void                OnPLTracksSelectAlbumArtist( wxCommandEvent &event );
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
+
+    void                OnPLTracksColClicked( wxListEvent &event );
 
     void                DeleteCurrentPlayList( void );
 
@@ -222,6 +227,10 @@ class guPlayListPanel : public guAuiManagerPanel
     void                SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 
     void                UpdatePlaylists( void );
+
+    void                SetTracksOrder( const int order, const int reload = true );
+
+    void                GetPlaylistTracks( guTrackArray * tracks ) { m_PLTracksListBox->GetAllSongs( tracks ); }
 
     friend class guPLNamesTreeCtrl;
     friend class guMediaViewer;

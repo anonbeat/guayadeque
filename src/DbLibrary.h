@@ -466,9 +466,9 @@ class guDbLibrary : public guDb
     int                 GetPlayListSongIds( const int plid, wxArrayInt * tracks );
     int                 GetPlayListSongs( const int plid, guTrackArray * tracks );
     int                 GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
-                            wxLongLong * len, wxLongLong * size );
+                            wxLongLong * len, wxLongLong * size, const int order = wxNOT_FOUND, const bool orderdesc = false );
     int                 GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &types, guTrackArray * tracks,
-                            wxLongLong * len, wxLongLong * size );
+                            wxLongLong * len, wxLongLong * size, const int order = wxNOT_FOUND, const bool orderdesc = false );
     int                 GetPlayListSetIds( const int plid, wxArrayInt * setids );
     int                 GetPlayListSetIds( const wxArrayInt &plid, wxArrayInt * setids );
     virtual void        DeletePlayList( const int plid );
