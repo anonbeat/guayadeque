@@ -124,7 +124,10 @@ class guPrefDialog : public wxDialog
     wxListbook *                m_MainNotebook;
     wxImageList *               m_ImageList;
 
-    wxScrolledWindow *                   m_GenPanel;
+    wxScrolledWindow *          m_GenPanel;
+    wxArrayString               m_MainLangChoices;
+    wxArrayInt                  m_MainLangCodes;
+    wxChoice *                  m_MainLangChoice;
     wxCheckBox *                m_ShowSplashChkBox;
     wxCheckBox *                m_MinStartChkBox;
     wxCheckBox *                m_TaskIconChkBox;
@@ -217,8 +220,8 @@ class guPrefDialog : public wxDialog
 
     wxStaticText *              m_LangStaticText;
     wxChoice *                  m_LangChoice;
-    wxArrayString               m_LangNames;
-    wxArrayString               m_LangIds;
+    wxArrayString               m_LFMLangNames;
+    wxArrayString               m_LFMLangIds;
     wxSpinCtrl *                m_MinTracksSpinCtrl;
     wxSpinCtrl *                m_NumTracksSpinCtrl;
     wxSpinCtrl *                m_MaxTracksPlayed;

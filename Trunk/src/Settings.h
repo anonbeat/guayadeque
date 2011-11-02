@@ -27,6 +27,7 @@
 
 #define guPATH_OLD_DBNAME                   guPATH_CONFIG wxT( "guayadeque.db" )
 #define guPATH_DBNAME                       wxT( "guayadeque.db" )
+#define guPATH_DBCACHE                      guPATH_CONFIG wxT( "cache.db" )
 
 #define guPATH_COLLECTIONS                  guPATH_CONFIG wxT( "Collections/" )
 

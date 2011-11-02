@@ -3441,7 +3441,6 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
 
     wxImage * CoverImage = NULL;
 
-    guLogMessage( wxT( "()()()() UpdatePlayerCover( %i )  ()()()()" ), m_Deleted );
     if( m_Deleted )
     {
         m_CurrentTrack->m_CoverPath = wxEmptyString;

@@ -37,7 +37,7 @@
 
 #include <wx/debugrpt.h>
 
-IMPLEMENT_APP(guMainApp);
+IMPLEMENT_APP( guMainApp );
 
 // -------------------------------------------------------------------------------- //
 guMainApp::guMainApp() : wxApp()
@@ -353,9 +353,8 @@ bool guMainApp::OnInit()
     // Init the wxCurl Lib
     wxCurlBase::Init();
 
-    //
-    if( m_Locale.Init( wxLANGUAGE_DEFAULT,
-                     /*wxLOCALE_LOAD_DEFAULT |*/ wxLOCALE_CONV_ENCODING ) )
+    int LangId = m_Config->ReadNum( wxT( "Language" ), wxLANGUAGE_DEFAULT, wxT( "general" ) );
+    if( m_Locale.Init( LangId, wxLOCALE_CONV_ENCODING ) )
     {
         m_Locale.AddCatalogLookupPathPrefix( wxT( "/usr/share/locale" ) );
         m_Locale.AddCatalog( wxT( "guayadeque" ) );
@@ -363,40 +362,29 @@ bool guMainApp::OnInit()
     }
     else
     {
-        int LangId = wxLocale::GetSystemLanguage();
         const wxLanguageInfo * LangInfo = wxLocale::GetLanguageInfo( LangId );
         if( LangInfo )
         {
             guLogError( wxT( "Could not initialize the translations engine for ( %s )" ), LangInfo->CanonicalName.c_str() );
+            wxStandardPaths StdPaths;
+            guLogError( wxT( "Locale directory '%s'" ), StdPaths.GetLocalizedResourcesDir( LangInfo->CanonicalName, wxStandardPaths::ResourceCat_Messages).c_str() );
         }
         else
         {
             guLogError( wxT( "Could not initialize the translations engine for (%d)" ), LangId );
         }
-        wxStandardPaths StdPaths;
-        guLogError( wxT( "Locale directory '%s'" ), StdPaths.GetLocalizedResourcesDir( wxT( "es_ES" ), wxStandardPaths::ResourceCat_Messages).c_str() );
     }
 
     // Enable tooltips
     wxToolTip::Enable( true );
 
-//    //
-//    // Init the Database Object
-//    //
-//    m_Db = new guDbLibrary( wxGetHomeDir() + wxT( "/.guayadeque/guayadeque.db" ) );
-//    if( !m_Db )
-//    {
-//        guLogError( wxT( "Could not open the guayadeque database" ) );
-//    }
-
-    m_DbCache = new guDbCache( wxGetHomeDir() + wxT( "/.guayadeque/cache.db" ) );
+    m_DbCache = new guDbCache( guPATH_DBCACHE );
     if( !m_DbCache )
     {
         guLogError( wxT( "Could not open the guayadeque cache database" ) );
     }
 
     m_DbCache->SetDbCache();
-
 
     // Initialize the MainFrame object
     guMainFrame* Frame = new guMainFrame( 0, m_DbCache );
