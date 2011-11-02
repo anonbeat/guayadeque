@@ -287,6 +287,7 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
 {
+    m_DragOverItem = wxTreeItemId();
     int Index;
     int Count;
     wxArrayTreeItemIds SelectedItems;
@@ -361,8 +362,9 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
         // If we left any hightligted item remove it
         if( m_DragOverItem.IsOk() )
         {
+            guLogMessage( wxT( "Clear m_DragOverItem element..."));
             SetItemDropHighlight( m_DragOverItem, false );
-            m_DragOverItem = wxTreeItemId();
+            //m_DragOverItem = wxTreeItemId();
         }
     }
 }
@@ -402,8 +404,6 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
 {
-    guLogMessage( wxT( "OnDropFile: '%s'" ), filename.c_str() );
-
     if( guPlayListFile::IsValidPlayList( filename ) )
     {
         guPlayListFile PlayList( filename );
@@ -424,7 +424,6 @@ void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
             int TrackId;
             if( ( TrackId = m_Db->FindTrackFile( filename, NULL ) ) )
             {
-                guLogMessage( wxT( "Its track %i" ), TrackId );
                 m_DropIds.Add( TrackId );
             }
         }
