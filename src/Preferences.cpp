@@ -128,25 +128,50 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
     Create( parent, wxID_ANY, _( "Preferences" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
 
+    //
+    m_MainLangChoices.Add( _( "Default" ) );
+    m_MainLangChoices.Add( _( "Czech" ) );
+    m_MainLangChoices.Add( _( "Dutch" ) );
+    m_MainLangChoices.Add( _( "English" ) );
+    m_MainLangChoices.Add( _( "French" ) );
+    m_MainLangChoices.Add( _( "German" ) );
+    m_MainLangChoices.Add( _( "Hungarian" ) );
+    m_MainLangChoices.Add( _( "Icelandic" ) );
+    m_MainLangChoices.Add( _( "Italian" ) );
+    m_MainLangChoices.Add( _( "Norwegian Bokmål" ) );
+    m_MainLangChoices.Add( _( "Portuguese" ) );
+    m_MainLangChoices.Add( _( "Portuguese-Brazilian" ) );
+    m_MainLangChoices.Add( _( "Russian" ) );
+    m_MainLangChoices.Add( _( "Spanish" ) );
+    m_MainLangChoices.Add( _( "Swedish" ) );
+    m_MainLangChoices.Add( _( "Thai" ) );
+    m_MainLangChoices.Add( _( "Ukrainian" ) );
 
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT(   "0" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT(  "16" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT(  "32" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT(  "64" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT(  "96" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT( "128" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT( "160" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT( "192" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT( "256" ) );
-//	m_RadioMinBitRateRadBoxChoices.Add( wxT( "320" ) );
+    m_MainLangCodes.Add( wxLANGUAGE_DEFAULT );
+    m_MainLangCodes.Add( wxLANGUAGE_CZECH );
+    m_MainLangCodes.Add( wxLANGUAGE_DUTCH );
+    m_MainLangCodes.Add( wxLANGUAGE_ENGLISH );
+    m_MainLangCodes.Add( wxLANGUAGE_FRENCH );
+    m_MainLangCodes.Add( wxLANGUAGE_GERMAN );
+    m_MainLangCodes.Add( wxLANGUAGE_HUNGARIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_ICELANDIC );
+    m_MainLangCodes.Add( wxLANGUAGE_ITALIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_NORWEGIAN_BOKMAL );
+    m_MainLangCodes.Add( wxLANGUAGE_PORTUGUESE );
+    m_MainLangCodes.Add( wxLANGUAGE_PORTUGUESE_BRAZILIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_RUSSIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_SPANISH );
+    m_MainLangCodes.Add( wxLANGUAGE_SWEDISH );
+    m_MainLangCodes.Add( wxLANGUAGE_THAI );
+    m_MainLangCodes.Add( wxLANGUAGE_UKRAINIAN );
 
-    m_LangNames.Add( _( "Default" ) );        m_LangIds.Add( wxEmptyString );
-    m_LangNames.Add( _( "English" ) );        m_LangIds.Add( wxT( "en" ) );
-    m_LangNames.Add( _( "French" ) );         m_LangIds.Add( wxT( "fr" ) );
-    m_LangNames.Add( _( "German" ) );         m_LangIds.Add( wxT( "de" ) );
-    m_LangNames.Add( _( "Italian" ) );        m_LangIds.Add( wxT( "it" ) );
-    m_LangNames.Add( _( "Portuguese" ) );     m_LangIds.Add( wxT( "pt" ) );
-    m_LangNames.Add( _( "Spanish" ) );        m_LangIds.Add( wxT( "es" ) );
+    m_LFMLangNames.Add( _( "Default" ) );        m_LFMLangIds.Add( wxEmptyString );
+    m_LFMLangNames.Add( _( "English" ) );        m_LFMLangIds.Add( wxT( "en" ) );
+    m_LFMLangNames.Add( _( "French" ) );         m_LFMLangIds.Add( wxT( "fr" ) );
+    m_LFMLangNames.Add( _( "German" ) );         m_LFMLangIds.Add( wxT( "de" ) );
+    m_LFMLangNames.Add( _( "Italian" ) );        m_LFMLangIds.Add( wxT( "it" ) );
+    m_LFMLangNames.Add( _( "Portuguese" ) );     m_LFMLangIds.Add( wxT( "pt" ) );
+    m_LFMLangNames.Add( _( "Spanish" ) );        m_LFMLangIds.Add( wxT( "es" ) );
 
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
@@ -543,6 +568,25 @@ void guPrefDialog::BuildGeneralPage( void )
     //
 	wxBoxSizer * GenMainSizer = new wxBoxSizer( wxVERTICAL );
 	wxStaticBoxSizer * StartSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" On Start ") ), wxVERTICAL );
+
+	wxBoxSizer * LangSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * LangStaticText = new wxStaticText( m_GenPanel, wxID_ANY, _( "Language:" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LangStaticText->Wrap( -1 );
+	LangSizer->Add( LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT|wxBOTTOM, 5 );
+
+	m_MainLangChoice = new wxChoice( m_GenPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MainLangChoices, 0 );
+	int LangEntry = m_MainLangCodes.Index( m_Config->ReadNum( wxT( "Language" ), 0, wxT( "general" ) ) );
+	if( LangEntry == wxNOT_FOUND )
+        LangEntry = 0;
+	m_MainLangChoice->SetSelection( LangEntry );
+	LangSizer->Add( m_MainLangChoice, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxBOTTOM, 5 );
+
+	wxStaticText * LangNoteStaticText = new wxStaticText( m_GenPanel, wxID_ANY, _( "(Needs restart)" ), wxDefaultPosition, wxDefaultSize, 0 );
+	LangNoteStaticText->Wrap( -1 );
+	LangSizer->Add( LangNoteStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT|wxBOTTOM, 5 );
+
+	StartSizer->Add( LangSizer, 1, wxEXPAND, 5 );
 
 	m_ShowSplashChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Show splash screen"), wxDefaultPosition, wxDefaultSize, 0 );
     m_ShowSplashChkBox->SetValue( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "general" ) ) );
@@ -1572,12 +1616,11 @@ void guPrefDialog::BuildOnlinePage( void )
 	m_LangStaticText->Wrap( -1 );
 	OnlineLangSizer->Add( m_LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_LangChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LangNames, 0 );
-    int LangIndex = m_LangIds.Index( m_Config->ReadStr( wxT( "Language" ), wxEmptyString, wxT( "lastfm" ) ) );
+	m_LangChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LFMLangNames, 0 );
+    int LangIndex = m_LFMLangIds.Index( m_Config->ReadStr( wxT( "Language" ), wxEmptyString, wxT( "lastfm" ) ) );
     if( LangIndex == wxNOT_FOUND )
-        m_LangChoice->SetSelection( 0 );
-    else
-        m_LangChoice->SetSelection( LangIndex );
+        LangIndex = 0;
+    m_LangChoice->SetSelection( LangIndex );
 	m_LangChoice->SetMinSize( wxSize( 250,-1 ) );
 	OnlineLangSizer->Add( m_LangChoice, 0, wxALL, 5 );
 
@@ -2492,6 +2535,7 @@ void guPrefDialog::SaveSettings( void )
     // Save all configurations
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
+        m_Config->WriteNum( wxT( "Language" ), m_MainLangCodes[ m_MainLangChoice->GetSelection() ], wxT( "general" ) );
         m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "general" ) );
         m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "general" ) );
         m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "general" ) );
@@ -2576,7 +2620,7 @@ void guPrefDialog::SaveSettings( void )
     // LastFM Panel Info language
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
     {
-        m_Config->WriteStr( wxT( "Language" ), m_LangIds[ m_LangChoice->GetSelection() ], wxT( "lastfm" ) );
+        m_Config->WriteStr( wxT( "Language" ), m_LFMLangIds[ m_LangChoice->GetSelection() ], wxT( "lastfm" ) );
 
         m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "searchfilters" ) );
 
