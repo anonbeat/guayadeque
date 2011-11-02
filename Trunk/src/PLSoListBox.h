@@ -69,6 +69,8 @@ class guPLSoListBox : public guSoListBox
         * size  = m_TracksSize;
     }
 
+    virtual void        SetTracksOrder( const int order );
+
 };
 
 #endif

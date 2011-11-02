@@ -49,6 +49,8 @@
 
 #define guPATH_LINKICONS                    guPATH_CONFIG wxT( "LinkIcons/" )
 
+#define guPATH_PLAYLISTS                    guPATH_CONFIG wxT( "PlayLists/" )
+
 #define guPATH_DEVICES                      guPATH_COLLECTIONS
 
 #define guPATH_EQUALIZERS                   guPATH_CONFIG

@@ -23,6 +23,7 @@
 #include "Accelerators.h"
 #include "Config.h" // Configuration
 #include "Commands.h"
+#include "DynamicPlayList.h"
 #include "Images.h"
 #include "MainApp.h"
 #include "OnlineLinks.h"
@@ -33,8 +34,10 @@
 
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style ) :
-             guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
+             guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS | guLISTVIEW_COLUMN_SORTING )
 {
+    m_TracksOrder = wxNOT_FOUND;
+
     CreateAcceleratorTable();
 
     ReloadItems();
@@ -82,7 +85,7 @@ void guPLSoListBox::GetItemsList( void )
     m_PLSetIds.Empty();
     if( m_PLIds.Count() )
     {
-        m_Db->GetPlayListSongs( m_PLIds, m_PLTypes, &m_Items, &m_TracksLength, &m_TracksSize );
+        m_Db->GetPlayListSongs( m_PLIds, m_PLTypes, &m_Items, &m_TracksLength, &m_TracksSize, m_TracksOrder, m_TracksOrderDesc );
         m_Db->GetPlayListSetIds( m_PLIds, &m_PLSetIds );
     }
     else
@@ -210,12 +213,14 @@ void guPLSoListBox::OnDropEnd( void )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::MoveSelection( void )
 {
+    if( ( m_TracksOrder != wxNOT_FOUND ) ||
+        ( m_PLIds.Count() != 1 ) ||
+        ( m_PLTypes[ 0 ] != guPLAYLIST_TYPE_STATIC ) )
+        return;
+
     wxArrayInt   MoveIds;
     wxArrayInt   MoveIndex;
     wxArrayInt   ItemIds;
-
-    if( ( m_PLIds.Count() != 1 ) || ( m_PLTypes[ 0 ] != guPLAYLIST_TYPE_STATIC ) )
-        return;
 
     // Copy the elements we are going to move
     unsigned long cookie;
@@ -323,6 +328,31 @@ wxString guPLSoListBox::GetSearchText( int item ) const
     return wxString::Format( wxT( "\"%s\" \"%s\"" ),
         m_Items[ item - m_ItemsFirst ].m_ArtistName.c_str(),
         m_Items[ item - m_ItemsFirst ].m_SongName.c_str() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLSoListBox::SetTracksOrder( const int order )
+{
+    // Only can select multiple static playlists
+    if( ( m_PLTypes.Count() == 1 ) && ( m_PLTypes[ 0 ] == guPLAYLIST_TYPE_DYNAMIC ) )
+    {
+        guDynPlayList DynPlayList;
+        m_Db->GetDynamicPlayList( m_PLIds[ 0 ], &DynPlayList );
+        if( DynPlayList.m_Sorted )
+            return;
+    }
+    if( m_TracksOrder != order )
+    {
+        m_TracksOrder = order;
+        if( order == wxNOT_FOUND )
+            m_TracksOrderDesc = false;
+    }
+    else if( order != wxNOT_FOUND )
+    {
+        m_TracksOrderDesc = !m_TracksOrderDesc;
+        if( !m_TracksOrderDesc )
+            SetTracksOrder( wxNOT_FOUND );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -1,5 +1,7 @@
  
-  
+  * All playlists but the dynamic playlists with sort defined can be sorted
+    by any criteria.
+  * Added collections support. You can define as much collections as you want.
   * Added {al1}, {au1}, {bl1} and {bu1} to lyrics panel patterns for
     lower/upper first letter of artist name and album name.
   * Added compositor and album artist to select context menus

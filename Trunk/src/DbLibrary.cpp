@@ -3300,7 +3300,7 @@ void guDbLibrary::UpdateStaticPlayListFile( const int plid )
             for( Index = 0; Index < Count; Index++ )
             {
                 PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
+                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length );
             }
 
             PlayListFile.Save( FileName.GetFullPath() );
@@ -3891,7 +3891,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, guTrackArray * tracks )
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
-                    wxLongLong * len, wxLongLong * size )
+        wxLongLong * len, wxLongLong * size, const int order, const bool orderdesc )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3905,6 +3905,8 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
     {
       query = GU_TRACKS_QUERYSTR;
       query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
+
+      query += GetSongsSortSQL( order, orderdesc );
 
       dbRes = ExecuteQuery( query );
 
@@ -3950,6 +3952,11 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
       query = GU_TRACKS_QUERYSTR + DynPlayListToSQLQuery( &PlayList );
 
+      if( !PlayList.m_Sorted && ( order != wxNOT_FOUND ) )
+      {
+        query += GetSongsSortSQL( order, orderdesc );
+      }
+
       //guLogMessage( wxT( "GetPlayListSongs: <<%s>>" ), query.c_str() );
 
       dbRes = ExecuteQuery( query );
@@ -3993,20 +4000,52 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &types, guTrackArray * tracks,
-                    wxLongLong * len, wxLongLong * size )
+                    wxLongLong * len, wxLongLong * size, const int order, const bool orderdesc )
 {
     int Index;
     int Count = wxMin( ids.Count(), types.Count() );
-    wxLongLong Length;
-    wxLongLong Size;
-    * len = 0;
-    * size = 0;
+
+    if( Count == 1 )
+    {
+        return GetPlayListSongs( ids[ 0 ], types[ 0 ], tracks, len, size, order, orderdesc );
+    }
+
+    //
+    // Only get multiple ids for static playlists
+    //
+    wxString query;
+    wxSQLite3ResultSet dbRes;
+    guTrack * Track;
+    wxLongLong TrackLength = 0;
+    wxLongLong TrackSize = 0;
+
+    query = GU_TRACKS_QUERYSTR;
+    query += wxT( ", plsets WHERE plset_songid = song_id AND plset_plid IN " );
+    query += wxT( "(" );
     for( Index = 0; Index < Count; Index++ )
     {
-        GetPlayListSongs( ids[ Index ], types[ Index ], tracks, &Length, &Size );
-        * len += Length;
-        * size += Size;
+        query += wxString::Format( wxT( "%u," ), ids[ Index ] );
     }
+    query.RemoveLast( 1 );
+    query += wxT( ")" ) + GetSongsSortSQL( order, orderdesc );
+
+    dbRes = ExecuteQuery( query );
+
+    while( dbRes.NextRow() )
+    {
+        Track = new guTrack();
+        FillTrackFromDb( Track, &dbRes );
+        tracks->Add( Track );
+        TrackLength += Track->m_Length;
+        TrackSize += Track->m_FileSize;
+    }
+    dbRes.Finalize();
+
+    if( len )
+        * len = TrackLength;
+    if( size )
+        * size = TrackSize;
+
     return tracks->Count();
 }
 
@@ -5072,6 +5111,8 @@ wxString GetSongsSortSQL( const int order, const bool orderdesc )
       query += wxT( "song_path" );
       break;
 
+    default :
+        return wxEmptyString;
   }
   //
   if( orderdesc )
