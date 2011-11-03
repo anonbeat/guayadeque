@@ -54,6 +54,7 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
     m_ContextMenuFlags = guCONTEXTMENU_DEFAULT;
     m_IsDefault = false;
     m_CopyToPattern = NULL;
+    m_UpdateCoversThread = NULL;
     guLogMessage( wxT( "MediaViewer '%s' => '%s' ==>> %08X" ), collection.m_Name.c_str(), collection.m_UniqueId.c_str(), playerpanel );
 
     if( !wxDirExists( guPATH_COLLECTIONS + m_MediaCollection->m_UniqueId ) )
@@ -137,6 +138,13 @@ guMediaViewer::~guMediaViewer()
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_MEDIAVIEWER_CLOSED );
     CmdEvent.SetClientData( this );
     wxPostEvent( m_MainFrame, CmdEvent );
+
+    if( m_UpdateCoversThread )
+    {
+        m_UpdateCoversThread->Pause();
+        m_UpdateCoversThread->Delete();
+        m_UpdateCoversThread = NULL;
+    }
 
     if( m_MediaCollection )
         delete m_MediaCollection;
@@ -972,6 +980,7 @@ void guMediaViewer::HandleCommand( const int command )
 
         case guCOLLECTION_ACTION_SEARCH_COVERS :
         {
+            UpdateCovers();
             break;
         }
 
@@ -1080,6 +1089,27 @@ void guMediaViewer::LibraryUpdated( void )
     {
         m_TreeViewPanel->RefreshAll();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::UpdateCovers( void )
+{
+    int GaugeId = m_MainFrame->AddGauge( m_MediaCollection->m_Name, false );
+
+    if( m_UpdateCoversThread )
+    {
+        m_UpdateCoversThread->Pause();
+        m_UpdateCoversThread->Delete();
+    }
+
+    m_UpdateCoversThread = new guUpdateCoversThread( this, GaugeId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::UpdateCoversFinished( void )
+{
+    if( m_UpdateCoversThread )
+        m_UpdateCoversThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2000,6 +2030,19 @@ guUpdateCoversThread::guUpdateCoversThread( guMediaViewer * mediaviewer, int gau
 }
 
 // -------------------------------------------------------------------------------- //
+guUpdateCoversThread::~guUpdateCoversThread()
+{
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    event.SetInt( m_GaugeId );
+    wxPostEvent( m_MediaViewer->GetMainFrame(), event );
+
+    if( !TestDestroy() )
+    {
+        m_MediaViewer->UpdateCoversFinished();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
 {
     guCoverInfos MissingCovers;
@@ -2030,9 +2073,6 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
         }
 
     }
-
-    event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
-    wxPostEvent( m_MediaViewer->GetMainFrame(), event );
 
     return 0;
 }

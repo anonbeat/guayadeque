@@ -829,7 +829,7 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 guMediaViewer * guMainFrame::FindCollectionMediaViewer( const wxString &uniqueid )
 {
-    guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
+    //guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
     int Index;
     int Count = m_MediaViewers.Count();
     for( Index = 0; Index < Count; Index++ )
@@ -1125,7 +1125,7 @@ void guMainFrame::CreateCollectionMenu( wxMenu * menu, const guMediaCollection &
 {
     wxMenu * Menu = new wxMenu();
 
-    guLogMessage( wxT( "CreateCollectionMenu( '%s' : '%s' )" ), collection.m_UniqueId.c_str(), collection.m_Name.c_str() );
+    //guLogMessage( wxT( "CreateCollectionMenu( '%s' : '%s' )" ), collection.m_UniqueId.c_str(), collection.m_Name.c_str() );
 
     guMediaViewer * MediaViewer = FindCollectionMediaViewer( collection.m_UniqueId );
     int ViewMode = MediaViewer ? MediaViewer->GetViewMode() : guMEDIAVIEWER_MODE_NONE;
