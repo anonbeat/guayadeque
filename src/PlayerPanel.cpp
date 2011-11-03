@@ -3213,6 +3213,9 @@ guSmartAddTracksThread::~guSmartAddTracksThread()
     delete m_LastFM;
 }
 
+#define guSMART_MODE_MIN_TRACK_MATCH    0.1
+#define guSMART_MODE_MIN_ARTIST_MATCH   0.2
+
 // -------------------------------------------------------------------------------- //
 void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs )
 {

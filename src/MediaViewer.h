@@ -86,6 +86,7 @@ class guMainFrame;
 class guLibUpdateThread;
 class guLibCleanThread;
 class guCopyToAction;
+class guUpdateCoversThread;
 
 // -------------------------------------------------------------------------------- //
 class guMediaViewer : public wxPanel
@@ -102,6 +103,7 @@ class guMediaViewer : public wxPanel
     guLibCleanThread *      m_CleanThread;
     wxBoxSizer *            m_FiltersSizer;
     guCopyToPattern *       m_CopyToPattern;
+    guUpdateCoversThread *  m_UpdateCoversThread;
 
     wxChoice *              m_FilterChoice;
     wxBitmapButton *        m_AddFilterButton;
@@ -238,6 +240,9 @@ class guMediaViewer : public wxPanel
 
     virtual void            LibraryUpdated( void );
 
+    virtual void            UpdateCovers( void );
+    virtual void            UpdateCoversFinished( void );
+
     virtual void            SaveLayout( wxXmlNode * xmlnode );
     virtual void            LoadLayout( wxXmlNode * xmlnode );
 
@@ -309,7 +314,7 @@ class guUpdateCoversThread : public wxThread
 
   public:
     guUpdateCoversThread( guMediaViewer * mediaviewer, int gaugeid );
-    ~guUpdateCoversThread() {}
+    ~guUpdateCoversThread();
 
     virtual ExitCode Entry();
 };
