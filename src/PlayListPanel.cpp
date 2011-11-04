@@ -1807,6 +1807,7 @@ void guPlayListPanel::SetTracksOrder( const int order, const int reload )
     m_PLTracksListBox->SetTracksOrder( order );
 
     int ColId = m_PLTracksListBox->GetTracksOrder();
+
     // Create the Columns
     wxArrayString ColumnNames = m_PLTracksListBox->GetColumnNames();
     int CurColId;

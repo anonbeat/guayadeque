@@ -138,7 +138,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangChoices.Add( _( "Hungarian" ) );
     m_MainLangChoices.Add( _( "Icelandic" ) );
     m_MainLangChoices.Add( _( "Italian" ) );
-    m_MainLangChoices.Add( _( "Norwegian Bokmål" ) );
+    m_MainLangChoices.Add( _( "Norwegian Bokmal" ) );
     m_MainLangChoices.Add( _( "Portuguese" ) );
     m_MainLangChoices.Add( _( "Portuguese-Brazilian" ) );
     m_MainLangChoices.Add( _( "Russian" ) );
