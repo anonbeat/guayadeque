@@ -90,6 +90,7 @@ class guPlayList : public guListView
     void                        OnEditTracksClicked( wxCommandEvent &event );
     void                        OnSearchClicked( wxCommandEvent &event );
     void                        OnStopAtEnd( wxCommandEvent &event ) { StopAtEnd(); }
+    void                        SetNextTracks( wxCommandEvent &event );
     void                        OnSearchLinkClicked( wxCommandEvent &event );
     void                        OnCommandClicked( wxCommandEvent &event );
     wxString                    GetSearchText( int item ) const;
@@ -137,9 +138,8 @@ class guPlayList : public guListView
 
     virtual void                ReloadItems( bool reset = true );
 
-    virtual int inline          GetItemId( const int row ) const;
-    virtual wxString inline     GetItemName( const int row ) const;
-
+    virtual wxString            GetItemName( const int row ) const { return m_Items[ row ].m_SongName; }
+    virtual int                 GetItemId( const int row ) const { return row; }
 
     guTrack *                   GetItem( size_t item );
     long                        GetCount();
