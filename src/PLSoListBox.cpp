@@ -37,6 +37,7 @@ guPLSoListBox::guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wx
              guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS | guLISTVIEW_COLUMN_SORTING )
 {
     m_TracksOrder = wxNOT_FOUND;
+    m_DisableSorting = false;
 
     CreateAcceleratorTable();
 
@@ -107,7 +108,21 @@ void guPLSoListBox::SetPlayList( int plid, int pltype )
     {
         m_PLIds.Add( plid );
         m_PLTypes.Add( pltype );
+
+        if( pltype == guPLAYLIST_TYPE_DYNAMIC )
+        {
+            guDynPlayList DynPlayList;
+            m_Db->GetDynamicPlayList( plid, &DynPlayList );
+            m_DisableSorting = false;
+            if( DynPlayList.m_Sorted )
+            {
+                SetTracksOrder( wxNOT_FOUND );
+                m_DisableSorting = true;
+                return;
+            }
+        }
     }
+
     ReloadItems();
 }
 
@@ -116,6 +131,12 @@ void guPLSoListBox::SetPlayList( const wxArrayInt &ids, const wxArrayInt &types 
 {
     m_PLIds = ids;
     m_PLTypes = types;
+
+    if( m_DisableSorting )
+    {
+        m_DisableSorting = false;
+    }
+
     ReloadItems();
 }
 
@@ -333,25 +354,39 @@ wxString guPLSoListBox::GetSearchText( int item ) const
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::SetTracksOrder( const int order )
 {
-    // Only can select multiple static playlists
-    if( ( m_PLTypes.Count() == 1 ) && ( m_PLTypes[ 0 ] == guPLAYLIST_TYPE_DYNAMIC ) )
+    if( !m_DisableSorting )
     {
-        guDynPlayList DynPlayList;
-        m_Db->GetDynamicPlayList( m_PLIds[ 0 ], &DynPlayList );
-        if( DynPlayList.m_Sorted )
-            return;
-    }
-    if( m_TracksOrder != order )
-    {
-        m_TracksOrder = order;
-        if( order == wxNOT_FOUND )
-            m_TracksOrderDesc = false;
-    }
-    else if( order != wxNOT_FOUND )
-    {
-        m_TracksOrderDesc = !m_TracksOrderDesc;
-        if( !m_TracksOrderDesc )
-            SetTracksOrder( wxNOT_FOUND );
+        if( m_TracksOrder != order )
+        {
+            m_TracksOrder = order;
+            if( order == wxNOT_FOUND )
+                m_TracksOrderDesc = false;
+        }
+        else if( order != wxNOT_FOUND )
+        {
+            m_TracksOrderDesc = !m_TracksOrderDesc;
+            if( !m_TracksOrderDesc )
+            {
+                m_TracksOrder = wxNOT_FOUND;
+                m_TracksOrderDesc = false;
+            }
+        }
+
+        int ColId = m_TracksOrder;
+
+        // Create the Columns
+        wxArrayString ColumnNames = GetColumnNames();
+        int CurColId;
+        int Index;
+        int Count = ColumnNames.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            CurColId = GetColumnId( Index );
+            SetColumnLabel( Index,
+                ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+        }
+
+        ReloadItems();
     }
 }
 

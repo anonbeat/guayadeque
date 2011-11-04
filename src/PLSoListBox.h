@@ -33,6 +33,7 @@ class guPLSoListBox : public guSoListBox
     wxArrayInt          m_DropIds;  // The array containing the id of the songs dropped
     wxLongLong          m_TracksSize;
     wxLongLong          m_TracksLength;
+    bool                m_DisableSorting;
 
     virtual void        GetItemsList( void );
     virtual void        CreateContextMenu( wxMenu * Menu ) const;
