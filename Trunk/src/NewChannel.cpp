@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "Utils.h"
 #include "Images.h"
+#include "Settings.h"
 
 #define guDIGITALPODCAST_OPML       wxT( "http://www.digitalpodcast.com/opml/digitalpodcast.opml" )
 
@@ -232,8 +233,10 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannels( wxXmlNode * XmlNode )
             NewPodcastChannel =  new guNewPodcastCategory();
             XmlNode->GetPropVal( wxT( "text" ), &NewPodcastChannel->m_Name );
         }
+
         if( !NewPodcastChannel )
             return 0;
+
         if( ReadNewPodcastChannel( XmlNode->GetChildren(), NewPodcastChannel ) )
         {
             if( !m_Filters.Count() )
@@ -280,7 +283,7 @@ void guNewPodcastChannelSelector::LoadPodcastDirectory( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "podcasts" ) );
+                                guPATH_PODCASTS, wxT( "podcasts" ) );
 
     wxSetCursor( * wxHOURGLASS_CURSOR );
     wxTheApp->Yield();
@@ -383,8 +386,7 @@ void guNewPodcastChannelSelector::OnReloadDirectoryClicked( wxCommandEvent &even
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                wxGetHomeDir() + wxT( "/.guayadeque/Podcasts" ), wxT( "podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
 
     wxRemoveFile( PodcastsPath + wxT( "/Podcast.Directory.xml" ) );
 

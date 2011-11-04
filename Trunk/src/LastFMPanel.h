@@ -38,6 +38,14 @@
 // -------------------------------------------------------------------------------- //
 class guHtmlWindow  : public wxHtmlWindow
 {
+  protected :
+    void    OnChangedSize( wxSizeEvent &event );
+    void    OnScrollTo( wxCommandEvent &event );
+
+  public :
+    guHtmlWindow( wxWindow * parent, wxWindowID id = wxNOT_FOUND, const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxHW_DEFAULT_STYLE );
+    ~guHtmlWindow();
+
 };
 
 // -------------------------------------------------------------------------------- //
@@ -416,7 +424,7 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
     guLastFMArtistInfo *    m_Info;
     wxSizer *               m_MainSizer;
     wxSizer *               m_DetailSizer;
-    wxHtmlWindow *          m_ArtistDetails;
+    guHtmlWindow *          m_ArtistDetails;
 	wxHyperlinkCtrl *       m_ShowMoreHyperLink;
 	bool                    m_ShowLongBioText;
 

@@ -49,6 +49,52 @@ WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray);
 WX_DEFINE_OBJARRAY(guLastFMTopTrackInfoArray);
 
 // -------------------------------------------------------------------------------- //
+guHtmlWindow::guHtmlWindow( wxWindow * parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style ) :
+                wxHtmlWindow( parent, id, pos, size, style )
+{
+    Connect( wxEVT_SIZE, wxSizeEventHandler( guHtmlWindow::OnChangedSize ), NULL, this );
+    Connect( guEVT_USER_FIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guHtmlWindow::OnScrollTo ), NULL, this );
+}
+
+// -------------------------------------------------------------------------------- //
+guHtmlWindow::~guHtmlWindow()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guHtmlWindow::OnScrollTo( wxCommandEvent &event )
+{
+    //guLogMessage( wxT( "Need to scroll to %i, %i" ), event.GetInt(), event.GetExtraLong() );
+    Scroll( event.GetInt(), event.GetExtraLong() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guHtmlWindow::OnChangedSize( wxSizeEvent &event )
+{
+    //wxSize Size = event.GetSize();
+    //wxSize ClientSize = GetClientSize();
+
+    int ScrollX;
+    int ScrollY;
+    CalcUnscrolledPosition( 0, 0, &ScrollX, &ScrollY );
+    //guLogMessage( wxT( "Initial position : %i, %i" ), ScrollX, ScrollY );
+
+    wxHtmlWindow::OnSize( event );
+
+    if( ScrollX || ScrollY )
+    {
+        //guLogMessage( wxT( "Setting position to %i, %i" ), ScrollX, ScrollY );
+        wxCommandEvent SizeEvent( wxEVT_COMMAND_MENU_SELECTED, guEVT_USER_FIRST );
+        SizeEvent.SetInt( ScrollX / wxHTML_SCROLL_STEP );
+        SizeEvent.SetExtraLong( ScrollY / wxHTML_SCROLL_STEP );
+        AddPendingEvent( SizeEvent );
+    }
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
 // guLastFMInfoCtrl
 // -------------------------------------------------------------------------------- //
 guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel, bool createcontrols ) :
@@ -400,7 +446,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	//m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 	m_DetailSizer->Add( TopSizer, 0, wxEXPAND, 5 );
 
-	m_ArtistDetails = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
+	m_ArtistDetails = new guHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_ArtistDetails->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
 	CurrentFont.SetPointSize( 10 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
