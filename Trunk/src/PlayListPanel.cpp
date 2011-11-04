@@ -811,10 +811,10 @@ void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
         {
             if( ItemData->GetType() == guPLAYLIST_TYPE_DYNAMIC )
             {
-                guDynPlayList DynPlayList;
-                m_Db->GetDynamicPlayList( ItemData->GetData(), &DynPlayList );
-                if( DynPlayList.m_Sorted )
-                    SetTracksOrder( wxNOT_FOUND, false );
+//                guDynPlayList DynPlayList;
+//                m_Db->GetDynamicPlayList( ItemData->GetData(), &DynPlayList );
+//                if( DynPlayList.m_Sorted )
+//                    SetTracksOrder( wxNOT_FOUND, false );
 
                 m_PLTracksListBox->SetPlayList( ItemData->GetData(), ItemData->GetType() );
                 m_LockSelection = true;
@@ -1801,35 +1801,34 @@ void guPlayListPanel::UpdatePlaylists( void )
     m_MediaViewer->PlayListUpdated();
 }
 
-// -------------------------------------------------------------------------------- //
-void guPlayListPanel::SetTracksOrder( const int order, const int reload )
-{
-    m_PLTracksListBox->SetTracksOrder( order );
-
-    int ColId = m_PLTracksListBox->GetTracksOrder();
-
-    // Create the Columns
-    wxArrayString ColumnNames = m_PLTracksListBox->GetColumnNames();
-    int CurColId;
-    int index;
-    int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
-    {
-        CurColId = m_PLTracksListBox->GetColumnId( index );
-        m_PLTracksListBox->SetColumnLabel( index,
-            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_PLTracksListBox->GetTracksOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
-    }
-
-    if( reload )
-        m_PLTracksListBox->ReloadItems();
-}
+//// -------------------------------------------------------------------------------- //
+//void guPlayListPanel::SetTracksOrder( const int order, const int reload )
+//{
+//    m_PLTracksListBox->SetTracksOrder( order );
+//
+//    int ColId = m_PLTracksListBox->GetTracksOrder();
+//
+//    // Create the Columns
+//    wxArrayString ColumnNames = m_PLTracksListBox->GetColumnNames();
+//    int CurColId;
+//    int index;
+//    int count = ColumnNames.Count();
+//    for( index = 0; index < count; index++ )
+//    {
+//        CurColId = m_PLTracksListBox->GetColumnId( index );
+//        m_PLTracksListBox->SetColumnLabel( index,
+//            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_PLTracksListBox->GetTracksOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+//    }
+//
+//    if( reload )
+//        m_PLTracksListBox->ReloadItems();
+//}
 
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksColClicked( wxListEvent &event )
 {
     int ColId = m_PLTracksListBox->GetColumnId( event.m_col );
-
-    SetTracksOrder( ColId );
+    m_PLTracksListBox->SetTracksOrder( ColId );
 }
 
 // -------------------------------------------------------------------------------- //

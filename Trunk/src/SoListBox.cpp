@@ -973,6 +973,22 @@ void guSoListBox::SetTracksOrder( const int order )
         m_TracksOrderDesc = !m_TracksOrderDesc;
         m_Db->SetTracksOrderDesc( m_TracksOrderDesc );
     }
+
+    int ColId = m_TracksOrder;
+
+    // Create the Columns
+    wxArrayString ColumnNames = GetColumnNames();
+    int CurColId;
+    int Index;
+    int Count = ColumnNames.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        CurColId = GetColumnId( Index );
+        SetColumnLabel( Index,
+            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+    }
+
+    ReloadItems();
 }
 
 // -------------------------------------------------------------------------------- //

@@ -228,8 +228,6 @@ class guPlayListPanel : public guAuiManagerPanel
 
     void                UpdatePlaylists( void );
 
-    void                SetTracksOrder( const int order, const int reload = true );
-
     void                GetPlaylistTracks( guTrackArray * tracks ) { m_PLTracksListBox->GetAllSongs( tracks ); }
 
     friend class guPLNamesTreeCtrl;
