@@ -142,7 +142,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     Connect( ID_PLAYER_PLAYLIST_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnEditTracksClicked ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSearchClicked ), NULL, this );
     Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCopyToClicked ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_STOP_ATEND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnStopAtEnd), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_STOP_ATEND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnStopAtEnd ), NULL, this );
+    Connect( ID_PLAYER_PLAYLIST_SET_NEXT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::SetNextTracks ), NULL, this );
 
     Connect( ID_PLAYER_PLAYLIST_SELECT_TITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectTrack ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSelectArtist ), NULL, this );
@@ -410,49 +411,55 @@ void guPlayList::MoveSelection( void )
         m_DragOverAfter = true;
     }
 
-        m_ItemsMutex.Lock();
+    if( !Selection.Count() )
+    {
+        return;
+    }
 
-        // Where is the Items to be moved
-        InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
-        // How Many elements to move
-        Count = Selection.Count();
-        //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
-        // Get a copy of every element to move
-        for( Index = 0; Index < Count; Index++ )
+    m_ItemsMutex.Lock();
+
+    // Where is the Items to be moved
+    InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
+    // How Many elements to move
+    Count = Selection.Count();
+    //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
+    // Get a copy of every element to move
+    for( Index = 0; Index < Count; Index++ )
+    {
+        MoveItems.Add( m_Items[ Selection[ Index ] ] );
+    }
+
+    // Remove the Items and move CurItem and InsertPos
+    // We move from last (bigger) to first
+    for( Index = Count - 1; Index >= 0; Index-- )
+    {
+        //guLogMessage( wxT( "%i) ci:%i ip:%i" ), Index, m_CurItem, InsertPos );
+        m_Items.RemoveAt( Selection[ Index ] );
+        if( Selection[ Index ] < InsertPos )
+            InsertPos--;
+        if( Selection[ Index ] < m_CurItem )
+            m_CurItem--;
+        else if( Selection[ Index ] == m_CurItem )
         {
-            MoveItems.Add( m_Items[ Selection[ Index ] ] );
+            m_CurItem = InsertPos + Index;
+            CurItemSet = true;
         }
+    }
 
-        // Remove the Items and move CurItem and InsertPos
-        // We move from last (bigger) to first
-        for( Index = Count - 1; Index >= 0; Index-- )
-        {
-            //guLogMessage( wxT( "%i) ci:%i ip:%i" ), Index, m_CurItem, InsertPos );
-            m_Items.RemoveAt( Selection[ Index ] );
-            if( Selection[ Index ] < InsertPos )
-                InsertPos--;
-            if( Selection[ Index ] < m_CurItem )
-                m_CurItem--;
-            else if( Selection[ Index ] == m_CurItem )
-            {
-                m_CurItem = InsertPos + Index;
-                CurItemSet = true;
-            }
-        }
+    //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
 
-        //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
+    // Insert every element at the InsertPos
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_Items.Insert( MoveItems[ Index ], InsertPos );
+        if( !CurItemSet && ( InsertPos <= m_CurItem ) )
+            m_CurItem++;
+        InsertPos++;
+    }
 
-        // Insert every element at the InsertPos
-        for( Index = 0; Index < Count; Index++ )
-        {
-            m_Items.Insert( MoveItems[ Index ], InsertPos );
-            if( !CurItemSet && ( InsertPos <= m_CurItem ) )
-                m_CurItem++;
-            InsertPos++;
-        }
-
-        //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
-        m_ItemsMutex.Unlock();
+    //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
+    m_DragOverItem = wxNOT_FOUND;
+    m_ItemsMutex.Unlock();
     ClearSelectedItems();
 }
 
@@ -1524,6 +1531,11 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 
     if( SelCount )
     {
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SET_NEXT_TRACK,
+                                _( "Set as Next Track" ),
+                                _( "Move the selected tracks to be played next" ) );
+        Menu->Append( MenuItem );
+
         wxMenu * RatingMenu = new wxMenu();
 
         MenuItem = new wxMenuItem( RatingMenu, ID_PLAYERPANEL_SETRATING_0, wxT( "☆☆☆☆☆" ), _( "Set the rating to 0" ), wxITEM_NORMAL );
@@ -2287,6 +2299,14 @@ int guPlayList::GetCaps()
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::SetNextTracks( wxCommandEvent &event )
+{
+    m_DragOverItem = ( m_CurItem == wxNOT_FOUND ) ? 0 : m_CurItem;
+    m_DragOverAfter = true;
+    MoveSelection();
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnSearchLinkClicked( wxCommandEvent &event )
 {
     unsigned long cookie;
@@ -2418,17 +2438,17 @@ void guPlayList::UpdatedTrack( const guTrack * track )
     }
 }
 
-// -------------------------------------------------------------------------------- //
-wxString inline guPlayList::GetItemName( const int row ) const
-{
-    return m_Items[ row ].m_SongName;
-}
-
-// -------------------------------------------------------------------------------- //
-int inline guPlayList::GetItemId( const int row ) const
-{
-    return row;
-}
+//// -------------------------------------------------------------------------------- //
+//wxString inline guPlayList::GetItemName( const int row ) const
+//{
+//    return m_Items[ row ].m_SongName;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//int inline guPlayList::GetItemId( const int row ) const
+//{
+//    return row;
+//}
 
 // -------------------------------------------------------------------------------- //
 wxString guPlayList::GetSearchText( int item ) const
