@@ -878,8 +878,9 @@ bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
                 m_TextSearchFilter = guSplitWords( m_LastSearchString );
 
                 RefreshCount();
-                ReloadItems();
+                m_ItemStart = 0;
                 m_LastItemStart = wxNOT_FOUND;
+                ReloadItems();
                 m_NavSlider->SetValue( 0 );
                 RefreshAll();
 
@@ -892,8 +893,9 @@ bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
             m_TextSearchFilter.Clear();
 
             RefreshCount();
-            ReloadItems();
+            m_ItemStart = 0;
             m_LastItemStart = wxNOT_FOUND;
+            ReloadItems();
             m_NavSlider->SetValue( 0 );
             RefreshAll();
 
