@@ -2580,7 +2580,7 @@ bool guASFTagInfo::Read( void )
             {
                 if( m_ASFTag->attributeListMap().contains( "ALBUM_LABELS" ) )
                 {
-                    m_AlbumLabelsStr = TStringTowxString( m_ASFTag->attributeListMap()[ "ARTIST_LABELS" ].front().toString() );
+                    m_AlbumLabelsStr = TStringTowxString( m_ASFTag->attributeListMap()[ "ALBUM_LABELS" ].front().toString() );
                     m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
                 }
             }
