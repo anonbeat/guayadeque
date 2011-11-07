@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-04 06:55+0000\n"
-"PO-Revision-Date: 2011-11-04 13:53-0000\n"
+"PO-Revision-Date: 2011-11-04 21:09-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@gmail.com>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -1440,7 +1440,7 @@ msgstr "Tónjafnari"
 
 #: Equalizer.cpp:112
 msgid "Preset:"
-msgstr "Forstilt:"
+msgstr "Forstillt:"
 
 #: FileBrowser.cpp:204
 #: FileBrowser.cpp:569
@@ -3621,7 +3621,7 @@ msgstr "Tékkneska"
 
 #: Preferences.cpp:134
 msgid "Dutch"
-msgstr "Þýska"
+msgstr "Hollenska"
 
 #: Preferences.cpp:135
 #: Preferences.cpp:169
@@ -3662,7 +3662,7 @@ msgstr "Portúgalska"
 
 #: Preferences.cpp:143
 msgid "Portuguese-Brazilian"
-msgstr "Portúgalska-Brasilíska"
+msgstr "Portúgalska-Brasilía"
 
 #: Preferences.cpp:144
 msgid "Russian"

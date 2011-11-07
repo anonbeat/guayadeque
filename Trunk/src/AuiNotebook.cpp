@@ -316,12 +316,9 @@ guAuiNotebook::guAuiNotebook() : wxAuiNotebook()
 }
 
 // -------------------------------------------------------------------------------- //
-guAuiNotebook::guAuiNotebook(wxWindow *parent,
-                             wxWindowID id,
-                             const wxPoint& pos,
-                             const wxSize& size,
-                             long style) :
-    wxAuiNotebook( parent, id, pos, size, style )
+guAuiNotebook::guAuiNotebook( wxWindow * parent, wxWindowID id, const wxPoint &pos,
+                             const wxSize &size, long style ) :
+    wxAuiNotebook( parent, id, pos, size, style | wxNO_BORDER )
 {
     SetArtProvider( new guAuiTabArt() );
 }
