@@ -1812,28 +1812,28 @@ wxString guMediaViewerPortableDeviceBase::GetCoverName( const int albumid )
         CoverName = wxT( "cover" );
     }
 
-    int DevCoverFormats = m_PortableDevice->CoverFormats();
-
-    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
-    {
-        CoverName += wxT( ".jpg" );
-    }
-    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
-    {
-        CoverName += wxT( ".png" );
-    }
-    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
-    {
-        CoverName += wxT( ".gif" );
-    }
-    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
-    {
-        CoverName += wxT( ".bmp" );
-    }
-    else
-    {
-        CoverName += wxT( ".jpg" );
-    }
+//    int DevCoverFormats = m_PortableDevice->CoverFormats();
+//
+//    if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
+//    {
+//        CoverName += wxT( ".jpg" );
+//    }
+//    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
+//    {
+//        CoverName += wxT( ".png" );
+//    }
+//    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_GIF )
+//    {
+//        CoverName += wxT( ".gif" );
+//    }
+//    else if( DevCoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
+//    {
+//        CoverName += wxT( ".bmp" );
+//    }
+//    else
+//    {
+//        CoverName += wxT( ".jpg" );
+//    }
 
     return CoverName;
 }

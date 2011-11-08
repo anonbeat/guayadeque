@@ -1166,90 +1166,90 @@ void guLibPanel::OnAlbumEditTracksClicked( wxCommandEvent &event )
     DoEditTracks( Tracks );
 }
 
-// -------------------------------------------------------------------------------- //
-wxString guLibPanel::GetCoverName( void )
-{
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
-    return ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
-}
+//// -------------------------------------------------------------------------------- //
+//wxString guLibPanel::GetCoverName( void )
+//{
+//    guConfig * Config = ( guConfig * ) guConfig::Get();
+//    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
+//    return ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+//}
 
-// -------------------------------------------------------------------------------- //
-bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg )
-{
-    wxString CoverName = albumpath + GetCoverName();
-
-    int MaxSize = GetCoverMaxSize();
-    if( MaxSize != wxNOT_FOUND )
-    {
-        coverimg->Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
-    }
-
-    if( coverimg->SaveFile( CoverName, GetCoverType() ) )
-    {
-        m_Db->SetAlbumCover( albumid, CoverName );
-
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
-        evt.SetInt( albumid );
-        evt.SetClientData( this );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
-        return true;
-    }
-    return false;
-}
-
-// -------------------------------------------------------------------------------- //
-bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath )
-{
-    wxString CoverName = albumpath + GetCoverName();
-    int MaxSize = GetCoverMaxSize();
-
-    wxURI Uri( coverpath );
-    if( Uri.IsReference() )
-    {
-        wxImage CoverImage( coverpath );
-        if( CoverImage.IsOk() )
-        {
-            if( MaxSize != wxNOT_FOUND )
-            {
-                CoverImage.Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
-            }
-
-            if( ( coverpath == CoverName ) || CoverImage.SaveFile( CoverName, GetCoverType() ) )
-            {
-                m_Db->SetAlbumCover( albumid, CoverName );
-
-                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
-                evt.SetInt( albumid );
-                evt.SetClientData( this );
-                wxPostEvent( wxTheApp->GetTopWindow(), evt );
-                return true;
-            }
-        }
-        else
-        {
-            guLogError( wxT( "Could not load the imate '%s'" ), coverpath.c_str() );
-        }
-    }
-    else
-    {
-        if( DownloadImage( coverpath, CoverName, GetCoverType(), MaxSize, MaxSize ) )
-        {
-            m_Db->SetAlbumCover( albumid, CoverName );
-
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
-            evt.SetInt( albumid );
-            evt.SetClientData( this );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
-            return true;
-        }
-        else
-        {
-            guLogError( wxT( "Failed to download file '%s'" ), coverpath.c_str() );
-        }
-    }
-    return false;
-}
+//// -------------------------------------------------------------------------------- //
+//bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg )
+//{
+//    wxString CoverName = albumpath + m_MediaViewer->GetCoverName() + wxT( ".jpg" );
+//
+//    int MaxSize = GetCoverMaxSize();
+//    if( MaxSize != wxNOT_FOUND )
+//    {
+//        coverimg->Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
+//    }
+//
+//    if( coverimg->SaveFile( CoverName, GetCoverType() ) )
+//    {
+//        m_Db->SetAlbumCover( albumid, CoverName );
+//
+//        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
+//        evt.SetInt( albumid );
+//        evt.SetClientData( this );
+//        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//        return true;
+//    }
+//    return false;
+//}
+//
+//// -------------------------------------------------------------------------------- //
+//bool guLibPanel::SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath )
+//{
+//    wxString CoverName = albumpath + m_MediaViewer->GetCoverName() + wxT( ".jpg" );
+//    int MaxSize = GetCoverMaxSize();
+//
+//    wxURI Uri( coverpath );
+//    if( Uri.IsReference() )
+//    {
+//        wxImage CoverImage( coverpath );
+//        if( CoverImage.IsOk() )
+//        {
+//            if( MaxSize != wxNOT_FOUND )
+//            {
+//                CoverImage.Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
+//            }
+//
+//            if( ( coverpath == CoverName ) || CoverImage.SaveFile( CoverName, GetCoverType() ) )
+//            {
+//                m_Db->SetAlbumCover( albumid, CoverName );
+//
+//                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
+//                evt.SetInt( albumid );
+//                evt.SetClientData( this );
+//                wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//                return true;
+//            }
+//        }
+//        else
+//        {
+//            guLogError( wxT( "Could not load the imate '%s'" ), coverpath.c_str() );
+//        }
+//    }
+//    else
+//    {
+//        if( DownloadImage( coverpath, CoverName, GetCoverType(), MaxSize, MaxSize ) )
+//        {
+//            m_Db->SetAlbumCover( albumid, CoverName );
+//
+//            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
+//            evt.SetInt( albumid );
+//            evt.SetClientData( this );
+//            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//            return true;
+//        }
+//        else
+//        {
+//            guLogError( wxT( "Failed to download file '%s'" ), coverpath.c_str() );
+//        }
+//    }
+//    return false;
+//}
 
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumDownloadCoverClicked( wxCommandEvent &event )

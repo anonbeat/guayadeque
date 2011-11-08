@@ -243,6 +243,8 @@ class guMediaViewer : public wxPanel
     virtual void            UpdateCovers( void );
     virtual void            UpdateCoversFinished( void );
 
+    virtual void            ImportFiles( void );
+
     virtual void            SaveLayout( wxXmlNode * xmlnode );
     virtual void            LoadLayout( wxXmlNode * xmlnode );
 

@@ -321,12 +321,12 @@ class guLibPanel : public guAuiManagerPanel
 
 //    virtual wxArrayString   GetCoverSearchWords( void );
 
-    virtual wxString        GetCoverName( void );
-    virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
-    virtual int             GetCoverMaxSize( void ) { return wxNOT_FOUND; }
+//    virtual wxString        GetCoverName( void );
+//    virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
+//    virtual int             GetCoverMaxSize( void ) { return wxNOT_FOUND; }
 
-    virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
-    virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
+//    virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg );
+//    virtual bool            SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath );
 
     virtual int             GetListViewColumnCount( void ) { return guSONGS_COLUMN_COUNT; }
     virtual bool            GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_SongListCtrl->GetColumnData( id, index, width, enabled ); }

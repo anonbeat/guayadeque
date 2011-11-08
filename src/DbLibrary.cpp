@@ -3001,11 +3001,6 @@ int guDbLibrary::GetAlbumsCount( guDynPlayList * filter, const wxArrayString &te
 
   query = wxT( "SELECT COUNT( DISTINCT song_albumid ) FROM songs " );
 
-//  if( textfilters.Count() )
-//  {
-//      query += wxT( ", albums, artists " );
-//  }
-
   if( filter )
   {
     postquery += DynPlayListToSQLQuery( filter );
@@ -3021,13 +3016,12 @@ int guDbLibrary::GetAlbumsCount( guDynPlayList * filter, const wxArrayString &te
     postquery += AlbumBrowserTextFilterToSQL( textfilters );
   }
 
-  //SELECT playlist_id, playlist_nameguLogMessage( wxT( "GetAlbumsCount:\n%s" ), ( query + postquery ).c_str() );
-
   dbRes = ExecuteQuery( query + postquery );
 
   if( dbRes.NextRow() )
   {
       RetVal = dbRes.GetInt( 0 );
+      guLogMessage( wxT( "Got %i albums" ), RetVal );
   }
   dbRes.Finalize();
 
@@ -3105,7 +3099,6 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
 
   query += wxString::Format( wxT( " LIMIT %i, %i" ), start, count );
 
-  //guLogMessage( wxT( "GetAlbums:\n%s" ), query.c_str() );
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )

@@ -344,8 +344,8 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     }
 
 
-    wxString CoverName = m_MediaViewer->GetCoverName( wxNOT_FOUND );
-    int CoverType = m_MediaViewer->GetCoverType();
+    wxString CoverName = m_MediaViewer->GetCoverName( wxNOT_FOUND ) + wxT( ".jpg" );
+    //int CoverType = m_MediaViewer->GetCoverType();
     int CoverMaxSize = m_MediaViewer->GetCoverMaxSize();
 
     Count = m_ImageFiles.Count();
@@ -362,7 +362,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( Index >= Count ) )
                 break;
 
-            m_Db->UpdateImageFile( m_ImageFiles[ Index ].ToUTF8(), CoverName.ToUTF8(), CoverType, CoverMaxSize );
+            m_Db->UpdateImageFile( m_ImageFiles[ Index ].ToUTF8(), CoverName.ToUTF8(), wxBITMAP_TYPE_JPEG, CoverMaxSize );
             Index++;
             if( Index > LastIndex )
             {

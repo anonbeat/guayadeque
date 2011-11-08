@@ -25,6 +25,7 @@
 #include "CoverEdit.h"
 #include "DynamicPlayList.h"
 #include "Images.h"
+#include "ImportFiles.h"
 #include "LibUpdate.h"
 #include "MainFrame.h"
 #include "SelCoverFile.h"
@@ -925,10 +926,25 @@ void guMediaViewer::SetFilter( const wxString &filterstr )
 void guMediaViewer::CreateContextMenu( wxMenu * menu, const int windowid )
 {
     wxMenu * Menu = new wxMenu();
+    wxMenuItem * MenuItem;
 
     int BaseCommand = GetBaseCommand();
+    int Type = GetType();
 
-    wxMenuItem * MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY, _( "Update" ), _( "Update the collection library" ), wxITEM_NORMAL );
+    if( ( Type == guMEDIA_COLLECTION_TYPE_NORMAL ) ||
+        ( Type == guMEDIA_COLLECTION_TYPE_PORTABLE_DEVICE ) ||
+        ( Type == guMEDIA_COLLECTION_TYPE_IPOD ) )
+    {
+        MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_ADD_PATH, _( "Add Path" ), _( "Add path to the collection" ), wxITEM_NORMAL );
+        Menu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_IMPORT, _( "Import Files" ), _( "Import files into the collection" ), wxITEM_NORMAL );
+        Menu->Append( MenuItem );
+    }
+
+    Menu->AppendSeparator();
+
+    MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY, _( "Update" ), _( "Update the collection library" ), wxITEM_NORMAL );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, BaseCommand + guCOLLECTION_ACTION_RESCAN_LIBRARY, _( "Rescan" ), _( "Rescan the collection library" ), wxITEM_NORMAL );
@@ -992,6 +1008,7 @@ void guMediaViewer::HandleCommand( const int command )
 
         case guCOLLECTION_ACTION_IMPORT :
         {
+            ImportFiles();
             break;
         }
     }
@@ -1152,6 +1169,25 @@ void guMediaViewer::OnAddPath( void )
             }
         }
         DirDialog->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::ImportFiles( void )
+{
+    guTrackArray * Tracks = new guTrackArray();
+    guImportFiles * ImportFiles = new guImportFiles( this, this, Tracks );
+    if( ImportFiles )
+    {
+        if( ImportFiles->ShowModal() == wxID_OK  )
+        {
+            m_MainFrame->ImportFiles( this, Tracks, ImportFiles->GetCopyToOption(), ImportFiles->GetCopyToPath() );
+        }
+        else
+        {
+            delete Tracks;
+        }
+        ImportFiles->Destroy();
     }
 }
 
@@ -1478,13 +1514,13 @@ bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &coverpath,
 // -------------------------------------------------------------------------------- //
 wxString guMediaViewer::GetCoverName( const int albumid )
 {
-    return m_MediaCollection->m_CoverWords.Count() ? m_MediaCollection->m_CoverWords[ 0 ] : wxT( "cover.jpg" );
+    return m_MediaCollection->m_CoverWords.Count() ? m_MediaCollection->m_CoverWords[ 0 ] : wxT( "cover" );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath, wxImage * coverimg )
 {
-    wxString CoverName = albumpath + GetCoverName( albumid );
+    wxString CoverName = albumpath + GetCoverName( albumid ) + wxT( ".jpg" );
 
     int MaxSize = GetCoverMaxSize();
     if( MaxSize != wxNOT_FOUND )
@@ -1492,7 +1528,7 @@ bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath,
         coverimg->Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
     }
 
-    if( coverimg->SaveFile( CoverName, GetCoverType() ) )
+    if( coverimg->SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
     {
         SetAlbumCover( albumid, CoverName );
         return true;
@@ -1503,7 +1539,7 @@ bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath,
 // -------------------------------------------------------------------------------- //
 bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath, wxString &coverpath )
 {
-    wxString CoverName = albumpath + GetCoverName( albumid );
+    wxString CoverName = albumpath + GetCoverName( albumid ) + wxT( ".jpg" );
     int MaxSize = GetCoverMaxSize();
 
     wxURI Uri( coverpath );
@@ -1517,7 +1553,7 @@ bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath,
                 CoverImage.Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
             }
 
-            if( ( coverpath == CoverName ) || CoverImage.SaveFile( CoverName, GetCoverType() ) )
+            if( ( coverpath == CoverName ) || CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
             {
                 SetAlbumCover( albumid, CoverName );
                 return true;
@@ -1645,7 +1681,7 @@ bool guMediaViewer::FindMissingCover( const int albumid, const wxString &artistn
                 //guLogMessage( wxT( "ImageLink : %s" ), AlbumInfo.ImageLink.c_str() );
                 // Save the cover into the target directory.
                 // Changed to DownloadImage to convert all images to jpg
-                wxString CoverName = albumpath + GetCoverName( albumid );
+                wxString CoverName = albumpath + GetCoverName( albumid ) + wxT( ".jpg" );
                 if( !DownloadImage( AlbumInfo.m_ImageLink, CoverName ) )
                 {
                     guLogWarning( wxT( "Could not download cover file" ) );

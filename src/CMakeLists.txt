@@ -274,6 +274,8 @@ ADD_EXECUTABLE( guayadeque
 	MediaViewerLibrary.h
 	iPodMedia.cpp
 	iPodMedia.h
+	ImportFiles.cpp
+	ImportFiles.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
