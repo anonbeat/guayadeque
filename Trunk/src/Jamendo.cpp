@@ -1181,7 +1181,7 @@ wxImage * guMediaViewerJamendo::GetAlbumCover( const int albumid, int &coverid,
     if( CoverImage )
         return CoverImage;
 
-    wxString CoverFile = guPATH_JAMENDO_COVERS + GetCoverName( albumid );
+    wxString CoverFile = guPATH_JAMENDO_COVERS + GetCoverName( albumid ) + wxT( ".jpg" );
     if( wxFileExists( CoverFile ) )
     {
         wxImage * CoverImage = new wxImage( CoverFile, wxBITMAP_TYPE_JPEG );
@@ -1209,7 +1209,7 @@ wxImage * guMediaViewerJamendo::GetAlbumCover( const int albumid, int &coverid,
 // -------------------------------------------------------------------------------- //
 wxString guMediaViewerJamendo::GetCoverName( const int albumid )
 {
-    return wxString::Format( wxT( "%u.jpg" ), albumid );
+    return wxString::Format( wxT( "%u" ), albumid );
 }
 
 // -------------------------------------------------------------------------------- //

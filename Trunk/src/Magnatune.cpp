@@ -1112,7 +1112,7 @@ wxString guMediaViewerMagnatune::GetCoverName( const int albumid )
     wxString Album;
     if( m_Db->GetAlbumInfo( albumid, &Album, &Artist, NULL ) )
     {
-        return wxString::Format( wxT( "%s-%s.jpg" ), Artist.c_str(), Album.c_str() );
+        return wxString::Format( wxT( "%s-%s" ), Artist.c_str(), Album.c_str() );
     }
     return wxEmptyString;
 }

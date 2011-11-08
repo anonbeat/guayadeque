@@ -112,6 +112,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_CopyToOptions = NULL;
     m_LyricSearchEngine = NULL;
     m_LyricSourceSelected = wxNOT_FOUND;
+    m_LibOptCopyToChoice = NULL;
 
     m_Config = ( guConfig * ) guConfig::Get();
     if( !m_Config )

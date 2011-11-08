@@ -842,6 +842,20 @@ guMediaViewer * guMainFrame::FindCollectionMediaViewer( const wxString &uniqueid
 }
 
 // -------------------------------------------------------------------------------- //
+int guMainFrame::GetMediaViewerIndex( guMediaViewer * mediaviewer )
+{
+    //guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
+    int Index;
+    int Count = m_MediaViewers.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_MediaViewers[ Index ] == mediaviewer )
+            return Index;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
 guMediaCollection * guMainFrame::FindCollection( const wxString &uniqueid )
 {
     int Index;
@@ -2183,6 +2197,54 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
         {
             delete Tracks;
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::ImportFiles( guMediaViewer * mediaviewer, guTrackArray * tracks, const wxString &copytooption, const wxString &destdir )
+{
+    guCopyToPattern * CopyToPattern = NULL;
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+
+    int Index;
+    int Count;
+    if( ( Count = CopyToOptions.Count() ) )
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            if( CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) ) == copytooption )
+            {
+                CopyToPattern = new guCopyToPattern( CopyToOptions[ Index ] );
+                break;
+            }
+        }
+    }
+
+    if( CopyToPattern )
+    {
+        m_CopyToThreadMutex.Lock();
+
+        if( !m_CopyToThread )
+        {
+            int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ), false );
+            m_CopyToThread = new guCopyToThread( this, GaugeId );
+        }
+
+        m_CopyToThread->AddAction( tracks, mediaviewer, destdir,
+                    CopyToPattern->m_Pattern,
+                    CopyToPattern->m_Format,
+                    CopyToPattern->m_Quality,
+                    CopyToPattern->m_MoveFiles );
+
+        m_CopyToThreadMutex.Unlock();
+
+        delete CopyToPattern;
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not find the copy to option selected" ) );
     }
 }
 

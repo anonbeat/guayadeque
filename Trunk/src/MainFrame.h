@@ -215,7 +215,6 @@ class guMainFrame : public wxFrame
     guDBusNotify *                  m_NotifySrv;
 
     guGIO_VolumeMonitor *           m_VolumeMonitor;
-//    guPortableMediaViewCtrlArray    m_PortableMediaViewCtrls;
 
     wxWindow *                      m_CurrentPage;
 
@@ -238,9 +237,7 @@ class guMainFrame : public wxFrame
 
     int                             m_LoadLayoutPending;
 
-//    void                            OnUpdateLibrary( wxCommandEvent &event );
     void                            OnUpdatePodcasts( wxCommandEvent &event );
-//    void                            OnUpdateCovers( wxCommandEvent &event );
     void                            OnUpdateTrack( wxCommandEvent &event );
     void                            OnPlayerStatusChanged( wxCommandEvent &event );
     void                            OnPlayerTrackListChanged( wxCommandEvent &event );
@@ -249,7 +246,6 @@ class guMainFrame : public wxFrame
     void                            OnAudioScrobbleUpdate( wxCommandEvent &event );
 
     guMediaViewer *                 FindCollectionMediaViewer( void * windowptr );
-//    int                             FindCollectionUniqueId( const wxString &uniqueid );
 
     void                            CreateCollectionsMenu( wxMenu * menu );
     void                            CreateCollectionMenu( wxMenu * menu, const guMediaCollection &collection,
@@ -259,7 +255,6 @@ class guMainFrame : public wxFrame
     void                            CreateViewMenu( wxMenu * menu );
     void                            CreateLayoutMenus( wxMenu * menu );
     void                            CreateControlsMenu( wxMenu * menu );
-//    void                            CreateActionsMenu( wxMenu * menu );
     void                            CreateHelpMenu( wxMenu * menu );
 
     void                            CreateMenu();
@@ -283,10 +278,11 @@ class guMainFrame : public wxFrame
     void                            OnAbout( wxCommandEvent &event );
     void                            OnHelp( wxCommandEvent &event );
     void                            OnCommunity( wxCommandEvent &event );
+
     void                            OnCopyTracksTo( wxCommandEvent &event );
     void                            OnCopyTracksToDevice( wxCommandEvent &event );
     void                            OnCopyPlayListToDevice( wxCommandEvent &event );
-//    void                            OnUpdateLabels( wxCommandEvent &event );
+
     void                            OnPlayerPlayListUpdateTitle( wxCommandEvent &event );
 
     void                            CheckShowNotebook( void );
@@ -295,13 +291,6 @@ class guMainFrame : public wxFrame
     void                            OnGaugeCreate( wxCommandEvent &event );
 
     void                            OnSetSelection( wxCommandEvent &event );
-//    void                            OnSelectTrack( wxCommandEvent &event );
-//    void                            OnSelectAlbum( wxCommandEvent &event );
-//    void                            OnSelectAlbumArtist( wxCommandEvent &event );
-//    void                            OnSelectComposer( wxCommandEvent &event );
-//    void                            OnSelectArtist( wxCommandEvent &event );
-//    void                            OnSelectYear( wxCommandEvent &event );
-//    void                            OnSelectGenre( wxCommandEvent &event );
     void                            OnSelectLocation( wxCommandEvent &event );
 
     void                            OnPlayListUpdated( wxCommandEvent &event );
@@ -359,8 +348,6 @@ class guMainFrame : public wxFrame
     void                            LoadPerspective( const wxString &layout );
     void                            LoadTabsPerspective( const wxString &layout );
 
-//    void                            OnForceUpdateLibrary( wxCommandEvent &event );
-//    void                            OnAddLibraryPath( wxCommandEvent &event );
     void                            OnPlayStream( wxCommandEvent &event );
 
     void                            OnViewFullScreen( wxCommandEvent &event );
@@ -447,9 +434,6 @@ class guMainFrame : public wxFrame
 
     wxArrayString                   PortableDeviceVolumeNames( void ) { return m_VolumeMonitor->GetMountNames(); }
 
-//    guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( const int basecmd );
-//    guPortableMediaViewCtrl *       GetPortableMediaViewCtrl( wxWindow * libpanel, const int windowtype = guPANEL_MAIN_LIBRARY );
-
     guLyricSearchEngine *           LyricSearchEngine( void ) { return m_LyricSearchEngine; }
 
     int                             AddGauge( const wxString &label, const bool showpercent = true );
@@ -463,10 +447,13 @@ class guMainFrame : public wxFrame
     void                            GetCollectionsCoverNames( wxArrayString &covernames );
 
     guMediaViewer *                 FindCollectionMediaViewer( const wxString &uniqueid );
+    int                             GetMediaViewerIndex( guMediaViewer * mediaviewer );
     guMediaCollection *             FindCollection( const wxString &uniqueid );
 
     void                            MediaViewerCreated( const wxString &uniqueid, guMediaViewer * mediaviewer );
     void                            MediaViewerClosed( guMediaViewer * mediaviewer );
+
+    void                            ImportFiles( guMediaViewer * mediaviewer, guTrackArray * tracks, const wxString &copytooption, const wxString &destdir );
 
 };
 
