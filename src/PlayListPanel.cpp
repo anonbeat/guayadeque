@@ -137,33 +137,67 @@ void guPLNamesTreeCtrl::CreateAcceleratorTable( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPLNamesTreeCtrl::ReloadItems( void )
+void guPLNamesTreeCtrl::ReloadItems( const bool reset )
 {
-    int index;
-    int count;
+    int Index;
+    int Count;
+    wxArrayTreeItemIds SelectedItems;
+    wxArrayInt         SelectedIds;
+    int SelCount = 0;
+
+    if( !reset )
+    {
+        SelCount = GetSelections( SelectedItems );
+        for( Index = 0; Index < SelCount; Index++ )
+        {
+            guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( SelectedItems[ Index ] );
+            if( ItemData )
+            {
+                SelectedIds.Add( ItemData->GetData() );
+            }
+        }
+        SelectedItems.Empty();
+    }
 
     DeleteChildren( m_StaticId );
     DeleteChildren( m_DynamicId );
 
     guListItems m_StaticItems;
     m_Db->GetPlayLists( &m_StaticItems, guPLAYLIST_TYPE_STATIC, &m_TextSearchFilter );
-    if( ( count = m_StaticItems.Count() ) )
+    if( ( Count = m_StaticItems.Count() ) )
     {
-        for( index = 0; index < count; index++ )
+        for( Index = 0; Index < Count; Index++ )
         {
-            AppendItem( m_StaticId, m_StaticItems[ index ].m_Name, -1, -1,
-                                new guPLNamesData( m_StaticItems[ index ].m_Id, guPLAYLIST_TYPE_STATIC ) );
+            wxTreeItemId NewItemId = AppendItem( m_StaticId, m_StaticItems[ Index ].m_Name, -1, -1,
+                                new guPLNamesData( m_StaticItems[ Index ].m_Id, guPLAYLIST_TYPE_STATIC ) );
+            if( SelectedIds.Index( m_StaticItems[ Index ].m_Id ) != wxNOT_FOUND )
+            {
+                SelectedItems.Add( NewItemId );
+            }
         }
     }
 
     guListItems m_DynamicItems;
     m_Db->GetPlayLists( &m_DynamicItems, guPLAYLIST_TYPE_DYNAMIC, &m_TextSearchFilter );
-    if( ( count = m_DynamicItems.Count() ) )
+    if( ( Count = m_DynamicItems.Count() ) )
     {
-        for( index = 0; index < count; index++ )
+        for( Index = 0; Index < Count; Index++ )
         {
-            AppendItem( m_DynamicId, m_DynamicItems[ index ].m_Name, -1, -1,
-                                new guPLNamesData( m_DynamicItems[ index ].m_Id, guPLAYLIST_TYPE_DYNAMIC ) );
+            wxTreeItemId NewItemId = AppendItem( m_DynamicId, m_DynamicItems[ Index ].m_Name, -1, -1,
+                                new guPLNamesData( m_DynamicItems[ Index ].m_Id, guPLAYLIST_TYPE_DYNAMIC ) );
+            if( SelectedIds.Index( m_DynamicItems[ Index ].m_Id ) != wxNOT_FOUND )
+            {
+                SelectedItems.Add( NewItemId );
+            }
+        }
+    }
+
+    if( !reset )
+    {
+        Count = SelectedItems.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            SelectItem( SelectedItems[ Index ] );
         }
     }
 }
@@ -1276,7 +1310,9 @@ void guPlayListPanel::OnPLTracksEditLabelsClicked( wxCommandEvent &event )
                 m_Db->UpdateSongsLabels( LabelSets );
             }
             LabelEditor->Destroy();
+            m_LockSelection = true;
             m_PLTracksListBox->ReloadItems( false );
+            m_LockSelection = false;
         }
     }
 
@@ -1611,7 +1647,9 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
 void guPlayListPanel::PlayListUpdated( void )
 {
     //guLogMessage( wxT( "guPLayListPanel::PlayListUpdated" ) );
-    m_NamesTreeCtrl->ReloadItems();
+    m_LockSelection = true;
+    m_NamesTreeCtrl->ReloadItems( false );
+    m_LockSelection = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1797,7 +1835,10 @@ void guPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag 
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::UpdatePlaylists( void )
 {
-    m_NamesTreeCtrl->ReloadItems();
+    m_LockSelection = true;
+    m_NamesTreeCtrl->ReloadItems( false );
+    m_PLTracksListBox->ReloadItems( false );
+    m_LockSelection = false;
     m_MediaViewer->PlayListUpdated();
 }
 
