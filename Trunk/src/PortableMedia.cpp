@@ -377,7 +377,7 @@ guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
     m_TranscodeFormat = Config->Read( wxT( "transcode_format" ), guTRANSCODE_FORMAT_KEEP );
     m_TranscodeScope = Config->Read( wxT( "transcode_scope" ), guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
     m_TranscodeQuality = Config->Read( wxT( "transcode_quality" ), guTRANSCODE_QUALITY_KEEP );
-    m_AudioFolders = Config->Read( wxT( "audio_folders" ), wxT( "/" ) );
+    m_AudioFolders = Config->Read( wxT( "audio_folders" ), wxT( "" ) );
     m_PlaylistFormats = MimeStrToPlaylistFormat( Config->Read( wxT( "playlist_format" ), wxEmptyString ) );
     m_PlaylistFolder = Config->Read( wxT( "playlist_path" ), wxEmptyString );
     m_CoverFormats = MimeStrToCoverFormat( Config->Read( wxT( "cover_art_file_type" ), wxT( "jpeg" ) ) );
@@ -1892,10 +1892,7 @@ wxArrayString guMediaViewerPortableDevice::GetPaths( void )
     for( Index = 0; Index < Count; Index++ )
     {
         Paths[ Index ] = m_PortableDevice->MountPath() + Paths[ Index ];
-        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
-        {
-            Paths[ Index ].RemoveLast();
-        }
+        Paths[ Index ].Replace( wxT( "//" ), wxT( "/" ) );
     }
     return Paths;
 }
