@@ -243,7 +243,9 @@ class guMediaViewer : public wxPanel
     virtual void            UpdateCovers( void );
     virtual void            UpdateCoversFinished( void );
 
-    virtual void            ImportFiles( void );
+    virtual void            ImportFiles( void ) { ImportFiles( new guTrackArray() ); }
+    virtual void            ImportFiles( guTrackArray * tracks );
+    virtual void            ImportFiles( const wxArrayString &files );
 
     virtual void            SaveLayout( wxXmlNode * xmlnode );
     virtual void            LoadLayout( wxXmlNode * xmlnode );
@@ -319,6 +321,19 @@ class guUpdateCoversThread : public wxThread
     ~guUpdateCoversThread();
 
     virtual ExitCode Entry();
+};
+
+// -------------------------------------------------------------------------------- //
+class guMediaViewerDropTarget : public wxFileDropTarget
+{
+  protected :
+    guMediaViewer * m_MediaViewer;
+
+  public :
+    guMediaViewerDropTarget( guMediaViewer * libpanel );
+    ~guMediaViewerDropTarget();
+
+    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames );
 };
 
 #endif
