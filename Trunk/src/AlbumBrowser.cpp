@@ -167,7 +167,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 	Layout();
 	m_MainSizer->Fit( this );
 
-    SetDropTarget( new guAlbumBrowserDropTarget( this ) );
+    SetDropTarget( new guAlbumBrowserDropTarget( m_AlbumBrowser->m_MediaViewer, this ) );
 
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowserItemPanel::OnContextMenu ), NULL, this );
 
@@ -1362,9 +1362,10 @@ void guAlbumBrowser::CreateContextMenu( wxMenu * menu )
 // -------------------------------------------------------------------------------- //
 // guAlbumBrowserDropTarget
 // -------------------------------------------------------------------------------- //
-guAlbumBrowserDropTarget::guAlbumBrowserDropTarget( guAlbumBrowserItemPanel * itempanel ) :
+guAlbumBrowserDropTarget::guAlbumBrowserDropTarget( guMediaViewer * mediaviewer, guAlbumBrowserItemPanel * itempanel ) :
     wxFileDropTarget()
 {
+    m_MediaViewer = mediaviewer;
     m_AlbumBrowserItemPanel = itempanel;
 }
 
@@ -1382,6 +1383,7 @@ bool guAlbumBrowserDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayS
                 return true;
             }
         }
+        m_MediaViewer->ImportFiles( files );
     }
     return false;
 }

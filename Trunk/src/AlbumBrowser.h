@@ -286,9 +286,10 @@ class guAlbumBrowserDropTarget : public wxFileDropTarget
 {
   private:
     guAlbumBrowserItemPanel *       m_AlbumBrowserItemPanel;
+    guMediaViewer *                 m_MediaViewer;
 
   public:
-    guAlbumBrowserDropTarget( guAlbumBrowserItemPanel * itempanel );
+    guAlbumBrowserDropTarget( guMediaViewer * mediaviewer, guAlbumBrowserItemPanel * itempanel );
     ~guAlbumBrowserDropTarget() {};
 
     virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );

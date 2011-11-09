@@ -186,6 +186,8 @@ void guMediaViewer::InitMediaViewer( const int mode )
     }
 
     m_SearchTextCtrl->SetFocus();
+
+    SetDropTarget( new guMediaViewerDropTarget( this ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1173,21 +1175,61 @@ void guMediaViewer::OnAddPath( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMediaViewer::ImportFiles( void )
+void guMediaViewer::ImportFiles( guTrackArray * tracks )
 {
-    guTrackArray * Tracks = new guTrackArray();
-    guImportFiles * ImportFiles = new guImportFiles( this, this, Tracks );
-    if( ImportFiles )
+    if( tracks )
     {
-        if( ImportFiles->ShowModal() == wxID_OK  )
+        if( tracks->Count() )
         {
-            m_MainFrame->ImportFiles( this, Tracks, ImportFiles->GetCopyToOption(), ImportFiles->GetCopyToPath() );
+            guImportFiles * ImportFiles = new guImportFiles( this, this, tracks );
+            if( ImportFiles )
+            {
+                if( ImportFiles->ShowModal() == wxID_OK  )
+                {
+                    m_MainFrame->ImportFiles( this, tracks, ImportFiles->GetCopyToOption(), ImportFiles->GetCopyToPath() );
+                }
+                else
+                {
+                    delete tracks;
+                }
+                ImportFiles->Destroy();
+            }
         }
         else
         {
-            delete Tracks;
+            delete tracks;
         }
-        ImportFiles->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::ImportFiles( const wxArrayString &files )
+{
+    int Index;
+    int Count = files.Count();
+    if( Count )
+    {
+        guTrackArray * Tracks = new guTrackArray();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            wxString NewFile = files[ Index ];
+            //guLogMessage( wxT( "Openning file '%s'" ), NewFile.c_str() );
+            if( wxFileExists( NewFile ) && guIsValidAudioFile( NewFile.Lower() ) )
+            {
+                guTrack * Track = new guTrack();
+                if( Track->ReadFromFile( NewFile ) )
+                {
+                    Track->m_Type = guTRACK_TYPE_NOTDB;
+                    Tracks->Add( Track );
+                }
+                else
+                {
+                    delete Track;
+                }
+            }
+        }
+
+        ImportFiles( Tracks );
     }
 }
 
@@ -2111,6 +2153,26 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     }
 
     return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+// guMediaViewerDropTarget
+// -------------------------------------------------------------------------------- //
+guMediaViewerDropTarget::guMediaViewerDropTarget( guMediaViewer * mediaviewer ) : wxFileDropTarget()
+{
+    m_MediaViewer = mediaviewer;
+}
+
+// -------------------------------------------------------------------------------- //
+guMediaViewerDropTarget::~guMediaViewerDropTarget()
+{
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaViewerDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames )
+{
+    m_MediaViewer->ImportFiles( filenames );
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //

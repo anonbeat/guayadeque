@@ -34,7 +34,7 @@
 
 // -------------------------------------------------------------------------------- //
 guTVSoListBox::guTVSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style ) :
-             guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS )
+             guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG )
 {
 //    guConfig * Config = ( guConfig * ) guConfig::Get();
 //    m_TracksOrder = Config->ReadNum( wxT( "TracksOrder" ), 0, confname );

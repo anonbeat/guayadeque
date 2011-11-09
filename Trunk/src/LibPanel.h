@@ -76,19 +76,6 @@ class guImagePtrArray;
 class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
-class guLibPanelDropTarget : public wxFileDropTarget
-{
-  protected :
-    guLibPanel * m_LibPanel;
-
-  public :
-    guLibPanelDropTarget( guLibPanel * libpanel );
-    ~guLibPanelDropTarget();
-
-    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames );
-};
-
-// -------------------------------------------------------------------------------- //
 class guLibPanel : public guAuiManagerPanel
 {
   protected :
@@ -244,8 +231,6 @@ class guLibPanel : public guAuiManagerPanel
     void                    ReloadRatings( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_RATINGS ) m_RatingListCtrl->ReloadItems( reset ); }
     void                    ReloadPlayCounts( bool reset = true ) { if( m_VisiblePanels & guPANEL_LIBRARY_PLAYCOUNT ) m_PlayCountListCtrl->ReloadItems( reset ); }
     void                    ReloadSongs( bool reset = true ) { m_SongListCtrl->ReloadItems( reset ); }
-
-    virtual bool            OnDropFiles( const wxArrayString &filenames );
 
     virtual void            UpdatePlaylists( void );
 

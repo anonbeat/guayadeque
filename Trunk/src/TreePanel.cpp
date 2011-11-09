@@ -90,8 +90,6 @@ guTreeViewTreeCtrl::guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guT
 
     SetIndent( 10 );
 
-//    SetDropTarget( new guTreeViewDropTarget( this ) );
-
     Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnSearchLinkClicked ) );
     Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guTreeViewTreeCtrl::OnContextMenu ), NULL, this );
     Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnCommandClicked ) );
