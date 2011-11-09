@@ -1927,7 +1927,6 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
 
     if( SelectedTracks.Count() )
     {
-
         wxArrayPtrVoid MediaViewerPtrs;
         GetMediaViewersList( SelectedTracks, MediaViewerPtrs );
 

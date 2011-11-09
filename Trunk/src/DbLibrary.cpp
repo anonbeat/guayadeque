@@ -655,7 +655,7 @@ bool guDbLibrary::CheckDbVersion( void )
                       "playlist_limited, playlist_limitvalue, playlist_limittype, "
                       "playlist_sorted, playlist_sorttype, playlist_sortdesc, playlist_anyoption ) "
                       "VALUES( NULL, '" );
-      querystr += _( "Most rated tracks" );
+      querystr += _( "Best rated tracks" );
       querystr += wxT( "', 1, 0, 0, 0, 1, 8, 1, 0 );" );
       query.Add( querystr );
 

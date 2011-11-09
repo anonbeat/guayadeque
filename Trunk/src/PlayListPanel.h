@@ -90,7 +90,7 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPlayListPanel * playlistpanel );
     ~guPLNamesTreeCtrl();
 
-    void            ReloadItems( void );
+    void            ReloadItems( const bool reset = true );
 
     DECLARE_EVENT_TABLE()
 
