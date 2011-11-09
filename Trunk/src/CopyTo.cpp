@@ -322,6 +322,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
     wxString        FilePattern;
     wxString        DestDir;
     bool            ActionIsCopy = true;
+    guMediaViewer * MediaViewer = copytoaction.GetMediaViewer();
 
     FilePattern = copytoaction.Pattern();
     guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
@@ -359,7 +360,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #ifdef WITH_LIBGPOD_SUPPORT
         if( copytoaction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
         {
-            int FileSize = ( ( guMediaVieweriPodDevice * ) copytoaction.GetMediaViewer() )->CopyTo( CurTrack, FileName );
+            int FileSize = ( ( guMediaVieweriPodDevice * ) MediaViewer )->CopyTo( CurTrack, FileName );
 
             if( FileSize == wxNOT_FOUND )
                 Result = false;
@@ -681,7 +682,6 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
     if( copytoaction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
     {
         guPlayListFile * PlayListFile = copytoaction.PlayListFile();
-        guMediaViewer * MediaViewer = copytoaction.GetMediaViewer();
         guIpodLibrary * IpodDb = ( guIpodLibrary *  ) MediaViewer->GetDb();
         if( PlayListFile )
         {
@@ -727,9 +727,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             }
         }
 
-        if( copytoaction.GetMediaViewer() )
+        if( MediaViewer )
         {
-            guDbLibrary * Db = copytoaction.GetMediaViewer()->GetDb();
+            guDbLibrary * Db = MediaViewer->GetDb();
             if( Db )
             {
                 // Update the covers
@@ -745,23 +745,24 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     Db->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
                 }
             }
-
-            //copytoaction.GetMediaViewer()->LibraryUpdated();
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
-            wxPostEvent( copytoaction.GetMediaViewer(), evt );
         }
     }
 
-    if( m_DeleteTracks.Count() )
+    if( MediaViewer )
     {
-        // Need to delete the old files
-        //CopyToAction.LibPanel()->DeleteTracks( &m_DeleteTracks );
-        if( copytoaction.GetMediaViewer() )
+        if( m_DeleteTracks.Count() )
         {
-            copytoaction.GetMediaViewer()->DeleteTracks( &m_DeleteTracks );
+            // Need to delete the old files
+            //CopyToAction.LibPanel()->DeleteTracks( &m_DeleteTracks );
+            MediaViewer->DeleteTracks( &m_DeleteTracks );
         }
-    }
 
+        //copytoaction.GetMediaViewer()->LibraryUpdated();
+        //wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+        //wxPostEvent( MediaViewer, evt );
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, MediaViewer->GetBaseCommand() + guCOLLECTION_ACTION_UPDATE_LIBRARY );
+        wxPostEvent( MediaViewer, Event );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
