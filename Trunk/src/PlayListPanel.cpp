@@ -1264,7 +1264,8 @@ void guPlayListPanel::OnPLTracksDeleteClicked( wxCommandEvent &event )
             {
                 m_Db->DelPlaylistSetIds( ItemData->GetData(), DelTracks );
                 m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
-                m_PLTracksListBox->ReloadItems();
+
+                m_PLTracksListBox->ReloadItems( false );
             }
         }
     }
@@ -1336,10 +1337,12 @@ void guPlayListPanel::OnPLTracksEditTracksClicked( wxCommandEvent &event )
         {
             m_MediaViewer->UpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
 
-            m_PLTracksListBox->ReloadItems();
+//            m_LockSelection = true;
+//            m_PLTracksListBox->ReloadItems( false );
+//            m_LockSelection = false;
 
             // Update the track in database, playlist, etc
-//            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYLISTS, &Tracks );
+            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_MEDIAVIEWER, &Tracks );
         }
         guImagePtrArrayClean( &Images );
         TrackEditor->Destroy();
@@ -1764,7 +1767,8 @@ void guPlayListPanel::OnPLTracksDeleteLibrary( wxCommandEvent &event )
             //
             m_Db->DeleteLibraryTracks( &Tracks, true );
 
-            m_PLTracksListBox->ReloadItems();
+            //m_PLTracksListBox->ReloadItems();
+            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_MEDIAVIEWER, &Tracks );
         }
     }
 }
@@ -1792,7 +1796,8 @@ void guPlayListPanel::OnPLTracksDeleteDrive( wxCommandEvent &event )
                 }
             }
 
-            m_PLTracksListBox->ReloadItems();
+            //m_PLTracksListBox->ReloadItems();
+            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_MEDIAVIEWER, &Tracks );
         }
     }
 }
