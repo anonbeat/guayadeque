@@ -40,16 +40,16 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_MENU_COMMUNITY );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
-        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
+        guAccelCmdIds.Add( ID_TRACKS_ENQUEUE_AFTER_ALL );
+        guAccelCmdIds.Add( ID_TRACKS_ENQUEUE_AFTER_TRACK );
+        guAccelCmdIds.Add( ID_TRACKS_ENQUEUE_AFTER_ALBUM );
         //
-        guAccelCmdIds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
+        guAccelCmdIds.Add( ID_TRACKS_ENQUEUE_AFTER_ARTIST );
         guAccelCmdIds.Add( ID_MENU_VIEW_FULLSCREEN );
         guAccelCmdIds.Add( ID_MAINFRAME_SETFORCEGAPLESS );
         guAccelCmdIds.Add( ID_MENU_HELP );
-        guAccelCmdIds.Add( ID_SONG_PLAY );
-        guAccelCmdIds.Add( ID_SONG_PLAYALL );
+        guAccelCmdIds.Add( ID_TRACKS_PLAY );
+        guAccelCmdIds.Add( ID_TRACKS_PLAYALL );
         guAccelCmdIds.Add( ID_PLAYERPANEL_PLAY );
         guAccelCmdIds.Add( ID_MENU_PLAY_STREAM );
         guAccelCmdIds.Add( ID_MENU_PREFERENCES );

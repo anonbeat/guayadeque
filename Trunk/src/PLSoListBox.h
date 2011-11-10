@@ -49,6 +49,8 @@ class guPLSoListBox : public guSoListBox
     virtual void        CreateAcceleratorTable();
     virtual wxString    GetSearchText( int item ) const;
 
+    void                OnRandomizeTracks( wxCommandEvent &event ) { RandomizeTracks(); }
+
   public :
     guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style = 0 );
     ~guPLSoListBox();
@@ -71,6 +73,8 @@ class guPLSoListBox : public guSoListBox
     }
 
     virtual void        SetTracksOrder( const int order );
+
+    virtual void        RandomizeTracks( void );
 
 };
 

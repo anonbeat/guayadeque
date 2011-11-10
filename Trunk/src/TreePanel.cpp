@@ -141,11 +141,11 @@ void guTreeViewTreeCtrl::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
-    AliasAccelCmds.Add( ID_SONG_PLAY );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
+    AliasAccelCmds.Add( ID_TRACKS_PLAY );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ARTIST );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
     RealAccelCmds.Add( ID_TREEVIEW_SAVETOPLAYLIST );
@@ -390,7 +390,7 @@ void guTreeViewTreeCtrl::OnContextMenu( wxTreeEvent &event )
                 Menu.Append( MenuItem );
 
                 MenuItem = new wxMenuItem( &Menu, ID_TREEVIEW_ENQUEUE_AFTER_ALL,
-                                wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALL ),
+                                wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                                 _( "Add current selected songs to the playlist" ) );
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
                 Menu.Append( MenuItem );
@@ -398,19 +398,19 @@ void guTreeViewTreeCtrl::OnContextMenu( wxTreeEvent &event )
                 wxMenu * EnqueueMenu = new wxMenu();
 
                 MenuItem = new wxMenuItem( EnqueueMenu, ID_TREEVIEW_ENQUEUE_AFTER_TRACK,
-                                        wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                                        wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                                         _( "Add current selected tracks to playlist after the current track" ) );
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
                 EnqueueMenu->Append( MenuItem );
 
                 MenuItem = new wxMenuItem( EnqueueMenu, ID_TREEVIEW_ENQUEUE_AFTER_ALBUM,
-                                        wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                                        wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                                         _( "Add current selected tracks to playlist after the current album" ) );
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
                 EnqueueMenu->Append( MenuItem );
 
                 MenuItem = new wxMenuItem( EnqueueMenu, ID_TREEVIEW_ENQUEUE_AFTER_ARTIST,
-                                        wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                                        wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                         _( "Add current selected tracks to playlist after the current artist" ) );
                 MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
                 EnqueueMenu->Append( MenuItem );
@@ -876,23 +876,23 @@ void guTreeViewPanel::CreateControls( void )
     m_TVTracksListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guTreeViewPanel::OnTrackListColClicked ), NULL, this );
 
     m_TVTracksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guTreeViewPanel::OnTVTracksActivated ), NULL, this );
-    Connect( ID_SONG_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksDeleteLibrary ), NULL, this );
-    Connect( ID_SONG_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksDeleteDrive ), NULL, this );
-    Connect( ID_SONG_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksPlayClicked ), NULL, this );
-    Connect( ID_SONG_ENQUEUE_AFTER_ALL, ID_SONG_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksQueueClicked ), NULL, this );
-    Connect( ID_SONG_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditLabelsClicked ), NULL, this );
-    Connect( ID_SONG_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditTracksClicked ), NULL, this );
+    Connect( ID_TRACKS_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksDeleteLibrary ), NULL, this );
+    Connect( ID_TRACKS_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksDeleteDrive ), NULL, this );
+    Connect( ID_TRACKS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksPlayClicked ), NULL, this );
+    Connect( ID_TRACKS_ENQUEUE_AFTER_ALL, ID_TRACKS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksQueueClicked ), NULL, this );
+    Connect( ID_TRACKS_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditLabelsClicked ), NULL, this );
+    Connect( ID_TRACKS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditTracksClicked ), NULL, this );
     m_TVTracksListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksCopyToClicked ), NULL, this );
-    Connect( ID_SONG_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSavePlayListClicked ), NULL, this );
-    Connect( ID_SONG_SET_RATING_0, ID_SONG_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetRating ), NULL, this );
-    Connect( ID_SONG_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetField ), NULL, this );
-    Connect( ID_SONG_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditField ), NULL, this );
+    Connect( ID_TRACKS_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSavePlayListClicked ), NULL, this );
+    Connect( ID_TRACKS_SET_RATING_0, ID_TRACKS_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetRating ), NULL, this );
+    Connect( ID_TRACKS_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetField ), NULL, this );
+    Connect( ID_TRACKS_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditField ), NULL, this );
 
-    Connect( ID_SONG_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectGenre ), NULL, this );
-    Connect( ID_SONG_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectArtist ), NULL, this );
-    Connect( ID_SONG_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbumArtist ), NULL, this );
-    Connect( ID_SONG_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectComposer ), NULL, this );
-    Connect( ID_SONG_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbum ), NULL, this );
+    Connect( ID_TRACKS_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectGenre ), NULL, this );
+    Connect( ID_TRACKS_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectArtist ), NULL, this );
+    Connect( ID_TRACKS_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbumArtist ), NULL, this );
+    Connect( ID_TRACKS_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectComposer ), NULL, this );
+    Connect( ID_TRACKS_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbum ), NULL, this );
 
 	Connect( guTREEVIEW_TIMER_TREEITEMSELECTED, wxEVT_TIMER, wxTimerEventHandler( guTreeViewPanel::OnTreeItemSelectedTimer ), NULL, this );
 }
@@ -1308,7 +1308,7 @@ void guTreeViewPanel::OnTVTracksQueueClicked( wxCommandEvent &event )
     if( !Tracks.Count() )
         m_TVTracksListBox->GetAllSongs( &Tracks );
     NormalizeTracks( &Tracks );
-    m_PlayerPanel->AddToPlayList( Tracks, true, event.GetId() - ID_SONG_ENQUEUE_AFTER_ALL );
+    m_PlayerPanel->AddToPlayList( Tracks, true, event.GetId() - ID_TRACKS_ENQUEUE_AFTER_ALL );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1457,7 +1457,7 @@ void guTreeViewPanel::OnTVTracksSavePlayListClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTVTracksSetRating( wxCommandEvent &event )
 {
-    int Rating = event.GetId() - ID_SONG_SET_RATING_0;
+    int Rating = event.GetId() - ID_TRACKS_SET_RATING_0;
     //guLogMessage( wxT( "OnSongSetRating( %i )" ), Rating );
 
     guTrackArray Tracks;

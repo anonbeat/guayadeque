@@ -63,19 +63,19 @@ void guTVSoListBox::CreateAcceleratorTable( void )
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SAVE );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITLABELS );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_EDITTRACKS );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
-    AliasAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ALL );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_TRACK );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ALBUM );
+    AliasAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ARTIST );
     AliasAccelCmds.Add( ID_PLAYER_PLAYLIST_SEARCH );
 
-    RealAccelCmds.Add( ID_SONG_SAVETOPLAYLIST );
-    RealAccelCmds.Add( ID_SONG_EDITLABELS );
-    RealAccelCmds.Add( ID_SONG_EDITTRACKS );
-    RealAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALL );
-    RealAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_TRACK );
-    RealAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ALBUM );
-    RealAccelCmds.Add( ID_SONG_ENQUEUE_AFTER_ARTIST );
+    RealAccelCmds.Add( ID_TRACKS_SAVETOPLAYLIST );
+    RealAccelCmds.Add( ID_TRACKS_EDITLABELS );
+    RealAccelCmds.Add( ID_TRACKS_EDITTRACKS );
+    RealAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ALL );
+    RealAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_TRACK );
+    RealAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ALBUM );
+    RealAccelCmds.Add( ID_TRACKS_ENQUEUE_AFTER_ARTIST );
     RealAccelCmds.Add( ID_PLAYLIST_SEARCH );
 
     if( guAccelDoAcceleratorTable( AliasAccelCmds, RealAccelCmds, AccelTable ) )
