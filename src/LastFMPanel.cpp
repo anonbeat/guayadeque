@@ -119,7 +119,7 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
     Connect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
     Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
-    Connect( ID_SONG_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
+    Connect( ID_TRACKS_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
     Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
     Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
 
@@ -141,7 +141,7 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
     Disconnect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
     Disconnect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
     Disconnect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
-    Disconnect( ID_SONG_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
+    Disconnect( ID_TRACKS_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
     Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
     Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
 
@@ -1237,7 +1237,7 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
+        MenuItem = new wxMenuItem( Menu, ID_TRACKS_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
         Menu->Append( MenuItem );
 
@@ -1445,7 +1445,7 @@ void guTopTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_SONG_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
+        MenuItem = new wxMenuItem( Menu, ID_TRACKS_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
         Menu->Append( MenuItem );
 

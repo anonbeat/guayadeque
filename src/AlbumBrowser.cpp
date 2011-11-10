@@ -326,19 +326,19 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
         wxMenu * EnqueueMenu = new wxMenu();
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_TRACK,
-                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_TRACK ),
+                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                                 _( "Add current selected tracks to playlist after the current track" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALBUM,
-                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ALBUM ),
+                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                                 _( "Add current selected tracks to playlist after the current album" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST,
-                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_SONG_ENQUEUE_AFTER_ARTIST ),
+                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                 _( "Add current selected tracks to playlist after the current artist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
