@@ -23,6 +23,8 @@
 #include "Commands.h"
 #include "Utils.h"
 #include "Preferences.h"
+#include "DbRadios.h"
+#include "PodcastsPanel.h"
 
 #include <wx/wfstream.h>
 
@@ -1255,6 +1257,96 @@ void GetGroupNames( wxFileConfig * fileconfig, wxArrayString &groupnames )
 }
 
 // -------------------------------------------------------------------------------- //
+void TransferRadioDb( const wxString &olddb, const wxString &newdb )
+{
+    guDbRadios * OldDb = new guDbRadios( olddb );
+    if( OldDb )
+    {
+        // Create the database with the initial structure
+        guDbRadios * NewDb = new guDbRadios( newdb );
+        if( NewDb )
+        {
+            delete NewDb;
+
+            wxArrayString query;
+
+            query.Add( wxString::Format( wxT( "ATTACH DATABASE '%s' AS NewDb" ), escape_query_str( newdb ).c_str() ) );
+
+            query.Add( wxT( "DELETE FROM NewDb.radiogenres;" ) );
+            query.Add( wxT( "DELETE FROM NewDb.radiostations;" ) );
+            query.Add( wxT( "DELETE FROM NewDb.radiolabels;" ) );
+            query.Add( wxT( "DELETE FROM NewDb.radiosetlabels;" ) );
+
+            query.Add( wxT( "INSERT INTO NewDb.radiogenres SELECT * FROM radiogenres;" ) );
+            query.Add( wxT( "INSERT INTO NewDb.radiostations SELECT * FROM radiostations;" ) );
+            query.Add( wxT( "INSERT INTO NewDb.radiolabels SELECT * FROM radiolabels;" ) );
+            query.Add( wxT( "INSERT INTO NewDb.radiosetlabels SELECT * FROM radiosetlabels;" ) );
+
+            int Index;
+            int Count = query.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                OldDb->ExecuteUpdate( query[ Index ] );
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Could not open the db '%s'" ), newdb.c_str() );
+        }
+
+        delete OldDb;
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not open the old db '%s'" ), olddb.c_str() );
+        return;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void TransferPodcastDb( const wxString &olddb, const wxString &newdb )
+{
+    guDbPodcasts * OldDb = new guDbPodcasts( olddb );
+    if( OldDb )
+    {
+        // Create the database with the initial structure
+        guDbPodcasts * NewDb = new guDbPodcasts( newdb );
+        if( NewDb )
+        {
+            delete NewDb;
+
+            wxArrayString query;
+
+            query.Add( wxString::Format( wxT( "ATTACH DATABASE '%s' AS NewDb" ), escape_query_str( newdb ).c_str() ) );
+
+            query.Add( wxT( "DELETE FROM NewDb.podcastchs;" ) );
+            query.Add( wxT( "DELETE FROM NewDb.podcastitems;" ) );
+
+            query.Add( wxT( "INSERT INTO NewDb.podcastchs SELECT * FROM podcastchs;" ) );
+            query.Add( wxT( "INSERT INTO NewDb.podcastitems SELECT * FROM podcastitems;" ) );
+
+            int Index;
+            int Count = query.Count();
+            for( Index = 0; Index < Count; Index++ )
+            {
+                OldDb->ExecuteUpdate( query[ Index ] );
+            }
+        }
+        else
+        {
+            guLogMessage( wxT( "Could not open the db '%s'" ), newdb.c_str() );
+        }
+
+        delete OldDb;
+    }
+    else
+    {
+        guLogMessage( wxT( "Could not open the old db '%s'" ), olddb.c_str() );
+        return;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guConfig::LoadOldConfig( const wxString &conffile )
 {
     guLogMessage( wxT( "Reading old configuration from file '%s'" ), conffile.c_str() );
@@ -1285,12 +1377,15 @@ void guConfig::LoadOldConfig( const wxString &conffile )
             wxMkdir( guPATH_COLLECTIONS + UniqueId, 0770 );
         }
 
+        TransferRadioDb( guPATH_OLD_DBNAME, guPATH_RADIOS_DBNAME );
+
+        TransferPodcastDb( guPATH_OLD_DBNAME, guPATH_PODCASTS_DBNAME );
+
         if( wxFileExists( guPATH_OLD_DBNAME ) )
         {
             wxCopyFile( guPATH_OLD_DBNAME, guPATH_COLLECTIONS + UniqueId + guPATH_DBNAME );
             wxRenameFile( guPATH_OLD_DBNAME, guPATH_OLD_DBNAME + wxT( ".old" ) );
         }
-
 
         int Index;
         int Count = GroupNames.Count();
