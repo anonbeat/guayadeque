@@ -90,8 +90,8 @@ void guPLSoListBox::GetItemsList( void )
     m_PLSetIds.Empty();
     if( m_PLIds.Count() )
     {
-        m_Db->GetPlayListSongs( m_PLIds, m_PLTypes, &m_Items, &m_TracksLength, &m_TracksSize, m_TracksOrder, m_TracksOrderDesc );
-        m_Db->GetPlayListSetIds( m_PLIds, &m_PLSetIds );
+        m_Db->GetPlayListSongs( m_PLIds, m_PLTypes, &m_Items, &m_PLSetIds, &m_TracksLength, &m_TracksSize, m_TracksOrder, m_TracksOrderDesc );
+        //m_Db->GetPlayListSetIds( m_PLIds, &m_PLSetIds, m_TracksOrder, m_TracksOrderDesc );
     }
     else
     {
@@ -153,19 +153,22 @@ void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         guSoListBox::CreateContextMenu( Menu );
 
+        int InsertPosition = 12;
+
         if( !m_DisableSorting && ( m_TracksOrder == wxNOT_FOUND ) )
         {
             MenuItem = new wxMenuItem( Menu, ID_TRACKS_RANDOMIZE,
                             wxString( _( "Randomize Playlist" ) )  + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_RANDOMPLAY ),
                             _( "Randomize the songs in the playlist" ) );
             Menu->Insert( 9, MenuItem );
+            InsertPosition = 13;
         }
 
         if( ( m_PLTypes.Count() == 1 ) && ( m_PLTypes[ 0 ] == guPLAYLIST_TYPE_STATIC ) )
         {
             MenuItem = new wxMenuItem( Menu, ID_TRACKS_DELETE, _( "Remove from Playlist" ), _( "Delete the current selected tracks" ) );
             MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
-            Menu->Insert( 12, MenuItem );
+            Menu->Insert( InsertPosition, MenuItem );
         }
     }
 

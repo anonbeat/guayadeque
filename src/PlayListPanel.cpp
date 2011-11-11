@@ -1251,7 +1251,6 @@ void guPlayListPanel::OnPLTracksActivated( wxListEvent &event )
 void guPlayListPanel::OnPLTracksDeleteClicked( wxCommandEvent &event )
 {
     wxArrayInt DelTracks;
-
     m_PLTracksListBox->GetPlayListSetIds( &DelTracks );
 
     if( DelTracks.Count() )
@@ -1265,7 +1264,8 @@ void guPlayListPanel::OnPLTracksDeleteClicked( wxCommandEvent &event )
                 m_Db->DelPlaylistSetIds( ItemData->GetData(), DelTracks );
                 m_Db->UpdateStaticPlayListFile( ItemData->GetData() );
 
-                m_PLTracksListBox->ReloadItems( false );
+                //m_PLTracksListBox->ReloadItems( false );
+                SendPlayListUpdatedEvent();
             }
         }
     }
