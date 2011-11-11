@@ -402,8 +402,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
 
     Menu.AppendSeparator();
 
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-    MainFrame->CreateCopyToMenu( &Menu );
+    m_MainFrame->CreateCopyToMenu( &Menu );
 
     AppendFolderCommands( &Menu );
 
@@ -1516,7 +1515,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
 
 
     wxString LastPath = Config->ReadStr( wxT( "Path" ), wxEmptyString, wxT( "filebrowser" ) );
-    m_DirCtrl = new guFileBrowserDirCtrl( this, m_MainFrame, m_Db, LastPath );
+    m_DirCtrl = new guFileBrowserDirCtrl( this, m_MainFrame, db, LastPath );
     guLogMessage( wxT( "LastPath: '%s'" ), LastPath.c_str() );
 
     m_AuiManager.AddPane( m_DirCtrl,
@@ -1651,7 +1650,10 @@ void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
     {
         m_MediaViewer = FindMediaViewerByPath( m_MainFrame, CurPath );
         m_Db = m_MediaViewer ? m_MediaViewer->GetDb() : NULL;
-//        guLogMessage( wxT( "'%s' ==>> '%i'" ), CurPath.c_str(), MediaViewer != NULL );
+        if( m_MediaViewer )
+            guLogMessage( wxT( "'%s' ==>> '%i' '%s'" ), CurPath.c_str(), m_MediaViewer != NULL, m_MediaViewer->GetName().c_str() );
+        else
+            guLogMessage( wxT( "'%s' ==>> '%i' ''" ), CurPath.c_str(), m_MediaViewer != NULL );
     }
     else
     {
@@ -1910,7 +1912,7 @@ void guFileBrowser::OnFolderEditTracks( wxCommandEvent &event )
 
     if( Tracks.Count() )
     {
-        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics, &ChangedFlags );
+        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db ? m_Db : m_DefaultDb, &Tracks, &Images, &Lyrics, &ChangedFlags );
 
         if( TrackEditor )
         {
@@ -1925,7 +1927,7 @@ void guFileBrowser::OnFolderEditTracks( wxCommandEvent &event )
                 //guUpdateImages( Tracks, Images, ChangedFlags );
 
                 // Update the track in database, playlist, etc
-                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
+                m_MainFrame->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
             }
             guImagePtrArrayClean( &Images );
             TrackEditor->Destroy();
@@ -1951,7 +1953,7 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
     {
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists,guPLAYLIST_TYPE_STATIC );
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( m_MainFrame, m_Db, &TrackIds, &PlayLists );
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
             int Selected = PlayListAppendDlg->GetSelectedPlayList();
@@ -1981,7 +1983,7 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
             }
 
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            wxPostEvent( m_MainFrame, evt );
         }
 
         PlayListAppendDlg->Destroy();
@@ -2006,7 +2008,7 @@ void guFileBrowser::OnFolderCopyTo( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2048,7 +2050,7 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
 
     if( Tracks.Count() )
     {
-        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &Tracks, &Images, &Lyrics, &ChangedFlags );
+        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db ? m_Db : m_DefaultDb, &Tracks, &Images, &Lyrics, &ChangedFlags );
 
         if( TrackEditor )
         {
@@ -2063,7 +2065,7 @@ void guFileBrowser::OnItemsEditTracks( wxCommandEvent &event )
                 //guUpdateImages( Tracks, Images, ChangedFlags );
 
                 // Update the track in database, playlist, etc
-                ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
+                m_MainFrame->UpdatedTracks( guUPDATED_TRACKS_PLAYER_PLAYLIST, &Tracks );
             }
             guImagePtrArrayClean( &Images );
             TrackEditor->Destroy();
@@ -2089,7 +2091,7 @@ void guFileBrowser::OnItemsSaveToPlayList( wxCommandEvent &event )
     {
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( m_MainFrame, m_Db, &TrackIds, &PlayLists );
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
             int Selected = PlayListAppendDlg->GetSelectedPlayList();
@@ -2119,7 +2121,7 @@ void guFileBrowser::OnItemsSaveToPlayList( wxCommandEvent &event )
             }
 
             wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            wxPostEvent( m_MainFrame, evt );
         }
 
         PlayListAppendDlg->Destroy();
@@ -2144,7 +2146,7 @@ void guFileBrowser::OnItemsCopyTo( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2153,7 +2155,7 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
     wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
     if( Files.Count() )
     {
-        guFileRenamer * FileRenamer = new guFileRenamer( this, m_Db, Files );
+        guFileRenamer * FileRenamer = new guFileRenamer( this, m_Db ? m_Db : m_DefaultDb, Files );
         if( FileRenamer )
         {
             if( FileRenamer->ShowModal() == wxID_OK )
@@ -2179,7 +2181,10 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
                                 RenamedFiles[ Index ].c_str() );
                         }
 
-                        m_Db->UpdateTrackFileName( Files[ Index ], RenamedFiles[ Index ] );
+                        if( m_Db )
+                            m_Db->UpdateTrackFileName( Files[ Index ], RenamedFiles[ Index ] );
+                        else
+                            m_DefaultDb->UpdateTrackFileName( Files[ Index ], RenamedFiles[ Index ] );
                     }
                 }
 
