@@ -3884,7 +3884,8 @@ int guDbLibrary::GetPlayListSongs( const int plid, guTrackArray * tracks )
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArray * tracks,
-        wxLongLong * len, wxLongLong * size, const int order, const bool orderdesc )
+                    wxArrayInt * setids, wxLongLong * len, wxLongLong * size,
+                    const int order, const bool orderdesc )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
@@ -3896,7 +3897,12 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
   {
     if( pltype == guPLAYLIST_TYPE_STATIC )
     {
-      query = GU_TRACKS_QUERYSTR;
+      query = wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
+               "song_addedtime, song_lastplay, song_filesize, plset_id "\
+               "FROM songs " );
       query += wxString::Format( wxT( ", plsets WHERE plset_songid = song_id AND plset_plid = %u" ), plid );
 
       query += GetSongsSortSQL( order, orderdesc );
@@ -3910,6 +3916,8 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
         tracks->Add( Track );
         TrackLength += Track->m_Length;
         TrackSize += Track->m_FileSize;
+        if( setids )
+            setids->Add( dbRes.GetInt( 29 ) );
       }
       dbRes.Finalize();
     }
@@ -3943,7 +3951,13 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
           }
       }
 
-      query = GU_TRACKS_QUERYSTR + DynPlayListToSQLQuery( &PlayList );
+      query = wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
+               "song_addedtime, song_lastplay, song_filesize, plset_id "\
+               "FROM songs " );
+      query += DynPlayListToSQLQuery( &PlayList );
 
       if( !PlayList.m_Sorted && ( order != wxNOT_FOUND ) )
       {
@@ -3980,6 +3994,8 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
         tracks->Add( Track );
         TrackLength += Track->m_Length;
         TrackSize += Track->m_FileSize;
+        if( setids )
+            setids->Add( dbRes.GetInt( 29 ) );
       }
       dbRes.Finalize();
     }
@@ -3993,14 +4009,14 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &types, guTrackArray * tracks,
-                    wxLongLong * len, wxLongLong * size, const int order, const bool orderdesc )
+                    wxArrayInt * setids, wxLongLong * len, wxLongLong * size, const int order, const bool orderdesc )
 {
     int Index;
     int Count = wxMin( ids.Count(), types.Count() );
 
     if( Count == 1 )
     {
-        return GetPlayListSongs( ids[ 0 ], types[ 0 ], tracks, len, size, order, orderdesc );
+        return GetPlayListSongs( ids[ 0 ], types[ 0 ], tracks, setids, len, size, order, orderdesc );
     }
 
     //
@@ -4012,9 +4028,13 @@ int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &type
     wxLongLong TrackLength = 0;
     wxLongLong TrackSize = 0;
 
-    query = GU_TRACKS_QUERYSTR;
-    query += wxT( ", plsets WHERE plset_songid = song_id AND plset_plid IN " );
-    query += wxT( "(" );
+    query = wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
+               "song_addedtime, song_lastplay, song_filesize, plset_id "\
+               "FROM songs " );
+    query += wxT( ", plsets WHERE plset_songid = song_id AND plset_plid IN (" );
     for( Index = 0; Index < Count; Index++ )
     {
         query += wxString::Format( wxT( "%u," ), ids[ Index ] );
@@ -4031,6 +4051,8 @@ int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &type
         tracks->Add( Track );
         TrackLength += Track->m_Length;
         TrackSize += Track->m_FileSize;
+        if( setids )
+            setids->Add( dbRes.GetInt( 29 ) );
     }
     dbRes.Finalize();
 
