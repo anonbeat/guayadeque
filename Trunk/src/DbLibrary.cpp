@@ -3955,7 +3955,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
                "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
                "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
                "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
-               "song_addedtime, song_lastplay, song_filesize, plset_id "\
+               "song_addedtime, song_lastplay, song_filesize "\
                "FROM songs " );
       query += DynPlayListToSQLQuery( &PlayList );
 
@@ -3994,8 +3994,6 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
         tracks->Add( Track );
         TrackLength += Track->m_Length;
         TrackSize += Track->m_FileSize;
-        if( setids )
-            setids->Add( dbRes.GetInt( 29 ) );
       }
       dbRes.Finalize();
     }
