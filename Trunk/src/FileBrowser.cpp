@@ -1559,7 +1559,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
     Connect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
     m_DirCtrl->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
 
-    m_DirCtrl->Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ) );
+    m_DirCtrl->Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ), NULL, this );
 
     Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Connect( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
@@ -1597,7 +1597,7 @@ guFileBrowser::~guFileBrowser()
     Disconnect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
     m_DirCtrl->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
 
-    m_DirCtrl->Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ) );
+    m_DirCtrl->Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ), NULL, this );
 
     Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
     Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
