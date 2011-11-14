@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2011-11-09 20:32+0000\n"
-"PO-Revision-Date: 2011-11-10 10:02-0000\n"
+"PO-Revision-Date: 2011-11-14 15:43-0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -3984,7 +3984,7 @@ msgstr "N.º faixas reproduzidas a manter na lista"
 
 #: Preferences.cpp:1020
 msgid "Don't repeat last"
-msgstr "Não repetir última"
+msgstr "Não repetir últimos"
 
 #: Preferences.cpp:1028
 msgid "artists or"
