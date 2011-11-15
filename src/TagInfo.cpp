@@ -23,6 +23,7 @@
 
 #include "ApeTag.h"
 #include "Base64.h"
+#include "MainFrame.h"
 #include "TrackEdit.h"
 
 #include <wx/mstream.h>
@@ -2727,6 +2728,19 @@ wxImage * guTagGetPicture( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guTagSetPicture( const wxString &filename, wxImage * picture )
 {
+    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+
+    const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
+    if( CurrentTrack && CurrentTrack->m_Loaded )
+    {
+        if( CurrentTrack->m_FileName == filename )
+        {
+            // Add the pending track change to MainFrame
+            MainFrame->AddPendingUpdateTrack( filename, picture, wxEmptyString, guTRACK_CHANGED_DATA_IMAGES );
+            return true;
+        }
+    }
+
     bool RetVal = false;
     guTagInfo * TagInfo = guGetTagInfoHandler( filename );
     if( TagInfo )
@@ -2770,6 +2784,19 @@ wxString guTagGetLyrics( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
 {
+    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+
+    const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
+    if( CurrentTrack && CurrentTrack->m_Loaded )
+    {
+        if( CurrentTrack->m_FileName == filename )
+        {
+            // Add the pending track change to MainFrame
+            MainFrame->AddPendingUpdateTrack( filename, NULL, lyrics, guTRACK_CHANGED_DATA_LYRICS );
+            return true;
+        }
+    }
+
     bool RetVal = false;
     guTagInfo * TagInfo = guGetTagInfoHandler( filename );
     if( TagInfo )
@@ -2783,66 +2810,14 @@ bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
     return RetVal;
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guUpdateTrack( const guTrack &track, const wxImage * image,
-//                    const wxString &lyrics, const int &changedflags )
-//{
-//    if( wxFileExists( track.m_FileName ) )
-//    {
-//        guTagInfo * TagInfo = guGetTagInfoHandler( track.m_FileName );
-//
-//        if( !TagInfo )
-//        {
-//            guLogError( wxT( "There is no handler for the file '%s'" ), track.m_FileName.c_str() );
-//            return;
-//        }
-//
-//        if( changedflags & guTRACK_CHANGED_DATA_TAGS )
-//        {
-//            TagInfo->m_TrackName = track.m_SongName;
-//            TagInfo->m_AlbumArtist = track.m_AlbumArtist;
-//            TagInfo->m_ArtistName = track.m_ArtistName;
-//            TagInfo->m_AlbumName = track.m_AlbumName;
-//            TagInfo->m_GenreName = track.m_GenreName;
-//            TagInfo->m_Track = track.m_Number;
-//            TagInfo->m_Year = track.m_Year;
-//            TagInfo->m_Composer = track.m_Composer;
-//            TagInfo->m_Comments = track.m_Comments;
-//            TagInfo->m_Disk = track.m_Disk;
-//        }
-//
-//        if( changedflags & guTRACK_CHANGED_DATA_RATING )
-//        {
-//            TagInfo->m_Rating = track.m_Rating;
-//            TagInfo->m_PlayCount = track.m_PlayCount;
-//        }
-//
-//        if( ( changedflags & guTRACK_CHANGED_DATA_LYRICS ) && TagInfo->CanHandleLyrics() )
-//        {
-//            TagInfo->SetLyrics( lyrics );
-//        }
-//
-//        if( ( changedflags & guTRACK_CHANGED_DATA_IMAGES ) && TagInfo->CanHandleImages() )
-//        {
-//            TagInfo->SetImage( image );
-//        }
-//
-//        TagInfo->Write( changedflags );
-//
-//        delete TagInfo;
-//    }
-//    else
-//    {
-//        guLogMessage( wxT( "File not found for edition: '%s'" ), track.m_FileName.c_str() );
-//    }
-//}
-
 // -------------------------------------------------------------------------------- //
 void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
                     const wxArrayString &lyrics, const wxArrayInt &changedflags )
 {
     int Index;
     int Count = tracks.Count();
+
+    guMainFrame * MainFrame = guMainFrame::GetMainFrame();
 
     // Process each Track
     for( Index = 0; Index < Count; Index++ )
@@ -2856,6 +2831,21 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
 
         if( wxFileExists( Track.m_FileName ) )
         {
+            // Prevent write to the current playing file in order to avoid segfaults specially with flac and wma files
+            const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
+            if( CurrentTrack && CurrentTrack->m_Loaded )
+            {
+                if( CurrentTrack->m_FileName == Track.m_FileName )
+                {
+                    // Add the pending track change to MainFrame
+                    MainFrame->AddPendingUpdateTrack( Track,
+                                                       Index < (int) images.Count() ? images[ Index ] : NULL,
+                                                       Index < (int) lyrics.Count() ? lyrics[ Index ] : wxT( "" ),
+                                                       changedflags[ Index ] );
+                    continue;
+                }
+            }
+
             guTagInfo * TagInfo = guGetTagInfoHandler( Track.m_FileName );
 
             if( !TagInfo )

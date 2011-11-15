@@ -2148,6 +2148,8 @@ void guPlayerPanel::SavePlayedTrack( void )
             }
         }
     }
+
+    m_MainFrame->CheckPendingUpdates( &m_MediaSong );
 }
 
 // -------------------------------------------------------------------------------- //
