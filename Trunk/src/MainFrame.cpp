@@ -51,6 +51,9 @@
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
 
+guMainFrame * guMainFrame::m_MainFrame = NULL;
+
+
 // -------------------------------------------------------------------------------- //
 guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 {
@@ -1805,6 +1808,8 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     {
         m_MPRIS2->OnPlayerTrackChange();
     }
+
+    CheckPendingUpdates( Track );
 
     if( Track )
     {
@@ -4725,6 +4730,86 @@ void guMainFrame::MediaViewerClosed( guMediaViewer * mediaviewer )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guMainFrame::AddPendingUpdateTrack( const guTrack &track, const wxImage * image, const wxString &lyric, const int changedflags )
+{
+    guLogMessage( wxT( "Adding pending update track '%s'" ), track.m_FileName.c_str() );
+    wxMutexLocker Lock( m_PendingUpdateMutex );
+    m_PendingUpdateTracks.Insert( new guTrack( track ), 0 );
+    m_PendingUpdateFiles.Insert( wxEmptyString, 0 );
+    m_PendingUpdateImages.Insert( image ? new wxImage( * image ) : NULL, 0 );
+    m_PendingUpdateLyrics.Insert( lyric, 0 );
+    m_PendingUpdateFlags.Insert( changedflags, 0 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::AddPendingUpdateTrack( const wxString &filename, const wxImage * image, const wxString &lyric, const int changedflags )
+{
+    guLogMessage( wxT( "Adding pending update track '%s'" ), filename.c_str() );
+    wxMutexLocker Lock( m_PendingUpdateMutex );
+    m_PendingUpdateTracks.Insert( NULL, 0 );
+    m_PendingUpdateFiles.Insert( filename, 0 );
+    m_PendingUpdateImages.Insert( image ? new wxImage( * image ) : NULL, 0 );
+    m_PendingUpdateLyrics.Insert( lyric, 0 );
+    m_PendingUpdateFlags.Insert( changedflags, 0 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::CheckPendingUpdates( const guTrack * track )
+{
+    wxMutexLocker Lock( m_PendingUpdateMutex );
+    int Index;
+    int Count = m_PendingUpdateTracks.Count();
+    if( Count )
+    {
+        for( Index = Count - 1; Index >= 0; Index-- )
+        {
+            bool RemoveTrack = false;
+            wxString CurFile = m_PendingUpdateFiles[ Index ];
+            if( CurFile.IsEmpty() )
+            {
+                CurFile = m_PendingUpdateTracks[ Index ].m_FileName;
+                if( CurFile != track->m_FileName )
+                {
+                    guTrackArray Tracks;
+                    Tracks.Add( m_PendingUpdateTracks[ Index ] );
+                    guImagePtrArray Images;
+                    Images.Add( m_PendingUpdateImages[ Index ] );
+                    wxArrayString Lyrics;
+                    Lyrics.Add( m_PendingUpdateLyrics[ Index ] );
+                    wxArrayInt ChangedFlags;
+                    ChangedFlags.Add( m_PendingUpdateFlags[ Index ] );
+                    guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+                    RemoveTrack = true;
+                }
+            }
+            else
+            {
+                if( CurFile != track->m_FileName )
+                {
+                    int ChangedFlags = m_PendingUpdateFlags[ Index ];
+                    if( ChangedFlags == guTRACK_CHANGED_DATA_LYRICS )
+                    {
+                        guTagSetLyrics( CurFile, m_PendingUpdateLyrics[ Index ] );
+                    }
+                    else
+                    {
+                        guTagSetPicture( CurFile, m_PendingUpdateImages[ Index ] );
+                    }
+                    RemoveTrack = true;
+                }
+            }
+            if( RemoveTrack )
+            {
+                m_PendingUpdateTracks.RemoveAt( Index );
+                m_PendingUpdateFiles.RemoveAt( Index );
+                m_PendingUpdateImages.RemoveAt( Index );
+                m_PendingUpdateLyrics.RemoveAt( Index );
+                m_PendingUpdateFlags.RemoveAt( Index );
+            }
+        }
+    }
+}
 
 
 

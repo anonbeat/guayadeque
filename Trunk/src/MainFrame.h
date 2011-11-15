@@ -52,6 +52,7 @@
 #include "RadioPanel.h"
 #include "StatusBar.h"
 #include "SplashWin.h"
+#include "TrackEdit.h"
 #include "TreePanel.h"
 #include "Vumeters.h"
 
@@ -125,6 +126,9 @@ class guLocationPanel;
 // -------------------------------------------------------------------------------- //
 class guMainFrame : public wxFrame
 {
+  private :
+    static guMainFrame *            m_MainFrame;
+
   private:
     wxAuiManager                    m_AuiManager;
     unsigned int                    m_VisiblePanels;
@@ -236,6 +240,14 @@ class guMainFrame : public wxFrame
     guMediaViewerArray              m_MediaViewers;
 
     int                             m_LoadLayoutPending;
+
+    // Store the Pending Update Tracks
+    guTrackArray                    m_PendingUpdateTracks;
+    wxArrayString                   m_PendingUpdateFiles;
+    guImagePtrArray                 m_PendingUpdateImages;
+    wxArrayString                   m_PendingUpdateLyrics;
+    wxArrayInt                      m_PendingUpdateFlags;
+    wxMutex                         m_PendingUpdateMutex;
 
     void                            OnUpdatePodcasts( wxCommandEvent &event );
     void                            OnUpdateTrack( wxCommandEvent &event );
@@ -394,6 +406,9 @@ class guMainFrame : public wxFrame
                                     guMainFrame( wxWindow * parent, guDbCache * dbcache );
                                     ~guMainFrame();
 
+    static guMainFrame *            GetMainFrame( void ) { return m_MainFrame; }
+    void                            SetMainFrame( void ) { m_MainFrame = this; }
+
     guRadioPanel *                  GetRadioPanel( void ) { return m_RadioPanel; }
     guPodcastPanel *                GetPodcastsPanel( void ) { return m_PodcastsPanel; }
 
@@ -454,6 +469,12 @@ class guMainFrame : public wxFrame
     void                            MediaViewerClosed( guMediaViewer * mediaviewer );
 
     void                            ImportFiles( guMediaViewer * mediaviewer, guTrackArray * tracks, const wxString &copytooption, const wxString &destdir );
+
+    const guCurrentTrack *          GetCurrentTrack( void ) const { return m_PlayerPanel->GetCurrentTrack(); }
+
+    void                            AddPendingUpdateTrack( const guTrack &track, const wxImage * image, const wxString &lyric, const int changedflags );
+    void                            AddPendingUpdateTrack( const wxString &filename, const wxImage * image, const wxString &lyric, const int changedflags );
+    void                            CheckPendingUpdates( const guTrack * track );
 
 };
 

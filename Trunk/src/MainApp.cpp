@@ -387,7 +387,8 @@ bool guMainApp::OnInit()
     m_DbCache->SetDbCache();
 
     // Initialize the MainFrame object
-    guMainFrame* Frame = new guMainFrame( 0, m_DbCache );
+    guMainFrame * Frame = new guMainFrame( 0, m_DbCache );
+    Frame->SetMainFrame();
     wxIcon MainIcon;
     MainIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
     Frame->SetIcon( MainIcon );
