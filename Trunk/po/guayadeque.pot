@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-16 07:02+0000\n"
+"POT-Creation-Date: 2011-11-16 09:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1022,7 +1022,7 @@ msgstr ""
 msgid "Dynamic Playlist Editor"
 msgstr ""
 
-#: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2071
+#: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2061
 #: PortableMedia.cpp:1026 Preferences.cpp:2087 Preferences.cpp:2208
 #: Preferences.cpp:2333 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
 msgid "Name:"
@@ -1846,83 +1846,83 @@ msgstr ""
 msgid "Lyrics from "
 msgstr ""
 
-#: LyricsPanel.cpp:2047
+#: LyricsPanel.cpp:2037
 msgid "Lyrics Target Editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2047
+#: LyricsPanel.cpp:2037
 msgid "Lyrics Source Editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2080
+#: LyricsPanel.cpp:2070
 msgid "Type:"
 msgstr ""
 
-#: LyricsPanel.cpp:2085
+#: LyricsPanel.cpp:2075
 msgid "Embedded"
 msgstr ""
 
-#: LyricsPanel.cpp:2086
+#: LyricsPanel.cpp:2076
 msgid "File"
 msgstr ""
 
-#: LyricsPanel.cpp:2087
+#: LyricsPanel.cpp:2077
 msgid "Command"
 msgstr ""
 
-#: LyricsPanel.cpp:2089 PodcastsPanel.cpp:2079
+#: LyricsPanel.cpp:2079 PodcastsPanel.cpp:2079
 msgid "Download"
 msgstr ""
 
-#: LyricsPanel.cpp:2096
+#: LyricsPanel.cpp:2086
 msgid "Source:"
 msgstr ""
 
-#: LyricsPanel.cpp:2104 LyricsPanel.cpp:2510
+#: LyricsPanel.cpp:2094 LyricsPanel.cpp:2500
 msgid "Replace:"
 msgstr ""
 
-#: LyricsPanel.cpp:2139
+#: LyricsPanel.cpp:2129
 msgid "Extract:"
 msgstr ""
 
-#: LyricsPanel.cpp:2169
+#: LyricsPanel.cpp:2159
 msgid "Exclude:"
 msgstr ""
 
-#: LyricsPanel.cpp:2199
+#: LyricsPanel.cpp:2189
 msgid "Not Found:"
 msgstr ""
 
-#: LyricsPanel.cpp:2508
+#: LyricsPanel.cpp:2498
 msgid "Replace option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2509 RadioPanel.cpp:94
+#: LyricsPanel.cpp:2499 RadioPanel.cpp:94
 msgid "Search:"
 msgstr ""
 
-#: LyricsPanel.cpp:2514
+#: LyricsPanel.cpp:2504
 msgid "Extract option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2515 LyricsPanel.cpp:2521
+#: LyricsPanel.cpp:2505 LyricsPanel.cpp:2511
 msgid "Begin:"
 msgstr ""
 
-#: LyricsPanel.cpp:2516 LyricsPanel.cpp:2522
+#: LyricsPanel.cpp:2506 LyricsPanel.cpp:2512
 msgid "End:"
 msgstr ""
 
-#: LyricsPanel.cpp:2520
+#: LyricsPanel.cpp:2510
 msgid "Exclude option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2526
+#: LyricsPanel.cpp:2516
 msgid "Not Found option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2527 LyricsPanel.cpp:2528
+#: LyricsPanel.cpp:2517 LyricsPanel.cpp:2518
 msgid "Tag:"
 msgstr ""
 
