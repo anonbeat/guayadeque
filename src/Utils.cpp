@@ -310,44 +310,39 @@ int DownloadFile( const wxString &Source, const wxString &Target )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guURLEncode( const wxString &Source )
+wxString guURLEncode( const wxString &url )
 {
-  //wxString delims = wxT( ";/?:@&=+$," );
-  // TODO : Check consecuencies of remove the delims
-  wxString RetVal;
-  wxString HexCode;
-  size_t index;
-  wxCharBuffer CharBuffer = Source.ToUTF8();
+    static const wxChar marks[] = wxT( "~!@#$&*()=:/,;?+'" );
 
-  for( index = 0; index < strlen( CharBuffer ); index++ )
-  {
-    unsigned char C = CharBuffer[ index ];
-    if( C == wxT(' '))
-    {
-      RetVal += wxT( "+" );
-    }
-    else
-    {
-      static const wxChar marks[] = wxT( "-_.\"+!~*()'" );
-      //static const wxChar marks[] = wxT( "-_.\"+!~*()" );
+	wxString RetVal;
+	unsigned char CurChar;
 
-      //if( !wxIsalnum( C ) && !wxStrchr( marks, C ) /*&& !wxStrchr( delims, C )*/ )
-      if( ( C >= 'a' && C <= 'z' ) ||
-          ( C >= 'A' && C <= 'Z' ) ||
-          ( C >= '0' && C <= '9' ) ||
-          wxStrchr( marks, C ) )
-      {
-        RetVal += C;
-      }
-      else
-      {
-        HexCode.Printf( wxT( "%%%02X" ), C );
-        RetVal += HexCode;
-      }
-    }
-  }
-//  guLogMessage( wxT( "guURLEncode: %s -> %s" ), Source.c_str(), RetVal.c_str() );
-  return RetVal;
+	wxCharBuffer CharBuffer = url.ToUTF8();
+	int Index;
+	int Count = strlen( CharBuffer );
+
+	for( Index = 0; Index < Count; ++Index )
+	{
+		CurChar = CharBuffer[ Index ];
+
+        if( ( CurChar >= 'a' && CurChar <= 'z' ) || ( CurChar >= 'A' && CurChar <= 'Z' ) ||
+            ( CurChar >= '0' && CurChar <= '9' ) || wxStrchr( marks, CurChar ) )
+		{
+	        RetVal += CurChar;
+	    }
+	    else if( CurChar == wxT( ' ' ) )
+	    {
+		    RetVal += wxT( "+" );
+		}
+		else
+		{
+		    RetVal += wxString::Format( wxT( "%%%02X" ), CurChar );
+		}
+	}
+
+	//guLogMessage( wxT( "URLEncode: '%s' => '%s'" ), url.c_str(), RetVal.c_str() );
+
+	return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -363,7 +358,7 @@ wxString guFileDnDEncode( const wxString &file )
   {
     unsigned char C = CharBuffer[ index ];
     {
-      static const wxChar marks[] = wxT( " -_.\"/+!~*()'[]%" );
+      static const wxChar marks[] = wxT( " -_.\"/+!~*()'[]%" ); //~!@#$&*()=:/,;?+'
 
       if( ( C >= 'a' && C <= 'z' ) ||
           ( C >= 'A' && C <= 'Z' ) ||

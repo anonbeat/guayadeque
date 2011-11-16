@@ -80,7 +80,7 @@ bool DownloadImage( const wxString &source, const wxString &taget, int maxwidth 
 int DownloadFile( const wxString &Source, const wxString &Target );
 wxString RemoveSearchFilters( const wxString &Album );
 bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
-wxString guURLEncode( const wxString &Source );
+wxString guURLEncode( const wxString &url );
 wxString guFileDnDEncode( const wxString &file );
 int guWebExecute( const wxString &Url );
 int guExecute( const wxString &Command );
