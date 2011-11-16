@@ -1642,19 +1642,9 @@ wxString guLyricSearchThread::CheckExclude( const wxString &content, guLyricSour
 // -------------------------------------------------------------------------------- //
 wxString guLyricSearchThread::DoReplace( const wxString &text, const wxString &search, const wxString &replace )
 {
-    wxString RetVal;
-    int Index;
-    int Count = text.Length();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        unsigned char C = text[ Index ];
-        if( wxStrchr( search, C ) )
-        {
-            C = replace[ 0 ];
-        }
-        if( C > 0 )
-            RetVal.Append( C );
-    }
+    wxString RetVal = text;
+    wxRegEx RegEx( wxT( "[" ) + search + wxT( "]" ) );
+    RegEx.Replace( &RetVal, replace );
     return RetVal;
 }
 
