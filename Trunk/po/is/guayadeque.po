@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: guayadeque-beta\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-11-09 20:32+0000\n"
-"PO-Revision-Date: 2011-11-10 09:09-0000\n"
+"POT-Creation-Date: 2011-11-16 11:46+0000\n"
+"PO-Revision-Date: 2011-11-19 10:34-0000\n"
 "Last-Translator: Hreinn Jónsson <hreinsijons@gmail.com>\n"
 "Language-Team: Hreinn Jonsson <hreinsijons@simnet.is>\n"
 "Language: \n"
@@ -22,9 +22,9 @@ msgstr ""
 #: AlListBox.cpp:246
 #: ArListBox.cpp:131
 #: FileBrowser.cpp:302
-#: FileBrowser.cpp:1077
-#: MainFrame.cpp:1417
-#: MainFrame.cpp:4431
+#: FileBrowser.cpp:1076
+#: MainFrame.cpp:1420
+#: MainFrame.cpp:4436
 #: OnlineLinks.cpp:69
 #: PlayList.cpp:1496
 #: Preferences.cpp:130
@@ -37,7 +37,7 @@ msgstr "Stillingar"
 #: AlListBox.cpp:246
 #: ArListBox.cpp:131
 #: FileBrowser.cpp:302
-#: FileBrowser.cpp:1077
+#: FileBrowser.cpp:1076
 #: PlayList.cpp:1496
 #: SoListBox.cpp:470
 #: TreePanel.cpp:342
@@ -48,7 +48,7 @@ msgstr "Bæta skipunum við stillingar"
 #: AlListBox.cpp:249
 #: ArListBox.cpp:134
 #: FileBrowser.cpp:305
-#: FileBrowser.cpp:1080
+#: FileBrowser.cpp:1079
 #: PlayList.cpp:1499
 #: Preferences.cpp:263
 #: SoListBox.cpp:473
@@ -63,7 +63,7 @@ msgstr "Skipanir"
 #: ArListBox.cpp:147
 #: CoListBox.cpp:103
 #: FileBrowser.cpp:317
-#: FileBrowser.cpp:1092
+#: FileBrowser.cpp:1091
 #: GeListBox.cpp:92
 #: LastFMPanel.cpp:552
 #: LastFMPanel.cpp:814
@@ -71,9 +71,9 @@ msgstr "Skipanir"
 #: LastFMPanel.cpp:1208
 #: LastFMPanel.cpp:1416
 #: LastFMPanel.cpp:3131
-#: MainFrame.cpp:1460
+#: MainFrame.cpp:1463
 #: PcListBox.cpp:111
-#: PlayListPanel.cpp:190
+#: PlayListPanel.cpp:224
 #: PodcastsPanel.cpp:2038
 #: RadioPanel.cpp:834
 #: RaListBox.cpp:143
@@ -96,7 +96,7 @@ msgstr "Spila valdar plötur flytjanda"
 #: ArListBox.cpp:154
 #: CoListBox.cpp:110
 #: FileBrowser.cpp:323
-#: FileBrowser.cpp:1098
+#: FileBrowser.cpp:1097
 #: GeListBox.cpp:99
 #: LastFMPanel.cpp:556
 #: LastFMPanel.cpp:818
@@ -105,7 +105,7 @@ msgstr "Spila valdar plötur flytjanda"
 #: LastFMPanel.cpp:1420
 #: LastFMPanel.cpp:3135
 #: PcListBox.cpp:118
-#: PlayListPanel.cpp:195
+#: PlayListPanel.cpp:229
 #: PodcastsPanel.cpp:2044
 #: RadioPanel.cpp:840
 #: RaListBox.cpp:150
@@ -130,7 +130,7 @@ msgstr "Bæta völdum lögum við lagalista"
 #: ArListBox.cpp:163
 #: CoListBox.cpp:119
 #: FileBrowser.cpp:331
-#: FileBrowser.cpp:1106
+#: FileBrowser.cpp:1105
 #: GeListBox.cpp:108
 #: LastFMPanel.cpp:563
 #: LastFMPanel.cpp:825
@@ -139,7 +139,7 @@ msgstr "Bæta völdum lögum við lagalista"
 #: LastFMPanel.cpp:1427
 #: LastFMPanel.cpp:3142
 #: PcListBox.cpp:127
-#: PlayListPanel.cpp:203
+#: PlayListPanel.cpp:237
 #: PodcastsPanel.cpp:2052
 #: RadioPanel.cpp:848
 #: RaListBox.cpp:159
@@ -154,7 +154,7 @@ msgstr "Núverandi Lag"
 #: AlbumBrowser.cpp:330
 #: ArListBox.cpp:164
 #: FileBrowser.cpp:332
-#: FileBrowser.cpp:1107
+#: FileBrowser.cpp:1106
 #: GeListBox.cpp:109
 #: LastFMPanel.cpp:564
 #: LastFMPanel.cpp:826
@@ -163,7 +163,7 @@ msgstr "Núverandi Lag"
 #: LastFMPanel.cpp:1428
 #: LastFMPanel.cpp:3143
 #: PcListBox.cpp:128
-#: PlayListPanel.cpp:204
+#: PlayListPanel.cpp:238
 #: PodcastsPanel.cpp:2053
 #: RadioPanel.cpp:849
 #: RaListBox.cpp:160
@@ -180,7 +180,7 @@ msgstr "Bæta völdum lögum við lagalista eftir núverandi lag"
 #: ArListBox.cpp:170
 #: CoListBox.cpp:126
 #: FileBrowser.cpp:337
-#: FileBrowser.cpp:1113
+#: FileBrowser.cpp:1112
 #: GeListBox.cpp:115
 #: LastFMPanel.cpp:569
 #: LastFMPanel.cpp:831
@@ -189,7 +189,7 @@ msgstr "Bæta völdum lögum við lagalista eftir núverandi lag"
 #: LastFMPanel.cpp:1433
 #: LastFMPanel.cpp:3148
 #: PcListBox.cpp:134
-#: PlayListPanel.cpp:209
+#: PlayListPanel.cpp:243
 #: PodcastsPanel.cpp:2058
 #: RadioPanel.cpp:855
 #: RaListBox.cpp:166
@@ -204,7 +204,7 @@ msgstr "Núverandi Plata"
 #: AlbumBrowser.cpp:336
 #: ArListBox.cpp:171
 #: FileBrowser.cpp:338
-#: FileBrowser.cpp:1114
+#: FileBrowser.cpp:1113
 #: GeListBox.cpp:116
 #: LastFMPanel.cpp:570
 #: LastFMPanel.cpp:832
@@ -213,7 +213,7 @@ msgstr "Núverandi Plata"
 #: LastFMPanel.cpp:1434
 #: LastFMPanel.cpp:3149
 #: PcListBox.cpp:135
-#: PlayListPanel.cpp:210
+#: PlayListPanel.cpp:244
 #: PodcastsPanel.cpp:2059
 #: RadioPanel.cpp:856
 #: RaListBox.cpp:167
@@ -230,7 +230,7 @@ msgstr "Bæta völdum lögum við lagalista eftir núverandi plötu"
 #: ArListBox.cpp:177
 #: CoListBox.cpp:133
 #: FileBrowser.cpp:343
-#: FileBrowser.cpp:1120
+#: FileBrowser.cpp:1119
 #: GeListBox.cpp:122
 #: LastFMPanel.cpp:575
 #: LastFMPanel.cpp:837
@@ -239,7 +239,7 @@ msgstr "Bæta völdum lögum við lagalista eftir núverandi plötu"
 #: LastFMPanel.cpp:1439
 #: LastFMPanel.cpp:3154
 #: PcListBox.cpp:141
-#: PlayListPanel.cpp:215
+#: PlayListPanel.cpp:249
 #: PodcastsPanel.cpp:2064
 #: RadioPanel.cpp:862
 #: RaListBox.cpp:173
@@ -254,7 +254,7 @@ msgstr "Núverandi Flytjandi"
 #: AlbumBrowser.cpp:342
 #: ArListBox.cpp:178
 #: FileBrowser.cpp:344
-#: FileBrowser.cpp:1121
+#: FileBrowser.cpp:1120
 #: GeListBox.cpp:123
 #: LastFMPanel.cpp:576
 #: LastFMPanel.cpp:838
@@ -263,7 +263,7 @@ msgstr "Núverandi Flytjandi"
 #: LastFMPanel.cpp:1440
 #: LastFMPanel.cpp:3155
 #: PcListBox.cpp:142
-#: PlayListPanel.cpp:216
+#: PlayListPanel.cpp:250
 #: PodcastsPanel.cpp:2065
 #: RadioPanel.cpp:863
 #: RaListBox.cpp:174
@@ -280,7 +280,7 @@ msgstr "Bæta völdum lögum við lagalista eftir núverandi Flytjanda"
 #: ArListBox.cpp:183
 #: CoListBox.cpp:139
 #: FileBrowser.cpp:348
-#: FileBrowser.cpp:1126
+#: FileBrowser.cpp:1125
 #: GeListBox.cpp:128
 #: LastFMPanel.cpp:580
 #: LastFMPanel.cpp:842
@@ -289,7 +289,7 @@ msgstr "Bæta völdum lögum við lagalista eftir núverandi Flytjanda"
 #: LastFMPanel.cpp:1444
 #: LastFMPanel.cpp:3159
 #: PcListBox.cpp:147
-#: PlayListPanel.cpp:220
+#: PlayListPanel.cpp:254
 #: PodcastsPanel.cpp:2069
 #: RadioPanel.cpp:868
 #: RaListBox.cpp:179
@@ -328,13 +328,13 @@ msgstr "Breyta völdum lögum"
 #: ArListBox.cpp:207
 #: CoListBox.cpp:157
 #: FileBrowser.cpp:361
-#: FileBrowser.cpp:1142
+#: FileBrowser.cpp:1141
 #: GeListBox.cpp:135
 #: LastFMPanel.cpp:3163
 #: PcListBox.cpp:165
 #: PlayListAppend.cpp:25
 #: PlayList.cpp:1576
-#: PlayListPanel.cpp:252
+#: PlayListPanel.cpp:286
 #: RaListBox.cpp:197
 #: SoListBox.cpp:633
 #: TaListBox.cpp:166
@@ -358,7 +358,7 @@ msgid "Audio Scrobbling"
 msgstr "Audio Scrobbling"
 
 #: Accelerators.cpp:110
-#: MainFrame.cpp:1476
+#: MainFrame.cpp:1479
 #: PlayList.cpp:1587
 msgid "Clear Playlist"
 msgstr "Hreinsa Lagalista"
@@ -384,7 +384,7 @@ msgstr "Breyta Merkjum"
 
 #: Accelerators.cpp:114
 #: FileBrowser.cpp:353
-#: FileBrowser.cpp:1134
+#: FileBrowser.cpp:1133
 msgid "Edit Tracks"
 msgstr "Breyta Lögum"
 
@@ -401,7 +401,7 @@ msgid "Enqueue After Artist"
 msgstr "Bæta við Eftir Flytjanda"
 
 #: Accelerators.cpp:120
-#: MainFrame.cpp:1388
+#: MainFrame.cpp:1391
 msgid "Full Screen"
 msgstr "Full Skjástærð"
 
@@ -411,8 +411,8 @@ msgstr "Eyðulaust/Krossvíxlun"
 
 #: Accelerators.cpp:122
 #: Accelerators.cpp:411
-#: MainFrame.cpp:1579
-#: MainFrame.cpp:1634
+#: MainFrame.cpp:1582
+#: MainFrame.cpp:1637
 msgid "Help"
 msgstr "Hjálp"
 
@@ -425,18 +425,19 @@ msgid "Play/Pause"
 msgstr "Spila/Hvíla"
 
 #: Accelerators.cpp:126
-#: MainFrame.cpp:1065
-#: MainFrame.cpp:1939
+#: MainFrame.cpp:1068
+#: MainFrame.cpp:1944
 msgid "Play Stream"
 msgstr "Spila Straum"
 
 #: Accelerators.cpp:128
-#: MainFrame.cpp:1119
+#: MainFrame.cpp:1122
 msgid "Quit"
 msgstr "Hætta"
 
 #: Accelerators.cpp:130
 #: PlayList.cpp:1582
+#: PLSoListBox.cpp:161
 msgid "Randomize Playlist"
 msgstr "Stokka Lagalista"
 
@@ -465,8 +466,8 @@ msgid "Repeat Current Track"
 msgstr "Endurtaka Núverandi Lag"
 
 #: Accelerators.cpp:139
-#: MainFrame.cpp:1316
-#: MainFrame.cpp:3725
+#: MainFrame.cpp:1319
+#: MainFrame.cpp:3730
 msgid "Save Layout"
 msgstr "Vista útlit"
 
@@ -548,18 +549,18 @@ msgid "Skip Previous Album"
 msgstr "Sleppa Fyrri Plötu"
 
 #: Accelerators.cpp:163
-#: MainFrame.cpp:1520
+#: MainFrame.cpp:1523
 msgid "Smart Play"
 msgstr "Snjall spilun"
 
 #: Accelerators.cpp:164
-#: MainFrame.cpp:1464
+#: MainFrame.cpp:1467
 #: TaskBar.cpp:116
 msgid "Stop"
 msgstr "Stoppa"
 
 #: Accelerators.cpp:165
-#: MainFrame.cpp:1469
+#: MainFrame.cpp:1472
 msgid "Stop at End"
 msgstr "Stoppa á Enda"
 
@@ -574,12 +575,12 @@ msgstr "Uppfæra Plötualbúm"
 #: LocationPanel.cpp:374
 #: LocationPanel.cpp:509
 #: Magnatune.cpp:1022
-#: MainFrame.cpp:1000
-#: MainFrame.cpp:1038
-#: MainFrame.cpp:1272
+#: MainFrame.cpp:1003
+#: MainFrame.cpp:1041
+#: MainFrame.cpp:1275
 #: MediaViewer.cpp:949
 #: PodcastsPanel.cpp:1745
-#: PortableMedia.cpp:1919
+#: PortableMedia.cpp:1916
 msgid "Update"
 msgstr "Uppfæra"
 
@@ -592,12 +593,12 @@ msgid "Update Podcasts"
 msgstr "Uppfæra Hlaðvörp"
 
 #: Accelerators.cpp:170
-#: MainFrame.cpp:1549
+#: MainFrame.cpp:1552
 msgid "Volume Down"
 msgstr "Lækka Hljóð"
 
 #: Accelerators.cpp:171
-#: MainFrame.cpp:1544
+#: MainFrame.cpp:1547
 msgid "Volume Up"
 msgstr "Hækka Hljóð"
 
@@ -689,13 +690,13 @@ msgid "Insert"
 msgstr "Insert"
 
 #: Accelerators.cpp:382
-#: PlayListPanel.cpp:262
+#: PlayListPanel.cpp:296
 #: PodcastsPanel.cpp:1739
 #: PodcastsPanel.cpp:2073
 #: TaListBox.cpp:115
 #: TreePanel.cpp:375
 msgid "Delete"
-msgstr "Delete"
+msgstr "Eyða"
 
 #: Accelerators.cpp:393
 msgid "Separator"
@@ -826,7 +827,7 @@ msgstr "Byggja plötualbúm við valin lög plötu"
 
 #: AlbumBrowser.cpp:401
 #: AlListBox.cpp:318
-#: FileBrowser.cpp:746
+#: FileBrowser.cpp:745
 #: RadioPanel.cpp:730
 msgid "Name"
 msgstr "Nafn"
@@ -1083,8 +1084,8 @@ msgstr "Spila valið tónskáld"
 msgid "Edit songs"
 msgstr "Breyta lögum"
 
-#: Config.cpp:1273
-#: MainFrame.cpp:85
+#: Config.cpp:1365
+#: MainFrame.cpp:88
 msgid "My Music"
 msgstr "Mín Músik"
 
@@ -1161,8 +1162,8 @@ msgid "Last played tracks"
 msgstr "Lög síðast spiluð"
 
 #: DbLibrary.cpp:658
-msgid "Most rated tracks"
-msgstr "Lög hæðsta einkunn"
+msgid "Best rated tracks"
+msgstr "Lög með hæstu einkunn"
 
 #: DynamicPlayList.cpp:46
 #: DynamicPlayList.cpp:126
@@ -1251,7 +1252,7 @@ msgstr "Lengd"
 #: LibPanel.cpp:330
 #: LibPanel.cpp:337
 #: LibPanel.cpp:534
-#: MainFrame.cpp:1224
+#: MainFrame.cpp:1227
 #: PodcastsPanel.cpp:1796
 #: SoListBox.cpp:430
 msgid "Plays"
@@ -1274,7 +1275,7 @@ msgid "Bit Rate"
 msgstr "Bitahraði"
 
 #: DynamicPlayList.cpp:63
-#: FileBrowser.cpp:747
+#: FileBrowser.cpp:746
 msgid "Size"
 msgstr "Stærð"
 
@@ -1396,7 +1397,7 @@ msgstr "Breyta Breytanlegum Lagalista"
 
 #: DynamicPlayList.cpp:458
 #: FileRenamer.cpp:67
-#: LyricsPanel.cpp:2071
+#: LyricsPanel.cpp:2061
 #: PortableMedia.cpp:1026
 #: Preferences.cpp:2087
 #: Preferences.cpp:2208
@@ -1443,12 +1444,12 @@ msgid "Preset:"
 msgstr "Forstillt:"
 
 #: FileBrowser.cpp:204
-#: FileBrowser.cpp:569
+#: FileBrowser.cpp:568
 msgid "See used locations"
 msgstr "Sjá notaða staði"
 
 #: FileBrowser.cpp:205
-#: FileBrowser.cpp:570
+#: FileBrowser.cpp:569
 msgid "See system files"
 msgstr "Sjá kerfisskrár"
 
@@ -1469,17 +1470,17 @@ msgid "Add the tracks in the selected folder to a playlist"
 msgstr "Bæta lögum úr valdri möppu á lagalista"
 
 #: FileBrowser.cpp:369
-#: FileBrowser.cpp:1150
+#: FileBrowser.cpp:1149
 msgid "Copy"
 msgstr "Afrita"
 
 #: FileBrowser.cpp:370
-#: FileBrowser.cpp:1150
+#: FileBrowser.cpp:1149
 msgid "Copy the selected folder to clipboard"
 msgstr "Afrita valda möppu á klippispjald"
 
 #: FileBrowser.cpp:376
-#: FileBrowser.cpp:1154
+#: FileBrowser.cpp:1153
 #: LyricsPanel.cpp:298
 msgid "Paste"
 msgstr "Líma"
@@ -1489,8 +1490,8 @@ msgid "Paste to the selected folder"
 msgstr "Lima við valda möppu"
 
 #: FileBrowser.cpp:392
-#: FileBrowser.cpp:450
-#: FileBrowser.cpp:454
+#: FileBrowser.cpp:449
+#: FileBrowser.cpp:453
 msgid "New Folder"
 msgstr "Ný Mappa"
 
@@ -1499,7 +1500,7 @@ msgid "Create a new folder"
 msgstr "Búa til nýja möppu"
 
 #: FileBrowser.cpp:395
-#: PlayListPanel.cpp:257
+#: PlayListPanel.cpp:291
 #: TaListBox.cpp:111
 msgid "Rename"
 msgstr "Endurnefna:"
@@ -1509,7 +1510,7 @@ msgid "Rename the selected folder"
 msgstr "Endurnefna valda möppu"
 
 #: FileBrowser.cpp:399
-#: FileBrowser.cpp:1175
+#: FileBrowser.cpp:1174
 msgid "Remove"
 msgstr "Fjarlægja"
 
@@ -1517,15 +1518,15 @@ msgstr "Fjarlægja"
 msgid "Remove the selected folder"
 msgstr "Fjarlægja valda möppu"
 
-#: FileBrowser.cpp:531
+#: FileBrowser.cpp:530
 msgid "Are you sure to delete the selected path ?"
 msgstr "Ertu viss um að þú viljir eyða valdri slóð ?"
 
-#: FileBrowser.cpp:532
-#: FileBrowser.cpp:2205
+#: FileBrowser.cpp:531
+#: FileBrowser.cpp:2210
 #: LabelEditor.cpp:310
 #: LibPanel.cpp:1215
-#: PlayListPanel.cpp:1000
+#: PlayListPanel.cpp:1034
 #: PodcastsPanel.cpp:1225
 #: PodcastsPanel.cpp:1611
 #: RadioPanel.cpp:561
@@ -1536,77 +1537,77 @@ msgstr "Ertu viss um að þú viljir eyða valdri slóð ?"
 msgid "Confirm"
 msgstr "Staðfesta"
 
-#: FileBrowser.cpp:542
+#: FileBrowser.cpp:541
 msgid "Error deleting the folder "
 msgstr "Villa getur ekki eytt Möppu"
 
-#: FileBrowser.cpp:543
+#: FileBrowser.cpp:542
 #: MediaViewer.cpp:1445
 #: SelCoverFile.cpp:40
 msgid "Error"
 msgstr "Villa"
 
-#: FileBrowser.cpp:748
+#: FileBrowser.cpp:747
 msgid "Modified"
 msgstr "Breytt"
 
-#: FileBrowser.cpp:1093
+#: FileBrowser.cpp:1092
 msgid "Play current selected files"
 msgstr "Spila valda skrá"
 
-#: FileBrowser.cpp:1099
+#: FileBrowser.cpp:1098
 msgid "Add current selected files to playlist"
 msgstr "Bæta valdri skrá við lagalista"
 
-#: FileBrowser.cpp:1135
+#: FileBrowser.cpp:1134
 msgid "Edit the current selected files"
 msgstr "Breyta völdum skrám"
 
-#: FileBrowser.cpp:1143
+#: FileBrowser.cpp:1142
 msgid "Add the current selected tracks to a playlist"
 msgstr "Bæta völdum skrám við lagalista"
 
-#: FileBrowser.cpp:1154
+#: FileBrowser.cpp:1153
 msgid "Paste to the selected dir"
 msgstr "Lima við valda staðsetningu"
 
-#: FileBrowser.cpp:1171
+#: FileBrowser.cpp:1170
 #: FileRenamer.cpp:47
 msgid "Rename Files"
 msgstr "Endurnefna Skrár"
 
-#: FileBrowser.cpp:1171
+#: FileBrowser.cpp:1170
 msgid "Rename the current selected file"
 msgstr "Endurnefna valda skrá"
 
-#: FileBrowser.cpp:1175
+#: FileBrowser.cpp:1174
 msgid "Delete the selected files"
 msgstr "Eyða völdum skrám"
 
-#: FileBrowser.cpp:1523
-#: FileBrowser.cpp:1539
+#: FileBrowser.cpp:1522
+#: FileBrowser.cpp:1538
 msgid "Directories"
 msgstr "Staðsetningar"
 
-#: FileBrowser.cpp:1963
-#: FileBrowser.cpp:2101
+#: FileBrowser.cpp:1965
+#: FileBrowser.cpp:2103
 #: LibPanel.cpp:1420
-#: PlayList.cpp:1960
-#: PlayListPanel.cpp:1375
+#: PlayList.cpp:1959
+#: PlayListPanel.cpp:1414
 #: TreePanel.cpp:1158
 #: TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr "ÓNefnt"
 
-#: FileBrowser.cpp:2204
+#: FileBrowser.cpp:2209
 msgid "Are you sure to delete the selected files ?"
 msgstr "Ertu viss um að þú viljir eyða völdum skrám ?"
 
-#: FileBrowser.cpp:2222
+#: FileBrowser.cpp:2227
 msgid "There was an error deleting "
 msgstr "Villa við eyðingu skrár"
 
-#: FileBrowser.cpp:2223
+#: FileBrowser.cpp:2228
 msgid ""
 "\n"
 "Continue deleting?"
@@ -1614,7 +1615,7 @@ msgstr ""
 "\n"
 "Eyða áfram?"
 
-#: FileBrowser.cpp:2224
+#: FileBrowser.cpp:2229
 msgid "Continue"
 msgstr "Halda áfram"
 
@@ -1661,7 +1662,7 @@ msgstr "Bæta við völdum flokkum við lagalista"
 
 #: ImportFiles.cpp:47
 #: LocationPanel.cpp:501
-#: MainFrame.cpp:1264
+#: MainFrame.cpp:1267
 #: MediaViewer.cpp:943
 msgid "Import Files"
 msgstr "Flytja inn skrár"
@@ -1759,9 +1760,9 @@ msgstr "Engum skrám bætt við"
 #: Jamendo.cpp:1128
 #: LocationPanel.cpp:510
 #: Magnatune.cpp:1022
-#: MainFrame.cpp:1273
+#: MainFrame.cpp:1276
 #: MediaViewer.cpp:949
-#: PortableMedia.cpp:1919
+#: PortableMedia.cpp:1916
 msgid "Update the collection library"
 msgstr "Uppfæra staðsetningu safns"
 
@@ -1769,9 +1770,9 @@ msgstr "Uppfæra staðsetningu safns"
 #: Jamendo.cpp:1131
 #: LocationPanel.cpp:515
 #: Magnatune.cpp:1025
-#: MainFrame.cpp:1278
+#: MainFrame.cpp:1281
 #: MediaViewer.cpp:952
-#: PortableMedia.cpp:1922
+#: PortableMedia.cpp:1919
 msgid "Rescan"
 msgstr "Endurskanna"
 
@@ -1779,9 +1780,9 @@ msgstr "Endurskanna"
 #: Jamendo.cpp:1131
 #: LocationPanel.cpp:516
 #: Magnatune.cpp:1025
-#: MainFrame.cpp:1279
+#: MainFrame.cpp:1282
 #: MediaViewer.cpp:952
-#: PortableMedia.cpp:1922
+#: PortableMedia.cpp:1919
 msgid "Rescan the collection library"
 msgstr "Endurskanna staðsetningu safns"
 
@@ -1789,9 +1790,9 @@ msgstr "Endurskanna staðsetningu safns"
 #: Jamendo.cpp:1134
 #: LocationPanel.cpp:521
 #: Magnatune.cpp:1028
-#: MainFrame.cpp:1284
+#: MainFrame.cpp:1287
 #: MediaViewer.cpp:955
-#: PortableMedia.cpp:1925
+#: PortableMedia.cpp:1922
 msgid "Search Covers"
 msgstr "Leita í plötualbúm"
 
@@ -1799,23 +1800,23 @@ msgstr "Leita í plötualbúm"
 #: Jamendo.cpp:1134
 #: LocationPanel.cpp:522
 #: Magnatune.cpp:1028
-#: MainFrame.cpp:1285
+#: MainFrame.cpp:1288
 #: MediaViewer.cpp:955
-#: PortableMedia.cpp:1925
+#: PortableMedia.cpp:1922
 msgid "Search the collection missing covers"
 msgstr "Leita að albúmun sem vantar í safn"
 
 #: iPodMedia.cpp:1693
 #: LocationPanel.cpp:530
-#: MainFrame.cpp:1293
-#: PortableMedia.cpp:1930
+#: MainFrame.cpp:1296
+#: PortableMedia.cpp:1927
 msgid "Unmount"
 msgstr "Aftengja"
 
 #: iPodMedia.cpp:1693
 #: LocationPanel.cpp:530
-#: MainFrame.cpp:1293
-#: PortableMedia.cpp:1930
+#: MainFrame.cpp:1296
+#: PortableMedia.cpp:1927
 msgid "Unmount the device"
 msgstr "Aftengja tæki"
 
@@ -1825,12 +1826,12 @@ msgstr "Aftengja tæki"
 #: LocationPanel.cpp:382
 #: LocationPanel.cpp:537
 #: Magnatune.cpp:1033
-#: MainFrame.cpp:1007
-#: MainFrame.cpp:1046
-#: MainFrame.cpp:1300
+#: MainFrame.cpp:1010
+#: MainFrame.cpp:1049
+#: MainFrame.cpp:1303
 #: MediaViewer.cpp:960
 #: PodcastsPanel.cpp:1751
-#: PortableMedia.cpp:1935
+#: PortableMedia.cpp:1932
 msgid "Properties"
 msgstr "Stillingar"
 
@@ -1838,9 +1839,9 @@ msgstr "Stillingar"
 #: Jamendo.cpp:1139
 #: LocationPanel.cpp:537
 #: Magnatune.cpp:1033
-#: MainFrame.cpp:1300
+#: MainFrame.cpp:1303
 #: MediaViewer.cpp:960
-#: PortableMedia.cpp:1935
+#: PortableMedia.cpp:1932
 msgid "Show collection properties"
 msgstr "Sýna eiginleika safns"
 
@@ -2034,8 +2035,8 @@ msgstr "Ónefnt"
 #: LibPanel.cpp:522
 #: LocationPanel.cpp:329
 #: LocationPanel.cpp:426
-#: MainFrame.cpp:993
-#: MainFrame.cpp:1189
+#: MainFrame.cpp:996
+#: MainFrame.cpp:1192
 #: RadioPanel.cpp:1185
 #: TreeViewFilterEditor.cpp:123
 msgid "Genres"
@@ -2046,8 +2047,8 @@ msgstr "Flokkar"
 #: LibPanel.cpp:524
 #: LocationPanel.cpp:324
 #: LocationPanel.cpp:421
-#: MainFrame.cpp:988
-#: MainFrame.cpp:1184
+#: MainFrame.cpp:991
+#: MainFrame.cpp:1187
 #: RadioPanel.cpp:1145
 #: RadioPanel.cpp:1153
 #: RadioPanel.cpp:1186
@@ -2058,7 +2059,7 @@ msgstr "Merki"
 #: LibPanel.cpp:262
 #: LibPanel.cpp:526
 #: LocationPanel.cpp:431
-#: MainFrame.cpp:1194
+#: MainFrame.cpp:1197
 msgid "Artists"
 msgstr "Flytjandi"
 
@@ -2066,7 +2067,7 @@ msgstr "Flytjandi"
 #: LibPanel.cpp:279
 #: LibPanel.cpp:528
 #: LocationPanel.cpp:446
-#: MainFrame.cpp:1209
+#: MainFrame.cpp:1212
 #: MediaViewer.cpp:1352
 msgid "Albums"
 msgstr "Plötur"
@@ -2075,7 +2076,7 @@ msgstr "Plötur"
 #: LibPanel.cpp:299
 #: LibPanel.cpp:530
 #: LocationPanel.cpp:451
-#: MainFrame.cpp:1214
+#: MainFrame.cpp:1217
 msgid "Years"
 msgstr "Ár"
 
@@ -2083,7 +2084,7 @@ msgstr "Ár"
 #: LibPanel.cpp:318
 #: LibPanel.cpp:532
 #: LocationPanel.cpp:456
-#: MainFrame.cpp:1219
+#: MainFrame.cpp:1222
 msgid "Ratings"
 msgstr "Einkunn"
 
@@ -2091,13 +2092,13 @@ msgstr "Einkunn"
 #: LibPanel.cpp:356
 #: LibPanel.cpp:536
 #: LocationPanel.cpp:436
-#: MainFrame.cpp:1199
+#: MainFrame.cpp:1202
 msgid "Composers"
 msgstr "Tónskáld"
 
 #: LibPanel.cpp:538
 #: LocationPanel.cpp:441
-#: MainFrame.cpp:1204
+#: MainFrame.cpp:1207
 msgid "Album Artists"
 msgstr "Albúm Flytjandi"
 
@@ -2111,14 +2112,14 @@ msgid "Are you sure to delete the selected album cover?"
 msgstr "Ertu viss um að þú viljir eyða völdu plötualbúm"
 
 #: LibPanel.cpp:1347
-#: PlayList.cpp:2110
-#: PlayListPanel.cpp:1270
+#: PlayList.cpp:2109
+#: PlayListPanel.cpp:1305
 #: TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr "Breyta Merkjum Laga"
 
 #: LibPanel.cpp:1623
-#: PlayListPanel.cpp:1544
+#: PlayListPanel.cpp:1583
 #: TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr "Svæða Ritill"
@@ -2166,23 +2167,23 @@ msgid "Radios"
 msgstr "Útvörp"
 
 #: LocationPanel.cpp:215
-#: MainFrame.cpp:1050
-#: MainFrame.cpp:2736
-#: MainFrame.cpp:3449
+#: MainFrame.cpp:1053
+#: MainFrame.cpp:2741
+#: MainFrame.cpp:3454
 #: PodcastsPanel.cpp:904
 #: Preferences.cpp:243
 msgid "Podcasts"
 msgstr "Hlaðvörp"
 
 #: LocationPanel.cpp:279
-#: MainFrame.cpp:959
-#: MainFrame.cpp:2773
+#: MainFrame.cpp:962
+#: MainFrame.cpp:2778
 msgid "File Browser"
 msgstr "Skráar vafri"
 
 #: LocationPanel.cpp:291
-#: MainFrame.cpp:1378
-#: MainFrame.cpp:2707
+#: MainFrame.cpp:1381
+#: MainFrame.cpp:2712
 #: Preferences.cpp:233
 #: TrackEdit.cpp:400
 msgid "Lyrics"
@@ -2192,37 +2193,37 @@ msgstr "Textar"
 #: LocationPanel.cpp:354
 #: LocationPanel.cpp:401
 #: LocationPanel.cpp:414
-#: MainFrame.cpp:976
-#: MainFrame.cpp:1018
-#: MainFrame.cpp:1164
-#: MainFrame.cpp:1177
+#: MainFrame.cpp:979
+#: MainFrame.cpp:1021
+#: MainFrame.cpp:1167
+#: MainFrame.cpp:1180
 msgid "Show"
 msgstr "Sýna"
 
 #: LocationPanel.cpp:313
-#: MainFrame.cpp:977
+#: MainFrame.cpp:980
 msgid "Show/Hide the radio panel"
 msgstr "Sýna/Fela útvarp stiku"
 
 #: LocationPanel.cpp:319
-#: MainFrame.cpp:983
+#: MainFrame.cpp:986
 #: RadioPanel.cpp:1117
 #: RadioPanel.cpp:1183
 msgid "Text Search"
 msgstr "Texta Leit"
 
 #: LocationPanel.cpp:319
-#: MainFrame.cpp:983
+#: MainFrame.cpp:986
 msgid "Show/Hide the radio text search"
 msgstr "Sýna/Fela leit útvarp"
 
 #: LocationPanel.cpp:324
-#: MainFrame.cpp:988
+#: MainFrame.cpp:991
 msgid "Show/Hide the radio labels"
 msgstr "Sýna/Fela merki útvarp"
 
 #: LocationPanel.cpp:329
-#: MainFrame.cpp:993
+#: MainFrame.cpp:996
 msgid "Show/Hide the radio genres"
 msgstr "Sýma/Fela flokka útvarp"
 
@@ -2234,17 +2235,17 @@ msgid "Update the radio station lists"
 msgstr "Uppfæra lista útvarpsstöðva"
 
 #: LocationPanel.cpp:344
-#: MainFrame.cpp:1008
+#: MainFrame.cpp:1011
 msgid "Set the radio preferences"
 msgstr "Velja stillingar Útvarps"
 
 #: LocationPanel.cpp:355
-#: MainFrame.cpp:1019
+#: MainFrame.cpp:1022
 msgid "Show/Hide the podcasts panel"
 msgstr "Sýna/Fela hlaðvarps stiku"
 
 #: LocationPanel.cpp:361
-#: MainFrame.cpp:1025
+#: MainFrame.cpp:1028
 #: PodcastsPanel.cpp:878
 #: PodcastsPanel.cpp:886
 #: PodcastsPanel.cpp:1043
@@ -2252,81 +2253,81 @@ msgid "Channels"
 msgstr "Veitur"
 
 #: LocationPanel.cpp:361
-#: MainFrame.cpp:1025
+#: MainFrame.cpp:1028
 msgid "Show/Hide the podcasts channels"
 msgstr "Sýna/Fela hlaðvarps veitur"
 
 #: LocationPanel.cpp:366
-#: MainFrame.cpp:1030
+#: MainFrame.cpp:1033
 #: PodcastsPanel.cpp:1046
 #: TrackEdit.cpp:310
 msgid "Details"
 msgstr "Upplýsingar"
 
 #: LocationPanel.cpp:366
-#: MainFrame.cpp:1030
+#: MainFrame.cpp:1033
 msgid "Show/Hide the podcasts details"
 msgstr "Sýna/Fela hlaðvarps upplýsingar"
 
 #: LocationPanel.cpp:375
-#: MainFrame.cpp:1039
+#: MainFrame.cpp:1042
 msgid "Update the podcasts added"
 msgstr "Uppfæra podcasts bætt við"
 
 #: LocationPanel.cpp:383
-#: MainFrame.cpp:1047
+#: MainFrame.cpp:1050
 msgid "Set the podcasts preferences"
 msgstr "Velja stillingar Podcast"
 
 #: LocationPanel.cpp:401
-#: MainFrame.cpp:1164
+#: MainFrame.cpp:1167
 msgid "Open the music collection"
 msgstr "Opna músik safn"
 
 #: LocationPanel.cpp:414
 #: LocationPanel.cpp:470
-#: MainFrame.cpp:1177
-#: MainFrame.cpp:1233
+#: MainFrame.cpp:1180
+#: MainFrame.cpp:1236
 msgid "View the collection library"
 msgstr "Skoða safn"
 
 #: LocationPanel.cpp:421
-#: MainFrame.cpp:1184
+#: MainFrame.cpp:1187
 msgid "View the library labels"
 msgstr "Skoða merki safns"
 
 #: LocationPanel.cpp:426
-#: MainFrame.cpp:1189
+#: MainFrame.cpp:1192
 msgid "View the library genres"
 msgstr "Skoða merki flokka"
 
 #: LocationPanel.cpp:431
-#: MainFrame.cpp:1194
+#: MainFrame.cpp:1197
 msgid "View the library artists"
 msgstr "Skoða flytjendur safns"
 
 #: LocationPanel.cpp:436
-#: MainFrame.cpp:1199
+#: MainFrame.cpp:1202
 msgid "View the library composers"
 msgstr "Skoða tónskáld safns"
 
 #: LocationPanel.cpp:441
-#: MainFrame.cpp:1204
+#: MainFrame.cpp:1207
 msgid "View the library album artists"
 msgstr "Skoða plata  flytjanda safns"
 
 #: LocationPanel.cpp:446
-#: MainFrame.cpp:1209
+#: MainFrame.cpp:1212
 msgid "View the library albums"
 msgstr "Skoða Plötur safns"
 
 #: LocationPanel.cpp:451
-#: MainFrame.cpp:1214
+#: MainFrame.cpp:1217
 msgid "View the library years"
 msgstr "Skoða ár safns"
 
 #: LocationPanel.cpp:456
-#: MainFrame.cpp:1219
+#: MainFrame.cpp:1222
 msgid "View the library ratings"
 msgstr "Skoða einkanir safns"
 
@@ -2335,68 +2336,68 @@ msgid "Play Counts"
 msgstr "Teljari"
 
 #: LocationPanel.cpp:461
-#: MainFrame.cpp:1224
+#: MainFrame.cpp:1227
 msgid "View the library play counts"
 msgstr "Skoða talningu spilana safns"
 
 #: LocationPanel.cpp:466
 #: LocationPanel.cpp:470
-#: MainFrame.cpp:1229
-#: MainFrame.cpp:1233
+#: MainFrame.cpp:1232
+#: MainFrame.cpp:1236
 #: TreePanel.cpp:89
 msgid "Library"
 msgstr "Safn"
 
 #: LocationPanel.cpp:476
-#: MainFrame.cpp:1239
+#: MainFrame.cpp:1242
 msgid "Album Browser"
 msgstr "Vafri Plötualbúm"
 
 #: LocationPanel.cpp:476
-#: MainFrame.cpp:1239
+#: MainFrame.cpp:1242
 msgid "View the collection album browser"
 msgstr "Skoða albúm safns í vafra"
 
 #: LocationPanel.cpp:481
-#: MainFrame.cpp:1244
+#: MainFrame.cpp:1247
 #: TreePanel.cpp:828
 #: TreePanel.cpp:853
 msgid "Tree"
 msgstr "Skráartré"
 
 #: LocationPanel.cpp:481
-#: MainFrame.cpp:1244
+#: MainFrame.cpp:1247
 msgid "View the collection tree view"
 msgstr "Skoða safn í skráartré"
 
 #: LocationPanel.cpp:486
-#: MainFrame.cpp:1249
+#: MainFrame.cpp:1252
 #: MediaViewer.cpp:232
-#: PlayListPanel.cpp:694
-#: PlayListPanel.cpp:720
+#: PlayListPanel.cpp:728
+#: PlayListPanel.cpp:754
 #: PortableMedia.cpp:1196
 msgid "Playlists"
 msgstr "Lagalistar"
 
 #: LocationPanel.cpp:486
-#: MainFrame.cpp:1249
+#: MainFrame.cpp:1252
 msgid "View the collection playlists"
 msgstr "Skoða lagalista safns"
 
 #: LocationPanel.cpp:497
-#: MainFrame.cpp:1260
+#: MainFrame.cpp:1263
 #: MediaViewer.cpp:940
 msgid "Add Path"
 msgstr "Bæta við slóð"
 
 #: LocationPanel.cpp:497
-#: MainFrame.cpp:1260
+#: MainFrame.cpp:1263
 #: MediaViewer.cpp:940
 msgid "Add path to the collection"
 msgstr "Bæta við slóð safns"
 
 #: LocationPanel.cpp:501
-#: MainFrame.cpp:1264
+#: MainFrame.cpp:1267
 #: MediaViewer.cpp:943
 msgid "Import files into the collection"
 msgstr "Flytja inn skrár í safn"
@@ -2454,534 +2455,534 @@ msgstr "Eingir textar funndust"
 msgid "Lyrics from "
 msgstr "Textar frá"
 
-#: LyricsPanel.cpp:2047
+#: LyricsPanel.cpp:2037
 msgid "Lyrics Target Editor"
 msgstr "Breyta Ákvörðunarstað Texta"
 
-#: LyricsPanel.cpp:2047
+#: LyricsPanel.cpp:2037
 msgid "Lyrics Source Editor"
 msgstr "Breyta Textum"
 
-#: LyricsPanel.cpp:2080
+#: LyricsPanel.cpp:2070
 msgid "Type:"
 msgstr "Tegund:"
 
-#: LyricsPanel.cpp:2085
+#: LyricsPanel.cpp:2075
 msgid "Embedded"
 msgstr "Innbyggt"
 
-#: LyricsPanel.cpp:2086
+#: LyricsPanel.cpp:2076
 msgid "File"
 msgstr "Skrá"
 
-#: LyricsPanel.cpp:2087
+#: LyricsPanel.cpp:2077
 msgid "Command"
 msgstr "Skipun"
 
-#: LyricsPanel.cpp:2089
+#: LyricsPanel.cpp:2079
 #: PodcastsPanel.cpp:2079
 msgid "Download"
 msgstr "Niðurhal"
 
-#: LyricsPanel.cpp:2096
+#: LyricsPanel.cpp:2086
 msgid "Source:"
 msgstr "Uppruni:"
 
-#: LyricsPanel.cpp:2104
-#: LyricsPanel.cpp:2510
+#: LyricsPanel.cpp:2094
+#: LyricsPanel.cpp:2500
 msgid "Replace:"
 msgstr "Endursetja:"
 
-#: LyricsPanel.cpp:2139
+#: LyricsPanel.cpp:2129
 msgid "Extract:"
 msgstr "Afþjappa:"
 
-#: LyricsPanel.cpp:2169
+#: LyricsPanel.cpp:2159
 msgid "Exclude:"
 msgstr "Útiloka:"
 
-#: LyricsPanel.cpp:2199
+#: LyricsPanel.cpp:2189
 msgid "Not Found:"
 msgstr "Ekkert Fannst:"
 
-#: LyricsPanel.cpp:2508
+#: LyricsPanel.cpp:2498
 msgid "Replace option editor"
 msgstr "Endursetja  breytt"
 
-#: LyricsPanel.cpp:2509
+#: LyricsPanel.cpp:2499
 #: RadioPanel.cpp:94
 msgid "Search:"
 msgstr "Leit:"
 
-#: LyricsPanel.cpp:2514
+#: LyricsPanel.cpp:2504
 msgid "Extract option editor"
 msgstr "Afþjappa Breytt"
 
-#: LyricsPanel.cpp:2515
-#: LyricsPanel.cpp:2521
+#: LyricsPanel.cpp:2505
+#: LyricsPanel.cpp:2511
 msgid "Begin:"
 msgstr "Byrja:"
 
-#: LyricsPanel.cpp:2516
-#: LyricsPanel.cpp:2522
+#: LyricsPanel.cpp:2506
+#: LyricsPanel.cpp:2512
 msgid "End:"
 msgstr "Endir:"
 
-#: LyricsPanel.cpp:2520
+#: LyricsPanel.cpp:2510
 msgid "Exclude option editor"
 msgstr "Útiloka breytt"
 
-#: LyricsPanel.cpp:2526
+#: LyricsPanel.cpp:2516
 msgid "Not Found option editor"
 msgstr "Ekkert fannst Breytt"
 
-#: LyricsPanel.cpp:2527
-#: LyricsPanel.cpp:2528
+#: LyricsPanel.cpp:2517
+#: LyricsPanel.cpp:2518
 msgid "Tag:"
 msgstr "Merkja:"
 
-#: MainFrame.cpp:239
+#: MainFrame.cpp:242
 msgid "Welcome to Guayadeque "
 msgstr "Velkominn  Guayadeque "
 
-#: MainFrame.cpp:254
-#: MainFrame.cpp:348
+#: MainFrame.cpp:257
+#: MainFrame.cpp:351
 #: TreeViewFilterEditor.cpp:54
 msgid "Filters"
 msgstr "Síur"
 
-#: MainFrame.cpp:346
-#: MainFrame.cpp:1351
-#: MainFrame.cpp:4225
+#: MainFrame.cpp:349
+#: MainFrame.cpp:1354
+#: MainFrame.cpp:4230
 msgid "VU Meters"
 msgstr "Vu Mælar"
 
-#: MainFrame.cpp:350
-#: MainFrame.cpp:706
-#: MainFrame.cpp:2095
-#: MainFrame.cpp:2834
-#: MainFrame.cpp:2851
+#: MainFrame.cpp:353
+#: MainFrame.cpp:709
+#: MainFrame.cpp:2100
+#: MainFrame.cpp:2839
+#: MainFrame.cpp:2856
 #: PlayList.cpp:78
 #: RadioPanel.cpp:734
 msgid "Now Playing"
 msgstr "Nú í spilun"
 
-#: MainFrame.cpp:960
+#: MainFrame.cpp:963
 msgid "Show/Hide the file browser panel"
 msgstr "Sýna/Fela skráarvafra stiku"
 
-#: MainFrame.cpp:1000
+#: MainFrame.cpp:1003
 msgid "Update the radio stations"
 msgstr "Uppfæra útvarpsstöðvar"
 
-#: MainFrame.cpp:1011
-#: MainFrame.cpp:2573
+#: MainFrame.cpp:1014
+#: MainFrame.cpp:2578
 msgid "Radio"
 msgstr "Útvarp"
 
-#: MainFrame.cpp:1011
+#: MainFrame.cpp:1014
 msgid "Set the radio visible panels"
 msgstr "Velja útvarp stiku"
 
-#: MainFrame.cpp:1050
+#: MainFrame.cpp:1053
 msgid "Set the podcasts visible panels"
 msgstr "Velja hlaðvarps stiku"
 
-#: MainFrame.cpp:1066
+#: MainFrame.cpp:1069
 msgid "Play a online music stream"
 msgstr " Spila músik yfir net "
 
-#: MainFrame.cpp:1103
+#: MainFrame.cpp:1106
 msgid "Show the selected portable devices"
 msgstr "Sýna valið viðtengt tæki"
 
-#: MainFrame.cpp:1110
+#: MainFrame.cpp:1113
 msgid "No Device Found"
 msgstr "Ekkert Tæki Fannst"
 
-#: MainFrame.cpp:1110
+#: MainFrame.cpp:1113
 msgid "No portable device was detected"
 msgstr "Ekkert viðtengt tæki fannst"
 
-#: MainFrame.cpp:1120
+#: MainFrame.cpp:1123
 msgid "Exits the application"
 msgstr "Hættir í forriti"
 
-#: MainFrame.cpp:1317
+#: MainFrame.cpp:1320
 msgid "Saves the current layout"
 msgstr "Vistar núverandi útlit"
 
-#: MainFrame.cpp:1327
+#: MainFrame.cpp:1330
 msgid "Player Playlist"
 msgstr "Spilari Lagalisti"
 
-#: MainFrame.cpp:1328
+#: MainFrame.cpp:1331
 msgid "Show/Hide the player playlist panel"
 msgstr "Sýna/Fela Lagalistar"
 
-#: MainFrame.cpp:1335
-#: MainFrame.cpp:1610
-#: MainFrame.cpp:4243
+#: MainFrame.cpp:1338
+#: MainFrame.cpp:1613
+#: MainFrame.cpp:4248
 msgid "Sources"
 msgstr "Uppruni"
 
-#: MainFrame.cpp:1336
+#: MainFrame.cpp:1339
 msgid "Show/Hide the locatons"
 msgstr "Sýna/Fela staðsetningu"
 
-#: MainFrame.cpp:1343
+#: MainFrame.cpp:1346
 msgid "Player Filters"
 msgstr "Síur"
 
-#: MainFrame.cpp:1344
+#: MainFrame.cpp:1347
 msgid "Show/Hide the player filters panel"
 msgstr "Sýna/Fela síur spilara"
 
-#: MainFrame.cpp:1352
+#: MainFrame.cpp:1355
 msgid "Show/Hide the player vumeter"
 msgstr "Syna/Fela Vu Mæla "
 
-#: MainFrame.cpp:1359
-#: MainFrame.cpp:4259
+#: MainFrame.cpp:1362
+#: MainFrame.cpp:4264
 msgid "Cover"
 msgstr "Plötuumslag"
 
-#: MainFrame.cpp:1360
+#: MainFrame.cpp:1363
 msgid "Show/Hide the cover"
 msgstr "Sýma/Fela plötualbúm"
 
-#: MainFrame.cpp:1370
-#: MainFrame.cpp:2675
+#: MainFrame.cpp:1373
+#: MainFrame.cpp:2680
 msgid "Last.fm"
 msgstr "Last.fm"
 
-#: MainFrame.cpp:1371
+#: MainFrame.cpp:1374
 msgid "Show/Hide the Last.fm panel"
 msgstr "Sýna/Fela Last.fm stiku"
 
-#: MainFrame.cpp:1379
+#: MainFrame.cpp:1382
 msgid "Show/Hide the lyrics panel"
 msgstr "Sýna/Fela texta stiku"
 
-#: MainFrame.cpp:1389
+#: MainFrame.cpp:1392
 msgid "Show/Restore the main window in full screen"
 msgstr "Sýna/Endurhlaða aðalglugga í fullri skjástærð"
 
-#: MainFrame.cpp:1394
+#: MainFrame.cpp:1397
 msgid "Statusbar"
 msgstr "Stöðustika"
 
-#: MainFrame.cpp:1395
+#: MainFrame.cpp:1398
 msgid "Show/Hide the statusbar"
 msgstr "Sýna/Fela stöðuslá"
 
-#: MainFrame.cpp:1400
+#: MainFrame.cpp:1403
 msgid "Show Captions"
 msgstr "Sýna Skýringartexta"
 
-#: MainFrame.cpp:1401
+#: MainFrame.cpp:1404
 msgid "Show/Hide the windows caption"
 msgstr "Sýna/Fela glugga skýringartexta "
 
-#: MainFrame.cpp:1408
+#: MainFrame.cpp:1411
 msgid "Close Current Tab"
 msgstr "Loka Núverandi Flipa"
 
-#: MainFrame.cpp:1409
+#: MainFrame.cpp:1412
 msgid "Close the current selected tab"
 msgstr "Loka völdum flipa"
 
-#: MainFrame.cpp:1418
+#: MainFrame.cpp:1421
 msgid "View the preferences"
 msgstr "Skoða Stillingar"
 
-#: MainFrame.cpp:1429
+#: MainFrame.cpp:1432
 msgid "Load Layout"
 msgstr "Hlaða Útlit"
 
-#: MainFrame.cpp:1429
+#: MainFrame.cpp:1432
 msgid "Set current view from a user defined layout"
 msgstr "Velja sýn fyrir útlit notanda"
 
-#: MainFrame.cpp:1430
+#: MainFrame.cpp:1433
 msgid "Delete Layout"
 msgstr "Eyða Útliti"
 
-#: MainFrame.cpp:1430
+#: MainFrame.cpp:1433
 msgid "Delete a user defined layout"
 msgstr "Eyða útliti notanda"
 
-#: MainFrame.cpp:1439
+#: MainFrame.cpp:1442
 #: TaskBar.cpp:122
 msgid "Next Track"
 msgstr "Næsta Lag"
 
-#: MainFrame.cpp:1440
+#: MainFrame.cpp:1443
 msgid "Play the next track in the playlist"
 msgstr "Spila næsta lag í lagalista"
 
-#: MainFrame.cpp:1443
+#: MainFrame.cpp:1446
 msgid "Prev. Track"
 msgstr "Fyrra. Lag"
 
-#: MainFrame.cpp:1444
+#: MainFrame.cpp:1447
 msgid "Play the previous track in the playlist"
 msgstr "Spila fyrra lag í lagalista"
 
-#: MainFrame.cpp:1448
+#: MainFrame.cpp:1451
 #: TaskBar.cpp:126
 msgid "Next Album"
 msgstr "Næsta Plata"
 
-#: MainFrame.cpp:1449
+#: MainFrame.cpp:1452
 msgid "Play the next album in the playlist"
 msgstr "Spila næstu plötu í lagalista"
 
-#: MainFrame.cpp:1453
+#: MainFrame.cpp:1456
 msgid "Prev. Album"
 msgstr "Fyrri.Plata"
 
-#: MainFrame.cpp:1454
+#: MainFrame.cpp:1457
 msgid "Play the previous album in the playlist"
 msgstr "Spila fyrri plötu í lagalista"
 
-#: MainFrame.cpp:1461
+#: MainFrame.cpp:1464
 msgid "Play or Pause the current track in the playlist"
 msgstr "Spila eða Hvíla lag í lagalista"
 
-#: MainFrame.cpp:1465
+#: MainFrame.cpp:1468
 msgid "Stop the current played track"
 msgstr "Stoppa valið lag"
 
-#: MainFrame.cpp:1470
+#: MainFrame.cpp:1473
 msgid "Stop after current playing or selected track"
 msgstr "Stoppa eftir núverandi spilað eða valið lag"
 
-#: MainFrame.cpp:1477
+#: MainFrame.cpp:1480
 msgid "Clear the now playing playlist"
 msgstr "Hreinsa lagalista í spilun"
 
-#: MainFrame.cpp:1487
+#: MainFrame.cpp:1490
 #: PlayList.cpp:1541
 #: SoListBox.cpp:599
 #: TaskBar.cpp:143
 msgid "Set the rating to 0"
 msgstr "Einkunn 0"
 
-#: MainFrame.cpp:1492
+#: MainFrame.cpp:1495
 #: PlayList.cpp:1543
 #: SoListBox.cpp:604
 #: TaskBar.cpp:146
 msgid "Set the rating to 1"
 msgstr "Einkunn 1"
 
-#: MainFrame.cpp:1497
+#: MainFrame.cpp:1500
 #: PlayList.cpp:1545
 #: SoListBox.cpp:609
 #: TaskBar.cpp:149
 msgid "Set the rating to 2"
 msgstr "Einkunn 2"
 
-#: MainFrame.cpp:1502
+#: MainFrame.cpp:1505
 #: PlayList.cpp:1547
 #: SoListBox.cpp:614
 #: TaskBar.cpp:152
 msgid "Set the rating to 3"
 msgstr "Einkunn 3"
 
-#: MainFrame.cpp:1507
+#: MainFrame.cpp:1510
 #: PlayList.cpp:1549
 #: SoListBox.cpp:619
 #: TaskBar.cpp:155
 msgid "Set the rating to 4"
 msgstr "Einkunn  4"
 
-#: MainFrame.cpp:1512
+#: MainFrame.cpp:1515
 #: PlayList.cpp:1551
 #: SoListBox.cpp:624
 #: TaskBar.cpp:158
 msgid "Set the rating to 5"
 msgstr "Einkunn 5"
 
-#: MainFrame.cpp:1515
+#: MainFrame.cpp:1518
 #: SoListBox.cpp:627
 msgid "Set Rating"
 msgstr "Stilla Einkunn"
 
-#: MainFrame.cpp:1515
+#: MainFrame.cpp:1518
 msgid "Set the rating of the current track"
 msgstr "Setja inn einkun við valið lag"
 
-#: MainFrame.cpp:1521
+#: MainFrame.cpp:1524
 #: TaskBar.cpp:165
 msgid "Update playlist based on Last.fm statics"
 msgstr "Uppfæra lagalista í samræmi við last.fm notkun"
 
-#: MainFrame.cpp:1526
+#: MainFrame.cpp:1529
 msgid "Randomize"
 msgstr "Stokkað"
 
-#: MainFrame.cpp:1527
+#: MainFrame.cpp:1530
 #: TaskBar.cpp:177
 msgid "Randomize the playlist"
 msgstr "Stokka lagalista"
 
-#: MainFrame.cpp:1530
+#: MainFrame.cpp:1533
 msgid "Repeat Playlist"
 msgstr "Endurtaka lagalista"
 
-#: MainFrame.cpp:1531
+#: MainFrame.cpp:1534
 #: TaskBar.cpp:169
 msgid "Repeat the tracks in the playlist"
 msgstr "Endurtaka lög í lagalista"
 
-#: MainFrame.cpp:1536
+#: MainFrame.cpp:1539
 msgid "Repeat Track"
 msgstr "Endurtaka lag"
 
-#: MainFrame.cpp:1537
+#: MainFrame.cpp:1540
 #: TaskBar.cpp:173
 msgid "Repeat the current track in the playlist"
 msgstr "Endurtaka valið lag í lagalista"
 
-#: MainFrame.cpp:1545
+#: MainFrame.cpp:1548
 msgid "Increment the volume level"
 msgstr "Auka styrk Hjóð"
 
-#: MainFrame.cpp:1550
+#: MainFrame.cpp:1553
 msgid "Decrement the volume level"
 msgstr "Minnka styrk Hljóð"
 
-#: MainFrame.cpp:1556
+#: MainFrame.cpp:1559
 #: TaskBar.cpp:183
 msgid "Force Gapless Mode"
 msgstr "Þvínga Eyðulausan Ham"
 
-#: MainFrame.cpp:1557
+#: MainFrame.cpp:1560
 #: TaskBar.cpp:183
 msgid "Set playback in gapless mode"
 msgstr "Eyðulaus spilunarhamur"
 
-#: MainFrame.cpp:1562
+#: MainFrame.cpp:1565
 #: Preferences.cpp:228
 msgid "Audioscrobble"
 msgstr "Audioscrobble"
 
-#: MainFrame.cpp:1563
+#: MainFrame.cpp:1566
 #: TaskBar.cpp:187
 msgid "Send played tracks information"
 msgstr "Senda upplysingar spilaðs lags"
 
-#: MainFrame.cpp:1580
+#: MainFrame.cpp:1583
 msgid "Get help using guayadeque"
 msgstr "Fá hjálp guayadeque"
 
-#: MainFrame.cpp:1584
+#: MainFrame.cpp:1587
 msgid "Community"
 msgstr "Samfélag"
 
-#: MainFrame.cpp:1585
+#: MainFrame.cpp:1588
 msgid "Get guayadeque support from guayadeque.org"
 msgstr "Fá stuðning frá Guayadeque.org"
 
-#: MainFrame.cpp:1590
+#: MainFrame.cpp:1593
 msgid "About"
 msgstr "Um"
 
-#: MainFrame.cpp:1591
+#: MainFrame.cpp:1594
 msgid "Show information about guayadeque music player"
 msgstr "Sýna upplýsingar um guayadeque"
 
-#: MainFrame.cpp:1618
+#: MainFrame.cpp:1621
 msgid "View"
 msgstr "Sýn"
 
-#: MainFrame.cpp:1626
+#: MainFrame.cpp:1629
 msgid "Controls"
 msgstr "Stjórntæki"
 
-#: MainFrame.cpp:1938
+#: MainFrame.cpp:1943
 msgid "Stream:"
 msgstr "Streyma:"
 
-#: MainFrame.cpp:2116
-#: MainFrame.cpp:2182
-#: MainFrame.cpp:2231
-#: MainFrame.cpp:2268
-#: MainFrame.cpp:4434
+#: MainFrame.cpp:2121
+#: MainFrame.cpp:2187
+#: MainFrame.cpp:2236
+#: MainFrame.cpp:2273
+#: MainFrame.cpp:4439
 msgid "Copy To..."
 msgstr "Afrita til..."
 
-#: MainFrame.cpp:2132
+#: MainFrame.cpp:2137
 msgid "Select destination directory"
 msgstr "Velja staðsetningu"
 
-#: MainFrame.cpp:3169
+#: MainFrame.cpp:3174
 msgid "station"
 msgstr "stöð"
 
-#: MainFrame.cpp:3169
+#: MainFrame.cpp:3174
 msgid "stations"
 msgstr "stöðvar"
 
-#: MainFrame.cpp:3178
+#: MainFrame.cpp:3183
 msgid "podcast"
 msgstr "hlaðvarp"
 
-#: MainFrame.cpp:3178
+#: MainFrame.cpp:3183
 msgid "podcasts"
 msgstr "hlaðvörp"
 
-#: MainFrame.cpp:3193
+#: MainFrame.cpp:3198
 msgid "dir"
 msgstr "skráar staðsetning"
 
-#: MainFrame.cpp:3193
+#: MainFrame.cpp:3198
 msgid "dirs"
 msgstr "skráa staðsetning"
 
-#: MainFrame.cpp:3195
+#: MainFrame.cpp:3200
 msgid "file"
 msgstr "skrá"
 
-#: MainFrame.cpp:3195
+#: MainFrame.cpp:3200
 msgid "files"
 msgstr "skrár"
 
-#: MainFrame.cpp:3612
-#: MainFrame.cpp:3618
-#: MainFrame.cpp:3621
+#: MainFrame.cpp:3617
+#: MainFrame.cpp:3623
+#: MainFrame.cpp:3626
 msgid "Load this user defined layout"
 msgstr "Hlaða útlit notanda"
 
-#: MainFrame.cpp:3613
+#: MainFrame.cpp:3618
 msgid "Delete this user defined layout"
 msgstr "Eyða þessu útliti notanda"
 
-#: MainFrame.cpp:3618
-#: MainFrame.cpp:3621
+#: MainFrame.cpp:3623
+#: MainFrame.cpp:3626
 msgid "No Layouts Defined"
 msgstr "Ekkert Útlit Valið"
 
-#: MainFrame.cpp:3725
+#: MainFrame.cpp:3730
 msgid "Layout:"
 msgstr "Útlit:"
 
-#: MainFrame.cpp:3725
+#: MainFrame.cpp:3730
 #, c-format
 msgid "Layout %u"
 msgstr "Útlit %u"
 
-#: MainFrame.cpp:4399
-#: MainFrame.cpp:4420
+#: MainFrame.cpp:4404
+#: MainFrame.cpp:4425
 msgid "Copy the current selected songs to a directory or device"
 msgstr "Afritar valdið lag til möppu eða tækis"
 
-#: MainFrame.cpp:4431
+#: MainFrame.cpp:4436
 msgid "Add Copy To patterns in preferences"
 msgstr "Bæta Vista Við mynstur í stillingum"
 
-#: MainFrame.cpp:4434
+#: MainFrame.cpp:4439
 msgid "Copy the selected tracks to a folder or device"
 msgstr "Afrita völd lög í möppu eða til tækis"
 
@@ -3144,7 +3145,7 @@ msgid "Record to file"
 msgstr "Upptaka"
 
 #: PlayerPanel.cpp:205
-#: PlayerPanel.cpp:2904
+#: PlayerPanel.cpp:2906
 msgid "Volume"
 msgstr "Hljóð"
 
@@ -3153,19 +3154,19 @@ msgid "Show the equalizer"
 msgstr "Sýna tónjafnara"
 
 #: PlayerPanel.cpp:218
-#: PlayerPanel.cpp:2241
+#: PlayerPanel.cpp:2243
 msgid "Smart Play: "
 msgstr "Snjall Spilun: "
 
 #: PlayerPanel.cpp:221
 #: PlayerPanel.cpp:237
-#: PlayerPanel.cpp:2244
+#: PlayerPanel.cpp:2246
 #: Preferences.cpp:959
 msgid "Disabled"
 msgstr "Óvirkt"
 
 #: PlayerPanel.cpp:225
-#: PlayerPanel.cpp:2248
+#: PlayerPanel.cpp:2250
 #: Preferences.cpp:1345
 #: Preferences.cpp:1380
 msgid "Enabled"
@@ -3176,14 +3177,14 @@ msgid "Repeat: "
 msgstr "Endurtaka: "
 
 #: PlayerPanel.cpp:241
-#: PlayerPanel.cpp:2296
+#: PlayerPanel.cpp:2298
 #: PlayList.cpp:1622
 #: Preferences.cpp:959
 msgid "Track"
 msgstr "Lag"
 
 #: PlayerPanel.cpp:245
-#: PlayerPanel.cpp:2300
+#: PlayerPanel.cpp:2302
 msgid "Playlist"
 msgstr "Lagalisti"
 
@@ -3223,11 +3224,11 @@ msgstr "Sýna bitahraða valins lags"
 msgid "Buffering..."
 msgstr "Hleður niður..."
 
-#: PlayerPanel.cpp:2289
+#: PlayerPanel.cpp:2291
 msgid "Repeat Mode: "
 msgstr "Endurtekin Hamur "
 
-#: PlayerPanel.cpp:2292
+#: PlayerPanel.cpp:2294
 msgid "Off"
 msgstr "Af"
 
@@ -3284,6 +3285,7 @@ msgid "Search a track in the playlist by name"
 msgstr "Leita að lagi í lagalista eftir nafni"
 
 #: PlayList.cpp:1583
+#: PLSoListBox.cpp:162
 msgid "Randomize the songs in the playlist"
 msgstr "Stokka lög í lagaLista"
 
@@ -3292,6 +3294,7 @@ msgid "Remove all tracks from playlist"
 msgstr "Fjarlægja öll lög úr lagaLista"
 
 #: PlayList.cpp:1595
+#: PLSoListBox.cpp:169
 msgid "Remove from Playlist"
 msgstr "Fjarlægja úr Lagalista"
 
@@ -3352,11 +3355,11 @@ msgstr "Velja flokk valins lags"
 msgid "Search in the library"
 msgstr "Leita í safni"
 
-#: PlayList.cpp:2140
+#: PlayList.cpp:2139
 msgid "Search: "
 msgstr "Leit:"
 
-#: PlayList.cpp:2140
+#: PlayList.cpp:2139
 msgid "Please enter the search term"
 msgstr "Vinsamlega settu inn leitarstreng"
 
@@ -3368,7 +3371,7 @@ msgstr "Vistaður Lagalisti"
 msgid "Dynamic playlists"
 msgstr "Breytanlegur lagalisti"
 
-#: PlayListPanel.cpp:190
+#: PlayListPanel.cpp:224
 #: PodcastsPanel.cpp:2039
 #: RadioPanel.cpp:835
 #: SoListBox.cpp:534
@@ -3376,101 +3379,97 @@ msgstr "Breytanlegur lagalisti"
 msgid "Play current selected songs"
 msgstr "Spila valin lög"
 
-#: PlayListPanel.cpp:196
+#: PlayListPanel.cpp:230
 #: SoListBox.cpp:541
 #: TreePanel.cpp:394
 msgid "Add current selected songs to the playlist"
 msgstr "Bæta völdum lögum við lagalista"
 
-#: PlayListPanel.cpp:226
+#: PlayListPanel.cpp:260
 msgid "New Dynamic Playlist"
 msgstr "Nýr Breytanlegur Lagalisti"
 
-#: PlayListPanel.cpp:226
+#: PlayListPanel.cpp:260
 msgid "Create a new dynamic playlist"
 msgstr "Búa til nýjand Breytanlegan Lagalista"
 
-#: PlayListPanel.cpp:232
+#: PlayListPanel.cpp:266
 #: RadioPanel.cpp:467
 msgid "Import"
 msgstr "Flytja inn"
 
-#: PlayListPanel.cpp:232
+#: PlayListPanel.cpp:266
 msgid "Import a playlist"
 msgstr "Flytja inn lagalista"
 
-#: PlayListPanel.cpp:238
+#: PlayListPanel.cpp:272
 #: RadioPanel.cpp:471
 msgid "Export"
 msgstr "Flytja út"
 
-#: PlayListPanel.cpp:238
+#: PlayListPanel.cpp:272
 msgid "Export the playlist"
 msgstr "Flytja út lagalista"
 
-#: PlayListPanel.cpp:248
+#: PlayListPanel.cpp:282
 #: SoListBox.cpp:502
 #: TreePanel.cpp:371
 msgid "Edit"
 msgstr "Breyta"
 
-#: PlayListPanel.cpp:248
+#: PlayListPanel.cpp:282
 msgid "Edit the selected playlist"
 msgstr "Breyta völdum lagalista"
 
-#: PlayListPanel.cpp:252
+#: PlayListPanel.cpp:286
 msgid "Save the selected playlist as a Static Playlist"
 msgstr "Vista valin lagalista í vistaður Lagalisti"
 
-#: PlayListPanel.cpp:257
+#: PlayListPanel.cpp:291
 msgid "Change the name of the selected playlist"
 msgstr "Breyta nafni valins lagalista"
 
-#: PlayListPanel.cpp:262
-#: PlayListPanel.cpp:272
+#: PlayListPanel.cpp:296
+#: PlayListPanel.cpp:306
 msgid "Delete the selected playlist"
 msgstr "Eyða völdum lagalista"
 
-#: PlayListPanel.cpp:268
+#: PlayListPanel.cpp:302
 msgid "Set as Alow Filter"
 msgstr "Síað sem Leyft"
 
-#: PlayListPanel.cpp:268
+#: PlayListPanel.cpp:302
 msgid "Set this playlist as the allow filter"
 msgstr "Sía Lagalista sem Leyfður"
 
-#: PlayListPanel.cpp:272
+#: PlayListPanel.cpp:306
 msgid "Set as Deny Filter"
 msgstr "Síað sem Ekki Leyft "
 
-#: PlayListPanel.cpp:958
-#: PlayListPanel.cpp:1099
+#: PlayListPanel.cpp:992
+#: PlayListPanel.cpp:1133
 msgid "Playlist Name: "
 msgstr "Nafn Lagalista: "
 
-#: PlayListPanel.cpp:959
-#: PlayListPanel.cpp:1100
+#: PlayListPanel.cpp:993
+#: PlayListPanel.cpp:1134
 msgid "Enter the new playlist name"
 msgstr "Breyta nafni á nýjum lagalista"
 
-#: PlayListPanel.cpp:999
+#: PlayListPanel.cpp:1033
 msgid "Are you sure to delete the selected Playlist?"
 msgstr "Ertu viss um að þú viljir eyða þessum Lagalista?"
 
-#: PlayListPanel.cpp:1084
-#: PlayListPanel.cpp:1158
+#: PlayListPanel.cpp:1118
+#: PlayListPanel.cpp:1192
 msgid "Select the playlist file"
 msgstr "Velja lagalista skrá"
 
-#: PlayListPanel.cpp:1111
+#: PlayListPanel.cpp:1145
 msgid "New Playlist"
 msgstr "Nýr Lagalsti"
 
-#: PLSoListBox.cpp:154
-msgid "Remove from PlayList"
-msgstr "Fjarlægja úr LagaLista"
-
-#: PLSoListBox.cpp:154
+#: PLSoListBox.cpp:169
 msgid "Delete the current selected tracks"
 msgstr "Eyða völdum lögum"
 
@@ -5062,6 +5061,9 @@ msgstr "Sía: "
 msgid "PlayCount"
 msgstr "Teljari"
 
+#~ msgid "Remove from PlayList"
+#~ msgstr "Fjarlægja úr LagaLista"
+
 #~ msgid "No commands defined"
 #~ msgstr "Engar aðgerðir fundust"
 
@@ -5702,3 +5704,4 @@ msgstr "Teljari"
 
 #~ msgid "Not available"
 #~ msgstr "No disponible"
+

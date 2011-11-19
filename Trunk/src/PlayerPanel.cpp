@@ -421,6 +421,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     CheckFiltersEnable();
 
+	Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayerPanel::OnIdle ), NULL, this );
 	// Connect Events
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
@@ -704,7 +705,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         {
             wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
             event.SetInt( 1 );
-            m_MainFrame->AddPendingEvent( event );
+            wxPostEvent( m_MainFrame, event );
         }
     }
 

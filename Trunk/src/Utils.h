@@ -71,36 +71,36 @@ void inline guImageResize( wxImage * image, int maxsize, bool forceresize = fals
 class guTrack;
 
 // -------------------------------------------------------------------------------- //
-wxString LenToString( const unsigned int len );
-wxString SizeToString( wxFileOffset size );
-wxArrayString guSplitWords( const wxString &InputStr );
-wxImage * guGetRemoteImage( const wxString &url, int &imgtype );
-bool DownloadImage( const wxString &source, const wxString &target, const int imagetype, int maxwidth, int maxheight );
-bool DownloadImage( const wxString &source, const wxString &taget, int maxwidth = -1, int maxheight = -1 );
-int DownloadFile( const wxString &Source, const wxString &Target );
-wxString RemoveSearchFilters( const wxString &Album );
-bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
-wxString guURLEncode( const wxString &url );
-wxString guFileDnDEncode( const wxString &file );
-int guWebExecute( const wxString &Url );
-int guExecute( const wxString &Command );
-wxFileOffset guGetFileSize( const wxString &FileName );
-wxString GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
-void CheckSymLinks( wxArrayString &libpaths );
-bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename );
-int guGetFileMode( const wxString &filepath );
-bool guSetFileMode( const wxString &filepath, int mode, bool adding = false );
-bool guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
-wxString guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr, const wxMBConv &conv = wxConvUTF8 );
-wxString guExpandTrackMacros( const wxString &pattern, guTrack * track, const int indexpos = 0 );
-bool guIsValidImageFile( const wxString &filename );
-bool guRemoveDir( const wxString &path );
-void GetMediaViewerTracks( const guTrackArray &sourcetracks, const wxArrayInt &sourceflags,
+wxString            LenToString( const unsigned int len );
+wxString            SizeToString( wxFileOffset size );
+wxArrayString       guSplitWords( const wxString &InputStr );
+wxImage *           guGetRemoteImage( const wxString &url, int &imgtype );
+bool                DownloadImage( const wxString &source, const wxString &target, const int imagetype, int maxwidth, int maxheight );
+bool                DownloadImage( const wxString &source, const wxString &taget, int maxwidth = -1, int maxheight = -1 );
+int                 DownloadFile( const wxString &Source, const wxString &Target );
+wxString            RemoveSearchFilters( const wxString &Album );
+bool                SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
+wxString            guURLEncode( const wxString &url );
+wxString            guFileDnDEncode( const wxString &file );
+int                 guWebExecute( const wxString &Url );
+int                 guExecute( const wxString &Command );
+wxFileOffset        guGetFileSize( const wxString &FileName );
+wxString            GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
+void                CheckSymLinks( wxArrayString &libpaths );
+bool                CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename );
+int                 guGetFileMode( const wxString &filepath );
+bool                guSetFileMode( const wxString &filepath, int mode, bool adding = false );
+bool                guRenameFile( const wxString &oldname, const wxString &newname, bool overwrite = true );
+wxString            guGetNextXMLChunk( wxFile &xmlfile, wxFileOffset &CurPos, const char * startstr, const char * endstr, const wxMBConv &conv = wxConvUTF8 );
+wxString            guExpandTrackMacros( const wxString &pattern, guTrack * track, const int indexpos = 0 );
+bool                guIsValidImageFile( const wxString &filename );
+bool                guRemoveDir( const wxString &path );
+void                GetMediaViewerTracks( const guTrackArray &sourcetracks, const wxArrayInt &sourceflags,
                                  const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags );
-void GetMediaViewerTracks( const guTrackArray &sourcetracks, const int flags,
+void                GetMediaViewerTracks( const guTrackArray &sourcetracks, const int flags,
                                  const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags );
-void GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks );
-void GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs );
+void                GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks );
+void                GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs );
 
 // -------------------------------------------------------------------------------- //
 #endif

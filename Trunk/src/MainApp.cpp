@@ -388,7 +388,8 @@ bool guMainApp::OnInit()
 
     // Initialize the MainFrame object
     guMainFrame * Frame = new guMainFrame( 0, m_DbCache );
-    Frame->SetMainFrame();
+    SetTopWindow( Frame );
+    //Frame->SetMainFrame();
     wxIcon MainIcon;
     MainIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
     Frame->SetIcon( MainIcon );
@@ -412,8 +413,6 @@ bool guMainApp::OnInit()
     {
         Frame->Show();
     }
-
-    SetTopWindow( Frame );
 
     return true;
 }

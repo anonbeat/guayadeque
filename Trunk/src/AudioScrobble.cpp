@@ -19,10 +19,11 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "AudioScrobble.h"
-#include "MD5.h"
 #include "Config.h"
-#include "Utils.h"
+#include "MainFrame.h"
+#include "MD5.h"
 #include "PlayerPanel.h"
+#include "Utils.h"
 
 #include <wx/curl/http.h>
 #include <wx/tokenzr.h>
@@ -262,6 +263,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
 // -------------------------------------------------------------------------------- //
 bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
 {
+    //guLogMessage( wxT( "guAudioScrobbleSender::SubmitNowPlaying" ) );
     wxCurlHTTP  http;
     wxString    PostData;
     wxString    Content;
@@ -295,7 +297,7 @@ bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
     if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_NowPlayUrl ) )
     {
         Content = http.GetResponseBody();
-        //guLogMessage( wxT( "%s" ), Content.c_str() );
+        //guLogMessage( wxT( "%i : %s" ), http.GetResponseCode(), Content.c_str() );
         if( !Content.IsEmpty() )
         {
             //guLogMessage( wxT( "AudioScrobble::Response : " ) + Content );
@@ -374,6 +376,7 @@ void guLibreFMAudioScrobble::ReadUserConfig( void )
 guAudioScrobble::guAudioScrobble( guDbLibrary * db )
 {
     m_Db = db;
+    m_MainFrame = guMainFrame::GetMainFrame();
     m_LastFMAudioScrobble = NULL;
     m_LibreFMAudioScrobble = NULL;
     m_PlayedThread = NULL;
@@ -391,12 +394,12 @@ guAudioScrobble::guAudioScrobble( guDbLibrary * db )
         m_LibreFMAudioScrobble = new guLibreFMAudioScrobble( db );
     }
 
-    // Update the MainFrame AudioScrobble Status
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-    event.SetEventObject( ( wxObject * ) this );
-    event.SetInt( 0 );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
-
+//    // Update the MainFrame AudioScrobble Status
+//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+//    event.SetInt( 0 );
+//    //wxPostEvent( m_MainFrame, event );
+//    m_MainFrame->AddPendingEvent( event );
+//    guLogMessage( wxT( "******** Sent the AudioScrobble Update Event ********" ) );
 }
 
 
@@ -434,9 +437,8 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * curtrack )
                    ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->GetErrorCode() );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-    event.SetEventObject( ( wxObject * ) this );
     event.SetInt( HasError );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 
     return !HasError;
 }
@@ -459,9 +461,8 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtrack
                    ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->GetErrorCode() );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-    event.SetEventObject( ( wxObject * ) this );
     event.SetInt( HasError );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( m_MainFrame, event );
 
     return !HasError;
 }
@@ -508,6 +509,16 @@ void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
             guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
 
         m_NowPlayingInfo = NULL;
+    }
+    else
+    {
+        guLogMessage( wxT( "Now Playing track submit delayed. There are pending tracks to send..." ) );
+        if( !m_PlayedThread )
+        {
+            m_PlayedThread = new guASPlayedThread( this, m_Db );
+            if( !m_PlayedThread )
+                guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
+        }
     }
 }
 
@@ -568,6 +579,10 @@ void guAudioScrobble::OnConfigUpdated( void )
     {
         m_LibreFMAudioScrobble->OnConfigUpdated();
     }
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    event.SetInt( !IsOk() );
+    wxPostEvent( m_MainFrame, event );
 }
 
 // -------------------------------------------------------------------------------- //

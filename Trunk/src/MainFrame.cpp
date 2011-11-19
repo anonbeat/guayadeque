@@ -57,6 +57,8 @@ guMainFrame * guMainFrame::m_MainFrame = NULL;
 // -------------------------------------------------------------------------------- //
 guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 {
+    SetMainFrame();
+
     //
     // Init the Config Object
     //
@@ -1878,6 +1880,7 @@ void guMainFrame::OnPlayerVolumeChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnAudioScrobbleUpdate( wxCommandEvent &event )
 {
+    guLogMessage( wxT( "######## OnAudioScrobbleUpdate ########" ) );
     if( m_MainStatusBar )
     {
         m_MainStatusBar->UpdateAudioScrobbleIcon( event.GetInt() == 0 );
@@ -3265,15 +3268,6 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 
 	m_MainStatusBar->Show( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "mainwindow" ) ) );
 
-//    // If the database need to be updated
-//    if( m_Db->NeedUpdate() || Config->ReadBool( wxT( "UpdateLibOnStart" ), false, wxT( "general" ) ) )
-//    {
-//        guLogMessage( wxT( "Database updating started. %i" ),  m_Db->NeedUpdate() );
-//        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED,
-//            m_Db->NeedUpdate() ? ID_MENU_UPDATE_LIBRARYFORCED : ID_MENU_UPDATE_LIBRARY );
-//        AddPendingEvent( event );
-//    }
-
     // If the Podcasts update is enable launch it...
     if( Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) )
     {
@@ -3292,9 +3286,16 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     // Now we can start the dbus server
     m_DBusServer->Run();
 
-//    CreatePortablePlayersMenu( m_MenuPortableDevices );
-
     CreateTaskBarIcon();
+
+    if( m_PlayerPanel )
+    {
+        if( m_PlayerPanel->GetAudioScrobbleEnabled() )
+        {
+            wxCommandEvent Event;
+            OnAudioScrobbleUpdate( Event );
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //

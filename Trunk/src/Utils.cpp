@@ -312,7 +312,7 @@ int DownloadFile( const wxString &Source, const wxString &Target )
 // -------------------------------------------------------------------------------- //
 wxString guURLEncode( const wxString &url )
 {
-    static const wxChar marks[] = wxT( "~!@#$&*()=:/,;?+'" );
+    static const wxChar marks[] = wxT( "-_.\"+!~*()'" );
 
 	wxString RetVal;
 	unsigned char CurChar;
