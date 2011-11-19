@@ -132,11 +132,14 @@ class guLibreFMAudioScrobble : public guAudioScrobbleSender
 
 };
 
+class guMainFrame;
+
 // -------------------------------------------------------------------------------- //
-class guAudioScrobble
+class guAudioScrobble : public wxEvtHandler
 {
     protected :
         guDbLibrary *               m_Db;
+        guMainFrame *               m_MainFrame;
 
         guLastFMAudioScrobble *     m_LastFMAudioScrobble;
         guLibreFMAudioScrobble *    m_LibreFMAudioScrobble;
