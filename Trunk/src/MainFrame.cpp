@@ -1880,10 +1880,10 @@ void guMainFrame::OnPlayerVolumeChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnAudioScrobbleUpdate( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "######## OnAudioScrobbleUpdate ########" ) );
+    guLogMessage( wxT( "######## OnAudioScrobbleUpdate ( %i ) ########" ), event.GetInt() );
     if( m_MainStatusBar )
     {
-        m_MainStatusBar->UpdateAudioScrobbleIcon( event.GetInt() == 0 );
+        m_MainStatusBar->UpdateAudioScrobbleIcon( !event.GetInt() );
     }
 }
 

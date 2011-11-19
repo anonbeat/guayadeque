@@ -57,6 +57,7 @@ void guAudioScrobbleSender::OnConfigUpdated( void )
 // -------------------------------------------------------------------------------- //
 int guAudioScrobbleSender::ProcessError( const wxString &ErrorStr )
 {
+    //guLogMessage( wxT( "ProcessError: '%s'" ), ErrorStr.c_str() );
     if( ErrorStr.Contains( wxT( "BANNED" ) ) )
     {
         m_ErrorCode = guAS_ERROR_BANNED;
@@ -158,6 +159,7 @@ wxString guAudioScrobbleSender::GetAuthToken( int TimeStamp )
 // -------------------------------------------------------------------------------- //
 bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &PlayedSongs )
 {
+    //guLogMessage( wxT( "guAudioScrobbleSender::SubmitPlayedSongs" ) );
     wxString    PostData;
     wxString    Content;
     int         index;
@@ -457,14 +459,15 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtrack
         m_LibreFMAudioScrobble->SubmitPlayedSongs( playedtracks );
     }
 
-    int HasError = ( m_LastFMAudioScrobble && m_LastFMAudioScrobble->GetErrorCode() ) ||
-                   ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->GetErrorCode() );
+    int LastFMErrorCode = m_LastFMAudioScrobble->GetErrorCode();
+    int LibreFMErrorCode = m_LibreFMAudioScrobble->GetErrorCode();
+    //guLogMessage( wxT( "ErrorCodes: %i  %i" ), LastFMErrorCode, LibreFMErrorCode );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-    event.SetInt( HasError );
+    event.SetInt( ( LastFMErrorCode || LibreFMErrorCode ) );
     wxPostEvent( m_MainFrame, event );
 
-    return !HasError;
+    return !( LastFMErrorCode || LibreFMErrorCode );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -525,6 +528,7 @@ void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
 // -------------------------------------------------------------------------------- //
 void guAudioScrobble::EndPlayedThread( void )
 {
+    //guLogMessage( wxT( "guAudioScrobble::EndPlayedThread" ) );
     wxMutexLocker Lock( m_NowPlayingInfoMutex );
 
     m_PlayedThread = NULL;
