@@ -1203,6 +1203,50 @@ void guMediaViewer::ImportFiles( guTrackArray * tracks )
 }
 
 // -------------------------------------------------------------------------------- //
+void AddImportFiles( guTrackArray * tracks, const wxString &filename )
+{
+    //guLogMessage( wxT( "AddImportFiles : '%s'" ), filename.c_str() );
+    if( wxFileExists( filename ) )
+    {
+        if( guIsValidAudioFile( filename.Lower() ) )
+        {
+            guTrack * Track = new guTrack();
+            if( Track->ReadFromFile( filename ) )
+            {
+                Track->m_Type = guTRACK_TYPE_NOTDB;
+                tracks->Add( Track );
+            }
+            else
+            {
+                delete Track;
+            }
+        }
+    }
+    else if( wxDirExists( filename ) )
+    {
+        wxString FileName;
+        wxString DirName = filename;
+        wxDir Dir;
+        if( !DirName.EndsWith( wxT( "/" ) ) )
+            DirName += wxT( "/" );
+
+        Dir.Open( DirName );
+        if( Dir.IsOpened() )
+        {
+            if( Dir.GetFirst( &FileName, wxEmptyString, wxDIR_FILES | wxDIR_DIRS ) )
+            {
+                do {
+                    if( ( FileName[ 0 ] != '.' ) )
+                    {
+                        AddImportFiles( tracks, DirName + FileName );
+                    }
+                } while( Dir.GetNext( &FileName ) );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guMediaViewer::ImportFiles( const wxArrayString &files )
 {
     int Index;
@@ -1212,23 +1256,8 @@ void guMediaViewer::ImportFiles( const wxArrayString &files )
         guTrackArray * Tracks = new guTrackArray();
         for( Index = 0; Index < Count; Index++ )
         {
-            wxString NewFile = files[ Index ];
-            //guLogMessage( wxT( "Openning file '%s'" ), NewFile.c_str() );
-            if( wxFileExists( NewFile ) && guIsValidAudioFile( NewFile.Lower() ) )
-            {
-                guTrack * Track = new guTrack();
-                if( Track->ReadFromFile( NewFile ) )
-                {
-                    Track->m_Type = guTRACK_TYPE_NOTDB;
-                    Tracks->Add( Track );
-                }
-                else
-                {
-                    delete Track;
-                }
-            }
+            AddImportFiles( Tracks, files[ Index ] );
         }
-
         ImportFiles( Tracks );
     }
 }

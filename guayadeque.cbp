@@ -305,8 +305,6 @@
 		<Unit filename="src/Makefile" />
 		<Unit filename="src/MediaCtrl.cpp" />
 		<Unit filename="src/MediaCtrl.h" />
-		<Unit filename="src/MediaDb.cpp" />
-		<Unit filename="src/MediaDb.h" />
 		<Unit filename="src/MediaViewer.cpp" />
 		<Unit filename="src/MediaViewer.h" />
 		<Unit filename="src/MediaViewerLibrary.cpp" />
