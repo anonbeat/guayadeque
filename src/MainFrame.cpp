@@ -461,6 +461,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     Connect( ID_MENU_PREFERENCES_COMMANDS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
     Connect( ID_MENU_PREFERENCES_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
     Connect( ID_MENU_PREFERENCES_LINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
+    Connect( ID_MENU_COLLECTION_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
 
     Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
     Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ), NULL, this );
@@ -944,6 +945,10 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
 //    MenuItem = new wxMenuItem( menu, -1, _( "Local Music" ), wxEmptyString, wxITEM_NORMAL );
 //    menu->Append( MenuItem );
 //    MenuItem->Enable( false );
+
+    MenuItem = new wxMenuItem( menu, ID_MENU_COLLECTION_NEW, _( "New Collection" ), _( "Create a new collection" ), wxITEM_NORMAL );
+    menu->Append( MenuItem );
+    menu->AppendSeparator();
 
     //CollectionBaseCommand = ID_COLLECTIONS_BASE;
     int Index;
@@ -1648,6 +1653,10 @@ void guMainFrame::OnPreferences( wxCommandEvent &event )
     int Page;
     switch( event.GetId() )
     {
+        case ID_MENU_COLLECTION_NEW  :
+            Page = guPREFERENCE_PAGE_LIBRARY;
+            break;
+
         case ID_MENU_PREFERENCES_COMMANDS :
             Page = guPREFERENCE_PAGE_COMMANDS;
             break;
@@ -4811,6 +4820,7 @@ void guMainFrame::CheckPendingUpdates( const guTrack * track )
         }
     }
 }
+
 
 
 
