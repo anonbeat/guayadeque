@@ -3088,7 +3088,7 @@ msgstr "%u Canali"
 #: NewChannel.cpp:306
 #, c-format
 msgid "%u Categories, %u Channels"
-msgstr "&u Categorie, %u Canali"
+msgstr "%u Categorie, %u Canali"
 
 #: NewChannel.cpp:374
 msgid "Filter Text: "
