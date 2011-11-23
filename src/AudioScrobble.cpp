@@ -448,19 +448,21 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * curtrack )
 // -------------------------------------------------------------------------------- //
 bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtracks )
 {
+    int LastFMErrorCode = 0;
+    int LibreFMErrorCode = 0;
     //guLogMessage( wxT( "guAudioScrobbler:SubmitPlayedSongs" ) );
     if( m_LastFMAudioScrobble )
     {
         m_LastFMAudioScrobble->SubmitPlayedSongs( playedtracks );
+        LastFMErrorCode = m_LastFMAudioScrobble->GetErrorCode();
     }
 
     if( m_LibreFMAudioScrobble )
     {
         m_LibreFMAudioScrobble->SubmitPlayedSongs( playedtracks );
+        LibreFMErrorCode = m_LibreFMAudioScrobble->GetErrorCode();
     }
 
-    int LastFMErrorCode = m_LastFMAudioScrobble->GetErrorCode();
-    int LibreFMErrorCode = m_LibreFMAudioScrobble->GetErrorCode();
     //guLogMessage( wxT( "ErrorCodes: %i  %i" ), LastFMErrorCode, LibreFMErrorCode );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
@@ -477,12 +479,12 @@ void guAudioScrobble::SendPlayedTrack( const guCurrentTrack &track )
     if( !m_Db->AddCachedPlayedSong( track ) )
         guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
 
-    if( !m_PlayedThread )
-    {
-        m_PlayedThread = new guASPlayedThread( this, m_Db );
-        if( !m_PlayedThread )
-            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
-    }
+//    if( !m_PlayedThread )
+//    {
+//        m_PlayedThread = new guASPlayedThread( this, m_Db );
+//        if( !m_PlayedThread )
+//            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -634,15 +636,6 @@ guASNowPlayingThread::ExitCode guASNowPlayingThread::Entry()
         FailCnt++;
         if( FailCnt > 2 )
         {
-//            guLogError( wxT( "Reached max number of fail retry submitting to lastfm AudioScrobble service." ) );
-//            FailCnt = 0;
-//            while( !m_AudioScrobble->GetSessionId() && !TestDestroy() )
-//            {
-//                Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-//                FailCnt++;
-//                if( FailCnt > 2 )
-//                    return 0;
-//            }
             break;
         }
         // If have not been destroyed wait 2 mins between submits.
@@ -698,32 +691,9 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
             //guLogMessage( wxT( "**** Trying a AudioScrobble Submit ****" ) );
             // We attempt to submit the info every 30 secs
             FailCnt = 0;
+
             while( !TestDestroy() && !( Submit = m_AudioScrobble->SubmitPlayedSongs( SubmitInfo ) ) )
             {
-//                // Update the MainFrame AudioScrobble Status
-//                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
-//                event.SetEventObject( ( wxObject * ) m_AudioScrobble );
-//                event.SetInt( m_AudioScrobble->GetErrorCode() );
-//                wxPostEvent( wxTheApp->GetTopWindow(), event );
-                //
-//                if( m_AudioScrobble->GetErrorCode() != guAS_ERROR_NOERROR )
-//                {
-//                    FailCnt++;
-//                    if( FailCnt > 2 )
-//                    {
-//                        guLogError( wxT( "Reached max number of fail retry submitting to lastfm AudioScrobble service." ) );
-//                        FailCnt = 0;
-//                        while( !m_AudioScrobble->GetSessionId() && !TestDestroy() )
-//                        {
-//                            Sleep( guAS_SUBMIT_RETRY_TIMEOUT );
-//                            FailCnt++;
-//                            if( FailCnt > 2 )
-//                                return 0;
-//                        }
-//                    }
-//                }
-//                else
-//                    return 0;
                 if( FailCnt++ > 2 )
                     break;
                 Sleep( guAS_SUBMIT_RETRY_TIMEOUT ); // Wait 30 Secs between submit attempts
@@ -738,6 +708,7 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
         {
             break;
         }
+        Sleep( guAS_SUBMIT_RETRY_TIMEOUT ); // Wait 30 Secs between submit attempts
     }
     return 0;
 }
