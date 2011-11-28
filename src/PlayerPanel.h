@@ -30,6 +30,7 @@
 #include "PlayList.h"
 #include "RatingCtrl.h"
 #include "RoundButton.h"
+#include "SmartMode.h"
 #include "StaticBitmap.h"
 #include "ToggleRoundButton.h"
 #include "Vumeters.h"
@@ -286,7 +287,8 @@ class guPlayerPanel : public wxPanel
     // AudioScrobble
     guAudioScrobble *           m_AudioScrobble;
     bool                        m_AudioScrobbleEnabled;
-    guSmartAddTracksThread *    m_SmartAddTracksThread;
+    //guSmartAddTracksThread *    m_SmartAddTracksThread;
+    guSmartModeThread *         m_SmartAddTracksThread;
 
     int                         m_BufferGaugeId;
 
@@ -336,6 +338,7 @@ class guPlayerPanel : public wxPanel
 
     // SmartPlay Events
     void                        SmartAddTracks( const guTrack &CurSong );
+    void                        OnSmartEndThread( wxCommandEvent &event );
     void                        OnSmartAddTracks( wxCommandEvent &event );
     void                        OnUpdatedRadioTrack( wxCommandEvent &event );
 
@@ -450,35 +453,7 @@ class guPlayerPanel : public wxPanel
 
     void                        MediaViewerClosed( guMediaViewer * mediaviewer );
 
-    friend class guSmartAddTracksThread;
-};
-
-// -------------------------------------------------------------------------------- //
-class guSmartAddTracksThread : public wxThread
-{
-  protected :
-    guDbLibrary *   m_Db;
-    guPlayerPanel * m_PlayerPanel;
-    guLastFM *      m_LastFM;
-    const guTrack * m_CurSong;
-    int             m_TrackCount;
-    int             m_FilterAllowPlayList;
-    int             m_FilterDenyPlayList;
-    wxArrayInt *    m_SmartAddedTracks;
-    wxArrayString * m_SmartAddedArtists;
-    int             m_SmartMaxTracksList;
-    int             m_SmartMaxArtistsList;
-
-    void           AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs );
-
-  public:
-    guSmartAddTracksThread( guDbLibrary * db, guPlayerPanel * playerpanel, const guTrack * track,
-             wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
-             const int maxtracks, const int maxartists,
-             const int trackcount, const int filterallow, const int filterdeny );
-    ~guSmartAddTracksThread();
-
-    virtual ExitCode Entry();
+    //friend class guSmartAddTracksThread;
 };
 
 // -------------------------------------------------------------------------------- //

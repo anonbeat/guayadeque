@@ -126,6 +126,8 @@ class guPlayList : public guListView
 
     void                        CheckPendingLoadItems( const wxString &uniqueid, guMediaViewer * mediaviewer );
 
+    void                        OnCreateSmartPlaylist( wxCommandEvent &event );
+
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL, guMainFrame * mainframe = NULL );
     ~guPlayList();

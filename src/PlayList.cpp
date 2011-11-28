@@ -163,6 +163,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
 
     Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnSetRating ), NULL, this );
 
+    Connect( ID_PLAYLIST_SMART_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnCreateSmartPlaylist ), NULL, this );
+
     CreateAcceleratorTable();
 
     ReloadItems();
@@ -1578,6 +1580,12 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
     Menu->Append( MenuItem );
 
+    if( SelCount == 1 )
+    {
+        MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_SMART_PLAYLIST, _( "Create Smart Playlist" ), _( "Create a smart playlist from this track" ) );
+        Menu->Append( MenuItem );
+    }
+
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY,
                             wxString( _( "Randomize Playlist" ) )  + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_RANDOMPLAY ),
                             _( "Randomize the songs in the playlist" ) );
@@ -2669,6 +2677,20 @@ void guPlayList::CheckPendingLoadItems( const wxString &uniqueid, guMediaViewer 
                 Track.m_FileName = FileName;
                 Track.m_MediaViewer = mediaviewer;
             }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnCreateSmartPlaylist( wxCommandEvent &event )
+{
+    wxArrayInt Selected = GetSelectedItems( false );
+    if( Selected.Count() )
+    {
+        const guTrack &Track = m_Items[ Selected[ 0 ] ];
+        if( Track.m_MediaViewer )
+        {
+            Track.m_MediaViewer->CreateSmartPlaylist( Track.m_ArtistName, Track.m_SongName );
         }
     }
 }

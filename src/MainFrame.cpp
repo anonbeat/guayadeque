@@ -1889,7 +1889,7 @@ void guMainFrame::OnPlayerVolumeChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnAudioScrobbleUpdate( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "######## OnAudioScrobbleUpdate ( %i ) ########" ), event.GetInt() );
+    //guLogMessage( wxT( "######## OnAudioScrobbleUpdate ( %i ) ########" ), event.GetInt() );
     if( m_MainStatusBar )
     {
         m_MainStatusBar->UpdateAudioScrobbleIcon( !event.GetInt() );
@@ -1916,7 +1916,7 @@ void guMainFrame::OnCloseTab( wxCommandEvent &event )
 void guMainFrame::OnShowCaptions( wxCommandEvent &event )
 {
     bool Visible = event.GetInt();
-    guLogMessage( wxT( "guMainFrame::OnShowCaptions( %i )" ) );
+    //guLogMessage( wxT( "guMainFrame::OnShowCaptions( %i )" ) );
 
     wxAuiPaneInfoArray &PaneInfoArray = m_AuiManager.GetAllPanes();
 
