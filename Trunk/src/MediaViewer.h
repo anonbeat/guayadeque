@@ -131,6 +131,11 @@ class guMediaViewer : public wxPanel
 
     int                     m_ContextMenuFlags;
 
+    wxString                m_SmartPlaylistName;
+    int                     m_SmartPlaylistId;
+    wxArrayInt              m_SmartTracksList;
+    wxArrayString           m_SmartArtistsList;
+
     void                    OnViewChanged( wxCommandEvent &event );
 
     // Search Str events
@@ -169,6 +174,8 @@ class guMediaViewer : public wxPanel
     virtual void            OnAlbumSetSelection( wxCommandEvent &event );
 
     virtual void            OnUpdateLabels( wxCommandEvent &event );
+
+    virtual void            OnSmartAddTracks( wxCommandEvent &event );
 
   public :
     guMediaViewer( wxWindow * parent, guMediaCollection & mediacollection, const int basecommand, guMainFrame * mainframe, const int mode, guPlayerPanel * playerpanel );
@@ -305,6 +312,8 @@ class guMediaViewer : public wxPanel
     virtual int             CoverFormats( void ) { return 2; } //guPORTABLEMEDIA_COVER_FORMAT_JPEG
     virtual wxString        CoverName( void ) { return GetCoverName( wxNOT_FOUND ); }
     virtual int             CoverSize( void ) { return 0; }
+
+    virtual void            CreateSmartPlaylist( const wxString &artistname, const wxString &trackname );
 
 };
 WX_DEFINE_ARRAY_PTR( guMediaViewer *, guMediaViewerArray );

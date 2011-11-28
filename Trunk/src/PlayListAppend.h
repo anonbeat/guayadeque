@@ -57,5 +57,7 @@ class guPlayListAppend : public wxDialog
 
 };
 
+int FindPlayListItem( guListItems * items, const wxString &playlistname );
+
 #endif
 // -------------------------------------------------------------------------------- //

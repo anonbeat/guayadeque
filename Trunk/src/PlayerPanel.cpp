@@ -477,7 +477,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Connect( guEVT_MEDIA_CHANGED_POSITION, guMediaEventHandler( guPlayerPanel::OnMediaPosition ), NULL, this );
     Connect( guEVT_MEDIA_CHANGED_LENGTH, guMediaEventHandler( guPlayerPanel::OnMediaLength ), NULL, this );
 
-    Connect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
+    Connect( ID_SMARTMODE_ADD_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
+    Connect( ID_SMARTMODE_THREAD_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartEndThread ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
@@ -610,7 +611,8 @@ guPlayerPanel::~guPlayerPanel()
     Disconnect( guEVT_MEDIA_CHANGED_POSITION, guMediaEventHandler( guPlayerPanel::OnMediaPosition ), NULL, this );
     Disconnect( guEVT_MEDIA_CHANGED_LENGTH, guMediaEventHandler( guPlayerPanel::OnMediaLength ), NULL, this );
 
-    Disconnect( ID_PLAYER_PLAYLIST_SMART_ADDTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
+    Disconnect( ID_SMARTMODE_ADD_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
+    Disconnect( ID_SMARTMODE_THREAD_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartEndThread ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
 
@@ -1250,16 +1252,26 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 //}
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnSmartEndThread( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "OnSmartEndThread" ) );
+    m_SmartAddTracksThread = NULL;
+    m_SmartSearchEnabled = false;
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartAddTracks( wxCommandEvent &event )
 {
-    guTrackArray * Songs = ( guTrackArray * ) event.GetClientData();
-    if( Songs )
+    guLogMessage( wxT( "OnSmartAddTracks" ) );
+    guTrackArray * Tracks = ( guTrackArray * ) event.GetClientData();
+    if( Tracks )
     {
-        if( Songs->Count() )
+        guLogMessage( wxT( "Tracks %i" ), Tracks->Count() );
+        if( Tracks->Count() )
         {
-            AddToPlayList( * Songs );
+            AddToPlayList( * Tracks );
         }
-        delete Songs;
+        delete Tracks;
     }
     m_SmartSearchEnabled = false;
 }
@@ -1272,9 +1284,12 @@ void guPlayerPanel::SmartAddTracks( const guTrack &CurSong )
         return;
 
     m_SmartSearchEnabled = true;
-    m_SmartAddTracksThread = new guSmartAddTracksThread( m_Db, this, &CurSong,
-        &m_SmartAddedTracks, &m_SmartAddedArtists, m_SmartPlayAddTracks,
+
+    m_SmartAddTracksThread = new guSmartModeThread( CurSong.m_MediaViewer ? CurSong.m_MediaViewer->GetDb() : m_Db, this,
+        CurSong.m_ArtistName, CurSong.m_SongName,
+        &m_SmartAddedTracks, &m_SmartAddedArtists,
         m_SmartMaxTracksList, m_SmartMaxArtistsList,
+        m_SmartPlayAddTracks, guSMARTMODE_TRACK_LIMIT_TRACKS,
         m_PlayerFilters->GetAllowFilterId(),
         m_PlayerFilters->GetDenyFilterId() );
 }
@@ -1981,7 +1996,8 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     UpdateCover();
 
     // Check if Smart is enabled
-    if( ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) && m_PlaySmart &&
+    if( m_PlaySmart &&
+        ( ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) || ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) ) &&
         ( ( m_PlayListCtrl->GetCurItem() + m_SmartPlayMinTracksToPlay ) >= m_PlayListCtrl->GetCount() ) )
     {
         SmartAddTracks( m_MediaSong );
@@ -3178,240 +3194,8 @@ void guPlayerPanel::MediaViewerClosed( guMediaViewer * mediaviewer )
     }
 }
 
-// -------------------------------------------------------------------------------- //
-// guSmartAddTracksThread
-// -------------------------------------------------------------------------------- //
-guSmartAddTracksThread::guSmartAddTracksThread( guDbLibrary * db,
-        guPlayerPanel * playerpanel, const guTrack * track,
-        wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
-        const int trackcount, const int maxtracks, const int maxartists, const int filterallow, const int filterdeny ) : wxThread()
-{
-    m_Db = db;
-    m_PlayerPanel = playerpanel;
-    m_LastFM = new guLastFM();
-    m_CurSong = track;
-    m_SmartAddedTracks = smartaddedtracks;
-    m_SmartAddedArtists = smartaddedartists;
-    m_SmartMaxTracksList = maxtracks;
-    m_SmartMaxArtistsList = maxartists;
-    m_TrackCount = trackcount;
-    m_FilterAllowPlayList = filterallow;
-    m_FilterDenyPlayList = filterdeny;
 
-    if( Create() == wxTHREAD_NO_ERROR )
-    {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-        Run();
-    }
-}
 
-// -------------------------------------------------------------------------------- //
-guSmartAddTracksThread::~guSmartAddTracksThread()
-{
-//    printf( "guSmartAddTracksThread Object destroyed\n" );
-  if( !TestDestroy() )
-    m_PlayerPanel->m_SmartAddTracksThread = NULL;
-
-  if( m_LastFM )
-    delete m_LastFM;
-}
-
-#define guSMART_MODE_MIN_TRACK_MATCH    0.1
-#define guSMART_MODE_MIN_ARTIST_MATCH   0.2
-
-// -------------------------------------------------------------------------------- //
-void guSmartAddTracksThread::AddSimilarTracks( const wxString &artist, const wxString &track, guTrackArray * songs )
-{
-    guSimilarTrackInfoArray SimilarTracks = m_LastFM->TrackGetSimilar( artist, track );
-    if( SimilarTracks.Count() )
-    {
-        int Index;
-        int Count = SimilarTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            double Match;
-            SimilarTracks[ Index ].m_Match.Replace( wxT( "." ), wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER ) );
-            if( SimilarTracks[ Index ].m_Match.ToDouble( &Match ) )
-            {
-                if( Match >= 0.1 )
-                {
-                    //guLogDebug( wxT( "Similar: '%s' - '%s'" ), SimilarTracks[ index ].ArtistName.c_str(), SimilarTracks[ index ].TrackName.c_str() );
-                    guTrack * Song = m_Db->FindSong( SimilarTracks[ Index ].m_ArtistName,
-                                                   SimilarTracks[ Index ].m_TrackName,
-                                                   m_FilterAllowPlayList,
-                                                   m_FilterDenyPlayList );
-                    if( Song )
-                    {
-                        if( ( m_SmartAddedTracks->Index( Song->m_SongId ) == wxNOT_FOUND ) &&
-                            ( m_SmartAddedArtists->Index( Song->m_ArtistName.Upper() ) == wxNOT_FOUND ) )
-                        {
-                            Song->m_TrackMode = guTRACK_MODE_SMART;
-                            //guLogDebug( wxT( "Found this song in the Songs Library" ) );
-                            songs->Add( Song );
-                        }
-                        else
-                        {
-                            delete Song;
-                        }
-                    }
-                }
-                else    // results comes sorted by match
-                    break;
-            }
-            if( TestDestroy() || ( ( int ) songs->Count() >= m_TrackCount ) )
-                break;
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-guSmartAddTracksThread::ExitCode guSmartAddTracksThread::Entry()
-{
-    if( m_LastFM )
-    {
-        guTrackArray FoundTracks;
-        guTrackArray * Songs = new guTrackArray();
-        //guTrack * Song;
-        int Index;
-        int Count;
-        if( !TestDestroy() && Songs )
-        {
-            guTrackArray FoundTracks;
-            guTrack      AddedTrack;
-
-            AddSimilarTracks( m_CurSong->m_ArtistName, m_CurSong->m_SongName, &FoundTracks );
-
-            int CurAddedTrack = m_SmartAddedTracks->Count();
-            if( CurAddedTrack )
-            {
-                CurAddedTrack--;
-                while( !TestDestroy() && ( FoundTracks.Count() < 20 && CurAddedTrack ) )
-                {
-                    if( m_Db->GetSong( ( * m_SmartAddedTracks )[ CurAddedTrack ], &AddedTrack ) )
-                    {
-                        AddSimilarTracks( AddedTrack.m_ArtistName, AddedTrack.m_SongName, &FoundTracks );
-                    }
-                    CurAddedTrack--;
-                    Sleep( 200 );
-                }
-            }
-
-            // Aleatorize tracks
-            Count = FoundTracks.Count();
-            if( !TestDestroy() && Count )
-            {
-                for( Index = 0; Index < m_TrackCount; Index++ )
-                {
-                    if( TestDestroy() || !Count )
-                        break;
-
-                    if( Count > 1 )
-                    {
-                        do {
-                            int Selected = guRandom( Count );
-                            //guLogDebug( wxT( "%i (%i) %s" ), Selected, Count, FoundTracks[ Selected ].m_SongName.c_str() );
-                            if( m_SmartAddedArtists->Index( FoundTracks[ Selected ].m_ArtistName.Upper() ) != wxNOT_FOUND )
-                            {
-                                continue;
-                            }
-                            Songs->Add( new guTrack( FoundTracks[ Selected ] ) );
-                            m_SmartAddedTracks->Add( FoundTracks[ Selected ].m_SongId );
-                            m_SmartAddedArtists->Add( FoundTracks[ Selected ].m_ArtistName.Upper() );
-                            FoundTracks.RemoveAt( Selected );
-                            Count--;
-                        } while( false );
-                    }
-                    else
-                    {
-                        if( m_SmartAddedArtists->Index( FoundTracks[ 0 ].m_ArtistName.Upper() ) == wxNOT_FOUND )
-                        {
-                            //guLogDebug( wxT( "%i (%i) %s" ), 0, Count, FoundTracks[ 0 ].m_SongName.c_str() );
-                            Songs->Add( new guTrack( FoundTracks[ 0 ] ) );
-                            m_SmartAddedTracks->Add( FoundTracks[ 0 ].m_SongId );
-                            m_SmartAddedArtists->Add( FoundTracks[ 0 ].m_ArtistName.Upper() );
-                        }
-                        break;
-                    }
-                }
-            }
-        }
-
-        if( !TestDestroy() && Songs && ( ( int ) Songs->Count() < m_TrackCount ) )
-        {
-            guSimilarArtistInfoArray SimilarArtists = m_LastFM->ArtistGetSimilar( m_CurSong->m_ArtistName );
-            if( SimilarArtists.Count() && !TestDestroy() )
-            {
-                int ArtistId;
-                Count = SimilarArtists.Count();
-                wxArrayInt Artists;
-                guTrackArray ArtistsTracks;
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    if( TestDestroy() )
-                        break;
-
-                    double Match;
-                    SimilarArtists[ Index ].m_Match.Replace( wxT( "." ), wxLocale::GetInfo( wxLOCALE_DECIMAL_POINT, wxLOCALE_CAT_NUMBER ) );
-                    if( SimilarArtists[ Index ].m_Match.ToDouble( &Match ) )
-                    {
-                        if( Match > 0.1 )
-                        {
-                            ArtistId = m_Db->GetArtistId( SimilarArtists[ Index ].m_Name, false );
-                            if( ArtistId != wxNOT_FOUND )
-                            {
-                                Artists.Add( ArtistId );
-                            }
-                        }
-                        else
-                            break;
-                    }
-                }
-
-                m_Db->GetArtistsSongs( Artists, &ArtistsTracks, 20, m_FilterAllowPlayList, m_FilterDenyPlayList );
-
-                Count = ArtistsTracks.Count();
-                for( Index = 0; Index < Count; Index++ )
-                {
-                    if( ( m_SmartAddedTracks->Index( ArtistsTracks[ Index ].m_SongId ) == wxNOT_FOUND ) &&
-                        ( m_SmartAddedArtists->Index( ArtistsTracks[ Index ].m_ArtistName.Upper() ) == wxNOT_FOUND ) )
-                    {
-                        Songs->Add( new guTrack( ArtistsTracks[ Index ] ) );
-                        m_SmartAddedTracks->Add( ArtistsTracks[ Index ].m_SongId );
-                        m_SmartAddedArtists->Add( ArtistsTracks[ Index ].m_ArtistName.Upper() );
-                        if( ( int ) Songs->Count() >= m_TrackCount )
-                            break;
-                    }
-                }
-            }
-        }
-
-        if( ( int ) m_SmartAddedTracks->Count() > m_SmartMaxTracksList )
-            m_SmartAddedTracks->RemoveAt( 0, m_SmartAddedTracks->Count() - m_SmartMaxTracksList );
-
-        if( ( int ) m_SmartAddedArtists->Count() > m_SmartMaxArtistsList )
-            m_SmartAddedArtists->RemoveAt( 0, m_SmartAddedArtists->Count() - m_SmartMaxArtistsList );
-
-        //guLogDebug( wxT( "========" ) );
-        //for( Index = 0; Index < m_SmartAddedArtists->Count(); Index++ )
-        //    guLogDebug( wxT( "Artist: '%s'" ), ( * m_SmartAddedArtists )[ Index ].c_str() );
-
-        if( !TestDestroy() )
-        {
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_SMART_ADDTRACK );
-            //event.SetEventObject( ( wxObject * ) this );
-            event.SetClientData( ( void * ) Songs );
-            m_PlayerPanel->AddPendingEvent( event );
-        }
-        else
-        {
-            if( Songs )
-            {
-                delete Songs;
-            }
-        }
-    }
-    return 0;
-}
 
 // -------------------------------------------------------------------------------- //
 // guUpdatePlayerCoverThread

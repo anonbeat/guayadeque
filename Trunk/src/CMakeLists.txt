@@ -276,6 +276,8 @@ ADD_EXECUTABLE( guayadeque
 	iPodMedia.h
 	ImportFiles.cpp
 	ImportFiles.h
+	SmartMode.cpp
+	SmartMode.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}

@@ -89,6 +89,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxStri
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guSoListBox::OnConfigUpdated ), NULL, this );
 
+    Connect( ID_PLAYLIST_SMART_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCreateSmartPlaylist ), NULL, this );
+
     CreateAcceleratorTable();
 
     ReloadItems();
@@ -635,6 +637,12 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
+        if( SelCount == 1 )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_SMART_PLAYLIST, _( "Create Smart Playlist" ), _( "Create a smart playlist from this track" ) );
+            Menu->Append( MenuItem );
+        }
+
         Menu->AppendSeparator();
 
         if( ContextMenuFlags & guCONTEXTMENU_DELETEFROMLIBRARY )
@@ -989,6 +997,17 @@ void guSoListBox::SetTracksOrder( const int order )
     }
 
     ReloadItems();
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnCreateSmartPlaylist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    GetSelectedSongs( &Tracks );
+    if( Tracks.Count() == 1 )
+    {
+        m_MediaViewer->CreateSmartPlaylist( Tracks[ 0 ].m_ArtistName, Tracks[ 0 ].m_SongName );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -198,7 +198,6 @@ class guLibPanel : public guAuiManagerPanel
     // SongsListBox Events
     virtual void            OnSongListActivated( wxListEvent &event );
     virtual void            OnSongPlayClicked( wxCommandEvent &event );
-//    virtual void            OnSongPlayAllClicked( wxCommandEvent &event );
     virtual void            OnSongQueueClicked( wxCommandEvent &event );
     virtual void            OnSongsEditLabelsClicked( wxCommandEvent &event );
     virtual void            OnSongsEditTracksClicked( wxCommandEvent &event );

@@ -30,6 +30,7 @@
 #include "MainFrame.h"
 #include "SelCoverFile.h"
 #include "Settings.h"
+#include "SmartMode.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "Transcode.h"
@@ -108,6 +109,8 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
 	Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumSetSelection ), NULL, this );
 
     Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnUpdateLabels ), NULL, this );
+
+    Connect( ID_SMARTMODE_ADD_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnSmartAddTracks ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2120,6 +2123,73 @@ wxString guMediaViewer::PlaylistPath( void )
 {
     return wxEmptyString;
 }
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::OnSmartAddTracks( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guMediaViewer::OnSmartAddTracks" ) );
+    guTrackArray * Tracks = ( guTrackArray * ) event.GetClientData();
+    if( Tracks )
+    {
+        wxArrayInt TrackIds;
+        int Index;
+        int Count = Tracks->Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            TrackIds.Add( Tracks->Item( Index ).m_SongId );
+        }
+
+        guListItems PlayLists;
+
+        if( m_SmartPlaylistId == wxNOT_FOUND )
+        {
+            m_Db->CreateStaticPlayList( m_SmartPlaylistName, TrackIds );
+        }
+        else
+        {
+            m_Db->AppendStaticPlayList( m_SmartPlaylistId, TrackIds );
+        }
+
+        UpdatePlaylists();
+
+        delete Tracks;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::CreateSmartPlaylist( const wxString &artistname, const wxString &trackname )
+{
+    wxString PlaylistName = artistname + wxT( " " ) + trackname + wxT( " " );
+    PlaylistName += _( " smart playlist" );
+    guGenSmartPlaylist * GenSmartPlaylist = new guGenSmartPlaylist( this, this, PlaylistName );
+    if( GenSmartPlaylist )
+    {
+        if( GenSmartPlaylist->ShowModal() == wxID_OK )
+        {
+            m_SmartArtistsList.Clear();
+            m_SmartTracksList.Clear();
+
+            int GaugeId = m_MainFrame->AddGauge( _( "Playlist" ) );
+
+            guSmartModeThread * SmartModeThread = new guSmartModeThread( m_Db, this,
+                    artistname, trackname,
+                    &m_SmartTracksList, &m_SmartArtistsList,
+                    100, 20,
+                    GenSmartPlaylist->GetLimitValue(), GenSmartPlaylist->GetLimitType(),
+                    GenSmartPlaylist->GetAllowFilter(), GenSmartPlaylist->GetDenyFilter(),
+                    GaugeId );
+
+            if( !SmartModeThread )
+                guLogMessage( wxT( "Could not create the smart mode thread" ) );
+
+            m_SmartPlaylistId = GenSmartPlaylist->GetPlayListId();
+            m_SmartPlaylistName = GenSmartPlaylist->GetPlaylistName();
+        }
+
+        GenSmartPlaylist->Destroy();
+    }
+}
+
 
 // -------------------------------------------------------------------------------- //
 // guUpdateCoversThread
