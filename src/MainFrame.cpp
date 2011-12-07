@@ -1801,7 +1801,10 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
     if( m_LyricSearchEngine )
     {
         if( m_LyricSearchContext )
+        {
             delete m_LyricSearchContext;
+            m_LyricSearchContext = NULL;
+        }
         if( m_LyricSearchEngine->TargetsEnabled() ||
             ( m_LyricsPanel && m_LyricsPanel->UpdateEnabled() ) )
         {
