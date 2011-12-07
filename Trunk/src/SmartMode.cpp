@@ -273,6 +273,7 @@ int guSmartModeThread::AddSimilarTracks( const wxString &artist, const wxString 
                 {
                     if( m_Db->GetArtistId( SimilarArtists[ Index ].m_Name, false ) != wxNOT_FOUND )
                     {
+                        //guLogMessage( wxT( "Found similar artist: '%s'" ), SimilarArtists[ Index ].m_Name.c_str() );
                         guTopTrackInfoArray ArtistTopTracks = m_LastFM->ArtistGetTopTracks( SimilarArtists[ Index ].m_Name );
                         int TTIndex;
                         int TTCount = ArtistTopTracks.Count();
@@ -352,6 +353,10 @@ guSmartModeThread::ExitCode guSmartModeThread::Entry()
                     m_TrackName = AddedTrack.m_SongName;
                     TrackIndex++;
                     //guLogMessage( wxT( "SmartModeThread:: TrackIndex: %i" ), TrackIndex );
+                }
+                else
+                {
+                    break;
                 }
             }
 
