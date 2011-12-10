@@ -72,11 +72,11 @@ bool guIsValidAudioFile( const wxString &filename )
         //guSupportedFormats.Add( wxT( "rmj"  ) );
     }
 
-    int Position = ( guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) ) != wxNOT_FOUND );
+    int Position = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
 
     guSupportedFormatsMutex.Unlock();
 
-    return Position;
+    return ( Position != wxNOT_FOUND );
 }
 
 // -------------------------------------------------------------------------------- //

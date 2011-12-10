@@ -278,7 +278,7 @@ class guMediaViewer : public wxPanel
 
     virtual wxString        GetCoverName( const int albumid );
     virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
-    virtual int             GetCoverMaxSize( void ) { return wxNOT_FOUND; }
+    virtual int             GetCoverMaxSize( void ) { return 0; }
 
     virtual wxImage *       GetAlbumCover( const int albumid, int &coverid, wxString &coverpath,
                                            const wxString &artistname = wxEmptyString, const wxString &albumname = wxEmptyString );
