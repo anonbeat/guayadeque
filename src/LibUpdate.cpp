@@ -248,11 +248,11 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
               {
                 //guLogMessage( wxT( "Adding image '%s'" ), wxString( dirname + FileName ).c_str() );
                 m_ImageFiles.Add( dirname + FileName );
+                FoundCover = true;
               }
             }
             else if( m_ScanAddPlayLists && guPlayListFile::IsValidPlayList( LowerFileName ) )
             {
-              FoundCover = true;
               m_PlayListFiles.Add( dirname + FileName );
             }
             //else

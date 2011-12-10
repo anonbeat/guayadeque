@@ -1597,7 +1597,7 @@ bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath,
     wxString CoverName = albumpath + GetCoverName( albumid ) + wxT( ".jpg" );
 
     int MaxSize = GetCoverMaxSize();
-    if( MaxSize != wxNOT_FOUND )
+    if( MaxSize )
     {
         coverimg->Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
     }
@@ -1622,7 +1622,7 @@ bool guMediaViewer::SetAlbumCover( const int albumid, const wxString &albumpath,
         wxImage CoverImage( coverpath );
         if( CoverImage.IsOk() )
         {
-            if( MaxSize != wxNOT_FOUND )
+            if( MaxSize )
             {
                 CoverImage.Rescale( MaxSize, MaxSize, wxIMAGE_QUALITY_HIGH );
             }
