@@ -702,6 +702,7 @@ guPlayListPanel::~guPlayListPanel()
     Disconnect( ID_TRACKS_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ), NULL, this );
     Disconnect( ID_TRACKS_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbumArtist ), NULL, this );
     Disconnect( ID_TRACKS_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ), NULL, this );
+    Disconnect( ID_TRACKS_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectComposer ), NULL, this );
 
     Disconnect( ID_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnGoToSearch ), NULL, this );
 }
@@ -794,6 +795,7 @@ void guPlayListPanel::CreateControls( void )
     Connect( ID_TRACKS_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectArtist ), NULL, this );
     Connect( ID_TRACKS_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbumArtist ), NULL, this );
     Connect( ID_TRACKS_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectAlbum ), NULL, this );
+    Connect( ID_TRACKS_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnPLTracksSelectComposer ), NULL, this );
 
     Connect( ID_PLAYLIST_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayListPanel::OnGoToSearch ), NULL, this );
 
@@ -1734,6 +1736,27 @@ void guPlayListPanel::OnPLTracksSelectAlbum( wxCommandEvent &event )
     }
     event.SetId( ID_ALBUM_SETSELECTION );
     event.SetClientData( ( void * ) Albums );
+    wxPostEvent( m_MediaViewer, event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayListPanel::OnPLTracksSelectComposer( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    m_PLTracksListBox->GetSelectedSongs( &Tracks );
+    wxArrayInt * Composers = new wxArrayInt();
+
+    int index;
+    int count = Tracks.Count();
+    for( index = 0; index < count; index++ )
+    {
+        if( Composers->Index( Tracks[ index ].m_ComposerId ) == wxNOT_FOUND )
+        {
+            Composers->Add( Tracks[ index ].m_ComposerId );
+        }
+    }
+    event.SetId( ID_COMPOSER_SETSELECTION );
+    event.SetClientData( ( void * ) Composers );
     wxPostEvent( m_MediaViewer, event );
 }
 

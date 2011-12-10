@@ -2070,7 +2070,7 @@ void guPlayerPanel::UpdateCover( const bool shownotify, const bool deleted )
 //        m_UpdateCoverThread->Delete();
 //    }
 
-    guLogMessage( wxT( "UpdateCover: '%s'  /// '%s'  %i" ), m_MediaSong.m_ArtistName.c_str(), m_MediaSong.m_AlbumName.c_str(), deleted );
+    //guLogMessage( wxT( "UpdateCover: '%s'  /// '%s'  %i" ), m_MediaSong.m_ArtistName.c_str(), m_MediaSong.m_AlbumName.c_str(), deleted );
 
     guUpdatePlayerCoverThread * UpdateCoverThread = new guUpdatePlayerCoverThread( m_Db, m_MainFrame, this, &m_MediaSong, shownotify, deleted );
     if( !UpdateCoverThread )
