@@ -188,6 +188,7 @@ class guPlayListPanel : public guAuiManagerPanel
     void                OnPLTracksSelectAlbumArtist( wxCommandEvent &event );
     void                OnPLTracksSelectArtist( wxCommandEvent &event );
     void                OnPLTracksSelectAlbum( wxCommandEvent &event );
+    void                OnPLTracksSelectComposer( wxCommandEvent &event );
 
     void                OnPLTracksColClicked( wxListEvent &event );
 
