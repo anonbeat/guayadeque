@@ -2262,8 +2262,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
     if( ( ( CurItem == 0 ) && ( State == guMEDIASTATE_PLAYING ) ) ||
         ( ( State != guMEDIASTATE_STOPPED ) && ( m_LastCurPos  > GUPLAYER_MIN_PREVTRACK_POS ) ) )
     {
-//        m_MediaCtrl->UnsetCrossfader();
-        SetPosition( 0 );
+        SetPosition( m_MediaSong.m_Offset );
         return;
     }
 
