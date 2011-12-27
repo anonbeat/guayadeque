@@ -1988,7 +1988,7 @@ int guMediaVieweriPodDevice::CopyTo( const guTrack * track, wxString &filename )
         wxRemoveFile( TmpFile );
         TmpFile += wxT( "." ) + guTranscodeFormatString( m_PortableDevice->TranscodeFormat() );
 
-        guTranscodeThread * TranscodeThread = new guTranscodeThread( track->m_FileName, TmpFile, m_PortableDevice->TranscodeFormat(), m_PortableDevice->TranscodeQuality() );
+        guTranscodeThread * TranscodeThread = new guTranscodeThread( track, TmpFile, m_PortableDevice->TranscodeFormat(), m_PortableDevice->TranscodeQuality() );
         if( TranscodeThread && TranscodeThread->IsOk() )
         {
                 // TODO : Make a better aproach to be sure its running

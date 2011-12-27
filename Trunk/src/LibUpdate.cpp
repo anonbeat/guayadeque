@@ -251,9 +251,14 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
                 FoundCover = true;
               }
             }
-            else if( m_ScanAddPlayLists && guPlayListFile::IsValidPlayList( LowerFileName ) )
+            else if( m_ScanAddPlayLists && guPlaylistFile::IsValidPlayList( LowerFileName ) )
             {
               m_PlayListFiles.Add( dirname + FileName );
+            }
+            else if( guCuePlaylistFile::IsValidFile( LowerFileName ) )
+            {
+              //
+              m_CueFiles.Add( dirname + FileName );
             }
             //else
             //{
@@ -311,7 +316,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         ScanDirectory( m_ScanPath, true );
     }
 
-    bool AllowGenres = m_MediaViewer->GetMediaCollection()->m_EmbeddMetadata;
+    bool EmbeddMetadata = m_MediaViewer->GetMediaCollection()->m_EmbeddMetadata;
     // For every new track file update it in the database
     Count = m_TrackFiles.Count();
     if( Count )
@@ -329,7 +334,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                 break;
 
             //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ Index ].c_str() );
-            m_Db->ReadFileTags( m_TrackFiles[ Index ], AllowGenres );
+            m_Db->ReadFileTags( m_TrackFiles[ Index ], EmbeddMetadata );
             //Sleep( 1 );
             Index++;
             if( Index > LastIndex )
@@ -343,6 +348,48 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
         m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
     }
 
+    Count = m_CueFiles.Count();
+    if( Count )
+    {
+        m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
+
+        evtmax.SetExtraLong( Count );
+        wxPostEvent( m_MainFrame, evtmax );
+
+        for( Index = 0; Index < Count; Index++ )
+        {
+            //
+            // Delete all files from the same cue files
+            //
+            wxString query = wxT( "DELETE FROM songs WHERE song_path = '" );
+            query += escape_query_str( wxPathOnly( m_CueFiles[ Index ] + wxT( "/" ) ) );
+            query += wxT( "' AND song_offset > 0" );
+            m_Db->ExecuteUpdate( query );
+            //guLogMessage( wxT( "DELETE:\n%s" ), query.c_str() );
+        }
+
+        Index = 0;
+        LastIndex = -1;
+        while( !TestDestroy() )
+        {
+            //guLogMessage( wxT( "%i - %i" ), Index, Count );
+            if( ( Index >= Count ) )
+                break;
+
+            //guLogMessage( wxT( "Scanning: '%s'" ), m_TrackFiles[ Index ].c_str() );
+            m_Db->ReadFileTags( m_CueFiles[ Index ], EmbeddMetadata );
+            //Sleep( 1 );
+            Index++;
+            if( Index > LastIndex )
+            {
+                evtup.SetExtraLong( Index );
+                wxPostEvent( m_MainFrame, evtup );
+                LastIndex = Index + 5;
+            }
+        }
+
+        m_Db->ExecuteUpdate( wxT( "COMMIT TRANSACTION;" ) );
+    }
 
     wxString CoverName = m_MediaViewer->GetCoverName( wxNOT_FOUND ) + wxT( ".jpg" );
     //int CoverType = m_MediaViewer->GetCoverType();
@@ -390,7 +437,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             if( ( Index >= Count ) )
                 break;
 
-            guPlayListFile PlayList( m_PlayListFiles[ Index ] );
+            guPlaylistFile PlayList( m_PlayListFiles[ Index ] );
             wxArrayInt PlayListIds;
             int ItemTrackId;
             int ItemIndex;

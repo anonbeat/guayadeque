@@ -99,7 +99,7 @@ class guTrack
     int             m_Number;             // the track num of the song into the album
     int             m_Year;               // the year of the song
     unsigned int    m_Length;             // the length of the song in seconds
-    int             m_Offset;
+    unsigned int    m_Offset;
     int             m_Bitrate;
     int             m_Rating;
     int             m_PlayCount;
@@ -380,8 +380,8 @@ class guDbLibrary : public guDb
 
     wxString            GetCoverPath( const int CoverId );
     int                 GetAlbumId( wxString &AlbumName, const int ArtistId, const int PathId, const wxString &Path, const int coverid = 0 );
-    int                 GetSongId( wxString &filename, const int pathid, bool * created = NULL );
-    int                 GetSongId( wxString &FileName, wxString &FilePath, bool * created = NULL );
+    int                 GetSongId( wxString &filename, const int pathid, const int start = 0, bool * created = NULL );
+    int                 GetSongId( wxString &FileName, wxString &FilePath, const int start = 0, bool * created = NULL );
     wxArrayInt          GetLabelIds( const wxArrayString &Labels );
     wxArrayString       GetLabelNames( const wxArrayInt &LabelIds );
     int                 GetLabelId( int * LabelId, wxString &LabelName );

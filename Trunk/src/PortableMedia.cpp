@@ -630,7 +630,7 @@ void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
         {
             guTrackArray Tracks;
             GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
-            guPlayListFile PlayListFile;
+            guPlaylistFile PlayListFile;
             PlayListFile.SetName( FileName.GetFullPath() );
             int Index;
             int Count = Tracks.Count();
@@ -787,7 +787,7 @@ wxString guPortableMediaLibPanel::GetName( void )
 //    {
 //        wxString CurFile = filenames[ Index ];
 //
-//        if( guPlayListFile::IsValidPlayList( CurFile ) )
+//        if( guPlaylistFile::IsValidPlayList( CurFile ) )
 //        {
 ////            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
 ////            Event.SetClientData( new wxString( CurFile ) );

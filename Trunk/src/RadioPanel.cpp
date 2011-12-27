@@ -1976,7 +1976,7 @@ guRadioPlayListLoadThread::~guRadioPlayListLoadThread()
 guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
 {
     guTrack * NewSong;
-    guPlayListFile PlayListFile;
+    guPlaylistFile PlayListFile;
 
     if( TestDestroy() )
         return 0;
@@ -1994,7 +1994,7 @@ guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
         NewSong = new guTrack();
         if( NewSong )
         {
-            guStationPlayListItem PlayListItem = PlayListFile.GetItem( Index );
+            guPlaylistItem PlayListItem = PlayListFile.GetItem( Index );
             NewSong->m_Type = guTRACK_TYPE_RADIOSTATION;
             NewSong->m_FileName = PlayListItem.m_Location;
             //NewSong->m_SongName = PlayList[ index ].m_Name;

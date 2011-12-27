@@ -104,7 +104,7 @@ guCopyToAction::guCopyToAction( wxString * playlistpath, guMediaViewer * mediavi
     m_MoveFiles = false;
     m_MediaViewer = mediaviewer;
     m_Db = mediaviewer->GetDb();
-    m_PlayListFile = new guPlayListFile( * playlistpath );
+    m_PlayListFile = new guPlaylistFile( * playlistpath );
     m_PlayListFile->SetName( * playlistpath );
 
 #ifdef WITH_LIBGPOD_SUPPORT
@@ -270,26 +270,39 @@ bool guCopyToThread::CopyFile( const wxString &from, const wxString &to )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guCopyToThread::TranscodeFile( const wxString &source, const wxString &target, int format, int quality )
+bool guCopyToThread::TranscodeFile( const guTrack * track, const wxString &target,
+        int format, int quality, const int start, const int length )
 {
-    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), source.c_str(), target.c_str() );
+    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), track->m_FileName.c_str(), target.c_str() );
     bool RetVal = false;
     wxString OutFile = target + wxT( "." ) + guTranscodeFormatString( format );
     if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
     {
-        guTranscodeThread * TranscodeThread = new guTranscodeThread( source, OutFile, format, quality );
-        if( TranscodeThread && TranscodeThread->IsOk() )
+        // Some times gstreamer gives random errors processing some files. Specially ape format
+        // We retry 3 times
+        int RetryCount = 0;
+        while( RetryCount < 3 )
         {
-            // TODO : Make a better aproach to be sure its running
-            Sleep( 1000 );
-            while( TranscodeThread->IsTranscoding() )
+            int FileSize = 0;
+            guTranscodeThread * TranscodeThread = new guTranscodeThread( track, OutFile, format, quality, start, length );
+            if( TranscodeThread && TranscodeThread->IsOk() )
             {
-                Sleep( 200 );
-            }
+                // TODO : Make a better aproach to be sure its running
+                Sleep( 1000 );
+                while( TranscodeThread->IsTranscoding() )
+                {
+                    Sleep( 200 );
+                }
 
-            m_SizeCounter += guGetFileSize( OutFile );
+                FileSize = guGetFileSize( OutFile );
+                m_SizeCounter += FileSize;
+            }
+            RetVal = TranscodeThread->IsOk();
+
+            RetryCount++;
+            if( FileSize )
+                break;
         }
-        RetVal = TranscodeThread->IsOk();
     }
     return RetVal;
 }
@@ -379,17 +392,11 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 
             FileName = DestDir + guExpandTrackMacros( FilePattern, CurTrack, m_CurrentFile - 1 );
 
-            // Replace all the special chars < > : " / \ | ? *
-            FileName.Replace( wxT( "<" ), wxT( "_" ) );
-            FileName.Replace( wxT( ">" ), wxT( "_" ) );
-            FileName.Replace( wxT( ":" ), wxT( "_" ) );
-            FileName.Replace( wxT( "\"" ), wxT( "_" ) );
-            FileName.Replace( wxT( "|" ), wxT( "_" ) );
-            FileName.Replace( wxT( "?" ), wxT( "_" ) );
-            FileName.Replace( wxT( "*" ), wxT( "_" ) );
+            // Replace all the special chars <>:" / \ | ? *
+            wxRegEx RegEx( wxT( "[<>:\\|?*]" ) );
+            RegEx.ReplaceAll( &FileName, wxT( "_" ) );
 
-
-            if( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP )
+            if( !CurTrack->m_Offset && ( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP ) )
             {
                 ActionIsCopy = true;
             }
@@ -399,9 +406,39 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 
                 if( copytoaction.Type() == guCOPYTO_ACTION_COPYTO )
                 {
+                    if( CurTrack->m_Offset && ( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP ) )
+                    {
+                        switch( FileFormat )
+                        {
+                            case guPORTABLEMEDIA_AUDIO_FORMAT_MP3 :
+                                copytoaction.Format( guTRANSCODE_FORMAT_MP3 );
+                                break;
+
+                            case guPORTABLEMEDIA_AUDIO_FORMAT_AAC :
+                                copytoaction.Format( guTRANSCODE_FORMAT_AAC );
+                                break;
+
+                            case guPORTABLEMEDIA_AUDIO_FORMAT_WMA :
+                                copytoaction.Format( guTRANSCODE_FORMAT_WMA );
+                                break;
+
+                            case guPORTABLEMEDIA_AUDIO_FORMAT_OGG :
+                                copytoaction.Format( guTRANSCODE_FORMAT_OGG );
+                                break;
+
+                            case guPORTABLEMEDIA_AUDIO_FORMAT_FLAC :
+                                copytoaction.Format( guTRANSCODE_FORMAT_FLAC );
+                                break;
+
+
+                            default :
+                                copytoaction.Format( guTRANSCODE_FORMAT_MP3 );
+                        }
+                    }
+
                     if( FileFormat == copytoaction.Format() )
                     {
-                        if( copytoaction.Quality() == guTRANSCODE_QUALITY_KEEP )
+                        if( !CurTrack->m_Offset && ( copytoaction.Quality() == guTRANSCODE_QUALITY_KEEP ) )
                         {
                             ActionIsCopy = true;
                         }
@@ -431,7 +468,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                 }
                             }
 
-                            if( CurTrack->m_Bitrate > FileBitrate )
+                            if( CurTrack->m_Offset || ( CurTrack->m_Bitrate > FileBitrate ) )
                             {
                                 ActionIsCopy = false;
                             }
@@ -451,7 +488,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), m_Device->AudioFormats(), FileFormat );
                     guPortableMediaDevice * MediaDevice  = copytoaction.GetPortableMediaDevice();
                     // If the file is not supported then need to transcode it
-                    if( !( MediaDevice->AudioFormats() & FileFormat ) )
+                    if( CurTrack->m_Offset || !( MediaDevice->AudioFormats() & FileFormat ) )
                     {
                         guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
                         ActionIsCopy = false;
@@ -529,7 +566,8 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             }
             else
             {
-                Result = TranscodeFile( CurTrack->m_FileName, FileName, copytoaction.Format(), copytoaction.Quality() );
+                Result = TranscodeFile( CurTrack, FileName, copytoaction.Format(), copytoaction.Quality(),
+                                       CurTrack->m_Offset, CurTrack->m_Offset ? CurTrack->m_Length : wxNOT_FOUND );
             }
 
             // Add the file to the files to add list so the library update it when this job is done
@@ -681,7 +719,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #ifdef WITH_LIBGPOD_SUPPORT
     if( copytoaction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
     {
-        guPlayListFile * PlayListFile = copytoaction.PlayListFile();
+        guPlaylistFile * PlayListFile = copytoaction.PlayListFile();
         guIpodLibrary * IpodDb = ( guIpodLibrary *  ) MediaViewer->GetDb();
         if( PlayListFile )
         {
@@ -704,7 +742,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         guPortableMediaLibrary * PortableMediaDb = ( guPortableMediaLibrary * ) copytoaction.GetDb();
         PortableMediaDb->AddFiles( m_FilesToAdd );
 
-        guPlayListFile * PlayListFile = copytoaction.PlayListFile();
+        guPlaylistFile * PlayListFile = copytoaction.PlayListFile();
         if( PlayListFile )
         {
             guLogMessage( wxT( "Normal device and is from a playlist..." ) );

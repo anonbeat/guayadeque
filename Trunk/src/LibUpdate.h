@@ -41,6 +41,7 @@ class guLibUpdateThread : public wxThread
     wxArrayString       m_TrackFiles;
     wxArrayString       m_ImageFiles;
     wxArrayString       m_PlayListFiles;
+    wxArrayString       m_CueFiles;
     int                 m_GaugeId;
     wxArrayString       m_LibPaths;
     int                 m_LastUpdate;

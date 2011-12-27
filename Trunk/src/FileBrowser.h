@@ -51,8 +51,8 @@ enum guFILEITEM_TYPE {
     guFILEITEM_TYPE_FILE
 };
 
-#define     guFILEBROWSER_SHOWPATH_SYSTEM           ( 1 << 0 )
-#define     guFILEBROWSER_SHOWPATH_LOCATIONS        ( 1 << 1 )
+#define     guFILEBROWSER_SHOWPATH_SYSTEM           0
+#define     guFILEBROWSER_SHOWPATH_LOCATIONS        1
 
 #define guDIR_IMAGE_INDEX_FOLDER        0
 #define guDIR_IMAGE_INDEX_OTHER         7

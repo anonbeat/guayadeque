@@ -32,7 +32,7 @@ extern "C" {
 // -------------------------------------------------------------------------------- //
 static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTranscodeThread * pobj )
 {
-    //guLogMessage( wxT( "Got gstreamer message %u" ), GST_MESSAGE_TYPE( message ) );
+    //guLogMessage( wxT( "Got gstreamer message %08X = '%s'" ), GST_MESSAGE_TYPE( message ), wxString( GST_MESSAGE_TYPE_NAME(message), wxConvUTF8 ).c_str() );
     switch( GST_MESSAGE_TYPE( message ) )
     {
         case GST_MESSAGE_ERROR :
@@ -50,9 +50,27 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
             break;
         }
 
+//        case GST_MESSAGE_STATE_CHANGED:
+//        {
+//            //  GST_STATE_VOID_PENDING        = 0,
+//            //  GST_STATE_NULL                = 1,
+//            //  GST_STATE_READY               = 2,
+//            //  GST_STATE_PAUSED              = 3,
+//            //  GST_STATE_PLAYING             = 4
+//            GstState oldstate, newstate, pendingstate;
+//            gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
+//
+//            //guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
+//            if( pendingstate == GST_STATE_VOID_PENDING )
+//            {
+//                guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
+//            }
+//            break;
+//        }
+
         case GST_MESSAGE_EOS :
         {
-          //guLogMessage( wxT( "EOS Detected..." ) );
+          guLogMessage( wxT( "Transcode EOS Detected..." ) );
           pobj->Stop();
           break;
         }
@@ -91,31 +109,69 @@ static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, G
   }
   gst_caps_unref( caps );
 
-  //guLogMessage( wxT( "Linked decoder and converter..." ) );
+  //guLogMessage( wxT( "Linked composer and converter..." ) );
   /* link'n'play */
   gst_pad_link( pad, convpad );
   g_object_unref( convpad );
 }
 
+// -------------------------------------------------------------------------------- //
+static void on_comp_pad_added( GstElement * comp, GstPad * pad, GstElement * conv )
+{
+  GstCaps * caps;
+  GstStructure * str;
+  GstPad * convpad;
+
+  //guLogMessage( wxT( "New pad created..." ) );
+
+  convpad = gst_element_get_static_pad( conv, "sink" );
+  if( GST_PAD_IS_LINKED( convpad ) )
+  {
+      g_object_unref( convpad );
+      return;
+  }
+
+  /* check media type */
+  caps = gst_pad_get_caps( pad );
+  str = gst_caps_get_structure( caps, 0 );
+  if( !g_strrstr( gst_structure_get_name( str ), "audio" ) )
+  {
+    gst_caps_unref( caps );
+    gst_object_unref( convpad );
+    return;
+  }
+  gst_caps_unref( caps );
+
+  guLogMessage( wxT( "Linked composer and converter..." ) );
+  /* link'n'play */
+  gst_pad_link( pad, convpad );
+  g_object_unref( convpad );
+}
 
 }
 
 // -------------------------------------------------------------------------------- //
 // guTranscodeThread
 // -------------------------------------------------------------------------------- //
-guTranscodeThread::guTranscodeThread( const wxChar * source, const wxChar * target,
-        const int format, const int quality )
+guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * target,
+        const int format, const int quality, const int start, const int length )
 {
-    m_Source = wxString( source );
+    m_Track = track;
     m_Target = wxString( target );
     m_Format = format;
     m_Quality = quality;
-    guLogMessage( wxT( "Transcode %i - %i '%s' => '%s'" ), format, quality, source, target );
+    m_StartPos = start;
+    m_Length = length;
+    guLogMessage( wxT( "Transcode %i - %i '%s' => '%s'\n:::: %i => %i" ),
+                    format, quality, track->m_FileName.c_str(), target, start, length );
 
     m_Running = false;
     m_HasError = false;
 
-    BuildPipeline();
+    if( m_StartPos )
+        BuildPipelineWithOffset();
+    else
+        BuildPipeline();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -343,20 +399,20 @@ void guTranscodeThread::BuildPipeline( void )
     if( GST_IS_ELEMENT( src ) )
     {
       wxString Location;
-      wxURI URI( m_Source );
+      wxURI URI( m_Track->m_FileName );
       if( URI.IsReference() )
       {
-          Location = wxT( "file://" ) + m_Source;
+          Location = wxT( "file://" ) + m_Track->m_FileName;
       }
       else
       {
           if( !URI.HasScheme() )
           {
-              Location = wxT( "http://" ) + m_Source;
+              Location = wxT( "http://" ) + m_Track->m_FileName;
           }
           else
           {
-            Location = m_Source;
+            Location = m_Track->m_FileName;
           }
       }
 
@@ -463,11 +519,155 @@ void guTranscodeThread::BuildPipeline( void )
 }
 
 // -------------------------------------------------------------------------------- //
+bool SetStateAndWait( GstElement * element, GstState state )
+{
+    GstStateChangeReturn ChangeState = gst_element_set_state( element, state );
+    if( ChangeState == GST_STATE_CHANGE_ASYNC )
+    {
+        gst_element_get_state( element, NULL, NULL, GST_CLOCK_TIME_NONE );
+        return true;
+    }
+
+    return ChangeState == GST_STATE_CHANGE_SUCCESS;
+}
+
+// -------------------------------------------------------------------------------- //
+void guTranscodeThread::BuildPipelineWithOffset( void )
+{
+  guLogMessage( wxT( "guTranscodeThread::BuildPipelineWithOffset" ) );
+  m_Pipeline = gst_pipeline_new( "guTransPipeline" );
+  if( GST_IS_ELEMENT( m_Pipeline ) )
+  {
+    GstElement * comp;
+    comp = gst_element_factory_make( "gnlcomposition", "guComposition" );
+    if( GST_IS_ELEMENT( comp ) )
+    {
+      GstElement * conv;
+      conv = gst_element_factory_make( "audioconvert", "guTransAudioConv" );
+      if( GST_IS_ELEMENT( conv ) )
+      {
+        GstElement * enc = NULL;
+        GstElement * mux = NULL;
+
+        if( BuildEncoder( &enc, &mux ) )
+        {
+          GstElement * filesink;
+          filesink = gst_element_factory_make( "filesink", "guTransFileSink" );
+          if( GST_IS_ELEMENT( filesink ) )
+          {
+            g_object_set( filesink, "location", ( const char * ) m_Target.mb_str( wxConvFile ), NULL );
+
+            if( mux )
+            {
+              gst_bin_add_many( GST_BIN( m_Pipeline ), comp, conv, enc, mux, filesink, NULL );
+            }
+            else
+            {
+              gst_bin_add_many( GST_BIN( m_Pipeline ), comp, conv, enc, filesink, NULL );
+            }
+
+            g_object_set( m_Pipeline, "async-handling", true, NULL );
+
+            GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Pipeline ) );
+            gst_bus_add_watch( bus, ( GstBusFunc ) gst_bus_async_callback, this );
+            gst_object_unref( G_OBJECT( bus ) );
+
+            g_signal_connect( comp, "pad-added", G_CALLBACK( on_comp_pad_added ), conv );
+
+            if( mux )
+            {
+              gst_element_link_many( conv, enc, mux, filesink, NULL );
+            }
+            else
+            {
+              gst_element_link_many( conv, enc, filesink, NULL );
+            }
+
+            // Add the source
+            GstElement * src = gst_element_factory_make( "gnlfilesource", "guTransSource" );
+            if( GST_IS_ELEMENT( src ) )
+            {
+              wxString Location;
+              wxURI URI( m_Track->m_FileName );
+              if( URI.IsReference() )
+              {
+                  Location = wxT( "file://" ) + m_Track->m_FileName;
+              }
+              else
+              {
+                  if( !URI.HasScheme() )
+                  {
+                      Location = wxT( "http://" ) + m_Track->m_FileName;
+                  }
+                  else
+                  {
+                    Location = m_Track->m_FileName;
+                  }
+              }
+
+              g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
+              g_object_set( G_OBJECT( src ), "start", 0, NULL );
+              g_object_set( G_OBJECT( src ), "duration", m_Length * GST_MSECOND, NULL );
+              g_object_set( G_OBJECT( src ), "media-start", m_StartPos * GST_MSECOND, NULL );
+              g_object_set( G_OBJECT( src ), "media-duration", m_Length * GST_MSECOND, NULL );
+              guLogMessage( wxT( "Converting from %li to %li" ), m_StartPos * GST_MSECOND, m_Length * GST_MSECOND );
+
+              gst_bin_add_many( GST_BIN( comp ), src, NULL );
+
+              //gst_element_set_state( m_Pipeline, GST_STATE_READY );
+              SetStateAndWait( m_Pipeline, GST_STATE_READY );
+
+              return;
+            }
+            else
+            {
+              guLogError( wxT( "Error creating the transcode comp source" ) );
+            }
+
+            gst_object_unref( filesink );
+          }
+          else
+          {
+            guLogError( wxT( "Error creating the transcode filesink" ) );
+          }
+
+          gst_object_unref( enc );
+          if( mux )
+          {
+            gst_object_unref( mux );
+          }
+        }
+        else
+        {
+          guLogError( wxT( "Error creating the transcode encoder" ) );
+        }
+        gst_object_unref( conv );
+      }
+      else
+      {
+        guLogError( wxT( "Error creating the transcode converter" ) );
+      }
+
+      gst_object_unref( comp );
+    }
+
+    gst_object_unref( m_Pipeline );
+    m_Pipeline = NULL;
+  }
+  else
+  {
+    guLogError( wxT( "Error creating the transcode pipeline" ) );
+  }
+  m_HasError = true;
+}
+
+// -------------------------------------------------------------------------------- //
 guTranscodeThread::ExitCode guTranscodeThread::Entry()
 {
     if( m_Pipeline )
     {
-        gst_element_set_state( m_Pipeline, GST_STATE_PLAYING );
+        //gst_element_set_state( m_Pipeline, GST_STATE_PLAYING );
+        SetStateAndWait( m_Pipeline, GST_STATE_PLAYING );
 
         m_Running = true;
         while( !TestDestroy() && m_Running )
@@ -483,53 +683,71 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
 // -------------------------------------------------------------------------------- //
 void guTranscodeThread::Stop( void )
 {
-
-    guTagInfo * InTagInfo = guGetTagInfoHandler( m_Source );
-    if( InTagInfo )
+    int WriteFlags = guTRACK_CHANGED_DATA_TAGS;
+    guTagInfo * OutTagInfo = guGetTagInfoHandler( m_Target );
+    if( OutTagInfo )
     {
-        InTagInfo->Read();
-        guTagInfo * OutTagInfo = guGetTagInfoHandler( m_Target );
-        if( OutTagInfo )
+        if( !m_StartPos )
         {
-            OutTagInfo->m_TrackName = InTagInfo->m_TrackName;
-            OutTagInfo->m_GenreName = InTagInfo->m_GenreName;
-            OutTagInfo->m_ArtistName = InTagInfo->m_ArtistName;
-            OutTagInfo->m_AlbumArtist = InTagInfo->m_AlbumArtist;
-            OutTagInfo->m_AlbumName = InTagInfo->m_AlbumName;
-            OutTagInfo->m_Composer = InTagInfo->m_Composer;
-            OutTagInfo->m_Comments = InTagInfo->m_Comments;
-            OutTagInfo->m_Track = InTagInfo->m_Track;
-            OutTagInfo->m_Year = InTagInfo->m_Year;
-            OutTagInfo->m_Disk = InTagInfo->m_Disk;
-            OutTagInfo->m_Rating = InTagInfo->m_Rating;
-            OutTagInfo->m_PlayCount = InTagInfo->m_PlayCount;
-            OutTagInfo->m_TrackLabels = InTagInfo->m_TrackLabels;
-            OutTagInfo->m_TrackLabelsStr = InTagInfo->m_TrackLabelsStr;
-            OutTagInfo->m_ArtistLabels = InTagInfo->m_ArtistLabels;
-            OutTagInfo->m_ArtistLabelsStr = InTagInfo->m_ArtistLabelsStr;
-            OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
-            OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
-            OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
-            int WriteFlags = guTRACK_CHANGED_DATA_TAGS;
-
-            if( !InTagInfo->m_TrackLabelsStr.IsEmpty() ||
-                !InTagInfo->m_ArtistLabelsStr.IsEmpty() ||
-                !InTagInfo->m_AlbumLabelsStr.IsEmpty() )
+            guTagInfo * InTagInfo = guGetTagInfoHandler( m_Track->m_FileName );
+            if( InTagInfo )
             {
-                WriteFlags |= guTRACK_CHANGED_DATA_LABELS;
+                InTagInfo->Read();
+
+                OutTagInfo->m_TrackName = InTagInfo->m_TrackName;
+                OutTagInfo->m_GenreName = InTagInfo->m_GenreName;
+                OutTagInfo->m_ArtistName = InTagInfo->m_ArtistName;
+                OutTagInfo->m_AlbumArtist = InTagInfo->m_AlbumArtist;
+                OutTagInfo->m_AlbumName = InTagInfo->m_AlbumName;
+                OutTagInfo->m_Composer = InTagInfo->m_Composer;
+                OutTagInfo->m_Comments = InTagInfo->m_Comments;
+                OutTagInfo->m_Track = InTagInfo->m_Track;
+                OutTagInfo->m_Year = InTagInfo->m_Year;
+                OutTagInfo->m_Disk = InTagInfo->m_Disk;
+                OutTagInfo->m_Rating = InTagInfo->m_Rating;
+                OutTagInfo->m_PlayCount = InTagInfo->m_PlayCount;
+                OutTagInfo->m_TrackLabels = InTagInfo->m_TrackLabels;
+                OutTagInfo->m_TrackLabelsStr = InTagInfo->m_TrackLabelsStr;
+                OutTagInfo->m_ArtistLabels = InTagInfo->m_ArtistLabels;
+                OutTagInfo->m_ArtistLabelsStr = InTagInfo->m_ArtistLabelsStr;
+                OutTagInfo->m_AlbumLabels = InTagInfo->m_AlbumLabels;
+                OutTagInfo->m_AlbumLabelsStr = InTagInfo->m_AlbumLabelsStr;
+                OutTagInfo->m_Compilation = InTagInfo->m_Compilation;
+
+                if( !InTagInfo->m_TrackLabelsStr.IsEmpty() ||
+                    !InTagInfo->m_ArtistLabelsStr.IsEmpty() ||
+                    !InTagInfo->m_AlbumLabelsStr.IsEmpty() )
+                {
+                    WriteFlags |= guTRACK_CHANGED_DATA_LABELS;
+                }
             }
 
-            if( InTagInfo->m_Rating != wxNOT_FOUND )
-            {
-                WriteFlags |= guTRACK_CHANGED_DATA_RATING;
-            }
-
-            OutTagInfo->Write( WriteFlags );
-
-            delete OutTagInfo;
+            delete InTagInfo;
+        }
+        else
+        {
+            OutTagInfo->m_TrackName = m_Track->m_SongName;
+            OutTagInfo->m_GenreName = m_Track->m_GenreName;
+            OutTagInfo->m_ArtistName = m_Track->m_ArtistName;
+            OutTagInfo->m_AlbumArtist = m_Track->m_AlbumArtist;
+            OutTagInfo->m_AlbumName = m_Track->m_AlbumName;
+            OutTagInfo->m_Composer = m_Track->m_Composer;
+            OutTagInfo->m_Comments = m_Track->m_Comments;
+            OutTagInfo->m_Track = m_Track->m_Number;
+            OutTagInfo->m_Year = m_Track->m_Year;
+            OutTagInfo->m_Disk = m_Track->m_Disk;
+            OutTagInfo->m_Rating = m_Track->m_Rating;
+            OutTagInfo->m_PlayCount = m_Track->m_PlayCount;
         }
 
-        delete InTagInfo;
+        if( OutTagInfo->m_Rating != wxNOT_FOUND )
+        {
+            WriteFlags |= guTRACK_CHANGED_DATA_RATING;
+        }
+
+        OutTagInfo->Write( WriteFlags );
+
+        delete OutTagInfo;
     }
 
     m_Running = false;

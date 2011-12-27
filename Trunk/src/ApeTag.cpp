@@ -545,7 +545,7 @@ void guApeFile::ReadAndProcessApeHeader( void )
 //        printf( "SampleRate       : %u\n", Header.nSampleRate );
 
         m_TrackLength = int( double( ( ( Header.nTotalFrames - 1 ) * Header.nBlocksPerFrame ) + Header.nFinalFrameBlocks )
-                             / double( Header.nSampleRate ) );
+                             / double( Header.nSampleRate ) ) * 1000;
 
     }
     else    // Old header format
@@ -565,11 +565,11 @@ void guApeFile::ReadAndProcessApeHeader( void )
 //        printf( "SampleRate       : %u\n", Header.nSampleRate );
 
         m_TrackLength = int( double( ( ( Header.nTotalFrames - 1 ) * BlocksPerFrame ) + Header.nFinalFrameBlocks )
-                             / double( Header.nSampleRate ) );
+                             / double( Header.nSampleRate ) ) * 1000;
 
     }
 
-    m_BitRate = m_TrackLength ? int( ( double( FileLength ) * double( 8 ) ) / ( double( m_TrackLength ) * double( 1000 ) ) ) : 0;
+    m_BitRate = m_TrackLength ? int( ( double( FileLength ) * double( 8 ) ) / double( m_TrackLength ) ) : 0;
 //    guLogMessage( wxT( "Track size %u  length %s  bitrate %u" ), FileLength, LenToString( m_TrackLength ).c_str(), m_BitRate );
 
     if( FileLength < sizeof( guAPE_HEADER_FOOTER ) )

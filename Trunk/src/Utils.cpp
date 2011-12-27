@@ -35,7 +35,7 @@
 wxString LenToString( const unsigned int len )
 {
     wxString LenStr;
-    unsigned int Len = len;
+    unsigned int Len = len / 1000;
     unsigned int w = 0;
     unsigned int d = 0;
     unsigned int h = 0;

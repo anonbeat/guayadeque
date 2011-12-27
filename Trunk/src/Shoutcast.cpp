@@ -218,17 +218,17 @@ wxString guShoutCast::GetStationUrl( const int id ) const
 }
 
 // -------------------------------------------------------------------------------- //
-guStationPlayList guShoutCast::GetStationPlayList( const int StationId ) const
+guPlaylistItemArray guShoutCast::GetStationPlayList( const int StationId ) const
 {
     return GetStationPlayList( wxString::Format( SHOUTCAST_GET_STATION_PLAYLIST, StationId ) );
 }
 
 // -------------------------------------------------------------------------------- //
-guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) const
+guPlaylistItemArray guShoutCast::GetStationPlayList( const wxString &stationurl ) const
 {
     wxString                Content;
-    guStationPlayList       RetVal;
-    guStationPlayListItem * NewStation;
+    guPlaylistItemArray       RetVal;
+    guPlaylistItem * NewStation;
     wxFileConfig *          PlayList;
     Content = GetUrlContent( stationurl );
     if( Content.Length() )
@@ -252,7 +252,7 @@ guStationPlayList guShoutCast::GetStationPlayList( const wxString &stationurl ) 
                     {
                         for( int index = 1; index <= count; index++ )
                         {
-                            NewStation = new guStationPlayListItem();
+                            NewStation = new guPlaylistItem();
 
                             PlayList->Read( wxString::Format( wxT( "File%u" ), index ), &NewStation->m_Location );
                             PlayList->Read( wxString::Format( wxT( "Title%u" ), index ), &NewStation->m_Name );

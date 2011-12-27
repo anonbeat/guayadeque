@@ -76,7 +76,7 @@ class guPlayList : public guListView
     virtual void                OnDropBegin( void );
     virtual void                OnDropEnd( void );
 
-    virtual wxString GetItemSearchText( const int row );
+    virtual wxString            GetItemSearchText( const int row );
 
 //    void                        OnMouse( wxMouseEvent &event );
     void                        RemoveSelected();
@@ -104,6 +104,9 @@ class guPlayList : public guListView
     void                        OnSelectGenre( wxCommandEvent &event );
 
     void                        CreateAcceleratorTable( void );
+
+    void                        SavePlaylistTracks( void );
+    void                        LoadPlaylistTracks( void );
 
   protected:
     virtual void                OnKeyDown( wxKeyEvent &event );
@@ -175,6 +178,7 @@ class guPlayList : public guListView
 
   friend class guAddDropFilesThread;
   friend class guPlayListDropTarget;
+  friend class guPlayerPlayList;
 
 };
 
@@ -196,6 +200,8 @@ class guPlayerPlayList : public guAuiManagedPanel
 
     void inline     MediaViewerCreated( const wxString &uniqueid, guMediaViewer * mediaviewer ) { m_PlayListCtrl->MediaViewerCreated( uniqueid, mediaviewer ); }
     void inline     MediaViewerClosed( guMediaViewer * mediaviewer ) { m_PlayListCtrl->MediaViewerClosed( mediaviewer ); }
+
+    void            LoadPlaylistTracks( void ) { m_PlayListCtrl->LoadPlaylistTracks(); }
 
 };
 
