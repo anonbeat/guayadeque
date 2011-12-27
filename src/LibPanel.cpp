@@ -977,18 +977,30 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
     guImagePtrArray Images;
     wxArrayString Lyrics;
     wxArrayInt ChangedFlags;
-    guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &Images, &Lyrics, &ChangedFlags );
-    if( TrackEditor )
+    int Index;
+    int Count = tracks.Count();
+    for( Index = Count - 1; Index >= 0; Index-- )
     {
-        if( TrackEditor->ShowModal() == wxID_OK )
+        if( tracks[ Index ].m_Offset )
         {
-            UpdateTracks( tracks, Images, Lyrics, ChangedFlags );
-
-            // Update the track in database, playlist, etc
-            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_NONE, &tracks );
+            tracks.RemoveAt( Index );
         }
-        guImagePtrArrayClean( &Images );
-        TrackEditor->Destroy();
+    }
+    if( tracks.Count() )
+    {
+        guTrackEditor * TrackEditor = new guTrackEditor( this, m_Db, &tracks, &Images, &Lyrics, &ChangedFlags );
+        if( TrackEditor )
+        {
+            if( TrackEditor->ShowModal() == wxID_OK )
+            {
+                UpdateTracks( tracks, Images, Lyrics, ChangedFlags );
+
+                // Update the track in database, playlist, etc
+                m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_NONE, &tracks );
+            }
+            guImagePtrArrayClean( &Images );
+            TrackEditor->Destroy();
+        }
     }
 }
 
@@ -1690,6 +1702,8 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
 void guLibPanel::OnSongListColClicked( wxListEvent &event )
 {
     int ColId = m_SongListCtrl->GetColumnId( event.m_col );
+    if( ColId == guSONGS_COLUMN_OFFSET )
+        return;
     m_SongListCtrl->SetTracksOrder( ColId );
 
     // Create the Columns

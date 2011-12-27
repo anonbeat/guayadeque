@@ -87,6 +87,7 @@ class guCurrentTrack : public guTrack
         m_Number = 0;
         m_Rating = 0;
         m_Year = 0;
+        m_Offset = 0;
     }
 
     guCurrentTrack& operator=(const guTrack &Src)
@@ -107,6 +108,7 @@ class guCurrentTrack : public guTrack
         m_FileName = Src.m_FileName;
         m_Number = Src.m_Number;
         m_Year = Src.m_Year;
+        m_Offset = Src.m_Offset;
         m_Length = Src.m_Length;
         m_Bitrate = Src.m_Bitrate;
         m_PlayCount = Src.m_PlayCount;
@@ -121,6 +123,7 @@ class guCurrentTrack : public guTrack
         m_PlayTime = 0;
         m_ASRating = guAS_RATING_NONE;
         m_MediaViewer = Src.m_MediaViewer;
+        guLogMessage( wxT( "Track starts at %i with length %i" ), m_Offset, m_Length );
 
         //CoverType = GU_SONGCOVER_NONE;
         if( m_Type == guTRACK_TYPE_RADIOSTATION )
@@ -172,6 +175,7 @@ class guCurrentTrack : public guTrack
         m_FileName = track.m_FileName;
         m_Number = track.m_Number;
         m_Year = track.m_Year;
+        m_Offset = track.m_Offset;
         m_Length = track.m_Length;
         m_Bitrate = track.m_Bitrate;
         m_PlayCount = track.m_PlayCount;
@@ -347,7 +351,7 @@ class guPlayerPanel : public wxPanel
     void                        OnArtistNameDClicked( wxMouseEvent &event );
     void                        OnYearDClicked( wxMouseEvent &event );
     void                        OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;
-                                                                UpdatePositionLabel( GetPosition() / 1000 ); };
+                                                                UpdatePositionLabel( GetPosition() ); };
     void                        OnRatingChanged( guRatingEvent &event );
     void                        CheckFiltersEnable( void );
 
@@ -452,6 +456,8 @@ class guPlayerPanel : public wxPanel
     void                        StopAtEnd( void ) { m_MediaSong.m_Type = guTrackType( ( int ) m_MediaSong.m_Type ^ guTRACK_TYPE_STOP_HERE ); }
 
     void                        MediaViewerClosed( guMediaViewer * mediaviewer );
+
+    void                        CheckStartPlaying( void );
 
     //friend class guSmartAddTracksThread;
 };

@@ -236,13 +236,15 @@ class guFaderPlayBin
     GstPad *            m_RecordGhostPad;
     GstPad *            m_RecordPad;
 
+    int                 m_StartOffset;
+    int                 m_SeekTimerId;
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
     bool                BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer );
 
   public :
-    guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, const int playtype );
+    guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, const int playtype, const int startpos = 0 );
     ~guFaderPlayBin();
 
     void                SendEvent( guMediaEvent &event );
@@ -274,7 +276,7 @@ class guFaderPlayBin
     bool                SetEqualizer( const wxArrayInt &eqset );
     void                SetEqualizerBand( const int band, const int value );
 
-    bool                Load( const wxString &uri, const bool restart = true );
+    bool                Load( const wxString &uri, const bool restart = true, const int startpos = 0 );
     bool                Play( void );
     bool                Pause( void );
     bool                Stop( void );
@@ -314,6 +316,7 @@ class guFaderPlayBin
     void                AddRecordElement( GstPad * pad, bool isblocked );
     void                RemoveRecordElement( GstPad * pad, bool isblocked );
 
+    bool                DoStartSeek( void );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;
@@ -371,7 +374,7 @@ class guMediaCtrl : public wxEvtHandler
 
     void            UpdatePosition( void );
 
-    long            Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype );
+    long            Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype, const int startpos = 0 );
     bool            Stop( void );
     bool            Play( void );
     bool            Pause( void );

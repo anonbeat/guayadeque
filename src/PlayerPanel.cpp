@@ -390,35 +390,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     m_MediaCtrl->SetEqualizer( Equalizer );
 
-    // There was a track passed as argument that we will play
-    if( m_PlayListCtrl->StartPlaying() )
-    {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
-        OnPlayButtonClick( event );
-    }
-    else
-    {
-        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
-        {
-            m_TrackStartPos = wxMax( 0, Config->ReadNum( wxT( "CurrentTrackPos" ), 0, wxT( "general" ) ) - 500 );
-            if( m_TrackStartPos > 0 )
-            {
-                wxCommandEvent event;
-                event.SetInt( Config->ReadNum( wxT( "PlayerCurItem" ), 0, wxT( "general" ) ) );
-                //OnPlayButtonClick( event );
-                OnPlayListDClick( event );
-            }
-            else
-            {
-                SetNextTrack( m_PlayListCtrl->GetCurrent() );
-            }
-        }
-        else if( m_PlayListCtrl->GetCurItem() != wxNOT_FOUND )
-        {
-            SetNextTrack( m_PlayListCtrl->GetCurrent() );
-        }
-    }
-
     CheckFiltersEnable();
 
 	Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayerPanel::OnIdle ), NULL, this );
@@ -534,7 +505,7 @@ guPlayerPanel::~guPlayerPanel()
         if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
         {
             if( ( m_LastPlayState != guMEDIASTATE_STOPPED ) &&
-                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "general" ) ) * 60 ) ) )
+                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "general" ) ) * 60000 ) ) )
             {
                 Config->WriteNum( wxT( "CurrentTrackPos" ), m_LastCurPos, wxT( "general" ) );
             }
@@ -764,7 +735,7 @@ void guPlayerPanel::SetRating( const int rating )
 void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
 {
     wxString Label;
-    unsigned int CurLen = m_LastLength / 1000;
+    unsigned int CurLen = m_LastLength;
     //if( !m_ShowRevTime || !m_MediaSong.m_Length )
     if( !m_ShowRevTime || !CurLen )
     {
@@ -817,19 +788,19 @@ void guPlayerPanel::SetBitRate( int bitrate )
         bitrate = bitrate / 1000;
         //guLogDebug( wxT( "Bitrate: %u" ), bitrate );
         m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
-        if( ( m_MediaSong.m_Bitrate < bitrate ) && ( GetState() == guMEDIASTATE_PLAYING ) )
-        {
-            m_MediaSong.m_Bitrate = bitrate;
-
-            if( m_MediaSong.m_MediaViewer )
-            {
-                guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
-                Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
-            }
-
-            // Update the track in database, playlist, etc
-            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
-        }
+//        if( ( m_MediaSong.m_Bitrate < bitrate ) && ( GetState() == guMEDIASTATE_PLAYING ) )
+//        {
+//            m_MediaSong.m_Bitrate = bitrate;
+//
+//            if( m_MediaSong.m_MediaViewer )
+//            {
+//                guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
+//                Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
+//            }
+//
+//            // Update the track in database, playlist, etc
+//            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+//        }
     }
     else
         m_BitRateLabel->SetLabel( wxT( "[kbps]" ) );
@@ -1196,61 +1167,6 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
     TrackListChanged();
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guPlayerPanel::UpdateStatus()
-//{
-//    guMediaState State;
-//    //wxFileOffset CurPos;
-//    static bool IsUpdatingStatus = false;
-//
-//    if( IsUpdatingStatus )
-//        return;
-//
-//    IsUpdatingStatus = true;
-//
-//    State = m_MediaCtrl->GetState();
-//
-//    if( State == guMEDIASTATE_PLAYING )
-//    {
-//        // Some track lengths are not correctly read by taglib so
-//        // we try to find the length from gstreamer and update the database
-//        // We need to not do this for radiostations or online streams
-//        if( m_MediaSong.m_Length == 0 &&
-//            m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
-//        {
-//            m_MediaSong.m_Length = m_MediaCtrl->GetLength();
-//
-//            if( m_MediaSong.m_SongId )
-//            {
-//                if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
-//                    m_Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
-//                else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-//                    m_Db->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
-//            }
-//
-//            // Update the track in database, playlist, etc
-//            ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
-//        }
-//
-//        // When tags are received while buffering the rename gets pending till the track start playing again
-//        // To avoid get the stream paused.
-//        if( m_PendingNewRecordName && ( m_BufferGaugeId == wxNOT_FOUND ) )
-//        {
-//            m_PendingNewRecordName = false;
-//            m_MediaRecordCtrl->SplitTrack();
-//        }
-//    }
-//
-//    // Total Length
-//    if( m_LastTotalLen != m_PlayListCtrl->GetLength() )
-//    {
-//        m_LastTotalLen = m_PlayListCtrl->GetLength();
-//        TrackListChanged();
-//    }
-//
-//    IsUpdatingStatus = false;
-//}
-
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartEndThread( wxCommandEvent &event )
 {
@@ -1384,7 +1300,8 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
         m_PlayListCtrl->ClearStopAtEnd();
         return;
     }
-    //guLogDebug( wxT( "LoadMedia Cur: %i  %i" ), m_PlayListCtrl->GetCurItem(), playtype );
+
+    guLogDebug( wxT( "LoadMedia Cur: %i  %i starting at %i" ), m_PlayListCtrl->GetCurItem(), playtype, m_NextSong.m_Offset );
     //m_MediaCtrl->Load( NextItem->FileName );
     wxURI UriPath( m_NextSong.m_FileName );
     wxString Uri;
@@ -1394,13 +1311,20 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
         else
             Uri = m_NextSong.m_FileName;
 
+        if( ( playtype == guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) && ( m_MediaSong.m_Offset || m_NextSong.m_Offset ) )
+        {
+            playtype = guFADERPLAYBIN_PLAYTYPE_REPLACE;
+        }
+
         //guLogDebug( wxT( "'%s'\n'%s'" ), FileName.c_str(), FileNameEncode( Uri ).c_str() );
-        m_NextTrackId = m_MediaCtrl->Load( FileNameEncode( Uri ), playtype );
+        m_NextTrackId = m_MediaCtrl->Load( FileNameEncode( Uri ), playtype, m_NextSong.m_Offset + m_TrackStartPos );
+        if( m_TrackStartPos )
+        {
+            m_TrackStartPos = 0;
+        }
         if( !m_NextTrackId )
         {
             guLogError( wxT( "ee: Failed load of file '%s'" ), Uri.c_str() );
-            //guLogError( wxT( "ee: The filename was '%s'" ), FileName.c_str() );
-            //m_MediaCtrl->CleanPlayBins();
 
             int CurItem = m_PlayListCtrl->GetCurItem();
             m_IsSkipping = false;
@@ -1471,7 +1395,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
     if( !m_SilenceDetected && m_SilenceDetector &&
         ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
         ( !m_SilenceDetectorTime ||
-          ( ( m_MediaSong.m_Length * 1000 ) > ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) ) ) )
+          ( m_MediaSong.m_Length > ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) ) ) )
     {
         //guLogDebug( wxT( "Decay Level: %0.2f /  %02i  %s  %li > %li" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, LenToString( ( unsigned int ) ( m_LastCurPos / 1000 ) ).c_str(), m_MediaSong.m_Length * 1000, ( unsigned int ) ( m_SilenceDetectorTime + 10000 ) );
         if( LevelInfo->m_Decay_L < double( m_SilenceDetectorLevel ) )
@@ -1479,7 +1403,7 @@ void guPlayerPanel::OnMediaLevel( guMediaEvent &event )
             unsigned long EventTime = m_LastCurPos; //LevelInfo->m_EndTime;
             if( EventTime > 10000 )
             {
-                unsigned long TrackLength = m_MediaSong.m_Length * 1000;
+                unsigned long TrackLength = m_MediaSong.m_Length;
                 //guLogDebug( wxT( "The level is now lower than triger level" ) );
                 //guLogDebug( wxT( "(%f) %02i : %li , %i, %i" ), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
                 //guLogDebug( wxT( "(%li) %f %02i : %li , %i, %i" ), event.GetExtraLong(), LevelInfo->m_Decay_L, m_SilenceDetectorLevel, EventTime, TrackLength - EventTime, m_SilenceDetectorTime );
@@ -1545,34 +1469,6 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
     OnNextTrackButtonClick( CmdEvent );
 
     RemoveItem( CurItem );
-
-//    m_MediaCtrl->SetCurrentState( GST_STATE_READY );
-
-//    m_MediaCtrl->CleanPlayBins();
-
-//    OnNextTrackButtonClick( CmdEvent );
-//
-//    OnPlayButtonClick( CmdEvent );
-
-//    // Be sure it will not try to play the track again
-//    event.SetInt( 0 );
-//    // Simulate the track loaded correctly.
-//    OnMediaLoaded( event );
-//
-//    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
-//    AddPendingEvent( CmdEvent );
-//
-//    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
-//    AddPendingEvent( CmdEvent );
-
-//    CmdEvent.SetId( ID_PLAYERPANEL_STOP );
-//    AddPendingEvent( CmdEvent );
-//
-//    CmdEvent.SetId( ID_PLAYERPANEL_PLAY );
-//    AddPendingEvent( CmdEvent );
-
-//    wxCommandEvent CmdEvent;
-//    OnNextTrackButtonClick( CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1626,9 +1522,9 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-    //guLogDebug( wxT( "OnMediaPosition... %i - %li" ), event.GetInt(), event.GetExtraLong() );
+    //guLogDebug( wxT( "OnMediaPosition... %i / %i - %li" ), event.GetInt(), m_MediaSong.m_Offset, event.GetExtraLong() );
 
-    if( event.GetInt() < 0 )
+    if( ( event.GetInt() < 0 ) || ( event.GetInt() < ( int ) m_MediaSong.m_Offset ) )
         return;
 
     long EventId = ( long ) event.GetClientData();
@@ -1636,67 +1532,76 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
     if( EventId != m_CurTrackId )
         return;
 
-    wxFileOffset CurPos = event.GetInt();
+    wxFileOffset CurPos = event.GetInt() - m_MediaSong.m_Offset;
     wxFileOffset CurLen = event.GetExtraLong();
-    if( CurLen && ( CurLen != m_LastLength ) )
+
+    if( !m_MediaSong.m_Offset )
     {
-        m_LastLength = CurLen;
-
-//        if( !m_LastLength )
-//            m_PlayerPositionSlider->SetValue( 0 );
-
-        // Some track lengths are not correctly read by taglib so
-        // we try to find the length from gstreamer and update the database
-        // We need to not do this for radiostations or online streams
-        if( CurLen > 0 && m_MediaSong.m_Length == 0 &&
-            m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
+        if( CurLen && ( CurLen != m_LastLength ) )
         {
-            m_MediaSong.m_Length = CurLen / 1000;
+            m_LastLength = CurLen;
 
-            if( m_MediaSong.m_SongId )
+            if( !m_LastLength )
+                m_PlayerPositionSlider->SetValue( 0 );
+
+            // Some track lengths are not correctly read by taglib so
+            // we try to find the length from gstreamer and update the database
+            // We need to not do this for radiostations or online streams
+            if( CurLen > 0 && m_MediaSong.m_Length == 0 &&
+                m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION )
             {
-                if( m_MediaSong.m_MediaViewer )
-                {
-                    guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
-                    Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
-                }
-                else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
-                {
-                    guDbPodcasts * DbPodcasts = m_MainFrame->GetPodcastsDb();
-                    DbPodcasts->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
-                }
-            }
+                m_MediaSong.m_Length = CurLen;
 
-            // Update the track in database, playlist, etc
-            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+                if( m_MediaSong.m_SongId )
+                {
+                    if( m_MediaSong.m_MediaViewer )
+                    {
+                        guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
+                        Db->UpdateTrackLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                    }
+                    else if( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST )
+                    {
+                        guDbPodcasts * DbPodcasts = m_MainFrame->GetPodcastsDb();
+                        DbPodcasts->UpdatePodcastItemLength( m_MediaSong.m_SongId, m_MediaSong.m_Length );
+                    }
+                }
+
+                // Update the track in database, playlist, etc
+                m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+            }
         }
+    }
+    else
+    {
+        if( m_LastLength != m_MediaSong.m_Length )
+            m_LastLength = m_MediaSong.m_Length;
     }
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
     {
-        //guLogDebug( wxT( "OnMediaPosition... %i - %li   %li %li" ), event.GetInt(), event.GetExtraLong(), m_CurTrackId, m_NextTrackId );
+        guLogDebug( wxT( "OnMediaPosition... %i - %li => %li  %li %li" ), CurPos, CurLen, m_LastLength - CurPos, m_CurTrackId, m_NextTrackId );
         m_LastCurPos = CurPos;
 
         if( m_TrackChanged )
             m_TrackChanged = false;
 
-        UpdatePositionLabel( CurPos / 1000 );
+        UpdatePositionLabel( CurPos );
 
         if( m_LastLength )
         {
-            m_PlayerPositionSlider->SetValue( event.GetInt() / ( m_LastLength / 1000 ) );
+            m_PlayerPositionSlider->SetValue( CurPos / ( m_LastLength / 1000 ) );
         }
 
-        m_MediaSong.m_PlayTime = CurPos / 1000;
+        m_MediaSong.m_PlayTime = CurPos;
 
         if( !m_AboutToEndDetected &&
             !m_NextTrackId &&
             ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
             ( CurPos > 0 ) && ( m_LastLength > 0 ) &&
-            ( CurPos + 5000 + ( !m_ForceGapless ? m_FadeOutTime : 0 ) >= m_LastLength )
+            ( ( CurPos + 5000 + ( !m_ForceGapless ? m_FadeOutTime : 0 ) ) >= m_LastLength )
           )
         {
-            if( GetState() == guMEDIASTATE_PLAYING )
+            if( !m_ForceGapless && m_FadeOutTime && !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
             {
                 m_AboutToEndDetected = true;
 
@@ -1706,13 +1611,24 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             }
         }
     }
+
+    if( m_MediaSong.m_Offset && ( CurPos >= m_LastLength ) )
+    {
+        guLogDebug( wxT( "Track should finish now..." ) );
+        wxCommandEvent evt;
+        OnNextTrackButtonClick( evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaLength( guMediaEvent &event )
 {
     guLogDebug( wxT( "OnMediaLength... %i" ), event.GetInt() );
-    wxFileOffset CurLen = event.GetInt() / 1000;
+
+    if( m_MediaSong.m_Offset )
+        return;
+
+    wxFileOffset CurLen = event.GetInt();
 
     if( CurLen != m_LastLength )
     {
@@ -1912,10 +1828,7 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 {
-    guLogDebug( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
-
-//    if( m_IsSkipping )
-//        m_IsSkipping = false;
+    guLogMessage( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
 
     try {
 
@@ -1923,13 +1836,6 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
         {
             //
             m_MediaCtrl->Play();
-        }
-
-        if( m_TrackStartPos )
-        {
-            //guLogDebug( wxT( "Try to set saved position %i" ), m_TrackStartPos );
-            SetPosition( m_TrackStartPos );
-            m_TrackStartPos = 0;
         }
 
         m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
@@ -1971,7 +1877,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     m_SavedPlayedTrack = false;
     m_SilenceDetected = false;
     m_AboutToEndDetected = false;
-    m_LastLength = m_MediaSong.m_Length * 1000;
+    m_LastLength = m_MediaSong.m_Length;
     if( !m_LastLength )
         m_PlayerPositionSlider->SetValue( 0 );
 
@@ -2135,7 +2041,7 @@ void guPlayerPanel::SavePlayedTrack( void )
                 m_MediaSong.m_PlayCount++;
                 guLogDebug( wxT( "Increased PlayCount to %i" ), m_MediaSong.m_PlayCount );
 
-                if( m_MediaSong.m_MediaViewer && m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
+                if( !m_MediaSong.m_Offset && m_MediaSong.m_MediaViewer && m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
                 {
                     guTrackArray Tracks;
                     Tracks.Add( m_MediaSong );
@@ -2371,8 +2277,8 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
             if( State == guMEDIASTATE_PLAYING )
             {
                 m_IsSkipping = true;
-                LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) );
+                LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) );
             }
         }
         else
@@ -2445,9 +2351,24 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         if( State == guMEDIASTATE_PLAYING || State == guMEDIASTATE_ERROR )
         {
             m_IsSkipping = true;
-            LoadMedia( ( event.GetInt() ? ( guFADERPLAYBIN_PLAYTYPE ) event.GetInt() :
-                ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
+
+            if( ( State != guMEDIASTATE_ERROR ) &&
+                !ForceSkip &&
+                !( !m_ForceGapless && m_FadeOutTime ) &&
+                m_MediaSong.m_Offset && m_NextSong.m_Offset &&
+                ( m_MediaSong.m_FileName == m_NextSong.m_FileName ) &&
+                ( m_MediaSong.m_Number + 1 == m_NextSong.m_Number ) )
+            {
+                guLogDebug( wxT( "Simulate track change for track %i => %i" ), m_MediaSong.m_Number, m_NextSong.m_Number );
+                m_NextTrackId = m_CurTrackId;
+                OnMediaPlayStarted();
+            }
+            else
+            {
+                LoadMedia( ( event.GetInt() ? ( guFADERPLAYBIN_PLAYTYPE ) event.GetInt() :
+                    ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                        ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
+            }
         }
         else
         {
@@ -2511,6 +2432,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
             }
         }
     }
+    guLogMessage( wxT( "End Of OnNextTrackButtonClick..." ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2832,7 +2754,7 @@ void guPlayerPanel::OnPlayerPositionSliderBeginSeek( wxScrollEvent &event )
 
 //        m_PositionLabel->SetLabel( LenToString( CurPos / 1000 ) + _( " of " ) + LenToString( m_MediaSong.m_Length ) );
 //        m_PosLabelSizer->Layout();
-        UpdatePositionLabel( CurPos / 1000 );
+        UpdatePositionLabel( CurPos );
         //printf( "Slider Tracking %d\n", CurPos );
 
         //m_MediaCtrl->Seek( CurPos * m_MediaSong.Length );
@@ -2862,7 +2784,7 @@ void guPlayerPanel::OnPlayerPositionSliderChanged( wxScrollEvent &event )
     {
         NewPos = event.GetPosition();
         //guLogDebug( wxT( "Slider Changed Set Pos to %i Of %i" ), ( int ) NewPos, 1000 );
-        SetPosition( NewPos * ( m_LastLength / 1000 ) );
+        SetPosition( m_MediaSong.m_Offset + ( NewPos * ( m_LastLength / 1000 ) ) );
     }
     m_SliderIsDragged = false;
 
@@ -2876,7 +2798,7 @@ void guPlayerPanel::OnPlayerPositionSliderMouseWheel( wxMouseEvent &event )
     {
         int Rotation = event.GetWheelRotation() / event.GetWheelDelta();
         //guLogDebug( wxT( "Pos : %i -> %i" ), GetPosition(), GetPosition() + ( Rotation * 7000 ) );
-        SetPosition( wxMax( 0, wxMin( ( int ) m_LastLength, GetPosition() + ( Rotation * 7000 ) ) ) );
+        SetPosition( m_MediaSong.m_Offset + wxMax( 0, wxMin( ( int ) m_LastLength, GetPosition() + ( Rotation * 7000 ) ) ) );
     }
     m_SliderIsDragged = false;
 
@@ -3000,7 +2922,7 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
     //if( m_MediaSong.m_Type == guTRACK_TYPE_DB )
     if( m_MediaSong.m_MediaViewer )
     {
-        if( m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
+        if( !m_MediaSong.m_Offset && m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
         {
             guTrackArray Tracks;
             Tracks.Add( m_MediaSong );
@@ -3060,6 +2982,7 @@ void guPlayerPanel::UpdatedTrack( const guTrack * track )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdateLabels( void )
 {
+    guLogDebug( wxT( "UpdateLabels..." ) );
     // Update the Current Playing Song Info
     SetTitleLabel( m_MediaSong.m_SongName );
     SetAlbumLabel( m_MediaSong.m_AlbumName );
@@ -3194,7 +3117,38 @@ void guPlayerPanel::MediaViewerClosed( guMediaViewer * mediaviewer )
     }
 }
 
-
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::CheckStartPlaying( void )
+{
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    // There was a track passed as argument that we will play
+    if( m_PlayListCtrl->StartPlaying() )
+    {
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+        OnPlayButtonClick( event );
+    }
+    else
+    {
+        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
+        {
+            m_TrackStartPos = wxMax( 0, Config->ReadNum( wxT( "CurrentTrackPos" ), 0, wxT( "general" ) ) - 500 );
+            if( m_TrackStartPos > 0 )
+            {
+                wxCommandEvent event;
+                event.SetInt( Config->ReadNum( wxT( "CurItem" ), 0, wxT( "playlist/nowplaying" ) ) );
+                OnPlayListDClick( event );
+            }
+            else
+            {
+                SetNextTrack( m_PlayListCtrl->GetCurrent() );
+            }
+        }
+        else if( m_PlayListCtrl->GetCurItem() != wxNOT_FOUND )
+        {
+            SetNextTrack( m_PlayListCtrl->GetCurrent() );
+        }
+    }
+}
 
 
 // -------------------------------------------------------------------------------- //

@@ -23,19 +23,20 @@
 
 #include <wx/arrstr.h>
 #include <wx/dynarray.h>
+#include <wx/uri.h>
 #include <wx/string.h>
 #include <wx/xml/xml.h>
 
-class guStationPlayListItem
+class guPlaylistItem
 {
   public:
     wxString m_Name;
     wxString m_Location;
     int      m_Length;
 
-    guStationPlayListItem() {};
+    guPlaylistItem() { m_Length = 0; };
 
-    guStationPlayListItem( const wxString &location, const wxString &title, const int length = wxNOT_FOUND )
+    guPlaylistItem( const wxString &location, const wxString &title, const int length = wxNOT_FOUND )
     {
         m_Name = title;
         m_Location = location;
@@ -44,10 +45,10 @@ class guStationPlayListItem
 
     wxString GetLocation( const bool relative = false, const wxString &pathbase = wxEmptyString );
 };
-WX_DECLARE_OBJARRAY(guStationPlayListItem, guStationPlayList);
+WX_DECLARE_OBJARRAY(guPlaylistItem, guPlaylistItemArray);
 
 // -------------------------------------------------------------------------------- //
-class guPlayListFile
+class guPlaylistFile
 {
   private :
     void                ReadXspfPlayList( wxXmlNode * XmlNode );
@@ -59,7 +60,7 @@ class guPlayListFile
 
   protected :
     wxString            m_Name;
-    guStationPlayList   m_PlayList;
+    guPlaylistItemArray m_Playlist;
 
     bool                ReadPlsStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
     bool                ReadM3uStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
@@ -77,39 +78,105 @@ class guPlayListFile
     bool                WriteAsxFile( const wxString &filename, const bool relative = false );
 
   public :
-    guPlayListFile( void ) {};
-    guPlayListFile( const wxString &uri );
-    ~guPlayListFile();
+    guPlaylistFile( void ) {};
+    guPlaylistFile( const wxString &uri );
+    ~guPlaylistFile();
 
     bool                    Load( const wxString &uri );
     bool                    Save( const wxString &filename, const bool relative = false );
 
     wxString                GetName( void ) { return m_Name; };
     void                    SetName( const wxString &name ) { m_Name = name; };
-    guStationPlayList       GetPlayList( void ) { return m_PlayList; };
-    void                    SetPlayList( const guStationPlayList &playlist ) { m_PlayList = playlist; };
+    guPlaylistItemArray     GetPlayList( void ) { return m_Playlist; };
+    void                    SetPlayList( const guPlaylistItemArray &playlist ) { m_Playlist = playlist; };
 
-    size_t                  Count( void ) const { return m_PlayList.Count(); };
+    size_t                  Count( void ) const { return m_Playlist.Count(); };
 
-    guStationPlayListItem   GetItem( const size_t index )
+    guPlaylistItem   GetItem( const size_t index )
     {
-        return m_PlayList[ index ];
+        return m_Playlist[ index ];
     }
 
     void                    AddItem( const wxString &location, const wxString &title = wxEmptyString, const int length = wxNOT_FOUND )
     {
-        m_PlayList.Add( new guStationPlayListItem( location, title, length ) );
+        m_Playlist.Add( new guPlaylistItem( location, title, length ) );
     }
 
-    void                    AddItem( const guStationPlayListItem &item )
+    void                    AddItem( const guPlaylistItem &item )
     {
-        m_PlayList.Add( new guStationPlayListItem( item ) );
+        m_Playlist.Add( new guPlaylistItem( item ) );
     };
 
     static bool             IsValidPlayList( const wxString &uri );
 
 };
 
+// -------------------------------------------------------------------------------- //
+class guCuePlaylistItem : public guPlaylistItem
+{
+  public :
+    int         m_Start;
+    //int       m_Length;
+    //wxString  m_Name;
+    //wxString  m_Location;
+
+    wxString    m_TrackPath;
+    wxString    m_ArtistName;
+    wxString    m_AlbumName;
+    wxString    m_Composer;
+    wxString    m_Genre;
+    wxString    m_Year;
+    wxString    m_Comment;
+
+    guCuePlaylistItem() : guPlaylistItem() { m_Start = 0; }
+
+    guCuePlaylistItem( const wxString &location, const wxString &title, const int start = 0, const int length = wxNOT_FOUND ) :
+        guPlaylistItem( location, title, length )
+    {
+        m_Start = start;
+    }
+
+};
+WX_DECLARE_OBJARRAY(guCuePlaylistItem, guCuePlaylistItemArray);
+
+// -------------------------------------------------------------------------------- //
+class guCuePlaylistFile
+{
+  public :
+    wxString                m_Location;
+    guCuePlaylistItemArray  m_PlaylistItems;
+
+    wxString                m_TrackPath;
+    int                     m_TrackLength;
+    wxString                m_AlbumName;
+    wxString                m_ArtistName;
+    wxString                m_Composer;
+    wxString                m_Genre;
+    wxString                m_Year;
+    wxString                m_Comment;
+
+    guCuePlaylistFile() {}
+
+    guCuePlaylistFile( const wxString &uri );
+    ~guCuePlaylistFile() {}
+
+    void                    SetLocation( const wxString &location ) { m_Location = location; }
+
+    bool                    Load( const wxString &location );
+    bool                    LoadFromText( const wxString &playlist );
+    //bool                  Save( const wxString &filename );
+
+    size_t                  Count( void ) const { return m_PlaylistItems.Count(); };
+
+    guCuePlaylistItem &     GetItem( const size_t index ) { return m_PlaylistItems[ index ]; }
+
+    static bool             IsValidFile( const wxString &uri ) {
+            wxURI Uri( uri );
+            wxString CuePath = Uri.GetPath().Lower();
+            return  CuePath.EndsWith( wxT( ".cue" ) );
+    }
+
+};
 
 #endif
 // -------------------------------------------------------------------------------- //

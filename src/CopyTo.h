@@ -46,7 +46,7 @@ class guCopyToAction
     guTrackArray *              m_Tracks;
     wxString                    m_DestDir;
     wxString                    m_Pattern;
-    guPlayListFile *            m_PlayListFile;
+    guPlaylistFile *            m_PlayListFile;
     int                         m_Format;
     int                         m_Quality;
     bool                        m_MoveFiles;
@@ -68,12 +68,14 @@ class guCopyToAction
     wxString                    DestDir( void ) { return m_DestDir; }
     wxString                    Pattern( void ) { return m_Pattern; }
     int                         Format( void ) { return m_Format; }
+    void                        Format( const int format ) { m_Format = format; }
     int                         Quality( void ) { return m_Quality; };
+    void                        Quality( const int quality ) { m_Quality = quality; }
     bool                        MoveFiles( void ) { return m_MoveFiles; }
     int                         CoverFormats( void ) { return m_CoverFormats; }
     int                         CoverSize( void ) { return m_CoverSize; }
     wxString                    CoverName( void ) { return m_CoverName; }
-    guPlayListFile *            PlayListFile( void ) { return m_PlayListFile; }
+    guPlaylistFile *            PlayListFile( void ) { return m_PlayListFile; }
 
     size_t                      Count( void  ) { return m_Tracks->Count(); }
     guTrack *                   Track( const int index ) { return &m_Tracks->Item( index ); }
@@ -104,7 +106,7 @@ class guCopyToThread : public wxThread
     wxMutex                     m_CopyToActionsMutex;
 
     bool                        CopyFile( const wxString &from, const wxString &to );
-    bool                        TranscodeFile( const wxString &from, const wxString &to, int format, int quality );
+    bool                        TranscodeFile( const guTrack * track, const wxString &to, int format, int quality, const int start = 0, const int length = wxNOT_FOUND );
     void                        DoCopyToAction( guCopyToAction &copytoaction );
 
 

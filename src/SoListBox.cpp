@@ -263,6 +263,13 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         {
             return Song->m_FileName; // contains both path and filename
         }
+
+        case guSONGS_COLUMN_OFFSET :
+          if( Song->m_Offset )
+            return LenToString( Song->m_Offset );
+          else
+            return wxEmptyString;
+
     }
     return wxEmptyString;
 }
@@ -434,6 +441,7 @@ wxArrayString guSoListBox::GetColumnNames( void ) const
     ColumnNames.Add( _( "Added" ) );
     ColumnNames.Add( _( "Format" ) );
     ColumnNames.Add( _( "Path" ) );
+    ColumnNames.Add( _( "Offset" ) );
     return ColumnNames;
 }
 
@@ -490,6 +498,7 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
 
     // If its a column not editable
     if( ColumnId == guSONGS_COLUMN_RATING ||
+        ColumnId == guSONGS_COLUMN_OFFSET ||
         ColumnId == guSONGS_COLUMN_LENGTH ||
         ColumnId == guSONGS_COLUMN_BITRATE ||
         ColumnId == guSONGS_COLUMN_PLAYCOUNT ||
@@ -591,8 +600,6 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
             Menu->AppendSeparator();
 
             AppendFastEditMenu( Menu, SelCount );
-
-
 
             wxMenu * RatingMenu = new wxMenu();
 

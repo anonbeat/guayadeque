@@ -723,7 +723,7 @@ bool guTagInfo::Read( void )
 
     if( m_TagFile && m_Tag && ( apro = m_TagFile->audioProperties() ) )
     {
-        m_Length = apro->length();
+        m_Length = apro->length() * 1000;
         m_Bitrate = apro->bitrate();
         //m_Samplerate = apro->sampleRate();
         return true;
@@ -2829,6 +2829,10 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
 
         const guTrack &Track = tracks[ Index ];
 
+        // Dont allow to edit tags from Cue files tracks
+        if( Track.m_Offset )
+            continue;
+
         if( wxFileExists( Track.m_FileName ) )
         {
             // Prevent write to the current playing file in order to avoid segfaults specially with flac and wma files
@@ -2902,7 +2906,7 @@ void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, c
     int Count = images.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        if( changedflags[ Index ] & guTRACK_CHANGED_DATA_IMAGES )
+        if( !songs[ Index ].m_Offset && ( changedflags[ Index ] & guTRACK_CHANGED_DATA_IMAGES ) )
             guTagSetPicture( songs[ Index ].m_FileName, images[ Index ] );
     }
 }
@@ -2914,7 +2918,7 @@ void guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, con
     int Count = lyrics.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        if( changedflags[ Index ] & guTRACK_CHANGED_DATA_LYRICS )
+        if( !songs[ Index ].m_Offset && ( changedflags[ Index ] & guTRACK_CHANGED_DATA_LYRICS ) )
             guTagSetLyrics( songs[ Index ].m_FileName, lyrics[ Index ] );
     }
 }

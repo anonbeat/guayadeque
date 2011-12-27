@@ -3300,6 +3300,11 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 
     CreateTaskBarIcon();
 
+    if( m_PlayerPlayList )
+    {
+        m_PlayerPlayList->LoadPlaylistTracks();
+    }
+
     if( m_PlayerPanel )
     {
         if( m_PlayerPanel->GetAudioScrobbleEnabled() )
@@ -3307,6 +3312,8 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
             wxCommandEvent Event;
             OnAudioScrobbleUpdate( Event );
         }
+
+        m_PlayerPanel->CheckStartPlaying();
     }
 }
 

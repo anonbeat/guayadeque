@@ -1832,7 +1832,8 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
             {
                 if( LyricTarget->Type() == guLYRIC_SOURCE_TYPE_EMBEDDED )
                 {
-                    if( ( lyricsource.Type() != guLYRIC_SOURCE_TYPE_EMBEDDED ) &&
+                    if( !m_LyricSearchContext->m_Track.m_Offset &&  // If its not from a cue file
+                        ( lyricsource.Type() != guLYRIC_SOURCE_TYPE_EMBEDDED ) &&
                         wxFileExists( m_LyricSearchContext->m_Track.m_FileName ) )
                     {
                         if( !guTagSetLyrics( m_LyricSearchContext->m_Track.m_FileName, m_LyricText ) )

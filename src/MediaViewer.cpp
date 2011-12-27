@@ -1566,7 +1566,8 @@ void guMediaViewer::EmbedAlbumCover( const int albumid )
     {
         for( TrackIndex = 0; TrackIndex < TrackCount; TrackIndex++ )
         {
-            guTagSetPicture( AlbumTracks[ TrackIndex ].m_FileName, CoverImage );
+            if( !AlbumTracks[ TrackIndex ].m_Offset )
+                guTagSetPicture( AlbumTracks[ TrackIndex ].m_FileName, CoverImage );
         }
     }
 
@@ -1892,6 +1893,9 @@ void guMediaViewer::DeleteTracks( const guTrackArray * tracks )
     for( Index = 0; Index < Count; Index++ )
     {
         guTrack &CurTrack = tracks->Item( Index );
+        if( CurTrack.m_Offset )
+            continue;
+
         if( DeletePaths.Index( wxPathOnly( CurTrack.m_FileName ) ) == wxNOT_FOUND )
         {
             DeletePaths.Add( wxPathOnly( CurTrack.m_FileName ) );

@@ -21,6 +21,8 @@
 #ifndef TRANSCODE_H
 #define TRANSCODE_H
 
+#include "DbLibrary.h"
+
 #include <wx/event.h>
 #include <wx/wx.h>
 
@@ -55,19 +57,23 @@ wxString            guTranscodeQualityString( const int quality );
 class guTranscodeThread : public wxThread
 {
   protected :
-    wxString        m_Source;
+    const guTrack * m_Track;
     wxString        m_Target;
     int             m_Format;
     int             m_Quality;
+    int             m_StartPos;
+    int             m_Length;
     bool            m_Running;
     GstElement *    m_Pipeline;
     bool            m_HasError;
 
     void            BuildPipeline( void );
+    void            BuildPipelineWithOffset( void );
     bool            BuildEncoder( GstElement ** enc, GstElement ** mux );
 
   public :
-    guTranscodeThread( const wxChar * source, const wxChar * target, const int format, const int quality );
+    guTranscodeThread( const guTrack * track, const wxChar * target, const int format, const int quality,
+                       const int start = 0, const int length = wxNOT_FOUND );
     ~guTranscodeThread();
 
     virtual ExitCode    Entry();
@@ -75,6 +81,8 @@ class guTranscodeThread : public wxThread
     bool                IsTranscoding( void ) { return m_Running; }
     bool                IsOk( void ) { return !m_HasError; }
     void                SetError( bool error ) { m_HasError = error; }
+    bool                CheckTrackEnd( void );
+    GstElement *        GetPipeline( void ) { return m_Pipeline; }
 
 };
 

@@ -161,12 +161,6 @@ guMainApp::~guMainApp()
     if( m_SingleInstanceChecker )
         delete m_SingleInstanceChecker;
 
-//    if( m_Db )
-//    {
-//        m_Db->Close();
-//        delete m_Db;
-//    }
-
     if( m_DbCache )
     {
         m_DbCache->Close();

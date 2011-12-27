@@ -40,6 +40,32 @@
 WX_DEFINE_OBJARRAY(guFileItemArray);
 
 // -------------------------------------------------------------------------------- //
+guMediaViewer * FindMediaViewerByPath( guMainFrame * mainframe, const wxString curpath )
+{
+    const guMediaCollectionArray &Collections = mainframe->GetMediaCollections();
+    int Index;
+    int Count = Collections.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        const guMediaCollection & Collection = Collections[ Index ];
+        if( mainframe->IsCollectionActive( Collection.m_UniqueId ) )
+        {
+            int PathIndex;
+            int PathCount = Collection.m_Paths.Count();
+            for( PathIndex = 0; PathIndex < PathCount; PathIndex++ )
+            {
+                guLogMessage( wxT( "%s == %s" ), curpath.c_str(), Collection.m_Paths[ PathIndex ].c_str() );
+                if( curpath.StartsWith( Collection.m_Paths[ PathIndex ] ) )
+                {
+                    return mainframe->FindCollectionMediaViewer( Collection.m_UniqueId );
+                }
+            }
+        }
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 // guGenericDirCtrl
 // -------------------------------------------------------------------------------- //
 BEGIN_EVENT_TABLE(guGenericDirCtrl, wxGenericDirCtrl)
@@ -96,8 +122,6 @@ void guGenericDirCtrl::SetupSections()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    guLogMessage( wxT( "Tree Flag %08X" ), m_ShowPaths );
-
     if( m_ShowPaths & guFILEBROWSER_SHOWPATH_LOCATIONS )
     {
         const guMediaCollectionArray &  Collections = m_MainFrame->GetMediaCollections();
@@ -138,8 +162,7 @@ void guGenericDirCtrl::SetupSections()
             AddSection( Path, wxFileNameFromPath( Name ), guDIR_IMAGE_INDEX_RECORDS );
         }
     }
-
-    if( m_ShowPaths & guFILEBROWSER_SHOWPATH_SYSTEM )
+    else //if( m_ShowPaths & guFILEBROWSER_SHOWPATH_SYSTEM )
     {
         AddSection( wxT( "/" ), wxT( "/" ), guDIR_IMAGE_INDEX_FOLDER );
     }
@@ -187,11 +210,10 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guMainFrame * mai
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-    int ShowPaths = Config->ReadNum( wxT( "ShowPaths" ), guFILEBROWSER_SHOWPATH_LOCATIONS, wxT( "filebrowser" ) );
+    int ShowPaths = Config->ReadNum( wxT( "ShowLibPaths" ), guFILEBROWSER_SHOWPATH_LOCATIONS, wxT( "filebrowser" ) );
 	m_DirCtrl = new guGenericDirCtrl( this, m_MainFrame, ShowPaths );
-	SetPath( dirpath, NULL );
-
 	m_DirCtrl->ShowHidden( false );
+	SetPath( dirpath, FindMediaViewerByPath( m_MainFrame, dirpath ) );
 	MainSizer->Add( m_DirCtrl, 1, wxEXPAND, 5 );
 
 	wxBoxSizer * DirBtnSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -225,7 +247,7 @@ guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Config->WriteBool( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "filebrowser" ) );
+    Config->WriteNum( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "filebrowser" ) );
     m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
 	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 
@@ -553,11 +575,7 @@ void guFileBrowserDirCtrl::FolderDelete( void )
 // -------------------------------------------------------------------------------- //
 void guFileBrowserDirCtrl::OnShowLibPathsClick( wxCommandEvent& event )
 {
-    int ShowPaths = 0;
-    if( m_ShowLibPathsBtn->GetValue() )
-        ShowPaths |= guFILEBROWSER_SHOWPATH_LOCATIONS;
-    if( !ShowPaths )
-        ShowPaths |= guFILEBROWSER_SHOWPATH_SYSTEM;
+    int ShowPaths = m_ShowLibPathsBtn->GetValue();
 
     wxString CurPath = GetPath();
     m_DirCtrl->SetShowPaths( ShowPaths );
@@ -967,10 +985,13 @@ int guFilesListBox::GetPathSordedItems( const wxString &path, guFileItemArray * 
                                 FileItem->m_Name = Path;
                             FileItem->m_Name += FileName;
                             GetFileDetails( Path + FileName, FileItem );
-                            if( guIsValidAudioFile( FileName.Lower() ) )
-                                FileItem->m_Type = guFILEITEM_TYPE_AUDIO;
-                            else if( guIsValidImageFile( FileName.Lower() ) )
-                                FileItem->m_Type = guFILEITEM_TYPE_IMAGE;
+                            if( !wxDirExists( Path + FileName ) )
+                            {
+                                if( guIsValidAudioFile( FileName.Lower() ) )
+                                    FileItem->m_Type = guFILEITEM_TYPE_AUDIO;
+                                else if( guIsValidImageFile( FileName.Lower() ) )
+                                    FileItem->m_Type = guFILEITEM_TYPE_IMAGE;
+                            }
                             items->Add( FileItem );
                         }
                     }
@@ -1609,32 +1630,6 @@ guFileBrowser::~guFileBrowser()
 
     m_FilesCtrl->Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCommand ), NULL, this );
 
-}
-
-// -------------------------------------------------------------------------------- //
-guMediaViewer * FindMediaViewerByPath( guMainFrame * mainframe, const wxString curpath )
-{
-    const guMediaCollectionArray &Collections = mainframe->GetMediaCollections();
-    int Index;
-    int Count = Collections.Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        const guMediaCollection & Collection = Collections[ Index ];
-        if( mainframe->IsCollectionActive( Collection.m_UniqueId ) )
-        {
-            int PathIndex;
-            int PathCount = Collection.m_Paths.Count();
-            for( PathIndex = 0; PathIndex < PathCount; PathIndex++ )
-            {
-                guLogMessage( wxT( "%s == %s" ), curpath.c_str(), Collection.m_Paths[ PathIndex ].c_str() );
-                if( curpath.StartsWith( Collection.m_Paths[ PathIndex ] ) )
-                {
-                    return mainframe->FindCollectionMediaViewer( Collection.m_UniqueId );
-                }
-            }
-        }
-    }
-    return NULL;
 }
 
 // -------------------------------------------------------------------------------- //

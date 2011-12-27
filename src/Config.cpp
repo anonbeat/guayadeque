@@ -23,8 +23,10 @@
 #include "Commands.h"
 #include "Utils.h"
 #include "Preferences.h"
+#include "DbLibrary.h"
 #include "DbRadios.h"
 #include "PodcastsPanel.h"
+#include "MediaViewer.h"
 
 #include <wx/wfstream.h>
 
@@ -908,7 +910,7 @@ void guConfig::LoadOldGeneral( wxFileConfig * fileconfig, guMediaCollection * me
             }
             else if( EntryName == wxT( "PlayerCurItem" ) )
             {
-                WriteStr( wxT( "CurItem" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "playlist" ) );
+                WriteStr( wxT( "CurItem" ), fileconfig->Read( EntryName, wxEmptyString ), wxT( "playlist/nowplaying" ) );
             }
             else if( EntryName == wxT( "SavePlayListOnClose" ) )
             {
@@ -1445,6 +1447,149 @@ void guConfig::LoadOldConfig( const wxString &conffile )
 
         delete FileConfig;
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void WriteTrack( wxXmlNode * xmlnode, const guTrack &track )
+{
+    wxXmlNode * XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "track" ) );
+
+    WriteStr( XmlNode, wxT( "Type" ), wxString::Format( wxT( "%i" ), track.m_Type ) );
+    if( track.m_MediaViewer )
+    {
+        //WriteStr( XmlNode, wxT( "MediaViewer" ), track.m_MediaViewer->GetUniqueId() );
+    }
+    WriteStr( XmlNode, wxT( "Name" ), track.m_SongName );
+    WriteStr( XmlNode, wxT( "Artist" ), track.m_ArtistName );
+    WriteStr( XmlNode, wxT( "AlbumArtist" ), track.m_AlbumArtist );
+    WriteStr( XmlNode, wxT( "Composer" ), track.m_Composer );
+    WriteStr( XmlNode, wxT( "Album" ), track.m_AlbumName );
+    WriteStr( XmlNode, wxT( "Path" ), track.m_Path );
+    WriteStr( XmlNode, wxT( "FileName" ), track.m_FileName );
+    WriteStr( XmlNode, wxT( "Number" ), wxString::Format( wxT( "%i" ), track.m_Number ) );
+    WriteStr( XmlNode, wxT( "Rating" ), wxString::Format( wxT( "%i" ), track.m_Rating ) );
+    WriteStr( XmlNode, wxT( "Offset" ), wxString::Format( wxT( "%i" ), track.m_Offset ) );
+    WriteStr( XmlNode, wxT( "Length" ), wxString::Format( wxT( "%i" ), track.m_Length ) );
+
+    xmlnode->AddChild( XmlNode );
+}
+
+// -------------------------------------------------------------------------------- //
+int inline StrToInt( const wxString &value )
+{
+    long RetVal = 0;
+    value.ToLong( &RetVal );
+    return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+void ReadTrack( wxXmlNode * xmlnode, guTrack &track )
+{
+    while( xmlnode )
+    {
+        wxString Name = xmlnode->GetName();
+        wxString Value;
+        if( Name == wxT( "Type" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            track.m_Type = ( guTrackType ) StrToInt( Value );
+        }
+        else if( Name == wxT( "MediaViewer" ) )
+        {
+        }
+        else if( Name == wxT( "Name" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_SongName );
+        }
+        else if( Name == wxT( "Artist" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_ArtistName );
+        }
+        else if( Name == wxT( "AlbumArtist" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_AlbumArtist );
+        }
+        else if( Name == wxT( "Composer" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_Composer );
+        }
+        else if( Name == wxT( "Album" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_AlbumName );
+        }
+        else if( Name == wxT( "Path" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_Path );
+        }
+        else if( Name == wxT( "FileName" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &track.m_FileName );
+        }
+        else if( Name == wxT( "Number" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            track.m_Number = StrToInt( Value );
+        }
+        else if( Name == wxT( "Rating" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            track.m_Rating = StrToInt( Value );
+        }
+        else if( Name == wxT( "Offset" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            track.m_Offset = StrToInt( Value );
+        }
+        else if( Name == wxT( "Length" ) )
+        {
+            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            track.m_Length = StrToInt( Value );
+        }
+
+        xmlnode = xmlnode->GetNext();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guConfig::SavePlaylistTracks( const guTrackArray &tracks, const int currenttrack )
+{
+    DeleteCategory( wxT( "playlist/nowplaying") );
+
+    WriteNum( wxT( "Count" ), tracks.Count(), wxT( "playlist/nowplaying" ) );
+    WriteNum( wxT( "CurItem" ), currenttrack, wxT( "playlist/nowplaying" ) );
+
+    wxXmlNode * XmlNode = CreateCategoryNode( m_RootNode, wxT( "playlist/nowplaying/tracks" ) );
+
+    int Index;
+    int Count = tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        WriteTrack( XmlNode, tracks[ Index ] );
+    }
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+int guConfig::LoadPlaylistTracks( guTrackArray &tracks )
+{
+    int CurItem = ReadNum( wxT( "CurItem" ), wxNOT_FOUND, wxT( "playlist/nowplaying" ) );
+    wxXmlNode * XmlNode = FindNode( wxT( "playlist/nowplaying/tracks" ) );
+    if( XmlNode )
+    {
+        XmlNode = XmlNode->GetChildren();
+        while( XmlNode )
+        {
+            if( XmlNode->GetName() == wxT( "track" ) )
+            {
+                guTrack Track;
+                ReadTrack( XmlNode->GetChildren(), Track );
+                tracks.Add( new guTrack( Track ) );
+            }
+            XmlNode = XmlNode->GetNext();
+        }
+    }
+
+    return CurItem;
 }
 
 // -------------------------------------------------------------------------------- //

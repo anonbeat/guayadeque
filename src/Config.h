@@ -33,6 +33,8 @@ WX_DEFINE_ARRAY_PTR( wxEvtHandler *, guEvtHandlerArray );
 extern const wxEventType guConfigUpdatedEvent;
 
 class guMediaCollectionArray;
+class guTrack;
+class guTrackArray;
 
 // -------------------------------------------------------------------------------- //
 class guConfig
@@ -118,6 +120,9 @@ class guConfig
 
     int                 LoadCollections( guMediaCollectionArray * collections, const int type = wxNOT_FOUND );
     void                SaveCollections( guMediaCollectionArray * collections, const bool resetgroup = true );
+
+    bool                SavePlaylistTracks( const guTrackArray &tracks, const int currenttrack );
+    int                 LoadPlaylistTracks( guTrackArray &tracks );
 
     void                RegisterObject( wxEvtHandler * object );
     void                UnRegisterObject( wxEvtHandler * object );

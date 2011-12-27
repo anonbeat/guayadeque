@@ -353,7 +353,7 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                         m_PlayListPanel->GetPlaylistTracks( &Tracks );
                         if( ( Count = Tracks.Count() ) )
                         {
-                            guPlayListFile PlayListFile;
+                            guPlaylistFile PlayListFile;
 
                             for( Index = 0; Index < Count; Index++ )
                             {
@@ -438,9 +438,9 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
 {
-    if( guPlayListFile::IsValidPlayList( filename ) )
+    if( guPlaylistFile::IsValidPlayList( filename ) )
     {
-        guPlayListFile PlayList( filename );
+        guPlaylistFile PlayList( filename );
         int Index;
         int Count;
         if( ( Count = PlayList.Count() ) )
@@ -1070,7 +1070,7 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
                     m_PLTracksListBox->GetAllSongs( &Tracks );
                     if( ( Count = Tracks.Count() ) )
                     {
-                        guPlayListFile PlayListFile;
+                        guPlaylistFile PlayListFile;
 
                         NormalizeTracks( &Tracks );
 
@@ -1127,7 +1127,7 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
     {
         if( FileDialog->ShowModal() == wxID_OK )
         {
-            guPlayListFile PlayListFile( FileDialog->GetPath() );
+            guPlaylistFile PlayListFile( FileDialog->GetPath() );
             if( ( Count = PlayListFile.Count() ) )
             {
                 if( PlayListFile.GetName().IsEmpty() )
@@ -1201,7 +1201,7 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
         {
             if( FileDialog->ShowModal() == wxID_OK )
             {
-                guPlayListFile PlayListFile;
+                guPlaylistFile PlayListFile;
 
                 PlayListFile.SetName( PlayListName );
 
