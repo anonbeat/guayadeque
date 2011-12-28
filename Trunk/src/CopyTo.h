@@ -106,7 +106,7 @@ class guCopyToThread : public wxThread
     wxMutex                     m_CopyToActionsMutex;
 
     bool                        CopyFile( const wxString &from, const wxString &to );
-    bool                        TranscodeFile( const guTrack * track, const wxString &to, int format, int quality, const int start = 0, const int length = wxNOT_FOUND );
+    bool                        TranscodeFile( const guTrack * track, const wxString &to, int format, int quality );
     void                        DoCopyToAction( guCopyToAction &copytoaction );
 
 

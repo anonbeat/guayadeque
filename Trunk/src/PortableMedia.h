@@ -94,9 +94,6 @@ enum guPortableMediaType {
 int GetPortableMediaType( const wxString &path );
 
 // -------------------------------------------------------------------------------- //
-int guGetTranscodeFileFormat( const wxString &filetype );
-
-// -------------------------------------------------------------------------------- //
 int inline guGetMp3QualityBitRate( int quality )
 {
     int guPortableMediaMp3QualityBitrate[] = {
