@@ -76,34 +76,6 @@ int GetPortableMediaType( const wxString &path )
 }
 
 // -------------------------------------------------------------------------------- //
-int guGetTranscodeFileFormat( const wxString &filetype )
-{
-    if( filetype == wxT( "mp3" ) )
-    {
-        return guPORTABLEMEDIA_AUDIO_FORMAT_MP3;
-    }
-    else if( filetype == wxT( "ogg" ) || filetype == wxT( "oga" ) )
-    {
-        return guPORTABLEMEDIA_AUDIO_FORMAT_OGG;
-    }
-    else if( filetype == wxT( "flac" ) )
-    {
-        return guPORTABLEMEDIA_AUDIO_FORMAT_FLAC;
-    }
-    else if( filetype == wxT( "m4a" ) || filetype == wxT( "m4b" ) ||
-             filetype == wxT( "aac" ) || filetype == wxT( "mp4" ) ||
-             filetype == wxT( "m4p" ) )
-    {
-        return guPORTABLEMEDIA_AUDIO_FORMAT_AAC;
-    }
-    else if( filetype == wxT( "wma" ) )
-    {
-        return guPORTABLEMEDIA_AUDIO_FORMAT_WMA;
-    }
-    return guTRANSCODE_FORMAT_KEEP;
-}
-
-// -------------------------------------------------------------------------------- //
 int MimeStrToAudioFormat( const wxString &mimestr )
 {
     int Formats = 0;

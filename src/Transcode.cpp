@@ -24,6 +24,7 @@
 #include "TagInfo.h"
 #include "Utils.h"
 #include "Version.h"
+#include "PortableMedia.h"
 
 #include <wx/uri.h>
 
@@ -168,6 +169,41 @@ guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * targ
     m_Running = false;
     m_HasError = false;
 
+
+    if( m_Format == guTRANSCODE_FORMAT_KEEP )
+    {
+        int FileFormat = guGetTranscodeFileFormat( m_Track->m_FileName.Lower().AfterLast( wxT( '.' ) ) );
+
+        switch( FileFormat )
+        {
+            case guPORTABLEMEDIA_AUDIO_FORMAT_MP3 :
+                m_Format = guTRANSCODE_FORMAT_MP3;
+                break;
+
+            case guPORTABLEMEDIA_AUDIO_FORMAT_AAC :
+                m_Format = guTRANSCODE_FORMAT_AAC;
+                break;
+
+            case guPORTABLEMEDIA_AUDIO_FORMAT_WMA :
+                m_Format = guTRANSCODE_FORMAT_WMA;
+                break;
+
+            case guPORTABLEMEDIA_AUDIO_FORMAT_OGG :
+                m_Format = guTRANSCODE_FORMAT_OGG;
+                break;
+
+            case guPORTABLEMEDIA_AUDIO_FORMAT_FLAC :
+                m_Format = guTRANSCODE_FORMAT_FLAC;
+                break;
+
+
+            default :
+                m_Format = guTRANSCODE_FORMAT_MP3;
+        }
+    }
+
+
+
     if( m_StartPos )
         BuildPipelineWithOffset();
     else
@@ -238,6 +274,34 @@ unsigned long guTranscodeWmaBitrates[] = {
 wxArrayString TranscodeFormatStrings;
 wxArrayString IpodTranscodeFormatStrings;
 wxArrayString TranscodeQualityStrings;
+
+// -------------------------------------------------------------------------------- //
+int guGetTranscodeFileFormat( const wxString &filetype )
+{
+    if( filetype == wxT( "mp3" ) )
+    {
+        return guPORTABLEMEDIA_AUDIO_FORMAT_MP3;
+    }
+    else if( filetype == wxT( "ogg" ) || filetype == wxT( "oga" ) )
+    {
+        return guPORTABLEMEDIA_AUDIO_FORMAT_OGG;
+    }
+    else if( filetype == wxT( "flac" ) )
+    {
+        return guPORTABLEMEDIA_AUDIO_FORMAT_FLAC;
+    }
+    else if( filetype == wxT( "m4a" ) || filetype == wxT( "m4b" ) ||
+             filetype == wxT( "aac" ) || filetype == wxT( "mp4" ) ||
+             filetype == wxT( "m4p" ) )
+    {
+        return guPORTABLEMEDIA_AUDIO_FORMAT_AAC;
+    }
+    else if( filetype == wxT( "wma" ) )
+    {
+        return guPORTABLEMEDIA_AUDIO_FORMAT_WMA;
+    }
+    return guTRANSCODE_FORMAT_KEEP;
+}
 
 // -------------------------------------------------------------------------------- //
 wxArrayString guTranscodeFormatStrings( const bool isipod )

@@ -52,6 +52,7 @@ wxArrayString       guTranscodeFormatStrings( const bool isipod = false );
 wxString            guTranscodeFormatString( const int format );
 wxArrayString       guTranscodeQualityStrings( void );
 wxString            guTranscodeQualityString( const int quality );
+int                 guGetTranscodeFileFormat( const wxString &filetype );
 
 // -------------------------------------------------------------------------------- //
 class guTranscodeThread : public wxThread

@@ -270,10 +270,10 @@ bool guCopyToThread::CopyFile( const wxString &from, const wxString &to )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guCopyToThread::TranscodeFile( const guTrack * track, const wxString &target,
-        int format, int quality, const int start, const int length )
+bool guCopyToThread::TranscodeFile( const guTrack * track, const wxString &target, int format, int quality )
 {
-    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\n%s\n%s" ), track->m_FileName.c_str(), target.c_str() );
+    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\nSource: '%s'\nTarget: '%s'\nFormat: %i\nQuality: %i" ),
+                    track->m_FileName.c_str(), target.c_str(), format, quality );
     bool RetVal = false;
     wxString OutFile = target + wxT( "." ) + guTranscodeFormatString( format );
     if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
@@ -284,7 +284,7 @@ bool guCopyToThread::TranscodeFile( const guTrack * track, const wxString &targe
         while( RetryCount < 3 )
         {
             int FileSize = 0;
-            guTranscodeThread * TranscodeThread = new guTranscodeThread( track, OutFile, format, quality, start, length );
+            guTranscodeThread * TranscodeThread = new guTranscodeThread( track, OutFile, format, quality, track->m_Offset, track->m_Length );
             if( TranscodeThread && TranscodeThread->IsOk() )
             {
                 // TODO : Make a better aproach to be sure its running
@@ -492,6 +492,35 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     {
                         guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
                         ActionIsCopy = false;
+                        if( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP )
+                        {
+                            switch( FileFormat )
+                            {
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_MP3 :
+                                    copytoaction.Format( guTRANSCODE_FORMAT_MP3 );
+                                    break;
+
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_AAC :
+                                    copytoaction.Format( guTRANSCODE_FORMAT_AAC );
+                                    break;
+
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_WMA :
+                                    copytoaction.Format( guTRANSCODE_FORMAT_WMA );
+                                    break;
+
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_OGG :
+                                    copytoaction.Format( guTRANSCODE_FORMAT_OGG );
+                                    break;
+
+                                case guPORTABLEMEDIA_AUDIO_FORMAT_FLAC :
+                                    copytoaction.Format( guTRANSCODE_FORMAT_FLAC );
+                                    break;
+
+
+                                default :
+                                    copytoaction.Format( guTRANSCODE_FORMAT_MP3 );
+                            }
+                        }
                     }
                     else    // The file is supported
                     {
@@ -566,8 +595,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             }
             else
             {
-                Result = TranscodeFile( CurTrack, FileName, copytoaction.Format(), copytoaction.Quality(),
-                                       CurTrack->m_Offset, CurTrack->m_Offset ? CurTrack->m_Length : wxNOT_FOUND );
+                Result = TranscodeFile( CurTrack, FileName, copytoaction.Format(), copytoaction.Quality() );
             }
 
             // Add the file to the files to add list so the library update it when this job is done
