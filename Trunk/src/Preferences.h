@@ -325,6 +325,7 @@ class guPrefDialog : public wxDialog
 
     wxScrolledWindow *          m_AccelPanel;
     wxListCtrl *                m_AccelListCtrl;
+    wxButton *                  m_AccelDefBtn;
     bool                        m_AccelItemNeedClear;
 
 	wxArrayString               m_AccelActionNames;
@@ -473,6 +474,7 @@ class guPrefDialog : public wxDialog
 
 	void OnAccelSelected( wxListEvent &event );
     void OnAccelKeyDown( wxKeyEvent &event );
+    void OnAccelDefaultClicked( wxCommandEvent &event );
 
     void LibSplitterOnIdle( wxIdleEvent &event )
     {
