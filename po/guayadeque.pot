@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-27 13:26+0000\n"
+"POT-Creation-Date: 2011-12-29 12:28+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -350,7 +350,7 @@ msgstr ""
 #: Accelerators.cpp:167 iPodMedia.cpp:1682 Jamendo.cpp:1128
 #: LocationPanel.cpp:336 LocationPanel.cpp:374 LocationPanel.cpp:509
 #: Magnatune.cpp:1022 MainFrame.cpp:1010 MainFrame.cpp:1048 MainFrame.cpp:1282
-#: MediaViewer.cpp:952 PodcastsPanel.cpp:1745 PortableMedia.cpp:1916
+#: MediaViewer.cpp:952 PodcastsPanel.cpp:1745 PortableMedia.cpp:1888
 msgid "Update"
 msgstr ""
 
@@ -792,14 +792,14 @@ msgstr ""
 msgid "Don't ask again"
 msgstr ""
 
-#: CopyTo.cpp:847
+#: CopyTo.cpp:875
 #, c-format
 msgid ""
 "Copied %u files (%s)\n"
 "in %s seconds"
 msgstr ""
 
-#: CopyTo.cpp:852
+#: CopyTo.cpp:880
 msgid "Finished copying files"
 msgstr ""
 
@@ -1023,7 +1023,7 @@ msgid "Dynamic Playlist Editor"
 msgstr ""
 
 #: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2062
-#: PortableMedia.cpp:1026 Preferences.cpp:2087 Preferences.cpp:2208
+#: PortableMedia.cpp:998 Preferences.cpp:2087 Preferences.cpp:2208
 #: Preferences.cpp:2333 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
 msgid "Name:"
 msgstr ""
@@ -1330,54 +1330,54 @@ msgstr ""
 
 #: iPodMedia.cpp:1682 Jamendo.cpp:1128 LocationPanel.cpp:510
 #: Magnatune.cpp:1022 MainFrame.cpp:1283 MediaViewer.cpp:952
-#: PortableMedia.cpp:1916
+#: PortableMedia.cpp:1888
 msgid "Update the collection library"
 msgstr ""
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515
 #: Magnatune.cpp:1025 MainFrame.cpp:1288 MediaViewer.cpp:955
-#: PortableMedia.cpp:1919
+#: PortableMedia.cpp:1891
 msgid "Rescan"
 msgstr ""
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:516
 #: Magnatune.cpp:1025 MainFrame.cpp:1289 MediaViewer.cpp:955
-#: PortableMedia.cpp:1919
+#: PortableMedia.cpp:1891
 msgid "Rescan the collection library"
 msgstr ""
 
 #: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:521
 #: Magnatune.cpp:1028 MainFrame.cpp:1294 MediaViewer.cpp:958
-#: PortableMedia.cpp:1922
+#: PortableMedia.cpp:1894
 msgid "Search Covers"
 msgstr ""
 
 #: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:522
 #: Magnatune.cpp:1028 MainFrame.cpp:1295 MediaViewer.cpp:958
-#: PortableMedia.cpp:1922
+#: PortableMedia.cpp:1894
 msgid "Search the collection missing covers"
 msgstr ""
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1303
-#: PortableMedia.cpp:1927
+#: PortableMedia.cpp:1899
 msgid "Unmount"
 msgstr ""
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1303
-#: PortableMedia.cpp:1927
+#: PortableMedia.cpp:1899
 msgid "Unmount the device"
 msgstr ""
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:343
 #: LocationPanel.cpp:382 LocationPanel.cpp:537 Magnatune.cpp:1033
 #: MainFrame.cpp:1017 MainFrame.cpp:1056 MainFrame.cpp:1310
-#: MediaViewer.cpp:963 PodcastsPanel.cpp:1751 PortableMedia.cpp:1932
+#: MediaViewer.cpp:963 PodcastsPanel.cpp:1751 PortableMedia.cpp:1904
 msgid "Properties"
 msgstr ""
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:537
 #: Magnatune.cpp:1033 MainFrame.cpp:1310 MediaViewer.cpp:963
-#: PortableMedia.cpp:1932
+#: PortableMedia.cpp:1904
 msgid "Show collection properties"
 msgstr ""
 
@@ -1777,7 +1777,7 @@ msgid "View the collection tree view"
 msgstr ""
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1259 MediaViewer.cpp:235
-#: PlayListPanel.cpp:729 PlayListPanel.cpp:755 PortableMedia.cpp:1196
+#: PlayListPanel.cpp:729 PlayListPanel.cpp:755 PortableMedia.cpp:1168
 msgid "Playlists"
 msgstr ""
 
@@ -2894,36 +2894,36 @@ msgstr ""
 msgid "Copy the current selected podcasts to a directory or device"
 msgstr ""
 
-#: PortableMedia.cpp:501 PortableMedia.cpp:1505
+#: PortableMedia.cpp:473 PortableMedia.cpp:1477
 msgid "embedded"
 msgstr ""
 
-#: PortableMedia.cpp:1013
+#: PortableMedia.cpp:985
 msgid "Portable Media Properties"
 msgstr ""
 
-#: PortableMedia.cpp:1019 Preferences.cpp:1253
+#: PortableMedia.cpp:991 Preferences.cpp:1253
 msgid " Properties "
 msgstr ""
 
-#: PortableMedia.cpp:1035 Preferences.cpp:2365
+#: PortableMedia.cpp:1007 Preferences.cpp:2365
 msgid "Path:"
 msgstr ""
 
-#: PortableMedia.cpp:1044
+#: PortableMedia.cpp:1016
 msgid "Used:"
 msgstr ""
 
-#: PortableMedia.cpp:1055
+#: PortableMedia.cpp:1027
 #, c-format
 msgid "%s free of %s"
 msgstr ""
 
-#: PortableMedia.cpp:1076
+#: PortableMedia.cpp:1048
 msgid "Name Pattern:"
 msgstr ""
 
-#: PortableMedia.cpp:1081
+#: PortableMedia.cpp:1053
 msgid ""
 "{a}\t: Artist\t\t\t{aa} : Album Artist\n"
 "{b}\t: Album\t\t\t{d}\t : Disk\n"
@@ -2932,71 +2932,71 @@ msgid ""
 "{y}\t: Year"
 msgstr ""
 
-#: PortableMedia.cpp:1086
+#: PortableMedia.cpp:1058
 msgid "Audio Folders:"
 msgstr ""
 
-#: PortableMedia.cpp:1097
+#: PortableMedia.cpp:1069
 msgid "Audio Formats:"
 msgstr ""
 
-#: PortableMedia.cpp:1108
+#: PortableMedia.cpp:1080
 msgid "Transcode to:"
 msgstr ""
 
-#: PortableMedia.cpp:1129
+#: PortableMedia.cpp:1101
 msgid "Unsupported formats only"
 msgstr ""
 
-#: PortableMedia.cpp:1129
+#: PortableMedia.cpp:1101
 msgid "always"
 msgstr ""
 
-#: PortableMedia.cpp:1142 Preferences.cpp:1272
+#: PortableMedia.cpp:1114 Preferences.cpp:1272
 msgid "Quality:"
 msgstr ""
 
-#: PortableMedia.cpp:1160
+#: PortableMedia.cpp:1132
 msgid "Audio"
 msgstr ""
 
-#: PortableMedia.cpp:1172
+#: PortableMedia.cpp:1144
 msgid "Playlist Folders:"
 msgstr ""
 
-#: PortableMedia.cpp:1182
+#: PortableMedia.cpp:1154
 msgid "Playlist Format:"
 msgstr ""
 
-#: PortableMedia.cpp:1206
+#: PortableMedia.cpp:1178
 msgid "Cover Format:"
 msgstr ""
 
-#: PortableMedia.cpp:1219
+#: PortableMedia.cpp:1191
 msgid "Cover Name:"
 msgstr ""
 
-#: PortableMedia.cpp:1230
+#: PortableMedia.cpp:1202
 msgid "Covers Size (pixels):"
 msgstr ""
 
-#: PortableMedia.cpp:1240
+#: PortableMedia.cpp:1212
 msgid "Covers"
 msgstr ""
 
-#: PortableMedia.cpp:1338 PortableMedia.cpp:1433
+#: PortableMedia.cpp:1310 PortableMedia.cpp:1405
 msgid "Select audio folder"
 msgstr ""
 
-#: PortableMedia.cpp:1407
+#: PortableMedia.cpp:1379
 msgid "Audio format"
 msgstr ""
 
-#: PortableMedia.cpp:1482
+#: PortableMedia.cpp:1454
 msgid "Playlist format"
 msgstr ""
 
-#: PortableMedia.cpp:1534
+#: PortableMedia.cpp:1506
 msgid "Cover format"
 msgstr ""
 
@@ -3360,23 +3360,23 @@ msgstr ""
 msgid "Format:"
 msgstr ""
 
-#: Preferences.cpp:1277 Transcode.cpp:281
+#: Preferences.cpp:1277 Transcode.cpp:343
 msgid "Very High"
 msgstr ""
 
-#: Preferences.cpp:1278 Transcode.cpp:282
+#: Preferences.cpp:1278 Transcode.cpp:344
 msgid "High"
 msgstr ""
 
-#: Preferences.cpp:1279 Transcode.cpp:285
+#: Preferences.cpp:1279 Transcode.cpp:347
 msgid "Normal"
 msgstr ""
 
-#: Preferences.cpp:1280 Transcode.cpp:286
+#: Preferences.cpp:1280 Transcode.cpp:348
 msgid "Low"
 msgstr ""
 
-#: Preferences.cpp:1281 Transcode.cpp:287
+#: Preferences.cpp:1281 Transcode.cpp:349
 msgid "Very Low"
 msgstr ""
 
@@ -4262,19 +4262,19 @@ msgid ""
 "Warning: The length of some edited tracks don't match"
 msgstr ""
 
-#: Transcode.cpp:257
+#: Transcode.cpp:319
 msgid "Keep Format"
 msgstr ""
 
-#: Transcode.cpp:280
+#: Transcode.cpp:342
 msgid "Keep Quality"
 msgstr ""
 
-#: Transcode.cpp:283
+#: Transcode.cpp:345
 msgid "Very Good"
 msgstr ""
 
-#: Transcode.cpp:284
+#: Transcode.cpp:346
 msgid "Good"
 msgstr ""
 

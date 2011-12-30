@@ -202,8 +202,6 @@ guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * targ
         }
     }
 
-
-
     if( m_StartPos )
         BuildPipelineWithOffset();
     else

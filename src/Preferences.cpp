@@ -2513,6 +2513,13 @@ void guPrefDialog::BuildAcceleratorsPage( void )
 
 	AccelActionsSizer->Add( m_AccelListCtrl, 1, wxEXPAND|wxALL, 5 );
 
+	wxBoxSizer * AccelBtnSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_AccelDefBtn = new wxButton( m_AccelPanel, wxID_ANY, _( "Default" ), wxDefaultPosition, wxDefaultSize, 0 );
+	AccelBtnSizer->Add( m_AccelDefBtn, 0, wxALIGN_RIGHT|wxRIGHT, 5 );
+
+	AccelActionsSizer->Add( AccelBtnSizer, 0, wxEXPAND, 5 );
+
 	AccelMainSizer->Add( AccelActionsSizer, 1, wxEXPAND|wxALL, 5 );
 
 	m_AccelPanel->SetSizer( AccelMainSizer );
@@ -2523,6 +2530,7 @@ void guPrefDialog::BuildAcceleratorsPage( void )
 
 	m_AccelListCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( guPrefDialog::OnAccelSelected ), NULL, this );
 	m_AccelListCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPrefDialog::OnAccelKeyDown ), NULL, this );
+	m_AccelDefBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAccelDefaultClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4354,6 +4362,20 @@ void guPrefDialog::OnAccelKeyDown( wxKeyEvent &event )
                 m_AccelListCtrl->SetItem( m_AccelCurIndex, 1, wxString( _( "Key used by '" ) ) + m_AccelActionNames[ KeyIndex ] + wxT( "'") );
             }
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnAccelDefaultClicked( wxCommandEvent &event )
+{
+    m_AccelKeys.Empty();
+    guAccelGetDefaultKeys( m_AccelKeys );
+
+    int Index;
+    int Count = m_AccelKeys.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_AccelListCtrl->SetItem( Index, 1, guAccelGetKeyCodeString( m_AccelKeys[ Index ] ) );
     }
 }
 

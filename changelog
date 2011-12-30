@@ -1,4 +1,6 @@
  
+  * Added load defaults in shortcuts preferences
+  * Added cue support
   * Allow to change language from Preferences -> General
   * All playlists but the dynamic playlists with sort defined can be sorted
     by any criteria.
