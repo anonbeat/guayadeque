@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-12-29 12:28+0000\n"
+"POT-Creation-Date: 2011-12-31 10:33+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2369,7 +2369,7 @@ msgstr ""
 msgid "Collection"
 msgstr ""
 
-#: MediaViewer.cpp:1140 Preferences.cpp:3048
+#: MediaViewer.cpp:1140 Preferences.cpp:3056
 msgid "Select library path"
 msgstr ""
 
@@ -3000,7 +3000,7 @@ msgstr ""
 msgid "Cover format"
 msgstr ""
 
-#: Preferences.cpp:133 Preferences.cpp:169
+#: Preferences.cpp:133 Preferences.cpp:169 Preferences.cpp:2518
 msgid "Default"
 msgstr ""
 
@@ -3637,43 +3637,43 @@ msgstr ""
 msgid "Key"
 msgstr ""
 
-#: Preferences.cpp:2909 Preferences.cpp:2929
+#: Preferences.cpp:2917 Preferences.cpp:2937
 msgid "Collection: "
 msgstr ""
 
-#: Preferences.cpp:2909 Preferences.cpp:2929
+#: Preferences.cpp:2917 Preferences.cpp:2937
 msgid "Enter the collection name"
 msgstr ""
 
-#: Preferences.cpp:3026
+#: Preferences.cpp:3034
 msgid "Change library path"
 msgstr ""
 
-#: Preferences.cpp:3104 Preferences.cpp:3124
+#: Preferences.cpp:3112 Preferences.cpp:3132
 msgid "Word: "
 msgstr ""
 
-#: Preferences.cpp:3104 Preferences.cpp:3124
+#: Preferences.cpp:3112 Preferences.cpp:3132
 msgid "Enter the text to find covers"
 msgstr ""
 
-#: Preferences.cpp:3613 Preferences.cpp:3643
+#: Preferences.cpp:3621 Preferences.cpp:3651
 msgid "Filter: "
 msgstr ""
 
-#: Preferences.cpp:3613
+#: Preferences.cpp:3621
 msgid "Enter the text to filter"
 msgstr ""
 
-#: Preferences.cpp:3643
+#: Preferences.cpp:3651
 msgid "Edit the text to filter"
 msgstr ""
 
-#: Preferences.cpp:4156
+#: Preferences.cpp:4164
 msgid "Select path"
 msgstr ""
 
-#: Preferences.cpp:4354
+#: Preferences.cpp:4362
 msgid "Key used by '"
 msgstr ""
 

@@ -73,8 +73,7 @@ class guTranscodeThread : public wxThread
     bool            BuildEncoder( GstElement ** enc, GstElement ** mux );
 
   public :
-    guTranscodeThread( const guTrack * track, const wxChar * target, const int format, const int quality,
-                       const int start = 0, const int length = wxNOT_FOUND );
+    guTranscodeThread( const guTrack * track, const wxChar * target, const int format, const int quality );
     ~guTranscodeThread();
 
     virtual ExitCode    Entry();

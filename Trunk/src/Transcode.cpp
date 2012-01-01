@@ -155,16 +155,16 @@ static void on_comp_pad_added( GstElement * comp, GstPad * pad, GstElement * con
 // guTranscodeThread
 // -------------------------------------------------------------------------------- //
 guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * target,
-        const int format, const int quality, const int start, const int length )
+        const int format, const int quality )
 {
     m_Track = track;
     m_Target = wxString( target );
     m_Format = format;
     m_Quality = quality;
-    m_StartPos = start;
-    m_Length = length;
+    m_StartPos = track->m_Offset;
+    m_Length = track->m_Length;
     guLogMessage( wxT( "Transcode %i - %i '%s' => '%s'\n:::: %i => %i" ),
-                    format, quality, track->m_FileName.c_str(), target, start, length );
+                    format, quality, track->m_FileName.c_str(), target, m_StartPos, m_Length );
 
     m_Running = false;
     m_HasError = false;
