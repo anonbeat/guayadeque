@@ -1979,8 +1979,9 @@ int guMediaVieweriPodDevice::CopyTo( const guTrack * track, wxString &filename )
     wxString TmpFile;
 
     // Copy the track file
-    if( !( m_PortableDevice->AudioFormats() & FileFormat ) ||
-         ( m_PortableDevice->TranscodeScope() == guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS ) )
+    if( track->m_Offset ||
+        !( m_PortableDevice->AudioFormats() & FileFormat ) ||
+        ( m_PortableDevice->TranscodeScope() == guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS ) )
     {
         // We need to transcode the file to a temporary file and then copy it
         guLogMessage( wxT( "guIpodMediaLibPanel Transcode File start" ) );
@@ -2011,10 +2012,13 @@ int guMediaVieweriPodDevice::CopyTo( const guTrack * track, wxString &filename )
         iPodTrack->size = guGetFileSize( TmpFile );
 
         //wxString guTagGetLyrics( const wxString &filename )
-        wxString LyricText = guTagGetLyrics( track->m_FileName );
-        if( !LyricText.IsEmpty() )
+        if( !track->m_Offset )
         {
-            guTagSetLyrics( TmpFile, LyricText );
+            wxString LyricText = guTagGetLyrics( track->m_FileName );
+            if( !LyricText.IsEmpty() )
+            {
+                guTagSetLyrics( TmpFile, LyricText );
+            }
         }
     }
     else    // The file is supported

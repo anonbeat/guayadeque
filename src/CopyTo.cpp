@@ -284,7 +284,7 @@ bool guCopyToThread::TranscodeFile( const guTrack * track, const wxString &targe
         while( RetryCount < 3 )
         {
             int FileSize = 0;
-            guTranscodeThread * TranscodeThread = new guTranscodeThread( track, OutFile, format, quality, track->m_Offset, track->m_Length );
+            guTranscodeThread * TranscodeThread = new guTranscodeThread( track, OutFile, format, quality );
             if( TranscodeThread && TranscodeThread->IsOk() )
             {
                 // TODO : Make a better aproach to be sure its running
