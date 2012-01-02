@@ -2169,6 +2169,10 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
                             wxAtoi( SelCopyTo[ 3 ] ),
                             wxAtoi( SelCopyTo[ 4 ] ) );
             }
+            else
+            {
+                delete Tracks;
+            }
 
             m_CopyToThreadMutex.Unlock();
         }
@@ -2191,7 +2195,7 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
             int PortableIndex = event.GetInt();
             if( PortableIndex >= 0 && PortableIndex < ( int ) m_Collections.Count() )
             {
-                guMediaViewerPortableDevice * MediaViewer = ( guMediaViewerPortableDevice * ) m_MediaViewers[ PortableIndex ];
+                guMediaViewer * MediaViewer = m_MediaViewers[ PortableIndex ];
                 if( MediaViewer )
                 {
                     guLogMessage( wxT( "MediaViewer with collection id '%s' for CopyTracks found" ), m_Collections[ PortableIndex ].m_UniqueId.c_str() );
@@ -2206,6 +2210,8 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
                     m_CopyToThread->AddAction( Tracks, MediaViewer );
 
                     m_CopyToThreadMutex.Unlock();
+
+                    return;
                 }
             }
             else
@@ -2213,10 +2219,8 @@ void guMainFrame::OnCopyTracksToDevice( wxCommandEvent &event )
                 guLogMessage( wxT( "Wrong portable device index in copy tracks to device command" ) );
             }
         }
-        else
-        {
-            delete Tracks;
-        }
+
+        delete Tracks;
     }
 }
 

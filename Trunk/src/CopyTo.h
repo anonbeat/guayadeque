@@ -117,9 +117,9 @@ class guCopyToThread : public wxThread
     void    AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir,
                     const wxString &pattern, int format, int quality, bool movefiles );
 //    void    AddAction( guTrackArray * tracks, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
-    void    AddAction( guTrackArray * tracks, guMediaViewerPortableDevice * mediaviewer );
+    void    AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer );
 //    void    AddAction( wxString * playlistpath, guDbLibrary * db, guPortableMediaViewCtrl * portablemediaviewctrl );
-    void    AddAction( wxString * playlistpath, guMediaViewerPortableDevice * mediaviewer );
+    void    AddAction( wxString * playlistpath, guMediaViewer * mediaviewer );
 
     virtual ExitCode Entry();
 

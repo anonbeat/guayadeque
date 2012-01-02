@@ -213,7 +213,7 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewer * mediaview
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewerPortableDevice * mediaviewer )
+void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer )
 {
     guCopyToAction * CopyToAction = new guCopyToAction( tracks, mediaviewer );
     if( CopyToAction )
@@ -231,7 +231,7 @@ void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewerPortableDevi
 }
 
 // -------------------------------------------------------------------------------- //
-void guCopyToThread::AddAction( wxString * playlistpath, guMediaViewerPortableDevice * mediaviewer )
+void guCopyToThread::AddAction( wxString * playlistpath, guMediaViewer * mediaviewer )
 {
     guCopyToAction * CopyToAction = new guCopyToAction( playlistpath, mediaviewer );
     if( CopyToAction )
@@ -485,10 +485,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                 }
                 else
                 {
-                    //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), m_Device->AudioFormats(), FileFormat );
-                    guPortableMediaDevice * MediaDevice  = copytoaction.GetPortableMediaDevice();
+                    //guLogMessage( wxT( "AudioFormats: %08X  %08X" ), MediaViewer->AudioFormats(), FileFormat );
                     // If the file is not supported then need to transcode it
-                    if( CurTrack->m_Offset || !( MediaDevice->AudioFormats() & FileFormat ) )
+                    if( CurTrack->m_Offset || !( MediaViewer->AudioFormats() & FileFormat ) )
                     {
                         guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
                         ActionIsCopy = false;
@@ -526,7 +525,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     {
                         guLogMessage( wxT( "Its a supported format" ) );
                         // The file is supported and we dont need to trasncode in all cases so copy the file
-                        if( MediaDevice->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
+                        if( MediaViewer->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
                         {
                             ActionIsCopy = true;
                         }
@@ -534,9 +533,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                         {
                             //guLogMessage( wxT( "TranscodeFOrmat: %u      FileFormat: %i" ), m_Device->TranscodeFormat(), FileFormat );
                             // The file is the same selected in the format so check if the bitrate is
-                            if( MediaDevice->TranscodeFormat() == FileFormat )
+                            if( MediaViewer->TranscodeFormat() == FileFormat )
                             {
-                                if( MediaDevice->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP )
+                                if( MediaViewer->TranscodeQuality() != guTRANSCODE_QUALITY_KEEP )
                                 {
                                     int FileBitrate = 0;
                                     switch( FileFormat )
@@ -545,13 +544,13 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                         case guPORTABLEMEDIA_AUDIO_FORMAT_AAC :
                                         case guPORTABLEMEDIA_AUDIO_FORMAT_WMA :
                                         {
-                                            FileBitrate = guGetMp3QualityBitRate( MediaDevice->TranscodeQuality() );
+                                            FileBitrate = guGetMp3QualityBitRate( MediaViewer->TranscodeQuality() );
                                             break;
                                         }
 
                                         case guPORTABLEMEDIA_AUDIO_FORMAT_OGG :
                                         {
-                                            FileBitrate = guGetOggQualityBitRate( MediaDevice->TranscodeQuality() );
+                                            FileBitrate = guGetOggQualityBitRate( MediaViewer->TranscodeQuality() );
                                             break;
                                         }
 
@@ -570,8 +569,6 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                                     {
                                         ActionIsCopy = true;
                                     }
-
-
                                 }
                                 else
                                 {
