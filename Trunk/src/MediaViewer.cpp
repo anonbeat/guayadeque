@@ -1369,7 +1369,7 @@ wxString guMediaViewer::GetSelInfo( void )
             wxString SelInfo = wxString::Format( wxT( "%llu " ), SelCount.GetValue() );
             SelInfo += SelCount == 1 ? _( "track" ) : _( "tracks" );
             SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
-                LenToString( SelLength.GetLo() ).c_str(),
+                LenToString( SelLength.GetValue() ).c_str(),
                 SizeToString( SelSize.GetValue() ).c_str() );
 
             return SelInfo;
@@ -1397,7 +1397,7 @@ wxString guMediaViewer::GetSelInfo( void )
                 wxString SelInfo = wxString::Format( wxT( "%llu " ), SelCount.GetValue() );
                 SelInfo += SelCount == 1 ? _( "track" ) : _( "tracks" );
                 SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
-                    LenToString( SelLength.GetLo() ).c_str(),
+                    LenToString( SelLength.GetValue() ).c_str(),
                     SizeToString( SelSize.GetValue() ).c_str() );
 
                 return SelInfo;
@@ -1412,7 +1412,7 @@ wxString guMediaViewer::GetSelInfo( void )
                 wxString SelInfo = wxString::Format( wxT( "%llu " ), SelCount.GetValue() );
                 SelInfo += SelCount == 1 ? _( "track" ) : _( "tracks" );
                 SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
-                    LenToString( SelLength.GetLo() ).c_str(),
+                    LenToString( SelLength.GetValue() ).c_str(),
                     SizeToString( SelSize.GetValue() ).c_str() );
                 return SelInfo;
             }

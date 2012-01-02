@@ -308,7 +308,7 @@ void guImportFiles::UpdateCounters( void )
         wxString SelInfo = wxString::Format( wxT( "%u " ), Count );
         SelInfo += Count == 1 ? _( "track" ) : _( "tracks" );
         SelInfo += wxString::Format( wxT( ",  %s,  %s" ),
-            LenToString( Length.GetLo() ).c_str(),
+            LenToString( Length.GetValue() ).c_str(),
             SizeToString( Size.GetValue() ).c_str() );
 
         m_FilesLabel->SetLabel( SelInfo );
