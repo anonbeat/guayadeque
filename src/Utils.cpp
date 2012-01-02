@@ -32,35 +32,34 @@
 #include <wx/zstream.h>
 
 // -------------------------------------------------------------------------------- //
-wxString LenToString( const unsigned int len )
+wxString LenToString( wxUint64 len )
 {
     wxString LenStr;
-    unsigned int Len = len / 1000;
+    len /= 1000;
     unsigned int w = 0;
     unsigned int d = 0;
     unsigned int h = 0;
     unsigned int m = 0;
-    if( Len >= ( 7 * 24 * 60 * 60 ) )
+    if( len >= ( 7 * 24 * 60 * 60 ) )
     {
-        w = Len / ( 7 * 24 * 60 * 60 );
-        Len %= ( 7 * 24 * 60 * 60 );
+        w = len / ( 7 * 24 * 60 * 60 );
+        len %= ( 7 * 24 * 60 * 60 );
     }
-    if( Len >= ( 24 * 60 * 60 ) )
+    if( len >= ( 24 * 60 * 60 ) )
     {
-        d = Len / ( 24 * 60 * 60 );
-        Len %= ( 24 * 60 * 60 );
+        d = len / ( 24 * 60 * 60 );
+        len %= ( 24 * 60 * 60 );
     }
-    if( Len >= ( 60 * 60 ) )
+    if( len >= ( 60 * 60 ) )
     {
-        h = Len / ( 60 * 60 );
-        Len %= ( 60 * 60 );
+        h = len / ( 60 * 60 );
+        len %= ( 60 * 60 );
     }
-    if( Len >= 60 )
+    if( len >= 60 )
     {
-        m = Len / 60;
-        Len %= 60;
+        m = len / 60;
+        len %= 60;
     }
-    LenStr = wxEmptyString;
     if( w > 0 )
     {
         LenStr += LenStr.Format( wxT( "%uw " ), w );
@@ -73,8 +72,8 @@ wxString LenToString( const unsigned int len )
     {
         LenStr += LenStr.Format( wxT( "%02u:" ), h );
     }
-    LenStr += LenStr.Format( wxT( "%02u:%02u" ), m, Len );
-//    guLogMessage( wxT( "%i -> %s" ), Len, LenStr.c_str() );
+    LenStr += LenStr.Format( wxT( "%02u:%02u" ), m, len );
+    //guLogMessage( wxT( "%lu -> %s" ), len, LenStr.c_str() );
     return LenStr;
 }
 

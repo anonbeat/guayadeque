@@ -27,7 +27,6 @@
 #include "MainApp.h"
 #include "MainFrame.h"
 #include "OnlineLinks.h"
-#include "PlayList.h" // LenToString
 #include "Utils.h"
 #include "RatingCtrl.h"
 #include "MediaViewer.h"

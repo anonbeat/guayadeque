@@ -1627,9 +1627,9 @@ void guTrackEditor::UpdateMBrainzTrackInfo( void )
             }
             // Length
             m_MBrainzLengthStaticText->SetForegroundColour(
-                    GetTrackLengthDiff( Track->m_Length * 1000, MBTrack->m_Length ) > guMBRAINZ_MAX_TIME_DIFF ?
+                    GetTrackLengthDiff( Track->m_Length, MBTrack->m_Length ) > guMBRAINZ_MAX_TIME_DIFF ?
                                         m_ErrorColor : m_NormalColor );
-            m_MBrainzLengthTextCtrl->SetValue( LenToString( ( unsigned int ) MBTrack->m_Length / 1000 ) );
+            m_MBrainzLengthTextCtrl->SetValue( LenToString( MBTrack->m_Length ) );
 
             // Number
             m_MBrainzNumberStaticText->SetForegroundColour( Track->m_Number == MBTrack->m_Number ?
@@ -1651,7 +1651,7 @@ int guTrackEditor::CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray *
     int Count = wxMin( tracks->Count(), mbtracks->Count() );
     for( Index = 0; Index < Count; Index++ )
     {
-        if( GetTrackLengthDiff( tracks->Item( Index ).m_Length * 1000,
+        if( GetTrackLengthDiff( tracks->Item( Index ).m_Length,
                              mbtracks->Item( Index ).m_Length ) > guMBRAINZ_MAX_TIME_DIFF )
         {
             RetVal++;
@@ -2068,7 +2068,7 @@ guMusicBrainzMetadataThread::ExitCode guMusicBrainzMetadataThread::Entry()
             return 0;
         }
 
-        MusicBrainz->GetTracks( FoundTracks, m_Track, m_Track->m_Length * 1000 );
+        MusicBrainz->GetTracks( FoundTracks, m_Track, m_Track->m_Length );
 
         wxCommandEvent event( guTrackEditEvent, guTRACKEDIT_EVENT_MBRAINZ_TRACKS );
         event.SetClientData( FoundTracks );

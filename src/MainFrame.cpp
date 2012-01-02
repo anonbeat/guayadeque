@@ -3201,7 +3201,7 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
         wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
         SelInfo += m_SelCount == 1 ? _( "podcast" ) : _( "podcasts" );
         SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
-            LenToString( m_SelLength.GetLo() ).c_str(),
+            LenToString( m_SelLength.GetValue() ).c_str(),
             SizeToString( m_SelSize.GetValue() ).c_str() );
         m_MainStatusBar->SetSelInfo( SelInfo );
     }

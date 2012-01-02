@@ -33,8 +33,6 @@
 #include <wx/thread.h>
 #include <wx/string.h>
 
-wxString LenToString( int Len );
-
 class guPlayerPanel;
 class guPlayList;
 class guMainFrame;

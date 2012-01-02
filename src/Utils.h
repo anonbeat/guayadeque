@@ -71,7 +71,7 @@ void inline guImageResize( wxImage * image, int maxsize, bool forceresize = fals
 class guTrack;
 
 // -------------------------------------------------------------------------------- //
-wxString            LenToString( const unsigned int len );
+wxString            LenToString( wxUint64 len );
 wxString            SizeToString( wxFileOffset size );
 wxArrayString       guSplitWords( const wxString &InputStr );
 wxImage *           guGetRemoteImage( const wxString &url, int &imgtype );
