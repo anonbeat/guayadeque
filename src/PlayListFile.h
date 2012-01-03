@@ -122,6 +122,7 @@ class guCuePlaylistItem : public guPlaylistItem
 
     wxString    m_TrackPath;
     wxString    m_ArtistName;
+    wxString    m_AlbumArtist;
     wxString    m_AlbumName;
     wxString    m_Composer;
     wxString    m_Genre;
@@ -148,8 +149,9 @@ class guCuePlaylistFile
 
     wxString                m_TrackPath;
     int                     m_TrackLength;
-    wxString                m_AlbumName;
     wxString                m_ArtistName;
+    wxString                m_AlbumArtist;
+    wxString                m_AlbumName;
     wxString                m_Composer;
     wxString                m_Genre;
     wxString                m_Year;

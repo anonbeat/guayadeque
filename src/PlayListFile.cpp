@@ -704,6 +704,10 @@ bool guCuePlaylistFile::LoadFromText( const wxString &content )
                 else
                 {
                     m_PlaylistItems[ CurrentTrack ].m_ArtistName = RemoveQuotationMark( GetKeyValue( Line, wxT( "PERFORMER" ) ) );
+                    if( !m_ArtistName.IsEmpty() )
+                    {
+                        m_PlaylistItems[ CurrentTrack ].m_AlbumArtist = m_ArtistName;
+                    }
                 }
             }
             else if( Keys[ 0 ] == wxT( "REM" ) )

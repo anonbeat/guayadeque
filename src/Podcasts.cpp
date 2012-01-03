@@ -36,7 +36,7 @@ WX_DEFINE_OBJARRAY(guPodcastItemArray);
 const wxEventType guPodcastEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
-int StrLengthToInt( const wxString &length )
+unsigned int StrLengthToInt( const wxString &length )
 {
     if( !length.IsEmpty() )
     {
@@ -44,7 +44,7 @@ int StrLengthToInt( const wxString &length )
         wxString Rest = length.Strip( wxString::both );
         long element;
         int FactorIndex = 0;
-        int RetVal = 0;
+        unsigned int RetVal = 0;
         int Factor[] = { 1, 60, 3600, 86400 };
         do {
             Rest.AfterLast( wxT( ':' ) ).ToLong( &element );
@@ -55,8 +55,8 @@ int StrLengthToInt( const wxString &length )
                 break;
             Rest = Rest.BeforeLast( wxT( ':' ) );
         } while( !Rest.IsEmpty() );
-        //guLogMessage( wxT( "%s -> %i" ), length.c_str(), RetVal );
-        return RetVal;
+        //guLogMessage( wxT( "StrLengthToInt : '%s' -> %u" ), length.c_str(), RetVal );
+        return RetVal * 1000;
     }
     return 0;
 }
