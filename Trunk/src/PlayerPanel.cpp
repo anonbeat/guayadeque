@@ -788,19 +788,19 @@ void guPlayerPanel::SetBitRate( int bitrate )
         bitrate = bitrate / 1000;
         //guLogDebug( wxT( "Bitrate: %u" ), bitrate );
         m_BitRateLabel->SetLabel( wxString::Format( wxT( "[%ukbps]" ), bitrate ) );
-//        if( ( m_MediaSong.m_Bitrate < bitrate ) && ( GetState() == guMEDIASTATE_PLAYING ) )
-//        {
-//            m_MediaSong.m_Bitrate = bitrate;
-//
-//            if( m_MediaSong.m_MediaViewer )
-//            {
-//                guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
-//                Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
-//            }
-//
-//            // Update the track in database, playlist, etc
-//            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
-//        }
+        if( ( m_MediaSong.m_Bitrate < bitrate ) && ( GetState() == guMEDIASTATE_PLAYING ) )
+        {
+            m_MediaSong.m_Bitrate = bitrate;
+
+            if( m_MediaSong.m_MediaViewer )
+            {
+                guDbLibrary * Db = m_MediaSong.m_MediaViewer->GetDb();
+                Db->UpdateTrackBitRate( m_MediaSong.m_SongId, bitrate );
+            }
+
+            // Update the track in database, playlist, etc
+            m_MainFrame->UpdatedTrack( guUPDATED_TRACKS_PLAYER, &m_MediaSong );
+        }
     }
     else
         m_BitRateLabel->SetLabel( wxT( "[kbps]" ) );
@@ -1601,7 +1601,8 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             ( ( CurPos + 5000 + ( !m_ForceGapless ? m_FadeOutTime : 0 ) ) >= m_LastLength )
           )
         {
-            if( !m_ForceGapless && m_FadeOutTime && !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
+            //if( !m_ForceGapless && m_FadeOutTime && !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
+            if( !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
             {
                 m_AboutToEndDetected = true;
 

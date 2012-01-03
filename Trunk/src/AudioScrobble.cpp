@@ -509,6 +509,7 @@ void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
     SubmitInfo = m_Db->GetCachedPlayedSongs( guAS_SUBMITTRACKS );
     if( !SubmitInfo.Count() )
     {
+        guLogMessage( wxT( "Now Playing track submit: Now ready to send..." ) );
         guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, m_NowPlayingInfo );
         if( !NowPlayingThread )
             guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
@@ -536,6 +537,7 @@ void guAudioScrobble::EndPlayedThread( void )
     m_PlayedThread = NULL;
     if( m_NowPlayingInfo )
     {
+        guLogMessage( wxT( "Now Playing track submit: Now ready to send..." ) );
         guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, m_NowPlayingInfo );
         if( !NowPlayingThread )
             guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
