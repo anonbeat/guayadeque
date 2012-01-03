@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-03 17:34+0000\n"
+"POT-Creation-Date: 2012-01-03 20:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2399,7 +2399,7 @@ msgstr ""
 msgid " smart playlist"
 msgstr ""
 
-#: MediaViewer.cpp:2176 PlayerPanel.cpp:245 PlayerPanel.cpp:2225
+#: MediaViewer.cpp:2176 PlayerPanel.cpp:245 PlayerPanel.cpp:2226
 msgid "Playlist"
 msgstr ""
 
@@ -2486,7 +2486,7 @@ msgstr ""
 msgid "Record to file"
 msgstr ""
 
-#: PlayerPanel.cpp:205 PlayerPanel.cpp:2843
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2844
 msgid "Volume"
 msgstr ""
 
@@ -2494,16 +2494,16 @@ msgstr ""
 msgid "Show the equalizer"
 msgstr ""
 
-#: PlayerPanel.cpp:218 PlayerPanel.cpp:2166
+#: PlayerPanel.cpp:218 PlayerPanel.cpp:2167
 msgid "Smart Play: "
 msgstr ""
 
-#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2169
+#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2170
 #: Preferences.cpp:959
 msgid "Disabled"
 msgstr ""
 
-#: PlayerPanel.cpp:225 PlayerPanel.cpp:2173 Preferences.cpp:1345
+#: PlayerPanel.cpp:225 PlayerPanel.cpp:2174 Preferences.cpp:1345
 #: Preferences.cpp:1380
 msgid "Enabled"
 msgstr ""
@@ -2512,7 +2512,7 @@ msgstr ""
 msgid "Repeat: "
 msgstr ""
 
-#: PlayerPanel.cpp:241 PlayerPanel.cpp:2221 PlayList.cpp:1630
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2222 PlayList.cpp:1630
 #: Preferences.cpp:959
 msgid "Track"
 msgstr ""
@@ -2553,11 +2553,11 @@ msgstr ""
 msgid "Buffering..."
 msgstr ""
 
-#: PlayerPanel.cpp:2214
+#: PlayerPanel.cpp:2215
 msgid "Repeat Mode: "
 msgstr ""
 
-#: PlayerPanel.cpp:2217
+#: PlayerPanel.cpp:2218
 msgid "Off"
 msgstr ""
 

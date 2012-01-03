@@ -345,94 +345,81 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     //
 	m_HVumFlexSizer = new wxFlexGridSizer( 3, 2, 0, 0 );
 	m_HVumFlexSizer->AddGrowableCol( 1 );
-	m_HVumFlexSizer->AddGrowableRow( 1 );
+	m_HVumFlexSizer->AddGrowableRow( 0 );
 	m_HVumFlexSizer->AddGrowableRow( 2 );
 	m_HVumFlexSizer->SetFlexibleDirection( wxBOTH );
 	m_HVumFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	CurrentFont.SetPointSize( 8 );
-
-	wxBoxSizer * HLabelsSizer;
-	HLabelsSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	wxStaticText * HDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
-	HDbLabel->Wrap( -1 );
-	HDbLabel->SetFont( CurrentFont );
-	m_HVumFlexSizer->Add( HDbLabel, 0, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
-	//m_HVumFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-
-	//CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
-
-//	wxStaticText * HDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
-//	HDbLabel->Wrap( -1 );
-//	HDbLabel->SetFont( CurrentFont );
-//	HLabelsSizer->Add( HDbLabel, 5, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HSixtyLevel = new wxStaticText( this, wxID_ANY, wxT("-60"), wxDefaultPosition, wxDefaultSize, 0 );
-	HSixtyLevel->Wrap( -1 );
-	HSixtyLevel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HSixtyLevel, 13, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HFortyLevel = new wxStaticText( this, wxID_ANY, wxT("-40"), wxDefaultPosition, wxDefaultSize, 0 );
-	HFortyLevel->Wrap( -1 );
-	HFortyLevel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HFortyLevel, 17, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HThirtyLevel = new wxStaticText( this, wxID_ANY, wxT("-30"), wxDefaultPosition, wxDefaultSize, 0 );
-	HThirtyLevel->Wrap( -1 );
-	HThirtyLevel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HThirtyLevel, 23, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HTwentyLevel = new wxStaticText( this, wxID_ANY, wxT("-20"), wxDefaultPosition, wxDefaultSize, 0 );
-	HTwentyLevel->Wrap( -1 );
-	HTwentyLevel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HTwentyLevel, 27, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HTenLevel = new wxStaticText( this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxDefaultSize, 0 );
-	HTenLevel->Wrap( -1 );
-	HTenLevel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HTenLevel, 13, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HOrangeLevel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
-	HOrangeLevel->Wrap( -1 );
-	HOrangeLevel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HOrangeLevel, 7, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
-	HRedLabel->Wrap( -1 );
-	HRedLabel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HRedLabel, 7, wxALIGN_BOTTOM, 5 );
-
-	wxStaticText * HClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
-	HClipLabel->Wrap( -1 );
-	HClipLabel->SetFont( CurrentFont );
-	HLabelsSizer->Add( HClipLabel, 0, wxRIGHT|wxALIGN_BOTTOM, 5 );
-
-	m_HVumFlexSizer->Add( HLabelsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	CurrentFont.SetPointSize( 7 );
 
 	wxStaticText * HVumLeftLabel = new wxStaticText( this, wxID_ANY, wxT("L:"), wxDefaultPosition, wxDefaultSize, 0 );
 	HVumLeftLabel->Wrap( -1 );
 	HVumLeftLabel->SetFont( CurrentFont );
-	m_HVumFlexSizer->Add( HVumLeftLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT, 5 );
+	m_HVumFlexSizer->Add( HVumLeftLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_HVumLeft = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL|wxGA_SMOOTH );
-	//m_VumLeft->SetValue( 0 );
 	m_HVumLeft->SetMinSize( wxSize( -1, 2 ) );
+	m_HVumFlexSizer->Add( m_HVumLeft, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
-	m_HVumFlexSizer->Add( m_HVumLeft, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	wxBoxSizer * HLabelsSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	wxStaticText * HDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
+	HDbLabel->Wrap( -1 );
+	HDbLabel->SetFont( CurrentFont );
+	m_HVumFlexSizer->Add( HDbLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	wxStaticText * HSixtyLevel = new wxStaticText( this, wxID_ANY, wxT("-60"), wxDefaultPosition, wxDefaultSize, 0 );
+	HSixtyLevel->Wrap( -1 );
+	HSixtyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HSixtyLevel, 13, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HFortyLevel = new wxStaticText( this, wxID_ANY, wxT("-40"), wxDefaultPosition, wxDefaultSize, 0 );
+	HFortyLevel->Wrap( -1 );
+	HFortyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HFortyLevel, 17, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HThirtyLevel = new wxStaticText( this, wxID_ANY, wxT("-30"), wxDefaultPosition, wxDefaultSize, 0 );
+	HThirtyLevel->Wrap( -1 );
+	HThirtyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HThirtyLevel, 23, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HTwentyLevel = new wxStaticText( this, wxID_ANY, wxT("-20"), wxDefaultPosition, wxDefaultSize, 0 );
+	HTwentyLevel->Wrap( -1 );
+	HTwentyLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HTwentyLevel, 27, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HTenLevel = new wxStaticText( this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxDefaultSize, 0 );
+	HTenLevel->Wrap( -1 );
+	HTenLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HTenLevel, 13, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HOrangeLevel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
+	HOrangeLevel->Wrap( -1 );
+	HOrangeLevel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HOrangeLevel, 7, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
+	HRedLabel->Wrap( -1 );
+	HRedLabel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HRedLabel, 7, wxALIGN_CENTER_VERTICAL, 5 );
+
+	wxStaticText * HClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+	HClipLabel->Wrap( -1 );
+	HClipLabel->SetFont( CurrentFont );
+	HLabelsSizer->Add( HClipLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
+
+	m_HVumFlexSizer->Add( HLabelsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * HVumRightLabel = new wxStaticText( this, wxID_ANY, wxT("R:"), wxDefaultPosition, wxDefaultSize, 0 );
 	HVumRightLabel->Wrap( -1 );
 	HVumRightLabel->SetFont( CurrentFont );
-	m_HVumFlexSizer->Add( HVumRightLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT, 5 );
+	m_HVumFlexSizer->Add( HVumRightLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxBOTTOM, 5 );
 
 	m_HVumRight = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL );
 	//m_HVumRight->SetValue( 0 );
 	m_HVumRight->SetMinSize( wxSize( -1, 2 ) );
 
 	m_HVumFlexSizer->Add( m_HVumRight, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
-
 	m_VumMainSizer->Add( m_HVumFlexSizer, 1, wxEXPAND, 5 );
 
 
@@ -440,84 +427,79 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     // Create the Vertical vumeter layout
     //
 	m_VVumFlexSizer = new wxFlexGridSizer( 2, 3, 0, 0 );
-	m_VVumFlexSizer->AddGrowableCol( 1 );
+	m_VVumFlexSizer->AddGrowableCol( 0 );
 	m_VVumFlexSizer->AddGrowableCol( 2 );
 	m_VVumFlexSizer->AddGrowableRow( 0 );
 	m_VVumFlexSizer->SetFlexibleDirection( wxBOTH );
 	m_VVumFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	wxBoxSizer* VLabelsSizer;
-	VLabelsSizer = new wxBoxSizer( wxVERTICAL );
+	m_VVumLeft = new guVumeter( this, wxID_ANY, guVU_VERTICAL );
+	m_VVumFlexSizer->Add( m_VVumLeft, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxLEFT, 5 );
+
+
+	wxBoxSizer * VLabelsSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxStaticText * VClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	VClipLabel->Wrap( -1 );
 	VClipLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VClipLabel, 8, wxALIGN_BOTTOM|wxALIGN_RIGHT|wxTOP, 5 );
+	VLabelsSizer->Add( VClipLabel, 8, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
 
 	wxStaticText * VRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	VRedLabel->Wrap( -1 );
 	VRedLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VRedLabel, 8, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VRedLabel, 8, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VOrangeLabel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
 	VOrangeLabel->Wrap( -1 );
 	VOrangeLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VOrangeLabel, 12, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VOrangeLabel, 12, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VTenLabel = new wxStaticText( this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxDefaultSize, 0 );
 	VTenLabel->Wrap( -1 );
 	VTenLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VTenLabel, 27, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VTenLabel, 27, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VTwentyLabel = new wxStaticText( this, wxID_ANY, wxT("-20"), wxDefaultPosition, wxDefaultSize, 0 );
 	VTwentyLabel->Wrap( -1 );
 	VTwentyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VTwentyLabel, 23, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VTwentyLabel, 23, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VThirtyLabel = new wxStaticText( this, wxID_ANY, wxT("-30"), wxDefaultPosition, wxDefaultSize, 0 );
 	VThirtyLabel->Wrap( -1 );
 	VThirtyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VThirtyLabel, 17, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VThirtyLabel, 17, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VFortyLabel = new wxStaticText( this, wxID_ANY, wxT("-40"), wxDefaultPosition, wxDefaultSize, 0 );
 	VFortyLabel->Wrap( -1 );
 	VFortyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VFortyLabel, 15, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VFortyLabel, 15, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VSixtyLabel = new wxStaticText( this, wxID_ANY, wxT("-60"), wxDefaultPosition, wxDefaultSize, 0 );
 	VSixtyLabel->Wrap( -1 );
 	VSixtyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VSixtyLabel, 0, wxALIGN_BOTTOM|wxALIGN_RIGHT, 5 );
+	VLabelsSizer->Add( VSixtyLabel, 0, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_VVumFlexSizer->Add( VLabelsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_VVumLeft = new guVumeter( this, wxID_ANY, guVU_VERTICAL );
-	//m_VVumLeft->SetValue( 72 );
-	//m_VVumLeft->SetMinSize( wxSize( 2, -1 ) );
-
-	m_VVumFlexSizer->Add( m_VVumLeft, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	m_VVumRight = new guVumeter( this, wxID_ANY, guVU_VERTICAL );
-	//m_VVumRight->SetValue( 76 );
-	//m_VVumRight->SetMinSize( wxSize( 2, -1 ) );
-
 	m_VVumFlexSizer->Add( m_VVumRight, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
-
-	wxStaticText * VDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
-	VDbLabel->Wrap( -1 );
-	VDbLabel->SetFont( CurrentFont );
-	m_VVumFlexSizer->Add( VDbLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * VVumLeftLabel = new wxStaticText( this, wxID_ANY, wxT("L:"), wxDefaultPosition, wxDefaultSize, 0 );
 	VVumLeftLabel->Wrap( -1 );
 	VVumLeftLabel->SetFont( CurrentFont );
 	m_VVumFlexSizer->Add( VVumLeftLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxLEFT, 5 );
 
+	wxStaticText * VDbLabel = new wxStaticText( this, wxID_ANY, wxT("db"), wxDefaultPosition, wxDefaultSize, 0 );
+	VDbLabel->Wrap( -1 );
+	VDbLabel->SetFont( CurrentFont );
+	m_VVumFlexSizer->Add( VDbLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
+
 	wxStaticText * VVumRightLabel = new wxStaticText( this, wxID_ANY, wxT("R:"), wxDefaultPosition, wxDefaultSize, 0 );
 	VVumRightLabel->Wrap( -1 );
 	VVumRightLabel->SetFont( CurrentFont );
-	m_VVumFlexSizer->Add( VVumRightLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxLEFT, 5 );
+	m_VVumFlexSizer->Add( VVumRightLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxRIGHT, 5 );
 
 	m_VumMainSizer->Add( m_VVumFlexSizer, 1, wxEXPAND, 5 );
 
