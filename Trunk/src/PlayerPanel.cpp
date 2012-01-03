@@ -2431,7 +2431,6 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
             }
         }
     }
-    guLogMessage( wxT( "End Of OnNextTrackButtonClick..." ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2953,9 +2952,9 @@ void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
     int count = tracks->Count();
     for( index = 0; index < count; index++ )
     {
-        if( tracks->Item( index ).m_FileName == m_MediaSong.m_FileName )
+        if( ( tracks->Item( index ).m_FileName == m_MediaSong.m_FileName ) &&
+            ( tracks->Item( index ).m_Offset == m_MediaSong.m_Offset ) )
         {
-            //m_MediaSong = tracks->Item( index );
             m_MediaSong.Update( tracks->Item( index ) );
             // Update the Current Playing Song Info
             UpdateLabels();
