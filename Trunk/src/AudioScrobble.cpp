@@ -502,7 +502,7 @@ void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
     m_NowPlayingInfo->m_ArtistName = track.m_ArtistName;
     m_NowPlayingInfo->m_AlbumName  = track.m_AlbumName;
     m_NowPlayingInfo->m_TrackName  = track.m_SongName;
-    m_NowPlayingInfo->m_TrackLen   = track.m_Length;
+    m_NowPlayingInfo->m_TrackLen   = track.m_Length / 1000;
     m_NowPlayingInfo->m_TrackNum   = track.m_Number;
 
     guAS_SubmitInfoArray    SubmitInfo;

@@ -6275,7 +6275,7 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
   escape_query_str( &Artist );
   escape_query_str( &Album );
 
-  guLogMessage( wxT( "Adding track at %u played %u seconds" ), wxGetUTCTime(), Song.m_PlayTime );
+  guLogMessage( wxT( "Adding track at %u played %u mseconds" ), wxGetUTCTime(), Song.m_PlayTime );
   query = wxString::Format( wxT( "INSERT into audioscs( audiosc_id, audiosc_artist, "\
           "audiosc_album, audiosc_track, audiosc_playedtime, audiosc_source, "\
           "audiosc_ratting, audiosc_len, audiosc_tracknum, audiosc_mbtrackid) "\
@@ -6283,10 +6283,10 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
           Artist.c_str(),
           Album.c_str(),
           Title.c_str(),
-          wxGetUTCTime() - Song.m_PlayTime,
+          wxGetUTCTime() - ( Song.m_PlayTime / 1000 ),
           Source,
           Rating,
-          Song.m_Length,
+          Song.m_Length / 1000,
           Song.m_Number,
           0 );
   //guLogMessage( query );
