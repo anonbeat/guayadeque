@@ -1244,7 +1244,7 @@ void guPrefDialog::BuildRecordPage( void )
 	RecSelDirSizer->Add( RecSelDirLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_RecSelDirPicker = new wxDirPickerCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
-    m_RecSelDirPicker->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/Records" ), wxT( "record" ) ) );
+    m_RecSelDirPicker->SetPath( m_Config->ReadStr( wxT( "Path" ), guPATH_DEFAULT_RECORDINGS, wxT( "record" ) ) );
     m_RecSelDirPicker->Enable( m_RecordChkBox->IsChecked() );
 	RecSelDirSizer->Add( m_RecSelDirPicker, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 

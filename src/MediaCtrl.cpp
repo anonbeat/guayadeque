@@ -23,6 +23,7 @@
 #include "Config.h"
 #include "FileRenamer.h" // NormalizeField
 #include "PlayerPanel.h"
+#include "Settings.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -2563,7 +2564,7 @@ guMediaRecordCtrl::~guMediaRecordCtrl()
 void guMediaRecordCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_MainPath = Config->ReadStr( wxT( "Path" ), wxGetHomeDir() + wxT( "/recordings" ), wxT( "record" ) );
+    m_MainPath = Config->ReadStr( wxT( "Path" ), guPATH_DEFAULT_RECORDINGS, wxT( "record" ) );
     m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "record" ) );
     m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "record" ) );
     m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "record" ) );

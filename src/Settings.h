@@ -57,6 +57,8 @@
 #define guPATH_EQUALIZERS                   guPATH_CONFIG
 #define guPATH_EQUALIZERS_FILENAME          guPATH_CONFIG wxT( "equalizers.conf" )
 
+#define guPATH_DEFAULT_RECORDINGS           wxGetHomeDir() + wxT( "/Recordings" )
+
 #define guCOPYTO_MAXCOUNT                   199
 #define guCOPYTO_DEVICE_BASE                100
 
