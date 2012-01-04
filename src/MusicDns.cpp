@@ -26,6 +26,8 @@
 #include "Utils.h"
 #include "Version.h"
 
+#include <wx/uri.h>
+
 #define guMUSICDNS_CLIENT_ID    "ca3d48c7383db1dcf6dccd1f0cab26e5"
 #define guMUSICDNS_BASEURL      "http://ofa.musicdns.org/ofa/1/track"
 
@@ -125,17 +127,20 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMu
 }
 
 // -------------------------------------------------------------------------------- //
-static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, GstElement * conv )
+static void on_pad_added( GstElement * comp, GstPad * pad, GstElement * conv )
 {
   GstCaps * caps;
   GstStructure * str;
   GstPad * convpad;
-//  GstElement * conv;
-//  conv = ( GstElemet * ) data;
 
-//  guLogMessage( wxT( "New pad created..." ) );
+  //guLogMessage( wxT( "New pad created..." ) );
 
-  convpad = gst_element_get_pad( conv, "sink" );
+  convpad = gst_element_get_static_pad( conv, "sink" );
+  if( GST_PAD_IS_LINKED( convpad ) )
+  {
+      g_object_unref( convpad );
+      return;
+  }
 
   /* check media type */
   caps = gst_pad_get_caps( pad );
@@ -148,9 +153,10 @@ static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, G
   }
   gst_caps_unref( caps );
 
-//  guLogMessage( wxT( "Linked decoder and converter..." ) );
+  //guLogMessage( wxT( "Linked composer and converter..." ) );
   /* link'n'play */
   gst_pad_link( pad, convpad );
+  g_object_unref( convpad );
 }
 
 
@@ -159,112 +165,30 @@ static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, G
 // -------------------------------------------------------------------------------- //
 // guMusicDnsThread
 // -------------------------------------------------------------------------------- //
-guMusicDnsThread::guMusicDnsThread( guMusicDns * musicdns, const wxChar * filename )
+guMusicDnsThread::guMusicDnsThread( guMusicDns * musicdns, const wxChar * filename,
+        const unsigned int start, const unsigned int length )
 {
   //guLogMessage( wxT( "guMusicDnsThread..." ) );
   m_MusicDns = musicdns;
   m_FileName = wxString( filename );
   m_Running = false;
   int Error = guMDNS_STATUS_ERROR_GSTREAMER;
+  m_Start = start;
+  m_Length = length;
 
-  m_Pipeline = gst_pipeline_new( "guPipeline" );
-  if( GST_IS_ELEMENT( m_Pipeline ) )
+  if( BuildPipeline() )
   {
-    GstElement * src;
-    src = gst_element_factory_make( "filesrc", "guSource" );
-    if( GST_IS_ELEMENT( src ) )
+    if( Create() == wxTHREAD_NO_ERROR )
     {
-      g_object_set( G_OBJECT( src ), "location", ( const char * ) m_FileName.mb_str(), NULL );
-      GstElement * dec;
-      dec = gst_element_factory_make( "decodebin", "guDecoder" );
-      if( GST_IS_ELEMENT( dec ) )
-      {
-        GstElement * conv;
-        conv = gst_element_factory_make( "audioconvert", "guConverter" );
-        if( GST_IS_ELEMENT( conv ) )
-        {
-          GstElement * ofa;
-          ofa = gst_element_factory_make( "ofa", "guOFA" );
-          if( GST_IS_ELEMENT( ofa ) )
-          {
-            GstElement * fake;
-            fake = gst_element_factory_make( "fakesink", "guFakeSink" );
-            g_object_set( G_OBJECT( fake ), "sync", 0, NULL );
-            if( GST_IS_ELEMENT( fake ) )
-            {
-              gst_bin_add_many( GST_BIN( m_Pipeline ), src, dec, conv, ofa, fake, NULL );
-
-              GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Pipeline ) );
-              gst_bus_add_watch( bus, ( GstBusFunc ) gst_bus_async_callback, this );
-              gst_object_unref( G_OBJECT( bus ) );
-
-              if( gst_element_link( src, dec ) )
-              {
-                g_signal_connect( dec, "new-decoded-pad", G_CALLBACK( on_pad_added ), conv );
-
-                if( gst_element_link_many( conv, ofa, fake, NULL ) )
-                {
-                  gst_element_set_state( m_Pipeline, GST_STATE_PAUSED );
-
-                  //guLogMessage( wxT( "Created the pipeline..." ) );
-
-                  if( Create() == wxTHREAD_NO_ERROR )
-                  {
-                    SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
-                    Run();
-                    return;
-                  }
-                  else
-                  {
-                    Error = guMDNS_STATUS_ERROR_THREAD;
-                  }
-                }
-                else
-                {
-                  guLogError( wxT( "Error linking the objects conv, ofa, fake" ) );
-                }
-              }
-              else
-              {
-                guLogError( wxT( "Error linking the objects src, dec" ) );
-              }
-              gst_object_unref( fake );
-            }
-            else
-            {
-              guLogError( wxT( "Error creating the MusicDns fakeout" ) );
-            }
-            gst_object_unref( ofa );
-          }
-          else
-          {
-            guLogError( wxT( "Error creating the MusicDns ofa" ) );
-          }
-          gst_object_unref( conv );
-        }
-        else
-        {
-          guLogError( wxT( "Error creating the MusicDns converter" ) );
-        }
-        gst_object_unref( dec );
-      }
-      else
-      {
-        guLogError( wxT( "Error creating the MusicDns decoder" ) );
-      }
-      gst_object_unref( src );
+      SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
+      Run();
     }
     else
     {
-        guLogError( wxT( "Error creating the MusicDns source" ) );
+      Error = guMDNS_STATUS_ERROR_THREAD;
+      m_MusicDns->SetStatus( Error );
     }
-    gst_object_unref( m_Pipeline );
   }
-  else
-  {
-        guLogError( wxT( "Error creating the MusicDns pipeline" ) );
-  }
-  m_MusicDns->SetStatus( Error );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -277,6 +201,113 @@ guMusicDnsThread::~guMusicDnsThread()
     }
     m_MusicDns->ClearMusicDnsThread();
     //guLogMessage( wxT( "Destroyed MusicDnsThread..." ) );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMusicDnsThread::BuildPipeline( void )
+{
+  m_Pipeline = gst_pipeline_new( "guPipeline" );
+  if( GST_IS_ELEMENT( m_Pipeline ) )
+  {
+    GstElement * comp = gst_element_factory_make( "gnlcomposition", "guComposition" );
+    if( GST_IS_ELEMENT( comp ) )
+    {
+      GstElement * conv = gst_element_factory_make( "audioconvert", "guConverter" );
+      if( GST_IS_ELEMENT( conv ) )
+      {
+        GstElement * ofa = gst_element_factory_make( "ofa", "guOFA" );
+        if( GST_IS_ELEMENT( ofa ) )
+        {
+          GstElement * fake = gst_element_factory_make( "fakesink", "guFakeSink" );
+          if( GST_IS_ELEMENT( fake ) )
+          {
+            g_object_set( G_OBJECT( fake ), "sync", 0, NULL );
+
+            gst_bin_add_many( GST_BIN( m_Pipeline ), comp, conv, ofa, fake, NULL );
+
+            g_object_set( m_Pipeline, "async-handling", true, NULL );
+
+            GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Pipeline ) );
+            gst_bus_add_watch( bus, ( GstBusFunc ) gst_bus_async_callback, this );
+            gst_object_unref( G_OBJECT( bus ) );
+
+            g_signal_connect( comp, "pad-added", G_CALLBACK( on_pad_added ), conv );
+
+            if( gst_element_link_many( conv, ofa, fake, NULL ) )
+            {
+              GstElement * src = gst_element_factory_make( "gnlfilesource", "guTransSource" );
+              if( GST_IS_ELEMENT( src ) )
+              {
+                wxString Location;
+                wxURI URI( m_FileName );
+                if( URI.IsReference() )
+                {
+                  Location = wxT( "file://" ) + m_FileName;
+                }
+                else
+                {
+                  if( !URI.HasScheme() )
+                  {
+                    Location = wxT( "http://" ) + m_FileName;
+                  }
+                  else
+                  {
+                    Location = m_FileName;
+                  }
+                }
+
+                g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
+                g_object_set( G_OBJECT( src ), "start", 0, NULL );
+                g_object_set( G_OBJECT( src ), "duration", m_Length * GST_MSECOND, NULL );
+                g_object_set( G_OBJECT( src ), "media-start", m_Start * GST_MSECOND, NULL );
+                g_object_set( G_OBJECT( src ), "media-duration", m_Length * GST_MSECOND, NULL );
+
+                gst_bin_add_many( GST_BIN( comp ), src, NULL );
+
+                gst_element_set_state( m_Pipeline, GST_STATE_PAUSED );
+
+                //guLogMessage( wxT( "Created the pipeline..." ) );
+                return true;
+              }
+            }
+            else
+            {
+              guLogError( wxT( "Error linking the objects conv, ofa, fake" ) );
+            }
+
+            gst_object_unref( fake );
+          }
+          else
+          {
+            guLogError( wxT( "Error creating the MusicDns fakeout" ) );
+          }
+          gst_object_unref( ofa );
+        }
+        else
+        {
+          guLogError( wxT( "Error creating the MusicDns ofa" ) );
+        }
+        gst_object_unref( conv );
+      }
+      else
+      {
+        guLogError( wxT( "Error creating the MusicDns converter" ) );
+      }
+
+      gst_object_unref( comp );
+    }
+    else
+    {
+        guLogError( wxT( "Error creating the MusicDns composer" ) );
+    }
+    gst_object_unref( m_Pipeline );
+  }
+  else
+  {
+        guLogError( wxT( "Error creating the MusicDns pipeline" ) );
+  }
+
+  return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -443,7 +474,7 @@ bool guMusicDns::DoGetMetadata( void )
         0,  // only return PUID
         m_Track->m_Bitrate,
         m_Track->m_FileName.AfterLast( wxT( '.' ) ).c_str(),
-        m_Track->m_Length * 1000,
+        m_Track->m_Length,
         !m_Track->m_ArtistName.IsEmpty() ? m_Track->m_ArtistName.c_str() : wxT( "unknown" ),
         !m_Track->m_SongName.IsEmpty() ? m_Track->m_SongName.c_str() : wxT( "unknown" ),
         !m_Track->m_AlbumName.IsEmpty() ? m_Track->m_AlbumName.c_str() : wxT( "unknown" ),
@@ -465,7 +496,7 @@ bool guMusicDns::DoGetMetadata( void )
     }
     else
     {
-        guLogMessage( wxT( guMUSICDNS_BASEURL ) wxT( "%s" ), HtmlData.c_str() );
+        //guLogMessage( wxT( guMUSICDNS_BASEURL ) wxT( "\n%s" ), HtmlData.c_str() );
         m_Status = guMDNS_STATUS_ERROR_HTTP;
     }
     return false;
