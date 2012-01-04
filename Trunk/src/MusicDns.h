@@ -40,9 +40,14 @@ class guMusicDnsThread : public wxThread
     bool            m_Running;
     guMusicDns *    m_MusicDns;
     GstElement *    m_Pipeline;
+    unsigned int    m_Start;
+    unsigned int    m_Length;
+
+    bool            BuildPipeline( void );
 
   public :
-    guMusicDnsThread( guMusicDns * musicdns, const wxChar * filename );
+    guMusicDnsThread( guMusicDns * musicdns, const wxChar * filename,
+                      const unsigned int start = 0, const unsigned int length = wxNOT_FOUND );
     ~guMusicDnsThread();
 
     virtual ExitCode    Entry();
