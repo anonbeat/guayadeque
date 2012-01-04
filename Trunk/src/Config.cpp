@@ -696,20 +696,17 @@ void guConfig::SendConfigChangedEvent( const int flags )
 void guConfig::LoadOldAccelerators( wxFileConfig * fileconfig )
 {
     wxString EntryName;
-    long EntryIndex = wxNOT_FOUND;
-    if( fileconfig->GetFirstEntry( EntryName, EntryIndex ) )
+    wxArrayString Accelerators;
+    for( int Index = 0; Index < 61; Index++ )
     {
-        wxArrayString Accelerators;
-        do {
-            Accelerators.Add( fileconfig->Read( EntryName, wxT( "0" ) ) );
-            //WriteStr( EntryName, fileconfig->Read( EntryName, wxT( "0" ) ), wxT( "Accelerators" ) );
-        } while( fileconfig->GetNextEntry( EntryName, EntryIndex ) );
-        if( Accelerators.Count() == 61 )
-        {
-            Accelerators.RemoveAt( 37 );
-            Accelerators.RemoveAt( 41 );
-            WriteAStr( wxT( "AccelKey" ), Accelerators, wxT( "accelerators" ) );
-        }
+        Accelerators.Add( fileconfig->Read( wxString::Format( wxT( "AccelKey%i" ), Index ), wxT( "0" ) ) );
+    }
+
+    if( Accelerators.Count() == 61 )
+    {
+        Accelerators.RemoveAt( 37 );
+        Accelerators.RemoveAt( 41 );
+        WriteAStr( wxT( "AccelKey" ), Accelerators, wxT( "accelerators" ) );
     }
 }
 
@@ -1385,8 +1382,8 @@ void guConfig::LoadOldConfig( const wxString &conffile )
 
         if( wxFileExists( guPATH_OLD_DBNAME ) )
         {
-            wxCopyFile( guPATH_OLD_DBNAME, guPATH_COLLECTIONS + UniqueId + guPATH_DBNAME );
-            wxRenameFile( guPATH_OLD_DBNAME, guPATH_OLD_DBNAME + wxT( ".old" ) );
+            wxCopyFile( guPATH_OLD_DBNAME, guPATH_COLLECTIONS + UniqueId + wxT( "/" ) guPATH_DBNAME );
+            wxRenameFile( guPATH_OLD_DBNAME, guPATH_OLD_DBNAME wxT( ".old" ) );
         }
 
         int Index;

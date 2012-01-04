@@ -72,13 +72,13 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guMu
             break;
         }
 
-        case GST_MESSAGE_STATE_CHANGED:
-        {
-            GstState oldstate, newstate, pendingstate;
-            gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
-            //guLogMessage( wxT( "State changed... %u  %u  %u" ), oldstate, newstate, pendingstate );
-            break;
-        }
+//        case GST_MESSAGE_STATE_CHANGED:
+//        {
+//            GstState oldstate, newstate, pendingstate;
+//            gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
+//            //guLogMessage( wxT( "State changed... %u  %u  %u" ), oldstate, newstate, pendingstate );
+//            break;
+//        }
 
 //        case GST_MESSAGE_BUFFERING :
 //        {

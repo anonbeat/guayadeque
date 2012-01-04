@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-04 16:03+0000\n"
+"POT-Creation-Date: 2012-01-04 17:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -784,11 +784,11 @@ msgstr ""
 msgid "Please confirm"
 msgstr ""
 
-#: ConfirmExit.cpp:45
+#: ConfirmExit.cpp:39
 msgid "Are you sure you want to exit the application?"
 msgstr ""
 
-#: ConfirmExit.cpp:51
+#: ConfirmExit.cpp:45
 msgid "Don't ask again"
 msgstr ""
 
