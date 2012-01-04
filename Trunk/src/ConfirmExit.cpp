@@ -23,44 +23,42 @@
 
 // -------------------------------------------------------------------------------- //
 guExitConfirmDlg::guExitConfirmDlg( wxWindow * parent ) :
-  wxDialog( parent, wxID_ANY, _("Please confirm"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _( "Please confirm" ), wxDefaultPosition, wxSize( -1, 160 ), wxDEFAULT_DIALOG_STYLE )
 {
-	wxBoxSizer* MainSizer;
-	wxBoxSizer* TopSizer;
-    wxStaticBitmap * ExitBitmap;
-    wxStaticText * MessageString;
-    wxStdDialogButtonSizer * ButtonsSizer;
-    wxButton * ButtonsSizerOK;
-    wxButton * ButtonsSizerCancel;
-
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	TopSizer = new wxBoxSizer( wxHORIZONTAL );
+	MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
 
-	ExitBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_exit ), wxDefaultPosition, wxDefaultSize, 0 );
+	wxBoxSizer * TopSizer = new wxBoxSizer( wxHORIZONTAL );
+
+    wxStaticBitmap * ExitBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_exit ), wxDefaultPosition, wxDefaultSize, 0 );
 	TopSizer->Add( ExitBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	MessageString = new wxStaticText( this, wxID_ANY, _("Are you sure you want to exit the application?"), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText * MessageString = new wxStaticText( this, wxID_ANY, _("Are you sure you want to exit the application?"), wxDefaultPosition, wxDefaultSize, 0 );
 	MessageString->Wrap( -1 );
 	TopSizer->Add( MessageString, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	MainSizer->Add( TopSizer, 1, wxEXPAND, 5 );
+	MainSizer->Add( TopSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_AskAgainCheckBox = new wxCheckBox( this, wxID_ANY, _("Don't ask again"), wxDefaultPosition, wxDefaultSize, 0 );
+	MainSizer->Add( m_AskAgainCheckBox, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	MainSizer->Add( m_AskAgainCheckBox, 0, wxALL, 5 );
+	MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	ButtonsSizer = new wxStdDialogButtonSizer();
-	ButtonsSizerOK = new wxButton( this, wxID_OK );
+    wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
+
+    wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
 	ButtonsSizer->AddButton( ButtonsSizerOK );
-	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+
+    wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
 	ButtonsSizer->AddButton( ButtonsSizerCancel );
+
 	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
 	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND | wxALL, 5 );
+	MainSizer->Add( ButtonsSizer, 0, wxALL|wxEXPAND, 5 );
 
 	SetSizer( MainSizer );
 	Layout();
