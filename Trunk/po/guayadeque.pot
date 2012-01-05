@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-04 17:42+0000\n"
+"POT-Creation-Date: 2012-01-05 07:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -776,7 +776,7 @@ msgstr ""
 msgid "Edit songs"
 msgstr ""
 
-#: Config.cpp:1367 MainFrame.cpp:90
+#: Config.cpp:1364 MainFrame.cpp:90
 msgid "My Music"
 msgstr ""
 
@@ -824,8 +824,8 @@ msgstr ""
 msgid "Embed into tracks"
 msgstr ""
 
-#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1774 DbLibrary.cpp:1786
-#: DbLibrary.cpp:1851 DbLibrary.cpp:1863 Jamendo.cpp:642 PlayerPanel.cpp:1454
+#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1776 DbLibrary.cpp:1788
+#: DbLibrary.cpp:1853 DbLibrary.cpp:1865 Jamendo.cpp:642 PlayerPanel.cpp:1454
 msgid "Unknown"
 msgstr ""
 

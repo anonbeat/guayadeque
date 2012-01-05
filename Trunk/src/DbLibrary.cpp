@@ -1719,17 +1719,17 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating 
   int Count;
   if( guCuePlaylistFile::IsValidFile( filename ) )   // If its a cue playlist
   {
-    guLogMessage( wxT( "***** CUE FILE ***** '%s'" ), filename.c_str() );
+    //guLogMessage( wxT( "***** CUE FILE ***** '%s'" ), filename.c_str() );
 
     //
     guCuePlaylistFile CuePlaylistFile( filename );
     if( ( Count = CuePlaylistFile.Count() ) )
     {
-      guLogMessage( wxT( "With %i tracks" ), Count );
+      //guLogMessage( wxT( "With %i tracks" ), Count );
       for( Index = 0; Index < Count; Index++ )
       {
         guCuePlaylistItem &CueItem = CuePlaylistFile.GetItem( Index );
-        guLogMessage( wxT( "Loading track %i '%s'" ), Index, CueItem.m_TrackPath.c_str() );
+        //guLogMessage( wxT( "Loading track %i '%s'" ), Index, CueItem.m_TrackPath.c_str() );
 
         if( wxFileExists( CueItem.m_TrackPath ) )
         {
@@ -1749,8 +1749,10 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating 
               guTrack CurTrack;
               CurTrack.m_Path = wxPathOnly( CueItem.m_TrackPath ) + wxT( "/" );
 
+              CurTrack.m_GenreName = CueItem.m_Genre;
               CurTrack.m_SongName = CueItem.m_Name;
               CurTrack.m_ArtistName = CueItem.m_ArtistName;
+              CurTrack.m_AlbumArtist = CueItem.m_AlbumArtist;
               CurTrack.m_Composer = CueItem.m_Composer;
               CurTrack.m_Comments = CueItem.m_Comment;
               CurTrack.m_AlbumName = CueItem.m_AlbumName;

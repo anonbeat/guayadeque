@@ -1602,7 +1602,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
           )
         {
             //if( !m_ForceGapless && m_FadeOutTime && !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
-            if( !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
+            if( ( !( m_ForceGapless || !m_FadeOutTime ) || !m_MediaSong.m_Offset ) && ( GetState() == guMEDIASTATE_PLAYING ) )
             {
                 m_AboutToEndDetected = true;
 
@@ -1613,7 +1613,9 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
         }
     }
 
-    if( m_MediaSong.m_Offset && ( CurPos >= m_LastLength ) )
+    //
+    // If we are in gapless mode with cue tracks only skip once we reach the end of the track.
+    if( m_MediaSong.m_Offset && ( m_ForceGapless || !m_FadeOutTime ) && ( CurPos >= m_LastLength ) )
     {
         guLogDebug( wxT( "Track should finish now..." ) );
         wxCommandEvent evt;
