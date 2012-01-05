@@ -717,10 +717,12 @@ bool guCuePlaylistFile::LoadFromText( const wxString &content )
                     if( CurrentTrack == wxNOT_FOUND )
                     {
                         m_Genre = RemoveQuotationMark( GetKeyValue( Line, wxT( "GENRE" ) ) );
+                        guLogMessage( wxT( "Genre  : '%s'" ), m_Genre.c_str() );
                     }
                     else
                     {
                         m_PlaylistItems[ CurrentTrack ].m_Genre = RemoveQuotationMark( GetKeyValue( Line, wxT( "GENRE" ) ) );
+                        guLogMessage( wxT( "Genre %i: '%s'" ), CurrentTrack, m_Genre.c_str() );
                     }
                 }
                 else if( Keys[ 1 ] == wxT( "DATE" ) )
