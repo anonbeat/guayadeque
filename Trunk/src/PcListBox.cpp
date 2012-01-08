@@ -184,7 +184,7 @@ wxString guPcListBox::GetSearchText( int item ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guPcListBox::GetDragFiles( wxFileDataObject * files )
+int guPcListBox::GetDragFiles( guDragObject * files )
 {
     guTrackArray Songs;
     int index;
@@ -192,12 +192,13 @@ int guPcListBox::GetDragFiles( wxFileDataObject * files )
     m_LibPanel->NormalizeTracks( &Songs, true );
     for( index = 0; index < count; index++ )
     {
-       wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
-       //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
-       //FileName.Replace( wxT( "%" ), wxT( "%25" ) );
-       //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
-       files->AddFile( FileName );
+        if( Songs[ index ].m_Offset )
+            continue;
+        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
+        //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
+        files->AddFile( FileName );
     }
+    files->SetTracks( Songs );
     return count;
 }
 

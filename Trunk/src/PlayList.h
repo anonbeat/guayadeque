@@ -69,8 +69,9 @@ class guPlayList : public guListView
 
 //    void                        OnDragOver( const wxCoord x, const wxCoord y );
 //    void                        OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
-    virtual int                 GetDragFiles( wxFileDataObject * files );
+    virtual int                 GetDragFiles( guDragObject * files );
     virtual void                OnDropFile( const wxString &filename );
+    virtual void                OnDropTracks( const guTrackArray * tracks );
     virtual void                OnDropBegin( void );
     virtual void                OnDropEnd( void );
 

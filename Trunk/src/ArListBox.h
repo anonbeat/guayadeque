@@ -39,7 +39,7 @@ class guArListBox : public guAccelListBox
     void            OnCommandClicked( wxCommandEvent &event );
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( wxFileDataObject * files );
+    virtual int     GetDragFiles( guDragObject * files );
 
     virtual void    CreateAcceleratorTable();
 

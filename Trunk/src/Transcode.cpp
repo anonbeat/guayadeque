@@ -677,13 +677,13 @@ void guTranscodeThread::BuildPipelineWithOffset( void )
               gst_bin_add_many( GST_BIN( comp ), src, NULL );
 
               //gst_element_set_state( m_Pipeline, GST_STATE_READY );
-              SetStateAndWait( m_Pipeline, GST_STATE_READY );
+              SetStateAndWait( m_Pipeline, GST_STATE_PAUSED );
 
               return;
             }
             else
             {
-              guLogError( wxT( "Error creating the transcode comp source" ) );
+              guLogError( wxT( "Error creating the transcode compositor filesource" ) );
             }
 
             gst_object_unref( filesink );
@@ -711,6 +711,10 @@ void guTranscodeThread::BuildPipelineWithOffset( void )
       }
 
       gst_object_unref( comp );
+    }
+    else
+    {
+      guLogError( wxT( "Error creating the transcode compositor" ) );
     }
 
     gst_object_unref( m_Pipeline );

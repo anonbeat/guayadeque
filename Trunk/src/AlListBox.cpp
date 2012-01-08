@@ -506,7 +506,7 @@ void guAlListBox::ReloadItems( bool reset )
 //}
 
 // -------------------------------------------------------------------------------- //
-int guAlListBox::GetDragFiles( wxFileDataObject * files )
+int guAlListBox::GetDragFiles( guDragObject * files )
 {
     guTrackArray Songs;
     int index;
@@ -514,12 +514,12 @@ int guAlListBox::GetDragFiles( wxFileDataObject * files )
     m_LibPanel->NormalizeTracks( &Songs, true );
     for( index = 0; index < count; index++ )
     {
-       wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
-       //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
-
-       //FileName.Replace( wxT( "%" ), wxT( "%25" ) );
-       files->AddFile( FileName );
+        if( Songs[ index ].m_Offset )
+            continue;
+        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
+        files->AddFile( FileName );
     }
+    files->SetTracks( Songs );
     return count;
 }
 

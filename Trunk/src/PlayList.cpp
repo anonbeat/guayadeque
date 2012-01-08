@@ -280,7 +280,7 @@ bool inline guIsMagnatuneFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropFile( const wxString &filename )
 {
-    //guLogMessage( wxT( "Dropping '%s'" ), filename.c_str() );
+    guLogMessage( wxT( "Dropping '%s'" ), filename.c_str() );
     if( guIsJamendoFile( filename ) || guIsMagnatuneFile( filename ) )
     {
         AddPlayListItem( wxT( "http:/" ) + filename, guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
@@ -291,6 +291,12 @@ void guPlayList::OnDropFile( const wxString &filename )
     {
         AddPlayListItem( filename, guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnDropTracks( const guTrackArray * tracks )
+{
+    AddToPlayList( * tracks );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -307,7 +313,7 @@ void guPlayList::OnDropEnd( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int  guPlayList::GetDragFiles( wxFileDataObject * files )
+int guPlayList::GetDragFiles( guDragObject * files )
 {
     int index;
     int count;

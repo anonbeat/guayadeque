@@ -47,6 +47,45 @@ DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxID_ANY )
 #define EVT_LISTBOX_ITEM_COL_RCLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_RCLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
 
 // -------------------------------------------------------------------------------- //
+class guDataObjectComposite : public wxDataObjectComposite
+{
+  public :
+    guDataObjectComposite() : wxDataObjectComposite() {}
+    ~guDataObjectComposite() {}
+
+    wxDataObjectSimple * GetDataObject( const wxDataFormat &format ) const { return GetObject( format ); }
+};
+
+// -------------------------------------------------------------------------------- //
+// guDragObject
+// -------------------------------------------------------------------------------- //
+class guDragObject
+{
+  protected :
+    wxFileDataObject *      m_FileObject;
+    wxTextDataObject *      m_TextObject;
+    wxCustomDataObject *    m_TracksObject;
+    guDataObjectComposite * m_CompositeObject;
+    guTrackArray *          m_Tracks;
+    bool                    m_AddedObjects;
+
+  public :
+    guDragObject();
+    ~guDragObject();
+
+    void    AddFile( const wxString &path );
+    void    SetText( const wxString &text );
+    void    SetTracks( const guTrackArray &tracks );
+
+    wxFileDataObject *      GetFileObject( void ) { return m_FileObject; }
+    wxTextDataObject *      GetTextObject( void ) { return m_TextObject; }
+    wxCustomDataObject *    GetTracksObject( void ) { return m_TracksObject; }
+    guDataObjectComposite * GetCompositeObject( void );
+
+};
+
+
+// -------------------------------------------------------------------------------- //
 // guListViewColumn
 // -------------------------------------------------------------------------------- //
 class guListViewColumn
@@ -279,8 +318,9 @@ class guListView : public wxScrolledWindow
     virtual void        OnDragOver( const wxCoord x, const wxCoord y );
     virtual void        OnDropBegin( void ) {}
     virtual void        OnDropFile( const wxString &filename ) {}
+    virtual void        OnDropTracks( const guTrackArray * tracks ) {}
     virtual void        OnDropEnd( void ) {}
-    virtual int         GetDragFiles( wxFileDataObject * files ) { return 0; }
+    virtual int         GetDragFiles( guDragObject * files ) { return 0; }
 
     virtual void        MoveSelection( void ) {}
     //virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
@@ -387,7 +427,7 @@ class guListViewDropFilesThread : public wxThread
 };
 
 // -------------------------------------------------------------------------------- //
-class guListViewDropTarget : public wxFileDropTarget
+class guListViewDropTarget : public wxDropTarget
 {
   private:
     guListView *                    m_ListView;
@@ -399,13 +439,14 @@ class guListViewDropTarget : public wxFileDropTarget
         m_DropFilesThreadMutex.Lock();
         m_ListViewDropFilesThread = NULL;
         m_DropFilesThreadMutex.Unlock();
-    };
+    }
 
   public:
     guListViewDropTarget( guListView * listview );
     ~guListViewDropTarget();
 
-    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+    virtual bool OnDrop( wxCoord x, wxCoord y );
+    virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 
     virtual void OnLeave();
 
@@ -414,7 +455,6 @@ class guListViewDropTarget : public wxFileDropTarget
 
     friend class guListViewDropFilesThread;
 };
-
 
 #endif
 // -------------------------------------------------------------------------------- //

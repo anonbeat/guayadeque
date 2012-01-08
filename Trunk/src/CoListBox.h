@@ -37,7 +37,7 @@ class guCoListBox : public guAccelListBox
     virtual void    CreateContextMenu( wxMenu * menu ) const;
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( wxFileDataObject * files );
+    virtual int     GetDragFiles( guDragObject * files );
 
     virtual void    CreateAcceleratorTable();
 

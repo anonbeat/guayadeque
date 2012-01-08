@@ -48,7 +48,7 @@ class guAlListBox : public  guListView
     void                OnOrderSelected( wxCommandEvent &event );
     wxString            GetSearchText( int item ) const;
 
-    virtual int         GetDragFiles( wxFileDataObject * files );
+    virtual int         GetDragFiles( guDragObject * files );
 
     void                OnConfigUpdated( wxCommandEvent &event );
     void                CreateAcceleratorTable();

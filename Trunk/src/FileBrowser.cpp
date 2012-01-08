@@ -1384,7 +1384,7 @@ wxArrayString guFilesListBox::GetAllFiles( const bool recursive ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guFilesListBox::GetDragFiles( wxFileDataObject * files )
+int guFilesListBox::GetDragFiles( guDragObject * files )
 {
     wxArrayString SelectFiles = GetSelectedFiles( true );
     int index;

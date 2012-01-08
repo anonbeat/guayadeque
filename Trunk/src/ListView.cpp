@@ -298,11 +298,11 @@ void guListView::RefreshAll( int scrollto )
 // -------------------------------------------------------------------------------- //
 void guListView::OnBeginDrag( wxMouseEvent &event )
 {
-    wxFileDataObject Files;
+    guDragObject * Files = new guDragObject();
 
-    if( GetDragFiles( &Files ) )
+    if( GetDragFiles( Files ) )
     {
-        wxDropSource source( Files, this );
+        wxDropSource source( * Files->GetCompositeObject(), this );
 
         m_DragSelfItems = true;
         wxDragResult Result = source.DoDragDrop();
@@ -313,7 +313,10 @@ void guListView::OnBeginDrag( wxMouseEvent &event )
         m_DragOverItem = wxNOT_FOUND;
 
         RefreshAll();
-        //wxMessageBox( wxT( "DoDragDrop Done" ) );
+    }
+    else
+    {
+        delete Files;
     }
 }
 
@@ -1740,9 +1743,16 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guListViewDropTarget
 // -------------------------------------------------------------------------------- //
-guListViewDropTarget::guListViewDropTarget( guListView * listview )
+guListViewDropTarget::guListViewDropTarget( guListView * listview ) : wxDropTarget()
 {
     m_ListView = listview;
+    wxDataObjectComposite * DataObject = new wxDataObjectComposite();
+    wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    DataObject->Add( TracksDataObject, true );
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
+    DataObject->Add( FileDataObject, false );
+    SetDataObject( DataObject );
+
     m_ListViewDropFilesThread = NULL;
 }
 
@@ -1753,7 +1763,64 @@ guListViewDropTarget::~guListViewDropTarget()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+wxDragResult guListViewDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def )
+{
+    //guLogMessage( wxT( "guListViewDropTarget::OnData" ) );
+
+    if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
+        return def;
+
+    if( !GetData() )
+    {
+        guLogMessage( wxT( "Error getting drop data" ) );
+        return wxDragError;
+    }
+
+    guDataObjectComposite * DataObject = ( guDataObjectComposite * ) m_dataObject;
+
+    wxDataFormat ReceivedFormat = DataObject->GetReceivedFormat();
+    //guLogMessage( wxT( "ReceivedFormat: '%s'" ), ReceivedFormat.GetId().c_str() );
+    if( ReceivedFormat == wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) )
+    {
+        guTrackArray * Tracks;
+        if( !DataObject->GetDataHere( ReceivedFormat, &Tracks ) )
+        {
+          guLogMessage( wxT( "Error getting tracks data..." ) );
+        }
+        else
+        {
+            m_ListView->OnDropTracks( Tracks );
+            m_ListView->OnDropEnd();
+
+            delete Tracks;
+        }
+    }
+    else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
+    {
+        m_DropFilesThreadMutex.Lock();
+        if( m_ListViewDropFilesThread )
+        {
+            m_ListViewDropFilesThread->Pause();
+            m_ListViewDropFilesThread->Delete();
+            m_ListViewDropFilesThread = NULL;
+        }
+        wxFileDataObject * FileDataObject = ( wxFileDataObject * ) DataObject->GetDataObject( wxDataFormat( wxDF_FILENAME ) );
+        if( FileDataObject )
+        {
+            m_ListViewDropFilesThread = new guListViewDropFilesThread( this, m_ListView, FileDataObject->GetFilenames() );
+            if( !m_ListViewDropFilesThread )
+            {
+                guLogError( wxT( "Could not create the add files thread." ) );
+            }
+        }
+        m_DropFilesThreadMutex.Unlock();
+    }
+
+    return def;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guListViewDropTarget::OnDrop( wxCoord x, wxCoord y )
 {
     // We are moving items inside this object.
     if( m_ListView->m_DragSelfItems )
@@ -1767,19 +1834,6 @@ bool guListViewDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayStrin
     else
     {
         m_ListView->OnDropBegin();
-
-        m_DropFilesThreadMutex.Lock();
-        if( m_ListViewDropFilesThread )
-        {
-            m_ListViewDropFilesThread->Pause();
-            m_ListViewDropFilesThread->Delete();
-        }
-        m_ListViewDropFilesThread = new guListViewDropFilesThread( this, m_ListView, files );
-        if( !m_ListViewDropFilesThread )
-        {
-            guLogError( wxT( "Could not create the add files thread." ) );
-        }
-        m_DropFilesThreadMutex.Unlock();
     }
     return true;
 }
@@ -1803,9 +1857,86 @@ void guListViewDropTarget::OnLeave()
 // -------------------------------------------------------------------------------- //
 wxDragResult guListViewDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
 {
-    //printf( "guListViewDropTarget::OnDragOver... %d - %d\n", x, y );
+    printf( "guListViewDropTarget::OnDragOver... %d - %d\n", x, y );
     m_ListView->OnDragOver( x, y );
     return wxDragCopy;
+}
+
+
+
+
+// -------------------------------------------------------------------------------- //
+// guDragObject
+// -------------------------------------------------------------------------------- //
+guDragObject::guDragObject()
+{
+    m_FileObject = NULL;
+    m_TextObject = NULL;
+    m_TracksObject = NULL;
+    m_CompositeObject = new guDataObjectComposite();
+    m_AddedObjects = false;
+}
+
+// -------------------------------------------------------------------------------- //
+guDragObject::~guDragObject()
+{
+    if( m_FileObject )
+        delete m_FileObject;
+    if( m_TextObject )
+        delete m_TextObject;
+    if( m_TracksObject )
+        delete m_TracksObject;
+    if( m_CompositeObject )
+        delete m_CompositeObject;
+}
+
+// -------------------------------------------------------------------------------- //
+void guDragObject::AddFile( const wxString &path )
+{
+    if( !m_FileObject )
+    {
+        m_FileObject = new wxFileDataObject();
+    }
+    m_FileObject->AddFile( path );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDragObject::SetText( const wxString &text )
+{
+    if( !m_TextObject )
+    {
+        m_TextObject = new wxTextDataObject();
+    }
+    m_TextObject->SetText( text );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDragObject::SetTracks( const guTrackArray &tracks )
+{
+    if( !m_TracksObject )
+    {
+        m_TracksObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+        m_Tracks = new guTrackArray();
+    }
+    int Index;
+    int Count = tracks.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        m_Tracks->Add( new guTrack( tracks[ Index ] ) );
+    }
+    m_TracksObject->SetData( sizeof( m_Tracks ), &m_Tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+guDataObjectComposite * guDragObject::GetCompositeObject( void )
+{
+    if( m_TracksObject )
+        m_CompositeObject->Add( m_TracksObject, true );
+    if( m_FileObject )
+        m_CompositeObject->Add( m_FileObject );
+    if( m_TextObject )
+        m_CompositeObject->Add( m_TextObject );
+    return m_CompositeObject;
 }
 
 // -------------------------------------------------------------------------------- //

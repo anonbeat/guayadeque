@@ -880,7 +880,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
                 Track.m_AlbumArtistId = Db->GetAlbumArtistId( Track.m_AlbumArtist );
                 Track.m_AlbumName = wxString( iPodTrack->album, wxConvUTF8 );
                 Track.m_FileSize = iPodTrack->size;
-                Track.m_Length = iPodTrack->tracklen / 1000;
+                Track.m_Length = iPodTrack->tracklen;
                 if( iPodTrack->cd_nr || iPodTrack->cds )
                 {
                     Track.m_Disk = wxString::Format( wxT( "%u/%u" ), iPodTrack->cd_nr, iPodTrack->cds );
@@ -1937,7 +1937,7 @@ int guMediaVieweriPodDevice::CopyTo( const guTrack * track, wxString &filename )
     iPodTrack->composer = strdup( track->m_Composer.ToUTF8() );
     iPodTrack->albumartist = strdup( track->m_AlbumArtist.ToUTF8() );
     iPodTrack->size = track->m_FileSize;
-    iPodTrack->tracklen = track->m_Length * 1000;
+    iPodTrack->tracklen = track->m_Length;
     iPodTrack->track_nr = track->m_Number;
     guStrDiskToDiskNum( track->m_Disk, iPodTrack->cd_nr, iPodTrack->cds );
     iPodTrack->bitrate = track->m_Bitrate;
@@ -2074,7 +2074,7 @@ void guMediaVieweriPodDevice::UpdateTracks( const guTrackArray &tracks, const gu
             CheckUpdateField( &iPodTrack->composer, Track.m_Composer );
             CheckUpdateField( &iPodTrack->albumartist, Track.m_AlbumArtist );
             iPodTrack->size = Track.m_FileSize;
-            iPodTrack->tracklen = Track.m_Length * 1000;
+            iPodTrack->tracklen = Track.m_Length;
             iPodTrack->track_nr = Track.m_Number;
             guStrDiskToDiskNum( Track.m_Disk, iPodTrack->cd_nr, iPodTrack->cds );
             iPodTrack->bitrate = Track.m_Bitrate;
