@@ -34,7 +34,7 @@ class guGeListBox : public guAccelListBox
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * Menu ) const;
 
-    virtual int     GetDragFiles( wxFileDataObject * files );
+    virtual int     GetDragFiles( guDragObject * files );
 
     virtual void    CreateAcceleratorTable( void );
 

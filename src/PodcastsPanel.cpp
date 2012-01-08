@@ -807,7 +807,7 @@ int guDbPodcasts::GetPendingPodcasts( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, wxFileDataObject * files )
+int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, guDragObject * files )
 {
   int Count = 0;
   wxString query;
@@ -1719,7 +1719,7 @@ int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guChannelsListBox::GetDragFiles( wxFileDataObject * files )
+int guChannelsListBox::GetDragFiles( guDragObject * files )
 {
     return ( ( guDbPodcasts * ) m_Db )->GetPodcastFiles( GetSelectedItems(), files );
 }
@@ -2184,7 +2184,7 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastListBox::GetDragFiles( wxFileDataObject * files )
+int guPodcastListBox::GetDragFiles( guDragObject * files )
 {
     guTrackArray Songs;
     int index;
