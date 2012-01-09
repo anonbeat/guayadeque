@@ -78,8 +78,9 @@ class guPLNamesTreeCtrl : public wxTreeCtrl
     void            OnContextMenu( wxTreeEvent &event );
 
     void            OnBeginDrag( wxTreeEvent &event );
-    void            OnDragOver( const wxCoord x, const wxCoord y );
+    wxDragResult    OnDragOver( const wxCoord x, const wxCoord y );
     void            OnDropFile( const wxString &filename );
+    void            OnDropTracks( const guTrackArray * tracks );
     void            OnDropEnd( void );
     void            OnKeyDown( wxKeyEvent &event );
 
@@ -118,7 +119,7 @@ class guPLNamesDropFilesThread : public wxThread
 };
 
 // -------------------------------------------------------------------------------- //
-class guPLNamesDropTarget : public wxFileDropTarget
+class guPLNamesDropTarget : public wxDropTarget
 {
   private:
     guPLNamesTreeCtrl *             m_PLNamesTreeCtrl;
@@ -130,10 +131,10 @@ class guPLNamesDropTarget : public wxFileDropTarget
     guPLNamesDropTarget( guPLNamesTreeCtrl * plnamestreectrl );
     ~guPLNamesDropTarget();
 
-    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
+    virtual bool                    OnDrop( wxCoord x, wxCoord y );
+    virtual wxDragResult            OnData( wxCoord x, wxCoord y, wxDragResult def );
 
-    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
-
+    virtual wxDragResult            OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
 
     friend class guPLNamesDropFilesThread;
 };
