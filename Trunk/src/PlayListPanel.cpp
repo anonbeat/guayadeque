@@ -404,7 +404,7 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
+wxDragResult guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
 {
     int HitFlags;
     wxTreeItemId TreeItemId = HitTest( wxPoint( x, y ), HitFlags );
@@ -433,6 +433,8 @@ void guPLNamesTreeCtrl::OnDragOver( const wxCoord x, const wxCoord y )
             m_DragOverItem = wxTreeItemId();
         }
     }
+
+    return m_DragOverItem.IsOk() ? wxDragCopy : wxDragNone;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -459,6 +461,27 @@ void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
             if( ( TrackId = m_Db->FindTrackFile( filename, NULL ) ) )
             {
                 m_DropIds.Add( TrackId );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPLNamesTreeCtrl::OnDropTracks( const guTrackArray * tracks )
+{
+    if( tracks )
+    {
+        int Index;
+        int Count;
+        if( ( Count = tracks->Count() ) )
+        {
+            for( Index = 0; Index < Count; Index++ )
+            {
+                const guTrack &Track = tracks->Item( Index );
+                if( Track.m_MediaViewer == m_PlayListPanel->m_MediaViewer )
+                {
+                    m_DropIds.Add( Track.m_SongId );
+                }
             }
         }
     }
@@ -596,10 +619,17 @@ guPLNamesDropFilesThread::ExitCode guPLNamesDropFilesThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guPLNamesDropTarget
 // -------------------------------------------------------------------------------- //
-guPLNamesDropTarget::guPLNamesDropTarget( guPLNamesTreeCtrl * plnamestreectrl )
+guPLNamesDropTarget::guPLNamesDropTarget( guPLNamesTreeCtrl * plnamestreectrl ) : wxDropTarget()
 {
     m_PLNamesTreeCtrl = plnamestreectrl;
     m_PLNamesDropFilesThread = NULL;
+
+    wxDataObjectComposite * DataObject = new wxDataObjectComposite();
+    wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    DataObject->Add( TracksDataObject, true );
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
+    DataObject->Add( FileDataObject, false );
+    SetDataObject( DataObject );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -609,30 +639,72 @@ guPLNamesDropTarget::~guPLNamesDropTarget()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guPLNamesDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+bool guPLNamesDropTarget::OnDrop( wxCoord x, wxCoord y )
 {
-    if( m_PLNamesDropFilesThread )
-    {
-        m_PLNamesDropFilesThread->Pause();
-        m_PLNamesDropFilesThread->Delete();
-    }
-
-    m_PLNamesDropFilesThread = new guPLNamesDropFilesThread( this, m_PLNamesTreeCtrl, files );
-
-    if( !m_PLNamesDropFilesThread )
-    {
-        guLogError( wxT( "Could not create the add files thread." ) );
-    }
-
     return true;
+}
+
+// -------------------------------------------------------------------------------- //
+wxDragResult guPLNamesDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def )
+{
+    //guLogMessage( wxT( "guListViewDropTarget::OnData" ) );
+
+    if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
+        return def;
+
+    if( !GetData() )
+    {
+        guLogMessage( wxT( "Error getting drop data" ) );
+        return wxDragError;
+    }
+
+    guDataObjectComposite * DataObject = ( guDataObjectComposite * ) m_dataObject;
+
+    wxDataFormat ReceivedFormat = DataObject->GetReceivedFormat();
+    //guLogMessage( wxT( "ReceivedFormat: '%s'" ), ReceivedFormat.GetId().c_str() );
+    if( ReceivedFormat == wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) )
+    {
+        guTrackArray * Tracks;
+        if( !DataObject->GetDataHere( ReceivedFormat, &Tracks ) )
+        {
+          guLogMessage( wxT( "Error getting tracks data..." ) );
+        }
+        else
+        {
+            m_PLNamesTreeCtrl->OnDropTracks( Tracks );
+            m_PLNamesTreeCtrl->OnDropEnd();
+
+            delete Tracks;
+        }
+    }
+    else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
+    {
+        if( m_PLNamesDropFilesThread )
+        {
+            m_PLNamesDropFilesThread->Pause();
+            m_PLNamesDropFilesThread->Delete();
+        }
+
+        wxFileDataObject * FileDataObject = ( wxFileDataObject * ) DataObject->GetDataObject( wxDataFormat( wxDF_FILENAME ) );
+        if( FileDataObject )
+        {
+            m_PLNamesDropFilesThread = new guPLNamesDropFilesThread( this, m_PLNamesTreeCtrl, FileDataObject->GetFilenames() );
+
+            if( !m_PLNamesDropFilesThread )
+            {
+                guLogError( wxT( "Could not create the add files thread." ) );
+            }
+        }
+    }
+
+    return def;
 }
 
 // -------------------------------------------------------------------------------- //
 wxDragResult guPLNamesDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
 {
     //printf( "guPLNamesDropTarget::OnDragOver... %d - %d\n", x, y );
-    m_PLNamesTreeCtrl->OnDragOver( x, y );
-    return wxDragCopy;
+    return m_PLNamesTreeCtrl->OnDragOver( x, y );
 }
 
 

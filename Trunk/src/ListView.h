@@ -81,7 +81,6 @@ class guDragObject
     wxTextDataObject *      GetTextObject( void ) { return m_TextObject; }
     wxCustomDataObject *    GetTracksObject( void ) { return m_TracksObject; }
     guDataObjectComposite * GetCompositeObject( void );
-
 };
 
 
