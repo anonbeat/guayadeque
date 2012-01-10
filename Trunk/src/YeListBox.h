@@ -37,14 +37,12 @@ class guYeListBox : public guAccelListBox
     virtual void    CreateContextMenu( wxMenu * menu ) const;
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( guDragObject * files );
-
     virtual void    CreateAcceleratorTable( void );
 
   public :
                     guYeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guYeListBox();
-    virtual int     GetSelectedSongs( guTrackArray * songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * songs, const bool isdrag = false ) const;
 
     int             FindYear( const int year );
 

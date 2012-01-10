@@ -184,7 +184,7 @@ class guFilesListBox : public guListView
     int                         GetAllSongs( guTrackArray * tracks ) const;
     int                         GetTracksFromFiles( const wxArrayString &files, guTrackArray * tracks ) const;
 
-    virtual int                 GetDragFiles( guDragObject * files );
+    virtual int                 GetDragFiles( guDataObjectComposite * files );
 
     wxArrayString               GetColumnNames( void );
 

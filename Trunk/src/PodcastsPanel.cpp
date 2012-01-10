@@ -807,10 +807,11 @@ int guDbPodcasts::GetPendingPodcasts( guPodcastItemArray * items )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, guDragObject * files )
+int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, guDataObjectComposite * files )
 {
   int Count = 0;
   wxString query;
+  wxArrayString Filenames;
   wxSQLite3ResultSet dbRes;
 
   query = wxT( "SELECT podcastitem_file FROM podcastitems WHERE " ) +
@@ -820,12 +821,10 @@ int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, guDragObject * fi
 
   while( dbRes.NextRow() )
   {
-      wxString FileName = guFileDnDEncode( dbRes.GetString( 0 ) );
-      //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
-      files->AddFile( FileName );
+      Filenames.Add( guFileDnDEncode( dbRes.GetString( 0 ) ) );
       Count++;
   }
-
+  files->SetFiles( Filenames );
   dbRes.Finalize();
   return Count;
 }
@@ -1719,7 +1718,7 @@ int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guChannelsListBox::GetDragFiles( guDragObject * files )
+int guChannelsListBox::GetDragFiles( guDataObjectComposite * files )
 {
     return ( ( guDbPodcasts * ) m_Db )->GetPodcastFiles( GetSelectedItems(), files );
 }
@@ -2181,19 +2180,6 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
         }
     }
     return tracks->Count();
-}
-
-// -------------------------------------------------------------------------------- //
-int guPodcastListBox::GetDragFiles( guDragObject * files )
-{
-    guTrackArray Songs;
-    int index;
-    int count = GetSelectedSongs( &Songs );
-    for( index = 0; index < count; index++ )
-    {
-       files->AddFile( Songs[ index ].m_FileName );
-    }
-    return count;
 }
 
 // -------------------------------------------------------------------------------- //

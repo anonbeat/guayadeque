@@ -92,10 +92,10 @@ void guArListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guArListBox::GetSelectedSongs( guTrackArray * songs ) const
+int guArListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) const
 {
     int Count = m_Db->GetArtistsSongs( GetSelectedItems(), songs );
-    m_LibPanel->NormalizeTracks( songs );
+    m_LibPanel->NormalizeTracks( songs, isdrag );
     return Count;
 }
 
@@ -334,25 +334,6 @@ bool guArListBox::SelectArtistName( const wxString &ArtistName )
         return true;
     }
     return false;
-}
-
-// -------------------------------------------------------------------------------- //
-int guArListBox::GetDragFiles( guDragObject * files )
-{
-    guTrackArray Songs;
-    int index;
-    int count = GetSelectedSongs( &Songs );
-    m_LibPanel->NormalizeTracks( &Songs, true );
-    for( index = 0; index < count; index++ )
-    {
-        if( Songs[ index ].m_Offset )
-            continue;
-        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
-        //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
-        files->AddFile( FileName );
-    }
-    files->SetTracks( Songs );
-    return count;
 }
 
 // -------------------------------------------------------------------------------- //

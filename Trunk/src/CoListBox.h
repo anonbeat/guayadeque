@@ -37,14 +37,12 @@ class guCoListBox : public guAccelListBox
     virtual void    CreateContextMenu( wxMenu * menu ) const;
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( guDragObject * files );
-
     virtual void    CreateAcceleratorTable();
 
   public :
                     guCoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guCoListBox();
-    virtual int     GetSelectedSongs( guTrackArray * songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * songs, const bool isdrag = false ) const;
 
     int             FindComposer( const wxString &composer );
 

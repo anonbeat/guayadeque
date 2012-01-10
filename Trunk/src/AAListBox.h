@@ -40,14 +40,12 @@ class guAAListBox : public guAccelListBox
     void            OnCommandClicked( wxCommandEvent &event );
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( guDragObject * files );
-
     virtual void    CreateAcceleratorTable( void );
 
   public :
                     guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guAAListBox();
-    virtual int     GetSelectedSongs( guTrackArray * songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * songs, const bool isdrag = false ) const;
 
     int             FindAlbumArtist( const wxString &albumartist );
 

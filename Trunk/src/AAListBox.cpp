@@ -90,10 +90,10 @@ void guAAListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guAAListBox::GetSelectedSongs( guTrackArray * songs ) const
+int guAAListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) const
 {
     int Count = m_Db->GetAlbumArtistsSongs( GetSelectedItems(), songs );
-    m_LibPanel->NormalizeTracks( songs );
+    m_LibPanel->NormalizeTracks( songs, isdrag );
     return Count;
 }
 
@@ -229,25 +229,6 @@ void guAAListBox::CreateContextMenu( wxMenu * Menu ) const
 wxString guAAListBox::GetSearchText( int item ) const
 {
     return GetItemName( item );
-}
-
-// -------------------------------------------------------------------------------- //
-int guAAListBox::GetDragFiles( guDragObject * files )
-{
-    guTrackArray Songs;
-    int index;
-    int count = GetSelectedSongs( &Songs );
-    m_LibPanel->NormalizeTracks( &Songs, true );
-    for( index = 0; index < count; index++ )
-    {
-        if( Songs[ index ].m_Offset )
-            continue;
-        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
-        //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
-        files->AddFile( FileName );
-    }
-    files->SetTracks( Songs );
-    return count;
 }
 
 // -------------------------------------------------------------------------------- //

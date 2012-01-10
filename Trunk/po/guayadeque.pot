@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-09 07:24+0000\n"
+"POT-Creation-Date: 2012-01-10 07:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1133,7 +1133,7 @@ msgid "Are you sure to delete the selected path ?"
 msgstr ""
 
 #: FileBrowser.cpp:553 FileBrowser.cpp:2205 LabelEditor.cpp:310
-#: LibPanel.cpp:1227 PlayListPanel.cpp:1036 PodcastsPanel.cpp:1225
+#: LibPanel.cpp:1227 PlayListPanel.cpp:1108 PodcastsPanel.cpp:1225
 #: PodcastsPanel.cpp:1611 RadioPanel.cpp:561 RadioPanel.cpp:1028
 #: RadioPanel.cpp:1763 TaListBox.cpp:203 TreePanel.cpp:1232
 msgid "Confirm"
@@ -1188,7 +1188,7 @@ msgid "Directories"
 msgstr ""
 
 #: FileBrowser.cpp:1960 FileBrowser.cpp:2098 LibPanel.cpp:1432
-#: PlayList.cpp:1973 PlayListPanel.cpp:1416 TreePanel.cpp:1158
+#: PlayList.cpp:1973 PlayListPanel.cpp:1488 TreePanel.cpp:1158
 #: TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr ""
@@ -1578,12 +1578,12 @@ msgstr ""
 msgid "Are you sure to delete the selected album cover?"
 msgstr ""
 
-#: LibPanel.cpp:1359 PlayList.cpp:2123 PlayListPanel.cpp:1307
+#: LibPanel.cpp:1359 PlayList.cpp:2123 PlayListPanel.cpp:1379
 #: TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr ""
 
-#: LibPanel.cpp:1635 PlayListPanel.cpp:1585 TreePanel.cpp:1599
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1657 TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr ""
 
@@ -1597,11 +1597,11 @@ msgstr ""
 msgid "Remove tracks from drive"
 msgstr ""
 
-#: ListView.cpp:1460
+#: ListView.cpp:1463
 msgid "Select Columns"
 msgstr ""
 
-#: ListView.cpp:1472
+#: ListView.cpp:1475
 msgid " Columns "
 msgstr ""
 
@@ -1777,7 +1777,7 @@ msgid "View the collection tree view"
 msgstr ""
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1259 MediaViewer.cpp:235
-#: PlayListPanel.cpp:729 PlayListPanel.cpp:755 PortableMedia.cpp:1168
+#: PlayListPanel.cpp:801 PlayListPanel.cpp:827 PortableMedia.cpp:1168
 msgid "Playlists"
 msgstr ""
 
@@ -2770,23 +2770,23 @@ msgstr ""
 msgid "Set as Deny Filter"
 msgstr ""
 
-#: PlayListPanel.cpp:994 PlayListPanel.cpp:1135
+#: PlayListPanel.cpp:1066 PlayListPanel.cpp:1207
 msgid "Playlist Name: "
 msgstr ""
 
-#: PlayListPanel.cpp:995 PlayListPanel.cpp:1136
+#: PlayListPanel.cpp:1067 PlayListPanel.cpp:1208
 msgid "Enter the new playlist name"
 msgstr ""
 
-#: PlayListPanel.cpp:1035
+#: PlayListPanel.cpp:1107
 msgid "Are you sure to delete the selected Playlist?"
 msgstr ""
 
-#: PlayListPanel.cpp:1120 PlayListPanel.cpp:1194
+#: PlayListPanel.cpp:1192 PlayListPanel.cpp:1266
 msgid "Select the playlist file"
 msgstr ""
 
-#: PlayListPanel.cpp:1147
+#: PlayListPanel.cpp:1219
 msgid "New Playlist"
 msgstr ""
 

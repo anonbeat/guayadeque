@@ -84,7 +84,7 @@ class guDbPodcasts : public guDb
     //void                    SetPodcastChannelFilters( const wxArrayInt &filters );
     //void                    SetPodcastOrder( int order );
     int                     GetPendingPodcasts( guPodcastItemArray * items );
-    int                     GetPodcastFiles( const wxArrayInt &channelid, guDragObject * files );
+    int                     GetPodcastFiles( const wxArrayInt &channelid, guDataObjectComposite * files );
 
 };
 
@@ -97,7 +97,7 @@ class guChannelsListBox : public guListBox
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * Menu ) const;
 
-    virtual int     GetDragFiles( guDragObject * files );
+    virtual int     GetDragFiles( guDataObjectComposite * files );
     virtual void    OnKeyDown( wxKeyEvent &event );
 
   public :
@@ -131,7 +131,6 @@ class guPodcastListBox : public guListView
     virtual void                GetItemsList( void );
     virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
 
-    virtual int                 GetDragFiles( guDragObject * files );
     virtual void                OnKeyDown( wxKeyEvent &event );
 
     void                        OnConfigUpdated( wxCommandEvent &event );
