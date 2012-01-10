@@ -353,10 +353,11 @@ void guSoListBox::ReloadItems( bool reset )
 }
 
 // -------------------------------------------------------------------------------- //
-int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
+int guSoListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) const
 {
     unsigned long cookie;
-    m_ItemsMutex.Lock();
+    guSoListBox * self = wxConstCast( this, guSoListBox );
+    self->m_ItemsMutex.Lock();
     int item = GetFirstSelected( cookie );
     while( item != wxNOT_FOUND )
     {
@@ -371,10 +372,11 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks )
         }
         item = GetNextSelected( cookie );
     }
-    m_ItemsMutex.Unlock();
+    self->m_ItemsMutex.Unlock();
 
-    m_MediaViewer->NormalizeTracks( tracks );
+    m_MediaViewer->NormalizeTracks( tracks, isdrag );
 
+    guLogMessage( wxT( "SOListBox::GetSelectedTracks <- %i" ), tracks->Count() );
     return tracks->Count();
 }
 

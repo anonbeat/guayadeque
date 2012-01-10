@@ -107,7 +107,7 @@ class guChannelsListBox : public guListBox
         ReloadItems();
     };
 
-    virtual int     GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
     int             FindItem( const int channelid );
 };
 
@@ -129,7 +129,7 @@ class guPodcastListBox : public guListView
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                GetItemsList( void );
-    virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
+    virtual int                 GetSelectedSongs( guTrackArray * tracks, const bool isdrag = false ) const;
 
     virtual void                OnKeyDown( wxKeyEvent &event );
 

@@ -87,10 +87,10 @@ void guTaListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guTaListBox::GetSelectedSongs( guTrackArray * songs ) const
+int guTaListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) const
 {
     int Count = m_Db->GetLabelsSongs( GetSelectedItems(), songs );
-    m_LibPanel->NormalizeTracks( songs );
+    m_LibPanel->NormalizeTracks( songs, isdrag );
     return Count;
 }
 

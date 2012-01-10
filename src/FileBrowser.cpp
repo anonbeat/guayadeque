@@ -1244,7 +1244,7 @@ void guFilesListBox::SetOrder( int columnid )
 }
 
 // -------------------------------------------------------------------------------- //
-int guFilesListBox::GetSelectedSongs( guTrackArray * tracks ) const
+int guFilesListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) const
 {
     wxArrayString Files = GetSelectedFiles( true );
     return GetTracksFromFiles( Files, tracks );

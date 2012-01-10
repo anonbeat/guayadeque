@@ -180,7 +180,7 @@ class guFilesListBox : public guListView
     virtual wxString            OnGetItemText( const int row, const int column ) const;
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                GetItemsList( void );
-    virtual int                 GetSelectedSongs( guTrackArray * tracks ) const;
+    virtual int                 GetSelectedSongs( guTrackArray * tracks, const bool isdrag = false ) const;
     int                         GetAllSongs( guTrackArray * tracks ) const;
     int                         GetTracksFromFiles( const wxArrayString &files, guTrackArray * tracks ) const;
 

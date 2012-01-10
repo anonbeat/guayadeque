@@ -1712,7 +1712,7 @@ void guChannelsListBox::OnKeyDown( wxKeyEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs ) const
+int guChannelsListBox::GetSelectedSongs( guTrackArray * Songs, const bool isdrag ) const
 {
     return 0;
 }
@@ -2146,7 +2146,7 @@ void guPodcastListBox::SetFilters( const wxArrayInt &filters )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks ) const
+int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) const
 {
     wxArrayInt Selection = GetSelectedItems();
     int Index;
