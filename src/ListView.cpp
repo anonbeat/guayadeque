@@ -298,25 +298,22 @@ void guListView::RefreshAll( int scrollto )
 // -------------------------------------------------------------------------------- //
 void guListView::OnBeginDrag( wxMouseEvent &event )
 {
-    guDragObject * Files = new guDragObject();
+    guDataObjectComposite Files;
 
-    if( GetDragFiles( Files ) )
+    if( GetDragFiles( &Files ) )
     {
-        wxDropSource source( * Files->GetCompositeObject(), this );
+        wxDropSource source( Files, this );
 
         m_DragSelfItems = true;
         wxDragResult Result = source.DoDragDrop();
         if( Result )
         {
         }
+
         m_DragSelfItems = false;
         m_DragOverItem = wxNOT_FOUND;
 
         RefreshAll();
-    }
-    else
-    {
-        delete Files;
     }
 }
 
@@ -542,6 +539,24 @@ void guListView::SetImageList( wxImageList * imagelist )
 
     if( m_Header )
         m_Header->SetImageList( imagelist );
+}
+
+// -------------------------------------------------------------------------------- //
+int guListView::GetDragFiles( guDataObjectComposite * files )
+{
+    guTrackArray Tracks;
+    wxArrayString Filenames;
+    int Index;
+    int Count = GetSelectedSongs( &Tracks, true );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Tracks[ Index ].m_Offset )
+            continue;
+        Filenames.Add( guFileDnDEncode( Tracks[ Index ].m_FileName ) );
+    }
+    files->SetTracks( Tracks );
+    files->SetFiles( Filenames );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1791,8 +1806,6 @@ wxDragResult guListViewDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult de
         {
             m_ListView->OnDropTracks( Tracks );
             m_ListView->OnDropEnd();
-
-            delete Tracks;
         }
     }
     else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
@@ -1866,77 +1879,35 @@ wxDragResult guListViewDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResul
 
 
 // -------------------------------------------------------------------------------- //
-// guDragObject
+// guDataObjectComposite
 // -------------------------------------------------------------------------------- //
-guDragObject::guDragObject()
+void guDataObjectComposite::SetFiles( const wxArrayString &files )
 {
-    m_FileObject = NULL;
-    m_TextObject = NULL;
-    m_TracksObject = NULL;
-    m_CompositeObject = new guDataObjectComposite();
-    m_AddedObjects = false;
-}
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
 
-// -------------------------------------------------------------------------------- //
-guDragObject::~guDragObject()
-{
-    if( m_FileObject )
-        delete m_FileObject;
-    if( m_TextObject )
-        delete m_TextObject;
-    if( m_TracksObject )
-        delete m_TracksObject;
-    if( m_CompositeObject )
-        delete m_CompositeObject;
-}
-
-// -------------------------------------------------------------------------------- //
-void guDragObject::AddFile( const wxString &path )
-{
-    if( !m_FileObject )
+    int Index;
+    int Count = files.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-        m_FileObject = new wxFileDataObject();
+        FileDataObject->AddFile( files[ Index ] );
     }
-    m_FileObject->AddFile( path );
+    Add( FileDataObject );
 }
 
 // -------------------------------------------------------------------------------- //
-void guDragObject::SetText( const wxString &text )
+void guDataObjectComposite::SetTracks( const guTrackArray &tracks )
 {
-    if( !m_TextObject )
-    {
-        m_TextObject = new wxTextDataObject();
-    }
-    m_TextObject->SetText( text );
-}
+    wxCustomDataObject * TracksObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    m_Tracks = new guTrackArray();
 
-// -------------------------------------------------------------------------------- //
-void guDragObject::SetTracks( const guTrackArray &tracks )
-{
-    if( !m_TracksObject )
-    {
-        m_TracksObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
-        m_Tracks = new guTrackArray();
-    }
     int Index;
     int Count = tracks.Count();
     for( Index = 0; Index < Count; Index++ )
     {
         m_Tracks->Add( new guTrack( tracks[ Index ] ) );
     }
-    m_TracksObject->SetData( sizeof( m_Tracks ), &m_Tracks );
-}
-
-// -------------------------------------------------------------------------------- //
-guDataObjectComposite * guDragObject::GetCompositeObject( void )
-{
-    if( m_TracksObject )
-        m_CompositeObject->Add( m_TracksObject, true );
-    if( m_FileObject )
-        m_CompositeObject->Add( m_FileObject );
-    if( m_TextObject )
-        m_CompositeObject->Add( m_TextObject );
-    return m_CompositeObject;
+    TracksObject->SetData( sizeof( m_Tracks ), &m_Tracks );
+    Add( TracksObject );
 }
 
 // -------------------------------------------------------------------------------- //

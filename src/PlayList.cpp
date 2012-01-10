@@ -313,18 +313,18 @@ void guPlayList::OnDropEnd( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPlayList::GetDragFiles( guDragObject * files )
+int guPlayList::GetDragFiles( guDataObjectComposite * files )
 {
     int index;
     int count;
+    wxArrayString FileNames;
     wxArrayInt Selection = GetSelectedItems( false );
     count = Selection.Count();
     for( index = 0; index < count; index++ )
     {
-        wxString FileName = guFileDnDEncode( m_Items[ Selection[ index ] ].m_FileName );
-        //FileName.Replace( wxT( "#" ), wxT( "%23" ) );
-        files->AddFile( FileName );
+        FileNames.Add( guFileDnDEncode( m_Items[ Selection[ index ] ].m_FileName ) );
     }
+    files->SetFiles( FileNames );
     return count;
 }
 

@@ -93,7 +93,7 @@ void guRaListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guRaListBox::GetSelectedSongs( guTrackArray * songs ) const
+int guRaListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) const
 {
     wxArrayInt Items = GetSelectedItems();
     int Index;
@@ -104,7 +104,7 @@ int guRaListBox::GetSelectedSongs( guTrackArray * songs ) const
             Items[ Index ]--;
     }
     Count = m_Db->GetRatingsSongs( Items, songs );
-    m_LibPanel->NormalizeTracks( songs );
+    m_LibPanel->NormalizeTracks( songs, isdrag );
     return Count;
 }
 
@@ -212,25 +212,6 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
 wxString guRaListBox::GetSearchText( int item ) const
 {
     return GetItemName( item );
-}
-
-// -------------------------------------------------------------------------------- //
-int guRaListBox::GetDragFiles( guDragObject * files )
-{
-    guTrackArray Songs;
-    int index;
-    int count = GetSelectedSongs( &Songs );
-    m_LibPanel->NormalizeTracks( &Songs, true );
-    for( index = 0; index < count; index++ )
-    {
-        if( Songs[ index ].m_Offset )
-            continue;
-        wxString FileName = guFileDnDEncode( Songs[ index ].m_FileName );
-        //guLogMessage( wxT( "Adding song '%s'" ), Songs[ index ].m_FileName.c_str() );
-        files->AddFile( FileName );
-    }
-    files->SetTracks( Songs );
-    return count;
 }
 
 // -------------------------------------------------------------------------------- //

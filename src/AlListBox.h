@@ -48,8 +48,6 @@ class guAlListBox : public  guListView
     void                OnOrderSelected( wxCommandEvent &event );
     wxString            GetSearchText( int item ) const;
 
-    virtual int         GetDragFiles( guDragObject * files );
-
     void                OnConfigUpdated( wxCommandEvent &event );
     void                CreateAcceleratorTable();
 
@@ -57,7 +55,7 @@ class guAlListBox : public  guListView
                         guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                         ~guAlListBox();
     bool                SelectAlbumName( const wxString &AlbumName );
-    virtual int         GetSelectedSongs( guTrackArray * tracks ) const;
+    virtual int         GetSelectedSongs( guTrackArray * tracks, const bool isdrag = false ) const;
     virtual wxString    GetItemName( const int item ) const { return ( * m_Items )[ item ].m_Name; }
 
     virtual int         GetItemId( const int item ) const { return ( * m_Items )[ item ].m_Id; }

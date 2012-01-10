@@ -49,40 +49,18 @@ DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxID_ANY )
 // -------------------------------------------------------------------------------- //
 class guDataObjectComposite : public wxDataObjectComposite
 {
+  protected :
+    guTrackArray *      m_Tracks;
+
   public :
-    guDataObjectComposite() : wxDataObjectComposite() {}
-    ~guDataObjectComposite() {}
+    guDataObjectComposite() : wxDataObjectComposite() { m_Tracks = NULL; }
+    ~guDataObjectComposite() { if( m_Tracks ) delete m_Tracks; }
+
+    void                SetFiles( const wxArrayString &files );
+    void                SetTracks( const guTrackArray &tracks );
 
     wxDataObjectSimple * GetDataObject( const wxDataFormat &format ) const { return GetObject( format ); }
 };
-
-// -------------------------------------------------------------------------------- //
-// guDragObject
-// -------------------------------------------------------------------------------- //
-class guDragObject
-{
-  protected :
-    wxFileDataObject *      m_FileObject;
-    wxTextDataObject *      m_TextObject;
-    wxCustomDataObject *    m_TracksObject;
-    guDataObjectComposite * m_CompositeObject;
-    guTrackArray *          m_Tracks;
-    bool                    m_AddedObjects;
-
-  public :
-    guDragObject();
-    ~guDragObject();
-
-    void    AddFile( const wxString &path );
-    void    SetText( const wxString &text );
-    void    SetTracks( const guTrackArray &tracks );
-
-    wxFileDataObject *      GetFileObject( void ) { return m_FileObject; }
-    wxTextDataObject *      GetTextObject( void ) { return m_TextObject; }
-    wxCustomDataObject *    GetTracksObject( void ) { return m_TracksObject; }
-    guDataObjectComposite * GetCompositeObject( void );
-};
-
 
 // -------------------------------------------------------------------------------- //
 // guListViewColumn
@@ -319,7 +297,7 @@ class guListView : public wxScrolledWindow
     virtual void        OnDropFile( const wxString &filename ) {}
     virtual void        OnDropTracks( const guTrackArray * tracks ) {}
     virtual void        OnDropEnd( void ) {}
-    virtual int         GetDragFiles( guDragObject * files ) { return 0; }
+    virtual int         GetDragFiles( guDataObjectComposite * files );
 
     virtual void        MoveSelection( void ) {}
     //virtual void        OnSysColorChanged( wxSysColourChangedEvent &event );
@@ -364,7 +342,7 @@ class guListView : public wxScrolledWindow
     void                    RefreshLines( const int from, const int to ) { m_ListBox->RefreshLines( from, to ); }
     void                    RefreshLine( const int line ) { m_ListBox->RefreshLine( line ); }
     bool                    IsSelected( size_t row ) const { return m_ListBox->IsSelected( row ); }
-    virtual int             GetSelectedSongs( guTrackArray * Songs ) const { return 0; }
+    virtual int             GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const { return 0; }
 
     int                     HitTest( wxCoord x, wxCoord y ) const { return m_ListBox->HitTest( x, y ); }
 

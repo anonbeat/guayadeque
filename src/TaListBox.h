@@ -37,8 +37,6 @@ class guTaListBox : public guAccelListBox
     void            DelLabel( wxCommandEvent &event );
     void            EditLabel( wxCommandEvent &event );
 
-    virtual int     GetDragFiles( guDragObject * files );
-
     virtual void    CreateAcceleratorTable( void );
 
   public :

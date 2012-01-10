@@ -39,14 +39,12 @@ class guArListBox : public guAccelListBox
     void            OnCommandClicked( wxCommandEvent &event );
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( guDragObject * files );
-
     virtual void    CreateAcceleratorTable();
 
   public :
                     guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guArListBox();
-    virtual int     GetSelectedSongs( guTrackArray * songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * songs, const bool isdrag = false ) const;
     bool            SelectArtistName( const wxString &ArtistName );
     int             FindArtist( const int artistid );
 

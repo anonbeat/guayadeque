@@ -1384,16 +1384,17 @@ wxArrayString guFilesListBox::GetAllFiles( const bool recursive ) const
 }
 
 // -------------------------------------------------------------------------------- //
-int guFilesListBox::GetDragFiles( guDragObject * files )
+int guFilesListBox::GetDragFiles( guDataObjectComposite * files )
 {
     wxArrayString SelectFiles = GetSelectedFiles( true );
-    int index;
-    int count = SelectFiles.Count();
-    for( index = 0; index < count; index++ )
+    int Index;
+    int Count = SelectFiles.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-       files->AddFile( guFileDnDEncode( SelectFiles[ index ] ) );
+       SelectFiles[ Index ] = guFileDnDEncode( SelectFiles[ Index ] );
     }
-    return count;
+    files->SetFiles( SelectFiles );
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //

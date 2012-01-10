@@ -40,8 +40,6 @@ class guRaListBox : public guAccelListBox
     virtual void    CreateContextMenu( wxMenu * menu ) const;
     wxString        GetSearchText( int Item ) const;
 
-    virtual int     GetDragFiles( guDragObject * files );
-
     virtual void    DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
 
     virtual void    CreateAcceleratorTable( void );
@@ -49,7 +47,7 @@ class guRaListBox : public guAccelListBox
   public :
                     guRaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
                     ~guRaListBox();
-    virtual int     GetSelectedSongs( guTrackArray * songs ) const;
+    virtual int     GetSelectedSongs( guTrackArray * songs, const bool isdrag = false ) const;
 
 };
 
