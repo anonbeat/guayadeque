@@ -107,17 +107,19 @@ void guTVSoListBox::SetFilters( guTreeViewFilterArray &filters )
 }
 
 // -------------------------------------------------------------------------------- //
-int guTVSoListBox::GetSelectedSongs( guTrackArray * tracks )
+int guTVSoListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) const
 {
     unsigned long cookie;
-    m_ItemsMutex.Lock();
+    guTVSoListBox * self = wxConstCast( this, guTVSoListBox );
+    self->m_ItemsMutex.Lock();
     int item = GetFirstSelected( cookie );
     while( item != wxNOT_FOUND )
     {
         tracks->Add( new guTrack( m_Items[ item ] ) );
         item = GetNextSelected( cookie );
     }
-    m_ItemsMutex.Unlock();
+    self->m_ItemsMutex.Unlock();
+    m_MediaViewer->NormalizeTracks( tracks, isdrag );
     return tracks->Count();
 }
 

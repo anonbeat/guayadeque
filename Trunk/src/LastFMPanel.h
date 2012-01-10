@@ -799,6 +799,7 @@ class guLastFMPanel : public wxScrolledWindow
 	void                SetUpdateEnable( bool value );
 	void                UpdateLayout( void ) { m_MainSizer->FitInside( this ); }
 	void                OnDropFiles( const wxArrayString &files );
+	void                OnDropFiles( const guTrackArray * tracks );
 
 	guMediaViewer *     GetMediaViewer( void ) { return m_MediaViewer; }
 	void                SetMediaViewer( guMediaViewer * mediaviewer );
@@ -816,17 +817,16 @@ class guLastFMPanel : public wxScrolledWindow
 };
 
 // -------------------------------------------------------------------------------- //
-class guLastFMPanelDropTarget : public wxFileDropTarget
+class guLastFMPanelDropTarget : public wxDropTarget
 {
   private:
     guLastFMPanel *     m_LastFMPanel;
+
   public:
     guLastFMPanelDropTarget( guLastFMPanel * lastfmpanel );
     ~guLastFMPanelDropTarget();
 
-    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
-
-    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
+    virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 #endif

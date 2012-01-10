@@ -49,7 +49,7 @@ class guTVSoListBox : public guSoListBox
 
     void                SetFilters( guTreeViewFilterArray &filters );
 
-    virtual int         GetSelectedSongs( guTrackArray * Songs );
+    virtual int         GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
     virtual void        GetAllSongs( guTrackArray * Songs );
 
     virtual int         GetItemId( const int row ) const;

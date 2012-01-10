@@ -39,7 +39,7 @@ class guGeListBox : public guAccelListBox
   public :
     guGeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label );
 
-    virtual int GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual int GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
 
 };
 

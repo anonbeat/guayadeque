@@ -3077,11 +3077,55 @@ void guLastFMPanel::OnDropFiles( const wxArrayString &files )
     if( !files.Count() )
         return;
 
+    guTrackChangeInfo ChangeInfo;
     guTrack Track;
     guDbLibrary * Db = m_Db ? m_Db : m_DefaultDb;
-    if( Db->FindTrackFile( files[ 0 ], &Track ) )
+    if( !Db->FindTrackFile( files[ 0 ], &Track ) )
+    {
+        if( Track.ReadFromFile( files[ 0 ] ) )
+        {
+            Track.m_Type = guTRACK_TYPE_NOTDB;
+            Track.m_MediaViewer = NULL;
+        }
+        else
+        {
+            return;
+        }
+    }
+    else
+    {
+        Track.m_MediaViewer = m_MediaViewer;
+    }
+
+    ChangeInfo.m_ArtistName = Track.m_ArtistName;
+    ChangeInfo.m_TrackName = Track.m_SongName;
+    ChangeInfo.m_MediaViewer = Track.m_MediaViewer;
+
+    SetUpdateEnable( false );
+    AppendTrackChangeInfo( &ChangeInfo );
+    ShowCurrentTrack();
+}
+
+// -------------------------------------------------------------------------------- //
+void guLastFMPanel::OnDropFiles( const guTrackArray * tracks )
+{
+    //guLogMessage( wxT( "guLastFMPanelDropTarget::OnDropFiles" ) );
+    if( tracks && tracks->Count() )
     {
         guTrackChangeInfo ChangeInfo;
+
+        const guTrack & Track = tracks->Item( 0 );
+
+        if( Track.m_MediaViewer )
+        {
+            m_MediaViewer = Track.m_MediaViewer;
+            m_Db = m_MediaViewer->GetDb();
+        }
+        else
+        {
+            m_MediaViewer = NULL;
+            m_Db = NULL;
+        }
 
         ChangeInfo.m_ArtistName = Track.m_ArtistName;
         ChangeInfo.m_TrackName = Track.m_SongName;
@@ -3089,22 +3133,6 @@ void guLastFMPanel::OnDropFiles( const wxArrayString &files )
         SetUpdateEnable( false );
         AppendTrackChangeInfo( &ChangeInfo );
         ShowCurrentTrack();
-    }
-    else
-    {
-        if( Track.ReadFromFile( files[ 0 ] ) )
-        {
-            Track.m_Type = guTRACK_TYPE_NOTDB;
-
-            guTrackChangeInfo ChangeInfo;
-
-            ChangeInfo.m_ArtistName = Track.m_ArtistName;
-            ChangeInfo.m_TrackName = Track.m_SongName;
-
-            SetUpdateEnable( false );
-            AppendTrackChangeInfo( &ChangeInfo );
-            ShowCurrentTrack();
-        }
     }
 }
 
@@ -4153,6 +4181,13 @@ guFetchSimTracksInfoThread::ExitCode guFetchSimTracksInfoThread::Entry()
 guLastFMPanelDropTarget::guLastFMPanelDropTarget( guLastFMPanel * lastfmpanel )
 {
     m_LastFMPanel = lastfmpanel;
+
+    wxDataObjectComposite * DataObject = new wxDataObjectComposite();
+    wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    DataObject->Add( TracksDataObject, true );
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
+    DataObject->Add( FileDataObject, false );
+    SetDataObject( DataObject );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4161,17 +4196,45 @@ guLastFMPanelDropTarget::~guLastFMPanelDropTarget()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guLastFMPanelDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+wxDragResult guLastFMPanelDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def )
 {
-    m_LastFMPanel->OnDropFiles( files );
-    return true;
-}
+    //guLogMessage( wxT( "guListViewDropTarget::OnData" ) );
 
-// -------------------------------------------------------------------------------- //
-wxDragResult guLastFMPanelDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
-{
-    //printf( "guLastFMPanelDropTarget::OnDragOver... %d - %d\n", x, y );
-    return wxDragCopy;
+    if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
+        return def;
+
+    if( !GetData() )
+    {
+        guLogMessage( wxT( "Error getting drop data" ) );
+        return wxDragError;
+    }
+
+    guDataObjectComposite * DataObject = ( guDataObjectComposite * ) m_dataObject;
+
+    wxDataFormat ReceivedFormat = DataObject->GetReceivedFormat();
+    //guLogMessage( wxT( "ReceivedFormat: '%s'" ), ReceivedFormat.GetId().c_str() );
+    if( ReceivedFormat == wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) )
+    {
+        guTrackArray * Tracks;
+        if( !DataObject->GetDataHere( ReceivedFormat, &Tracks ) )
+        {
+          guLogMessage( wxT( "Error getting tracks data..." ) );
+        }
+        else
+        {
+            m_LastFMPanel->OnDropFiles( Tracks );
+        }
+    }
+    else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
+    {
+        wxFileDataObject * FileDataObject = ( wxFileDataObject * ) DataObject->GetDataObject( wxDataFormat( wxDF_FILENAME ) );
+        if( FileDataObject )
+        {
+            m_LastFMPanel->OnDropFiles( FileDataObject->GetFilenames() );
+        }
+    }
+
+    return def;
 }
 
 // -------------------------------------------------------------------------------- //

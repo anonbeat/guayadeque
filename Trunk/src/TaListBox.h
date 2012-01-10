@@ -44,7 +44,7 @@ class guTaListBox : public guAccelListBox
     guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * NewDb, const wxString &Label );
     ~guTaListBox();
 
-    virtual int GetSelectedSongs( guTrackArray * Songs ) const;
+    virtual int GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
 
 };
 

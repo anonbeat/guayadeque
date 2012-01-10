@@ -59,7 +59,7 @@ class guPLSoListBox : public guSoListBox
     void                SetPlayList( const wxArrayInt &ids, const wxArrayInt &types );
     int                 GetPlayListSetIds( wxArrayInt * setids ) const;
 
-    virtual int         GetSelectedSongs( guTrackArray * Songs );
+    virtual int         GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
     virtual void        GetAllSongs( guTrackArray * Songs );
 
     virtual int         GetItemId( const int row ) const;

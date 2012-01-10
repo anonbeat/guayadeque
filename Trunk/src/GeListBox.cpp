@@ -75,10 +75,10 @@ void guGeListBox::GetItemsList( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guGeListBox::GetSelectedSongs( guTrackArray * songs ) const
+int guGeListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) const
 {
     int Count = m_Db->GetGenresSongs( GetSelectedItems(), songs );
-    m_LibPanel->NormalizeTracks( songs );
+    m_LibPanel->NormalizeTracks( songs, isdrag );
     return Count;
 }
 

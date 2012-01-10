@@ -98,7 +98,7 @@ class guSoListBox : public guListView
 
     virtual void                ReloadItems( bool reset = true );
 
-    virtual int                 GetSelectedSongs( guTrackArray * Songs );
+    virtual int                 GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
     virtual void                GetAllSongs( guTrackArray * Songs );
 
     virtual int                 GetItemId( const int row ) const;
