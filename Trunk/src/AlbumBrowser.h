@@ -282,7 +282,7 @@ class guAlbumBrowser : public wxPanel
 };
 
 // -------------------------------------------------------------------------------- //
-class guAlbumBrowserDropTarget : public wxFileDropTarget
+class guAlbumBrowserDropTarget : public wxDropTarget
 {
   private:
     guAlbumBrowserItemPanel *       m_AlbumBrowserItemPanel;
@@ -292,9 +292,7 @@ class guAlbumBrowserDropTarget : public wxFileDropTarget
     guAlbumBrowserDropTarget( guMediaViewer * mediaviewer, guAlbumBrowserItemPanel * itempanel );
     ~guAlbumBrowserDropTarget() {};
 
-    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
-
-//    virtual wxDragResult OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
+    virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 #endif

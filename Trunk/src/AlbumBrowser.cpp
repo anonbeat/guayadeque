@@ -1363,29 +1363,72 @@ void guAlbumBrowser::CreateContextMenu( wxMenu * menu )
 // guAlbumBrowserDropTarget
 // -------------------------------------------------------------------------------- //
 guAlbumBrowserDropTarget::guAlbumBrowserDropTarget( guMediaViewer * mediaviewer, guAlbumBrowserItemPanel * itempanel ) :
-    wxFileDropTarget()
+    wxDropTarget()
 {
     m_MediaViewer = mediaviewer;
     m_AlbumBrowserItemPanel = itempanel;
+
+    wxDataObjectComposite * DataObject = new wxDataObjectComposite();
+    wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    DataObject->Add( TracksDataObject, true );
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
+    DataObject->Add( FileDataObject, false );
+    SetDataObject( DataObject );
 }
 
 // -------------------------------------------------------------------------------- //
-bool guAlbumBrowserDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+wxDragResult guAlbumBrowserDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def )
 {
-    if( files.Count() )
+    //guLogMessage( wxT( "guAlbumBrowserDropTarget::OnData" ) );
+
+    if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
+        return def;
+
+    if( !GetData() )
     {
-        wxString CoverFile = files[ 0 ];
-        if( !CoverFile.IsEmpty() && wxFileExists( CoverFile ) )
+        guLogMessage( wxT( "Error getting drop data" ) );
+        return wxDragError;
+    }
+
+    guDataObjectComposite * DataObject = ( guDataObjectComposite * ) m_dataObject;
+
+    wxDataFormat ReceivedFormat = DataObject->GetReceivedFormat();
+    //guLogMessage( wxT( "ReceivedFormat: '%s'" ), ReceivedFormat.GetId().c_str() );
+    if( ReceivedFormat == wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) )
+    {
+        guTrackArray * Tracks;
+        if( !DataObject->GetDataHere( ReceivedFormat, &Tracks ) )
         {
-            if( guIsValidImageFile( CoverFile.Lower() ) )
+          guLogMessage( wxT( "Error getting tracks data..." ) );
+        }
+        else
+        {
+            m_MediaViewer->ImportFiles( new guTrackArray( * Tracks ) );
+        }
+    }
+    else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
+    {
+        wxFileDataObject * FileDataObject = ( wxFileDataObject * ) DataObject->GetDataObject( wxDataFormat( wxDF_FILENAME ) );
+        if( FileDataObject )
+        {
+            wxArrayString Files = FileDataObject->GetFilenames();
+            if( Files.Count() )
             {
-                m_AlbumBrowserItemPanel->SetAlbumCover( CoverFile );
-                return true;
+                wxString CoverFile = Files[ 0 ];
+                if( !CoverFile.IsEmpty() && wxFileExists( CoverFile ) &&
+                    guIsValidImageFile( CoverFile.Lower() ) )
+                {
+                    m_AlbumBrowserItemPanel->SetAlbumCover( CoverFile );
+                }
+                else
+                {
+                    m_MediaViewer->ImportFiles( Files );
+                }
             }
         }
-        m_MediaViewer->ImportFiles( files );
     }
-    return false;
+
+    return def;
 }
 
 // -------------------------------------------------------------------------------- //
