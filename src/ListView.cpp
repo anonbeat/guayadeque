@@ -1761,14 +1761,14 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
 guListViewDropTarget::guListViewDropTarget( guListView * listview ) : wxDropTarget()
 {
     m_ListView = listview;
+    m_ListViewDropFilesThread = NULL;
+
     wxDataObjectComposite * DataObject = new wxDataObjectComposite();
     wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
     DataObject->Add( TracksDataObject, true );
     wxFileDataObject * FileDataObject = new wxFileDataObject();
     DataObject->Add( FileDataObject, false );
     SetDataObject( DataObject );
-
-    m_ListViewDropFilesThread = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1870,7 +1870,7 @@ void guListViewDropTarget::OnLeave()
 // -------------------------------------------------------------------------------- //
 wxDragResult guListViewDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
 {
-    printf( "guListViewDropTarget::OnDragOver... %d - %d\n", x, y );
+    //printf( "guListViewDropTarget::OnDragOver... %d - %d\n", x, y );
     m_ListView->OnDragOver( x, y );
     return wxDragCopy;
 }

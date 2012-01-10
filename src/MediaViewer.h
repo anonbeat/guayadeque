@@ -333,7 +333,7 @@ class guUpdateCoversThread : public wxThread
 };
 
 // -------------------------------------------------------------------------------- //
-class guMediaViewerDropTarget : public wxFileDropTarget
+class guMediaViewerDropTarget : public wxDropTarget
 {
   protected :
     guMediaViewer * m_MediaViewer;
@@ -342,7 +342,7 @@ class guMediaViewerDropTarget : public wxFileDropTarget
     guMediaViewerDropTarget( guMediaViewer * libpanel );
     ~guMediaViewerDropTarget();
 
-    virtual bool OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames );
+    virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 #endif
