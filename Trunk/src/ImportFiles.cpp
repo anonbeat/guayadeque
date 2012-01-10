@@ -124,7 +124,15 @@ void guImportFiles::CreateControls( void )
 	Count = m_Tracks->Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
-	    m_FilesListBox->Append( m_Tracks->Item( Index ).m_FileName.AfterLast( wxT( '/' ) ) );
+	    const guTrack & CurTrack = m_Tracks->Item( Index );
+	    wxString CurFile = CurTrack.m_FileName.AfterLast( wxT( '/' ) );
+	    if( CurTrack.m_Offset )
+	    {
+            CurFile += wxT( "@" ) + LenToString( CurTrack.m_Offset );
+            CurFile += wxT( " / " ) + LenToString( CurTrack.m_Length );
+	    }
+
+	    m_FilesListBox->Append( CurFile );
 	}
 	FilesSizer->Add( m_FilesListBox, 1, wxEXPAND|wxALL, 5 );
 

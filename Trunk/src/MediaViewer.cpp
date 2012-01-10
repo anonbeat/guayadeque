@@ -2261,9 +2261,16 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
 // -------------------------------------------------------------------------------- //
 // guMediaViewerDropTarget
 // -------------------------------------------------------------------------------- //
-guMediaViewerDropTarget::guMediaViewerDropTarget( guMediaViewer * mediaviewer ) : wxFileDropTarget()
+guMediaViewerDropTarget::guMediaViewerDropTarget( guMediaViewer * mediaviewer ) : wxDropTarget()
 {
     m_MediaViewer = mediaviewer;
+
+    wxDataObjectComposite * DataObject = new wxDataObjectComposite();
+    wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    DataObject->Add( TracksDataObject, true );
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
+    DataObject->Add( FileDataObject, false );
+    SetDataObject( DataObject );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2272,10 +2279,43 @@ guMediaViewerDropTarget::~guMediaViewerDropTarget()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaViewerDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &filenames )
+wxDragResult guMediaViewerDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def )
 {
-    m_MediaViewer->ImportFiles( filenames );
-    return false;
+    if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
+        return def;
+
+    if( !GetData() )
+    {
+        guLogMessage( wxT( "Error getting drop data" ) );
+        return wxDragError;
+    }
+
+    guDataObjectComposite * DataObject = ( guDataObjectComposite * ) m_dataObject;
+
+    wxDataFormat ReceivedFormat = DataObject->GetReceivedFormat();
+    //guLogMessage( wxT( "ReceivedFormat: '%s'" ), ReceivedFormat.GetId().c_str() );
+    if( ReceivedFormat == wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) )
+    {
+        guTrackArray * Tracks;
+        if( !DataObject->GetDataHere( ReceivedFormat, &Tracks ) )
+        {
+          guLogMessage( wxT( "Error getting tracks data..." ) );
+        }
+        else
+        {
+            m_MediaViewer->ImportFiles( new guTrackArray( * Tracks ) );
+        }
+    }
+    else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
+    {
+        wxFileDataObject * FileDataObject = ( wxFileDataObject * ) DataObject->GetDataObject( wxDataFormat( wxDF_FILENAME ) );
+        if( FileDataObject )
+        {
+            m_MediaViewer->ImportFiles( FileDataObject->GetFilenames() );
+        }
+    }
+
+    return def;
 }
 
 // -------------------------------------------------------------------------------- //
