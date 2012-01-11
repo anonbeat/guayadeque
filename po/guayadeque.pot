@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-10 12:42+0000\n"
+"POT-Creation-Date: 2012-01-10 14:18+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1262,69 +1262,69 @@ msgstr ""
 msgid " Files "
 msgstr ""
 
-#: ImportFiles.cpp:220
+#: ImportFiles.cpp:228
 msgid "Select files"
 msgstr ""
 
-#: ImportFiles.cpp:221
+#: ImportFiles.cpp:229
 msgid "Audio files"
 msgstr ""
 
-#: ImportFiles.cpp:222
+#: ImportFiles.cpp:230
 msgid "mp3 files"
 msgstr ""
 
-#: ImportFiles.cpp:223
+#: ImportFiles.cpp:231
 msgid "ogg files"
 msgstr ""
 
-#: ImportFiles.cpp:224
+#: ImportFiles.cpp:232
 msgid "flac files"
 msgstr ""
 
-#: ImportFiles.cpp:225
+#: ImportFiles.cpp:233
 msgid "mp4 files"
 msgstr ""
 
-#: ImportFiles.cpp:226
+#: ImportFiles.cpp:234
 msgid "wma files"
 msgstr ""
 
-#: ImportFiles.cpp:227
+#: ImportFiles.cpp:235
 msgid "ape files"
 msgstr ""
 
-#: ImportFiles.cpp:228
+#: ImportFiles.cpp:236
 msgid "waf files"
 msgstr ""
 
-#: ImportFiles.cpp:229
+#: ImportFiles.cpp:237
 msgid "aif files"
 msgstr ""
 
-#: ImportFiles.cpp:230
+#: ImportFiles.cpp:238
 msgid "wv files"
 msgstr ""
 
-#: ImportFiles.cpp:231
+#: ImportFiles.cpp:239
 msgid "tta files"
 msgstr ""
 
-#: ImportFiles.cpp:232
+#: ImportFiles.cpp:240
 msgid "mpc files"
 msgstr ""
 
-#: ImportFiles.cpp:309 MediaViewer.cpp:1370 MediaViewer.cpp:1398
+#: ImportFiles.cpp:317 MediaViewer.cpp:1370 MediaViewer.cpp:1398
 #: MediaViewer.cpp:1413 Preferences.cpp:931
 msgid "track"
 msgstr ""
 
-#: ImportFiles.cpp:309 MediaViewer.cpp:1370 MediaViewer.cpp:1398
+#: ImportFiles.cpp:317 MediaViewer.cpp:1370 MediaViewer.cpp:1398
 #: MediaViewer.cpp:1413 Preferences.cpp:1036
 msgid "tracks"
 msgstr ""
 
-#: ImportFiles.cpp:319
+#: ImportFiles.cpp:327
 msgid "No files added"
 msgstr ""
 

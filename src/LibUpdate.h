@@ -25,9 +25,6 @@
 #include "MainFrame.h"
 #include "LibPanel.h"
 
-// -------------------------------------------------------------------------------- //
-bool guIsValidImageFile( const wxString &filename );
-
 class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //

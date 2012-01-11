@@ -54,7 +54,7 @@ class guTrackArray;
 class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
-void inline guImageResize( wxImage * image, int maxsize, bool forceresize = false )
+void inline         guImageResize( wxImage * image, int maxsize, bool forceresize = false )
 {
     int w = image->GetWidth();
     int h = image->GetHeight();
@@ -67,6 +67,23 @@ void inline guImageResize( wxImage * image, int maxsize, bool forceresize = fals
         image->Rescale( ( w * ratio ) + .5, ( h * ratio ) + .5, wxIMAGE_QUALITY_HIGH );
     }
 }
+
+// -------------------------------------------------------------------------------- //
+int inline          GetFileLastChangeTime( const wxString &FileName )
+{
+    wxStructStat St;
+    wxStat( FileName, &St );
+    return St.st_ctime;
+}
+
+// -------------------------------------------------------------------------------- //
+bool inline         IsFileSymbolicLink( const wxString &FileName )
+{
+    wxStructStat St;
+    wxLstat( FileName, &St );
+    return S_ISLNK( St.st_mode );
+}
+
 
 class guTrack;
 

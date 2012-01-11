@@ -1691,7 +1691,7 @@ int guDbLibrary::GetSongId( wxString &filename, const int pathid, const int star
   else
   {
     query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_rating, song_playcount, song_addedtime ) "
-                               "VALUES( NULL, %u, -1, 0, %u )" ), pathid, wxDateTime::GetTimeNow() );
+                               "VALUES( NULL, %u, -1, 0, %u )" ), pathid, GetFileLastChangeTime( filename ) );
     if( ExecuteUpdate( query ) )
     {
       RetVal = GetLastRowId();
