@@ -2433,6 +2433,10 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                 OnNextTrackButtonClick( event );
             }
         }
+        else if( m_MediaSong.m_Offset )
+        {
+            OnStopButtonClick( event );
+        }
     }
 }
 
