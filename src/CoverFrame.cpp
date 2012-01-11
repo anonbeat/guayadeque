@@ -83,7 +83,6 @@ void guCoverFrame::OnTimer( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guCoverFrame::OnClick( wxMouseEvent &event )
 {
-    //guLogMessage( wxT( "OnClick...." ) );
     Close();
 }
 

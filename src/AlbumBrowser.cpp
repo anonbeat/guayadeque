@@ -145,7 +145,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Bitmap = new guStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
@@ -169,12 +169,15 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
     SetDropTarget( new guAlbumBrowserDropTarget( m_AlbumBrowser->m_MediaViewer, this ) );
 
+    m_BitmapTimer.SetOwner( this );
+
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowserItemPanel::OnContextMenu ), NULL, this );
 
     Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCommandClicked ) );
     Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnSearchLinkClicked ) );
 
 	m_Bitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guAlbumBrowserItemPanel::OnAlbumDClicked ), NULL, this );
+	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnBitmapClicked ), NULL, this );
 
     Connect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnPlayClicked ), NULL, this );
     Connect( ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
@@ -197,8 +200,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     Connect( ID_ALBUMBROWSER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnBeginDrag ), NULL, this );
     Connect( ID_ALBUMBROWSER_COVER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnCoverBeginDrag ), NULL, this );
 
-    Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guAlbumBrowserItemPanel::OnBitmapMouseOver ), NULL, this );
-
+	Connect( wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowserItemPanel::OnTimer ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -293,7 +295,7 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
     if( !m_AlbumBrowserItem )
         return;
 
-    m_Bitmap->StopTimer();
+    //m_Bitmap->StopTimer();
 
     wxMenu Menu;
     wxMenuItem * MenuItem;
@@ -491,17 +493,6 @@ void guAlbumBrowserItemPanel::OnEnqueueClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowserItemPanel::OnAlbumDClicked( wxMouseEvent &event )
-{
-    if( m_AlbumBrowserItem )
-    {
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId,
-            Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "general" ) ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnCopyToClipboard( wxCommandEvent &event )
 {
     wxTheClipboard->UsePrimarySelection( false );
@@ -668,12 +659,34 @@ void guAlbumBrowserItemPanel::SetAlbumCover( const wxString &cover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowserItemPanel::OnBitmapMouseOver( wxCommandEvent &event )
+void guAlbumBrowserItemPanel::OnAlbumDClicked( wxMouseEvent &event )
 {
+    if( m_BitmapTimer.IsRunning() )
+        m_BitmapTimer.Stop();
+
     if( m_AlbumBrowserItem )
-        m_AlbumBrowser->OnBitmapMouseOver( m_AlbumBrowserItem->m_CoverId, ClientToScreen( m_Bitmap->GetPosition() ) );
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId,
+            Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "general" ) ) );
+    }
 }
 
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowserItemPanel::OnBitmapClicked( wxMouseEvent &event )
+{
+    if( m_BitmapTimer.IsRunning() )
+        m_BitmapTimer.Stop();
+
+    m_BitmapTimer.Start( 300, wxTIMER_ONE_SHOT );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowserItemPanel::OnTimer( wxTimerEvent &event )
+{
+    if( m_AlbumBrowserItem )
+        m_AlbumBrowser->OnBitmapClicked( m_AlbumBrowserItem->m_CoverId, ClientToScreen( m_Bitmap->GetPosition() ) );
+}
 
 
 
@@ -1288,7 +1301,7 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::OnBitmapMouseOver( const int coverid, const wxPoint &position )
+void guAlbumBrowser::OnBitmapClicked( const int coverid, const wxPoint &position )
 {
     wxString CoverFile = GetAlbumCoverFile( coverid );
     if( !CoverFile.IsEmpty() )

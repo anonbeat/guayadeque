@@ -128,7 +128,7 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 
-    Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
+    //Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -154,7 +154,8 @@ guLastFMInfoCtrl::~guLastFMInfoCtrl()
     m_Text->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
 
-    Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
+    //Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
+	m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnBitmapClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -163,7 +164,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_default_lastfm_image ),
 	                                            wxDefaultPosition, wxSize( 50, 50 ), 0 );
     //Bitmap->SetCursor( wxCURSOR_HAND );
 	MainSizer->Add( m_Bitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 2 );
@@ -186,6 +187,8 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
     m_Text->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
     m_Text->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+
+	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnBitmapClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -334,7 +337,7 @@ void guLastFMInfoCtrl::OnEnqueueClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLastFMInfoCtrl::OnBitmapMouseOver( wxCommandEvent &event )
+void guLastFMInfoCtrl::OnBitmapClicked( wxMouseEvent &event )
 {
     int ImageType;
     wxString ImageUrl = GetBitmapImageUrl();
@@ -351,6 +354,25 @@ void guLastFMInfoCtrl::OnBitmapMouseOver( wxCommandEvent &event )
         }
     }
 }
+
+//// -------------------------------------------------------------------------------- //
+//void guLastFMInfoCtrl::OnBitmapMouseOver( wxCommandEvent &event )
+//{
+//    int ImageType;
+//    wxString ImageUrl = GetBitmapImageUrl();
+//    if( !ImageUrl.IsEmpty() )
+//    {
+//        wxImage * Image = m_DbCache->GetImage( ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+//        if( Image )
+//        {
+//            guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
+//            if( ShowImage )
+//            {
+//                ShowImage->Show();
+//            }
+//        }
+//    }
+//}
 
 // -------------------------------------------------------------------------------- //
 wxString guLastFMInfoCtrl::GetBitmapImageUrl( void )
@@ -415,7 +437,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 {
 	m_MainSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Bitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_photo ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	m_MainSizer->Add( m_Bitmap, 0, wxALL, 5 );
 
 //	wxBoxSizer * DetailSizer;

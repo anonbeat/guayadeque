@@ -224,7 +224,7 @@ class guPlayerPanel : public wxPanel
 	guToggleRoundButton *       m_RepeatPlayButton;
 	guRoundButton *             m_EqualizerButton;
 	//
-	guStaticBitmap *            m_PlayerCoverBitmap;
+	wxStaticBitmap *            m_PlayerCoverBitmap;
 	guAutoScrollText *          m_TitleLabel;
 	guAutoScrollText *          m_AlbumLabel;
 	guAutoScrollText *          m_ArtistLabel;
@@ -313,7 +313,8 @@ class guPlayerPanel : public wxPanel
 
 	void                        OnVolumenButtonClick( wxCommandEvent &event );
 	void                        OnVolumenMouseWheel( wxMouseEvent &event );
-    void                        OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
+    //void                        OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
+    void                        OnLeftClickPlayerCoverBitmap( wxMouseEvent &event );
     void                        OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
     void                        OnPlayerPositionSliderEndSeek( wxScrollEvent &event );
     void                        OnPlayerPositionSliderChanged( wxScrollEvent &event );
