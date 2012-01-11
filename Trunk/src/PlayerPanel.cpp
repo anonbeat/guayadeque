@@ -259,7 +259,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	wxBoxSizer* PlayerDetailsSizer;
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayerCoverBitmap = new guStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	//m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
@@ -418,8 +418,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 //	m_LoveBanButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
 
     //
+	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guPlayerPanel::OnLeftClickPlayerCoverBitmap ), NULL, this );
 	//m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
-    Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
+    //Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
 
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
@@ -553,7 +554,7 @@ guPlayerPanel::~guPlayerPanel()
 
     //
 	//m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
-    Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
+    //Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
 
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
 	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
@@ -2728,7 +2729,7 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
+void guPlayerPanel::OnLeftClickPlayerCoverBitmap( wxMouseEvent &event )
 {
     if( m_MediaSong.m_CoverType == GU_SONGCOVER_NONE ||
         m_MediaSong.m_CoverType == GU_SONGCOVER_RADIO ||
@@ -2740,9 +2741,6 @@ void guPlayerPanel::OnPlayerCoverBitmapMouseOver( wxCommandEvent &event )
     guCoverFrame * BigCover = new guCoverFrame( this, wxID_ANY, wxEmptyString, Pos );
     if( BigCover )
     {
-//        if( m_MediaSong.m_CoverType == GU_SONGCOVER_ID3TAG )
-//            BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_FileName );
-//        else
         BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
         BigCover->Show();
     }

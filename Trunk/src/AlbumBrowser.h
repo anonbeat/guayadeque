@@ -86,10 +86,11 @@ class guAlbumBrowserItemPanel : public wxPanel
 
     // GUI
     wxBoxSizer *            m_MainSizer;
-    guStaticBitmap *        m_Bitmap;
+    wxStaticBitmap *        m_Bitmap;
     guAutoScrollText *      m_ArtistLabel;
     guAutoScrollText *      m_AlbumLabel;
     guAutoScrollText *      m_TracksLabel;
+    wxTimer                 m_BitmapTimer;
 
     void                    OnContextMenu( wxContextMenuEvent &event );
 
@@ -113,7 +114,8 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnBeginDrag( wxMouseEvent &event );
     void                    OnCoverBeginDrag( wxMouseEvent &event );
 
-    void                    OnBitmapMouseOver( wxCommandEvent &event );
+    void                    OnBitmapClicked( wxMouseEvent &event );
+    void                    OnTimer( wxTimerEvent &event );
 
   public :
     guAlbumBrowserItemPanel( wxWindow * parent, const int index, guAlbumBrowserItem * albumitem = NULL );
@@ -184,7 +186,7 @@ class guAlbumBrowser : public wxPanel
 
     virtual void                    NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
-    virtual void                    OnBitmapMouseOver( const int coverid, const wxPoint &position );
+    virtual void                    OnBitmapClicked( const int coverid, const wxPoint &position );
 
     virtual void                    OnAlbumSelectName( const int albumid );
     virtual void                    OnArtistSelectName( const int artistid );

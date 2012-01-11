@@ -373,7 +373,7 @@ class guLastFMInfoCtrl : public wxPanel
     guDbLibrary *       m_DefaultDb;
     guDbCache *         m_DbCache;
     guPlayerPanel *     m_PlayerPanel;
-    guStaticBitmap *    m_Bitmap;
+    wxStaticBitmap *    m_Bitmap;
 	wxStaticText *      m_Text;
 	wxColor             m_NormalColor;
 	wxColor             m_NotFoundColor;
@@ -397,7 +397,8 @@ class guLastFMInfoCtrl : public wxPanel
     virtual void        OnArtistSelectName( wxCommandEvent &event ) {}
     virtual void        OnAlbumSelectName( wxCommandEvent &event ) {}
 
-    virtual void        OnBitmapMouseOver( wxCommandEvent &event );
+    //virtual void        OnBitmapMouseOver( wxCommandEvent &event );
+    virtual void        OnBitmapClicked( wxMouseEvent &event );
     virtual wxString    GetBitmapImageUrl( void );
 
     virtual void        OnMouse( wxMouseEvent &event );
