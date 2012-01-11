@@ -26,6 +26,7 @@
 #include "curl/http.h"
 #include "Preferences.h"
 #include "Images.h"
+#include "ListView.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -687,14 +688,42 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
     if( !files.Count() )
         return;
 
-    // If have been edited and not saved
-//    if( m_LyricText->IsModified() )
-//    {
-//        SaveLyrics();
-//    }
-//
-    if( m_Db->FindTrackFile( files[ 0 ], &Track ) )
+    if( !m_Db->FindTrackFile( files[ 0 ], &Track ) )
     {
+        if( !Track.ReadFromFile( files[ 0 ] ) )
+        {
+            return;
+        }
+    }
+
+    if( m_UpdateEnabled )
+    {
+        SetCurrentTrack( &Track );
+
+        SetAutoUpdate( false );
+    }
+    else
+    {
+        m_ArtistTextCtrl->SetValue( Track.m_ArtistName );
+        m_TrackTextCtrl->SetValue( Track.m_SongName );
+        if( m_CurrentTrack )
+        {
+            delete m_CurrentTrack;
+            m_CurrentTrack = NULL;
+        }
+    }
+    m_CurrentLyricText = wxEmptyString;
+
+    wxCommandEvent DummyEvent;
+    OnReloadBtnClick( DummyEvent );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLyricsPanel::OnDropFiles( const guTrackArray * tracks )
+{
+    if( tracks && tracks->Count() )
+    {
+        const guTrack & Track= tracks->Item( 0 );
         if( m_UpdateEnabled )
         {
             SetCurrentTrack( &Track );
@@ -715,32 +744,6 @@ void guLyricsPanel::OnDropFiles( const wxArrayString &files )
 
         wxCommandEvent DummyEvent;
         OnReloadBtnClick( DummyEvent );
-    }
-    else
-    {
-        if( Track.ReadFromFile( files[ 0 ] ) )
-        {
-            if( m_UpdateEnabled )
-            {
-                SetCurrentTrack( &Track );
-
-                SetAutoUpdate( false );
-            }
-            else
-            {
-                m_ArtistTextCtrl->SetValue( Track.m_ArtistName );
-                m_TrackTextCtrl->SetValue( Track.m_SongName );
-                if( m_CurrentTrack )
-                {
-                    delete m_CurrentTrack;
-                    m_CurrentTrack = NULL;
-                }
-            }
-            m_CurrentLyricText = wxEmptyString;
-
-            wxCommandEvent DummyEvent;
-            OnReloadBtnClick( DummyEvent );
-        }
     }
 }
 
@@ -852,9 +855,16 @@ wxString guLyricsPanel::GetLyricSource( void )
 // -------------------------------------------------------------------------------- //
 // guLyricsPanelDropTarget
 // -------------------------------------------------------------------------------- //
-guLyricsPanelDropTarget::guLyricsPanelDropTarget( guLyricsPanel * lyricspanel )
+guLyricsPanelDropTarget::guLyricsPanelDropTarget( guLyricsPanel * lyricspanel ) : wxDropTarget()
 {
     m_LyricsPanel = lyricspanel;
+
+    wxDataObjectComposite * DataObject = new wxDataObjectComposite();
+    wxCustomDataObject * TracksDataObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
+    DataObject->Add( TracksDataObject, true );
+    wxFileDataObject * FileDataObject = new wxFileDataObject();
+    DataObject->Add( FileDataObject, false );
+    SetDataObject( DataObject );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -863,18 +873,48 @@ guLyricsPanelDropTarget::~guLyricsPanelDropTarget()
 }
 
 // -------------------------------------------------------------------------------- //
-bool guLyricsPanelDropTarget::OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files )
+wxDragResult guLyricsPanelDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def )
 {
-    m_LyricsPanel->OnDropFiles( files );
-    return true;
+    //guLogMessage( wxT( "guListViewDropTarget::OnData" ) );
+
+    if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
+        return def;
+
+    if( !GetData() )
+    {
+        guLogMessage( wxT( "Error getting drop data" ) );
+        return wxDragError;
+    }
+
+    guDataObjectComposite * DataObject = ( guDataObjectComposite * ) m_dataObject;
+
+    wxDataFormat ReceivedFormat = DataObject->GetReceivedFormat();
+    //guLogMessage( wxT( "ReceivedFormat: '%s'" ), ReceivedFormat.GetId().c_str() );
+    if( ReceivedFormat == wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) )
+    {
+        guTrackArray * Tracks;
+        if( !DataObject->GetDataHere( ReceivedFormat, &Tracks ) )
+        {
+          guLogMessage( wxT( "Error getting tracks data..." ) );
+        }
+        else
+        {
+            m_LyricsPanel->OnDropFiles( Tracks );
+        }
+    }
+    else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )
+    {
+        wxFileDataObject * FileDataObject = ( wxFileDataObject * ) DataObject->GetDataObject( wxDataFormat( wxDF_FILENAME ) );
+        if( FileDataObject )
+        {
+            m_LyricsPanel->OnDropFiles( FileDataObject->GetFilenames() );
+        }
+    }
+
+    return def;
 }
 
-// -------------------------------------------------------------------------------- //
-wxDragResult guLyricsPanelDropTarget::OnDragOver( wxCoord x, wxCoord y, wxDragResult def )
-{
-    //printf( "guLyricsPanelDropTarget::OnDragOver... %d - %d\n", x, y );
-    return wxDragCopy;
-}
+
 
 
 
