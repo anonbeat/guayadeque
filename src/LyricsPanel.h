@@ -119,6 +119,7 @@ class guLyricsPanel : public wxPanel
     void                    SetTrack( const guTrackChangeInfo * trackchangeinfo, const bool onlinesearch = false );
     //void                    ClearLyricThread( void );
     void                    OnDropFiles( const wxArrayString &files );
+    void                    OnDropFiles( const guTrackArray * tracks );
 
     void                    SetLyricText( const wxString * lyrictext, const bool forceupdate = false );
 
@@ -138,7 +139,7 @@ class guLyricsPanel : public wxPanel
 };
 
 // -------------------------------------------------------------------------------- //
-class guLyricsPanelDropTarget : public wxFileDropTarget
+class guLyricsPanelDropTarget : public wxDropTarget
 {
   private:
     guLyricsPanel *         m_LyricsPanel;
@@ -147,9 +148,7 @@ class guLyricsPanelDropTarget : public wxFileDropTarget
     guLyricsPanelDropTarget( guLyricsPanel * lyricspanel );
     ~guLyricsPanelDropTarget();
 
-    virtual bool            OnDropFiles( wxCoord x, wxCoord y, const wxArrayString &files );
-
-    virtual wxDragResult    OnDragOver( wxCoord x, wxCoord y, wxDragResult def );
+    virtual wxDragResult    OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
 
 enum guLyricSourceType {
