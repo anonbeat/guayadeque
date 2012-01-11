@@ -61,15 +61,11 @@ class guPlayList : public guListView
     wxBitmap *      m_SelectStar;
     wxCoord         m_SecondLineOffset;
 
-//    wxColor         m_PlayedColor;
-
     wxArrayString   m_PendingLoadIds;
 
     virtual wxCoord             OnMeasureItem( size_t row ) const;
 
-//    void                        OnDragOver( const wxCoord x, const wxCoord y );
-//    void                        OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) const;
-    virtual int                 GetDragFiles( guDataObjectComposite * files );
+    virtual int                 GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;
     virtual void                OnDropFile( const wxString &filename );
     virtual void                OnDropTracks( const guTrackArray * tracks );
     virtual void                OnDropBegin( void );
@@ -77,7 +73,6 @@ class guPlayList : public guListView
 
     virtual wxString            GetItemSearchText( const int row );
 
-//    void                        OnMouse( wxMouseEvent &event );
     void                        RemoveSelected();
     virtual void                MoveSelection( void );
 
