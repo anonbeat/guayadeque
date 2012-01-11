@@ -30,22 +30,6 @@
 #include <unistd.h>
 #include <wx/event.h>
 
-// -------------------------------------------------------------------------------- //
-int inline GetFileLastChangeTime( const wxString &FileName )
-{
-    wxStructStat St;
-    wxStat( FileName, &St );
-    return St.st_ctime;
-}
-
-// -------------------------------------------------------------------------------- //
-bool inline IsFileSymbolicLink( const wxString &FileName )
-{
-    wxStructStat St;
-    wxLstat( FileName, &St );
-    return S_ISLNK( St.st_mode );
-}
-
 //// -------------------------------------------------------------------------------- //
 //guLibUpdateThread::guLibUpdateThread( guLibPanel * libpanel, int gaugeid, const wxString &scanpath )
 //{
