@@ -313,19 +313,17 @@ void guPlayList::OnDropEnd( void )
 }
 
 // -------------------------------------------------------------------------------- //
-int guPlayList::GetDragFiles( guDataObjectComposite * files )
+int guPlayList::GetSelectedSongs( guTrackArray * Songs, const bool isdrag ) const
 {
-    int index;
-    int count;
-    wxArrayString FileNames;
+    int Index;
+    int Count;
     wxArrayInt Selection = GetSelectedItems( false );
-    count = Selection.Count();
-    for( index = 0; index < count; index++ )
+    Count = Selection.Count();
+    for( Index = 0; Index < Count; Index++ )
     {
-        FileNames.Add( guFileDnDEncode( m_Items[ Selection[ index ] ].m_FileName ) );
+        Songs->Add( new guTrack( m_Items[ Selection[ Index ] ] ) );
     }
-    files->SetFiles( FileNames );
-    return count;
+    return Count;
 }
 
 // -------------------------------------------------------------------------------- //
