@@ -900,7 +900,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 
                 Track.m_PathId = Db->GetPathId( Track.m_Path );
 
-                Track.m_SongId = Db->GetSongId( Track.m_FileName, Track.m_PathId );
+                Track.m_SongId = Db->GetSongId( Track.m_FileName, Track.m_PathId, iPodTrack->time_added );
 
                 Track.m_AlbumId = Db->GetAlbumId( Track.m_AlbumName, Track.m_ArtistName, Track.m_AlbumArtist, Track.m_Disk );
 
@@ -1015,7 +1015,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 
                             int PathId = Db->GetPathId( Path );
 
-                            int TrackId = Db->GetSongId( FileName, PathId );
+                            int TrackId = Db->GetSongId( FileName, PathId, PlaylistTrack->time_added );
                             if( TrackId )
                             {
                                 PlaylistTrackIds.Add( TrackId );

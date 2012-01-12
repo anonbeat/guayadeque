@@ -69,18 +69,19 @@ void inline         guImageResize( wxImage * image, int maxsize, bool forceresiz
 }
 
 // -------------------------------------------------------------------------------- //
-int inline          GetFileLastChangeTime( const wxString &FileName )
+time_t inline         GetFileLastChangeTime( const wxString &filename )
 {
     wxStructStat St;
-    wxStat( FileName, &St );
+    if( wxStat( filename, &St ) )
+        return -1;
     return St.st_ctime;
 }
 
 // -------------------------------------------------------------------------------- //
-bool inline         IsFileSymbolicLink( const wxString &FileName )
+bool inline         IsFileSymbolicLink( const wxString &filename )
 {
     wxStructStat St;
-    wxLstat( FileName, &St );
+    wxLstat( filename, &St );
     return S_ISLNK( St.st_mode );
 }
 
@@ -96,12 +97,12 @@ bool                DownloadImage( const wxString &source, const wxString &targe
 bool                DownloadImage( const wxString &source, const wxString &taget, int maxwidth = -1, int maxheight = -1 );
 int                 DownloadFile( const wxString &Source, const wxString &Target );
 wxString            RemoveSearchFilters( const wxString &Album );
-bool                SearchCoverWords( const wxString &FileName, const wxArrayString &Strings );
+bool                SearchCoverWords( const wxString &filename, const wxArrayString &Strings );
 wxString            guURLEncode( const wxString &url );
 wxString            guFileDnDEncode( const wxString &file );
 int                 guWebExecute( const wxString &Url );
 int                 guExecute( const wxString &Command );
-wxFileOffset        guGetFileSize( const wxString &FileName );
+wxFileOffset        guGetFileSize( const wxString &filename );
 wxString            GetUrlContent( const wxString &url, const wxString &referer = wxEmptyString, bool encoding = false );
 void                CheckSymLinks( wxArrayString &libpaths );
 bool                CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename );

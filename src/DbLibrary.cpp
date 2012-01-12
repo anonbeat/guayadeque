@@ -1668,7 +1668,7 @@ int guDbLibrary::GetPathId( wxString &PathValue )
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetSongId( wxString &filename, const int pathid, const int start, bool * created )
+int guDbLibrary::GetSongId( wxString &filename, const int pathid, const time_t filedate, const int start, bool * created )
 {
   //wxSQLite3StatementBuffer query;
   wxString query;
@@ -1691,7 +1691,8 @@ int guDbLibrary::GetSongId( wxString &filename, const int pathid, const int star
   else
   {
     query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_rating, song_playcount, song_addedtime ) "
-                               "VALUES( NULL, %u, -1, 0, %u )" ), pathid, GetFileLastChangeTime( filename ) );
+                               "VALUES( NULL, %u, -1, 0, %u )" ), pathid, filedate );
+    //guLogMessage( wxT( "Query: '%s'" ), query.c_str() );
     if( ExecuteUpdate( query ) )
     {
       RetVal = GetLastRowId();
@@ -1707,9 +1708,9 @@ int guDbLibrary::GetSongId( wxString &filename, const int pathid, const int star
 }
 
 // -------------------------------------------------------------------------------- //
-int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath, const int start, bool * created )
+int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath, const time_t filedate, const int start, bool * created )
 {
-  return GetSongId( FileName, GetPathId( FilePath ), start, created );
+  return GetSongId( FileName, GetPathId( FilePath ), filedate, start, created );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1794,7 +1795,8 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating 
                 CurTrack.m_SongName = CurTrack.m_FileName.AfterLast( wxT( '/' ) ).BeforeLast( wxT( '.' ) );
 
               bool IsNewTrack = false;
-              CurTrack.m_SongId = GetSongId( CurTrack.m_FileName, CurTrack.m_PathId, CurTrack.m_Offset, &IsNewTrack );
+              CurTrack.m_SongId = GetSongId( CurTrack.m_FileName, CurTrack.m_PathId,
+                                             GetFileLastChangeTime( filename ), CurTrack.m_Offset, &IsNewTrack );
 
               UpdateSong( CurTrack, IsNewTrack || allowrating );
             }
@@ -1872,8 +1874,8 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating 
             CurTrack.m_SongName = CurTrack.m_FileName.AfterLast( wxT( '/' ) ).BeforeLast( wxT( '.' ) );
 
           bool IsNewTrack = false;
-          CurTrack.m_SongId = GetSongId( CurTrack.m_FileName, CurTrack.m_PathId, CurTrack.m_Offset, &IsNewTrack );
-
+          CurTrack.m_SongId = GetSongId( CurTrack.m_FileName, CurTrack.m_PathId,
+                                         GetFileLastChangeTime( filename ), CurTrack.m_Offset, &IsNewTrack );
 
           wxArrayInt ArrayIds;
 
