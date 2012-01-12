@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-12 06:51+0000\n"
+"POT-Creation-Date: 2012-01-12 17:29+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -824,8 +824,8 @@ msgstr ""
 msgid "Embed into tracks"
 msgstr ""
 
-#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1776 DbLibrary.cpp:1788
-#: DbLibrary.cpp:1853 DbLibrary.cpp:1865 Jamendo.cpp:642 PlayerPanel.cpp:1455
+#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1777 DbLibrary.cpp:1789
+#: DbLibrary.cpp:1855 DbLibrary.cpp:1867 Jamendo.cpp:642 PlayerPanel.cpp:1455
 msgid "Unknown"
 msgstr ""
 
@@ -2486,7 +2486,7 @@ msgstr ""
 msgid "Record to file"
 msgstr ""
 
-#: PlayerPanel.cpp:205 PlayerPanel.cpp:2848
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2849
 msgid "Volume"
 msgstr ""
 

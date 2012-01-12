@@ -1616,7 +1616,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
     //
     // If we are in gapless mode with cue tracks only skip once we reach the end of the track.
-    if( m_MediaSong.m_Offset && ( m_ForceGapless || !m_FadeOutTime ) && ( CurPos >= m_LastLength ) )
+    if( m_MediaSong.m_Offset && ( m_ForceGapless || !m_FadeOutTime ) && ( ( CurPos + 250 ) >= m_LastLength ) )
     {
         guLogDebug( wxT( "Track should finish now..." ) );
         wxCommandEvent evt;

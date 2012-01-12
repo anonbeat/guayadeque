@@ -296,12 +296,14 @@ void guPlayList::OnDropFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropTracks( const guTrackArray * tracks )
 {
+    guLogMessage( wxT( "Dropping tracks" ) );
     AddToPlayList( * tracks );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnDropEnd( void )
 {
+    m_DragOverItem = wxNOT_FOUND;
     // Once finished send the update guPlayList event to the guPlayList object
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
     guConfig * Config = ( guConfig * ) guConfig::Get();
@@ -1164,7 +1166,7 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold,
     Count = items.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        m_Items.Insert( items[ Index ], InsertPosition + Index );
+        AddItem( items[ Index ], InsertPosition + Index );
         m_TotalLen += items[ Index ].m_Length;
     }
 
