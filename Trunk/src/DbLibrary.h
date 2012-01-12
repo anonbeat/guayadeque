@@ -380,8 +380,8 @@ class guDbLibrary : public guDb
 
     wxString            GetCoverPath( const int CoverId );
     int                 GetAlbumId( wxString &AlbumName, const int ArtistId, const int PathId, const wxString &Path, const int coverid = 0 );
-    int                 GetSongId( wxString &filename, const int pathid, const int start = 0, bool * created = NULL );
-    int                 GetSongId( wxString &FileName, wxString &FilePath, const int start = 0, bool * created = NULL );
+    int                 GetSongId( wxString &filename, const int pathid, const time_t filedate, const int start = 0, bool * created = NULL );
+    int                 GetSongId( wxString &FileName, wxString &FilePath, const time_t filedate, const int start = 0, bool * created = NULL );
     wxArrayInt          GetLabelIds( const wxArrayString &Labels );
     wxArrayString       GetLabelNames( const wxArrayInt &LabelIds );
     int                 GetLabelId( int * LabelId, wxString &LabelName );

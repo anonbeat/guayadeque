@@ -2743,6 +2743,7 @@ void guPlayerPanel::OnLeftClickPlayerCoverBitmap( wxMouseEvent &event )
     {
         BigCover->SetBitmap( m_MediaSong.m_CoverType, m_MediaSong.m_CoverPath );
         BigCover->Show();
+        BigCover->SetFocus();
     }
 }
 
