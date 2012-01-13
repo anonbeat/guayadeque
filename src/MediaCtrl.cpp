@@ -1680,7 +1680,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer )
 {
-    guLogMessage( wxT( "BuildRecordBin( '%s' )" ), path.c_str() );
+    guLogDebug( wxT( "BuildRecordBin( '%s' )" ), path.c_str() );
     m_RecordBin = gst_bin_new( "gurb_recordbin" );
     if( IsValidElement( m_RecordBin ) )
     {
@@ -1772,7 +1772,7 @@ bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder,
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::DoStartSeek( void )
 {
-    guLogMessage( wxT( "DoStartSeek( %i )" ), m_StartOffset );
+    guLogDebug( wxT( "DoStartSeek( %i )" ), m_StartOffset );
     m_SeekTimerId = 0;
     if( GST_IS_ELEMENT( m_Playbin ) )
     {
@@ -2290,7 +2290,7 @@ wxFileOffset guFaderPlayBin::Length( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, const int quality )
 {
-    guLogMessage( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
+    guLogDebug( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
     GstElement * Encoder = NULL;
     GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
@@ -2389,7 +2389,7 @@ bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, co
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::DisableRecord( void )
 {
-    guLogMessage( wxT( "guFaderPlayBin::DisableRecord" ) );
+    guLogDebug( wxT( "guFaderPlayBin::DisableRecord" ) );
     bool NeedBlock = true;
 
     GstPad * AddPad;
@@ -2412,7 +2412,7 @@ void guFaderPlayBin::DisableRecord( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
 {
-    guLogMessage( wxT( "guFaderPlayBin::SetRecrodFileName %i" ), m_IsBuffering );
+    guLogDebug( wxT( "guFaderPlayBin::SetRecrodFileName %i" ), m_IsBuffering );
     if( !m_RecordBin || m_IsBuffering )
         return false;
 
@@ -2448,7 +2448,7 @@ bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 {
-    guLogMessage( wxT( "guFaderPlayBin::AddRecordElement" ) );
+    guLogDebug( wxT( "guFaderPlayBin::AddRecordElement" ) );
     if( m_RecordBinAdded )
         return;
 
@@ -2481,7 +2481,7 @@ void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
         return;
     m_RecordBinAdded = false;
 
-    guLogMessage( wxT( "guFaderPlayBin::RemoveRecordElement" ) );
+    guLogDebug( wxT( "guFaderPlayBin::RemoveRecordElement" ) );
     g_object_ref( m_RecordBin );
     gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
 
