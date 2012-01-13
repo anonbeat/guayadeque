@@ -1679,22 +1679,25 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer )
 {
-    m_RecordBin = gst_bin_new( "recordbin" );
+    m_RecordBin = gst_bin_new( "gurb_recordbin" );
     if( IsValidElement( m_RecordBin ) )
     {
-        GstElement * converter = gst_element_factory_make( "audioconvert", "rb_audioconvert" );
+        GstElement * converter = gst_element_factory_make( "audioconvert", "gurb_audioconvert" );
         if( IsValidElement( converter ) )
         {
-            m_FileSink = gst_element_factory_make( "filesink", "rb_filesink" );
+          GstElement * resample = gst_element_factory_make( "audioresample", "gurb_audioresample" );
+          if( IsValidElement( resample ) )
+          {
+            m_FileSink = gst_element_factory_make( "filesink", "gurb_filesink" );
             if( IsValidElement( m_FileSink ) )
             {
                 g_object_set( m_FileSink, "location", ( const char * ) path.mb_str( wxConvFile ), NULL );
 
-                GstElement * queue = gst_element_factory_make( "queue", "rb_queue" );
+                GstElement * queue = gst_element_factory_make( "queue", "gurb_queue" );
                 if( IsValidElement( queue ) )
                 {
                     // The bin contains elements that change state asynchronously and not as part of a state change in the entire pipeline.
-                    g_object_set( m_RecordBin, "async-handling", true, NULL );
+                    //g_object_set( m_RecordBin, "async-handling", true, NULL );
 
                     g_object_set( queue, "max-size-buffers", 3, NULL );
                     //g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
@@ -1738,9 +1741,15 @@ bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder,
             }
             else
             {
-                guLogError( wxT( "Could not create the lame encoder object" ) );
+              guLogError( wxT( "Could not create the lame encoder object" ) );
             }
-            g_object_unref( converter );
+            g_object_unref( resample );
+          }
+          else
+          {
+            guLogError( wxT( "Could not create the lame resample object" ) );
+          }
+          g_object_unref( converter );
         }
         else
         {
