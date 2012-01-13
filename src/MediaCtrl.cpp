@@ -2588,8 +2588,8 @@ void guMediaRecordCtrl::UpdatedConfig( void )
     m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "record" ) );
     m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "record" ) );
     m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "record" ) );
-    m_DeleteTracks = Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "record" ) ) * 1000;
-    m_DeleteTime = Config->ReadNum( wxT( "DeleteTime" ), 55, wxT( "record" ) );
+    m_DeleteTracks = Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "record" ) );
+    m_DeleteTime = Config->ReadNum( wxT( "DeleteTime" ), 55, wxT( "record" ) ) * 1000;
 
     if( !m_MainPath.EndsWith( wxT( "/" ) ) )
         m_MainPath += wxT( "/" );
