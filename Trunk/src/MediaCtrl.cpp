@@ -1697,19 +1697,19 @@ bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder,
                 if( IsValidElement( queue ) )
                 {
                     // The bin contains elements that change state asynchronously and not as part of a state change in the entire pipeline.
-                    //g_object_set( m_RecordBin, "async-handling", true, NULL );
+                    g_object_set( m_RecordBin, "async-handling", true, NULL );
 
                     g_object_set( queue, "max-size-buffers", 3, NULL );
                     //g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                     if( muxer )
                     {
-                        gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, encoder, muxer, m_FileSink, NULL );
+                        gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, resample, encoder, muxer, m_FileSink, NULL );
                         gst_element_link_many( queue, converter, encoder, muxer, m_FileSink, NULL );
                     }
                     else
                     {
-                        gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, encoder, m_FileSink, NULL );
+                        gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, resample, encoder, m_FileSink, NULL );
                         gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
                     }
 
