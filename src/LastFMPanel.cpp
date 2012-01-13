@@ -485,6 +485,8 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	//MainSizer->Fit( this );
 
     m_Text->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guArtistInfoCtrl::OnDoubleClicked ), NULL, this );
+
+	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnBitmapClicked ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
