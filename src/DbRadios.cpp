@@ -68,6 +68,7 @@ guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )
                   "radiostation_name VARCHAR COLLATE NOCASE, radiostation_link VARCHAR, radiostation_type VARCHAR, "
                   "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
 
+    query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_scid' on radiostations (radiostation_scid ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_genreid' on radiostations (radiostation_source,radiostation_genreid ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_lc' on radiostations (radiostation_lc ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_type' on radiostations (radiostation_type ASC);" ) );
@@ -207,7 +208,7 @@ void guDbRadios::GetRadioGenres( const int source, guListItems * radiogenres, bo
     }
     if( m_RaLaFilters.Count() )
     {
-        query += wxT( " AND radiostation_id IN ( SELECT DISTINCT radiosetlabel_stationid FROM radiosetlabels WHERE " );
+        query += wxT( " AND radiostation_scid IN ( SELECT DISTINCT radiosetlabel_stationid FROM radiosetlabels WHERE " );
         query += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
         query += wxT( " )" );
     }
@@ -401,7 +402,7 @@ int guDbRadios::GetRadioStations( guRadioStations * Stations )
         if( m_RaLaFilters.Count() )
         {
             querydb += wxT( ", radiosetlabels " );
-            subquery += wxT( "WHERE radiostation_id = radiosetlabel_stationid AND radiostation_source = 1" );
+            subquery += wxT( "WHERE radiostation_scid = radiosetlabel_stationid AND radiostation_source = 1" );
             subquery += wxT( " AND " ) + ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
         }
         else
@@ -429,7 +430,7 @@ int guDbRadios::GetRadioStations( guRadioStations * Stations )
         wxString subquery = wxEmptyString;
         if( m_RaLaFilters.Count() )
         {
-            query += wxT( ", radiosetlabels WHERE radiostation_genreid = radiogenre_id AND radiostation_id = radiosetlabel_stationid AND " );
+            query += wxT( ", radiosetlabels WHERE radiostation_genreid = radiogenre_id AND radiostation_scid = radiosetlabel_stationid AND " );
             subquery += ArrayToFilter( m_RaLaFilters, wxT( "radiosetlabel_labelid" ) );
         }
         else
@@ -614,6 +615,26 @@ bool guDbRadios::RadioStationExists( const int shoutcastid )
 
   RetVal = dbRes.NextRow();
 
+  dbRes.Finalize();
+  return RetVal;
+}
+
+// -------------------------------------------------------------------------------- //
+wxArrayInt guDbRadios::GetStationsSCIds( const wxArrayInt &stations )
+{
+  wxString query;
+  wxSQLite3ResultSet dbRes;
+  wxArrayInt RetVal;
+
+  query = wxT( "SELECT DISTINCT( radiostation_scid ) FROM radiostations " ) \
+          wxT( "WHERE radiostation_id IN " ) + ArrayIntToStrList( stations );
+
+  dbRes = ExecuteQuery( query );
+
+  while( dbRes.NextRow() )
+  {
+    RetVal.Add( dbRes.GetInt( 0 ) );
+  }
   dbRes.Finalize();
   return RetVal;
 }

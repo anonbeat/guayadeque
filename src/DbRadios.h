@@ -97,6 +97,7 @@ class guDbRadios : public guDb
     bool                    GetRadioStation( const int id, guRadioStation * radiostation );
     bool                    RadioStationExists( const int shoutcastid );
     void                    SetRadioStations( const guRadioStations * RadioStations );
+    wxArrayInt              GetStationsSCIds( const wxArrayInt &stations );
     guArrayListItems        GetStationsLabels( const wxArrayInt &Stations );
     void                    SetRadioStationsLabels( const guArrayListItems &labelsets );
     int                     DelRadioStations( const int source, const wxArrayInt &radioids );
