@@ -1412,7 +1412,8 @@ void guRadioPanel::OnStationsEditLabelsClicked( wxCommandEvent &event )
     m_StationsListBox->GetSelectedItems( &Stations );
     if( Stations.Count() )
     {
-        guArrayListItems LabelSets = m_Db->GetStationsLabels( m_StationsListBox->GetSelectedItems() );
+        wxArrayInt SCIds = m_Db->GetStationsSCIds( m_StationsListBox->GetSelectedItems() );
+        guArrayListItems LabelSets = m_Db->GetStationsLabels( SCIds );
 
         guLabelEditor * LabelEditor = new guLabelEditor( this, ( guDbLibrary * ) m_Db, _( "Stations Labels Editor" ), true, &Stations, &LabelSets );
         if( LabelEditor )

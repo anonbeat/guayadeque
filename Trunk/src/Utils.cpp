@@ -198,42 +198,39 @@ wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
                 }
             }
 
-    //        if( ResCode != 200 )
-    //        {
-    //            guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
-    //                http.GetResponseCode(),
-    //                url.c_str(),
-    //                http.GetResponseHeader().c_str() );
-    //        }
+//            if( ResCode != 200 )
+//            {
+//                guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
+//                    http.GetResponseCode(),
+//                    url.c_str(),
+//                    http.GetResponseHeader().c_str() );
+//            }
 
-            if( Buffer.IsOk() )
+            wxMemoryInputStream Ins( Buffer );
+            if( Ins.IsOk() )
             {
-                wxMemoryInputStream Ins( Buffer );
-                if( Ins.IsOk() )
-                {
-                    if( FileName.EndsWith( wxT( ".jpg" ) ) ||
-                        FileName.EndsWith( wxT( ".jpeg" ) ) )
-                      imgtype = wxBITMAP_TYPE_JPEG;
-                    else if( FileName.EndsWith( wxT( ".png" ) ) )
-                      imgtype = wxBITMAP_TYPE_PNG;
-                    else if( FileName.EndsWith( wxT( ".gif" ) ) )
-                      imgtype = wxBITMAP_TYPE_GIF;
-                    else if( FileName.EndsWith( wxT( ".bmp" ) ) )
-                      imgtype = wxBITMAP_TYPE_BMP;
-                    else
-                      imgtype = wxBITMAP_TYPE_INVALID;
+                if( FileName.EndsWith( wxT( ".jpg" ) ) ||
+                    FileName.EndsWith( wxT( ".jpeg" ) ) )
+                  imgtype = wxBITMAP_TYPE_JPEG;
+                else if( FileName.EndsWith( wxT( ".png" ) ) )
+                  imgtype = wxBITMAP_TYPE_PNG;
+                else if( FileName.EndsWith( wxT( ".gif" ) ) )
+                  imgtype = wxBITMAP_TYPE_GIF;
+                else if( FileName.EndsWith( wxT( ".bmp" ) ) )
+                  imgtype = wxBITMAP_TYPE_BMP;
+                else
+                  imgtype = wxBITMAP_TYPE_INVALID;
 
-                    if( imgtype != wxBITMAP_TYPE_INVALID )
+                if( imgtype != wxBITMAP_TYPE_INVALID )
+                {
+                    Image = new wxImage( Ins, imgtype );
+                    if( Image )
                     {
-                        Image = new wxImage( Ins, imgtype );
-                        if( Image )
+                        if( Image->IsOk() )
                         {
-                            if( Image->IsOk() )
-                            {
-                                return Image;
-                            }
-                            delete Image;
+                            return Image;
                         }
+                        delete Image;
                     }
                 }
             }

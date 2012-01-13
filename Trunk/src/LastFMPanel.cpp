@@ -355,25 +355,6 @@ void guLastFMInfoCtrl::OnBitmapClicked( wxMouseEvent &event )
     }
 }
 
-//// -------------------------------------------------------------------------------- //
-//void guLastFMInfoCtrl::OnBitmapMouseOver( wxCommandEvent &event )
-//{
-//    int ImageType;
-//    wxString ImageUrl = GetBitmapImageUrl();
-//    if( !ImageUrl.IsEmpty() )
-//    {
-//        wxImage * Image = m_DbCache->GetImage( ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
-//        if( Image )
-//        {
-//            guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
-//            if( ShowImage )
-//            {
-//                ShowImage->Show();
-//            }
-//        }
-//    }
-//}
-
 // -------------------------------------------------------------------------------- //
 wxString guLastFMInfoCtrl::GetBitmapImageUrl( void )
 {
