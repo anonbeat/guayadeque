@@ -1487,6 +1487,9 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
       GstElement * converter = gst_element_factory_make( "audioconvert", "pb_audioconvert" );
       if( IsValidElement( converter ) )
       {
+       GstElement * resample = gst_element_factory_make( "audioresample", "pb_audioresampler" );
+       if( IsValidElement( resample ) )
+       {
         if( m_Player->m_ReplayGainMode )
         {
             m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
@@ -1496,12 +1499,12 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
 
         if( !m_Player->m_ReplayGainMode || IsValidElement( m_ReplayGain ) )
         {
-            if( m_ReplayGain )
-            {
-                g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
-                g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", m_Player->m_ReplayGainPreAmp, NULL );
-                //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
-            }
+          if( m_ReplayGain )
+          {
+            g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
+            g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", m_Player->m_ReplayGainPreAmp, NULL );
+             //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
+          }
 
           m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
           if( IsValidElement( m_FaderVolume ) )
@@ -1529,11 +1532,12 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
                         if( IsValidElement( limiter ) )
                         {
                             //g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
-
-                            GstElement * outconverter = gst_element_factory_make( "audioconvert", "pb_audioconvert2" );
-                            if( IsValidElement( outconverter ) )
-                            {
-
+                          GstElement * outconverter = gst_element_factory_make( "audioconvert", "pb_audioconvert2" );
+                          if( IsValidElement( outconverter ) )
+                          {
+                             GstElement * outresample = gst_element_factory_make( "audioresample", "pb_audioresample2" );
+                             if( IsValidElement( outresample ) )
+                             {
                                 m_Tee = gst_element_factory_make( "tee", "pb_tee" );
                                 if( IsValidElement( m_Tee ) )
                                 {
@@ -1545,13 +1549,13 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
 
                                         if( m_ReplayGain )
                                         {
-                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
-                                            gst_element_link_many( m_Tee, queue, converter, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, resample, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, resample, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
                                         }
                                         else
                                         {
-                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
-                                            gst_element_link_many( m_Tee, queue, converter, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, m_OutputSink, NULL );
+                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, resample, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
+                                            gst_element_link_many( m_Tee, queue, converter, resample, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
                                         }
 
                                         GstPad * pad = gst_element_get_pad( m_Tee, "sink" );
@@ -1597,15 +1601,20 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
                                 {
                                     guLogError( wxT( "Could not create the tee object" ) );
                                 }
+                                g_object_unref( outresample );
+                             }
+                             else
+                             {
+                               guLogError( wxT( "Could not create the outresample object" ) );
+                             }
+                             g_object_unref( outconverter );
+                          }
+                          else
+                          {
+                            guLogError( wxT( "Could not create the output outconvert object" ) );
+                          }
 
-                                g_object_unref( outconverter );
-                            }
-                            else
-                            {
-                                guLogError( wxT( "Could not create the output audioconvert object" ) );
-                            }
-
-                            g_object_unref( limiter );
+                          g_object_unref( limiter );
                         }
                         else
                         {
@@ -1651,7 +1660,14 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
         }
         m_ReplayGain = NULL;
 
-        g_object_unref( converter );
+        g_object_unref( resample );
+       }
+       else
+       {
+        guLogError( wxT( "Could not create the audioresample object" ) );
+       }
+
+       g_object_unref( converter );
       }
       else
       {
@@ -1707,12 +1723,12 @@ bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder,
                     if( muxer )
                     {
                         gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, resample, encoder, muxer, m_FileSink, NULL );
-                        gst_element_link_many( queue, converter, encoder, muxer, m_FileSink, NULL );
+                        gst_element_link_many( queue, converter, resample, encoder, muxer, m_FileSink, NULL );
                     }
                     else
                     {
                         gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, resample, encoder, m_FileSink, NULL );
-                        gst_element_link_many( queue, converter, encoder, m_FileSink, NULL );
+                        gst_element_link_many( queue, converter, resample, encoder, m_FileSink, NULL );
                     }
 
                     GstPad * pad = gst_element_get_pad( queue, "sink" );
