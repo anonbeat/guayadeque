@@ -1486,36 +1486,36 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
       GstElement * converter = gst_element_factory_make( "audioconvert", "pb_audioconvert" );
       if( IsValidElement( converter ) )
       {
-       GstElement * resample = gst_element_factory_make( "audioresample", "pb_audioresampler" );
-       if( IsValidElement( resample ) )
-       {
-        if( m_Player->m_ReplayGainMode )
+        GstElement * resample = gst_element_factory_make( "audioresample", "pb_audioresampler" );
+        if( IsValidElement( resample ) )
         {
+          if( m_Player->m_ReplayGainMode )
+          {
             m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
-        }
-        else
+          }
+          else
             m_ReplayGain = NULL;
 
-        if( !m_Player->m_ReplayGainMode || IsValidElement( m_ReplayGain ) )
-        {
-          if( m_ReplayGain )
+          if( !m_Player->m_ReplayGainMode || IsValidElement( m_ReplayGain ) )
           {
-            g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
-            g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", m_Player->m_ReplayGainPreAmp, NULL );
-             //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
-          }
-
-          m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
-          if( IsValidElement( m_FaderVolume ) )
-          {
-            if( m_PlayType == guFADERPLAYBIN_PLAYTYPE_CROSSFADE )
+            if( m_ReplayGain )
             {
-                g_object_set( m_FaderVolume, "volume", 0.0, NULL );
+              g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
+              g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", m_Player->m_ReplayGainPreAmp, NULL );
+               //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
             }
 
-            GstElement * level = gst_element_factory_make( "level", "pb_level" );
-            if( IsValidElement( level ) )
+            m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
+            if( IsValidElement( m_FaderVolume ) )
             {
+              if( m_PlayType == guFADERPLAYBIN_PLAYTYPE_CROSSFADE )
+              {
+                g_object_set( m_FaderVolume, "volume", 0.0, NULL );
+              }
+
+              GstElement * level = gst_element_factory_make( "level", "pb_level" );
+              if( IsValidElement( level ) )
+              {
                 g_object_set( level, "message", TRUE, NULL );
                 g_object_set( level, "interval", 100000000, NULL) ;
                 g_object_set( level, "peak-falloff", 6.0, NULL );
@@ -1637,36 +1637,36 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
                 }
 
                 g_object_unref( level );
+              }
+              else
+              {
+                guLogError( wxT( "Could not create the level object" ) );
+              }
+
+              g_object_unref( m_FaderVolume );
             }
             else
             {
-                guLogError( wxT( "Could not create the level object" ) );
+              guLogError( wxT( "Could not create the fader volume object" ) );
             }
+            m_FaderVolume = NULL;
 
-            g_object_unref( m_FaderVolume );
+            g_object_unref( m_ReplayGain );
           }
           else
           {
-            guLogError( wxT( "Could not create the fader volume object" ) );
+            guLogError( wxT( "Could not create the replay gain object" ) );
           }
-          m_FaderVolume = NULL;
+          m_ReplayGain = NULL;
 
-          g_object_unref( m_ReplayGain );
+          g_object_unref( resample );
         }
         else
         {
-            guLogError( wxT( "Could not create the replay gain object" ) );
+          guLogError( wxT( "Could not create the audioresample object" ) );
         }
-        m_ReplayGain = NULL;
 
-        g_object_unref( resample );
-       }
-       else
-       {
-        guLogError( wxT( "Could not create the audioresample object" ) );
-       }
-
-       g_object_unref( converter );
+        g_object_unref( converter );
       }
       else
       {
