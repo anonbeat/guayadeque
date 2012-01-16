@@ -716,7 +716,7 @@ bool guTagInfo::Read( void )
         m_ArtistName = TStringTowxString( m_Tag->artist() );
         m_AlbumName = TStringTowxString( m_Tag->album() );
         m_GenreName = TStringTowxString( m_Tag->genre() );
-        //m_Comments = TStringTowxString( m_Tag->comment() );
+        m_Comments = TStringTowxString( m_Tag->comment() );
         m_Track = m_Tag->track();
         m_Year = m_Tag->year();
     }
