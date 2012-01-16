@@ -221,8 +221,6 @@ class guFaderPlayBin
     int                 m_State;
     gint64              m_PausePosition;
 
-    bool                m_RecordBinAdded;
-
     //
     GstElement *        m_OutputSink;
     GstElement *        m_Playbin;
