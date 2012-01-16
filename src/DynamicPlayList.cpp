@@ -222,7 +222,7 @@ void guFilterItem::SetFilterLabel( void )
         case guDYNAMIC_FILTER_TYPE_LENGTH : // Time
         {
             m_Label += m_FilterNumberOptionChoices[ m_Option ] + wxT( " " );
-            m_Label += LenToString( m_Number );
+            m_Label += LenToString( m_Number * 1000 );
             break;
         }
 
