@@ -580,6 +580,9 @@ void guAlbumBrowserItemPanel::OnMouse( wxMouseEvent &event )
 
         if( ++m_DragCount == 3 )
         {
+            if( m_BitmapTimer.IsRunning() )
+                m_BitmapTimer.Stop();
+
             wxCommandEvent DragEvent( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUMBROWSER_BEGINDRAG );
             if( event.ControlDown() )
             {
