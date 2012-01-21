@@ -553,7 +553,7 @@ void ReadJamendoXmlTrack( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, g
         else if( ItemName == wxT( "duration" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            track->m_Length = Id;
+            track->m_Length = Id * 1000;
         }
         else if( ItemName == wxT( "numalbum" ) )
         {

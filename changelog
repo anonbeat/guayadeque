@@ -1,4 +1,5 @@
- 
+
+  * Allow to select tracks from album browser zoon cover mode 
   * Added load defaults in shortcuts preferences
   * Added cue support
   * Allow to change language from Preferences -> General
