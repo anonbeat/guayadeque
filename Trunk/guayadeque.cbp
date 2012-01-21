@@ -46,14 +46,16 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-O2" />
 			<Add option="-w" />
 			<Add option="-Wfatal-errors" />
-			<Add option="-W" />
 			<Add option="-Wall" />
+			<Add option="-W" />
 			<Add option="`pkg-config gtk+-2.0 --cflags`" />
 			<Add option="`wx-config --cflags`" />
 			<Add option="`curl-config --cflags`" />
 			<Add option="`pkg-config gstreamer-0.10 --cflags`" />
+			<Add option="`pkg-config dbus-1 --cflags`" />
 			<Add directory="/usr/include/dbus-1.0" />
 			<Add directory="/usr/lib/dbus-1.0/include" />
 			<Add directory="/usr/include/taglib" />
@@ -63,6 +65,7 @@
 			<Add option="`pkg-config gstreamer-0.10 --libs`" />
 			<Add option="`pkg-config dbus-1 --libs`" />
 			<Add option="`pkg-config flac --libs`" />
+			<Add option="`pkg-config libcurl --libs`" />
 			<Add library="sqlite3" />
 			<Add library="libcurl" />
 			<Add library="/usr/lib/libtag.so" />
@@ -114,6 +117,8 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/ArrayStringArray.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/AudioScrobble.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/AuiDockArt.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/AuiManagedPanel.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/AuiManagerPanel.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/AuiNotebook.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/AutoPulseGauge.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/AutoScrollText.o" />
@@ -122,6 +127,7 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/CXX.includecache" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/ChannelEditor.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/CoListBox.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/Collections.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Config.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/ConfirmExit.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/CopyTo.o" />
@@ -136,6 +142,7 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/DependInfo.cmake" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Discogs.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/DynamicPlayList.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/EditWithOptions.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Equalizer.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/FieldEditor.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/FileBrowser.o" />
@@ -144,6 +151,7 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/GeListBox.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Google.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Images.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/ImportFiles.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/ItemListBox.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Jamendo.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/LabelEditor.o" />
@@ -160,6 +168,8 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/MainApp.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/MainFrame.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/MediaCtrl.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/MediaViewer.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/MediaViewerLibrary.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/MusicBrainz.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/MusicDns.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/NewChannel.o" />
@@ -185,10 +195,12 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/SelCoverFile.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Shoutcast.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/ShowImage.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/SmartMode.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/SoListBox.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/SplashWin.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/StaticBitmap.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/StatusBar.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/TVSoListBox.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/TaListBox.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/TagInfo.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/TaskBar.o" />
@@ -197,6 +209,9 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/TrackChangeInfo.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/TrackEdit.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Transcode.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/TreePanel.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/TreeViewFilter.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/TreeViewFilterEditor.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Utils.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/VolumeFrame.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/Vumeters.o" />
@@ -216,6 +231,7 @@
 		<Unit filename="src/CMakeFiles/guayadeque.dir/flags.make" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/hmac/hmac_sha2.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/hmac/sha2.o" />
+		<Unit filename="src/CMakeFiles/guayadeque.dir/iPodMedia.o" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/link.txt" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/progress.make" />
 		<Unit filename="src/CMakeFiles/guayadeque.dir/wxsqlite3/wxsqlite3.o" />
@@ -227,6 +243,7 @@
 		<Unit filename="src/CoListBox.cpp" />
 		<Unit filename="src/CoListBox.h" />
 		<Unit filename="src/Collections.cpp" />
+		<Unit filename="src/Collections.h" />
 		<Unit filename="src/Commands.h" />
 		<Unit filename="src/Config.cpp" />
 		<Unit filename="src/Config.h" />
@@ -272,6 +289,8 @@
 		<Unit filename="src/Google.h" />
 		<Unit filename="src/Images.cpp" />
 		<Unit filename="src/Images.h" />
+		<Unit filename="src/ImportFiles.cpp" />
+		<Unit filename="src/ImportFiles.h" />
 		<Unit filename="src/ItemListBox.cpp" />
 		<Unit filename="src/ItemListBox.h" />
 		<Unit filename="src/Jamendo.cpp" />
@@ -360,6 +379,8 @@
 		<Unit filename="src/Shoutcast.h" />
 		<Unit filename="src/ShowImage.cpp" />
 		<Unit filename="src/ShowImage.h" />
+		<Unit filename="src/SmartMode.cpp" />
+		<Unit filename="src/SmartMode.h" />
 		<Unit filename="src/SoListBox.cpp" />
 		<Unit filename="src/SoListBox.h" />
 		<Unit filename="src/SplashWin.cpp" />
@@ -431,6 +452,8 @@
 			<Option compilerVar="CC" />
 		</Unit>
 		<Unit filename="src/hmac/sha2.h" />
+		<Unit filename="src/iPodMedia.cpp" />
+		<Unit filename="src/iPodMedia.h" />
 		<Unit filename="src/images/add.h" />
 		<Unit filename="src/images/blank_cd_cover.h" />
 		<Unit filename="src/images/bookmark.h" />
@@ -612,6 +635,10 @@
 		<Unit filename="src/images/orig/tiny_gapless.png" />
 		<Unit filename="src/images/orig/tiny_left.png" />
 		<Unit filename="src/images/orig/tiny_library.png" />
+		<Unit filename="src/images/orig/tiny_mv_albumbrowser.png" />
+		<Unit filename="src/images/orig/tiny_mv_library.png" />
+		<Unit filename="src/images/orig/tiny_mv_playlists.png" />
+		<Unit filename="src/images/orig/tiny_mv_treeview.png" />
 		<Unit filename="src/images/orig/tiny_net_radio.png" />
 		<Unit filename="src/images/orig/tiny_numerate.png" />
 		<Unit filename="src/images/orig/tiny_podcast.png" />
@@ -730,6 +757,10 @@
 		<Unit filename="src/images/tiny_gapless.h" />
 		<Unit filename="src/images/tiny_left.h" />
 		<Unit filename="src/images/tiny_library.h" />
+		<Unit filename="src/images/tiny_mv_albumbrowser.h" />
+		<Unit filename="src/images/tiny_mv_library.h" />
+		<Unit filename="src/images/tiny_mv_playlists.h" />
+		<Unit filename="src/images/tiny_mv_treeview.h" />
 		<Unit filename="src/images/tiny_net_radio.h" />
 		<Unit filename="src/images/tiny_numerate.h" />
 		<Unit filename="src/images/tiny_podcast.h" />

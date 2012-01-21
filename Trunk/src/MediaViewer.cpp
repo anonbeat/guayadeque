@@ -1696,7 +1696,7 @@ void guMediaViewer::AlbumCoverChanged( const int albumid, const bool deleted )
 
     if( m_AlbumBrowser )
     {
-        m_AlbumBrowser->AlbumCoverChanged();
+        m_AlbumBrowser->AlbumCoverChanged( albumid );
     }
 
     wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );

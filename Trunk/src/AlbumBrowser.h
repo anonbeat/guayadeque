@@ -128,6 +128,8 @@ class guAlbumBrowserItemPanel : public wxPanel
 };
 WX_DEFINE_ARRAY_PTR( guAlbumBrowserItemPanel *, guAlbumBrowserItemPanelArray );
 
+WX_DEFINE_ARRAY_PTR( wxStaticText *, guStaticTextArray );
+
 class guUpdateAlbumDetails;
 
 // -------------------------------------------------------------------------------- //
@@ -159,12 +161,27 @@ class guAlbumBrowser : public wxPanel
 
     wxString                        m_ConfigPath;
 
+    wxTimer                         m_BitmapClickTimer;
+
     // GUI
+    wxBoxSizer *                    m_MainSizer;
+    wxBoxSizer *                    m_AlbumBrowserSizer;
 	wxGridSizer *                   m_AlbumsSizer;
 	wxStaticText *                  m_NavLabel;
 	wxSlider *                      m_NavSlider;
 	wxSize                          m_LastSize;
     wxArrayString                   m_TextSearchFilter;
+
+    wxBoxSizer *                    m_BigCoverSizer;
+    wxButton *                      m_BigCoverBackBtn;
+    wxStaticBitmap *                m_BigCoverBitmap;
+    wxStaticText *                  m_BigCoverAlbumLabel;
+    wxStaticText *                  m_BigCoverArtistLabel;
+    wxStaticText *                  m_BigCoverDetailsLabel;
+    wxListBox *                     m_BigCoverTracksListBox;
+    guStaticTextArray               m_BigCoverTracksItems;
+    guTrackArray                    m_BigCoverTracks;
+    bool                            m_BigCoverShowed;
 
     int                             GetItemStart( void ) { return m_ItemStart; }
     int                             GetItemCount( void ) { return m_ItemCount; }
@@ -174,7 +191,6 @@ class guAlbumBrowser : public wxPanel
     void                            OnChangingPosition( wxScrollEvent& event );
     void                            OnRefreshTimer( wxTimerEvent &event );
 
-//    void                            OnFilterSelected( wxCommandEvent &event );
     void                            OnAddFilterClicked( wxCommandEvent &event );
     void                            OnDelFilterClicked( wxCommandEvent &event );
     void                            OnEditFilterClicked( wxCommandEvent &event );
@@ -186,7 +202,7 @@ class guAlbumBrowser : public wxPanel
 
     virtual void                    NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
-    virtual void                    OnBitmapClicked( const int coverid, const wxPoint &position );
+    virtual void                    OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPoint &position );
 
     virtual void                    OnAlbumSelectName( const int albumid );
     virtual void                    OnArtistSelectName( const int artistid );
@@ -196,6 +212,34 @@ class guAlbumBrowser : public wxPanel
     void                            CreateAcceleratorTable( void );
 
     bool                            DoTextSearch( const wxString &searchtext );
+
+    void                            OnBigCoverBackClicked( wxCommandEvent &event );
+    void                            OnBigCoverBitmapClicked( wxMouseEvent &event );
+    void                            OnBigCoverBitmapDClicked( wxMouseEvent &event );
+    void                            OnBigCoverTracksDClicked( wxCommandEvent &event );
+    void                            DoBackToAlbums( void );
+    int                             GetSelectedTracks( guTrackArray * tracks );
+    void                            DoSelectTracks( const guTrackArray &tracks, const bool append, const int aftercurrent = 0 );
+    void                            OnBigCoverContextMenu( wxContextMenuEvent &event );
+    void                            OnBigCoverTracksContextMenu( wxContextMenuEvent &event );
+
+    void                            OnBigCoverPlayClicked( wxCommandEvent &event );
+    void                            OnBigCoverEnqueueClicked( wxCommandEvent &event );
+    void                            OnBigCoverCopyToClipboard( wxCommandEvent &event );
+    void                            OnBigCoverAlbumSelectName( wxCommandEvent &event );
+    void                            OnBigCoverArtistSelectName( wxCommandEvent &event );
+    void                            OnBigCoverCommandClicked( wxCommandEvent &event );
+    void                            OnBigCoverDownloadCoverClicked( wxCommandEvent &event );
+    void                            OnBigCoverSelectCoverClicked( wxCommandEvent &event );
+    void                            OnBigCoverDeleteCoverClicked( wxCommandEvent &event );
+    void                            OnBigCoverEmbedCoverClicked( wxCommandEvent &event );
+    void                            OnBigCoverCopyToClicked( wxCommandEvent &event );
+    void                            OnBigCoverEditLabelsClicked( wxCommandEvent &event );
+    void                            OnBigCoverEditTracksClicked( wxCommandEvent &event );
+    void                            OnBigCoverSearchLinkClicked( wxCommandEvent &event );
+
+
+    void                            OnTimerTimeout( wxTimerEvent &event );
 
   protected :
     void                            CreateControls( void );
@@ -274,7 +318,7 @@ class guAlbumBrowser : public wxPanel
 
     int                             GetSortSelected( void ) { return m_SortSelected; }
 
-    virtual void                    AlbumCoverChanged( void );
+    virtual void                    AlbumCoverChanged( const int albumid );
 
     void                            SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 

@@ -615,7 +615,7 @@ void guMagnatuneUpdateThread::ReadMagnatuneXmlTrack( wxXmlNode * xmlnode )
         else if( ItemName == wxT( "seconds" ) )
         {
             xmlnode->GetNodeContent().ToLong( &Id );
-            m_CurrentTrack.m_Length = Id;
+            m_CurrentTrack.m_Length = Id * 1000;
         }
         else if( ItemName == wxT( "url" ) )
         {

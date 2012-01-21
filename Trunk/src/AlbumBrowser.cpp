@@ -52,6 +52,7 @@ WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray );
 #define guALBUMBROWSER_GRID_SIZE_HEIGHT         180
 
 #define guALBUMBROWSER_TIMER_ID_REFRESH         3
+#define guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED  4
 
 void AddAlbumCommands( wxMenu * Menu, int SelCount );
 
@@ -685,8 +686,9 @@ void guAlbumBrowserItemPanel::OnBitmapClicked( wxMouseEvent &event )
 void guAlbumBrowserItemPanel::OnTimer( wxTimerEvent &event )
 {
     if( m_AlbumBrowserItem )
-        m_AlbumBrowser->OnBitmapClicked( m_AlbumBrowserItem->m_CoverId, ClientToScreen( m_Bitmap->GetPosition() ) );
+        m_AlbumBrowser->OnBitmapClicked( m_AlbumBrowserItem, ClientToScreen( m_Bitmap->GetPosition() ) );
 }
+
 
 
 
@@ -695,7 +697,8 @@ void guAlbumBrowserItemPanel::OnTimer( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer ) :
     wxPanel( parent, wxID_ANY ),
-    m_RefreshTimer( this, guALBUMBROWSER_TIMER_ID_REFRESH )//, m_TextChangedTimer( this, guALBUMBROWSER_TIMER_ID_TEXTSEARCH )
+    m_RefreshTimer( this, guALBUMBROWSER_TIMER_ID_REFRESH ),
+    m_BitmapClickTimer( this, guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED )
 {
     m_MediaViewer = mediaviewer;
     m_Db = mediaviewer->GetDb();
@@ -706,6 +709,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer )
     m_ItemCount = 1;
     m_BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_no_cover ) );
     m_ConfigPath = mediaviewer->ConfigPath() + wxT( "/albumbrowser" );
+    m_BigCoverShowed = false;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -715,6 +719,7 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer )
     CreateAcceleratorTable();
 
     RefreshCount();
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -746,7 +751,10 @@ void guAlbumBrowser::CreateControls( void )
     // GUI
 	SetMinSize( wxSize( 120, 150 ) );
 
-	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
+    m_MainSizer = new wxBoxSizer( wxVERTICAL );
+
+    // AlbumItems
+	m_AlbumBrowserSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_AlbumsSizer = new wxGridSizer( 1, 1, 0, 0 );
 
@@ -754,10 +762,10 @@ void guAlbumBrowser::CreateControls( void )
 
 	m_AlbumsSizer->Add( m_ItemPanels[ 0 ], 1, wxEXPAND|wxALL, 5 );
 
-	MainSizer->Add( m_AlbumsSizer, 1, wxEXPAND, 5 );
+	m_AlbumBrowserSizer->Add( m_AlbumsSizer, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* NavigatorSizer;
-	NavigatorSizer = new wxBoxSizer( wxVERTICAL );
+	// Navigator
+	wxBoxSizer * NavigatorSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_NavLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_NavLabel->Wrap( -1 );
@@ -767,10 +775,81 @@ void guAlbumBrowser::CreateControls( void )
 	m_NavSlider->SetFocus();
 	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	MainSizer->Add( NavigatorSizer, 0, wxEXPAND, 5 );
+	m_AlbumBrowserSizer->Add( NavigatorSizer, 0, wxEXPAND, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    m_MainSizer->Add( m_AlbumBrowserSizer, 1, wxEXPAND, 5 );
+
+
+    // BigCover
+    // ------------------------------------------------------------------------------------------------------------------
+	m_BigCoverSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_BigCoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxBoxSizer * BigCoverCenterSizer = new wxBoxSizer( wxHORIZONTAL );
+
+	BigCoverCenterSizer->Add( 0, 0, 2, wxEXPAND, 5 );
+
+	wxBoxSizer * BigCoverSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_BigCoverBitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 300,300 ), 0 );
+	BigCoverSizer->Add( m_BigCoverBitmap, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_BigCoverAlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_BigCoverAlbumLabel->Wrap( -1 );
+	wxFont CurFont = GetFont();
+	CurFont.SetWeight( wxFONTWEIGHT_BOLD );
+	m_BigCoverAlbumLabel->SetFont( CurFont );
+	BigCoverSizer->Add( m_BigCoverAlbumLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+
+	m_BigCoverArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_BigCoverArtistLabel->Wrap( -1 );
+	//m_BigCoverArtistLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	BigCoverSizer->Add( m_BigCoverArtistLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
+
+	m_BigCoverDetailsLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_BigCoverDetailsLabel->Wrap( -1 );
+    CurFont = GetFont();
+	CurFont.SetPointSize( CurFont.GetPointSize() - 2 );
+	m_BigCoverDetailsLabel->SetFont( CurFont );
+	BigCoverSizer->Add( m_BigCoverDetailsLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+	BigCoverCenterSizer->Add( BigCoverSizer, 0, wxEXPAND, 5 );
+
+	BigCoverCenterSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxBoxSizer * BigCoverTracksSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_BigCoverTracksListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+	m_BigCoverTracksListBox->SetBackgroundColour( m_BigCoverDetailsLabel->GetBackgroundColour() );
+	//m_BigCoverTracksListBox->SetMaxSize( wxSize( 450, -1 ) );
+	BigCoverTracksSizer->Add( m_BigCoverTracksListBox, 1, 0, 5 );
+
+	BigCoverCenterSizer->Add( BigCoverTracksSizer, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+
+	BigCoverCenterSizer->Add( 0, 0, 2, wxEXPAND, 5 );
+
+	m_BigCoverSizer->Add( BigCoverCenterSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+
+	m_BigCoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	wxBoxSizer * BigCoverBtnSizer = new wxBoxSizer( wxVERTICAL );
+
+	m_BigCoverBackBtn = new wxButton( this, wxID_ANY, _( "Back" ), wxDefaultPosition, wxDefaultSize, 0 );
+	BigCoverBtnSizer->Add( m_BigCoverBackBtn, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_BigCoverSizer->Add( BigCoverBtnSizer, 0, wxEXPAND, 5 );
+
+	m_BigCoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+	m_MainSizer->Add( m_BigCoverSizer, 1, wxEXPAND, 5 );
+    // ------------------------------------------------------------------------------------------------------------------
+
+    this->SetSizer( m_MainSizer );
+	//this->Layout();
+
+	m_MainSizer->Hide( m_BigCoverSizer, true );
+	m_MainSizer->FitInside( this );
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
 	m_NavSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
@@ -782,6 +861,30 @@ void guAlbumBrowser::CreateControls( void )
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlbumBrowser::OnConfigUpdated ), NULL, this );
 
 	Connect( ID_ALBUMBROWSER_ORDER_NAME, ID_ALBUMBROWSER_ORDER_ADDEDTIME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnSortSelected ), NULL, this );
+
+	m_BigCoverBackBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverBackClicked ), NULL, this );
+	m_BigCoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowser::OnBigCoverBitmapClicked ), NULL, this );
+	m_BigCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guAlbumBrowser::OnBigCoverBitmapDClicked ), NULL, this );
+	m_BigCoverTracksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksDClicked ), NULL, this );
+    m_BigCoverBitmap->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowser::OnBigCoverContextMenu ), NULL, this );
+    m_BigCoverTracksListBox->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowser::OnBigCoverTracksContextMenu ), NULL, this );
+
+	Connect( guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED, wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnTimerTimeout ), NULL, this );
+
+    Connect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverPlayClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEnqueueClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEditLabelsClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEditTracksClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverCopyToClipboard ), NULL, this );
+    Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverAlbumSelectName ), NULL, this );
+    Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverArtistSelectName ), NULL, this );
+    Connect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverDownloadCoverClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverSelectCoverClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverDeleteCoverClicked ), NULL, this );
+    Connect( ID_ALBUMBROWSER_EMBEDCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEmbedCoverClicked ), NULL, this );
+    Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverCopyToClicked ), NULL, this );
+    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverCommandClicked ) );
+    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverSearchLinkClicked ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -827,7 +930,7 @@ void guAlbumBrowser::OnGoToSearch( wxCommandEvent &event )
 void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
 {
     wxSize Size = event.GetSize();
-    if( Size != m_LastSize )
+    if( ( Size != m_LastSize ) )
     {
         size_t ColItems = Size.GetWidth() / guALBUMBROWSER_GRID_SIZE_WIDTH;
         size_t RowItems = Size.GetHeight() / guALBUMBROWSER_GRID_SIZE_HEIGHT;
@@ -850,6 +953,8 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
                     {
                         int Index = m_ItemPanels.Count();
                         m_ItemPanels.Add( new guAlbumBrowserItemPanel( this, Index ) );
+                        if( m_BigCoverShowed )
+                            m_ItemPanels[ Index ]->Hide();
                         m_AlbumsSizer->Add( m_ItemPanels[ Index ], 1, wxEXPAND|wxALL, 5 );
                     }
                 }
@@ -1225,7 +1330,7 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
 {
-    if( !m_NavSlider->IsEnabled() )
+    if( m_BigCoverShowed || !m_NavSlider->IsEnabled() )
         return;
 
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta() * -1;
@@ -1301,29 +1406,83 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::OnBitmapClicked( const int coverid, const wxPoint &position )
+void guAlbumBrowser::OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPoint &position )
 {
-    wxString CoverFile = GetAlbumCoverFile( coverid );
-    if( !CoverFile.IsEmpty() )
+    if( albumitem && albumitem->m_AlbumId )
     {
-        wxImage * Image = new wxImage( CoverFile, wxBITMAP_TYPE_ANY );
-        if( Image )
+        wxImage * Image = NULL;
+        wxString CoverFile = GetAlbumCoverFile( albumitem->m_CoverId );
+        if( !CoverFile.IsEmpty() )
         {
-            if( Image->IsOk() )
-            {
-                guImageResize( Image, 300, true );
-
-                guShowImage * ShowImage = new guShowImage( this, Image, position );
-                if( ShowImage )
-                {
-                    ShowImage->Show();
-                }
-            }
-            else
+            Image = new wxImage( CoverFile, wxBITMAP_TYPE_ANY );
+            if( Image && !Image->IsOk() )
             {
                 delete Image;
+                Image = NULL;
             }
         }
+
+        if( !Image )
+        {
+            Image = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+        }
+
+        guImageResize( Image, 300, true );
+
+        m_BigCoverBitmap->SetBitmap( wxBitmap( * Image ) );
+
+        if( Image )
+        {
+            delete Image;
+        }
+
+        m_BigCoverTracks.Empty();
+        wxArrayInt Albums;
+        Albums.Add( albumitem->m_AlbumId );
+
+        m_Db->GetAlbumsSongs( Albums, &m_BigCoverTracks, true );
+        m_MediaViewer->NormalizeTracks( &m_BigCoverTracks );
+
+        m_BigCoverTracksListBox->Clear();
+        m_BigCoverTracksListBox->Append( _( "All" ) );
+        wxUint64 AlbumLength = 0;
+        int Index;
+        int Count = m_BigCoverTracks.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            const guTrack &Track = m_BigCoverTracks[ Index ];
+            AlbumLength += Track.m_Length;
+            wxString TrackName = wxString::Format( wxT( "%02u - " ), Track.m_Number );
+            if( !Track.m_AlbumArtist.IsEmpty() )
+            {
+                TrackName += Track.m_ArtistName + wxT( " - " );
+            }
+            TrackName += Track.m_SongName;
+
+            m_BigCoverTracksListBox->Append( TrackName );
+        }
+
+        m_BigCoverAlbumLabel->SetLabel( albumitem->m_AlbumName );
+        m_BigCoverArtistLabel->SetLabel( albumitem->m_ArtistName );
+        wxString Details;
+        if( albumitem->m_Year )
+        {
+            Details += wxString::Format( wxT( "%04u" ), albumitem->m_Year );
+        }
+        Details += wxString::Format( wxT( "   %02u " ), m_BigCoverTracks.Count() );
+        Details += _( "Tracks" );
+        if( AlbumLength )
+        {
+            Details += wxT( "   " ) + LenToString( AlbumLength );
+        }
+        m_BigCoverDetailsLabel->SetLabel( Details );
+
+        m_LastAlbumBrowserItem = albumitem;
+        m_BigCoverShowed = true;
+        m_MainSizer->Hide( m_AlbumBrowserSizer, true );
+        m_MainSizer->Show( m_BigCoverSizer, true );
+
+        Layout();
     }
 }
 
@@ -1360,8 +1519,37 @@ void guAlbumBrowser::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::AlbumCoverChanged( void )
+void guAlbumBrowser::AlbumCoverChanged( const int albumid )
 {
+    if( m_BigCoverShowed && ( m_LastAlbumBrowserItem->m_AlbumId == ( unsigned int ) albumid ) )
+    {
+        wxImage * Image = NULL;
+        wxString CoverFile = GetAlbumCoverFile( m_LastAlbumBrowserItem->m_CoverId );
+        if( !CoverFile.IsEmpty() )
+        {
+            Image = new wxImage( CoverFile, wxBITMAP_TYPE_ANY );
+            if( Image && !Image->IsOk() )
+            {
+                delete Image;
+                Image = NULL;
+            }
+        }
+
+        if( !Image )
+        {
+            Image = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+        }
+
+        guImageResize( Image, 300, true );
+
+        m_BigCoverBitmap->SetBitmap( wxBitmap( * Image ) );
+
+        if( Image )
+        {
+            delete Image;
+        }
+    }
+
     ReloadItems();
     RefreshAll();
 }
@@ -1371,6 +1559,331 @@ void guAlbumBrowser::CreateContextMenu( wxMenu * menu )
 {
     m_MediaViewer->CreateContextMenu( menu, guLIBRARY_ELEMENT_ALBUMS );
 }
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverBackClicked( wxCommandEvent &event )
+{
+    DoBackToAlbums();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverBitmapClicked( wxMouseEvent &event )
+{
+    guLogMessage( wxT( "OnBigCoverBitmapClicked..." ) );
+    if( m_BitmapClickTimer.IsRunning() )
+        m_BitmapClickTimer.Stop();
+
+    m_BitmapClickTimer.Start( 300, wxTIMER_ONE_SHOT );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverBitmapDClicked( wxMouseEvent &event )
+{
+    if( m_BitmapClickTimer.IsRunning() )
+        m_BitmapClickTimer.Stop();
+
+    DoSelectTracks( m_BigCoverTracks, false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnTimerTimeout( wxTimerEvent &event )
+{
+    guLogMessage( wxT( "OnBigCoverBitmapClicked...Timeout..." ) );
+    DoBackToAlbums();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::DoBackToAlbums( void )
+{
+    m_BigCoverShowed = false;
+    m_MainSizer->Hide( m_BigCoverSizer, true );
+    m_MainSizer->Show( m_AlbumBrowserSizer, true );
+    Layout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverTracksDClicked( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "TracksDClicked..." ) );
+    guTrackArray Tracks;
+    if( GetSelectedTracks( &Tracks ) )
+    {
+        DoSelectTracks( Tracks, false );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+int guAlbumBrowser::GetSelectedTracks( guTrackArray * tracks )
+{
+    wxArrayInt Selections;
+    int Index;
+    int Count = m_BigCoverTracksListBox->GetSelections( Selections );
+    if( Selections.Index( 0 ) != wxNOT_FOUND )
+    {
+        * tracks = m_BigCoverTracks;
+    }
+    else
+    {
+        for( Index = 0; Index < Count; Index++ )
+        {
+            tracks->Add( new guTrack( m_BigCoverTracks[ Selections[ Index ] - 1 ] ) );
+        }
+    }
+    return tracks->Count();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::DoSelectTracks( const guTrackArray &tracks, const bool append, const int aftercurrent )
+{
+    if( append )
+        m_PlayerPanel->AddToPlayList( tracks, true, aftercurrent );
+    else
+        m_PlayerPanel->SetPlayList( tracks );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverContextMenu( wxContextMenuEvent &event )
+{
+    wxMenu Menu;
+    wxMenuItem * MenuItem;
+    wxPoint Point = event.GetPosition();
+    // If from keyboard
+    if( Point.x == -1 && Point.y == -1 )
+    {
+        wxSize Size = GetSize();
+        Point.x = Size.x / 2;
+        Point.y = Size.y / 2;
+    }
+    else
+    {
+        Point = ScreenToClient( Point );
+    }
+
+
+//    if( m_AlbumItems->m_AlbumId != ( size_t ) wxNOT_FOUND )
+    {
+        int ContextMenuFlags = m_MediaViewer->GetContextMenuFlags();
+
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_PLAY, _( "Play" ), _( "Play the album tracks" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        Menu.Append( MenuItem );
+
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, _( "Enqueue" ), _( "Enqueue the album tracks to the playlist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        Menu.Append( MenuItem );
+
+        wxMenu * EnqueueMenu = new wxMenu();
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_TRACK,
+                                wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
+                                _( "Add current selected tracks to playlist after the current track" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALBUM,
+                                wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
+                                _( "Add current selected tracks to playlist after the current album" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST,
+                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
+                                _( "Add current selected tracks to playlist after the current artist" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        EnqueueMenu->Append( MenuItem );
+
+        Menu.Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITLABELS, _( "Edit Labels" ), _( "Edit the labels assigned to the selected albums" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+        Menu.Append( MenuItem );
+
+        if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
+        {
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EDITTRACKS, _( "Edit Songs" ), _( "Edit the selected songs" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            Menu.Append( MenuItem );
+        }
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUM_SELECTNAME, _( "Search Album" ), _( "Search the album in the library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+        Menu.Append( MenuItem );
+
+        MenuItem = new wxMenuItem( &Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+        Menu.Append( MenuItem );
+
+        if( ContextMenuFlags & guCONTEXTMENU_DOWNLOAD_COVERS )
+        {
+            Menu.AppendSeparator();
+
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_SEARCHCOVER, _( "Download Cover" ), _( "Download cover for the current selected album" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu.Append( MenuItem );
+
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_SELECTCOVER, _( "Select Cover" ), _( "Select the cover image file from disk" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            Menu.Append( MenuItem );
+
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_DELETECOVER, _( "Delete Cover" ), _( "Delete the cover for the selected album" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+            Menu.Append( MenuItem );
+        }
+
+        if( ContextMenuFlags & guCONTEXTMENU_EMBED_COVERS )
+        {
+            MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_EMBEDCOVER, _( "Embed Cover" ), _( "Embed the cover to the selected album tracks" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+            Menu.Append( MenuItem );
+        }
+
+        Menu.AppendSeparator();
+
+        MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_COPYTOCLIPBOARD, _( "Copy to Clipboard" ), _( "Copy the album info to clipboard" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+        Menu.Append( MenuItem );
+
+
+        if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_LINKS ) ||
+            ( ContextMenuFlags & guCONTEXTMENU_COMMANDS ) )
+        {
+            Menu.AppendSeparator();
+
+            if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
+            {
+                guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+                MainFrame->CreateCopyToMenu( &Menu );
+            }
+
+            if( ContextMenuFlags & guCONTEXTMENU_LINKS )
+            {
+                AddOnlineLinksMenu( &Menu );
+            }
+
+            if( ContextMenuFlags & guCONTEXTMENU_COMMANDS )
+            {
+                AddAlbumCommands( &Menu, 1 );
+            }
+        }
+
+        CreateContextMenu( &Menu );
+    }
+
+    // Add Links and Commands
+    PopupMenu( &Menu, Point.x, Point.y );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverTracksContextMenu( wxContextMenuEvent &event )
+{
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverPlayClicked( wxCommandEvent &event )
+{
+    SelectAlbum( m_LastAlbumBrowserItem->m_AlbumId, false );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverEnqueueClicked( wxCommandEvent &event )
+{
+    SelectAlbum( m_LastAlbumBrowserItem->m_AlbumId, true, event.GetId() - ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverCopyToClipboard( wxCommandEvent &event )
+{
+    wxTheClipboard->UsePrimarySelection( false );
+    if( wxTheClipboard->Open() )
+    {
+        wxTheClipboard->Clear();
+        if( !wxTheClipboard->AddData( new wxTextDataObject(
+            m_LastAlbumBrowserItem->m_ArtistName + wxT( " " ) + m_LastAlbumBrowserItem->m_AlbumName ) ) )
+        {
+            guLogError( wxT( "Can't copy data to the clipboard" ) );
+        }
+        wxTheClipboard->Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the clipboard object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverAlbumSelectName( wxCommandEvent &event )
+{
+    OnAlbumSelectName( m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverArtistSelectName( wxCommandEvent &event )
+{
+    OnArtistSelectName( m_LastAlbumBrowserItem->m_ArtistId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverCommandClicked( wxCommandEvent &event )
+{
+    OnCommandClicked( event.GetId(), m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverDownloadCoverClicked( wxCommandEvent &event )
+{
+    OnAlbumDownloadCoverClicked( m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverSelectCoverClicked( wxCommandEvent &event )
+{
+    OnAlbumSelectCoverClicked( m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverDeleteCoverClicked( wxCommandEvent &event )
+{
+    OnAlbumDeleteCoverClicked( m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverEmbedCoverClicked( wxCommandEvent &event )
+{
+    OnAlbumEmbedCoverClicked( m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverCopyToClicked( wxCommandEvent &event )
+{
+    OnAlbumCopyToClicked( m_LastAlbumBrowserItem->m_AlbumId, event.GetId() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverEditLabelsClicked( wxCommandEvent &event )
+{
+    OnAlbumEditLabelsClicked( m_LastAlbumBrowserItem );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverEditTracksClicked( wxCommandEvent &event )
+{
+    OnAlbumEditTracksClicked( m_LastAlbumBrowserItem->m_AlbumId );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverSearchLinkClicked( wxCommandEvent &event )
+{
+    ExecuteOnlineLink( event.GetId(), m_LastAlbumBrowserItem->m_ArtistName + wxT( " " ) +
+                                                      m_LastAlbumBrowserItem->m_AlbumName );
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guAlbumBrowserDropTarget
