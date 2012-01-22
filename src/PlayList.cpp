@@ -2751,8 +2751,8 @@ void guPlayList::LoadPlaylistTracks( void )
     {
         guTrackArray Tracks;
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_CurItem = Config->LoadPlaylistTracks( Tracks );
-        if( ( size_t ) m_CurItem > m_Items.Count() )
+        int CurItem = Config->LoadPlaylistTracks( Tracks );
+        if( ( size_t ) m_CurItem > Tracks.Count() )
             m_CurItem = wxNOT_FOUND;
 
         wxTheApp->Yield();
@@ -2770,6 +2770,7 @@ void guPlayList::LoadPlaylistTracks( void )
                 AddPlayListItem( Tracks[ Index ].m_FileName, guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
             }
         }
+        m_CurItem = CurItem;
     }
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );

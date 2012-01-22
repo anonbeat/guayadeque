@@ -1171,7 +1171,6 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartEndThread( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnSmartEndThread" ) );
     m_SmartAddTracksThread = NULL;
     m_SmartSearchEnabled = false;
 }
@@ -1179,11 +1178,10 @@ void guPlayerPanel::OnSmartEndThread( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnSmartAddTracks( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "OnSmartAddTracks" ) );
     guTrackArray * Tracks = ( guTrackArray * ) event.GetClientData();
     if( Tracks )
     {
-        guLogMessage( wxT( "Tracks %i" ), Tracks->Count() );
+        //guLogMessage( wxT( "Tracks %i" ), Tracks->Count() );
         if( Tracks->Count() )
         {
             AddToPlayList( * Tracks );
