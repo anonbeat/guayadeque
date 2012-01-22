@@ -2945,7 +2945,16 @@ void guPrefDialog::OnLibAddCollectClick( wxCommandEvent& event )
                 m_LibCollectListBox->Append( NewName );
                 guMediaCollection * Collection = new guMediaCollection();
                 Collection->m_Name = NewName;
-                Collection->m_CoverWords.Add( wxT( "cover" ) );
+                if( m_Collections.Count() )
+                {
+                    Collection->m_CoverWords = m_Collections[ 0 ].m_CoverWords;
+                }
+                else
+                {
+                    Collection->m_CoverWords.Add( wxT( "cover" ) );
+                    Collection->m_CoverWords.Add( wxT( "front" ) );
+                    Collection->m_CoverWords.Add( wxT( "folder" ) );
+                }
                 Collection->m_UpdateOnStart = false;
                 Collection->m_ScanPlaylists = true;
                 Collection->m_ScanFollowSymLinks = false;
