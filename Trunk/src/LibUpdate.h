@@ -49,7 +49,9 @@ class guLibUpdateThread : public wxThread
     bool                m_ScanSymlinks;
 
     int                 ScanDirectory( wxString dirname, bool includedir = false );
-    bool                ReadFileTags( const wxString &filename );
+//    bool                ReadFileTags( const wxString &filename );
+    void                ProcessCovers( void );
+
 
   public :
     guLibUpdateThread( guMediaViewer * mediaviewer, int gaugeid, const wxString &scanpath = wxEmptyString );

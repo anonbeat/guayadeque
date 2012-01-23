@@ -2305,7 +2305,7 @@ wxFileOffset guFaderPlayBin::Length( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, const int quality )
 {
-    guLogDebug( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
+    guLogMessage( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
     GstElement * Encoder = NULL;
     GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
