@@ -2463,8 +2463,6 @@ bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 {
-    guLogMessage( wxT( "guFaderPlayBin::AddRecordElement %08X  %i" ), pad, isblocked );
-
 	gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
     m_RecordPad = gst_element_get_request_pad( m_Tee, "src%d" );
 
@@ -2488,8 +2486,6 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
 {
-    guLogMessage( wxT( "RemoveRecordElement..." ) );
-
     g_object_ref( m_RecordBin );
     gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
 
