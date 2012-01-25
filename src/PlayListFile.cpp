@@ -805,16 +805,41 @@ bool guCuePlaylistFile::Load( const wxString &location )
         if( Uri.IsReference() )
         {
             guLogMessage( wxT( "CuePlaylist from file : '%s'" ), location.c_str() );
-            wxFileInputStream Ins( location );
-            if( Ins.IsOk() )
+
+            wxFile PlaylistFile( location, wxFile::read );
+
+            if( !PlaylistFile.IsOpened() )
             {
-                wxStringOutputStream Outs( &Content );
-                Ins.Read( Outs );
+                guLogMessage( wxT( "Could not open '%s'" ), location.c_str() );
+                return false;
             }
-            else
+
+            int DataSize = PlaylistFile.Length();
+            if( !DataSize )
             {
-                guLogError( wxT( "Could not open the cue playlist '%s'" ), location.c_str() );
+                guLogMessage( wxT( "Playlist '%s' with 0 length" ), location.c_str() );
+                return false;
             }
+
+            char * Buffer = ( char * ) malloc( DataSize + 1 );
+            if( Buffer )
+            {
+                if( PlaylistFile.Read( Buffer, DataSize ) == DataSize )
+                {
+                    for( int Index = 0; Index < DataSize; Index++ )
+                    {
+                        Content += Buffer[ Index ];
+                    }
+                }
+                else
+                {
+                    guLogMessage( wxT( "Could not read '%s' %u bytes" ), location.c_str(), DataSize );
+                }
+
+                free( Buffer );
+            }
+
+            guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
         }
         else
         {
