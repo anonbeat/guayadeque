@@ -588,7 +588,7 @@ void guLibPanel::InitPanelData( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::ReloadControls( void )
 {
-    guLogMessage( wxT( "ReloadControls...%08X" ), m_VisiblePanels );
+//    guLogMessage( wxT( "ReloadControls...%08X" ), m_VisiblePanels );
     //m_Db->LoadCache();
     m_UpdateLock = true;
     ReloadLabels( false );
