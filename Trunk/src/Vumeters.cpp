@@ -216,14 +216,8 @@ void guVumeter::DrawHVumeter( wxBitmap * bitmap, int width, int height, wxColour
 
         Rect.x = 0;
         Rect.y = 0;
-        Rect.width = ( 84 * width ) / 100;
         Rect.height = height;
-
-        MemDC.SetBrush( green );
-        MemDC.DrawRectangle( 0, 0, Rect.width, height );
-
-        Rect.x = Rect.width;
-        Rect.width = ( 8 * width ) / 100;
+        Rect.width = ( 92 * width ) / 100;
 
         MemDC.GradientFillLinear( Rect, green, orange );
 
@@ -247,14 +241,8 @@ void guVumeter::DrawVVumeter( wxBitmap * bitmap, int width, int height, wxColour
 
         Rect.x = 0;
         Rect.width = width;
-        Rect.y = ( height * 16 ) / 100;
+        Rect.y = ( height * 8 ) / 100;
         Rect.height = height - Rect.y;
-
-        MemDC.SetBrush( green );
-        MemDC.DrawRectangle( 0, Rect.y, width, Rect.height );
-
-        Rect.height = ( 8 * height ) / 100;
-        Rect.y -= Rect.height;
 
         MemDC.GradientFillLinear( Rect, green, orange, wxNORTH );
 

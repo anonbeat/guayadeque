@@ -154,6 +154,10 @@ class guAlbumBrowser : public wxPanel
     wxTimer                         m_RefreshTimer;
     guDynPlayList                   m_DynFilter;
     guAlbumBrowserItem *            m_LastAlbumBrowserItem;
+    int                             m_DragCount;
+    wxPoint                         m_DragStart;
+    bool                            m_MouseWasLeftUp;
+    bool                            m_MouseSelecting;
 
     wxString                        m_LastSearchString;
 
@@ -182,6 +186,7 @@ class guAlbumBrowser : public wxPanel
     guStaticTextArray               m_BigCoverTracksItems;
     guTrackArray                    m_BigCoverTracks;
     bool                            m_BigCoverShowed;
+    bool                            m_BigCoverTracksContextMenu;
 
     int                             GetItemStart( void ) { return m_ItemStart; }
     int                             GetItemCount( void ) { return m_ItemCount; }
@@ -237,6 +242,13 @@ class guAlbumBrowser : public wxPanel
     void                            OnBigCoverEditLabelsClicked( wxCommandEvent &event );
     void                            OnBigCoverEditTracksClicked( wxCommandEvent &event );
     void                            OnBigCoverSearchLinkClicked( wxCommandEvent &event );
+
+    void                            OnBigCoverTracksPlayClicked( wxCommandEvent &event );
+    void                            OnBigCoverTracksEnqueueClicked( wxCommandEvent &event );
+    void                            OnBigCoverTracksEditLabelsClicked( wxCommandEvent &event );
+    void                            OnBigCoverTracksEditTracksClicked( wxCommandEvent &event );
+    void                            OnBigCoverTracksMouseMoved( wxMouseEvent &event );
+    void                            OnBigCoverTracksBeginDrag( wxMouseEvent &event );
 
 
     void                            OnTimerTimeout( wxTimerEvent &event );
@@ -300,6 +312,7 @@ class guAlbumBrowser : public wxPanel
     virtual void                    SelectAlbum( const int albumid, const bool append, const int aftercurrent = 0 );
     virtual int                     GetAlbumTracks( const int albumid, guTrackArray * tracks );
     virtual void                    OnCommandClicked( const int commandid, const int albumid );
+    virtual void                    OnCommandClicked( const int commandid, const guTrackArray &tracks );
     virtual void                    OnAlbumDownloadCoverClicked( const int albumid );
     virtual void                    OnAlbumSelectCoverClicked( const int albumid );
     virtual void                    OnAlbumDeleteCoverClicked( const int albumid );

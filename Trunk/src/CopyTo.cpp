@@ -832,14 +832,14 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 guCopyToThread::ExitCode guCopyToThread::Entry()
 {
 	long IdleTime = wxNOT_FOUND;
-	unsigned int TimeCounter = wxNOT_FOUND;
+	long TimeCounter = wxNOT_FOUND;
 	unsigned int FileCounter = 0;
     while( !TestDestroy() )
     {
         if( m_CopyToActions->Count() )
         {
             IdleTime = wxNOT_FOUND;
-            if( ( int ) TimeCounter == wxNOT_FOUND )
+            if( TimeCounter == wxNOT_FOUND )
             {
                 TimeCounter = wxGetLocalTime();
                 m_SizeCounter = 0;
@@ -872,7 +872,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
                     wxString FinishMsg = wxString::Format( _( "Copied %u files (%s)\nin %s seconds" ),
                         FileCounter,
                         SizeToString( m_SizeCounter ).c_str(),
-                        LenToString( TimeCounter ).c_str() );
+                        LenToString( TimeCounter * 1000 ).c_str() );
                     wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
                     NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );
                 }

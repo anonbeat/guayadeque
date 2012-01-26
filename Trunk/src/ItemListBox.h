@@ -31,8 +31,8 @@ class guListBox : public guListView
     guDbLibrary *       m_Db;
     guListItems *       m_Items;
 
-    virtual wxString    OnGetItemText( const int row, const int col ) const;
-    virtual wxString    GetSearchText( const int item ) const;
+    virtual wxString    OnGetItemText( const int row, const int col ) const { return GetItemName( row ); }
+    virtual wxString    GetSearchText( const int item ) const { return wxEmptyString; }
 
   public :
     guListBox( wxWindow * parent, guDbLibrary * db, const wxString &label = wxEmptyString,
@@ -51,7 +51,7 @@ class guListBox : public guListView
 
     virtual void            ReloadItems( bool reset = true );
 
-    virtual void            SetSelectedItems( const wxArrayInt &selection );
+//    virtual void            SetSelectedItems( const wxArrayInt &selection );
 
     virtual int             FindItemId( const int id );
 

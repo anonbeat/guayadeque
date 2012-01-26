@@ -43,24 +43,6 @@ guListBox::~guListBox()
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guListBox::OnGetItemText( const int row, const int col ) const
-{
-    return GetItemName( row );
-}
-
-// -------------------------------------------------------------------------------- //
-//wxString inline guListBox::GetItemName( const int row ) const
-//{
-//    return ( * m_Items )[ row ].m_Name;
-//}
-
-// -------------------------------------------------------------------------------- //
-//int inline guListBox::GetItemId( const int row ) const
-//{
-//    return ( * m_Items )[ row ].m_Id;
-//}
-
-// -------------------------------------------------------------------------------- //
 void guListBox::ReloadItems( bool reset )
 {
     wxArrayInt Selection;
@@ -88,23 +70,6 @@ void guListBox::ReloadItems( bool reset )
       ScrollToLine( FirstVisible );
     }
     RefreshAll();
-}
-
-// -------------------------------------------------------------------------------- //
-wxString guListBox::GetSearchText( const int item ) const
-{
-    return wxEmptyString;
-}
-
-// -------------------------------------------------------------------------------- //
-void  guListBox::SetSelectedItems( const wxArrayInt &selection )
-{
-    guListView::SetSelectedItems( selection );
-
-//    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
-//    event.SetEventObject( this );
-//    event.SetInt( -1 );
-//    (void) GetEventHandler()->ProcessEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //
