@@ -20,17 +20,18 @@
 // -------------------------------------------------------------------------------- //
 #include "CoverEdit.h"
 
-#include "Amazon.h"
+//#include "Amazon.h"
 #include "Commands.h"
 #include "Config.h"
 #include "CoverFetcher.h"
 #include "CoverFrame.h"
-#include "Discogs.h"
+//#include "Discogs.h"
 #include "Google.h"
 #include "Images.h"
 #include "LastFMCovers.h"
 #include "MainFrame.h"
 #include "Utils.h"
+#include "Yahoo.h"
 
 #include <wx/arrimpl.cpp>
 #include <wx/curl/http.h>
@@ -40,9 +41,10 @@
 
 enum guCOVER_SEARCH_ENGINE {
     guCOVER_SEARCH_ENGINE_GOOGLE = 0,
-    guCOVER_SEARCH_ENGINE_AMAZON,
+//    guCOVER_SEARCH_ENGINE_AMAZON,
     guCOVER_SEARCH_ENGINE_LASTFM,
-    guCOVER_SEARCH_ENGINE_DISCOGS
+//    guCOVER_SEARCH_ENGINE_DISCOGS
+    guCOVER_SEARCH_ENGINE_YAHOO
 };
 
 WX_DEFINE_OBJARRAY(guCoverImageArray);
@@ -84,7 +86,13 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 	FromStaticText->Wrap( -1 );
 	EditsSizer->Add( FromStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	wxString m_EngineChoiceChoices[] = { wxT( "Google" ), wxT( "Amazon" ), wxT("Last.fm"), wxT( "Discogs" ) };
+	wxString m_EngineChoiceChoices[] = {
+	    wxT( "Google" ),
+	    //wxT( "Amazon" ),
+	    wxT("Last.fm"),
+	    //wxT( "Discogs" )
+	    wxT( "Yahoo" )
+	    };
 	int m_EngineChoiceNChoices = sizeof( m_EngineChoiceChoices ) / sizeof( wxString );
 	m_EngineChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_EngineChoiceNChoices, m_EngineChoiceChoices, 0 );
 	EditsSizer->Add( m_EngineChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -390,14 +398,15 @@ void guCoverEditor::UpdateCoverBitmap( void )
         if( m_AlbumCovers.Count() && m_AlbumCovers[ m_CurrentImage ].m_Image )
         {
             CoverImage = m_AlbumCovers[ m_CurrentImage ].m_Image->Copy();
-            CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
             // Update the Size label
             m_SizeStaticText->SetLabel( m_AlbumCovers[ m_CurrentImage ].m_SizeStr );
         }
         else
         {
+            CoverImage = guImage( guIMAGE_INDEX_no_cover );
             m_SizeStaticText->SetLabel( wxEmptyString );
         }
+        CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
         m_SizeSizer->Layout();
         m_CoverBitmap->SetBitmap( CoverImage );
         m_CoverBitmap->Refresh();
@@ -554,17 +563,21 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * owner,
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guGoogleCoverFetcher( this, &m_CoverLinks, artist, album );
     }
-    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_AMAZON )
-    {
-        m_CoverFetcher = ( guCoverFetcher * ) new guAmazonCoverFetcher( this, &m_CoverLinks, artist, album );
-    }
+//    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_AMAZON )
+//    {
+//        m_CoverFetcher = ( guCoverFetcher * ) new guAmazonCoverFetcher( this, &m_CoverLinks, artist, album );
+//    }
     else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_LASTFM )
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guLastFMCoverFetcher( this, &m_CoverLinks, artist, album );
     }
-    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_DISCOGS )
+//    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_DISCOGS )
+//    {
+//        m_CoverFetcher = ( guCoverFetcher * ) new guDiscogsCoverFetcher( this, &m_CoverLinks, artist, album );
+//    }
+    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_YAHOO )
     {
-        m_CoverFetcher = ( guCoverFetcher * ) new guDiscogsCoverFetcher( this, &m_CoverLinks, artist, album );
+        m_CoverFetcher = ( guCoverFetcher * ) new guYahooCoverFetcher( this, &m_CoverLinks, artist, album );
     }
 
     if( Create() == wxTHREAD_NO_ERROR )
