@@ -18,7 +18,7 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "Google.h"
+#include "Yahoo.h"
 
 #include "CoverEdit.h"
 #include "Utils.h"
@@ -28,48 +28,47 @@
 #include <wx/statline.h>
 #include <wx/html/htmlpars.h>
 
-//#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
-#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&sout=1&start=%u" )
-
-#define GOOGLE_COVERS_PER_PAGE      15
+#define YAHOO_IMAGES_SEARCH_URL    wxT( "http://images.search.yahoo.com/search/images?&p=%s" )
 
 // -------------------------------------------------------------------------------- //
-guGoogleCoverFetcher::guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
+guYahooCoverFetcher::guYahooCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
                                     const wxChar * artist, const wxChar * album ) :
     guCoverFetcher( mainthread, coverlinks, artist, album )
 {
 }
 
 // -------------------------------------------------------------------------------- //
-void guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
+void guYahooCoverFetcher::ExtractImageInfo( const wxString &content )
 {
     //guLogMessage( wxT( "ExtractImageInfo: '%s'" ), content.c_str() );
     wxArrayString CurImageInfo;
-    CurImageInfo.Add( ExtractString( content, wxT( "<a href=\"/imgres?imgurl=" ), wxT( "&amp;" ) ) );
-    wxString ImgInfo = ExtractString( content, wxT( "&amp;w=" ), wxT( "&amp;" ) );
+    wxString ImgUrl = ExtractString( content, wxT( "&imgurl=" ), wxT( "&" ) );
+    ImgUrl.Replace( wxT( "%2F" ), wxT( "/" ) );
+    CurImageInfo.Add( ImgUrl );
+    wxString ImgInfo = ExtractString( content, wxT( "&w=" ), wxT( "&" ) );
     if( !ImgInfo.IsEmpty() )
-        ImgInfo += wxT( " x " ) + ExtractString( content, wxT( "&amp;h=" ), wxT( "&amp;" ) );
+        ImgInfo += wxT( " x " ) + ExtractString( content, wxT( "&h=" ), wxT( "&" ) );
     CurImageInfo.Add( ImgInfo );
     m_CoverLinks->Add( CurImageInfo );
 }
 
 // -------------------------------------------------------------------------------- //
-int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
+int guYahooCoverFetcher::ExtractImagesInfo( wxString &content, int count )
 {
     int ImageIndex = 0;
     while( !m_MainThread->TestDestroy() )
     {
-        int FindPos = content.Find( wxT( "<a href=\"/imgres?imgurl=" ) );
+        int FindPos = content.Find( wxT( "<li class=\"ld\"" ) );
         if( FindPos == wxNOT_FOUND )
             break;
 
         content = content.Mid( FindPos );
 
-        FindPos = content.Find( wxT( "</a>" ) );
+        FindPos = content.Find( wxT( "</li>" ) );
         if( FindPos == wxNOT_FOUND )
             break;
 
-        ExtractImageInfo( content.Mid( 0, FindPos + 4 ) );
+        ExtractImageInfo( content.Mid( 0, FindPos + 5 ) );
         ImageIndex++;
         if( ImageIndex > count )
             break;
@@ -79,15 +78,15 @@ int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
             break;
     }
 
-    return ImageIndex;
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
-int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
+int guYahooCoverFetcher::AddCoverLinks( int pagenum )
 {
     wxString SearchString = wxString::Format( wxT( "\"%s\" \"%s\"" ), m_Artist.c_str(), m_Album.c_str() );
     //guLogMessage( wxT( "URL: %u %s" ), m_CurrentPage, m_SearchString.c_str() );
-    wxString SearchUrl = wxString::Format( GOOGLE_IMAGES_SEARCH_URL, guURLEncode( SearchString ).c_str(), ( pagenum * GOOGLE_COVERS_PER_PAGE ) );
+    wxString SearchUrl = wxString::Format( YAHOO_IMAGES_SEARCH_URL, guURLEncode( SearchString ).c_str() );
     //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
     if( !m_MainThread->TestDestroy() )
     {
@@ -98,7 +97,7 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
             if( !m_MainThread->TestDestroy() )
             {
                 //guLogMessage( wxT( "Google:====>>>>\n%s\n<<<<====" ), Content.c_str() );
-                return ExtractImagesInfo( Content, GOOGLE_COVERS_PER_PAGE );
+                return ExtractImagesInfo( Content, 32 );
             }
         }
         else

@@ -21,6 +21,23 @@
 #include "CoverFetcher.h"
 
 // -------------------------------------------------------------------------------- //
+wxString ExtractString( const wxString &source, const wxString &start, const wxString &end )
+{
+    int StartPos = source.Find( start );
+    int EndPos;
+    if( StartPos != wxNOT_FOUND )
+    {
+        wxString SearchStr = source.Mid( StartPos + start.Length() );
+        EndPos = SearchStr.Find( end );
+        if( EndPos != wxNOT_FOUND )
+        {
+            return SearchStr.Mid( 0, EndPos );
+        }
+    }
+    return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
 // guCoverFetcher
 // -------------------------------------------------------------------------------- //
 guCoverFetcher::guCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,

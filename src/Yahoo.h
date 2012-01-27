@@ -18,30 +18,26 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef COVERFETCHER_H
-#define COVERFETCHER_H
+#ifndef YAHOO_H
+#define YAHOO_H
 
-#include "CoverEdit.h"
+#include "ArrayStringArray.h"
+#include "CoverFetcher.h"
+
+class guFetchCoverLinksThread;
 
 // -------------------------------------------------------------------------------- //
-wxString ExtractString( const wxString &source, const wxString &start, const wxString &end );
-
-// -------------------------------------------------------------------------------- //
-class guCoverFetcher
+class guYahooCoverFetcher : public guCoverFetcher
 {
-  protected :
-    guFetchCoverLinksThread *   m_MainThread;
-    guArrayStringArray *        m_CoverLinks;
-    wxString                    m_Artist;
-    wxString                    m_Album;
+  private :
+    void            ExtractImageInfo( const wxString &content );
+    int             ExtractImagesInfo( wxString &content, int count );
 
   public :
-    guCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
+    guYahooCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
                                     const wxChar * artist, const wxChar * album );
-    ~guCoverFetcher();
-
-    virtual int   AddCoverLinks( int pagenum ) = 0;
+    virtual int     AddCoverLinks( int pagenum );
 };
 
-
 #endif
+// -------------------------------------------------------------------------------- //

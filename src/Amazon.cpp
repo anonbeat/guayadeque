@@ -259,7 +259,7 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
 
     wxString SearchUrl = AMAZON_SEARCH_URL + SearchParams + wxT( "&Signature=" ) + SignText;
 
-    //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
+    guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
 
     if( !m_MainThread->TestDestroy() )
     {
@@ -270,7 +270,7 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
         {
             if( !m_MainThread->TestDestroy() )
             {
-                //guLogMessage( Content );
+                guLogMessage( Content );
                 return ExtractImagesInfo( Content );
             }
         }

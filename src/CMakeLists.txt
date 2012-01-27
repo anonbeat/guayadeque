@@ -278,6 +278,8 @@ ADD_EXECUTABLE( guayadeque
 	ImportFiles.h
 	SmartMode.cpp
 	SmartMode.h
+	Yahoo.cpp
+	Yahoo.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
