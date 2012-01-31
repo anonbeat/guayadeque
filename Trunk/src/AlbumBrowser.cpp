@@ -32,6 +32,7 @@
 #include "MainFrame.h"
 #include "MediaViewer.h"
 #include "OnlineLinks.h"
+#include "PlayListAppend.h"
 #include "SelCoverFile.h"
 #include "Settings.h"
 #include "StaticBitmap.h"
@@ -901,6 +902,10 @@ void guAlbumBrowser::CreateControls( void )
 	m_BigCoverTracksListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksMouseMoved ), NULL, this );
 	m_BigCoverTracksListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksMouseMoved ), NULL, this );
     Connect( ID_ALBUMBROWSER_TRACKS_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksBeginDrag ), NULL, this );
+
+    Connect( ID_ALBUMBROWSER_TRACKS_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksPlaylistSave ), NULL, this );
+    Connect( ID_ALBUMBROWSER_TRACKS_SMART_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksSmartPlaylist ), NULL, this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1417,7 +1422,10 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
 {
     if( m_BigCoverShowed || !m_NavSlider->IsEnabled() )
+    {
+        event.Skip();
         return;
+    }
 
     int Rotation = event.GetWheelRotation() / event.GetWheelDelta() * -1;
     //guLogMessage( wxT( "Got MouseWheel %i " ), Rotation );
@@ -1434,6 +1442,8 @@ void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
     wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
     ScrollEvent.SetPosition( CurPos );
     wxPostEvent( m_NavSlider, ScrollEvent );
+
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1927,6 +1937,17 @@ void guAlbumBrowser::OnBigCoverTracksContextMenu( wxContextMenuEvent &event )
         Menu.Append( MenuItem );
     }
 
+    Menu.AppendSeparator();
+
+    MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_TRACKS_PLAYLIST_SAVE,
+                        wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
+                        _( "Save the selected tracks to playlist" ) );
+    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+    Menu.Append( MenuItem );
+
+    MenuItem = new wxMenuItem( &Menu, ID_ALBUMBROWSER_TRACKS_SMART_PLAYLIST, _( "Create Smart Playlist" ), _( "Create a smart playlist from this track" ) );
+    Menu.Append( MenuItem );
+
     if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
         ( ContextMenuFlags & guCONTEXTMENU_LINKS ) ||
         ( ContextMenuFlags & guCONTEXTMENU_COMMANDS ) )
@@ -2283,6 +2304,75 @@ void guAlbumBrowser::OnBigCoverTracksBeginDrag( wxMouseEvent &event )
         }
     }
 }
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverTracksPlaylistSave( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    GetSelectedTracks( &Tracks );
+    if( Tracks.Count() );
+    {
+        wxArrayInt TrackIds;
+        int Index;
+        int Count = Tracks.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            TrackIds.Add( Tracks[ Index ].m_SongId );
+        }
+        guListItems PlayLists;
+        m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
+
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
+
+        if( PlayListAppendDlg->ShowModal() == wxID_OK )
+        {
+            int PLId;
+            int Selected = PlayListAppendDlg->GetSelectedPlayList();
+            if( Selected == -1 )
+            {
+                wxString PLName = PlayListAppendDlg->GetPlaylistName();
+                if( PLName.IsEmpty() )
+                {
+                    PLName = _( "UnNamed" );
+                }
+                PLId = m_Db->CreateStaticPlayList( PLName, TrackIds );
+            }
+            else
+            {
+                PLId = PlayLists[ Selected ].m_Id;
+                wxArrayInt OldSongs;
+                m_Db->GetPlayListSongIds( PLId, &OldSongs );
+                if( PlayListAppendDlg->GetSelectedPosition() == 0 ) // BEGIN
+                {
+                    m_Db->UpdateStaticPlayList( PLId, TrackIds );
+                    m_Db->AppendStaticPlayList( PLId, OldSongs );
+                }
+                else                                                // END
+                {
+                    m_Db->AppendStaticPlayList( PLId, TrackIds );
+                }
+            }
+            m_Db->UpdateStaticPlayListFile( PLId );
+
+            m_MediaViewer->UpdatePlaylists();
+        }
+        PlayListAppendDlg->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnBigCoverTracksSmartPlaylist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    GetSelectedTracks( &Tracks );
+    if( Tracks.Count() )
+    {
+        m_MediaViewer->CreateSmartPlaylist( Tracks[ 0 ].m_ArtistName, Tracks[ 0 ].m_SongName );
+    }
+}
+
+
+
 
 // -------------------------------------------------------------------------------- //
 // guAlbumBrowserDropTarget

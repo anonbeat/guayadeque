@@ -23,6 +23,10 @@
 #include "Images.h"
 #include "Utils.h"
 
+#include <gtk/gtk.h>
+#include <wx/gtk/win_gtk.h>
+#include <wx/renderer.h>
+
 extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
 
 // -------------------------------------------------------------------------------- //
@@ -136,4 +140,3 @@ void guAuiDockArt::DrawPaneButton( wxDC &dc, wxWindow * window, int button, int 
 }
 
 // -------------------------------------------------------------------------------- //
-

@@ -41,8 +41,7 @@ class guAuiDockArt : public wxAuiDefaultDockArt
 
     virtual void    DrawCaption( wxDC &dc, wxWindow * window, const wxString &text, const wxRect &rect, wxAuiPaneInfo &pane );
     virtual void    DrawPaneButton( wxDC &dc, wxWindow * window, int button, int button_state,
-                  const wxRect &rect, wxAuiPaneInfo &pane );
-
+                        const wxRect &rect, wxAuiPaneInfo &pane );
 };
 
 #endif

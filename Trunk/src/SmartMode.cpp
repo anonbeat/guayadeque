@@ -55,11 +55,11 @@ guSmartModeThread::guSmartModeThread( guDbLibrary * db, wxEvtHandler * owner,
     switch( limittype )
     {
         case guSMARTMODE_TRACK_LIMIT_TIME_MINUTES :
-            m_TrackLimit.Assign( tracklimit * 60 );
+            m_TrackLimit.Assign( tracklimit * 60000 );
             break;
 
         case guSMARTMODE_TRACK_LIMIT_TIME_HOURS :
-            m_TrackLimit.Assign( tracklimit * 60 * 60 );
+            m_TrackLimit.Assign( tracklimit * 60 * 60000 );
             break;
 
         case guSMARTMODE_TRACK_LIMIT_SIZE_MB :

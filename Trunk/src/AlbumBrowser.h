@@ -249,6 +249,8 @@ class guAlbumBrowser : public wxPanel
     void                            OnBigCoverTracksEditTracksClicked( wxCommandEvent &event );
     void                            OnBigCoverTracksMouseMoved( wxMouseEvent &event );
     void                            OnBigCoverTracksBeginDrag( wxMouseEvent &event );
+    void                            OnBigCoverTracksPlaylistSave( wxCommandEvent &event );
+    void                            OnBigCoverTracksSmartPlaylist( wxCommandEvent &event );
 
 
     void                            OnTimerTimeout( wxTimerEvent &event );
