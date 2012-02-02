@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-01-03 06:49+0000\n"
-"PO-Revision-Date: 2012-01-02 20:37+0000\n"
+"POT-Creation-Date: 2012-01-25 09:27+0000\n"
+"PO-Revision-Date: 2012-01-23 14:25+0000\n"
 "Last-Translator: triasa <angelinvertigo@hotmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,45 +20,46 @@ msgstr ""
 
 #: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
 #: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1427
-#: MainFrame.cpp:4460 OnlineLinks.cpp:69 PlayList.cpp:1498 Preferences.cpp:130
-#: SoListBox.cpp:479 TreePanel.cpp:342
+#: MainFrame.cpp:4460 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
+#: SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Preferences"
 msgstr "Προτιμήσεις"
 
 #: AAListBox.cpp:129 AlListBox.cpp:246 ArListBox.cpp:131 FileBrowser.cpp:324
-#: FileBrowser.cpp:1097 PlayList.cpp:1498 SoListBox.cpp:479 TreePanel.cpp:342
+#: FileBrowser.cpp:1097 PlayList.cpp:1504 SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Add commands in preferences"
 msgstr "Προσθήκη εντολών στις προτιμήσεις"
 
 #: AAListBox.cpp:132 AlListBox.cpp:249 ArListBox.cpp:134 FileBrowser.cpp:327
-#: FileBrowser.cpp:1100 PlayList.cpp:1501 Preferences.cpp:263
-#: SoListBox.cpp:482 TreePanel.cpp:346
+#: FileBrowser.cpp:1100 PlayList.cpp:1507 Preferences.cpp:263
+#: SoListBox.cpp:464 TreePanel.cpp:346
 msgid "Commands"
 msgstr "Εντολές"
 
-#: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:318
-#: AlListBox.cpp:263 ArListBox.cpp:147 CoListBox.cpp:103 FileBrowser.cpp:339
-#: FileBrowser.cpp:1112 GeListBox.cpp:92 LastFMPanel.cpp:552
-#: LastFMPanel.cpp:814 LastFMPanel.cpp:1008 LastFMPanel.cpp:1208
-#: LastFMPanel.cpp:1416 LastFMPanel.cpp:3131 MainFrame.cpp:1470
-#: PcListBox.cpp:111 PlayListPanel.cpp:224 PodcastsPanel.cpp:2038
-#: RadioPanel.cpp:834 RaListBox.cpp:143 SoListBox.cpp:543 TaListBox.cpp:123
-#: TaskBar.cpp:112 TreePanel.cpp:388 YeListBox.cpp:103
+#: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:321
+#: AlbumBrowser.cpp:1670 AlListBox.cpp:263 ArListBox.cpp:147 CoListBox.cpp:103
+#: FileBrowser.cpp:339 FileBrowser.cpp:1112 GeListBox.cpp:92
+#: LastFMPanel.cpp:557 LastFMPanel.cpp:819 LastFMPanel.cpp:1013
+#: LastFMPanel.cpp:1213 LastFMPanel.cpp:1421 LastFMPanel.cpp:3164
+#: MainFrame.cpp:1470 PcListBox.cpp:111 PlayListPanel.cpp:224
+#: PodcastsPanel.cpp:2037 RadioPanel.cpp:834 RaListBox.cpp:143
+#: SoListBox.cpp:525 TaListBox.cpp:123 TaskBar.cpp:112 TreePanel.cpp:388
+#: YeListBox.cpp:103
 msgid "Play"
 msgstr "Αναπαραγωγή"
 
 #: AAListBox.cpp:146
 msgid "Play current selected album artist"
-msgstr "Αναπαραγωγή του επιλεγμένου καλλιτέχνη άλμπουμ"
+msgstr "Αναπαραγωγή του επιλεγμένου καλλιτέχνη δίσκου"
 
-#: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:322
-#: AlListBox.cpp:269 ArListBox.cpp:154 CoListBox.cpp:110 FileBrowser.cpp:345
-#: FileBrowser.cpp:1118 GeListBox.cpp:99 LastFMPanel.cpp:556
-#: LastFMPanel.cpp:818 LastFMPanel.cpp:1012 LastFMPanel.cpp:1212
-#: LastFMPanel.cpp:1420 LastFMPanel.cpp:3135 PcListBox.cpp:118
-#: PlayListPanel.cpp:229 PodcastsPanel.cpp:2044 RadioPanel.cpp:840
-#: RaListBox.cpp:150 SoListBox.cpp:550 TaListBox.cpp:130 TreePanel.cpp:393
-#: YeListBox.cpp:110
+#: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:325
+#: AlbumBrowser.cpp:1674 AlListBox.cpp:269 ArListBox.cpp:154 CoListBox.cpp:110
+#: FileBrowser.cpp:345 FileBrowser.cpp:1118 GeListBox.cpp:99
+#: LastFMPanel.cpp:561 LastFMPanel.cpp:823 LastFMPanel.cpp:1017
+#: LastFMPanel.cpp:1217 LastFMPanel.cpp:1425 LastFMPanel.cpp:3168
+#: PcListBox.cpp:118 PlayListPanel.cpp:229 PodcastsPanel.cpp:2043
+#: RadioPanel.cpp:840 RaListBox.cpp:150 SoListBox.cpp:532 TaListBox.cpp:130
+#: TreePanel.cpp:393 YeListBox.cpp:110
 msgid "Enqueue"
 msgstr "Προσθήκη στην ουρά αναπαραγωγής"
 
@@ -67,105 +68,109 @@ msgstr "Προσθήκη στην ουρά αναπαραγωγής"
 msgid "Add current selected tracks to playlist"
 msgstr "Προσθήκη επιλεγμένων κομματιών στη λίστα αναπαραγωγής"
 
-#: AAListBox.cpp:161 AlbumBrowser.cpp:329 AlListBox.cpp:277 ArListBox.cpp:163
-#: CoListBox.cpp:119 FileBrowser.cpp:353 FileBrowser.cpp:1126
-#: GeListBox.cpp:108 LastFMPanel.cpp:563 LastFMPanel.cpp:825
-#: LastFMPanel.cpp:1019 LastFMPanel.cpp:1219 LastFMPanel.cpp:1427
-#: LastFMPanel.cpp:3142 PcListBox.cpp:127 PlayListPanel.cpp:237
-#: PodcastsPanel.cpp:2052 RadioPanel.cpp:848 RaListBox.cpp:159
-#: SoListBox.cpp:559 TaListBox.cpp:139 TreePanel.cpp:401 YeListBox.cpp:119
+#: AAListBox.cpp:161 AlbumBrowser.cpp:332 AlbumBrowser.cpp:1681
+#: AlListBox.cpp:277 ArListBox.cpp:163 CoListBox.cpp:119 FileBrowser.cpp:353
+#: FileBrowser.cpp:1126 GeListBox.cpp:108 LastFMPanel.cpp:568
+#: LastFMPanel.cpp:830 LastFMPanel.cpp:1024 LastFMPanel.cpp:1224
+#: LastFMPanel.cpp:1432 LastFMPanel.cpp:3175 PcListBox.cpp:127
+#: PlayListPanel.cpp:237 PodcastsPanel.cpp:2051 RadioPanel.cpp:848
+#: RaListBox.cpp:159 SoListBox.cpp:541 TaListBox.cpp:139 TreePanel.cpp:401
+#: YeListBox.cpp:119
 msgid "Current Track"
 msgstr "Τρέχον Κομμάτι"
 
-#: AAListBox.cpp:162 AlbumBrowser.cpp:330 ArListBox.cpp:164
-#: FileBrowser.cpp:354 FileBrowser.cpp:1127 GeListBox.cpp:109
-#: LastFMPanel.cpp:564 LastFMPanel.cpp:826 LastFMPanel.cpp:1020
-#: LastFMPanel.cpp:1220 LastFMPanel.cpp:1428 LastFMPanel.cpp:3143
-#: PcListBox.cpp:128 PlayListPanel.cpp:238 PodcastsPanel.cpp:2053
-#: RadioPanel.cpp:849 RaListBox.cpp:160 SoListBox.cpp:560 TaListBox.cpp:140
-#: TreePanel.cpp:402 YeListBox.cpp:120
+#: AAListBox.cpp:162 AlbumBrowser.cpp:333 AlbumBrowser.cpp:1682
+#: ArListBox.cpp:164 FileBrowser.cpp:354 FileBrowser.cpp:1127
+#: GeListBox.cpp:109 LastFMPanel.cpp:569 LastFMPanel.cpp:831
+#: LastFMPanel.cpp:1025 LastFMPanel.cpp:1225 LastFMPanel.cpp:1433
+#: LastFMPanel.cpp:3176 PcListBox.cpp:128 PlayListPanel.cpp:238
+#: PodcastsPanel.cpp:2052 RadioPanel.cpp:849 RaListBox.cpp:160
+#: SoListBox.cpp:542 TaListBox.cpp:140 TreePanel.cpp:402 YeListBox.cpp:120
 msgid "Add current selected tracks to playlist after the current track"
 msgstr ""
-"Προσθήκη των επιλεγμένων κομματιών στην λίστα αναπαραγωγής μετά το τρέχον "
+"Προσθήκη επιλεγμένων κομματιών στη λίστα αναπαραγωγής μετά απο τρέχον "
 "κομμάτι"
 
-#: AAListBox.cpp:168 AlbumBrowser.cpp:335 AlListBox.cpp:283 ArListBox.cpp:170
-#: CoListBox.cpp:126 FileBrowser.cpp:359 FileBrowser.cpp:1133
-#: GeListBox.cpp:115 LastFMPanel.cpp:569 LastFMPanel.cpp:831
-#: LastFMPanel.cpp:1025 LastFMPanel.cpp:1225 LastFMPanel.cpp:1433
-#: LastFMPanel.cpp:3148 PcListBox.cpp:134 PlayListPanel.cpp:243
-#: PodcastsPanel.cpp:2058 RadioPanel.cpp:855 RaListBox.cpp:166
-#: SoListBox.cpp:566 TaListBox.cpp:146 TreePanel.cpp:407 YeListBox.cpp:126
+#: AAListBox.cpp:168 AlbumBrowser.cpp:338 AlbumBrowser.cpp:1687
+#: AlListBox.cpp:283 ArListBox.cpp:170 CoListBox.cpp:126 FileBrowser.cpp:359
+#: FileBrowser.cpp:1133 GeListBox.cpp:115 LastFMPanel.cpp:574
+#: LastFMPanel.cpp:836 LastFMPanel.cpp:1030 LastFMPanel.cpp:1230
+#: LastFMPanel.cpp:1438 LastFMPanel.cpp:3181 PcListBox.cpp:134
+#: PlayListPanel.cpp:243 PodcastsPanel.cpp:2057 RadioPanel.cpp:855
+#: RaListBox.cpp:166 SoListBox.cpp:548 TaListBox.cpp:146 TreePanel.cpp:407
+#: YeListBox.cpp:126
 msgid "Current Album"
-msgstr "Τρέχον άλμπουμ"
+msgstr "Τρέχων δίσκος"
 
-#: AAListBox.cpp:169 AlbumBrowser.cpp:336 ArListBox.cpp:171
-#: FileBrowser.cpp:360 FileBrowser.cpp:1134 GeListBox.cpp:116
-#: LastFMPanel.cpp:570 LastFMPanel.cpp:832 LastFMPanel.cpp:1026
-#: LastFMPanel.cpp:1226 LastFMPanel.cpp:1434 LastFMPanel.cpp:3149
-#: PcListBox.cpp:135 PlayListPanel.cpp:244 PodcastsPanel.cpp:2059
-#: RadioPanel.cpp:856 RaListBox.cpp:167 SoListBox.cpp:567 TaListBox.cpp:147
-#: TreePanel.cpp:408 YeListBox.cpp:127
+#: AAListBox.cpp:169 AlbumBrowser.cpp:339 AlbumBrowser.cpp:1688
+#: ArListBox.cpp:171 FileBrowser.cpp:360 FileBrowser.cpp:1134
+#: GeListBox.cpp:116 LastFMPanel.cpp:575 LastFMPanel.cpp:837
+#: LastFMPanel.cpp:1031 LastFMPanel.cpp:1231 LastFMPanel.cpp:1439
+#: LastFMPanel.cpp:3182 PcListBox.cpp:135 PlayListPanel.cpp:244
+#: PodcastsPanel.cpp:2058 RadioPanel.cpp:856 RaListBox.cpp:167
+#: SoListBox.cpp:549 TaListBox.cpp:147 TreePanel.cpp:408 YeListBox.cpp:127
 msgid "Add current selected tracks to playlist after the current album"
 msgstr ""
-"Προσθήκη των επιλεγμένων κομματιών στην λίστα αναπαραγωγής μετά το τρέχον "
-"άλμπουμ"
+"Προσθήκη επιλεγμένων κομματιών στη λίστα αναπαραγωγής μετά απο τρέχοντα "
+"δίσκο"
 
-#: AAListBox.cpp:175 AlbumBrowser.cpp:341 AlListBox.cpp:289 ArListBox.cpp:177
-#: CoListBox.cpp:133 FileBrowser.cpp:365 FileBrowser.cpp:1140
-#: GeListBox.cpp:122 LastFMPanel.cpp:575 LastFMPanel.cpp:837
-#: LastFMPanel.cpp:1031 LastFMPanel.cpp:1231 LastFMPanel.cpp:1439
-#: LastFMPanel.cpp:3154 PcListBox.cpp:141 PlayListPanel.cpp:249
-#: PodcastsPanel.cpp:2064 RadioPanel.cpp:862 RaListBox.cpp:173
-#: SoListBox.cpp:573 TaListBox.cpp:153 TreePanel.cpp:413 YeListBox.cpp:133
+#: AAListBox.cpp:175 AlbumBrowser.cpp:344 AlbumBrowser.cpp:1693
+#: AlListBox.cpp:289 ArListBox.cpp:177 CoListBox.cpp:133 FileBrowser.cpp:365
+#: FileBrowser.cpp:1140 GeListBox.cpp:122 LastFMPanel.cpp:580
+#: LastFMPanel.cpp:842 LastFMPanel.cpp:1036 LastFMPanel.cpp:1236
+#: LastFMPanel.cpp:1444 LastFMPanel.cpp:3187 PcListBox.cpp:141
+#: PlayListPanel.cpp:249 PodcastsPanel.cpp:2063 RadioPanel.cpp:862
+#: RaListBox.cpp:173 SoListBox.cpp:555 TaListBox.cpp:153 TreePanel.cpp:413
+#: YeListBox.cpp:133
 msgid "Current Artist"
 msgstr "Τρέχων καλλιτέχνης"
 
-#: AAListBox.cpp:176 AlbumBrowser.cpp:342 ArListBox.cpp:178
-#: FileBrowser.cpp:366 FileBrowser.cpp:1141 GeListBox.cpp:123
-#: LastFMPanel.cpp:576 LastFMPanel.cpp:838 LastFMPanel.cpp:1032
-#: LastFMPanel.cpp:1232 LastFMPanel.cpp:1440 LastFMPanel.cpp:3155
-#: PcListBox.cpp:142 PlayListPanel.cpp:250 PodcastsPanel.cpp:2065
-#: RadioPanel.cpp:863 RaListBox.cpp:174 SoListBox.cpp:574 TaListBox.cpp:154
-#: TreePanel.cpp:414 YeListBox.cpp:134
+#: AAListBox.cpp:176 AlbumBrowser.cpp:345 AlbumBrowser.cpp:1694
+#: ArListBox.cpp:178 FileBrowser.cpp:366 FileBrowser.cpp:1141
+#: GeListBox.cpp:123 LastFMPanel.cpp:581 LastFMPanel.cpp:843
+#: LastFMPanel.cpp:1037 LastFMPanel.cpp:1237 LastFMPanel.cpp:1445
+#: LastFMPanel.cpp:3188 PcListBox.cpp:142 PlayListPanel.cpp:250
+#: PodcastsPanel.cpp:2064 RadioPanel.cpp:863 RaListBox.cpp:174
+#: SoListBox.cpp:556 TaListBox.cpp:154 TreePanel.cpp:414 YeListBox.cpp:134
 msgid "Add current selected tracks to playlist after the current artist"
 msgstr ""
-"Προσθήκη των επιλεγμένων κομματιών στην λίστα αναπαραγωγής μετά τον τρέχοντα"
-" καλλιτέχνη"
+"Προσθήκη επιλεγμένων κομματιών στη λίστα αναπαραγωγής μετά απο τρέχοντα "
+"καλλιτέχνη"
 
-#: AAListBox.cpp:181 AlbumBrowser.cpp:346 AlListBox.cpp:294 ArListBox.cpp:183
-#: CoListBox.cpp:139 FileBrowser.cpp:370 FileBrowser.cpp:1146
-#: GeListBox.cpp:128 LastFMPanel.cpp:580 LastFMPanel.cpp:842
-#: LastFMPanel.cpp:1036 LastFMPanel.cpp:1236 LastFMPanel.cpp:1444
-#: LastFMPanel.cpp:3159 PcListBox.cpp:147 PlayListPanel.cpp:254
-#: PodcastsPanel.cpp:2069 RadioPanel.cpp:868 RaListBox.cpp:179
-#: SoListBox.cpp:579 TaListBox.cpp:159 TreePanel.cpp:418 YeListBox.cpp:139
+#: AAListBox.cpp:181 AlbumBrowser.cpp:349 AlbumBrowser.cpp:1698
+#: AlListBox.cpp:294 ArListBox.cpp:183 CoListBox.cpp:139 FileBrowser.cpp:370
+#: FileBrowser.cpp:1146 GeListBox.cpp:128 LastFMPanel.cpp:585
+#: LastFMPanel.cpp:847 LastFMPanel.cpp:1041 LastFMPanel.cpp:1241
+#: LastFMPanel.cpp:1449 LastFMPanel.cpp:3192 PcListBox.cpp:147
+#: PlayListPanel.cpp:254 PodcastsPanel.cpp:2068 RadioPanel.cpp:868
+#: RaListBox.cpp:179 SoListBox.cpp:561 TaListBox.cpp:159 TreePanel.cpp:418
+#: YeListBox.cpp:139
 msgid "Enqueue After"
 msgstr "Προσθήκη στην ουρά αναπαραγωγής μετά απο"
 
-#: AAListBox.cpp:190 AlbumBrowser.cpp:356 AlListBox.cpp:307 ArListBox.cpp:198
-#: PcListBox.cpp:156 PlayList.cpp:1527 RaListBox.cpp:188 SoListBox.cpp:594
-#: TreePanel.cpp:440 YeListBox.cpp:148
+#: AAListBox.cpp:190 AlbumBrowser.cpp:359 AlbumBrowser.cpp:1708
+#: AlListBox.cpp:307 ArListBox.cpp:198 PcListBox.cpp:156 PlayList.cpp:1533
+#: RaListBox.cpp:188 SoListBox.cpp:576 TreePanel.cpp:440 YeListBox.cpp:148
 msgid "Edit Songs"
 msgstr "Επεξεργασία Τραγουδιών"
 
 #: AAListBox.cpp:191 CoListBox.cpp:149 PcListBox.cpp:157 RaListBox.cpp:189
 #: TreePanel.cpp:441 YeListBox.cpp:149
 msgid "Edit the selected tracks"
-msgstr "Επεξεργασία επιλεγμένων κομματιών"
+msgstr "Επεξεργασία των επιλεγμένων κομματιών"
 
 #: AAListBox.cpp:199 Accelerators.cpp:141 AlListBox.cpp:335 ArListBox.cpp:207
 #: CoListBox.cpp:157 FileBrowser.cpp:383 FileBrowser.cpp:1162
-#: GeListBox.cpp:135 LastFMPanel.cpp:3163 PcListBox.cpp:165
-#: PlayListAppend.cpp:25 PlayList.cpp:1578 PlayListPanel.cpp:286
-#: RaListBox.cpp:197 SoListBox.cpp:641 TaListBox.cpp:166 TreePanel.cpp:449
+#: GeListBox.cpp:135 LastFMPanel.cpp:3196 PcListBox.cpp:165
+#: PlayListAppend.cpp:25 PlayList.cpp:1584 PlayListPanel.cpp:286
+#: RaListBox.cpp:197 SoListBox.cpp:623 TaListBox.cpp:166 TreePanel.cpp:449
 #: YeListBox.cpp:157
 msgid "Save to Playlist"
 msgstr "Αποθήκευση στη Λίστα Αναπαραγωγής"
 
 #: AAListBox.cpp:200 AlListBox.cpp:336 YeListBox.cpp:158
 msgid "Save the selected tracks to Playlist"
-msgstr "Αποθήκευση επιλεγμένων κομματιών στη Λίστα Αναπαραγωγής"
+msgstr "Αποθήκευση των επιλεγμένων κομματιών στη Λίστα Αναπαραγωγής"
 
 #: Accelerators.cpp:108
 msgid "Add Folder"
@@ -175,7 +180,7 @@ msgstr "Προσθήκη Φακέλου"
 msgid "Audio Scrobbling"
 msgstr "Scrobbling Αρχείων Ήχου"
 
-#: Accelerators.cpp:110 MainFrame.cpp:1486 PlayList.cpp:1595
+#: Accelerators.cpp:110 MainFrame.cpp:1486 PlayList.cpp:1601
 msgid "Clear Playlist"
 msgstr "Εκκαθάριση Λίστας Αναπαραγωγής"
 
@@ -187,9 +192,9 @@ msgstr "Κλείσιμο Παραθύρου"
 msgid "Community Forums"
 msgstr "Forums Κοινότητας"
 
-#: Accelerators.cpp:113 AlbumBrowser.cpp:350 AlListBox.cpp:299
-#: ArListBox.cpp:190 PlayList.cpp:1521 RadioPanel.cpp:873 SoListBox.cpp:586
-#: TreePanel.cpp:430
+#: Accelerators.cpp:113 AlbumBrowser.cpp:353 AlbumBrowser.cpp:1702
+#: AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1527 RadioPanel.cpp:873
+#: SoListBox.cpp:568 TreePanel.cpp:430
 msgid "Edit Labels"
 msgstr "Επεξεργασία Ετικετών"
 
@@ -203,7 +208,7 @@ msgstr "Προσθήκη στην ουρά αναπαραγωγής μετά α�
 
 #: Accelerators.cpp:117
 msgid "Enqueue After Album"
-msgstr "Προσθήκη στην ουρά αναπαραγωγής μετά απο Άλμπουμ"
+msgstr "Προσθήκη στην ουρά αναπαραγωγής μετά απο Δίσκο"
 
 #: Accelerators.cpp:119
 msgid "Enqueue After Artist"
@@ -238,14 +243,14 @@ msgstr "Ροή Αναπαραγωγής"
 msgid "Quit"
 msgstr "Έξοδος"
 
-#: Accelerators.cpp:130 PlayList.cpp:1590 PLSoListBox.cpp:160
+#: Accelerators.cpp:130 PlayList.cpp:1596 PLSoListBox.cpp:160
 msgid "Randomize Playlist"
-msgstr "Τυχαία σειρά των περιεχομένων της Λίστας Αναπαραγωγής"
+msgstr "Τυχαία σειρά περιεχομένων της Λίστας Αναπαραγωγής"
 
 #: Accelerators.cpp:131 Accelerators.cpp:132 Accelerators.cpp:133
 #: Accelerators.cpp:134 Accelerators.cpp:135 Accelerators.cpp:136
-#: DynamicPlayList.cpp:56 DynamicPlayList.cpp:134 PlayList.cpp:1556
-#: SoListBox.cpp:437 TaskBar.cpp:162 TreeViewFilterEditor.cpp:69
+#: DynamicPlayList.cpp:56 DynamicPlayList.cpp:134 PlayList.cpp:1562
+#: SoListBox.cpp:419 TaskBar.cpp:162 TreeViewFilterEditor.cpp:69
 #: TreeViewFilterEditor.cpp:123
 msgid "Rating"
 msgstr "Βαθμολογία"
@@ -262,7 +267,7 @@ msgstr "Επανάληψη Τρέχοντος Κομματιού"
 msgid "Save Layout"
 msgstr "Αποθήκευση Διάταξης"
 
-#: Accelerators.cpp:142 PlayList.cpp:1562
+#: Accelerators.cpp:142 PlayList.cpp:1568
 msgid "Search"
 msgstr "Αναζήτηση"
 
@@ -328,7 +333,7 @@ msgstr "Παράλειψη Επόμενου"
 
 #: Accelerators.cpp:159
 msgid "Skip Next Album"
-msgstr "Παράλειψη Επόμενου Άλμπουμ"
+msgstr "Παράλειψη Επόμενου Δίσκου"
 
 #: Accelerators.cpp:160
 msgid "Skip Previous"
@@ -336,7 +341,7 @@ msgstr "Παράλειψη Προηγούμενου"
 
 #: Accelerators.cpp:161
 msgid "Skip Previous Album"
-msgstr "Παράλειψη Προηγούμενου Άλμπουμ"
+msgstr "Παράλειψη Προηγούμενου Δίσκου"
 
 #: Accelerators.cpp:163 MainFrame.cpp:1530
 msgid "Smart Play"
@@ -357,7 +362,7 @@ msgstr "Ενημέρωση Εξωφύλλων"
 #: Accelerators.cpp:167 iPodMedia.cpp:1682 Jamendo.cpp:1128
 #: LocationPanel.cpp:336 LocationPanel.cpp:374 LocationPanel.cpp:509
 #: Magnatune.cpp:1022 MainFrame.cpp:1010 MainFrame.cpp:1048 MainFrame.cpp:1282
-#: MediaViewer.cpp:952 PodcastsPanel.cpp:1745 PortableMedia.cpp:1888
+#: MediaViewer.cpp:952 PodcastsPanel.cpp:1744 PortableMedia.cpp:1888
 msgid "Update"
 msgstr "Ενημέρωση"
 
@@ -393,7 +398,7 @@ msgstr "Alt"
 msgid "Meta"
 msgstr "Meta"
 
-#: Accelerators.cpp:303
+#: Accelerators.cpp:303 AlbumBrowser.cpp:841
 msgid "Back"
 msgstr "Back"
 
@@ -411,7 +416,7 @@ msgstr "Tab"
 
 #: Accelerators.cpp:313
 msgid "Return"
-msgstr ""
+msgstr "Return"
 
 #: Accelerators.cpp:315
 msgid "Enter"
@@ -419,7 +424,7 @@ msgstr "Enter"
 
 #: Accelerators.cpp:348 Preferences.cpp:1552
 msgid "Left"
-msgstr "Αριστερό"
+msgstr "Αριστερά"
 
 #: Accelerators.cpp:351
 msgid "Up"
@@ -427,7 +432,7 @@ msgstr "Πάνω"
 
 #: Accelerators.cpp:354 Preferences.cpp:1554
 msgid "Right"
-msgstr "Δεξί"
+msgstr "Δεξιά"
 
 #: Accelerators.cpp:357
 msgid "Down"
@@ -457,8 +462,8 @@ msgstr "Begin"
 msgid "Insert"
 msgstr "Insert"
 
-#: Accelerators.cpp:382 PlayListPanel.cpp:296 PodcastsPanel.cpp:1739
-#: PodcastsPanel.cpp:2073 TaListBox.cpp:115 TreePanel.cpp:375
+#: Accelerators.cpp:382 PlayListPanel.cpp:296 PodcastsPanel.cpp:1738
+#: PodcastsPanel.cpp:2072 TaListBox.cpp:115 TreePanel.cpp:375
 msgid "Delete"
 msgstr "Delete"
 
@@ -466,11 +471,11 @@ msgstr "Delete"
 msgid "Separator"
 msgstr "Διαχωριστής"
 
-#: Accelerators.cpp:406 PlayList.cpp:1651 SoListBox.cpp:685
+#: Accelerators.cpp:406 PlayList.cpp:1657 SoListBox.cpp:667
 msgid "Select"
 msgstr "Επιλογή"
 
-#: Accelerators.cpp:407 LyricsPanel.cpp:307
+#: Accelerators.cpp:407 LyricsPanel.cpp:308
 msgid "Print"
 msgstr "Εκτύπωση"
 
@@ -480,7 +485,7 @@ msgstr "Εκτέλεση"
 
 #: Accelerators.cpp:409
 msgid "Snapshot"
-msgstr "Στιγμιότυπο"
+msgstr "Φωτογραφικό Στιγμιότυπο"
 
 #: Accelerators.cpp:412
 msgid "Cancel"
@@ -492,194 +497,200 @@ msgstr "Μενού"
 
 #: Accelerators.cpp:414
 msgid "Capital"
-msgstr ""
+msgstr "Κεφαλαία"
 
-#: AlbumBrowser.cpp:280 DynamicPlayList.cpp:118 LibPanel.cpp:395
-#: LibPanel.cpp:540 SmartMode.cpp:467
+#: AlbumBrowser.cpp:283 AlbumBrowser.cpp:1476 DynamicPlayList.cpp:118
+#: LibPanel.cpp:395 LibPanel.cpp:540 SmartMode.cpp:467
 msgid "Tracks"
 msgstr "Κομμάτια"
 
-#: AlbumBrowser.cpp:318 LastFMPanel.cpp:814
+#: AlbumBrowser.cpp:321 AlbumBrowser.cpp:1670 LastFMPanel.cpp:819
 msgid "Play the album tracks"
-msgstr "Αναπαραγωγή των κομματιών του άλμπουμ"
+msgstr "Αναπαραγωγή των κομματιών του δίσκου"
 
-#: AlbumBrowser.cpp:322 LastFMPanel.cpp:818
+#: AlbumBrowser.cpp:325 AlbumBrowser.cpp:1674 LastFMPanel.cpp:823
 msgid "Enqueue the album tracks to the playlist"
-msgstr "Προσθήκη των κομματιών του άλμπουμ στην ουρά αναπαραγωγής"
+msgstr "Προσθήκη των κομματιών του δίσκου στην ουρά αναπαραγωγής"
 
-#: AlbumBrowser.cpp:350 AlListBox.cpp:300
+#: AlbumBrowser.cpp:353 AlbumBrowser.cpp:1702 AlListBox.cpp:300
 msgid "Edit the labels assigned to the selected albums"
-msgstr "Επεξεργασία των ορισμένων ετικετών στα επιλεγμένα άλμπουμ"
+msgstr "Επεξεργασία των ετικετών που έχουν οριστεί στους επιλεγμένους δίσκους"
 
-#: AlbumBrowser.cpp:356 AlListBox.cpp:308
+#: AlbumBrowser.cpp:359 AlbumBrowser.cpp:1708 AlListBox.cpp:308
 msgid "Edit the selected songs"
-msgstr "Επεξεργασία επιλεγμένων κομματιών"
+msgstr "Επεξεργασία των επιλεγμένων κομματιών"
 
-#: AlbumBrowser.cpp:363 LastFMPanel.cpp:846
+#: AlbumBrowser.cpp:366 AlbumBrowser.cpp:1715 LastFMPanel.cpp:851
 msgid "Search Album"
-msgstr "Αναζήτηση άλμπουμ"
+msgstr "Αναζήτηση Δίσκου"
 
-#: AlbumBrowser.cpp:363 LastFMPanel.cpp:846
+#: AlbumBrowser.cpp:366 AlbumBrowser.cpp:1715 LastFMPanel.cpp:851
 msgid "Search the album in the library"
-msgstr "Αναζήτηση του άλμπουμ στη βιβλιοθήκη"
+msgstr "Αναζήτηση του δίσκου στη βιβλιοθήκη"
 
-#: AlbumBrowser.cpp:367 LastFMPanel.cpp:584 LastFMPanel.cpp:1040
-#: LastFMPanel.cpp:1244 LastFMPanel.cpp:1452
+#: AlbumBrowser.cpp:370 AlbumBrowser.cpp:1719 LastFMPanel.cpp:589
+#: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
 msgid "Search Artist"
 msgstr "Αναζήτηση Καλλιτέχνη"
 
-#: AlbumBrowser.cpp:367 LastFMPanel.cpp:584 LastFMPanel.cpp:1040
-#: LastFMPanel.cpp:1244 LastFMPanel.cpp:1452
+#: AlbumBrowser.cpp:370 AlbumBrowser.cpp:1719 LastFMPanel.cpp:589
+#: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
 msgid "Search the artist in the library"
 msgstr "Αναζήτηση του καλλιτέχνη στη βιβλιοθήκη"
 
-#: AlbumBrowser.cpp:375 AlListBox.cpp:344
+#: AlbumBrowser.cpp:378 AlbumBrowser.cpp:1727 AlListBox.cpp:344
 msgid "Download Cover"
 msgstr "Κατέβασμα Εξωφύλλου"
 
-#: AlbumBrowser.cpp:375 AlListBox.cpp:344
+#: AlbumBrowser.cpp:378 AlbumBrowser.cpp:1727 AlListBox.cpp:344
 msgid "Download cover for the current selected album"
-msgstr "Κατέβασμα εξωφύλλου για το επιλεγμένο άλμπουμ"
+msgstr "Κατέβασμα εξωφύλλου για τον επιλεγμένο δίσκο"
 
-#: AlbumBrowser.cpp:379 AlListBox.cpp:348
+#: AlbumBrowser.cpp:382 AlbumBrowser.cpp:1731 AlListBox.cpp:348
 msgid "Select Cover"
 msgstr "Επιλογή Εξωφύλλου"
 
-#: AlbumBrowser.cpp:379 AlListBox.cpp:348
+#: AlbumBrowser.cpp:382 AlbumBrowser.cpp:1731 AlListBox.cpp:348
 msgid "Select the cover image file from disk"
 msgstr "Επιλογή του αρχείου εικόνας εξωφύλλου απο τον δίσκο"
 
-#: AlbumBrowser.cpp:383 AlListBox.cpp:352
+#: AlbumBrowser.cpp:386 AlbumBrowser.cpp:1735 AlListBox.cpp:352
 msgid "Delete Cover"
 msgstr "Διαγραφή Εξωφύλλου"
 
-#: AlbumBrowser.cpp:383 AlListBox.cpp:352
+#: AlbumBrowser.cpp:386 AlbumBrowser.cpp:1735 AlListBox.cpp:352
 msgid "Delete the cover for the selected album"
-msgstr "Διαγραφή εξωφύλλου για το επιλεγμένο άλμπουμ"
+msgstr "Διαγραφή του εξωφύλλου του επιλεγμένου δίσκου"
 
-#: AlbumBrowser.cpp:390 AlListBox.cpp:359
+#: AlbumBrowser.cpp:393 AlbumBrowser.cpp:1742 AlListBox.cpp:359
 msgid "Embed Cover"
 msgstr "Ενσωμάτωση Εξωφύλλου"
 
-#: AlbumBrowser.cpp:390
+#: AlbumBrowser.cpp:393 AlbumBrowser.cpp:1742
 msgid "Embed the cover to the selected album tracks"
 msgstr "Ενσωμάτωση εξωφύλλου στα επιλεγμένα κομμάτια"
 
-#: AlbumBrowser.cpp:401 AlListBox.cpp:318 FileBrowser.cpp:763
+#: AlbumBrowser.cpp:404 AlListBox.cpp:318 FileBrowser.cpp:763
 #: RadioPanel.cpp:730
 msgid "Name"
 msgstr "Όνομα"
 
-#: AlbumBrowser.cpp:401
+#: AlbumBrowser.cpp:404
 msgid "Sort albums by name"
-msgstr "Ταξινόμηση των άλμπουμ κατά όνομα"
+msgstr "Ταξινόμηση των δίσκων κατά όνομα"
 
-#: AlbumBrowser.cpp:405 AlListBox.cpp:319 DynamicPlayList.cpp:55
-#: DynamicPlayList.cpp:133 PlayList.cpp:1645 SoListBox.cpp:435
+#: AlbumBrowser.cpp:408 AlListBox.cpp:319 DynamicPlayList.cpp:55
+#: DynamicPlayList.cpp:133 PlayList.cpp:1651 SoListBox.cpp:417
 #: TreeViewFilterEditor.cpp:68 TreeViewFilterEditor.cpp:123
 msgid "Year"
 msgstr "Έτος"
 
-#: AlbumBrowser.cpp:405
+#: AlbumBrowser.cpp:408
 msgid "Sort albums by year"
-msgstr "Ταξινόμηση των άλμπουμ βάσει έτους"
+msgstr "Ταξινόμηση των δίσκων κατά έτος"
 
-#: AlbumBrowser.cpp:409 AlListBox.cpp:320
+#: AlbumBrowser.cpp:412 AlListBox.cpp:320
 msgid "Year Descending"
-msgstr "Έτος με φθίνουσα ταξινόμηση"
+msgstr "Φθίνουσα Ταξινόμηση κατα Έτος"
 
-#: AlbumBrowser.cpp:409 AlbumBrowser.cpp:425
+#: AlbumBrowser.cpp:412 AlbumBrowser.cpp:428
 msgid "Sort albums by year descendant"
-msgstr "Φθίνουσα ταξινόμηση κατά έτος"
+msgstr "Ταξινόμηση των δίσκων κατά έτος σε φθίνουσα σειρά"
 
-#: AlbumBrowser.cpp:413
+#: AlbumBrowser.cpp:416
 msgid "Artist Name"
 msgstr "Όνομα Καλλιτέχνη"
 
-#: AlbumBrowser.cpp:413
+#: AlbumBrowser.cpp:416
 msgid "Sort albums by artist name"
-msgstr "Ταξινόμηση των άλμπουμ κατά όνομα καλλιτέχνη"
+msgstr "Ταξινόμηση των δίσκων κατά όνομα καλλιτέχνη"
 
-#: AlbumBrowser.cpp:417 AlListBox.cpp:322
+#: AlbumBrowser.cpp:420 AlListBox.cpp:322
 msgid "Artist, Year"
 msgstr "Καλλιτέχνης, Έτος"
 
-#: AlbumBrowser.cpp:417
+#: AlbumBrowser.cpp:420
 msgid "Sort albums by artist, year"
-msgstr "Ταξινόμηση κατά καλλιτέχνη, έτος"
+msgstr "Ταξινόμηση των δίσκων κατά καλλιτέχνη, έτος"
 
-#: AlbumBrowser.cpp:421 AlListBox.cpp:323
+#: AlbumBrowser.cpp:424 AlListBox.cpp:323
 msgid "Artist, Year Descending"
-msgstr "Καλλιτέχνης, Έτος με φθίνουσα ταξινόμηση"
+msgstr "Καλλιτέχνης, Έτος με Φθίνουσα Ταξινόμηση"
 
-#: AlbumBrowser.cpp:421
+#: AlbumBrowser.cpp:424
 msgid "Sort albums by artist, year descendant"
-msgstr "Φθίνουσα ταξινόμηση κατά καλλιτέχνη, έτος"
+msgstr "Tαξινόμηση δίσκων κατά καλλιτέχνη, έτος σε φθίνουσα σειρά"
 
-#: AlbumBrowser.cpp:425 DynamicPlayList.cpp:60 DynamicPlayList.cpp:138
-#: PodcastsPanel.cpp:1798 SoListBox.cpp:440
+#: AlbumBrowser.cpp:428 DynamicPlayList.cpp:60 DynamicPlayList.cpp:138
+#: PodcastsPanel.cpp:1797 SoListBox.cpp:422
 msgid "Added"
 msgstr "Προστέθηκε"
 
-#: AlbumBrowser.cpp:429 AlListBox.cpp:328
+#: AlbumBrowser.cpp:432 AlListBox.cpp:328
 msgid "Sort By"
 msgstr "Ταξινόμηση κατά"
 
-#: AlbumBrowser.cpp:429
+#: AlbumBrowser.cpp:432
 msgid "Set the albums sorting"
-msgstr "Καθορισμός της ταξινόμησης των άλμπουμ"
+msgstr "Καθορισμός της ταξινόμησης των δίσκων"
 
-#: AlbumBrowser.cpp:433 LastFMPanel.cpp:592 LastFMPanel.cpp:854
-#: LastFMPanel.cpp:1050 LastFMPanel.cpp:1255 LastFMPanel.cpp:1460
-#: LastFMPanel.cpp:1585 LyricsPanel.cpp:286
+#: AlbumBrowser.cpp:436 AlbumBrowser.cpp:1749 LastFMPanel.cpp:597
+#: LastFMPanel.cpp:859 LastFMPanel.cpp:1055 LastFMPanel.cpp:1260
+#: LastFMPanel.cpp:1465 LastFMPanel.cpp:1590 LyricsPanel.cpp:287
 msgid "Copy to Clipboard"
 msgstr "Αντιγραφή στο Πρόχειρο"
 
-#: AlbumBrowser.cpp:433 LastFMPanel.cpp:854
+#: AlbumBrowser.cpp:436 AlbumBrowser.cpp:1749 LastFMPanel.cpp:859
 msgid "Copy the album info to clipboard"
-msgstr "Αντιγραφή των πληροφοριών του άλμπουμ στο πρόχειρο"
+msgstr "Αντιγραφή των πληροφοριών του δίσκου στο πρόχειρο"
 
-#: AlbumBrowser.cpp:1145 LibPanel.cpp:1149 TreePanel.cpp:1059
+#: AlbumBrowser.cpp:1266 LibPanel.cpp:1149 TreePanel.cpp:1059
 msgid "Albums Labels Editor"
-msgstr "Επεξεργασία ετικετών του άλμπουμ"
+msgstr "Επεξεργασία των ετικετών του δίσκου"
 
-#: AlbumBrowser.cpp:1340
+#: AlbumBrowser.cpp:1450 AlListBox.cpp:486 ItemListBox.cpp:82
+#: PlayerFilters.cpp:107 Preferences.cpp:1801 Preferences.cpp:1898
+#: SmartMode.cpp:396
+msgid "All"
+msgstr "Όλα"
+
+#: AlbumBrowser.cpp:1515
 msgid "Page"
 msgstr "Σελίδα"
 
 #: AlListBox.cpp:177
 msgid "by "
-msgstr "απο"
+msgstr "από"
 
 #: AlListBox.cpp:264
 msgid "Play current selected albums"
-msgstr "Αναπαραγωγή επιλεγμένων άλμπουμ"
+msgstr "Αναπαραγωγή επιλεγμένων δίσκων"
 
 #: AlListBox.cpp:270
 msgid "Add current selected albums to the Playlist"
-msgstr "Προσθήκη επιλεγμένων άλμπουμ στη Λίστα Αναπαραγωγής"
+msgstr "Προσθήκη επιλεγμένων δίσκων στη Λίστα Αναπαραγωγής"
 
 #: AlListBox.cpp:278 AlListBox.cpp:284 AlListBox.cpp:290 CoListBox.cpp:120
 #: CoListBox.cpp:127 CoListBox.cpp:134
 msgid "Add current selected albums to the Playlist as Next Tracks"
 msgstr ""
-"Προσθήκη επιλεγμένων άλμπουμ στην Λίστα Αναπαραγωγής σαν Επόμενα Κομμάτια"
+"Προσθήκη επιλεγμένων δίσκων στην Λίστα Αναπαραγωγής σαν Επόμενα Κομμάτια"
 
 #: AlListBox.cpp:294 CoListBox.cpp:139
 msgid "Add the selected albums after"
-msgstr "Προσθήκη επιλεγμένων άλμπουμ μετά απο"
+msgstr "Προσθήκη επιλεγμένων δίσκων μετά απο"
 
 #: AlListBox.cpp:318
 msgid "Albums are sorted by name"
-msgstr "Άλμπουμ ταξινομημένα κατά όνομα"
+msgstr "Δίσκοι ταξινομημένοι κατά όνομα"
 
 #: AlListBox.cpp:319
 msgid "Albums are sorted by year"
-msgstr "Άλμπουμ ταξινομημένα κατά έτος"
+msgstr "Δίσκοι ταξινομημένοι κατά έτος"
 
 #: AlListBox.cpp:320
 msgid "Albums are sorted by year descending"
-msgstr "Άλμπουμ με φθίνουσα ταξινόμηση κατά έτος"
+msgstr "Δίσκοι ταξινομημένοι κατά έτος σε φθίνουσα σειρά"
 
 #: AlListBox.cpp:321
 msgid "Artist, Name"
@@ -687,28 +698,23 @@ msgstr "Καλλιτέχνης, Όνομα"
 
 #: AlListBox.cpp:321
 msgid "Albums are sorted by artist and album name"
-msgstr "Άλμπουμ ταξινομημένα κατά καλλιτέχνη και άλμπουμ"
+msgstr "Δίσκοι ταξινομημένοι κατά καλλιτέχνη και όνομα δίσκου"
 
 #: AlListBox.cpp:322
 msgid "Albums are sorted by artist and year"
-msgstr "Άλμπουμ ταξινομημένα κατά καλλιτέχνη και έτος"
+msgstr "Δίσκοι ταξινομημένοι κατά καλλιτέχνη και έτος"
 
 #: AlListBox.cpp:323
 msgid "Albums are sorted by artist and year descending"
-msgstr "Άλμπουμ με φθίνουσα ταξινόμηση κατά καλλιτέχνη και έτος"
+msgstr "Δίσκοι ταξινομημένοι κατά καλλιτέχνη και έτος σε φθίνουσα σειρά"
 
 #: AlListBox.cpp:328
 msgid "Sets the albums order"
-msgstr ""
+msgstr "Ορίζει τη σειρά των δίσκων"
 
 #: AlListBox.cpp:359
 msgid "Embed the current cover to the album files"
-msgstr "Ενσωμάτωση του τρέχοντος εξωφύλλου στα αρχεία του άλμπουμ"
-
-#: AlListBox.cpp:486 ItemListBox.cpp:82 PlayerFilters.cpp:107
-#: Preferences.cpp:1801 Preferences.cpp:1898 SmartMode.cpp:396
-msgid "All"
-msgstr "Όλα"
+msgstr "Ενσωμάτωση του τρέχοντος εξωφύλλου στα αρχεία του δίσκου"
 
 #: ArListBox.cpp:148 YeListBox.cpp:104
 msgid "Play current selected artists"
@@ -721,34 +727,35 @@ msgstr "Προσθήκη επιλεγμένων καλλιτεχνών στη λ
 #: ArListBox.cpp:191
 msgid "Edit the labels assigned to the selected artists"
 msgstr ""
+"Επεξεργασία των ετικετών που έχουν οριστεί στους επιλεγμένους καλλιτέχνες"
 
 #: ArListBox.cpp:199
 msgid "Edit the songs from the selected artists"
 msgstr "Επεξεργασία των τραγουδιών απο τους επιλεγμένους καλλιτέχνες"
 
-#: ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136 LastFMPanel.cpp:3163
-#: PcListBox.cpp:166 PlayList.cpp:1579 RaListBox.cpp:198 TaListBox.cpp:167
+#: ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136 LastFMPanel.cpp:3196
+#: PcListBox.cpp:166 PlayList.cpp:1585 RaListBox.cpp:198 TaListBox.cpp:167
 #: TreePanel.cpp:450
 msgid "Save the selected tracks to playlist"
 msgstr "Αποθήκευση των επιλεγμένων κομματιών στην λίστα αναπαραγωγής"
 
 #: ChannelEditor.cpp:36
 msgid "Podcast Channel Editor"
-msgstr ""
+msgstr "Επεξεργαστής Καναλιών Podcast"
 
 #: ChannelEditor.cpp:57
 msgid " Podcast Channel "
-msgstr ""
+msgstr "Κανάλι Podcast"
 
-#: ChannelEditor.cpp:102 PodcastsPanel.cpp:936
+#: ChannelEditor.cpp:102 PodcastsPanel.cpp:935
 msgid "Description:"
 msgstr "Περιγραφή:"
 
-#: ChannelEditor.cpp:114 PodcastsPanel.cpp:946
+#: ChannelEditor.cpp:114 PodcastsPanel.cpp:945
 msgid "Author:"
 msgstr "Δημιουργός:"
 
-#: ChannelEditor.cpp:124 PodcastsPanel.cpp:956
+#: ChannelEditor.cpp:124 PodcastsPanel.cpp:955
 msgid "Owner:"
 msgstr "Ιδιοκτήτης:"
 
@@ -784,7 +791,7 @@ msgstr "Αναπαραγωγή επιλεγμένου συνθέτη"
 msgid "Edit songs"
 msgstr "Επεξεργασία τραγουδιών"
 
-#: Config.cpp:1367 MainFrame.cpp:90
+#: Config.cpp:1364 MainFrame.cpp:90
 msgid "My Music"
 msgstr "Η Μουσική μου"
 
@@ -792,11 +799,11 @@ msgstr "Η Μουσική μου"
 msgid "Please confirm"
 msgstr "Παρακαλώ επιβεβαιώστε"
 
-#: ConfirmExit.cpp:45
+#: ConfirmExit.cpp:39
 msgid "Are you sure you want to exit the application?"
 msgstr "Είστε σίγουροι οτι θέλετε να κλείσετε την εφαρμογή;"
 
-#: ConfirmExit.cpp:51
+#: ConfirmExit.cpp:45
 msgid "Don't ask again"
 msgstr "Να μην ερωτηθώ ξανά"
 
@@ -815,16 +822,16 @@ msgstr "Ολοκληρώθηκε η αντιγραφή των αρχείων"
 
 #: CoverEdit.cpp:52
 msgid "Cover Editor"
-msgstr "Επεξεργαστής Εξωφύλλου"
+msgstr "Επεξεργαστής Εξωφύλλων"
 
-#: CoverEdit.cpp:69 LastFMPanel.cpp:1677 LyricsPanel.cpp:110 TrackEdit.cpp:148
+#: CoverEdit.cpp:69 LastFMPanel.cpp:1682 LyricsPanel.cpp:111 TrackEdit.cpp:148
 #: TrackEdit.cpp:373 TrackEdit.cpp:415 TrackEdit.cpp:474
 msgid "Artist:"
 msgstr "Καλλιτέχνης:"
 
 #: CoverEdit.cpp:76 TrackEdit.cpp:172 TrackEdit.cpp:440 TrackEdit.cpp:496
 msgid "Album:"
-msgstr "Άλμπουμ:"
+msgstr "Δίσκος:"
 
 #: CoverEdit.cpp:83
 msgid "From:"
@@ -834,10 +841,10 @@ msgstr "Απο:"
 msgid "Embed into tracks"
 msgstr "Ενσωμάτωση σε κομμάτια"
 
-#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1774 DbLibrary.cpp:1786
-#: DbLibrary.cpp:1851 DbLibrary.cpp:1863 Jamendo.cpp:642 PlayerPanel.cpp:1454
+#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1777 DbLibrary.cpp:1789
+#: DbLibrary.cpp:1855 DbLibrary.cpp:1867 Jamendo.cpp:642 PlayerPanel.cpp:1453
 msgid "Unknown"
-msgstr "Άγνωστος"
+msgstr "Άγνωστο"
 
 #: DbLibrary.cpp:643
 msgid "Recently added tracks"
@@ -851,31 +858,31 @@ msgstr "Κομμάτια που αναπαράχθηκαν τελευταία"
 msgid "Best rated tracks"
 msgstr "Κομμάτια με την υψηλότερη βαθμολογία"
 
-#: DynamicPlayList.cpp:46 DynamicPlayList.cpp:126 PodcastsPanel.cpp:1790
-#: SoListBox.cpp:427
+#: DynamicPlayList.cpp:46 DynamicPlayList.cpp:126 PodcastsPanel.cpp:1789
+#: SoListBox.cpp:409
 msgid "Title"
 msgstr "Τίτλος"
 
-#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:127 PlayList.cpp:1633
-#: SoListBox.cpp:428 SoListBox.cpp:673 TreeViewFilterEditor.cpp:64
+#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:127 PlayList.cpp:1639
+#: SoListBox.cpp:410 SoListBox.cpp:655 TreeViewFilterEditor.cpp:64
 #: TreeViewFilterEditor.cpp:123
 msgid "Artist"
 msgstr "Καλλιτέχνης"
 
 #: DynamicPlayList.cpp:48 DynamicPlayList.cpp:128 LibPanel.cpp:368
-#: LibPanel.cpp:375 PlayList.cpp:1636 SoListBox.cpp:429 SoListBox.cpp:676
+#: LibPanel.cpp:375 PlayList.cpp:1642 SoListBox.cpp:411 SoListBox.cpp:658
 #: TreeViewFilterEditor.cpp:66 TreeViewFilterEditor.cpp:123
 msgid "Album Artist"
-msgstr "Καλλιτέχνης του Άλμπουμ"
+msgstr "Καλλιτέχνης Δίσκου"
 
-#: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1642
-#: Preferences.cpp:959 SoListBox.cpp:430 SoListBox.cpp:682
+#: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1648
+#: Preferences.cpp:959 SoListBox.cpp:412 SoListBox.cpp:664
 #: TreeViewFilterEditor.cpp:67 TreeViewFilterEditor.cpp:123
 msgid "Album"
-msgstr "Άλμπουμ"
+msgstr "Δίσκος"
 
-#: DynamicPlayList.cpp:50 DynamicPlayList.cpp:130 PlayList.cpp:1648
-#: RadioPanel.cpp:313 RadioPanel.cpp:1135 SoListBox.cpp:431 SoListBox.cpp:670
+#: DynamicPlayList.cpp:50 DynamicPlayList.cpp:130 PlayList.cpp:1654
+#: RadioPanel.cpp:313 RadioPanel.cpp:1135 SoListBox.cpp:413 SoListBox.cpp:652
 #: TreeViewFilterEditor.cpp:63
 msgid "Genre"
 msgstr "Είδος"
@@ -884,8 +891,8 @@ msgstr "Είδος"
 msgid "Label"
 msgstr "Ετικέτα"
 
-#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:132 PlayList.cpp:1639
-#: SoListBox.cpp:432 SoListBox.cpp:679 TreeViewFilterEditor.cpp:65
+#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:132 PlayList.cpp:1645
+#: SoListBox.cpp:414 SoListBox.cpp:661 TreeViewFilterEditor.cpp:65
 #: TreeViewFilterEditor.cpp:123
 msgid "Composer"
 msgstr "Συνθέτης"
@@ -894,23 +901,23 @@ msgstr "Συνθέτης"
 msgid "Comment"
 msgstr "Σχόλια"
 
-#: DynamicPlayList.cpp:54 SoListBox.cpp:442
+#: DynamicPlayList.cpp:54 SoListBox.cpp:424
 msgid "Path"
-msgstr ""
+msgstr "Διαδρομή"
 
-#: DynamicPlayList.cpp:57 DynamicPlayList.cpp:135 PodcastsPanel.cpp:1794
-#: SoListBox.cpp:434
+#: DynamicPlayList.cpp:57 DynamicPlayList.cpp:135 PodcastsPanel.cpp:1793
+#: SoListBox.cpp:416
 msgid "Length"
 msgstr "Διάρκεια"
 
 #: DynamicPlayList.cpp:58 DynamicPlayList.cpp:136 LibPanel.cpp:330
-#: LibPanel.cpp:337 LibPanel.cpp:534 MainFrame.cpp:1234 PodcastsPanel.cpp:1796
-#: SoListBox.cpp:438
+#: LibPanel.cpp:337 LibPanel.cpp:534 MainFrame.cpp:1234 PodcastsPanel.cpp:1795
+#: SoListBox.cpp:420
 msgid "Plays"
-msgstr "Αριθμός Αναπαραγωγών"
+msgstr "Αναπαραγωγές"
 
-#: DynamicPlayList.cpp:59 DynamicPlayList.cpp:137 PodcastsPanel.cpp:1797
-#: SoListBox.cpp:439
+#: DynamicPlayList.cpp:59 DynamicPlayList.cpp:137 PodcastsPanel.cpp:1796
+#: SoListBox.cpp:421
 msgid "Last Played"
 msgstr "Τελευταία Αναπαραγωγή"
 
@@ -918,15 +925,15 @@ msgstr "Τελευταία Αναπαραγωγή"
 msgid "Track Number"
 msgstr "Αριθμός Κομματιού"
 
-#: DynamicPlayList.cpp:62 SoListBox.cpp:436
+#: DynamicPlayList.cpp:62 SoListBox.cpp:418
 msgid "Bit Rate"
-msgstr ""
+msgstr "Συχνότητα Bit"
 
 #: DynamicPlayList.cpp:63 FileBrowser.cpp:764
 msgid "Size"
 msgstr "Μέγεθος"
 
-#: DynamicPlayList.cpp:64 SoListBox.cpp:433
+#: DynamicPlayList.cpp:64 SoListBox.cpp:415
 msgid "Disc"
 msgstr "Δίσκος"
 
@@ -970,7 +977,7 @@ msgstr "τουλάχιστον"
 
 #: DynamicPlayList.cpp:94
 msgid "at most"
-msgstr ""
+msgstr "το πολύ"
 
 #: DynamicPlayList.cpp:101
 msgid "after"
@@ -982,11 +989,11 @@ msgstr "πριν"
 
 #: DynamicPlayList.cpp:107
 msgid "in the last"
-msgstr ""
+msgstr "στο τελευταίο"
 
 #: DynamicPlayList.cpp:108
 msgid "before the last"
-msgstr ""
+msgstr "πριν το τελευταίο"
 
 #: DynamicPlayList.cpp:113
 msgid "false"
@@ -1026,13 +1033,13 @@ msgstr "μήνες"
 
 #: DynamicPlayList.cpp:439
 msgid "Filter Album Browser"
-msgstr ""
+msgstr "Φίλτρο Περιηγητή Δίσκων"
 
 #: DynamicPlayList.cpp:440
 msgid "Dynamic Playlist Editor"
-msgstr ""
+msgstr "Δυναμικός Επεξεργαστής της Λίστας Αναπαραγωγής"
 
-#: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2062
+#: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2102
 #: PortableMedia.cpp:998 Preferences.cpp:2087 Preferences.cpp:2208
 #: Preferences.cpp:2333 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
 msgid "Name:"
@@ -1060,7 +1067,7 @@ msgstr "Ταξινόμηση κατά"
 
 #: DynamicPlayList.cpp:594
 msgid "Descending"
-msgstr ""
+msgstr "Φθίνουσα σειρά"
 
 #: DynamicPlayList.cpp:612
 msgid "Add tracks on any criteria"
@@ -1072,11 +1079,11 @@ msgstr "Equalizer"
 
 #: Equalizer.cpp:112
 msgid "Preset:"
-msgstr ""
+msgstr "Προκαθορισμός:"
 
 #: FileBrowser.cpp:226 FileBrowser.cpp:586
 msgid "See used locations"
-msgstr ""
+msgstr "Βλέπε χρησιμοποιημένες τοποθεσίες"
 
 #: FileBrowser.cpp:227 FileBrowser.cpp:587
 msgid "See system files"
@@ -1106,7 +1113,7 @@ msgstr "Αντιγραφή"
 msgid "Copy the selected folder to clipboard"
 msgstr "Αντιγραφή του επιλεγμένου φακέλου στο πρόχειρο"
 
-#: FileBrowser.cpp:398 FileBrowser.cpp:1174 LyricsPanel.cpp:298
+#: FileBrowser.cpp:398 FileBrowser.cpp:1174 LyricsPanel.cpp:299
 msgid "Paste"
 msgstr "Επικόλληση"
 
@@ -1128,7 +1135,7 @@ msgstr "Μετονομασία"
 
 #: FileBrowser.cpp:417
 msgid "Rename the selected folder"
-msgstr "Μετονομασία επιλεγμένου φακέλου"
+msgstr "Μετονομασία του επιλεγμένου φακέλου"
 
 #: FileBrowser.cpp:421 FileBrowser.cpp:1195
 msgid "Remove"
@@ -1140,14 +1147,14 @@ msgstr "Διαγραφή του επιλεγμένου φακέλου"
 
 #: FileBrowser.cpp:552
 msgid "Are you sure to delete the selected path ?"
-msgstr ""
+msgstr "Είστε σίγουροι ότι θέλετε να διαγράψετε την επιλεγμένη διαδρομή;"
 
-#: FileBrowser.cpp:553 FileBrowser.cpp:2205 LabelEditor.cpp:310
-#: LibPanel.cpp:1227 PlayListPanel.cpp:1036 PodcastsPanel.cpp:1225
-#: PodcastsPanel.cpp:1611 RadioPanel.cpp:561 RadioPanel.cpp:1028
-#: RadioPanel.cpp:1763 TaListBox.cpp:203 TreePanel.cpp:1232
+#: FileBrowser.cpp:553 FileBrowser.cpp:2206 LabelEditor.cpp:310
+#: LibPanel.cpp:1227 PlayListPanel.cpp:1108 PodcastsPanel.cpp:1224
+#: PodcastsPanel.cpp:1610 RadioPanel.cpp:561 RadioPanel.cpp:1028
+#: RadioPanel.cpp:1764 TaListBox.cpp:203 TreePanel.cpp:1232
 msgid "Confirm"
-msgstr "Επιβεβαιώστε"
+msgstr "Επιβεβαίωση"
 
 #: FileBrowser.cpp:563
 msgid "Error deleting the folder "
@@ -1163,11 +1170,11 @@ msgstr "Έχει τροποποιηθεί"
 
 #: FileBrowser.cpp:1113
 msgid "Play current selected files"
-msgstr "Αναπαραγωγή επιλεγμένων αρχείων"
+msgstr "Αναπαραγωγή των επιλεγμένων αρχείων"
 
 #: FileBrowser.cpp:1119
 msgid "Add current selected files to playlist"
-msgstr "Προσθήκη επιλεγμένων αρχείων στη λίστα αναπαραγωγής"
+msgstr "Προσθήκη των επιλεγμένων αρχείων στη λίστα αναπαραγωγής"
 
 #: FileBrowser.cpp:1155
 msgid "Edit the current selected files"
@@ -1179,39 +1186,39 @@ msgstr "Προσθήκη των επιλεγμένων κομματιών στη
 
 #: FileBrowser.cpp:1174
 msgid "Paste to the selected dir"
-msgstr "Επικόλληση στην επιλεγμένη διαδρομή"
+msgstr ""
 
 #: FileBrowser.cpp:1191 FileRenamer.cpp:47
 msgid "Rename Files"
-msgstr "Μετονομασία αρχείων"
+msgstr "Μετονομασία Aρχείων"
 
 #: FileBrowser.cpp:1191
 msgid "Rename the current selected file"
-msgstr "Μετονομασία επιλεγμένου φακέλου"
+msgstr "Μετονομασία του επιλεγμένου αρχείου"
 
 #: FileBrowser.cpp:1195
 msgid "Delete the selected files"
-msgstr "Διαγραφή επιλεγμένων αρχείων"
+msgstr "Διαγραφή των επιλεγμένων αρχείων"
 
-#: FileBrowser.cpp:1543 FileBrowser.cpp:1559
+#: FileBrowser.cpp:1544 FileBrowser.cpp:1560
 msgid "Directories"
 msgstr "Διαδρομές"
 
-#: FileBrowser.cpp:1960 FileBrowser.cpp:2098 LibPanel.cpp:1432
-#: PlayList.cpp:1967 PlayListPanel.cpp:1416 TreePanel.cpp:1158
+#: FileBrowser.cpp:1961 FileBrowser.cpp:2099 LibPanel.cpp:1432
+#: PlayList.cpp:1973 PlayListPanel.cpp:1488 TreePanel.cpp:1158
 #: TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr "Χωρίς Όνομα"
 
-#: FileBrowser.cpp:2204
+#: FileBrowser.cpp:2205
 msgid "Are you sure to delete the selected files ?"
 msgstr "Είστε σίγουροι οτι θέλετε να διαγράψετε τα επιλεγμένα αρχεία;"
 
-#: FileBrowser.cpp:2222
+#: FileBrowser.cpp:2223
 msgid "There was an error deleting "
 msgstr "Υπήρξε σφάλμα κατά τη διαγραφή"
 
-#: FileBrowser.cpp:2223
+#: FileBrowser.cpp:2224
 msgid ""
 "\n"
 "Continue deleting?"
@@ -1219,7 +1226,7 @@ msgstr ""
 "\n"
 "Συνέχεια διαγραφής;"
 
-#: FileBrowser.cpp:2224
+#: FileBrowser.cpp:2225
 msgid "Continue"
 msgstr "Συνέχεια"
 
@@ -1247,9 +1254,9 @@ msgstr ""
 "Πρότυπες σημαίες:\n"
 "{g} : Είδος\n"
 "{a} : Καλλιτέχνης\n"
-"{aa}: Καλλιτέχνης του Άλμπουμ\n"
+"{aa}: Καλλιτέχνης Δίσκου\n"
 "{A} : {aa} ή {a}\n"
-"{b} : Άλμπουμ\n"
+"{b} : Δίσκος\n"
 "{t} : Τίτλος\n"
 "{n} : Αριθμός\n"
 "{y} : Έτος\n"
@@ -1284,69 +1291,69 @@ msgstr "Επιλογή φακέλου"
 msgid " Files "
 msgstr "Αρχεία"
 
-#: ImportFiles.cpp:220
+#: ImportFiles.cpp:228
 msgid "Select files"
 msgstr "Επιλογή αρχείων"
 
-#: ImportFiles.cpp:221
+#: ImportFiles.cpp:229
 msgid "Audio files"
 msgstr "Αρχεία ήχου"
 
-#: ImportFiles.cpp:222
+#: ImportFiles.cpp:230
 msgid "mp3 files"
 msgstr "Αρχεία mp3"
 
-#: ImportFiles.cpp:223
+#: ImportFiles.cpp:231
 msgid "ogg files"
 msgstr "Αρχεία ogg"
 
-#: ImportFiles.cpp:224
+#: ImportFiles.cpp:232
 msgid "flac files"
 msgstr "Αρχεία flac"
 
-#: ImportFiles.cpp:225
+#: ImportFiles.cpp:233
 msgid "mp4 files"
 msgstr "Αρχεία mp4"
 
-#: ImportFiles.cpp:226
+#: ImportFiles.cpp:234
 msgid "wma files"
 msgstr "Αρχεία wma"
 
-#: ImportFiles.cpp:227
+#: ImportFiles.cpp:235
 msgid "ape files"
 msgstr "Αρχεία ape"
 
-#: ImportFiles.cpp:228
+#: ImportFiles.cpp:236
 msgid "waf files"
 msgstr "Αρχεία waf"
 
-#: ImportFiles.cpp:229
+#: ImportFiles.cpp:237
 msgid "aif files"
 msgstr "Αρχεία aif"
 
-#: ImportFiles.cpp:230
+#: ImportFiles.cpp:238
 msgid "wv files"
 msgstr "Αρχεία wv"
 
-#: ImportFiles.cpp:231
+#: ImportFiles.cpp:239
 msgid "tta files"
 msgstr "Αρχεία tta"
 
-#: ImportFiles.cpp:232
+#: ImportFiles.cpp:240
 msgid "mpc files"
 msgstr "Αρχεία mpc"
 
-#: ImportFiles.cpp:309 MediaViewer.cpp:1370 MediaViewer.cpp:1398
+#: ImportFiles.cpp:317 MediaViewer.cpp:1370 MediaViewer.cpp:1398
 #: MediaViewer.cpp:1413 Preferences.cpp:931
 msgid "track"
 msgstr "κομμάτι"
 
-#: ImportFiles.cpp:309 MediaViewer.cpp:1370 MediaViewer.cpp:1398
+#: ImportFiles.cpp:317 MediaViewer.cpp:1370 MediaViewer.cpp:1398
 #: MediaViewer.cpp:1413 Preferences.cpp:1036
 msgid "tracks"
 msgstr "κομμάτια"
 
-#: ImportFiles.cpp:319
+#: ImportFiles.cpp:327
 msgid "No files added"
 msgstr "Δεν έχουν εισαχθεί φάκελοι"
 
@@ -1354,7 +1361,7 @@ msgstr "Δεν έχουν εισαχθεί φάκελοι"
 #: Magnatune.cpp:1022 MainFrame.cpp:1283 MediaViewer.cpp:952
 #: PortableMedia.cpp:1888
 msgid "Update the collection library"
-msgstr "Ενημέρωση βιβλιοθήκης συλλογής"
+msgstr "Ενημέρωση της βιβλιοθήκης της συλλογής"
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515
 #: Magnatune.cpp:1025 MainFrame.cpp:1288 MediaViewer.cpp:955
@@ -1378,22 +1385,22 @@ msgstr "Αναζήτηση Εξωφύλλων"
 #: Magnatune.cpp:1028 MainFrame.cpp:1295 MediaViewer.cpp:958
 #: PortableMedia.cpp:1894
 msgid "Search the collection missing covers"
-msgstr "Αναζήτηση για ελλείποντα εξώφυλλα"
+msgstr "Αναζήτηση στη συλλογή για ελλείποντα εξώφυλλα"
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1303
 #: PortableMedia.cpp:1899
 msgid "Unmount"
-msgstr ""
+msgstr "Αποσύνδεση"
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1303
 #: PortableMedia.cpp:1899
 msgid "Unmount the device"
-msgstr ""
+msgstr "Αποσύνδεση της συσκευής"
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:343
 #: LocationPanel.cpp:382 LocationPanel.cpp:537 Magnatune.cpp:1033
 #: MainFrame.cpp:1017 MainFrame.cpp:1056 MainFrame.cpp:1310
-#: MediaViewer.cpp:963 PodcastsPanel.cpp:1751 PortableMedia.cpp:1904
+#: MediaViewer.cpp:963 PodcastsPanel.cpp:1750 PortableMedia.cpp:1904
 msgid "Properties"
 msgstr "Επιλογές"
 
@@ -1401,20 +1408,20 @@ msgstr "Επιλογές"
 #: Magnatune.cpp:1033 MainFrame.cpp:1310 MediaViewer.cpp:963
 #: PortableMedia.cpp:1904
 msgid "Show collection properties"
-msgstr "Εμφάνιση επιλογών συλλογής"
+msgstr "Εμφάνιση των επιλογών της συλλογής"
 
 #: Jamendo.cpp:1109 Jamendo.cpp:1119 Magnatune.cpp:1008 Magnatune.cpp:1015
 msgid "Download Albums"
-msgstr "Κατέβασμα των άλμπουμς"
+msgstr "Κατέβασμα των δίσκων"
 
 #: Jamendo.cpp:1109 Jamendo.cpp:1112 Jamendo.cpp:1119 Jamendo.cpp:1122
 #: Magnatune.cpp:1008 Magnatune.cpp:1015
 msgid "Download the current selected album"
-msgstr "Κατέβασμα του επιλεγμένου άλμπουμ"
+msgstr "Κατέβασμα του επιλεγμένου δίσκου"
 
 #: Jamendo.cpp:1112 Jamendo.cpp:1122
 msgid "Download Albums torrents"
-msgstr ""
+msgstr "Κατέβασμα δίσκων από torrent"
 
 #: LabelEditor.cpp:70
 msgid " Items "
@@ -1434,7 +1441,7 @@ msgstr "Διαγραφή επιλεγμένης ετικέτας"
 
 #: LabelEditor.cpp:131
 msgid "Copy the label selection to all the items"
-msgstr ""
+msgstr "Αντιγραφή της επιλεγμένης ετικέτας σε όλα τα αντικείμενα"
 
 #: LabelEditor.cpp:286 RadioPanel.cpp:1010 RadioPanel.cpp:1049
 #: TaListBox.cpp:185 TaListBox.cpp:226
@@ -1443,113 +1450,113 @@ msgstr "Όνομα ετικέτας"
 
 #: LabelEditor.cpp:286 RadioPanel.cpp:1010 TaListBox.cpp:185
 msgid "Please enter the label name"
-msgstr "Παρακαλώ εισάγετε όνομα ετικέτας"
+msgstr "Παρακαλώ εισάγετε το όνομα ετικέτας"
 
 #: LabelEditor.cpp:309 RadioPanel.cpp:1027 TaListBox.cpp:202
 msgid "Are you sure to delete the selected labels?"
 msgstr "Είστε σίγουροι οτι θέλετε να διαγράψετε τις επιλεγμένες ετικέτες;"
 
-#: LastFMPanel.cpp:437 LastFMPanel.cpp:670
+#: LastFMPanel.cpp:440 LastFMPanel.cpp:675
 msgid "Less..."
 msgstr "Λιγότερα..."
 
-#: LastFMPanel.cpp:437 LastFMPanel.cpp:670
+#: LastFMPanel.cpp:440 LastFMPanel.cpp:675
 msgid "More..."
 msgstr "Περισσότερα..."
 
-#: LastFMPanel.cpp:552 LastFMPanel.cpp:1008 LastFMPanel.cpp:1208
-#: LastFMPanel.cpp:1416 LastFMPanel.cpp:3131
+#: LastFMPanel.cpp:557 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
+#: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164
 msgid "Play the artist tracks"
-msgstr "Αναπαραγωγή κομματιών καλλιτέχνη"
+msgstr "Αναπαραγωγή των κομματιών του καλλιτέχνη"
 
-#: LastFMPanel.cpp:556 LastFMPanel.cpp:1012 LastFMPanel.cpp:1212
-#: LastFMPanel.cpp:1420 LastFMPanel.cpp:3135
+#: LastFMPanel.cpp:561 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
+#: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168
 msgid "Enqueue the artist tracks to the playlist"
-msgstr "Προσθήκη κομματιών καλλιτέχνη στην ουρά αναπαραγωγής"
+msgstr "Προσθήκη των κομματιών του καλλιτέχνη στην ουρά αναπαραγωγής"
 
-#: LastFMPanel.cpp:592
+#: LastFMPanel.cpp:597
 msgid "Copy the artist name to clipboard"
 msgstr "Αντιγραφή του ονόματος καλλιτέχνη στο πρόχειρο"
 
-#: LastFMPanel.cpp:600 LastFMPanel.cpp:862 LastFMPanel.cpp:1058
-#: LastFMPanel.cpp:1263 LastFMPanel.cpp:1468 LastFMPanel.cpp:1593
+#: LastFMPanel.cpp:605 LastFMPanel.cpp:867 LastFMPanel.cpp:1063
+#: LastFMPanel.cpp:1268 LastFMPanel.cpp:1473 LastFMPanel.cpp:1598
 msgid "Visit last.fm page for this item"
 msgstr "Επίσκεψη της σελίδας του Last.fm για αυτό το στοιχείο"
 
-#: LastFMPanel.cpp:625
+#: LastFMPanel.cpp:630
 msgid "There is no information available for this artist."
 msgstr "Δεν υπάρχουν διαθέσιμες πληροφορίες για αυτόν τον καλλιτέχνη."
 
-#: LastFMPanel.cpp:1048 LastFMPanel.cpp:1252
+#: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
 msgid "Show Artist Info"
 msgstr "Εμφάνιση Πληροφοριών Καλλιτέχνη"
 
-#: LastFMPanel.cpp:1048 LastFMPanel.cpp:1252
+#: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
 msgid "Update the information with the current selected artist"
-msgstr ""
+msgstr "Ενημέρωση των πληροφοριών με τον επιλεγμένο καλλιτέχνη"
 
-#: LastFMPanel.cpp:1050
+#: LastFMPanel.cpp:1055
 msgid "Copy the artist info to clipboard"
-msgstr "Αντιγραφή των πληροφοριών καλλιτέχνη στο πρόχειρο"
+msgstr "Αντιγραφή των πληροφοριών του καλλιτέχνη στο πρόχειρο"
 
-#: LastFMPanel.cpp:1240 LastFMPanel.cpp:1448
+#: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
 msgid "Search Track"
 msgstr "Αναζήτηση κομματιού"
 
-#: LastFMPanel.cpp:1240 LastFMPanel.cpp:1448
+#: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
 msgid "Search the track in the library"
 msgstr "Αναζήτηση του κομματιού στη βιβλιοθήκη"
 
-#: LastFMPanel.cpp:1255 LastFMPanel.cpp:1460
+#: LastFMPanel.cpp:1260 LastFMPanel.cpp:1465
 msgid "Copy the track info to clipboard"
-msgstr "Αντιγραφή των πληροφοριών κομματιού στο πρόχειρο"
+msgstr "Αντιγραφή των πληροφοριών του κομματιού στο πρόχειρο"
 
-#: LastFMPanel.cpp:1354
+#: LastFMPanel.cpp:1359
 #, c-format
 msgid ""
 "%s\n"
 "%i plays by %u users"
 msgstr ""
-"%s\n"
+"%s⏎\n"
 "%i ακροάσεις απο %u χρήστες"
 
-#: LastFMPanel.cpp:1585
+#: LastFMPanel.cpp:1590
 msgid "Copy the event info to clipboard"
-msgstr ""
+msgstr "Αντιγραφή των πληροφοριών της εκδήλωσης στο πρόχειρο"
 
-#: LastFMPanel.cpp:1660 LyricsPanel.cpp:80
+#: LastFMPanel.cpp:1665 LyricsPanel.cpp:81
 msgid "Follow player"
 msgstr "Να ακολουθεί την αναπαραγωγή"
 
-#: LastFMPanel.cpp:1686 LyricsPanel.cpp:120 TrackEdit.cpp:380
+#: LastFMPanel.cpp:1691 LyricsPanel.cpp:121 TrackEdit.cpp:380
 msgid "Track:"
 msgstr "Κομμάτι:"
 
-#: LastFMPanel.cpp:1706
+#: LastFMPanel.cpp:1711
 msgid "Artist Info"
 msgstr "Πληροφορίες για τον Καλλιτέχνη"
 
-#: LastFMPanel.cpp:1741
+#: LastFMPanel.cpp:1746
 msgid "Top Albums"
-msgstr "Κορυφαία Άλμπουμ"
+msgstr "Κορυφαίοι Δίσκοι"
 
-#: LastFMPanel.cpp:1783
+#: LastFMPanel.cpp:1788
 msgid "Top Tracks"
 msgstr "Κορυφαία Κομμάτια"
 
-#: LastFMPanel.cpp:1824
+#: LastFMPanel.cpp:1829
 msgid "Similar Artists"
 msgstr "Παρόμοιοι Καλλιτέχνες"
 
-#: LastFMPanel.cpp:1865
+#: LastFMPanel.cpp:1870
 msgid "Similar Tracks"
 msgstr "Παρόμοια Κομμάτια"
 
-#: LastFMPanel.cpp:1906
+#: LastFMPanel.cpp:1911
 msgid "Events"
 msgstr "Εκδηλώσεις"
 
-#: LastFMPanel.cpp:3307
+#: LastFMPanel.cpp:3340
 msgid "Unnamed"
 msgstr "Χωρίς Όνομα"
 
@@ -1573,7 +1580,7 @@ msgstr "Καλλιτέχνες"
 #: LibPanel.cpp:272 LibPanel.cpp:279 LibPanel.cpp:528 LocationPanel.cpp:446
 #: MainFrame.cpp:1219 MediaViewer.cpp:1384
 msgid "Albums"
-msgstr "Άλμπουμς"
+msgstr "Δίσκοι"
 
 #: LibPanel.cpp:292 LibPanel.cpp:299 LibPanel.cpp:530 LocationPanel.cpp:451
 #: MainFrame.cpp:1224
@@ -1592,22 +1599,22 @@ msgstr "Συνθέτες"
 
 #: LibPanel.cpp:538 LocationPanel.cpp:441 MainFrame.cpp:1214
 msgid "Album Artists"
-msgstr "Καλλιτέχνες των Άλμπουμς"
+msgstr "Καλλιτέχνες των Δίσκων"
 
 #: LibPanel.cpp:958 TreePanel.cpp:1059
 msgid "Artist Labels Editor"
-msgstr "Επεξεργαστής Καλλιτεχνών των Άλμπουμς"
+msgstr "Επεξεργαστής Καλλιτεχνών των Δίσκων"
 
 #: LibPanel.cpp:1226
 msgid "Are you sure to delete the selected album cover?"
 msgstr "Είστε σίγουροι οτι θέλετε να διαγράψετε το επιλεγμένο εξώφυλλο;"
 
-#: LibPanel.cpp:1359 PlayList.cpp:2117 PlayListPanel.cpp:1307
+#: LibPanel.cpp:1359 PlayList.cpp:2123 PlayListPanel.cpp:1379
 #: TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr "Επεξεργαστής Ετικετών των Κομματιών"
 
-#: LibPanel.cpp:1635 PlayListPanel.cpp:1585 TreePanel.cpp:1599
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1657 TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr "Επεξεργαστής Πεδίων"
 
@@ -1616,18 +1623,18 @@ msgid ""
 "Are you sure to delete the selected tracks from your drive?\n"
 "This will permanently erase the selected tracks."
 msgstr ""
-"Είστε σίγουροι οτι θέλετε να διαγράψετε τα επιλεγμένα κομμάτια απο το δίσκο σας;\n"
+"Είστε σίγουροι οτι θέλετε να διαγράψετε τα επιλεγμένα κομμάτια απο το σκληρό δίσκο σας;\n"
 "Αυτό θα διαγράψει οριστικά τα επιλεγμένα κομμάτια."
 
 #: LibPanel.cpp:2775
 msgid "Remove tracks from drive"
-msgstr "Διαγραφή κομματιών απο δίσκο"
+msgstr "Διαγραφή κομματιών απο σκληρό δίσκο"
 
-#: ListView.cpp:1457
+#: ListView.cpp:1475
 msgid "Select Columns"
 msgstr "Επιλογή Στηλών"
 
-#: ListView.cpp:1469
+#: ListView.cpp:1487
 msgid " Columns "
 msgstr "Στήλες"
 
@@ -1645,16 +1652,16 @@ msgstr "Φορητές Συσκευές"
 
 #: LocationPanel.cpp:103
 msgid "Context"
-msgstr ""
+msgstr "Περιεχόμενο"
 
-#: LocationPanel.cpp:210 RadioPanel.cpp:1484 RadioPanel.cpp:1550
+#: LocationPanel.cpp:210 RadioPanel.cpp:1485 RadioPanel.cpp:1551
 msgid "Radios"
 msgstr "Ραδιόφωνα"
 
 #: LocationPanel.cpp:215 MainFrame.cpp:1060 MainFrame.cpp:2760
-#: MainFrame.cpp:3478 PodcastsPanel.cpp:904 Preferences.cpp:243
+#: MainFrame.cpp:3478 PodcastsPanel.cpp:903 Preferences.cpp:243
 msgid "Podcasts"
-msgstr ""
+msgstr "Podcasts"
 
 #: LocationPanel.cpp:279 MainFrame.cpp:969 MainFrame.cpp:2797
 msgid "File Browser"
@@ -1682,15 +1689,15 @@ msgstr "Αναζήτηση κειμένου"
 
 #: LocationPanel.cpp:319 MainFrame.cpp:993
 msgid "Show/Hide the radio text search"
-msgstr "Εμφάνιση/Απόκρυψη αναζήτησης κειμένου του ραδιοφώνου"
+msgstr "Εμφάνιση/Απόκρυψη της αναζήτησης κειμένου του ραδιοφώνου"
 
 #: LocationPanel.cpp:324 MainFrame.cpp:998
 msgid "Show/Hide the radio labels"
-msgstr "Εμφάνιση/Απόκρυψη ετικετών ραδιοφώνου"
+msgstr "Εμφάνιση/Απόκρυψη των ετικετών ραδιοφώνου"
 
 #: LocationPanel.cpp:329 MainFrame.cpp:1003
 msgid "Show/Hide the radio genres"
-msgstr "Εμφάνιση/Απόκρυψη ειδών ραδιοφώνου"
+msgstr "Εμφάνιση/Απόκρυψη των ειδών ραδιοφώνου"
 
 #: LocationPanel.cpp:336 RadioPanel.cpp:432 RadioPanel.cpp:455
 #: RadioPanel.cpp:477
@@ -1705,8 +1712,8 @@ msgstr "Καθορισμός προτιμήσεων ραδιοφώνου"
 msgid "Show/Hide the podcasts panel"
 msgstr "Εμφάνιση/Απόρυψη του πίνακα των podcasts"
 
-#: LocationPanel.cpp:361 MainFrame.cpp:1035 PodcastsPanel.cpp:878
-#: PodcastsPanel.cpp:886 PodcastsPanel.cpp:1043
+#: LocationPanel.cpp:361 MainFrame.cpp:1035 PodcastsPanel.cpp:877
+#: PodcastsPanel.cpp:885 PodcastsPanel.cpp:1042
 msgid "Channels"
 msgstr "Κανάλια"
 
@@ -1714,7 +1721,7 @@ msgstr "Κανάλια"
 msgid "Show/Hide the podcasts channels"
 msgstr "Εμφάνιση/Απόκρυψη των καναλιών των podcasts"
 
-#: LocationPanel.cpp:366 MainFrame.cpp:1040 PodcastsPanel.cpp:1046
+#: LocationPanel.cpp:366 MainFrame.cpp:1040 PodcastsPanel.cpp:1045
 #: TrackEdit.cpp:310
 msgid "Details"
 msgstr "Λεπτομέρειες"
@@ -1758,11 +1765,11 @@ msgstr "Προβολή των συνθετών της βιβλιοθήκης"
 
 #: LocationPanel.cpp:441 MainFrame.cpp:1214
 msgid "View the library album artists"
-msgstr "Προβολή των καλλιτεχνών άλμπουμ της βιβλιοθήκης"
+msgstr "Προβολή των καλλιτεχνών δίσκων της βιβλιοθήκης"
 
 #: LocationPanel.cpp:446 MainFrame.cpp:1219
 msgid "View the library albums"
-msgstr "Προβολή των άλμπουμ της βιβλιοθήκης"
+msgstr "Προβολή των δίσκων της βιβλιοθήκης"
 
 #: LocationPanel.cpp:451 MainFrame.cpp:1224
 msgid "View the library years"
@@ -1787,23 +1794,23 @@ msgstr "Βιβλιοθήκη"
 
 #: LocationPanel.cpp:476 MainFrame.cpp:1249
 msgid "Album Browser"
-msgstr "Περιηγητής των Άμπουμς"
+msgstr "Περιηγητής των Δίσκων"
 
 #: LocationPanel.cpp:476 MainFrame.cpp:1249
 msgid "View the collection album browser"
-msgstr ""
+msgstr "Προβολή του περιηγητή της συλλογής δίσκων"
 
 #: LocationPanel.cpp:481 MainFrame.cpp:1254 TreePanel.cpp:828
 #: TreePanel.cpp:853
 msgid "Tree"
-msgstr ""
+msgstr "Δέντρο"
 
 #: LocationPanel.cpp:481 MainFrame.cpp:1254
 msgid "View the collection tree view"
 msgstr "Προβολή της συλλογής σε μορφή δέντρου"
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1259 MediaViewer.cpp:235
-#: PlayListPanel.cpp:729 PlayListPanel.cpp:755 PortableMedia.cpp:1168
+#: PlayListPanel.cpp:801 PlayListPanel.cpp:827 PortableMedia.cpp:1168
 msgid "Playlists"
 msgstr "Λίστες αναπαραγωγής"
 
@@ -1823,134 +1830,134 @@ msgstr "Προσθήκη διαδρομής στη συλλογή"
 msgid "Import files into the collection"
 msgstr "Εισαγωγή αρχείων στη συλλογή"
 
-#: LyricsPanel.cpp:81
+#: LyricsPanel.cpp:82
 msgid "Search the lyrics for the current playing track"
 msgstr "Αναζήτηση στίχων για το τρέχον κομμάτι"
 
-#: LyricsPanel.cpp:87
+#: LyricsPanel.cpp:88
 msgid "Configure lyrics preferences"
 msgstr "Ρύθμιση προτιμήσεων για τους στίχους"
 
-#: LyricsPanel.cpp:91 TrackEdit.cpp:388
+#: LyricsPanel.cpp:92 TrackEdit.cpp:388
 msgid "Search for lyrics"
 msgstr "Αναζήτηση στίχων"
 
-#: LyricsPanel.cpp:96
+#: LyricsPanel.cpp:97
 msgid "Edit the lyrics"
 msgstr "Επεξεργασία των στίχων"
 
-#: LyricsPanel.cpp:102
+#: LyricsPanel.cpp:103
 msgid "Save the lyrics"
 msgstr "Αποθήκευση των στίχων"
 
-#: LyricsPanel.cpp:107
+#: LyricsPanel.cpp:108
 msgid "Search the lyrics on the web"
 msgstr "Αναζήτηση των στίχων στο διαδίκτυο"
 
-#: LyricsPanel.cpp:286
+#: LyricsPanel.cpp:287
 msgid "Copy the content of the lyric to clipboard"
 msgstr "Αντιγραφή του περιεχομένου των στίχων στο πρόχειρο"
 
-#: LyricsPanel.cpp:298
+#: LyricsPanel.cpp:299
 msgid "Paste the content of the lyric from clipboard"
 msgstr "Επικόλληση του περιεχομένου των στίχων απο το πρόχειρο"
 
-#: LyricsPanel.cpp:307
+#: LyricsPanel.cpp:308
 msgid "Print the content of the lyrics"
 msgstr "Εκτύπωση του περιεχομένου των στίχων"
 
-#: LyricsPanel.cpp:441 LyricsPanel.cpp:560 LyricsPanel.cpp:841
-#: LyricsPanel.cpp:843
+#: LyricsPanel.cpp:442 LyricsPanel.cpp:561 LyricsPanel.cpp:844
+#: LyricsPanel.cpp:846
 msgid "Searching..."
 msgstr "Αναζήτηση..."
 
-#: LyricsPanel.cpp:754 LyricsPanel.cpp:847
+#: LyricsPanel.cpp:757 LyricsPanel.cpp:850
 msgid "No lyrics found"
 msgstr "Δε βρέθηκαν στίχοι"
 
-#: LyricsPanel.cpp:839
+#: LyricsPanel.cpp:842
 msgid "Lyrics from "
 msgstr "Στίχοι απο"
 
-#: LyricsPanel.cpp:2038
+#: LyricsPanel.cpp:2078
 msgid "Lyrics Target Editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2038
+#: LyricsPanel.cpp:2078
 msgid "Lyrics Source Editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2071
+#: LyricsPanel.cpp:2111
 msgid "Type:"
-msgstr ""
+msgstr "Τύπος:"
 
-#: LyricsPanel.cpp:2076
+#: LyricsPanel.cpp:2116
 msgid "Embedded"
-msgstr "Given that it's indeed about Lyrics: ενσωματωμένοι"
+msgstr "Ενσωματωμένοι"
 
-#: LyricsPanel.cpp:2077
+#: LyricsPanel.cpp:2117
 msgid "File"
 msgstr "Αρχείο"
 
-#: LyricsPanel.cpp:2078
+#: LyricsPanel.cpp:2118
 msgid "Command"
 msgstr "Εντολή"
 
-#: LyricsPanel.cpp:2080 PodcastsPanel.cpp:2079
+#: LyricsPanel.cpp:2120 PodcastsPanel.cpp:2078
 msgid "Download"
 msgstr "Κατέβασμα"
 
-#: LyricsPanel.cpp:2087
+#: LyricsPanel.cpp:2127
 msgid "Source:"
 msgstr "Πηγή:"
 
-#: LyricsPanel.cpp:2095 LyricsPanel.cpp:2501
+#: LyricsPanel.cpp:2135 LyricsPanel.cpp:2541
 msgid "Replace:"
 msgstr "Αντικατάσταση:"
 
-#: LyricsPanel.cpp:2130
+#: LyricsPanel.cpp:2170
 msgid "Extract:"
 msgstr "Εξαγωγή:"
 
-#: LyricsPanel.cpp:2160
+#: LyricsPanel.cpp:2200
 msgid "Exclude:"
 msgstr "Απόκλειση:"
 
-#: LyricsPanel.cpp:2190
+#: LyricsPanel.cpp:2230
 msgid "Not Found:"
 msgstr "Δε Βρέθηκαν:"
 
-#: LyricsPanel.cpp:2499
+#: LyricsPanel.cpp:2539
 msgid "Replace option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2500 RadioPanel.cpp:94
+#: LyricsPanel.cpp:2540 RadioPanel.cpp:94
 msgid "Search:"
 msgstr "Αναζήτηση:"
 
-#: LyricsPanel.cpp:2505
+#: LyricsPanel.cpp:2545
 msgid "Extract option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2506 LyricsPanel.cpp:2512
+#: LyricsPanel.cpp:2546 LyricsPanel.cpp:2552
 msgid "Begin:"
 msgstr "Αρχή:"
 
-#: LyricsPanel.cpp:2507 LyricsPanel.cpp:2513
+#: LyricsPanel.cpp:2547 LyricsPanel.cpp:2553
 msgid "End:"
 msgstr "Τέλος:"
 
-#: LyricsPanel.cpp:2511
+#: LyricsPanel.cpp:2551
 msgid "Exclude option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2517
+#: LyricsPanel.cpp:2557
 msgid "Not Found option editor"
 msgstr ""
 
-#: LyricsPanel.cpp:2518 LyricsPanel.cpp:2519
+#: LyricsPanel.cpp:2558 LyricsPanel.cpp:2559
 msgid "Tag:"
-msgstr ""
+msgstr "Ετικέτα:"
 
 #: MainFrame.cpp:244
 msgid "Welcome to Guayadeque "
@@ -1991,19 +1998,19 @@ msgstr "Ραδιόφωνο"
 
 #: MainFrame.cpp:1021
 msgid "Set the radio visible panels"
-msgstr ""
+msgstr "Ορισμός των εμφανών πινάκων του ραδιοφώνου"
 
 #: MainFrame.cpp:1060
 msgid "Set the podcasts visible panels"
-msgstr ""
+msgstr "Ορισμός των εμφανών πινάκων των podcasts"
 
 #: MainFrame.cpp:1076
 msgid "Play a online music stream"
-msgstr ""
+msgstr "Αναπαραγωγή μιας μουσικής ροής σε απευθείας σύνδεση"
 
 #: MainFrame.cpp:1113
 msgid "Show the selected portable devices"
-msgstr ""
+msgstr "Εμφάνιση των επιλεγμένων φορητών συσκευών"
 
 #: MainFrame.cpp:1120
 msgid "No Device Found"
@@ -2039,15 +2046,15 @@ msgstr "Εμφάνιση/Απόκρυψη των τοποθεσιών"
 
 #: MainFrame.cpp:1353
 msgid "Player Filters"
-msgstr ""
+msgstr "Φίλτρα Αναπαραγωγής"
 
 #: MainFrame.cpp:1354
 msgid "Show/Hide the player filters panel"
-msgstr ""
+msgstr "Εμφάνιση/Απόκρυψη του πίνακα φιλτρών αναπαραγωγής"
 
 #: MainFrame.cpp:1362
 msgid "Show/Hide the player vumeter"
-msgstr ""
+msgstr "Εμφάνιση/Απόκρυψη του μετρητή VU"
 
 #: MainFrame.cpp:1369 MainFrame.cpp:4288
 msgid "Cover"
@@ -2107,7 +2114,7 @@ msgstr "Φόρτωση Διάταξης"
 
 #: MainFrame.cpp:1439
 msgid "Set current view from a user defined layout"
-msgstr ""
+msgstr "Επιλογή διάταξης ορισμένης απο το χρήστη για την τρέχουσα προβολή"
 
 #: MainFrame.cpp:1440
 msgid "Delete Layout"
@@ -2135,19 +2142,19 @@ msgstr "Αναπαραγωγή του προηγούμενου κομματιο�
 
 #: MainFrame.cpp:1458 TaskBar.cpp:126
 msgid "Next Album"
-msgstr "Επόμενο Άλμπουμ"
+msgstr "Επόμενος Δίσκος"
 
 #: MainFrame.cpp:1459
 msgid "Play the next album in the playlist"
-msgstr "Αναπαραγωγή του επόμενου άλμπουμ στη λίστα"
+msgstr "Αναπαραγωγή του επόμενου δίσκου στη λίστα"
 
 #: MainFrame.cpp:1463
 msgid "Prev. Album"
-msgstr "Προηγούμενο Άλμπουμ"
+msgstr "Προηγούμενος Δίσκος"
 
 #: MainFrame.cpp:1464
 msgid "Play the previous album in the playlist"
-msgstr "Αναπαραγωγή του προηγούμενου άλμπουμ στη λίστα"
+msgstr "Αναπαραγωγή του προηγούμενου δίσκου στη λίστα"
 
 #: MainFrame.cpp:1471
 msgid "Play or Pause the current track in the playlist"
@@ -2165,31 +2172,31 @@ msgstr "Διακοπή μετά απο την τρέχουσα αναπαραγ�
 msgid "Clear the now playing playlist"
 msgstr "Εκκαθάριση της λίστας τρέχουσας αναπαραγωγής"
 
-#: MainFrame.cpp:1497 PlayList.cpp:1543 SoListBox.cpp:607 TaskBar.cpp:143
+#: MainFrame.cpp:1497 PlayList.cpp:1549 SoListBox.cpp:589 TaskBar.cpp:143
 msgid "Set the rating to 0"
 msgstr "Καθορισμός της βαθμολογίας στο 0"
 
-#: MainFrame.cpp:1502 PlayList.cpp:1545 SoListBox.cpp:612 TaskBar.cpp:146
+#: MainFrame.cpp:1502 PlayList.cpp:1551 SoListBox.cpp:594 TaskBar.cpp:146
 msgid "Set the rating to 1"
 msgstr "Καθορισμός της βαθμολογίας στο 1"
 
-#: MainFrame.cpp:1507 PlayList.cpp:1547 SoListBox.cpp:617 TaskBar.cpp:149
+#: MainFrame.cpp:1507 PlayList.cpp:1553 SoListBox.cpp:599 TaskBar.cpp:149
 msgid "Set the rating to 2"
 msgstr "Καθορισμός της βαθμολογίας στο 2"
 
-#: MainFrame.cpp:1512 PlayList.cpp:1549 SoListBox.cpp:622 TaskBar.cpp:152
+#: MainFrame.cpp:1512 PlayList.cpp:1555 SoListBox.cpp:604 TaskBar.cpp:152
 msgid "Set the rating to 3"
 msgstr "Καθορισμός της βαθμολογίας στο 3"
 
-#: MainFrame.cpp:1517 PlayList.cpp:1551 SoListBox.cpp:627 TaskBar.cpp:155
+#: MainFrame.cpp:1517 PlayList.cpp:1557 SoListBox.cpp:609 TaskBar.cpp:155
 msgid "Set the rating to 4"
 msgstr "Καθορισμός της βαθμολογίας στο 4"
 
-#: MainFrame.cpp:1522 PlayList.cpp:1553 SoListBox.cpp:632 TaskBar.cpp:158
+#: MainFrame.cpp:1522 PlayList.cpp:1559 SoListBox.cpp:614 TaskBar.cpp:158
 msgid "Set the rating to 5"
 msgstr "Καθορισμός της βαθμολογίας στο 5"
 
-#: MainFrame.cpp:1525 SoListBox.cpp:635
+#: MainFrame.cpp:1525 SoListBox.cpp:617
 msgid "Set Rating"
 msgstr "Καθορισμός Βαθμολογίας"
 
@@ -2224,7 +2231,7 @@ msgstr "Επανάληψη Κομματιού"
 
 #: MainFrame.cpp:1547 TaskBar.cpp:173
 msgid "Repeat the current track in the playlist"
-msgstr "Επανάληψη του τρέχοντος κομματιού στην λίστα αναπαραγωγής"
+msgstr "Επανάληψη του τρέχοντος κομματιού στη λίστα"
 
 #: MainFrame.cpp:1555
 msgid "Increment the volume level"
@@ -2244,11 +2251,11 @@ msgstr "Καθορισμός της αναπαραγωγής σε λειτουρ
 
 #: MainFrame.cpp:1572 Preferences.cpp:228
 msgid "Audioscrobble"
-msgstr ""
+msgstr "Scrobbling αρχείων ήχου"
 
 #: MainFrame.cpp:1573 TaskBar.cpp:187
 msgid "Send played tracks information"
-msgstr "Αποστολή πληροφοριών των κομματιών που αναπαράγονται"
+msgstr "Αποστολή πληροφοριών των αναπαραγόμενων κομματιών"
 
 #: MainFrame.cpp:1590
 msgid "Get help using guayadeque"
@@ -2276,11 +2283,11 @@ msgstr "Προβολή"
 
 #: MainFrame.cpp:1636
 msgid "Controls"
-msgstr ""
+msgstr "Πλήκτρα"
 
 #: MainFrame.cpp:1958
 msgid "Stream:"
-msgstr ""
+msgstr "Ροή:"
 
 #: MainFrame.cpp:2136 MainFrame.cpp:2206 MainFrame.cpp:2255 MainFrame.cpp:2292
 #: MainFrame.cpp:4463
@@ -2301,19 +2308,19 @@ msgstr "σταθμοί"
 
 #: MainFrame.cpp:3202
 msgid "podcast"
-msgstr ""
+msgstr "podcast"
 
 #: MainFrame.cpp:3202
 msgid "podcasts"
-msgstr ""
+msgstr "podcasts"
 
 #: MainFrame.cpp:3217
 msgid "dir"
-msgstr ""
+msgstr "φάκελος"
 
 #: MainFrame.cpp:3217
 msgid "dirs"
-msgstr ""
+msgstr "φάκελοι"
 
 #: MainFrame.cpp:3219
 msgid "file"
@@ -2325,15 +2332,15 @@ msgstr "αρχεία"
 
 #: MainFrame.cpp:3641 MainFrame.cpp:3647 MainFrame.cpp:3650
 msgid "Load this user defined layout"
-msgstr "Φόρτωση αυτής της καθορισμένης απο τον χρήστη διάταξης"
+msgstr "Φόρτωση αυτής της διάταξης που έχει οριστεί απο το χρήστη"
 
 #: MainFrame.cpp:3642
 msgid "Delete this user defined layout"
-msgstr "Διαγραφή αυτής της καθορισμένης απο τον χρήστη διάταξης"
+msgstr "Διαγραφή αυτής της διάταξης που έχει οριστεί απο το χρήστη"
 
 #: MainFrame.cpp:3647 MainFrame.cpp:3650
 msgid "No Layouts Defined"
-msgstr "Δεν έχουν καθοριστεί διατάξεις"
+msgstr "Δεν έχουν οριστεί διατάξεις"
 
 #: MainFrame.cpp:3754
 msgid "Layout:"
@@ -2346,19 +2353,19 @@ msgstr "Διάταξη %u"
 
 #: MainFrame.cpp:4428 MainFrame.cpp:4449
 msgid "Copy the current selected songs to a directory or device"
-msgstr ""
+msgstr "Αντιγραφή των επιλεγμένων τραγουδιών σε φάκελο ή συσκευή"
 
 #: MainFrame.cpp:4460
 msgid "Add Copy To patterns in preferences"
-msgstr ""
+msgstr "Προσθήκη του Αντιγραφή Σε στα πρότυπα των προτιμήσεων"
 
 #: MainFrame.cpp:4463
 msgid "Copy the selected tracks to a folder or device"
-msgstr "Αντιγραφή των επιλεγμένων κομματιών σε φάκελο ή συσκευ"
+msgstr "Αντιγραφή των επιλεγμένων κομματιών σε φάκελο ή συσκευή"
 
 #: MediaViewer.cpp:213
 msgid "All Albums"
-msgstr "Όλα τα άλμπουμς"
+msgstr "Όλοι οι Δίσκοι"
 
 #: MediaViewer.cpp:223
 msgid "Library view"
@@ -2366,7 +2373,7 @@ msgstr "Προβολή βιβλιοθήκης"
 
 #: MediaViewer.cpp:227
 msgid "Album Browser view"
-msgstr "Προβολή της περιήγησης των άλμπουμς"
+msgstr "Προβολή της περιήγησης των δίσκων"
 
 #: MediaViewer.cpp:231
 msgid "Tree view"
@@ -2374,11 +2381,11 @@ msgstr "Προβολή σε μορφή δέντρου"
 
 #: MediaViewer.cpp:246
 msgid "View the current defined filters"
-msgstr "Προβολή των φίλτρων που έχουν οριστε"
+msgstr "Προβολή των φίλτρων που έχουν οριστεί"
 
 #: MediaViewer.cpp:251
 msgid "Add a new album browser filter"
-msgstr "Προσθήκη νέου φίλτρου περιήγησης σε άλμπουμς"
+msgstr "Προσθήκη νέου φίλτρου περιήγησης σε δίσκους"
 
 #: MediaViewer.cpp:255
 msgid "Delete the current selected filter"
@@ -2396,19 +2403,19 @@ msgstr "Νέο Φίλτρο"
 msgid "Collection"
 msgstr "Συλλογή"
 
-#: MediaViewer.cpp:1140 Preferences.cpp:3056
+#: MediaViewer.cpp:1140 Preferences.cpp:3065
 msgid "Select library path"
-msgstr ""
+msgstr "Επιλογή διαδρομής της βιβλιοθήκης"
 
 #: MediaViewer.cpp:1170
 msgid "This Path is already in the library"
-msgstr ""
+msgstr "Αυτή η διαδρομή βρίσκεται ήδη στη βιβλιοθήκη"
 
 #: MediaViewer.cpp:1171
 msgid "Adding path error"
 msgstr "Σφάλμα προσθήκης διαδρομής"
 
-#: MediaViewer.cpp:1385 SoListBox.cpp:523
+#: MediaViewer.cpp:1385 SoListBox.cpp:505
 msgid "to"
 msgstr "σε"
 
@@ -2421,32 +2428,32 @@ msgid ""
 "Could not find the Album in the songs library.\n"
 "You should update the library."
 msgstr ""
-"Δε βρέθηκε το Άλμπουμ στη βιβλιοθήκη.\n"
+"Δε βρέθηκε ο Δίσκος στη βιβλιοθήκη.\n"
 "Πρέπει να ενημερώσετε τη βιβλιοθήκη."
 
 #: MediaViewer.cpp:2167
 msgid " smart playlist"
 msgstr "έξυπνη λίστα αναπαραγωγής"
 
-#: MediaViewer.cpp:2176 PlayerPanel.cpp:245 PlayerPanel.cpp:2225
+#: MediaViewer.cpp:2176 PlayerPanel.cpp:245 PlayerPanel.cpp:2227
 msgid "Playlist"
 msgstr "Λίστα Αναπαραγωγής"
 
 #: NewChannel.cpp:87
 msgid "New Podcast Channel"
-msgstr ""
+msgstr "Νέο Podcast Κανάλι"
 
 #: NewChannel.cpp:100
 msgid " Digital Podcast Directory "
-msgstr ""
+msgstr "Ψηφιακός Podcast Φάκελος"
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directoy"
-msgstr ""
+msgstr "Αναζήτηση στον Podcast Φάκελο"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
-msgstr ""
+msgstr "Ανανέωση της λίστας των Podcast φακέλων"
 
 #: NewChannel.cpp:227
 msgid "Filtered channels"
@@ -2468,7 +2475,7 @@ msgstr "Κείμενο Φίλτρου:"
 
 #: NewChannel.cpp:374
 msgid "Enter the text to filter podcasts channels"
-msgstr ""
+msgstr "Εισαγωγή του κειμένου για φιλτράρισμα των podcast καναλιών"
 
 #: OnlineLinks.cpp:69
 msgid "Add search links in preferences"
@@ -2484,11 +2491,11 @@ msgstr "Αναπαραγωγή επιλεγμένων κομματιών"
 
 #: PlayerFilters.cpp:42
 msgid "Allow:"
-msgstr "Επιτρέπει:"
+msgstr "Αποδοχή:"
 
 #: PlayerFilters.cpp:51
 msgid "Deny:"
-msgstr "Απορρίπτει:"
+msgstr "Απόρριψη:"
 
 #: PlayerFilters.cpp:123 Preferences.cpp:1804 Preferences.cpp:1901
 #: Preferences.cpp:1924 SmartMode.cpp:450
@@ -2515,7 +2522,7 @@ msgstr "Διακοπή αναπαραγωγής"
 msgid "Record to file"
 msgstr "Εγγραφή σε αρχείο"
 
-#: PlayerPanel.cpp:205 PlayerPanel.cpp:2844
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2847
 msgid "Volume"
 msgstr "Ένταση"
 
@@ -2523,16 +2530,16 @@ msgstr "Ένταση"
 msgid "Show the equalizer"
 msgstr "Εμφάνιση του equalizer"
 
-#: PlayerPanel.cpp:218 PlayerPanel.cpp:2166
+#: PlayerPanel.cpp:218 PlayerPanel.cpp:2168
 msgid "Smart Play: "
 msgstr "Έξυπνη αναπαραγωγή:"
 
-#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2169
+#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2171
 #: Preferences.cpp:959
 msgid "Disabled"
 msgstr "Ενεργοποιημένο"
 
-#: PlayerPanel.cpp:225 PlayerPanel.cpp:2173 Preferences.cpp:1345
+#: PlayerPanel.cpp:225 PlayerPanel.cpp:2175 Preferences.cpp:1345
 #: Preferences.cpp:1380
 msgid "Enabled"
 msgstr "Απενεργοποιημένο"
@@ -2541,7 +2548,7 @@ msgstr "Απενεργοποιημένο"
 msgid "Repeat: "
 msgstr "Επανάληψη:"
 
-#: PlayerPanel.cpp:241 PlayerPanel.cpp:2221 PlayList.cpp:1630
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2223 PlayList.cpp:1636
 #: Preferences.cpp:959
 msgid "Track"
 msgstr "Κομμάτι"
@@ -2556,7 +2563,7 @@ msgstr "Εμφάνιση του ονόματος του τρέχοντος κο�
 
 #: PlayerPanel.cpp:281
 msgid "Show the album name of the current track"
-msgstr "Εμφάνιση του ονόματος άλμπουμ του τρέχοντος κομματιού"
+msgstr "Εμφάνιση του ονόματος δίσκου του τρέχοντος κομματιού"
 
 #: PlayerPanel.cpp:292
 msgid "Show the artist name of the current track"
@@ -2572,23 +2579,23 @@ msgstr "00:00 απο 00:00"
 
 #: PlayerPanel.cpp:307
 msgid "Show the current position and song length of the current track"
-msgstr ""
+msgstr "Εμφάνιση τρέχουσας θέσης και διάρκειας του τρέχοντος κομματιού"
 
 #: PlayerPanel.cpp:326
 msgid "Show the bit rate of the current track"
-msgstr ""
+msgstr "Εμφάνιση της συχνότητας Bit του τρέχοντος κομματιού"
 
-#: PlayerPanel.cpp:1366
+#: PlayerPanel.cpp:1365
 msgid "Buffering..."
-msgstr ""
+msgstr "Γίνεται σύνδεση..."
 
-#: PlayerPanel.cpp:2214
+#: PlayerPanel.cpp:2216
 msgid "Repeat Mode: "
 msgstr "Λειτουργία επανάληψης:"
 
-#: PlayerPanel.cpp:2217
+#: PlayerPanel.cpp:2219
 msgid "Off"
-msgstr ""
+msgstr "Όχι"
 
 #: PlayListAppend.cpp:49
 msgid "Playlist:"
@@ -2610,122 +2617,122 @@ msgstr "Αρχή"
 msgid "Tracks:"
 msgstr "Κομμάτια:"
 
-#: PlayList.cpp:1512
+#: PlayList.cpp:1518
 msgid "Empty Playlist"
 msgstr "Άδειασμα της Λίστας Αναπαραγωγής"
 
-#: PlayList.cpp:1512
+#: PlayList.cpp:1518
 msgid "The playlist is empty"
 msgstr "Η λίστα αναπαραγωγής είναι άδεια"
 
-#: PlayList.cpp:1522
-msgid "Edit the current selected tracks labels"
-msgstr ""
-
 #: PlayList.cpp:1528
+msgid "Edit the current selected tracks labels"
+msgstr "Επεξεργασία της ετικέτας των επιλεγμένων κομματιών"
+
+#: PlayList.cpp:1534
 msgid "Edit the current selected songs"
 msgstr "Επεξεργασία των επιλεγμένων τραγουδιών"
 
-#: PlayList.cpp:1537
+#: PlayList.cpp:1543
 msgid "Set as Next Track"
 msgstr "Καθορισμός σαν Επόμενο Κομμάτι"
 
-#: PlayList.cpp:1538
+#: PlayList.cpp:1544
 msgid "Move the selected tracks to be played next"
 msgstr ""
 "Μετακίνηση των επιλεγμένων κομματιών ωστε να αναπαραχθούν στη συνέχεια"
 
-#: PlayList.cpp:1556
+#: PlayList.cpp:1562
 msgid "Set the current selected tracks rating"
 msgstr "Καθορισμός της βαθμολογίας των επιλεγμένων κομματιών"
 
-#: PlayList.cpp:1563
+#: PlayList.cpp:1569
 msgid "Search a track in the playlist by name"
 msgstr "Αναζήτηση κομματιού στην λίστα αναπαραγωγής κατά όνομα"
 
-#: PlayList.cpp:1585 SoListBox.cpp:648
+#: PlayList.cpp:1591 SoListBox.cpp:630
 msgid "Create Smart Playlist"
 msgstr "Δημιουργία Έξυπνης Λίστας Αναπαραγωγής"
 
-#: PlayList.cpp:1585 SoListBox.cpp:648
+#: PlayList.cpp:1591 SoListBox.cpp:630
 msgid "Create a smart playlist from this track"
 msgstr "Δημιουργία έξυπνης λίστας αναπαραγωγής απο αυτό το κομμάτι"
 
-#: PlayList.cpp:1591 PLSoListBox.cpp:161
+#: PlayList.cpp:1597 PLSoListBox.cpp:161
 msgid "Randomize the songs in the playlist"
 msgstr "Τυχαία σειρά των τραγουδιών στη λίστα αναπαραγωγής"
 
-#: PlayList.cpp:1596
+#: PlayList.cpp:1602
 msgid "Remove all tracks from playlist"
 msgstr "Διαγραφή όλων των κομματιών απο τη λίστα αναπαραγωγής"
 
-#: PlayList.cpp:1603 PLSoListBox.cpp:168
+#: PlayList.cpp:1609 PLSoListBox.cpp:168
 msgid "Remove from Playlist"
 msgstr "Διαγραφή απο τη Λίστα Αναπαραγωγής"
 
-#: PlayList.cpp:1604
+#: PlayList.cpp:1610
 msgid "Remove the selected tracks from playlist"
 msgstr "Διαγραφή των επιλεγμένων κομματιών απο τη λίστα αναπαραγωγής"
 
-#: PlayList.cpp:1611 SoListBox.cpp:656
+#: PlayList.cpp:1617 SoListBox.cpp:638
 msgid "Remove from Library"
 msgstr "Διαγραφή απο τη Βιβλιοθήκη"
 
-#: PlayList.cpp:1612
+#: PlayList.cpp:1618
 msgid "Remove the selected tracks from library"
 msgstr "Διαγραφή των επιλεγμένων κομματιών απο τη βιβλιοθήκη"
 
-#: PlayList.cpp:1617 SoListBox.cpp:661
+#: PlayList.cpp:1623 SoListBox.cpp:643
 msgid "Delete from Drive"
-msgstr "Διαγραφή απο τον Δίσκο"
+msgstr "Διαγραφή απο τον Σκληρό Δίσκο"
 
-#: PlayList.cpp:1618
+#: PlayList.cpp:1624
 msgid "Remove the selected tracks from drive"
-msgstr "Διαγραφή των επιλεγμένων κομματιών απο τον Δίσκο"
+msgstr "Διαγραφή των επιλεγμένων κομματιών απο τον Σκληρό Δίσκο"
 
-#: PlayList.cpp:1630
+#: PlayList.cpp:1636
 msgid "Selects the current selected track in the library"
 msgstr "Επιλογή του επιλεγμένου κομματιού στη βιβλιοθήκη"
 
-#: PlayList.cpp:1633 SoListBox.cpp:673
+#: PlayList.cpp:1639 SoListBox.cpp:655
 msgid "Selects the artist of the current song"
 msgstr "Επιλογή του καλλιτέχνη του τρέχοντος τραγουδιού"
 
-#: PlayList.cpp:1636
+#: PlayList.cpp:1642
 msgid "Select the album artist of the current song"
-msgstr "Επιλογή του καλλιτέχνη άλμπουμ του τρέχοντος τραγουδιο"
-
-#: PlayList.cpp:1639
-msgid "Select the composer of the current song"
-msgstr "Επιλογή του συνθέτη του τρέχοντος τραγουδιο"
-
-#: PlayList.cpp:1642 SoListBox.cpp:682
-msgid "Select the album of the current song"
-msgstr "Επιλογή του άλμπουμ του τρέχοντος κομματιού"
+msgstr "Επιλογή του καλλιτέχνη δίσκου του τρέχοντος τραγουδιού"
 
 #: PlayList.cpp:1645
+msgid "Select the composer of the current song"
+msgstr "Επιλογή του συνθέτη του τρέχοντος τραγουδιού"
+
+#: PlayList.cpp:1648 SoListBox.cpp:664
+msgid "Select the album of the current song"
+msgstr "Επιλογή του δίσκου του τρέχοντος κομματιού"
+
+#: PlayList.cpp:1651
 msgid "Select the year of the current song"
 msgstr "Επιλογή του έτους του τρέχοντος κομματιού"
 
-#: PlayList.cpp:1648
+#: PlayList.cpp:1654
 msgid "Select the genre of the current song"
-msgstr "Επιλογή του είδους μουσικής του τρέχοντος κομματιού"
+msgstr "Επιλογή του είδους του τρέχοντος κομματιού"
 
-#: PlayList.cpp:1651 SoListBox.cpp:685
+#: PlayList.cpp:1657 SoListBox.cpp:667
 msgid "Search in the library"
 msgstr "Αναζήτηση στη βιβλιοθήκη"
 
-#: PlayList.cpp:2147
+#: PlayList.cpp:2153
 msgid "Search: "
 msgstr "Αναζήτηση:"
 
-#: PlayList.cpp:2147
+#: PlayList.cpp:2153
 msgid "Please enter the search term"
 msgstr "Παρακαλώ εισάγετε τον όρο αναζήτησης"
 
-#: PlayList.cpp:2727
+#: PlayList.cpp:2733
 msgid "Loading tracks. Please wait"
-msgstr ""
+msgstr "Φόρτωση κομματιών. Παρακαλώ περιμένετε"
 
 #: PlayListPanel.cpp:83
 msgid "Static playlists"
@@ -2735,12 +2742,12 @@ msgstr "Στατικές λίστες αναπαραγωγής"
 msgid "Dynamic playlists"
 msgstr "Δυναμικές λίστες αναπαραγωγής"
 
-#: PlayListPanel.cpp:224 PodcastsPanel.cpp:2039 RadioPanel.cpp:835
-#: SoListBox.cpp:544 TreePanel.cpp:388
+#: PlayListPanel.cpp:224 PodcastsPanel.cpp:2038 RadioPanel.cpp:835
+#: SoListBox.cpp:526 TreePanel.cpp:388
 msgid "Play current selected songs"
 msgstr "Αναπαραγωγή επιλεγμένων τραγουδιών"
 
-#: PlayListPanel.cpp:230 SoListBox.cpp:551 TreePanel.cpp:394
+#: PlayListPanel.cpp:230 SoListBox.cpp:533 TreePanel.cpp:394
 msgid "Add current selected songs to the playlist"
 msgstr "Προσθήκη επιλεγμένων κομματιών στη λίστα αναπαραγωγής"
 
@@ -2754,7 +2761,7 @@ msgstr "Δημιουργία νέας δυναμικής λίστας αναπα
 
 #: PlayListPanel.cpp:266 RadioPanel.cpp:467
 msgid "Import"
-msgstr "Εισαγωγ"
+msgstr "Εισαγωγή"
 
 #: PlayListPanel.cpp:266
 msgid "Import a playlist"
@@ -2768,7 +2775,7 @@ msgstr "Εξαγωγή"
 msgid "Export the playlist"
 msgstr "Εξαγωγή λίστας αναπαραγωγής"
 
-#: PlayListPanel.cpp:282 SoListBox.cpp:512 TreePanel.cpp:371
+#: PlayListPanel.cpp:282 SoListBox.cpp:494 TreePanel.cpp:371
 msgid "Edit"
 msgstr "Επεξεργασία"
 
@@ -2796,30 +2803,30 @@ msgstr "Ορισμός σαν φίλτρο αποδοχής"
 
 #: PlayListPanel.cpp:302
 msgid "Set this playlist as the allow filter"
-msgstr ""
+msgstr "Ορισμός αυτής της λίστας αναπαραγωγής σαν φίλτρο αποδοχής"
 
 #: PlayListPanel.cpp:306
 msgid "Set as Deny Filter"
 msgstr "Ορισμός σαν φίλτρο απόρριψης"
 
-#: PlayListPanel.cpp:994 PlayListPanel.cpp:1135
+#: PlayListPanel.cpp:1066 PlayListPanel.cpp:1207
 msgid "Playlist Name: "
 msgstr "Όνομα Λίστας αναπαραγωγής:"
 
-#: PlayListPanel.cpp:995 PlayListPanel.cpp:1136
+#: PlayListPanel.cpp:1067 PlayListPanel.cpp:1208
 msgid "Enter the new playlist name"
 msgstr "Εισαγωγή του νέου ονόματος της λίστας αναπαραγωγής"
 
-#: PlayListPanel.cpp:1035
+#: PlayListPanel.cpp:1107
 msgid "Are you sure to delete the selected Playlist?"
 msgstr ""
 "Είστε σίγουροι οτι θέλετε να διαγράψετε την επιλεγμένη Λίστα Αναπαραγωγής;"
 
-#: PlayListPanel.cpp:1120 PlayListPanel.cpp:1194
+#: PlayListPanel.cpp:1192 PlayListPanel.cpp:1266
 msgid "Select the playlist file"
 msgstr "Επιλογή του αρχείου της λίστας αναπαραγωγής"
 
-#: PlayListPanel.cpp:1147
+#: PlayListPanel.cpp:1219
 msgid "New Playlist"
 msgstr "Νέα Λίστα Αναπαραγωγής"
 
@@ -2827,111 +2834,110 @@ msgstr "Νέα Λίστα Αναπαραγωγής"
 msgid "Delete the current selected tracks"
 msgstr "Διαγραφή των επιλεγμένων κομματιών"
 
-#: PodcastsPanel.cpp:916 TrackEdit.cpp:466
+#: PodcastsPanel.cpp:915 TrackEdit.cpp:466
 msgid " Details "
 msgstr "Λεπτομέρειες"
 
-#: PodcastsPanel.cpp:967 RadioEditor.cpp:52
+#: PodcastsPanel.cpp:966 RadioEditor.cpp:52
 msgid "Link:"
 msgstr "Σύνδεσμος:"
 
-#: PodcastsPanel.cpp:982 TrackEdit.cpp:183 TrackEdit.cpp:423 TrackEdit.cpp:520
+#: PodcastsPanel.cpp:981 TrackEdit.cpp:183 TrackEdit.cpp:423 TrackEdit.cpp:520
 msgid "Title:"
 msgstr "Τίτλος:"
 
-#: PodcastsPanel.cpp:992
+#: PodcastsPanel.cpp:991
 msgid "Sumary:"
 msgstr "Περίληψη:"
 
-#: PodcastsPanel.cpp:1002 TrackEdit.cpp:507
+#: PodcastsPanel.cpp:1001 TrackEdit.cpp:507
 msgid "Date:"
 msgstr "Ημερομηνία:"
 
-#: PodcastsPanel.cpp:1012 TrackEdit.cpp:531
+#: PodcastsPanel.cpp:1011 TrackEdit.cpp:531
 msgid "Length:"
 msgstr "Διάρκεια:"
 
-#: PodcastsPanel.cpp:1033
+#: PodcastsPanel.cpp:1032
 msgid "Podcast Details"
-msgstr ""
+msgstr "Λεπτομέρειες του Podcast"
 
-#: PodcastsPanel.cpp:1224
+#: PodcastsPanel.cpp:1223
 msgid "Are you sure to delete the selected podcast channel?"
-msgstr ""
+msgstr "Είστε σίγουροι οτι θέλετε να διαγράψετε το επιλεγμένο κανάλι podcast;"
 
-#: PodcastsPanel.cpp:1610
+#: PodcastsPanel.cpp:1609
 msgid "Are you sure to delete the selected podcast item?"
 msgstr ""
+"Είστε σίγουροι οτι θέλετε να διαγράψετε το επιλεγμένο στοιχείο podcast;"
 
-#: PodcastsPanel.cpp:1733
+#: PodcastsPanel.cpp:1732
 msgid "New Channel"
 msgstr "Νέο κανάλι"
 
-#: PodcastsPanel.cpp:1733
+#: PodcastsPanel.cpp:1732
 msgid "Add a new podcast channel"
-msgstr ""
+msgstr "Προσθήκη νέου podcast καναλιού"
 
-#: PodcastsPanel.cpp:1739
+#: PodcastsPanel.cpp:1738
 msgid "delete this podcast channels and all its items"
-msgstr ""
+msgstr "διαγραφή αυτού του καναλιού και όλων των στοιχείων του"
 
-#: PodcastsPanel.cpp:1745
+#: PodcastsPanel.cpp:1744
 msgid "Update the podcast items of the selected channels"
-msgstr ""
+msgstr "Ενημέρωση των στοιχείων podcast των επιλεγμένων καναλιών"
 
-#: PodcastsPanel.cpp:1751
+#: PodcastsPanel.cpp:1750
 msgid "Edit the podcast channel"
-msgstr ""
+msgstr "Επεξεργασία του καναλιού podcast"
 
-#: PodcastsPanel.cpp:1789
+#: PodcastsPanel.cpp:1788
 msgid "Status"
 msgstr "Κατάσταση"
 
-#: PodcastsPanel.cpp:1791
+#: PodcastsPanel.cpp:1790
 msgid "Channel"
 msgstr "Κανάλι"
 
-#: PodcastsPanel.cpp:1792
+#: PodcastsPanel.cpp:1791
 msgid "Category"
 msgstr "Κατηγορία"
 
-#: PodcastsPanel.cpp:1793
+#: PodcastsPanel.cpp:1792
 msgid "Date"
 msgstr "Ημερομηνία"
 
-#: PodcastsPanel.cpp:1795
+#: PodcastsPanel.cpp:1794
 msgid "Author"
 msgstr "Δημιουργός"
 
-#: PodcastsPanel.cpp:1966 SoListBox.cpp:246
+#: PodcastsPanel.cpp:1965 SoListBox.cpp:246
 msgid "Never"
 msgstr "Ποτέ"
 
-#: PodcastsPanel.cpp:2045 RadioPanel.cpp:841
+#: PodcastsPanel.cpp:2044 RadioPanel.cpp:841
 msgid "Add current selected songs to playlist"
 msgstr "Προσθήκη επιλεγμένων κομματιών στη λίστα αναπαραγωγής"
 
-#: PodcastsPanel.cpp:2073
+#: PodcastsPanel.cpp:2072
 msgid "Delete the current selected podcasts"
-msgstr ""
+msgstr "Διαγραφή των επιλεγμένων podcasts"
 
-#: PodcastsPanel.cpp:2079
+#: PodcastsPanel.cpp:2078
 msgid "Download the current selected podcasts"
-msgstr ""
+msgstr "Κατέβασμα των επιλεγμένων podcasts"
 
-#: PodcastsPanel.cpp:2091
+#: PodcastsPanel.cpp:2090
 msgid "No selected items..."
 msgstr "Δεν έχουν επιλεγεί στοιχεία..."
 
-#: PodcastsPanel.cpp:2091
+#: PodcastsPanel.cpp:2090
 msgid "Copy the current selected podcasts to a directory or device"
-msgstr ""
+msgstr "Αντιγραφή των επιλεγμένων podcasts σε φάκελο ή συσκευή"
 
 #: PortableMedia.cpp:473 PortableMedia.cpp:1477
 msgid "embedded"
-msgstr ""
-"Given that it's indeed about Covers:    singular: ενσωματωμένο  plural: "
-"ενσωματωμένα"
+msgstr "ενσωματωμένα"
 
 #: PortableMedia.cpp:985
 msgid "Portable Media Properties"
@@ -2943,7 +2949,7 @@ msgstr "Επιλογές"
 
 #: PortableMedia.cpp:1007 Preferences.cpp:2365
 msgid "Path:"
-msgstr ""
+msgstr "Διαδρομή:"
 
 #: PortableMedia.cpp:1016
 msgid "Used:"
@@ -3078,7 +3084,7 @@ msgstr "Ιταλικά"
 
 #: Preferences.cpp:142
 msgid "Norwegian Bokmal"
-msgstr "Νορβηγικ"
+msgstr "Νορβηγικά"
 
 #: Preferences.cpp:143 Preferences.cpp:174
 msgid "Portuguese"
@@ -3110,7 +3116,7 @@ msgstr "Ουκρανικά"
 
 #: Preferences.cpp:204
 msgid "General"
-msgstr ""
+msgstr "Γενικά"
 
 #: Preferences.cpp:208
 msgid "Collections"
@@ -3126,7 +3132,7 @@ msgstr ""
 
 #: Preferences.cpp:223
 msgid "Record"
-msgstr "Εγγραφ"
+msgstr "Εγγραφή"
 
 #: Preferences.cpp:238
 msgid "Online"
@@ -3142,7 +3148,7 @@ msgstr "Συντομεύσεις"
 
 #: Preferences.cpp:355
 msgid " Accept "
-msgstr "Αποδοχ"
+msgstr "Αποδοχή"
 
 #: Preferences.cpp:357
 msgid " Cancel "
@@ -3170,7 +3176,7 @@ msgstr "Έναρξη σε ελαχιστοποίηση"
 
 #: Preferences.cpp:602
 msgid "Restore position for tracks longer than"
-msgstr ""
+msgstr "Επαναφορά θέσης για κομμάτια μεγαλύτερα απο"
 
 #: Preferences.cpp:609
 msgid "set the minimun length in minutes to save track position"
@@ -3182,7 +3188,7 @@ msgstr "Φόρτωση προεπιλεγμένης διάταξης"
 
 #: Preferences.cpp:625
 msgid " Behaviour "
-msgstr "Συμπεριφορ"
+msgstr "Συμπεριφορά"
 
 #: Preferences.cpp:627
 msgid "Activate task bar icon"
@@ -3194,7 +3200,7 @@ msgstr "Ενσωμάτωση στο Μενού Ήχου"
 
 #: Preferences.cpp:648
 msgid "Enqueue as default action"
-msgstr ""
+msgstr "Προσθήκη σε ουρά αναπαραγωγής σαν προεπιλεγμένη ενέργεια"
 
 #: Preferences.cpp:652
 msgid "Drop files clear playlist"
@@ -3206,7 +3212,9 @@ msgstr "Άμεση αναζήτηση κειμένου"
 
 #: Preferences.cpp:660
 msgid "When searching, pressing enter queues the result"
-msgstr "Κατά την αναζήτηση, πατώντας το Enter "
+msgstr ""
+"Κατά την αναζήτηση, πατώντας το Enter τοποθετείται το αποτέλεσμα στην ουρά "
+"αναπαραγωγής"
 
 #: Preferences.cpp:665
 msgid "Show CD cover frame in player"
@@ -3222,7 +3230,7 @@ msgstr "Αποθήκευση της λίστας αναπαραγωγής κατ
 
 #: Preferences.cpp:677
 msgid "Close to task bar icon"
-msgstr ""
+msgstr "Κλείσιμο σε εικονίδιο γραμμής εργασιών"
 
 #: Preferences.cpp:682
 msgid "Ask confirmation on exit"
@@ -3234,7 +3242,7 @@ msgstr "Συλλογές"
 
 #: Preferences.cpp:772
 msgid " Paths "
-msgstr ""
+msgstr "Διαδρομές"
 
 #: Preferences.cpp:792
 msgid " Words to detect covers "
@@ -3254,7 +3262,7 @@ msgstr "Δημιουργία λιστών αναπαραγωγής κατά τη
 
 #: Preferences.cpp:831
 msgid "Follow symbolic links on scan"
-msgstr ""
+msgstr "Ακολούθηση συμβολικών συνδέσμων κατά τη σάρωση"
 
 #: Preferences.cpp:835
 msgid "Scan embedded covers in audio files"
@@ -3274,7 +3282,7 @@ msgstr "Τυχαία αναπαραγωγή"
 
 #: Preferences.cpp:931
 msgid "album"
-msgstr "άλμπουμ"
+msgstr "δίσκος"
 
 #: Preferences.cpp:939
 msgid "when playlist is empty"
@@ -3310,7 +3318,7 @@ msgstr "Κομμάτια που προστίθενται κάθε φορά"
 
 #: Preferences.cpp:1012
 msgid "Max played tracks kept in playlist"
-msgstr ""
+msgstr "Μέγιστος αριθμός αναπαραγμένων κομματιών που διατηρούνται στη λίστα"
 
 #: Preferences.cpp:1020
 msgid "Don't repeat last"
@@ -3330,7 +3338,7 @@ msgstr "Μετάβαση στο"
 
 #: Preferences.cpp:1068
 msgid "In the last"
-msgstr ""
+msgstr "Στα τελευταία"
 
 #: Preferences.cpp:1078 Preferences.cpp:1310
 msgid "seconds"
@@ -3386,11 +3394,11 @@ msgstr ""
 
 #: Preferences.cpp:1234
 msgid " Record "
-msgstr "Εγγραφ"
+msgstr "Εγγραφή"
 
 #: Preferences.cpp:1236
 msgid "Enable recording"
-msgstr "Να επιτρέπεται η εγγραφ"
+msgstr "Να επιτρέπεται η εγγραφή"
 
 #: Preferences.cpp:1242
 msgid "Save to:"
@@ -3402,23 +3410,23 @@ msgstr "Μορφή:"
 
 #: Preferences.cpp:1277 Transcode.cpp:343
 msgid "Very High"
-msgstr ""
+msgstr "Πολύ υψηλό"
 
 #: Preferences.cpp:1278 Transcode.cpp:344
 msgid "High"
-msgstr ""
+msgstr "Υψηλό"
 
 #: Preferences.cpp:1279 Transcode.cpp:347
 msgid "Normal"
-msgstr ""
+msgstr "Κανονικό"
 
 #: Preferences.cpp:1280 Transcode.cpp:348
 msgid "Low"
-msgstr ""
+msgstr "Χαμηλό"
 
 #: Preferences.cpp:1281 Transcode.cpp:349
 msgid "Very Low"
-msgstr ""
+msgstr "Πολύ Χαμηλό"
 
 #: Preferences.cpp:1293
 msgid "Split tracks"
@@ -3458,7 +3466,7 @@ msgstr ""
 
 #: Preferences.cpp:1533
 msgid " Font "
-msgstr "Γραμματοσειρ"
+msgstr "Γραμματοσειρά"
 
 #: Preferences.cpp:1535
 msgid "Font:"
@@ -3482,11 +3490,11 @@ msgstr "Γλώσσα"
 
 #: Preferences.cpp:1630
 msgid " Browser command "
-msgstr "Εντολή περιηγητ"
+msgstr "Εντολή περιηγητή"
 
 #: Preferences.cpp:1651
 msgid " Minimum radio allowed bit rate "
-msgstr "Ελάχιστο επιτρεπόμενο bitrate του ραδιοφώνου"
+msgstr "Ελάχιστη επιτρεπόμενη συχνότητα bit του ραδιοφώνου"
 
 #: Preferences.cpp:1659
 msgid " Player online buffer size "
@@ -3542,7 +3550,7 @@ msgstr "Μήνες"
 
 #: Preferences.cpp:1745
 msgid "Only if played"
-msgstr "Μόνο αν αναπαραχθε"
+msgstr "Μόνο αν αναπαραχθεί"
 
 #: Preferences.cpp:1773 Preferences.cpp:1866 RadioGenreEditor.cpp:37
 msgid " Genres "
@@ -3558,7 +3566,7 @@ msgstr "Μορφή ήχου:"
 
 #: Preferences.cpp:1832
 msgid "Torrent command:"
-msgstr ""
+msgstr "Εντολή για torrent:"
 
 #: Preferences.cpp:1918
 msgid "Membership :"
@@ -3628,6 +3636,9 @@ msgid ""
 "Album cover file path\n"
 "Track path"
 msgstr ""
+"Διαδρομή Δίσκου\n"
+"Διαδρομή αρχείου εξωφύλλου\n"
+"Διαδρομή κομματιού"
 
 #: Preferences.cpp:2269
 msgid " Patterns "
@@ -3649,9 +3660,9 @@ msgid ""
 "Album"
 msgstr ""
 "Καλλιτέχνης\n"
-"Καλλιτέχνης του Άλμπουμ\n"
+"Καλλιτέχνης του Δίσκου\n"
 "{aa} ή {a}\n"
-"Άλμπουμ"
+"Δίσκος"
 
 #: Preferences.cpp:2412
 msgid ""
@@ -3683,7 +3694,7 @@ msgstr "Ενέργεια"
 
 #: Preferences.cpp:2485
 msgid "Key"
-msgstr "Κλειδ"
+msgstr "Κλειδί"
 
 #: Preferences.cpp:2917 Preferences.cpp:2937
 msgid "Collection: "
@@ -3693,41 +3704,41 @@ msgstr "Συλλογή:"
 msgid "Enter the collection name"
 msgstr "Εισαγωγή ονόματος συλλογής"
 
-#: Preferences.cpp:3034
+#: Preferences.cpp:3043
 msgid "Change library path"
 msgstr "Αλλαγή διαδρομής βιβλιοθήκης"
 
-#: Preferences.cpp:3112 Preferences.cpp:3132
+#: Preferences.cpp:3121 Preferences.cpp:3141
 msgid "Word: "
 msgstr "Λέξη:"
 
-#: Preferences.cpp:3112 Preferences.cpp:3132
+#: Preferences.cpp:3121 Preferences.cpp:3141
 msgid "Enter the text to find covers"
 msgstr "Εισαγωγή κειμένου για εύρεση εξωφύλλων"
 
-#: Preferences.cpp:3621 Preferences.cpp:3651
+#: Preferences.cpp:3630 Preferences.cpp:3660
 msgid "Filter: "
 msgstr "Φίλτρο:"
 
-#: Preferences.cpp:3621
+#: Preferences.cpp:3630
 msgid "Enter the text to filter"
 msgstr "Εισαγωγή κειμένου για φιλτράρισμα"
 
-#: Preferences.cpp:3651
+#: Preferences.cpp:3660
 msgid "Edit the text to filter"
 msgstr "Επεξεργασία κειμένου για φιλτράρισμα"
 
-#: Preferences.cpp:4164
+#: Preferences.cpp:4173
 msgid "Select path"
 msgstr "Επιλογή διαδρομής"
 
-#: Preferences.cpp:4362
+#: Preferences.cpp:4371
 msgid "Key used by '"
-msgstr ""
+msgstr "Κλειδί χρησιμοποιημένο απο"
 
 #: RadioGenreEditor.cpp:27
 msgid "Radio Genre Editor"
-msgstr ""
+msgstr "Επεξεργαστής Είδους Ραδιοφώνου"
 
 #: RadioGenreEditor.cpp:48
 msgid "Other:"
@@ -3751,7 +3762,7 @@ msgstr "Αναζήτηση στα ονόματα των σταθμών"
 
 #: RadioPanel.cpp:116
 msgid "Include results from all genres"
-msgstr ""
+msgstr "Να συμπεριλαμβάνονται αποτελέσματα απο όλα τα είδη"
 
 #: RadioPanel.cpp:312
 msgid "Shoutcast"
@@ -3763,7 +3774,7 @@ msgstr "Αναζητήσεις"
 
 #: RadioPanel.cpp:315
 msgid "User Defined"
-msgstr ""
+msgstr "Καθορισμένο απο το χρήστη"
 
 #: RadioPanel.cpp:415
 msgid "Add Genre"
@@ -3844,21 +3855,21 @@ msgstr ""
 
 #: RadioPanel.cpp:731
 msgid "BitRate"
-msgstr "BitRate"
+msgstr "Συχνότητα Bit"
 
 #: RadioPanel.cpp:732
 msgid "Listeners"
 msgstr "Ακροατές"
 
-#: RadioPanel.cpp:733 SoListBox.cpp:441
+#: RadioPanel.cpp:733 SoListBox.cpp:423
 msgid "Format"
-msgstr "Μορφ"
+msgstr "Μορφή"
 
 #: RadioPanel.cpp:809
 msgid "Add a radio"
 msgstr "Προσθήκη ραδιοφώνου"
 
-#: RadioPanel.cpp:821 RadioPanel.cpp:1657 RadioPanel.cpp:1686
+#: RadioPanel.cpp:821 RadioPanel.cpp:1658 RadioPanel.cpp:1687
 msgid "Edit Radio"
 msgstr "Επεξεργασία ραδιοφώνου"
 
@@ -3877,6 +3888,7 @@ msgstr "Διαγραφή του επιλεγμένου ραδιοφώνου"
 #: RadioPanel.cpp:874
 msgid "Edit the labels assigned to the selected stations"
 msgstr ""
+"Επεξεργασία των ετικετών που έχουν οριστεί για τους επιλεγμένους σταθμούς"
 
 #: RadioPanel.cpp:990
 msgid "Add Label"
@@ -3908,17 +3920,17 @@ msgstr "Εισαγωγή νέου ονόματος ετικέτας"
 
 #: RadioPanel.cpp:1173 RadioPanel.cpp:1187
 msgid "Stations"
-msgstr "Σταθμο"
+msgstr "Σταθμοί"
 
-#: RadioPanel.cpp:1417
+#: RadioPanel.cpp:1418
 msgid "Stations Labels Editor"
-msgstr ""
+msgstr "Επεξεργαστής Ετικετών των Σταθμών"
 
-#: RadioPanel.cpp:1650
+#: RadioPanel.cpp:1651
 msgid "There are not entries for this Radio Station"
-msgstr "Δεν υπάρχουν καταχωρησεις για αυτόν τον Ραδιοφωνικό Σταθμ"
+msgstr "Δεν υπάρχουν καταχωρησεις για αυτόν τον Ραδιοφωνικό Σταθμό"
 
-#: RadioPanel.cpp:1762
+#: RadioPanel.cpp:1763
 msgid "Are you sure to delete the selected radio searches?"
 msgstr ""
 "Είστε σίγουροι οτι θέλετε να διαγράψετε τις επιλεγμένες ραδιοφωνικές "
@@ -3950,11 +3962,11 @@ msgstr "Αποθήκευση σε"
 
 #: SmartMode.cpp:431
 msgid "Allow"
-msgstr "Να Επιτρέπεται"
+msgstr "Αποδοχή"
 
 #: SmartMode.cpp:446
 msgid "Deny"
-msgstr "Να Μην Επιτρέπεται"
+msgstr "Απόρριψη"
 
 #: SmartMode.cpp:469
 msgid "Hours"
@@ -3968,57 +3980,57 @@ msgstr "MiBytes"
 msgid "GiBytes"
 msgstr "GiBytes"
 
-#: SoListBox.cpp:443
+#: SoListBox.cpp:425
 msgid "Offset"
 msgstr ""
 
-#: SoListBox.cpp:515
+#: SoListBox.cpp:497
 msgid "Edit the clicked column for the selected tracks"
 msgstr ""
 
-#: SoListBox.cpp:521
+#: SoListBox.cpp:503
 msgid "Set"
 msgstr "Καθορισμός"
 
-#: SoListBox.cpp:528
+#: SoListBox.cpp:510
 msgid "Set the clicked column for the selected tracks"
 msgstr ""
 
-#: SoListBox.cpp:587
+#: SoListBox.cpp:569
 msgid "Edit the labels assigned to the selected songs"
-msgstr ""
+msgstr "Επεεργασία των ετικετών που έχουν οριστεί για τα επιλεγμένα κομμάτια"
 
-#: SoListBox.cpp:595
+#: SoListBox.cpp:577
 msgid "Edit the songs selected"
 msgstr "Επεξεργασία των επιλεγμένων τραγουδιών"
 
-#: SoListBox.cpp:635 TaskBar.cpp:162
+#: SoListBox.cpp:617 TaskBar.cpp:162
 msgid "Set the current track rating"
-msgstr ""
+msgstr "Ορισμός της βαθμολογίας του τρέχοντος κομματιού"
 
-#: SoListBox.cpp:642
+#: SoListBox.cpp:624
 msgid "Save all selected tracks as a playlist"
-msgstr ""
+msgstr "Αποθήκευση των επιλεγμένων κομματιών σαν λίστα αναπαραγωγής"
 
-#: SoListBox.cpp:656
+#: SoListBox.cpp:638
 msgid "Remove the current selected tracks from library"
 msgstr "Διαγραφή των επιλεγμένων κομματιών απο τη βιβλιοθήκη"
 
-#: SoListBox.cpp:661
+#: SoListBox.cpp:643
 msgid "Remove the current selected tracks from drive"
-msgstr "Διαγραφή των επιλεγμένων κομματιών απο το δίσκο"
+msgstr "Διαγραφή των επιλεγμένων κομματιών απο το σκληρό δίσκο"
 
-#: SoListBox.cpp:670
+#: SoListBox.cpp:652
 msgid "Selects the genre of the current song"
 msgstr "Επιλογή του είδους του τρέχοντος τραγουδιού"
 
-#: SoListBox.cpp:676
+#: SoListBox.cpp:658
 msgid "Selects the album artist of the current song"
-msgstr "Επιλογή του καλλιτέχνη άλμπουμ του τρέχοντος κομματιού"
+msgstr "Επιλογή του καλλιτέχνη δίσκου του τρέχοντος κομματιού"
 
-#: SoListBox.cpp:679
+#: SoListBox.cpp:661
 msgid "Selects the composer of the current song"
-msgstr "Επιλογή του συνθέτη του τρέχοντος κομματιο"
+msgstr "Επιλογή του συνθέτη του τρέχοντος κομματιού"
 
 #: SplashWin.cpp:62
 msgid "guayadeque.org"
@@ -4074,7 +4086,7 @@ msgstr "Μετάβαση στο επόμενο κομμάτι στην τρέχ�
 
 #: TaskBar.cpp:126
 msgid "Skip to next album track in current playlist"
-msgstr "Μετάβαση στο επόμενο άλμπουμ στην τρέχουσα λίστα αναπαραγωγής"
+msgstr "Μετάβαση σε επόμενο δίσκο στην τρέχουσα λίστα αναπαραγωγής"
 
 #: TaskBar.cpp:130
 msgid "Prev Track"
@@ -4086,7 +4098,7 @@ msgstr "Μετάβαση στο προηγούμενο κομμάτι στην �
 
 #: TaskBar.cpp:134
 msgid "Prev Album"
-msgstr "Προηγούμενο Άλμπουμ"
+msgstr "Προηγούμενος Δίσκος"
 
 #: TaskBar.cpp:134
 msgid "Skip to previous album track in current playlist"
@@ -4094,7 +4106,7 @@ msgstr "Μετάβαση στο προηγούμενο κομμάτι της τ�
 
 #: TaskBar.cpp:165
 msgid "&Smart Play"
-msgstr "%Έξυπνη Αναπαραγωγ"
+msgstr "%Έξυπνη Αναπαραγωγή"
 
 #: TaskBar.cpp:169
 msgid "&Repeat Playlist"
@@ -4102,11 +4114,11 @@ msgstr "&Επανάληψη Λίστας Αναπαραγωγής"
 
 #: TaskBar.cpp:173
 msgid "&Repeat Track"
-msgstr "&Επανάληψη Κομματιο"
+msgstr "&Επανάληψη Κομματιού"
 
 #: TaskBar.cpp:177
 msgid "R&andomize"
-msgstr "Τυχαία Σειρ"
+msgstr "Τυχαία Σειρά"
 
 #: TaskBar.cpp:187
 msgid "Audioscrobbling"
@@ -4144,18 +4156,20 @@ msgstr ""
 #: TrackEdit.cpp:157
 msgid "Copy the album artist name to all the tracks you are editing"
 msgstr ""
+"Αντιγραφή του ονόματος του καλλιτέχνη δίσκου σε όλα τα επεξεργαζόμενα "
+"κομμάτια"
 
 #: TrackEdit.cpp:160 TrackEdit.cpp:485
 msgid "A. Artist:"
-msgstr ""
+msgstr "Καλλιτέχνης Δίσκου:"
 
 #: TrackEdit.cpp:161
 msgid "shows the album artist of the track"
-msgstr ""
+msgstr "Εμφάνιση του καλλιτέχνη δίσκου του κομματιού"
 
 #: TrackEdit.cpp:169
 msgid "Copy the album name to all the tracks you are editing"
-msgstr "Αντιγραφή της ονομασίας του άλμπουμ σε όλα τα επεξεργαζόμενα κομμάτια"
+msgstr "Αντιγραφή της ονομασίας του δίσκου σε όλα τα επεξεργαζόμενα κομμάτια"
 
 #: TrackEdit.cpp:180
 msgid "Copy the title to all the tracks you are editing"
@@ -4171,7 +4185,7 @@ msgstr "Συνθέτης:"
 
 #: TrackEdit.cpp:203
 msgid "Copy the comment to all the tracks you are editing"
-msgstr "Αντιγραφή σχολίο σε όλα τα επεξεργαζόμενα κομμάτια"
+msgstr "Αντιγραφή σχολίου σε όλα τα επεξεργαζόμενα κομμάτια"
 
 #: TrackEdit.cpp:207
 msgid "Comment:"
@@ -4231,7 +4245,7 @@ msgstr "Αποθήκευση της τρέχουσας εικόνας σε αρ�
 
 #: TrackEdit.cpp:344
 msgid "Search the album cover"
-msgstr "Αναζήτηση για εξώφυλλο του άλμπουμ"
+msgstr "Αναζήτηση για εξώφυλλο του δίσκου"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picute to all the tracks you are editing"
@@ -4256,15 +4270,15 @@ msgstr ""
 
 #: TrackEdit.cpp:446
 msgid "Select the album found in musicbrainz"
-msgstr "Επιλέξτε το άλμπουμ που βρέθηκε στο musicbrainz"
+msgstr "Επιλέξτε τον δίσκο που βρέθηκε στο musicbrainz"
 
 #: TrackEdit.cpp:452
 msgid "Search albums in musicbrainz"
-msgstr "Αναζήτηση για άλμπουμς στο musicbrainz"
+msgstr "Αναζήτηση για δίσκους στο musicbrainz"
 
 #: TrackEdit.cpp:458
 msgid "Copy the content of the album to the edited tracks"
-msgstr "Αντιγραφή του περιεχομένου του άλμπουμ στα επεξεργαζόμενα κομμάτια"
+msgstr "Αντιγραφή του περιεχομένου του δίσκου στα επεξεργαζόμενα κομμάτια"
 
 #: TrackEdit.cpp:482
 msgid "Copy the artist to the edited tracks"
@@ -4272,11 +4286,11 @@ msgstr "Αντιγραφή του καλλιτέχνη στα επεξεργασ
 
 #: TrackEdit.cpp:493
 msgid "Copy the album artist to the edited tracks"
-msgstr "Αντιγραφή του καλλιτέχνη του άλμπουμ στα επεξεργασμένα κομμάτια"
+msgstr "Αντιγραφή του καλλιτέχνη δίσκου στα επεξεργασμένα κομμάτια"
 
 #: TrackEdit.cpp:504
 msgid "Copy the album to the edited tracks"
-msgstr "Αντιγραφή του άλμπουμ στα επεξεργασμένα κομμάτια"
+msgstr "Αντιγραφή του δίσκου στα επεξεργασμένα κομμάτια"
 
 #: TrackEdit.cpp:517
 msgid "Copy the date to the edited tracks"
@@ -4305,13 +4319,13 @@ msgid ""
 "BitRate\t: %u Kbps\n"
 "File Size\t: %s"
 msgstr ""
-"BitRate»: %u Kbps\n"
+"Συχνότητα Bit»: %u Kbps\n"
 "Μέγεθος Αρχείου»: %s"
 
 #: TrackEdit.cpp:1673
 #, c-format
 msgid "Error: The album have %u tracks and you are editing %u"
-msgstr "Σφάλμα: Το άλμπουμ έχει %u κομμάτια και εσείς επεξεργάζεστε %u"
+msgstr "Σφάλμα: Ο δίσκος έχει %u κομμάτια και εσείς επεξεργάζεστε %u"
 
 #: TrackEdit.cpp:1678
 msgid ""
@@ -4331,19 +4345,19 @@ msgstr "Διατήρηση Ποιότητας"
 
 #: Transcode.cpp:345
 msgid "Very Good"
-msgstr "Given that it's about quality: Πολύ Καλή"
+msgstr "Πολύ Καλή"
 
 #: Transcode.cpp:346
 msgid "Good"
-msgstr "Given that it's about quality: Καλή"
+msgstr "Καλή"
 
 #: TreePanel.cpp:72
 msgid "Genres,Artists,Albums"
-msgstr "Είδη,Καλλιτέχνες,Άλμπουμς"
+msgstr "Είδη,Καλλιτέχνες,Δίσκοι"
 
 #: TreePanel.cpp:73
 msgid "Genres,Year,Artists,Albums"
-msgstr "Είδη,Έτος,Καλλιτέχνες,Άλμπουμς"
+msgstr "Είδη,Έτος,Καλλιτέχνες,Δίσκοι"
 
 #: TreePanel.cpp:88
 msgid "Sortings"
@@ -4363,7 +4377,7 @@ msgstr "Διαγραφή του επιλεγμένου φίλτρου"
 
 #: TreePanel.cpp:431
 msgid "Edit the labels assigned to the selected items"
-msgstr ""
+msgstr "Επεξεργασία των ετικετών που έχουν οριστεί για τα επιλεγμένα στοιχεία"
 
 #: TreePanel.cpp:1231
 msgid "Are you sure to delete the selected filter?"
