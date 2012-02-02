@@ -1647,6 +1647,18 @@ void guAlbumBrowser::AlbumCoverChanged( const int albumid )
     }
 
     ReloadItems();
+
+    // When we do the ReloadItems the m_LastAlbumBrowser pointer is invalid so find it again
+    int Index;
+    int Count = m_AlbumItems.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_AlbumItems[ Index ].m_AlbumId == ( unsigned int ) albumid )
+        {
+            m_LastAlbumBrowserItem = &m_AlbumItems[ Index ];
+        }
+    }
+
     RefreshAll();
 }
 
