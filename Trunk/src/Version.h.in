@@ -21,7 +21,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#define ID_GUAYADEQUE_VERSION	"0.3.4"
+#define ID_GUAYADEQUE_VERSION	"0.3.5"
 #define ID_GUAYADEQUE_REVISION	"${_GUREVISION_}"
 
 #endif
