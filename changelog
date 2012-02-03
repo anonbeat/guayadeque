@@ -1,11 +1,16 @@
+2012-02-03 0.3.5
 
-  * Allow to select tracks from album browser zoon cover mode 
+  * Allow to select tracks from album browser zoon cover mode
   * Added load defaults in shortcuts preferences
   * Added cue support
   * Allow to change language from Preferences -> General
   * All playlists but the dynamic playlists with sort defined can be sorted
     by any criteria.
-  * Added collections support. You can define as much collections as you want.
+  * Added collections support. You can define as much collections as you
+  * want.
+
+2011-05-13 0.3.1
+
   * Added {al1}, {au1}, {bl1} and {bu1} to lyrics panel patterns for
     lower/upper first letter of artist name and album name.
   * Added compositor and album artist to select context menus
