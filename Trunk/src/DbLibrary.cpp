@@ -3392,7 +3392,7 @@ void guDbLibrary::UpdateStaticPlayListFile( const int plid )
             for( Index = 0; Index < Count; Index++ )
             {
                 PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length );
+                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length / 1000 );
             }
 
             PlayListFile.Save( FileName.GetFullPath() );
@@ -4035,7 +4035,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
                 break;
 
               case guDYNAMIC_FILTER_LIMIT_MINUTES : // Minutes -> to seconds
-                Limit = PlayList.m_LimitValue * 60;
+                Limit = PlayList.m_LimitValue * 60000;
                 break;
 
               case guDYNAMIC_FILTER_LIMIT_MEGABYTES : // MB -> To bytes

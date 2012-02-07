@@ -358,7 +358,7 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                             for( Index = 0; Index < Count; Index++ )
                             {
                                 PlayListFile.AddItem( Tracks[ Index ].m_FileName,
-                                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length );
+                                    Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length / 1000 );
                             }
 
                             wxString PlayListName = m_Db->GetPlayListName( ItemData->GetData() );
