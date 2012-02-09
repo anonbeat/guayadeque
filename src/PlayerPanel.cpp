@@ -38,8 +38,8 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#define guLogDebug(...)
+#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+//#define guLogDebug(...)
 
 
 #define GUPLAYER_MIN_PREVTRACK_POS      5000
@@ -1505,7 +1505,6 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
         //
         wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
         wxPostEvent( m_MainFrame, event );
-
     }
 
     if( m_ErrorFound )
@@ -2432,9 +2431,16 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
                 OnNextTrackButtonClick( event );
             }
         }
-        else if( m_MediaSong.m_Offset )
+        else
         {
-            OnStopButtonClick( event );
+            if( m_MediaSong.m_Offset )
+            {
+                OnStopButtonClick( event );
+            }
+            else
+            {
+                SavePlayedTrack();
+            }
         }
     }
 }
