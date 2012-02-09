@@ -651,6 +651,9 @@ bool guCuePlaylistFile::LoadFromText( const wxString &content )
             guLogMessage( wxT( "'%s'" ), Line.c_str() );
             wxArrayString Keys = wxStringTokenize( Line, wxT( " " ) );
 
+            if( !Keys.Count() )
+                continue;
+
             if( Keys[ 0 ] == wxT( "FILE" ) )
             {
                 if( CurrentTrack == wxNOT_FOUND )
