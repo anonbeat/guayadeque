@@ -155,7 +155,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
         }
       } while( !TestDestroy() && Dir.GetNext( &FileName ) );
 
-      if( m_ScanEmbeddedCovers && !FoundCover )
+      if( m_ScanEmbeddedCovers && !FoundCover && !FirstAudioFile.IsEmpty() )
       {
         m_ImageFiles.Add( FirstAudioFile );
       }
@@ -171,15 +171,20 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 // -------------------------------------------------------------------------------- //
 void GetCoversFromSamePath( const wxString &path, wxArrayString &files, wxArrayString &paths, wxArrayInt &positions )
 {
+    guLogMessage( wxT( "**************************************************************" ) );
+    guLogMessage( wxT( "Searching for '%s'" ), path.c_str() );
     int Index;
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        if( files[ Index ].StartsWith( path ) )
+        guLogMessage( wxT( "Checking  for '%s'" ), files[ Index ].c_str() );
+        if( wxPathOnly( files[ Index ] ) == path )
         {
             paths.Add( files[ Index ] );
             positions.Add( Index );
         }
+        else
+            break;
     }
 }
 
@@ -216,8 +221,6 @@ void guLibUpdateThread::ProcessCovers( void )
     //int CoverType = m_MediaViewer->GetCoverType();
     int CoverMaxSize = m_MediaViewer->GetCoverMaxSize();
 
-    int Index;
-    int Count;
     int ImageCount = m_ImageFiles.Count();
 
     m_Db->ExecuteUpdate( wxT( "BEGIN TRANSACTION;" ) );
@@ -238,11 +241,8 @@ void guLibUpdateThread::ProcessCovers( void )
 
         m_Db->UpdateImageFile( CoverPaths[ FirstIndex ].ToUTF8(), CoverName.ToUTF8(), wxBITMAP_TYPE_JPEG, CoverMaxSize );
 
-        Count = CoverIndexs.Count();
-        for( Index = 0; Index < Count; Index++ )
-        {
-            m_ImageFiles.RemoveAt( CoverIndexs[ Index ] );
-        }
+        // The covers found are always at the beginning so we remove them
+        m_ImageFiles.RemoveAt( 0, CoverIndexs.Count() );
 
         //guLogMessage( wxT( "%i covers left from %i " ), m_ImageFiles.Count(), ImageCount );
         evtup.SetExtraLong( ImageCount - m_ImageFiles.Count() );
