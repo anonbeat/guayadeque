@@ -171,13 +171,10 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
 // -------------------------------------------------------------------------------- //
 void GetCoversFromSamePath( const wxString &path, wxArrayString &files, wxArrayString &paths, wxArrayInt &positions )
 {
-    guLogMessage( wxT( "**************************************************************" ) );
-    guLogMessage( wxT( "Searching for '%s'" ), path.c_str() );
     int Index;
     int Count = files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        guLogMessage( wxT( "Checking  for '%s'" ), files[ Index ].c_str() );
         if( wxPathOnly( files[ Index ] ) == path )
         {
             paths.Add( files[ Index ] );
