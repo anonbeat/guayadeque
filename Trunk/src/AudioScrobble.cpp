@@ -479,12 +479,12 @@ void guAudioScrobble::SendPlayedTrack( const guCurrentTrack &track )
     if( !m_Db->AddCachedPlayedSong( track ) )
         guLogError( wxT( "Could not add Song to CachedSongs Database" ) );
 
-//    if( !m_PlayedThread )
-//    {
-//        m_PlayedThread = new guASPlayedThread( this, m_Db );
-//        if( !m_PlayedThread )
-//            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
-//    }
+    if( !m_PlayedThread )
+    {
+        m_PlayedThread = new guASPlayedThread( this, m_Db );
+        if( !m_PlayedThread )
+            guLogError( wxT( "Could no create the AudioScrobble Played thread" ) );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
