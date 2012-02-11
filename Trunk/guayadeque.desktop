@@ -1,6 +1,5 @@
 [Desktop Entry]
 Version=1.0
-Encoding=UTF-8
 Name=Guayadeque Music Player
 Name[es]=Guayadeque - Reproductor de Música
 Name[fr]=Guayadeque - Lecteur de musique et de radios
@@ -14,7 +13,7 @@ Comment[it]=lettore di file audio che legge ed organizza file musicali i stazion
 Exec=guayadeque
 Terminal=false
 Type=Application
-Categories=GNOME;GTK;AudioVideo;Player;
+Categories=GNOME;GTK;AudioVideo;Audio;Player;
 MimeType=application/ogg;application/x-flac;audio/mp4;audio/mpeg;audio/mpegurl;audio/ogg;audio/x-ape;audio/x-flac;audio/x-m4a;audio/x-mod;audio/x-mp3;audio/x-mpeg;audio/x-mpegurl;audio/x-ms-asf;audio/x-ms-asx;audio/x-ms-wax;audio/x-ms-wma;
 Icon=guayadeque
 X-GNOME-Autostart-Phase=Desktop
