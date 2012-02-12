@@ -47,6 +47,7 @@ class guMPRIS2 : public guDBusClient
     void                        OnPlayerCapsChange( void );
     void                        OnPlayerVolumeChange( void );
     void                        OnTrackListChange( void );
+    void                        OnPlayerSeeked( const unsigned int newpos );
 
     bool                        Indicators_Sound_Available( void );
     int                         Indicators_Sound_BlacklistMediaPlayer( const dbus_bool_t blacklist = true );

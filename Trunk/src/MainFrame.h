@@ -256,6 +256,7 @@ class guMainFrame : public wxFrame
     void                            OnPlayerCapsChanged( wxCommandEvent &event );
     void                            OnPlayerVolumeChanged( wxCommandEvent &event );
     void                            OnAudioScrobbleUpdate( wxCommandEvent &event );
+    void                            OnPlayerSeeked( wxCommandEvent &event );
 
     guMediaViewer *                 FindCollectionMediaViewer( void * windowptr );
 

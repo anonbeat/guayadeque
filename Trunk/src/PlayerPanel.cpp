@@ -2859,7 +2859,14 @@ void guPlayerPanel::SetVolume( double volume )
 // -------------------------------------------------------------------------------- //
 bool guPlayerPanel::SetPosition( int pos )
 {
-    return m_MediaCtrl->Seek( pos );
+    bool Result = m_MediaCtrl->Seek( pos );
+    if( Result )
+    {
+        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SEEKED );
+        evt.SetInt( pos );
+        wxPostEvent( m_MainFrame, evt );
+    }
+    return Result;
 }
 
 // -------------------------------------------------------------------------------- //

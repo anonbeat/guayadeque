@@ -28,6 +28,7 @@
 // See http://www.mpris.org/2.0/spec/index.html
 #define GUAYADEQUE_MPRIS2_SERVICE_NAME          "org.mpris.MediaPlayer2.guayadeque"
 #define GUAYADEQUE_MPRIS2_OBJECT_PATH           "/org/mpris/MediaPlayer2"
+#define GUAYADEQUE_MPRIS2_PLAYER_PATH           "/org/mpris/MediaPlayer2/Player"
 #define GUAYADEQUE_PROPERTIES_INTERFACE         "org.freedesktop.DBus.Properties"
 
 #define GUAYADEQUE_MPRIS2_INTERFACE_ROOT        "org.mpris.MediaPlayer2"
@@ -682,6 +683,29 @@ void guMPRIS2::OnPlayerVolumeChange( void )
     else
     {
         guLogError( wxT( "Could not create EmitPropertyChangedSignal object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMPRIS2::OnPlayerSeeked( const unsigned int newpos )
+{
+    guDBusSignal * signal = new guDBusSignal( GUAYADEQUE_MPRIS2_OBJECT_PATH, GUAYADEQUE_MPRIS2_INTERFACE_PLAYER, "Seeked" );
+    if( signal )
+    {
+        DBusMessageIter args;
+
+        dbus_message_iter_init_append( signal->GetMessage(), &args );
+
+        gint64 Position = newpos * 1000;
+        dbus_message_iter_append_basic( &args, DBUS_TYPE_INT64, &Position );
+
+        Send( signal );
+        Flush();
+        delete signal;
+    }
+    else
+    {
+        guLogError( wxT( "Could not create Seeked signal object" ) );
     }
 }
 
