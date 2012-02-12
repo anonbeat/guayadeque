@@ -2289,7 +2289,7 @@ wxFileOffset guFaderPlayBin::Position( void )
 {
     GstFormat Format = GST_FORMAT_TIME;
     wxFileOffset Position;
-    gst_element_query_position( m_OutputSink, &Format, &Position );
+    gst_element_query_position( m_OutputSink, &Format, ( gint64 * ) &Position );
     return Position;
 }
 
@@ -2298,7 +2298,7 @@ wxFileOffset guFaderPlayBin::Length( void )
 {
     GstFormat Format = GST_FORMAT_TIME;
     wxFileOffset Length;
-    gst_element_query_duration( m_OutputSink, &Format, &Length );
+    gst_element_query_duration( m_OutputSink, &Format, ( gint64 * ) &Length );
     return Length;
 }
 

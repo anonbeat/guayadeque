@@ -392,7 +392,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     CheckFiltersEnable();
 
-	Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayerPanel::OnIdle ), NULL, this );
+//	Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayerPanel::OnIdle ), NULL, this );
 	// Connect Events
 	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
 	m_NextTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );

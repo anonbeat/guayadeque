@@ -315,7 +315,7 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
     }
 
 
-    if( m_AlbumBrowserItem->m_AlbumId != ( size_t ) wxNOT_FOUND )
+    if( m_AlbumBrowserItem->m_AlbumId != ( unsigned int ) wxNOT_FOUND )
     {
         int ContextMenuFlags = m_AlbumBrowser->GetContextMenuFlags();
 
