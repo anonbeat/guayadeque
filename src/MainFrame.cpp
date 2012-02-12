@@ -468,6 +468,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
     Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
     Connect( ID_PLAYERPANEL_VOLUMECHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerVolumeChanged ), NULL, this );
+    Connect( ID_PLAYERPANEL_SEEKED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerSeeked ), NULL, this );
 
 
 	Connect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
@@ -608,6 +609,7 @@ guMainFrame::~guMainFrame()
     Disconnect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
     Disconnect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
     Disconnect( ID_PLAYERPANEL_VOLUMECHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerVolumeChanged ), NULL, this );
+    Disconnect( ID_PLAYERPANEL_SEEKED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerSeeked ), NULL, this );
 
 	Disconnect( ID_MAINFRAME_SELECT_LOCATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectLocation ), NULL, this );
     Disconnect( ID_MENU_VIEW_MAIN_SHOWCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
@@ -1886,6 +1888,15 @@ void guMainFrame::OnPlayerVolumeChanged( wxCommandEvent &event )
     if( m_MPRIS2 )
     {
         m_MPRIS2->OnPlayerVolumeChange();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnPlayerSeeked( wxCommandEvent &event )
+{
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnPlayerSeeked( event.GetInt() );
     }
 }
 
