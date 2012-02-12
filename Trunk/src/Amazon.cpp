@@ -41,10 +41,12 @@
 //    &ItemPage=[The page Num {1..x}]
 
 #define AMAZON_SEARCH_APIKEY    "AKIAI3VJGDYXLU7N2HKQ"
+#define AMAZON_ASSOCIATE_TAG    "guaymusiplay-20"
 
 #define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?" )
 #define AMAZON_SEARCH_PARAMS    wxT( "AWSAccessKeyId=" AMAZON_SEARCH_APIKEY\
                                      "&Artist=%s"\
+                                     "&AssociateTag=guaymusiplay-20"\
                                      "&ItemPage=%u"\
                                      "&Keywords=%s"\
                                      "&Operation=ItemSearch"\
@@ -259,18 +261,17 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
 
     wxString SearchUrl = AMAZON_SEARCH_URL + SearchParams + wxT( "&Signature=" ) + SignText;
 
-    guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
-
+    //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
     if( !m_MainThread->TestDestroy() )
     {
         //printf( "Buffer:\n%s\n", Buffer );
         wxString Content = GetUrlContent( SearchUrl );
         //Content = http.GetContent( SearchUrl, 60 );
+        //guLogMessage( wxT( "Amazon Response:\n%s" ), Content.c_str() );
         if( Content.Length() )
         {
             if( !m_MainThread->TestDestroy() )
             {
-                guLogMessage( Content );
                 return ExtractImagesInfo( Content );
             }
         }

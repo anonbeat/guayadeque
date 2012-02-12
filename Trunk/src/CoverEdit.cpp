@@ -20,7 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "CoverEdit.h"
 
-//#include "Amazon.h"
+#include "Amazon.h"
 #include "Commands.h"
 #include "Config.h"
 #include "CoverFetcher.h"
@@ -41,7 +41,7 @@
 
 enum guCOVER_SEARCH_ENGINE {
     guCOVER_SEARCH_ENGINE_GOOGLE = 0,
-//    guCOVER_SEARCH_ENGINE_AMAZON,
+    guCOVER_SEARCH_ENGINE_AMAZON,
     guCOVER_SEARCH_ENGINE_LASTFM,
 //    guCOVER_SEARCH_ENGINE_DISCOGS
     guCOVER_SEARCH_ENGINE_YAHOO
@@ -88,7 +88,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
 	wxString m_EngineChoiceChoices[] = {
 	    wxT( "Google" ),
-	    //wxT( "Amazon" ),
+	    wxT( "Amazon" ),
 	    wxT("Last.fm"),
 	    //wxT( "Discogs" )
 	    wxT( "Yahoo" )
@@ -563,10 +563,10 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * owner,
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guGoogleCoverFetcher( this, &m_CoverLinks, artist, album );
     }
-//    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_AMAZON )
-//    {
-//        m_CoverFetcher = ( guCoverFetcher * ) new guAmazonCoverFetcher( this, &m_CoverLinks, artist, album );
-//    }
+    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_AMAZON )
+    {
+        m_CoverFetcher = ( guCoverFetcher * ) new guAmazonCoverFetcher( this, &m_CoverLinks, artist, album );
+    }
     else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_LASTFM )
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guLastFMCoverFetcher( this, &m_CoverLinks, artist, album );
