@@ -1051,7 +1051,7 @@ void guPlayListPanel::OnPLNamesEditPlaylist( wxCommandEvent &event )
         {
             PlayListEditor->FillPlayListEditData();
             m_Db->UpdateDynamicPlayList( ItemData->GetData(), &DynPlayList );
-            m_NamesTreeCtrl->ReloadItems();
+            m_NamesTreeCtrl->ReloadItems( false );
         }
         PlayListEditor->Destroy();
     }
