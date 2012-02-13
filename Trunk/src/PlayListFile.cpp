@@ -829,10 +829,23 @@ bool guCuePlaylistFile::Load( const wxString &location )
             {
                 if( PlaylistFile.Read( Buffer, DataSize ) == DataSize )
                 {
-                    for( int Index = 0; Index < DataSize; Index++ )
+                    Content = wxString( Buffer, wxConvAuto() );
+                    if( Content.IsEmpty() )
                     {
-                        Content += Buffer[ Index ];
+                        Content = wxString( Buffer, wxConvUTF8 );
+                        if( Content.IsEmpty() )
+                        {
+                            Content = wxString( Buffer, wxConvISO8859_1 );
+                            if( Content.IsEmpty() )
+                            {
+                                for( int Index = 0; Index < DataSize; Index++ )
+                                {
+                                    Content += Buffer[ Index ];
+                                }
+                            }
+                        }
                     }
+
                 }
                 else
                 {
