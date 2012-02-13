@@ -3808,7 +3808,7 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
       {
         query += wxT( "( song_length " ) +
                  DynPLNumericOption( playlist->m_Filters[ index ].m_Option,
-                                  playlist->m_Filters[ index ].m_Number ) + wxT( ")" );
+                                  playlist->m_Filters[ index ].m_Number * 1000 ) + wxT( ")" );
         break;
       }
 
