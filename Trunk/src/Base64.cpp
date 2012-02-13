@@ -46,15 +46,15 @@ wxString guBase64Encode( const char * src, const size_t srclen )
 int guBase64Encode( const char * src, const size_t srclen, char * dst, const size_t dstlen )
 {
     wxString EncodedString;
-    int Index;
+    size_t Index;
 
     if( ( ( srclen / 3 ) + ( ( srclen % 3 ) > 0 ) ) * 4 > dstlen )
         return -1;
 
-    unsigned int Temp;
+    wxUint32 Temp;
     const unsigned char * pData = ( unsigned char * ) src;
-    int OutPos = 0;
-    for( Index = 0; Index < ( int ) srclen / 3; Index++ )
+    size_t OutPos = 0;
+    for( Index = 0; Index < srclen / 3; Index++ )
     {
         Temp  = ( * pData++ ) << 16;
         Temp |= ( ( * pData++ ) <<  8 );
