@@ -653,6 +653,9 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
         m_SortCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
 	}
 	m_NameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guDynPlayListEditor::OnNameChanged ), NULL, this );
+	m_LengthHours->Connect( wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler( guDynPlayListEditor::OnHoursChanged ), NULL, this );
+	m_LengthMinutes->Connect( wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler( guDynPlayListEditor::OnMinutesChanged ), NULL, this );
+	m_LengthSeconds->Connect( wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler( guDynPlayListEditor::OnSecondsChanged ), NULL, this );
 
 	m_FiltersListBox->SetFocus();
 }
@@ -1094,6 +1097,24 @@ void guDynPlayListEditor::OnSortChecked( wxCommandEvent &event )
 void guDynPlayListEditor::OnNameChanged( wxCommandEvent &event )
 {
     m_BtnOk->Enable( m_Filters->Count() && !m_NameTextCtrl->IsEmpty() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDynPlayListEditor::OnHoursChanged( wxSpinEvent &event )
+{
+    m_FilterAccept->Enable( m_CurFilter != wxNOT_FOUND );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDynPlayListEditor::OnMinutesChanged( wxSpinEvent &event )
+{
+    m_FilterAccept->Enable( m_CurFilter != wxNOT_FOUND );
+}
+
+// -------------------------------------------------------------------------------- //
+void guDynPlayListEditor::OnSecondsChanged( wxSpinEvent &event )
+{
+    m_FilterAccept->Enable( m_CurFilter != wxNOT_FOUND );
 }
 
 // -------------------------------------------------------------------------------- //
