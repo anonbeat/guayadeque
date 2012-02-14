@@ -1489,8 +1489,7 @@ void guMediaViewer::DownloadAlbumCover( const int albumid )
             wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
             if( CoverImage )
             {
-                guConfig * Config = ( guConfig * ) guConfig::Get();
-                wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
+                wxArrayString SearchCovers = GetCoverWords();
                 wxString CoverName = AlbumPath + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
                 CoverImage->SaveFile( CoverName, wxBITMAP_TYPE_JPEG );
 
