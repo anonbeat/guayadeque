@@ -1526,7 +1526,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                     const char * TrackId;
                     dbus_int64_t Position;
                     dbus_message_get_args( msg->GetMessage(), &error,
-                            DBUS_TYPE_STRING, &TrackId,
+                            DBUS_TYPE_OBJECT_PATH, &TrackId,
                             DBUS_TYPE_INT64, &Position,
                             DBUS_TYPE_INVALID );
 
