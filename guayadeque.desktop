@@ -1,15 +1,15 @@
 [Desktop Entry]
 Version=1.0
 Name=Guayadeque Music Player
-Name[es]=Guayadeque - Reproductor de Música
-Name[fr]=Guayadeque - Lecteur de musique et de radios
+Name[es]=Guayadeque - Reproductor de música
+Name[fr]=Guayadeque - Lecteur de musique 
 Name[de]=Guayadeque - Musik-Wiedergabeprogramm
 Name[it]=Guayadeque - Riproduttore musicale
-Comment=Play music songs
-Comment[es]=Reproduce canciones
-Comment[fr]=Permet de lire, organiser, trier nos musiques et radios numériques
-Comment[de]=Ihre Musiksammlung wiedergeben und organisieren
-Comment[it]=lettore di file audio che legge ed organizza file musicali i stazioni radio
+Comment=Play and organize your music, listen to radios, podcasts and more ...
+Comment[es]=Reproduce y organiza tu música, escucha radios, podcasts y más ...
+Comment[fr]=Permet de lire et organiser vos musiques, écouter les radios, des podcasts et bien plus encore ...
+Comment[de]=Ihre Musiksammlung wiedergeben und organisieren, hören Sie Radio, Podcasts und vieles mehr ...
+Comment[it]=Riprodurre e organizzare la tua musica, ascoltare radio, podcast e molto altro ancora ...
 Exec=guayadeque
 Terminal=false
 Type=Application
@@ -18,3 +18,29 @@ MimeType=application/ogg;application/x-flac;audio/mp4;audio/mpeg;audio/mpegurl;a
 Icon=guayadeque
 X-GNOME-Autostart-Phase=Desktop
 X-GNOME-Autostart-Notify=true
+X-Ayatana-Desktop-Shortcuts=Play;Pause;Stop;Previous;Next;
+
+[Play Shortcut Group]
+Name=Play
+Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Play
+TargetEnvironment=Unity
+
+[Pause Shortcut Group]
+Name=Pause
+Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Pause
+TargetEnvironment=Unity
+
+[Stop Shortcut Group]
+Name=Stop (+shit Stop at End)
+Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Stop
+TargetEnvironment=Unity
+
+[Previous Shortcut Group]
+Name=Prev. (+shit Prev. Album)
+Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Prev
+TargetEnvironment=Unity
+
+[Next Shortcut Group]
+Name=Next (+shit Next Album)
+Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Next
+TargetEnvironment=Unity
