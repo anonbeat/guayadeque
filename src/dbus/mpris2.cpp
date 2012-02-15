@@ -353,7 +353,7 @@ static void FillMetadataIter( DBusMessageIter * iter, const guCurrentTrack * cur
         FillMetadataDetails( &dict, "xesam:album", ( const char * ) curtrack->m_AlbumName.mb_str( wxConvUTF8 ) );
         if( curtrack->m_Number )
             FillMetadataDetails( &dict, "xesam:trackNumber", ( const int ) curtrack->m_Number );
-        FillMetadataDetails( &dict, "mpris:length", ( const gint64 ) gint64( curtrack->m_Length * 1000000 ) );
+        FillMetadataDetails( &dict, "mpris:length", ( const gint64 ) gint64( curtrack->m_Length * 1000 ) );
         FillMetadataAsList( &dict, "xesan:genre", ( const char * ) curtrack->m_GenreName.mb_str( wxConvUTF8 ) );
         if( curtrack->m_Rating >= 0 )
             FillMetadataDetails( &dict, "xesam:userRating", ( const double ) double( curtrack->m_Rating * 0.2 ) );
