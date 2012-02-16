@@ -1436,19 +1436,41 @@ bool guFaderPlayBin::BuildOutputBin( void )
     };
 
     int OutputDevice = m_Player->OutputDevice();
-    outputsink = gst_element_factory_make( ElementNames[ OutputDevice ], "OutputSink" );
-    if( IsValidElement( outputsink ) )
+    if( ( OutputDevice > 0 ) && ( OutputDevice < guOUTPUT_DEVICE_OTHER ) )
     {
-        if( OutputDevice > guOUTPUT_DEVICE_GCONF )
+        outputsink = gst_element_factory_make( ElementNames[ OutputDevice ], "OutputSink" );
+        if( IsValidElement( outputsink ) )
         {
-            wxString OutputDeviceName = m_Player->OutputDeviceName();
-            if( !OutputDeviceName.IsEmpty() )
+            if( OutputDevice > guOUTPUT_DEVICE_GCONF )
             {
-                g_object_set( outputsink, "device", ( const char * ) OutputDeviceName.mb_str( wxConvFile ), NULL );
+                wxString OutputDeviceName = m_Player->OutputDeviceName();
+                if( !OutputDeviceName.IsEmpty() )
+                {
+                    g_object_set( outputsink, "device", ( const char * ) OutputDeviceName.mb_str( wxConvFile ), NULL );
+                }
+            }
+            m_OutputSink = outputsink;
+            return true;
+        }
+    }
+    else if( OutputDevice == guOUTPUT_DEVICE_OTHER )
+    {
+        wxString OutputDeviceName = m_Player->OutputDeviceName();
+        if( !OutputDeviceName.IsEmpty() )
+        {
+            GError * err = NULL;
+            outputsink = gst_parse_launch( ( const char * ) OutputDeviceName.mb_str( wxConvFile ), &err );
+            if( outputsink )
+            {
+                if( err )
+                {
+                    guLogMessage( wxT( "Error building output pipeline: '%s'" ), wxString( err->message, wxConvUTF8 ).c_str() );
+                    g_error_free( err );
+                }
+                m_OutputSink = outputsink;
+                return true;
             }
         }
-        m_OutputSink = outputsink;
-        return true;
     }
 
     guLogError( wxT( "The configured audio output sink is not valid. Autoconfiguring..." ) );

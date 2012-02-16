@@ -1091,6 +1091,7 @@ void guPrefDialog::BuildPlaybackPage( void )
     OutputDeviceOptions.Add( wxT( "Alsa" ) );
     OutputDeviceOptions.Add( wxT( "PulseAudio" ) );
     OutputDeviceOptions.Add( wxT( "OSS" ) );
+    OutputDeviceOptions.Add( wxT( "Other" ) );
 
 	m_PlayOutDevChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, OutputDeviceOptions, 0 );
 	int OutDevice = m_Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "playback" ) );
