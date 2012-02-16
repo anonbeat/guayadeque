@@ -62,7 +62,8 @@ enum guOutputDeviceSink {
     guOUTPUT_DEVICE_GCONF,
     guOUTPUT_DEVICE_ALSA,
     guOUTPUT_DEVICE_PULSEAUDIO,
-    guOUTPUT_DEVICE_OSS
+    guOUTPUT_DEVICE_OSS,
+    guOUTPUT_DEVICE_OTHER
 };
 
 // -------------------------------------------------------------------------------- //
