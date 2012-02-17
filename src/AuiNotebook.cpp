@@ -28,7 +28,7 @@
 // -------------------------------------------------------------------------------- //
 static void inline IndentPressedBitmap( wxRect * rect, int button_state )
 {
-    if (button_state == wxAUI_BUTTON_STATE_PRESSED)
+    if( button_state == wxAUI_BUTTON_STATE_PRESSED )
     {
         rect->x++;
         rect->y++;
@@ -40,7 +40,9 @@ static void inline IndentPressedBitmap( wxRect * rect, int button_state )
 // -------------------------------------------------------------------------------- //
 guAuiTabArt::guAuiTabArt() : wxAuiDefaultTabArt()
 {
-    m_BgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_BACKGROUND );
+    wxVisualAttributes VisualAttributes = wxStaticText::GetClassDefaultAttributes();
+
+    m_BgColor = VisualAttributes.colBg; //wxSystemSettings::GetColour( wxSYS_COLOUR_BACKGROUND );
     m_SelBgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
     m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_SelTextFgColour = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
@@ -71,8 +73,9 @@ wxAuiTabArt * guAuiTabArt::Clone()
 void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
 {
     // draw background
-   wxColor top_color      = m_base_colour;
-   wxColor bottom_color   = wxAuiStepColour( m_base_colour, 140 );
+   //wxColor top_color      = m_base_colour;
+   wxColor top_color      = m_BgColor;
+   wxColor bottom_color   = wxAuiStepColour( m_base_colour, 120 );
    wxRect r;
 
    if( m_flags & wxAUI_NB_BOTTOM )
@@ -80,9 +83,9 @@ void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
    // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
    // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
    else //for wxAUI_NB_TOP
-       r = wxRect(rect.x, rect.y, rect.width+2, rect.height-3);
+       r = wxRect( rect.x, rect.y, rect.width + 2, rect.height - 3 );
 
-    dc.GradientFillLinear( r, top_color, bottom_color, wxNORTH );
+   dc.GradientFillLinear( r, top_color, bottom_color, wxNORTH );
 
    // draw base lines
    dc.SetPen( m_border_pen );
@@ -98,8 +101,8 @@ void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
    // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
    else //for wxAUI_NB_TOP
    {
-       dc.SetBrush( m_base_colour_brush );
-       dc.DrawRectangle( -1, y - 4, w + 2, 4 );
+       dc.SetBrush( wxBrush( top_color ) );
+       dc.DrawRectangle( -1, y - 4, w + 2, 5 );
    }
 }
 
@@ -185,7 +188,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 
 
     wxPoint border_points[6];
-    if (m_flags &wxAUI_NB_BOTTOM)
+    if( m_flags & wxAUI_NB_BOTTOM )
     {
        border_points[0] = wxPoint(tab_x,             tab_y);
        border_points[1] = wxPoint(tab_x,             tab_y+tab_height-6);
@@ -210,12 +213,12 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     int drawn_tab_height = border_points[0].y - border_points[1].y;
 
 
-    if( page.active )
-    {
-        dc.SetBrush( m_base_colour_brush );
-        dc.SetPen( * wxTRANSPARENT_PEN );
-        dc.DrawRectangle( tab_x + 1, tab_y + 2, tab_width - 1, tab_height - 3 );
-    }
+//    if( page.active )
+//    {
+//        dc.SetBrush( m_BgColor );
+//        dc.SetPen( * wxTRANSPARENT_PEN );
+//        dc.DrawRectangle( tab_x + 1, tab_height, tab_width - 1, tab_height + 2 );
+//    }
 
     // draw tab outline
     dc.SetPen( m_border_pen );
@@ -224,14 +227,14 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 
     // there are two horizontal grey lines at the bottom of the tab control,
     // this gets rid of the top one of those lines in the tab control
-    if (page.active)
+    if( page.active )
     {
         if( m_flags & wxAUI_NB_BOTTOM )
             dc.SetPen( wxPen( wxColour( wxAuiStepColour( m_base_colour, 170 ) ) ) );
         // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
         // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
         else //for wxAUI_NB_TOP
-           dc.SetPen( m_base_colour_pen );
+           dc.SetPen( m_BgColor ); //dc.SetPen( m_base_colour_pen );
 
         dc.DrawLine( border_points[ 0 ].x + 1,
                      border_points[ 0 ].y,
@@ -318,9 +321,40 @@ guAuiNotebook::guAuiNotebook() : wxAuiNotebook()
 // -------------------------------------------------------------------------------- //
 guAuiNotebook::guAuiNotebook( wxWindow * parent, wxWindowID id, const wxPoint &pos,
                              const wxSize &size, long style ) :
-    wxAuiNotebook( parent, id, pos, size, style | wxNO_BORDER )
+    wxAuiNotebook( parent, id, pos, size, style | wxBORDER_NONE | wxNO_BORDER )
 {
     SetArtProvider( new guAuiTabArt() );
+
+    wxAuiDockArt * AuiDockArt = m_mgr.GetArtProvider();
+
+    wxColour BaseColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
+            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
+            BaseColor );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
+            wxAuiStepColour( BaseColor, 140 ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
+            BaseColor );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
+            wxAuiStepColour( BaseColor, 140 ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_BORDER_COLOUR, BaseColor );
+
+    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 0 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 5 );
+
+    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
+            wxAUI_GRADIENT_VERTICAL );
 }
 
 // -------------------------------------------------------------------------------- //

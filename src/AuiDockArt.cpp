@@ -35,7 +35,7 @@ guAuiDockArt::guAuiDockArt() : wxAuiDefaultDockArt()
 // -------------------------------------------------------------------------------- //
 void inline DrawGradientRectangle( wxDC &dc, const wxRect &rect, const wxColour &start_color, const wxColour &end_color, int direction )
 {
-    dc.GradientFillLinear( rect, start_color, end_color, direction == wxAUI_GRADIENT_VERTICAL ? wxSOUTH : wxEAST );
+    dc.GradientFillLinear( rect, start_color, end_color, direction == wxAUI_GRADIENT_VERTICAL ? wxNORTH : wxWEST );
 }
 
 
@@ -64,8 +64,8 @@ void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool act
 #else
             // on other platforms, active gradients become lighter at the top
             DrawGradientRectangle( dc, rect,
-                                 m_active_caption_gradient_colour,
                                  m_active_caption_colour,
+                                 m_active_caption_gradient_colour,
                                  m_gradient_type );
 #endif
         }
@@ -74,8 +74,8 @@ void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool act
 #ifdef __WXMAC__
             // on mac the gradients are expected to become darker from the top
             DrawGradientRectangle( dc, rect,
-                                 m_inactive_caption_gradient_colour,
                                  m_inactive_caption_colour,
+                                 m_inactive_caption_gradient_colour,
                                  m_gradient_type );
 #else
             // on other platforms, inactive gradients become lighter at the bottom
@@ -86,6 +86,10 @@ void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool act
 #endif
         }
     }
+
+    dc.SetPen( m_border_pen );
+    int y = rect.y + rect.height - 1;
+    dc.DrawLine( rect.x, y, rect.x + rect.width, y );
 }
 
 
