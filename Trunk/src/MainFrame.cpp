@@ -187,9 +187,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );
 
+    wxVisualAttributes VisualAttributes = wxStaticText::GetClassDefaultAttributes();
+
     wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
 
-    wxColour BaseColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
+    wxColour BaseColor = VisualAttributes.colBg; //wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
@@ -197,20 +199,22 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, BaseColor );
+
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 140 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            BaseColor );
+            wxAuiStepColour( BaseColor, 110 ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 140 ) );
+                          BaseColor );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
+            wxAuiStepColour( BaseColor, 110 ) );
+
+    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, BaseColor );
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 4 );
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
