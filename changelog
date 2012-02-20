@@ -1,5 +1,5 @@
 
-
+  * Added option to rename podcast channel name
   * Added option in Preferences -> Playback the option to write the complete output pipeline
   * Added Seeked mpris2 signal
   * Fixed amazon cover download engine

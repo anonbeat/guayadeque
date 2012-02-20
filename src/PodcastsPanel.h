@@ -86,6 +86,8 @@ class guDbPodcasts : public guDb
     int                     GetPendingPodcasts( guPodcastItemArray * items );
     int                     GetPodcastFiles( const wxArrayInt &channelid, guDataObjectComposite * files );
 
+    void                    UpdateItemPaths( const wxString &oldpath, const wxString &newpath );
+
 };
 
 // -------------------------------------------------------------------------------- //

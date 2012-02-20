@@ -829,6 +829,18 @@ int guDbPodcasts::GetPodcastFiles( const wxArrayInt &channels, guDataObjectCompo
   return Count;
 }
 
+// -------------------------------------------------------------------------------- //
+void guDbPodcasts::UpdateItemPaths( const wxString &oldpath, const wxString &newpath )
+{
+  wxString query;
+
+  query = wxString::Format( wxT( "UPDATE podcastitems SET podcastitem_file = replace( podcastitem_file, '%s', '%s' )" ),
+            escape_query_str( oldpath ).c_str(), escape_query_str( newpath ).c_str() );
+
+  guLogMessage( wxT( "Updating path: %s" ), query.c_str() );
+  ExecuteUpdate( query );
+}
+
 
 // -------------------------------------------------------------------------------- //
 // guPostcastPanel
@@ -1252,16 +1264,41 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
     {
         wxSetCursor( * wxHOURGLASS_CURSOR );
 
+        wxString LastTitle = PodcastChannel.m_Title;
+
         ChannelEditor->GetEditData();
 
-        // Create the channel dir
-        wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                  PodcastChannel.m_Title );
-        if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+        if( LastTitle != PodcastChannel.m_Title )
         {
-            if( !wxDirExists( ChannelDir.GetFullPath() ) )
+            wxFileName LastChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) + LastTitle );
+            if( LastChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
             {
-                wxMkdir( ChannelDir.GetFullPath(), 0770 );
+                wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                          PodcastChannel.m_Title );
+                if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+                {
+                    if( wxRename( LastChannelDir.GetFullPath(), ChannelDir.GetFullPath() ) )
+                    {
+                        guLogMessage( wxT( "Error trying to create the new podcast channel folder" ) );
+                    }
+                    else
+                    {
+                        m_Db->UpdateItemPaths( LastChannelDir.GetFullPath(), ChannelDir.GetFullPath() );
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Create the channel dir
+            wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                      PodcastChannel.m_Title );
+            if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+            {
+                if( !wxDirExists( ChannelDir.GetFullPath() ) )
+                {
+                    wxMkdir( ChannelDir.GetFullPath(), 0770 );
+                }
             }
         }
 
