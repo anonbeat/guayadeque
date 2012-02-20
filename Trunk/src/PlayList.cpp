@@ -2386,7 +2386,7 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
                 {
                     for( index = 0; index < count; index++ )
                     {
-                        SongList += wxT( " \"" ) + Track.m_FileName + wxT( "\"" );
+                        SongList += wxT( " \"" ) + m_Items[ Selection[ index ] ].m_FileName + wxT( "\"" );
                     }
                     CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
                 }
