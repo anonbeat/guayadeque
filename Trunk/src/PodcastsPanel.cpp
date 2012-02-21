@@ -94,7 +94,8 @@ int guDbPodcasts::GetPodcastChannels( guPodcastChannelArray * channels )
                "podcastch_author, podcastch_ownername, podcastch_owneremail, "
                "podcastch_category, podcastch_image, "
                "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs" );
+               "FROM podcastchs "
+               "ORDER BY podcastch_title" );
 
   dbRes = ExecuteQuery( query );
 
@@ -1264,41 +1265,16 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
     {
         wxSetCursor( * wxHOURGLASS_CURSOR );
 
-        wxString LastTitle = PodcastChannel.m_Title;
-
         ChannelEditor->GetEditData();
 
-        if( LastTitle != PodcastChannel.m_Title )
+        // Create the channel dir
+        wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
+                                  PodcastChannel.m_Title );
+        if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
         {
-            wxFileName LastChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) + LastTitle );
-            if( LastChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+            if( !wxDirExists( ChannelDir.GetFullPath() ) )
             {
-                wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                          PodcastChannel.m_Title );
-                if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
-                {
-                    if( wxRename( LastChannelDir.GetFullPath(), ChannelDir.GetFullPath() ) )
-                    {
-                        guLogMessage( wxT( "Error trying to create the new podcast channel folder" ) );
-                    }
-                    else
-                    {
-                        m_Db->UpdateItemPaths( LastChannelDir.GetFullPath(), ChannelDir.GetFullPath() );
-                    }
-                }
-            }
-        }
-        else
-        {
-            // Create the channel dir
-            wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
-                                      PodcastChannel.m_Title );
-            if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
-            {
-                if( !wxDirExists( ChannelDir.GetFullPath() ) )
-                {
-                    wxMkdir( ChannelDir.GetFullPath(), 0770 );
-                }
+                wxMkdir( ChannelDir.GetFullPath(), 0770 );
             }
         }
 

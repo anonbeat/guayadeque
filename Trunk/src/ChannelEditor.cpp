@@ -93,12 +93,8 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
         }
     }
 
-	wxBoxSizer * TitleSizer = new wxBoxSizer( wxHORIZONTAL );
-
-	m_Title = new wxTextCtrl( this, wxID_ANY, channel->m_Title, wxDefaultPosition, wxDefaultSize, 0 );
-	TitleSizer->Add( m_Title, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
-
-	FlexGridSizer->Add( TitleSizer, 1, wxEXPAND, 5 );
+	m_Title = new wxStaticText( this, wxID_ANY, channel->m_Title, wxDefaultPosition, wxDefaultSize, 0 );
+	FlexGridSizer->Add( m_Title, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
 	DescLabel = new wxStaticText( this, wxID_ANY, _( "Description:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	DescLabel->Wrap( -1 );
@@ -204,7 +200,7 @@ void guChannelEditor::OnDownloadChoice( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guChannelEditor::GetEditData( void )
 {
-    m_PodcastChannel->m_Title = m_Title->GetValue();
+    //m_PodcastChannel->m_Title = m_Title->GetValue();
     m_PodcastChannel->m_DownloadType = m_DownloadChoice->GetSelection();
     m_PodcastChannel->m_DownloadText = ( m_PodcastChannel->m_DownloadType == 1 ) ?
                                         m_DownloadText->GetValue() : wxT( "" );

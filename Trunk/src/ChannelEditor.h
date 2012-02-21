@@ -50,8 +50,8 @@ class guChannelEditor : public wxDialog
   protected:
     guPodcastChannel *  m_PodcastChannel;
 	wxStaticBitmap  *   m_Image;
-	//wxStaticText    *   m_Title;
-	wxTextCtrl      *   m_Title;
+	wxStaticText    *   m_Title;
+	//wxTextCtrl      *   m_Title;
 	wxStaticText    *   m_DescText;
 	wxStaticText    *   m_AuthorText;
 	wxStaticText    *   m_OwnerText;
