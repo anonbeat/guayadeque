@@ -53,6 +53,15 @@
 #define guPODCASTS_COLUMN_COUNT         10
 
 // -------------------------------------------------------------------------------- //
+enum guPodcastSorting {
+    guPODCAST_CHANNEL_SORT_NONE,
+    guPODCAST_CHANNEL_SORT_TITLE,
+    guPODCAST_CHANNEL_SORT_TIME,
+    guPODCAST_CHANNEL_SORT_AUTHOR,
+    guPODCAST_CHANNEL_SORT_CATEGORY
+};
+
+// -------------------------------------------------------------------------------- //
 class guDbPodcasts : public guDb
 {
   protected :
