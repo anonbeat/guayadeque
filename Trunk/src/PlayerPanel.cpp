@@ -2274,12 +2274,12 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 
         if( State == guMEDIASTATE_PLAYING )
         {
-            if( State == guMEDIASTATE_PLAYING )
-            {
-                m_IsSkipping = true;
-                LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                    ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) );
-            }
+//            if( State == guMEDIASTATE_PLAYING )
+//            {
+            m_IsSkipping = true;
+            LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
+                ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) );
+//            }
         }
         else
         {

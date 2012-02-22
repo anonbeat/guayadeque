@@ -1182,25 +1182,18 @@ void guMediaViewer::ImportFiles( guTrackArray * tracks )
 {
     if( tracks )
     {
-        if( tracks->Count() )
+        guImportFiles * ImportFiles = new guImportFiles( this, this, tracks );
+        if( ImportFiles )
         {
-            guImportFiles * ImportFiles = new guImportFiles( this, this, tracks );
-            if( ImportFiles )
+            if( ImportFiles->ShowModal() == wxID_OK  )
             {
-                if( ImportFiles->ShowModal() == wxID_OK  )
-                {
-                    m_MainFrame->ImportFiles( this, tracks, ImportFiles->GetCopyToOption(), ImportFiles->GetCopyToPath() );
-                }
-                else
-                {
-                    delete tracks;
-                }
-                ImportFiles->Destroy();
+                m_MainFrame->ImportFiles( this, tracks, ImportFiles->GetCopyToOption(), ImportFiles->GetCopyToPath() );
             }
-        }
-        else
-        {
-            delete tracks;
+            else
+            {
+                delete tracks;
+            }
+            ImportFiles->Destroy();
         }
     }
 }
