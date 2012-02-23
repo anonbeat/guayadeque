@@ -1290,10 +1290,10 @@ wxString inline FileNameEncode( const wxString filename )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype )
+void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forceskip )
 {
     guLogDebug( wxT( "LoadMedia  %i  %i  (%i)" ), m_CurTrackId, m_NextTrackId, m_SavedPlayedTrack );
-    if( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE )
+    if( !forceskip && ( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE ) )
     {
         m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
         m_PlayListCtrl->ClearStopAtEnd();
@@ -2278,7 +2278,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 //            {
             m_IsSkipping = true;
             LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) );
+                ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ), ForceSkip );
 //            }
         }
         else
@@ -2367,7 +2367,8 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
             {
                 LoadMedia( ( event.GetInt() ? ( guFADERPLAYBIN_PLAYTYPE ) event.GetInt() :
                     ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
-                        ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ) );
+                        ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ) ) ),
+                        ForceSkip );
             }
         }
         else
@@ -2464,7 +2465,11 @@ void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
         if( State == guMEDIASTATE_PLAYING )
         {
             m_IsSkipping = true;
-            LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
+
+            bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
+                              ( event.GetEventObject() == m_NextTrackButton );
+            LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ),
+                       ForceSkip );
         }
         //else
         //{
@@ -2516,7 +2521,10 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
         if( State == guMEDIASTATE_PLAYING )
         {
             m_IsSkipping = true;
-            LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ) );
+            bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_PREVTRACK ) ||
+                              ( event.GetEventObject() == m_PrevTrackButton );
+            LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ),
+                        ForceSkip );
         }
         //else
         //{
