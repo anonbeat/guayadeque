@@ -385,10 +385,13 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
             {
                 for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
                 {
-                    ItemTrackId = m_Db->FindTrackFile( PlayList.GetItem( ItemIndex ).m_Location, NULL );
-                    if( ItemTrackId )
+                    if( wxFileExists( PlayList.GetItem( ItemIndex ).m_Location ) )
                     {
-                        PlayListIds.Add( ItemTrackId );
+                        ItemTrackId = m_Db->FindTrackFile( PlayList.GetItem( ItemIndex ).m_Location, NULL );
+                        if( ItemTrackId )
+                        {
+                            PlayListIds.Add( ItemTrackId );
+                        }
                     }
                 }
                 if( PlayListIds.Count() )
