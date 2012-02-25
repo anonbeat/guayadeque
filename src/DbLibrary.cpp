@@ -2936,16 +2936,16 @@ void guDbLibrary::GetAlbums( guAlbumItems * Albums, bool FullList )
             break;
 
         case guALBUMS_ORDER_ARTIST_NAME :
-            query += wxT( "song_artist, song_album, song_disk " );
+            query += wxT( "coalesce(nullif(song_albumartist,''),song_artist) COLLATE NOCASE, song_album, song_disk " );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR :
-            query += wxT( "song_artist, song_year, song_album, song_disk" );
+            query += wxT( "coalesce(nullif(song_albumartist,''),song_artist) COLLATE NOCASE, song_year, song_album, song_disk" );
             break;
 
         case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
         default :
-            query += wxT( "song_artist, song_year DESC, song_album, song_disk" );
+            query += wxT( "coalesce(nullif(song_albumartist,''),song_artist) COLLATE NOCASE, song_year DESC, song_album, song_disk" );
             break;
     }
   }
@@ -3142,18 +3142,7 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
   if( filter )
   {
     subquery = DynPlayListToSQLQuery( filter );
-//    if( DynQuery.Find( wxT( "albums" ) ) == wxNOT_FOUND )
-//        query += wxT( ", albums" );
-//    if( DynQuery.Find( wxT( "artists" ) ) == wxNOT_FOUND )
-//        query += wxT( ", artists " );
-//    query += DynQuery;
-//    query += DynQuery.IsEmpty() ? wxT( " WHERE " ) : wxT( " AND " );
-//    query += wxT( "album_artistid = artist_id AND song_albumid = album_id " );
   }
-//  else
-//  {
-//    query += wxT( ", albums, artists WHERE album_artistid = artist_id AND song_albumid = album_id " );
-//  }
 
   if( textfilters.Count() )
   {
@@ -3178,11 +3167,11 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
       break;
 
     case guALBUMS_ORDER_ARTIST_NAME :
-      query += wxT( "song_artist, song_album " );
+      query += wxT( "coalesce(nullif(song_albumartist, ''),song_artist) COLLATE NOCASE, song_album " );
       break;
 
     case guALBUMS_ORDER_ARTIST_YEAR :
-      query += wxT( "song_artist, song_year" );
+      query += wxT( "coalesce(nullif(song_albumartist,''),song_artist) COLLATE NOCASE, song_year" );
       break;
 
     case guALBUMS_ORDER_ADDEDTIME :
@@ -3191,12 +3180,14 @@ int guDbLibrary::GetAlbums( guAlbumBrowserItemArray * items, guDynPlayList * fil
 
     case guALBUMS_ORDER_ARTIST_YEAR_REVERSE :
     default :
-      query += wxT( "song_artist, song_year DESC" );
+      query += wxT( "coalesce(nullif(song_albumartist,''),song_artist) COLLATE NOCASE, song_year DESC" );
       break;
 
   }
 
   query += wxString::Format( wxT( " LIMIT %i, %i" ), start, count );
+
+  //guLogMessage( wxT( "GetAlbums:\n%s" ), query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
