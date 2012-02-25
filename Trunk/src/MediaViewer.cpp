@@ -1370,16 +1370,7 @@ wxString guMediaViewer::GetSelInfo( void )
 
         case guMEDIAVIEWER_MODE_ALBUMBROWSER :
         {
-            unsigned int AlbumCount = m_AlbumBrowser->GetAlbumsCount();
-            if( AlbumCount > 0 )
-            {
-                unsigned int ItemStart = m_AlbumBrowser->GetItemStart();
-                wxString SelInfo = _( "Albums" ) + wxString::Format( wxT( " %u " ), ItemStart );
-                SelInfo += _( "to" ) + wxString::Format( wxT( " %u " ), guMin( ItemStart + m_AlbumBrowser->GetItemCount(), AlbumCount ) );
-                SelInfo += _( "of" ) + wxString::Format( wxT( " %u " ), AlbumCount );
-                return SelInfo;
-            }
-            break;
+            return m_AlbumBrowser->GetSelInfo();
         }
 
         case guMEDIAVIEWER_MODE_TREEVIEW :

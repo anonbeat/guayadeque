@@ -1120,7 +1120,7 @@ void guAlbumBrowser::SelectAlbum( const int albumid, const bool append, const in
     guTrackArray Tracks;
     wxArrayInt Selections;
     Selections.Add( albumid );
-    if( m_Db->GetAlbumsSongs( Selections, &Tracks ) )
+    if( m_Db->GetAlbumsSongs( Selections, &Tracks, true ) )
     {
         NormalizeTracks( &Tracks );
         if( append )
@@ -1135,7 +1135,7 @@ int guAlbumBrowser::GetAlbumTracks( const int albumid, guTrackArray * tracks )
 {
     wxArrayInt Albums;
     Albums.Add( albumid );
-    return m_Db->GetAlbumsSongs( Albums, tracks );
+    return m_Db->GetAlbumsSongs( Albums, tracks, true );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1206,7 +1206,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
             {
                 guTrackArray Songs;
                 wxString SongList = wxEmptyString;
-                if( m_Db->GetAlbumsSongs( Selection, &Songs ) )
+                if( m_Db->GetAlbumsSongs( Selection, &Songs, true ) )
                 {
                     NormalizeTracks( &Songs );
                     count = Songs.Count();
@@ -1325,7 +1325,7 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid, const int commandi
     wxArrayInt Albums;
     Albums.Add( albumid );
 
-    m_Db->GetAlbumsSongs( Albums, Tracks );
+    m_Db->GetAlbumsSongs( Albums, Tracks, true );
     NormalizeTracks( Tracks );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
@@ -1579,6 +1579,9 @@ void guAlbumBrowser::OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPo
         m_MainSizer->Show( m_BigCoverSizer, true );
 
         Layout();
+
+        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        AddPendingEvent( event );
     }
 }
 
@@ -1707,6 +1710,9 @@ void guAlbumBrowser::DoBackToAlbums( void )
     m_MainSizer->Hide( m_BigCoverSizer, true );
     m_MainSizer->Show( m_AlbumBrowserSizer, true );
     Layout();
+
+    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    AddPendingEvent( event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2381,6 +2387,26 @@ void guAlbumBrowser::OnBigCoverTracksSmartPlaylist( wxCommandEvent &event )
     {
         m_MediaViewer->CreateSmartPlaylist( Tracks[ 0 ].m_ArtistName, Tracks[ 0 ].m_SongName );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guAlbumBrowser::GetSelInfo( void )
+{
+    if( m_BigCoverShowed )
+    {
+        return wxString::Format( wxT( "%u " ), m_BigCoverTracks.Count() ) + _( "Tracks" );
+    }
+    else
+    {
+        if( m_AlbumsCount > 0 )
+        {
+            wxString SelInfo = _( "Albums" ) + wxString::Format( wxT( " %u " ), m_ItemStart + 1 );
+            SelInfo += _( "to" ) + wxString::Format( wxT( " %u " ), guMin( m_ItemStart + m_ItemCount, m_AlbumsCount ) );
+            SelInfo += _( "of" ) + wxString::Format( wxT( " %u " ), m_AlbumsCount );
+            return SelInfo;
+        }
+    }
+    return wxEmptyString;
 }
 
 
