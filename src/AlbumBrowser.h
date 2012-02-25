@@ -337,6 +337,8 @@ class guAlbumBrowser : public wxPanel
 
     void                            SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 
+    wxString                        GetSelInfo( void );
+
     friend class guUpdateAlbumDetails;
     friend class guAlbumBrowserItemPanel;
     friend class guMediaViewer;
