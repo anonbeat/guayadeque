@@ -179,9 +179,9 @@ class guAlbumBrowser : public wxPanel
     wxBoxSizer *                    m_BigCoverSizer;
     wxButton *                      m_BigCoverBackBtn;
     wxStaticBitmap *                m_BigCoverBitmap;
-    wxStaticText *                  m_BigCoverAlbumLabel;
-    wxStaticText *                  m_BigCoverArtistLabel;
-    wxStaticText *                  m_BigCoverDetailsLabel;
+    guAutoScrollText *              m_BigCoverAlbumLabel;
+    guAutoScrollText *              m_BigCoverArtistLabel;
+    guAutoScrollText *              m_BigCoverDetailsLabel;
     wxListBox *                     m_BigCoverTracksListBox;
     guStaticTextArray               m_BigCoverTracksItems;
     guTrackArray                    m_BigCoverTracks;

@@ -37,6 +37,7 @@ class guAutoScrollText : public wxControl
     wxTimer         m_StartTimer;
     int             m_ScrollPos;
     int             m_ScrollQuantum;
+    wxSize          m_DefaultSize;
 
 
     virtual wxSize  DoGetBestSize() const;
@@ -47,7 +48,7 @@ class guAutoScrollText : public wxControl
     void            OnTimer( wxTimerEvent &event );
 
   public :
-    guAutoScrollText( wxWindow * parent, const wxString &label );
+    guAutoScrollText( wxWindow * parent, const wxString &label, const wxSize &size = wxDefaultSize );
     ~guAutoScrollText();
 
     void SetLabel( const wxString &label );

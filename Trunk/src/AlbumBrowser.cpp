@@ -794,46 +794,46 @@ void guAlbumBrowser::CreateControls( void )
 
 	m_BigCoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	wxBoxSizer * BigCoverCenterSizer = new wxBoxSizer( wxHORIZONTAL );
+	wxFlexGridSizer * BigCoverCenterSizer = new wxFlexGridSizer( 1, 5, 0, 0 );
+	BigCoverCenterSizer->AddGrowableCol( 0 );
+	BigCoverCenterSizer->AddGrowableCol( 2 );
+	BigCoverCenterSizer->AddGrowableCol( 3 );
+	BigCoverCenterSizer->AddGrowableCol( 4 );
+	BigCoverCenterSizer->SetFlexibleDirection( wxBOTH );
+	BigCoverCenterSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	BigCoverCenterSizer->Add( 0, 0, 2, wxEXPAND, 5 );
 
 	wxBoxSizer * BigCoverSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_BigCoverBitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 300,300 ), 0 );
+	m_BigCoverBitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 300, 300 ), 0 );
 	BigCoverSizer->Add( m_BigCoverBitmap, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_BigCoverAlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_BigCoverAlbumLabel->Wrap( -1 );
+	m_BigCoverAlbumLabel = new guAutoScrollText( this, wxEmptyString, wxSize( 290, -1 ) );
 	wxFont CurFont = GetFont();
 	CurFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_BigCoverAlbumLabel->SetFont( CurFont );
 	BigCoverSizer->Add( m_BigCoverAlbumLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_BigCoverArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_BigCoverArtistLabel->Wrap( -1 );
+	m_BigCoverArtistLabel = new guAutoScrollText( this, wxEmptyString, wxSize( 290, -1 ) );
 	//m_BigCoverArtistLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
 	BigCoverSizer->Add( m_BigCoverArtistLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
 
-	m_BigCoverDetailsLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_BigCoverDetailsLabel->Wrap( -1 );
+	m_BigCoverDetailsLabel = new guAutoScrollText( this, wxEmptyString, wxSize( 290, -1 ) );
     CurFont = GetFont();
 	CurFont.SetPointSize( CurFont.GetPointSize() - 2 );
 	m_BigCoverDetailsLabel->SetFont( CurFont );
 	BigCoverSizer->Add( m_BigCoverDetailsLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	BigCoverCenterSizer->Add( BigCoverSizer, 0, wxEXPAND, 5 );
+	BigCoverCenterSizer->Add( BigCoverSizer, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
 	BigCoverCenterSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	wxBoxSizer * BigCoverTracksSizer = new wxBoxSizer( wxVERTICAL );
-
 	m_BigCoverTracksListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
 	m_BigCoverTracksListBox->SetBackgroundColour( m_BigCoverDetailsLabel->GetBackgroundColour() );
-	//m_BigCoverTracksListBox->SetMaxSize( wxSize( 450, -1 ) );
-	BigCoverTracksSizer->Add( m_BigCoverTracksListBox, 1, 0, 5 );
+	m_BigCoverTracksListBox->SetMaxSize( wxSize( 450, -1 ) );
 
-	BigCoverCenterSizer->Add( BigCoverTracksSizer, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+	BigCoverCenterSizer->Add( m_BigCoverTracksListBox, 1, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxRIGHT, 5 );
 
 	BigCoverCenterSizer->Add( 0, 0, 2, wxEXPAND, 5 );
 
@@ -854,7 +854,7 @@ void guAlbumBrowser::CreateControls( void )
     // ------------------------------------------------------------------------------------------------------------------
 
     this->SetSizer( m_MainSizer );
-	//this->Layout();
+	BigCoverSizer->Layout();
 
 	m_MainSizer->Hide( m_BigCoverSizer, true );
 	m_MainSizer->FitInside( this );
