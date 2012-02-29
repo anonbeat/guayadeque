@@ -35,7 +35,7 @@ BEGIN_EVENT_TABLE( guAutoScrollText, wxControl )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label ) :
+guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label, const wxSize &size ) :
     wxControl( parent, wxID_ANY )
 {
     m_ScrollPos = 0;
@@ -45,6 +45,7 @@ guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label ) :
     m_StartTimer.SetOwner( this );
     m_ScrollTimer.SetOwner( this );
     //SetBackgroundColour( * wxCYAN );
+    m_DefaultSize = size;
 
     SetLabel( label );
 
@@ -60,7 +61,10 @@ guAutoScrollText::~guAutoScrollText()
 // -------------------------------------------------------------------------------- //
 wxSize guAutoScrollText::DoGetBestSize() const
 {
-    return m_LabelExtent;
+    wxSize RetVal;
+    RetVal.x = ( m_DefaultSize.x != wxNOT_FOUND ) ? wxMin( m_DefaultSize.x, m_LabelExtent.x ) : m_LabelExtent.x;
+    RetVal.y = ( m_DefaultSize.y != wxNOT_FOUND ) ? wxMin( m_DefaultSize.y, m_LabelExtent.y ) : m_LabelExtent.y;
+    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
