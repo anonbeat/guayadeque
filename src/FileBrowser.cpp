@@ -1978,8 +1978,7 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
                 }
             }
 
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( m_MainFrame, evt );
+            m_MediaViewer->UpdatePlaylists();
         }
 
         PlayListAppendDlg->Destroy();
@@ -2116,8 +2115,7 @@ void guFileBrowser::OnItemsSaveToPlayList( wxCommandEvent &event )
                 }
             }
 
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-            wxPostEvent( m_MainFrame, evt );
+            m_MediaViewer->UpdatePlaylists();
         }
 
         PlayListAppendDlg->Destroy();

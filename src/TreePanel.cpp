@@ -1813,8 +1813,9 @@ void guTreeViewPanel::OnTVTracksDeleteDrive( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::SendPlayListUpdatedEvent( void )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    m_MediaViewer->UpdatePlaylists();
 }
 
 // -------------------------------------------------------------------------------- //
