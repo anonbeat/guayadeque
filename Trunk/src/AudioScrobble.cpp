@@ -224,13 +224,15 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
             Track  = guURLEncode( PlayedSongs[ index ].m_TrackName );
             Album  = guURLEncode( PlayedSongs[ index ].m_AlbumName );
             //
-            PostData += wxString::Format( wxT( "a[%u]=%s&t[%u]=%s&i[%u]=%u&o[%u]=%c&r[%u]=%c&l[%u]=%u&b[%u]=%s&n[%u]=%s&m[%u]=&" ),
+            PostData += wxString::Format( wxT( "a[%u]=%s&t[%u]=%s&i[%u]=%u&o[%u]=%c&r[%u]=%c&l[%u]=%s&b[%u]=%s&n[%u]=%s&m[%u]=&" ),
                                 index, Artist.c_str(),
                                 index, Track.c_str(),
                                 index, PlayedSongs[ index ].m_PlayedTime,
                                 index, PlayedSongs[ index ].m_Source,
                                 index, PlayedSongs[ index ].m_Rating,
-                                index, PlayedSongs[ index ].m_TrackLen,
+                                index, ( PlayedSongs[ index ].m_TrackLen ) ?
+                                           wxString::Format( wxT( "%u" ), PlayedSongs[ index ].m_TrackLen ).c_str() :
+                                           wxEmptyString,
                                 index, Album.c_str(),
                                 index, ( PlayedSongs[ index ].m_TrackNum > 0 ) ?
                                            wxString::Format( wxT( "%u" ), PlayedSongs[ index ].m_TrackNum ).c_str() :
@@ -255,7 +257,11 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
                     return true;
                 }
                 else
+                {
+                    guLogMessage( wxT( "AudioScrobble::PlayedTracks: \n%s\n%s" ), m_SubmitUrl.c_str(), PostData.c_str() );
+                    guLogMessage( wxT( "AudioScrobble::Response : " ) + Content );
                     ProcessError( Content );
+                }
             }
         }
     }
@@ -265,7 +271,6 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
 // -------------------------------------------------------------------------------- //
 bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
 {
-    //guLogMessage( wxT( "guAudioScrobbleSender::SubmitNowPlaying" ) );
     wxCurlHTTP  http;
     wxString    PostData;
     wxString    Content;
@@ -282,14 +287,16 @@ bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
     Track  = guURLEncode( cursong->m_TrackName );
     Album  = guURLEncode( cursong->m_AlbumName );
     //
-    PostData += wxString::Format( wxT( "a=%s&t=%s&l=%u&b=%s&n=%s&m=" ),
+    PostData += wxString::Format( wxT( "a=%s&t=%s&l=%s&b=%s&n=%s&m=" ),
                         Artist.c_str(),
                         Track.c_str(),
-                        cursong->m_TrackLen,
+                        ( cursong->m_TrackLen ) ?
+                            wxString::Format( wxT( "%u" ), cursong->m_TrackLen ).c_str() :
+                            wxEmptyString,
                         Album.c_str(),
                         ( cursong->m_TrackNum > 0 ) ?
-                                   wxString::Format( wxT( "%u" ), cursong->m_TrackNum ).c_str() :
-                                   wxEmptyString
+                            wxString::Format( wxT( "%u" ), cursong->m_TrackNum ).c_str() :
+                            wxEmptyString
                         );
 
     //guLogMessage( wxT( "AudioScrobble::NowPlaying : " ) + m_NowPlayUrl + PostData );
@@ -309,7 +316,11 @@ bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
                 return true;
             }
             else
+            {
+                guLogMessage( wxT( "AudioScrobble::NowPlaying : \n%s\n%s" ), m_NowPlayUrl.c_str(), PostData.c_str() );
+                guLogMessage( wxT( "AudioScrobble::Response : " ) + Content );
                 ProcessError( Content );
+            }
         }
     }
     else
@@ -383,6 +394,7 @@ guAudioScrobble::guAudioScrobble( guDbLibrary * db )
     m_LibreFMAudioScrobble = NULL;
     m_PlayedThread = NULL;
     m_NowPlayingInfo = NULL;
+    m_NowPlayingThread = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
@@ -408,6 +420,18 @@ guAudioScrobble::guAudioScrobble( guDbLibrary * db )
 // -------------------------------------------------------------------------------- //
 guAudioScrobble::~guAudioScrobble()
 {
+    if( m_NowPlayingThread )
+    {
+        m_NowPlayingThread->Pause();
+        m_NowPlayingThread->Delete();
+        m_NowPlayingThread = NULL;
+    }
+
+    if( m_NowPlayingInfo )
+    {
+        delete m_NowPlayingInfo;
+    }
+
     if( m_PlayedThread )
     {
         m_PlayedThread->Pause();
@@ -493,15 +517,23 @@ void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
     //guLogMessage( wxT( "guAudioScrobble::SendNowPlayingTrack" ) );
     wxMutexLocker Lock( m_NowPlayingInfoMutex );
 
+    if( m_NowPlayingThread )
+    {
+        m_NowPlayingThread->Pause();
+        m_NowPlayingThread->Delete();
+        m_NowPlayingThread = NULL;
+    }
+
     if( m_NowPlayingInfo )
     {
+        guLogMessage( wxT( "Deleted old NowPLayingInfo..." ) );
         delete m_NowPlayingInfo;
     }
     m_NowPlayingInfo = new guAS_SubmitInfo();
 
-    m_NowPlayingInfo->m_ArtistName = track.m_ArtistName;
-    m_NowPlayingInfo->m_AlbumName  = track.m_AlbumName;
-    m_NowPlayingInfo->m_TrackName  = track.m_SongName;
+    m_NowPlayingInfo->m_ArtistName = track.m_ArtistName.IsEmpty() ? wxT( "Unknown" ) : track.m_ArtistName;
+    m_NowPlayingInfo->m_AlbumName  = track.m_AlbumName.IsEmpty() ? wxT( "Unknown" ) : track.m_AlbumName;
+    m_NowPlayingInfo->m_TrackName  = track.m_SongName.IsEmpty() ? wxT( "Unknown" ) : track.m_SongName;
     m_NowPlayingInfo->m_TrackLen   = track.m_Length / 1000;
     m_NowPlayingInfo->m_TrackNum   = track.m_Number;
 
@@ -510,8 +542,8 @@ void guAudioScrobble::SendNowPlayingTrack( const guCurrentTrack &track )
     if( !SubmitInfo.Count() )
     {
         guLogMessage( wxT( "Now Playing track submit: Now ready to send..." ) );
-        guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, m_NowPlayingInfo );
-        if( !NowPlayingThread )
+        m_NowPlayingThread = new guASNowPlayingThread( this, m_NowPlayingInfo );
+        if( !m_NowPlayingThread )
             guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
 
         m_NowPlayingInfo = NULL;
@@ -538,10 +570,31 @@ void guAudioScrobble::EndPlayedThread( void )
     if( m_NowPlayingInfo )
     {
         guLogMessage( wxT( "Now Playing track submit: Now ready to send..." ) );
-        guASNowPlayingThread * NowPlayingThread  = new guASNowPlayingThread( this, m_NowPlayingInfo );
-        if( !NowPlayingThread )
+
+        if( m_NowPlayingThread )
+        {
+            m_NowPlayingThread->Pause();
+            m_NowPlayingThread->Delete();
+            m_NowPlayingThread = NULL;
+        }
+
+        m_NowPlayingThread = new guASNowPlayingThread( this, m_NowPlayingInfo );
+
+        if( !m_NowPlayingThread )
             guLogError( wxT( "Could no create the AudioScrobble NowPlaying thread" ) );
+
         m_NowPlayingInfo = NULL;
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAudioScrobble::EndNowPlayingThread( void )
+{
+    if( m_NowPlayingThread )
+    {
+        m_NowPlayingThread->Pause();
+        m_NowPlayingThread->Delete();
+        m_NowPlayingThread = NULL;
     }
 }
 
@@ -622,6 +675,10 @@ guASNowPlayingThread::~guASNowPlayingThread()
 {
     if( m_CurrentSong )
         delete m_CurrentSong;
+    if( !TestDestroy() )
+    {
+        m_AudioScrobble->EndNowPlayingThread();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

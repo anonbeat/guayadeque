@@ -133,6 +133,7 @@ class guLibreFMAudioScrobble : public guAudioScrobbleSender
 };
 
 class guMainFrame;
+class guASNowPlayingThread;
 
 // -------------------------------------------------------------------------------- //
 class guAudioScrobble : public wxEvtHandler
@@ -147,6 +148,7 @@ class guAudioScrobble : public wxEvtHandler
         guASPlayedThread *          m_PlayedThread;
         bool                        m_PendingNowPlaying;
         guAS_SubmitInfo *           m_NowPlayingInfo;
+        guASNowPlayingThread *      m_NowPlayingThread;
         wxMutex                     m_NowPlayingInfoMutex;
 
     public :
@@ -159,6 +161,7 @@ class guAudioScrobble : public wxEvtHandler
     void                        SendNowPlayingTrack( const guCurrentTrack &track );
     void                        SendPlayedTrack( const guCurrentTrack &track );
     void                        EndPlayedThread( void );
+    void                        EndNowPlayingThread( void );
 
     void                        OnConfigUpdated( void );
     bool                        IsOk( void );
