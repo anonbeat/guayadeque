@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-02-29 16:32+0000\n"
+"POT-Creation-Date: 2012-03-05 09:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -679,7 +679,7 @@ msgstr ""
 msgid "Tracks Labels Editor"
 msgstr ""
 
-#: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2099
+#: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
 #: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1488
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
@@ -1179,7 +1179,7 @@ msgstr ""
 msgid "Are you sure to delete the selected path ?"
 msgstr ""
 
-#: FileBrowser.cpp:553 FileBrowser.cpp:2206 LabelEditor.cpp:310
+#: FileBrowser.cpp:553 FileBrowser.cpp:2204 LabelEditor.cpp:310
 #: LibPanel.cpp:1227 PlayListPanel.cpp:1108 PodcastsPanel.cpp:1237
 #: PodcastsPanel.cpp:1623 RadioPanel.cpp:561 RadioPanel.cpp:1028
 #: RadioPanel.cpp:1764 TaListBox.cpp:203 TreePanel.cpp:1232
@@ -1234,21 +1234,21 @@ msgstr ""
 msgid "Directories"
 msgstr ""
 
-#: FileBrowser.cpp:2205
+#: FileBrowser.cpp:2203
 msgid "Are you sure to delete the selected files ?"
 msgstr ""
 
-#: FileBrowser.cpp:2223
+#: FileBrowser.cpp:2221
 msgid "There was an error deleting "
 msgstr ""
 
-#: FileBrowser.cpp:2224
+#: FileBrowser.cpp:2222
 msgid ""
 "\n"
 "Continue deleting?"
 msgstr ""
 
-#: FileBrowser.cpp:2225
+#: FileBrowser.cpp:2223
 msgid "Continue"
 msgstr ""
 
@@ -2422,7 +2422,7 @@ msgstr ""
 msgid " smart playlist"
 msgstr ""
 
-#: MediaViewer.cpp:2159 PlayerPanel.cpp:245 PlayerPanel.cpp:2226
+#: MediaViewer.cpp:2159 PlayerPanel.cpp:245 PlayerPanel.cpp:2237
 msgid "Playlist"
 msgstr ""
 
@@ -2509,7 +2509,7 @@ msgstr ""
 msgid "Record to file"
 msgstr ""
 
-#: PlayerPanel.cpp:205 PlayerPanel.cpp:2861
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2872
 msgid "Volume"
 msgstr ""
 
@@ -2517,16 +2517,16 @@ msgstr ""
 msgid "Show the equalizer"
 msgstr ""
 
-#: PlayerPanel.cpp:218 PlayerPanel.cpp:2167
+#: PlayerPanel.cpp:218 PlayerPanel.cpp:2178
 msgid "Smart Play: "
 msgstr ""
 
-#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2170
+#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2181
 #: Preferences.cpp:959
 msgid "Disabled"
 msgstr ""
 
-#: PlayerPanel.cpp:225 PlayerPanel.cpp:2174 Preferences.cpp:1346
+#: PlayerPanel.cpp:225 PlayerPanel.cpp:2185 Preferences.cpp:1346
 #: Preferences.cpp:1381
 msgid "Enabled"
 msgstr ""
@@ -2535,7 +2535,7 @@ msgstr ""
 msgid "Repeat: "
 msgstr ""
 
-#: PlayerPanel.cpp:241 PlayerPanel.cpp:2222 PlayList.cpp:1636
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2233 PlayList.cpp:1636
 #: Preferences.cpp:959
 msgid "Track"
 msgstr ""
@@ -2576,11 +2576,11 @@ msgstr ""
 msgid "Buffering..."
 msgstr ""
 
-#: PlayerPanel.cpp:2215
+#: PlayerPanel.cpp:2226
 msgid "Repeat Mode: "
 msgstr ""
 
-#: PlayerPanel.cpp:2218
+#: PlayerPanel.cpp:2229
 msgid "Off"
 msgstr ""
 

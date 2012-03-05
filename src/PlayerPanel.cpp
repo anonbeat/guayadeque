@@ -1756,6 +1756,8 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                 }
                 else
                 {
+                    m_AudioScrobble->SendPlayedTrack( m_MediaSong );
+
                     ExtractMetaData( Title,
                             m_MediaSong.m_ArtistName,
                             m_MediaSong.m_SongName );
@@ -1773,6 +1775,14 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                         m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
 
                     SendRecordSplitEvent();
+                }
+
+                if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() )
+                {
+                    if( !m_NextTrackId )
+                    {
+                        m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+                    }
                 }
 
                 //guLogDebug( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
