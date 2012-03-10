@@ -185,17 +185,17 @@ int inline guRatingToPopM( const int rating )
 
 // -------------------------------------------------------------------------------- //
 wxImage * GetID3v2ImageType( TagLib::ID3v2::FrameList &framelist,
-            TagLib::ID3v2::AttachedPictureFrame::Type frametype  = TagLib::ID3v2::AttachedPictureFrame::FrontCover );
+            int frametype  = TagLib::ID3v2::AttachedPictureFrame::FrontCover );
 
 wxImage * GetID3v2ImageType( TagLib::ID3v2::FrameList &framelist,
-            TagLib::ID3v2::AttachedPictureFrame::Type frametype )
+            int frametype )
 {
     TagLib::ID3v2::AttachedPictureFrame * PicFrame;
     for( std::list<TagLib::ID3v2::Frame*>::iterator iter = framelist.begin(); iter != framelist.end(); iter++ )
     {
         PicFrame = static_cast<TagLib::ID3v2::AttachedPictureFrame *>( *iter );
 
-        if( PicFrame->type() == frametype )
+        if( ( frametype == wxNOT_FOUND ) || ( PicFrame->type() == frametype ) )
         {
             int ImgDataSize = PicFrame->picture().size();
 
@@ -238,6 +238,10 @@ wxImage * GetID3v2Image( ID3v2::Tag * tagv2 )
     if( !CoverImage )
     {
         CoverImage = GetID3v2ImageType( FrameList, TagLib::ID3v2::AttachedPictureFrame::Other );
+        if( !CoverImage )
+        {
+            CoverImage = GetID3v2ImageType( FrameList, wxNOT_FOUND );
+        }
     }
 
 	return CoverImage;
@@ -1228,14 +1232,14 @@ bool guFlacTagInfo::CanHandleImages( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guFlacTagInfo::GetImage( void )
+wxImage * GetFlacImage( const wxString &filename, int imagetype )
 {
     wxImage * CoverImage = NULL;
 
     FLAC__Metadata_SimpleIterator * iter = FLAC__metadata_simple_iterator_new();
     if( iter )
     {
-        if( FLAC__metadata_simple_iterator_init( iter, m_FileName.mb_str( wxConvFile ), true, false ) )
+        if( FLAC__metadata_simple_iterator_init( iter, filename.mb_str( wxConvFile ), true, false ) )
         {
             while( !CoverImage && FLAC__metadata_simple_iterator_next( iter ) )
             {
@@ -1243,7 +1247,7 @@ wxImage * guFlacTagInfo::GetImage( void )
                 {
                     FLAC__StreamMetadata * block = FLAC__metadata_simple_iterator_get_block( iter );
 
-                    if( block->data.picture.type == FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER )
+                    if( block->data.picture.type == imagetype )
                     {
                         wxMemoryOutputStream ImgOutStream;
 
@@ -1269,6 +1273,20 @@ wxImage * guFlacTagInfo::GetImage( void )
         }
 
         FLAC__metadata_simple_iterator_delete( iter );
+    }
+
+    return CoverImage;
+}
+
+// -------------------------------------------------------------------------------- //
+wxImage * guFlacTagInfo::GetImage( void )
+{
+    wxImage * CoverImage = NULL;
+
+    CoverImage = GetFlacImage( m_FileName, FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER );
+    if( !CoverImage )
+    {
+        CoverImage = GetFlacImage( m_FileName, FLAC__STREAM_METADATA_PICTURE_TYPE_OTHER );
     }
 
     return CoverImage;
