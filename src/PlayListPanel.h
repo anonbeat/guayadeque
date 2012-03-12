@@ -231,6 +231,7 @@ class guPlayListPanel : public guAuiManagerPanel
     void                UpdatePlaylists( void );
 
     void                GetPlaylistTracks( guTrackArray * tracks ) { m_PLTracksListBox->GetAllSongs( tracks ); }
+    int                 GetPlaylistTrackCount( void ) { return m_PLTracksListBox->GetTrackCount(); }
 
     friend class guPLNamesTreeCtrl;
     friend class guMediaViewer;

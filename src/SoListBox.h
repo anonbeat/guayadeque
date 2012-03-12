@@ -119,6 +119,8 @@ class guSoListBox : public guListView
     virtual bool                GetTracksOrderDesc( void ) { return m_TracksOrderDesc; }
     virtual void                SetTracksOrderDesc( const bool orderdesc ) { m_TracksOrderDesc = orderdesc; }
 
+    virtual int                 GetTrackCount( void ) { return m_Items.Count(); }
+
 };
 
 #endif
