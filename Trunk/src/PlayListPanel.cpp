@@ -309,8 +309,15 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 
         Menu.AppendSeparator();
 
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
-        MainFrame->CreateCopyToMenu( &Menu );
+        int TrackCount = m_PlayListPanel->GetPlaylistTrackCount();
+        if( TrackCount )
+        {
+            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+            MainFrame->CreateCopyToMenu( &Menu );
+
+
+        }
+
     }
 
     PopupMenu( &Menu, Point );
@@ -1879,20 +1886,9 @@ void guPlayListPanel::OnPLTracksDeleteDrive( wxCommandEvent &event )
             guTrackArray Tracks;
             m_PLTracksListBox->GetSelectedSongs( &Tracks );
             //
-            m_Db->DeleteLibraryTracks( &Tracks, false );
-            //
-            int Index;
-            int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
-            {
-                if( !wxRemoveFile( Tracks[ Index ].m_FileName ) )
-                {
-                    guLogMessage( wxT( "Error deleting '%s'" ), Tracks[ Index ].m_FileName.c_str() );
-                }
-            }
+            m_MediaViewer->DeleteTracks( &Tracks );
 
-            //m_PLTracksListBox->ReloadItems();
-            m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_MEDIAVIEWER, &Tracks );
+            SendPlayListUpdatedEvent();
         }
     }
 }
