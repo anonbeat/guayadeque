@@ -1756,7 +1756,8 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                 }
                 else
                 {
-                    m_AudioScrobble->SendPlayedTrack( m_MediaSong );
+                    if( m_AudioScrobble )
+                        m_AudioScrobble->SendPlayedTrack( m_MediaSong );
 
                     ExtractMetaData( Title,
                             m_MediaSong.m_ArtistName,
@@ -1781,7 +1782,8 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                 {
                     if( !m_NextTrackId )
                     {
-                        m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
+                        if( m_AudioScrobble )
+                            m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
                     }
                 }
 
