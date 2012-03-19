@@ -1,0 +1,27 @@
+[main]
+host = https://www.transifex.net
+
+[guayadeque.Guayadeque_Application]
+source_file = po/guayadeque.pot
+source_lang = en
+trans.cs_CZ = po/cs/guayadeque.po
+trans.de_DE = po/de/guayadeque.po
+trans.el_GR = po/el/guayadeque.po
+trans.es_ES = po/es/guayadeque.po
+trans.fr_FR = po/fr/guayadeque.po
+trans.hu_HU = po/hu/guayadeque.po
+trans.is_IS = po/is/guayadeque.po
+trans.it_IT = po/it/guayadeque.po
+trans.ja_JP = po/ja/guayadeque.po
+trans.nb_NO = po/nb/guayadeque.po
+trans.nl_NL = po/nl/guayadeque.po
+trans.pl = po/pl/guayadeque.po
+trans.pt_BR = po/pt_BR/guayadeque.po
+trans.pt_PT = po/pt/guayadeque.po
+trans.ru_RU = po/ru/guayadeque.po
+trans.sk_SK = po/sk/guayadeque.po
+trans.sv_SE = po/sv/guayadeque.po
+trans.th_TH = po/th/guayadeque.po
+trans.tr_TR = po/tr/guayadeque.po
+trans.uk_UA = po/uk/guayadeque.po
+

@@ -9,13 +9,13 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-03-19 09:55+0000\n"
 "PO-Revision-Date: 2012-03-19 09:55+0000\n"
-"Last-Translator: anonbeat <anonbeat@gmail.com>\n"
-"Language-Team: Portuguese (Portugal) (http://www.transifex.net/projects/p/guayadeque/language/pt_PT/)\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt_PT\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
+"Language: tr_TR\n"
+"Plural-Forms: nplurals=1; plural=0\n"
 
 #: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
 #: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1433
