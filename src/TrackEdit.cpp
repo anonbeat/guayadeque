@@ -927,7 +927,7 @@ void guTrackEditor::ReadItemData( void )
 
         if( m_MBQuerySetArtistEnabled )
         {
-            m_MBQueryArtistTextCtrl->SetValue( Track->m_ArtistName );
+            m_MBQueryArtistTextCtrl->SetValue( Track->m_AlbumArtist.IsEmpty() ? Track->m_ArtistName : Track->m_AlbumArtist );
             m_MBQueryTitleTextCtrl->SetValue( Track->m_AlbumName );
         }
 
