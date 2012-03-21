@@ -598,6 +598,9 @@ unsigned int RedBookToMTime( const wxString &rbtime )
     guLogMessage( wxT( "RedBookToMTime( '%s' )" ), rbtime.c_str() );
     // 01:23:45
     wxArrayString Sections = wxStringTokenize( rbtime, wxT( ":" ) );
+    if( Sections.Count() != 3 )
+        return 0;
+
     unsigned long Mins;
     unsigned long Secs;
     unsigned long Frames;
