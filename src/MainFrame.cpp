@@ -3200,7 +3200,11 @@ void guMainFrame::OnPageClosed( wxAuiNotebookEvent& event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
 {
-    if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
+    if( !m_CurrentPage )
+    {
+        m_MainStatusBar->SetSelInfo( wxEmptyString );
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_RadioPanel )
     {
         //m_Db->GetRadioCounter( &m_SelCount );
         m_RadioPanel->GetRadioCounter( &m_SelCount );
