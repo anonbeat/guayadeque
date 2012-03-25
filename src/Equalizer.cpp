@@ -200,7 +200,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer00;
 	BandSizer00 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 0 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 0 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 0 ]->Wrap( -1 );
 	BandSizer00->Add( m_Values[ 0 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -217,7 +217,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer01;
 	BandSizer01 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 1 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 1 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 1 ]->Wrap( -1 );
 	BandSizer01->Add( m_Values[ 1 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -234,7 +234,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer02;
 	BandSizer02 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 2 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 2 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 2 ]->Wrap( -1 );
 	BandSizer02->Add( m_Values[ 2 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -251,7 +251,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer03;
 	BandSizer03 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 3 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 3 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 3 ]->Wrap( -1 );
 	BandSizer03->Add( m_Values[ 3 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -268,7 +268,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer04;
 	BandSizer04 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 4 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 4 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 4 ]->Wrap( -1 );
 	BandSizer04->Add( m_Values[ 4 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -285,7 +285,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer05;
 	BandSizer05 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 5 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 5 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 5 ]->Wrap( -1 );
 	BandSizer05->Add( m_Values[ 5 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -302,7 +302,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer06;
 	BandSizer06 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 6 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 6 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 6 ]->Wrap( -1 );
 	BandSizer06->Add( m_Values[ 6 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -319,7 +319,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer07;
 	BandSizer07 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 7 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 7 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 7 ]->Wrap( -1 );
 	BandSizer07->Add( m_Values[ 7 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -336,7 +336,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer08;
 	BandSizer08 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 8 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 8 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 8 ]->Wrap( -1 );
 	BandSizer08->Add( m_Values[ 8 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -353,7 +353,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	wxBoxSizer* BandSizer09;
 	BandSizer09 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 9 ] = new wxStaticText( this, wxID_ANY, wxT("0.0"), wxDefaultPosition, wxDefaultSize, 0 );
+	m_Values[ 9 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Values[ 9 ]->Wrap( -1 );
 	BandSizer09->Add( m_Values[ 9 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
@@ -378,6 +378,15 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	EQBtnSizer->Realize();
 	MainSizer->Add( EQBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
+    int Index;
+    for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
+    {
+        m_Values[ Index ]->SetLabel( wxString::Format( wxT( "%.1f" ), double( m_Bands[ Index ]->GetValue() ) / 10.0 ) );
+
+        m_Bands[ Index ]->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
+        m_Bands[ Index ]->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guEq10Band::OnUpdateLabel ), NULL, this );
+    }
+
 	this->SetSizer( MainSizer );
 	this->Layout();
 
@@ -389,14 +398,6 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 	m_ResetButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnResetPreset ), NULL, this );
 	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnAddPreset ), NULL, this );
 	m_DelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnDelPreset ), NULL, this );
-
-    int Index;
-    for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
-    {
-        m_Bands[ Index ]->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
-        m_Bands[ Index ]->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guEq10Band::OnUpdateLabel ), NULL, this );
-    }
-
 
     if( LastPresetIndex != wxNOT_FOUND )
     {
