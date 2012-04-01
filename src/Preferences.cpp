@@ -136,16 +136,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangChoices.Add( _( "English" ) );
     m_MainLangChoices.Add( _( "French" ) );
     m_MainLangChoices.Add( _( "German" ) );
+    m_MainLangChoices.Add( _( "Greek" ) );
     m_MainLangChoices.Add( _( "Hungarian" ) );
     m_MainLangChoices.Add( _( "Icelandic" ) );
     m_MainLangChoices.Add( _( "Italian" ) );
+    m_MainLangChoices.Add( _( "Japanese" ) );
     m_MainLangChoices.Add( _( "Norwegian Bokmal" ) );
+    m_MainLangChoices.Add( _( "Polish" ) );
     m_MainLangChoices.Add( _( "Portuguese" ) );
     m_MainLangChoices.Add( _( "Portuguese-Brazilian" ) );
     m_MainLangChoices.Add( _( "Russian" ) );
+    m_MainLangChoices.Add( _( "Slovak" ) );
     m_MainLangChoices.Add( _( "Spanish" ) );
     m_MainLangChoices.Add( _( "Swedish" ) );
     m_MainLangChoices.Add( _( "Thai" ) );
+    m_MainLangChoices.Add( _( "Turkish" ) );
     m_MainLangChoices.Add( _( "Ukrainian" ) );
 
     m_MainLangCodes.Add( wxLANGUAGE_DEFAULT );
@@ -154,16 +159,21 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangCodes.Add( wxLANGUAGE_ENGLISH );
     m_MainLangCodes.Add( wxLANGUAGE_FRENCH );
     m_MainLangCodes.Add( wxLANGUAGE_GERMAN );
+    m_MainLangCodes.Add( wxLANGUAGE_GREEK );
     m_MainLangCodes.Add( wxLANGUAGE_HUNGARIAN );
     m_MainLangCodes.Add( wxLANGUAGE_ICELANDIC );
     m_MainLangCodes.Add( wxLANGUAGE_ITALIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_JAPANESE );
     m_MainLangCodes.Add( wxLANGUAGE_NORWEGIAN_BOKMAL );
+    m_MainLangCodes.Add( wxLANGUAGE_POLISH );
     m_MainLangCodes.Add( wxLANGUAGE_PORTUGUESE );
     m_MainLangCodes.Add( wxLANGUAGE_PORTUGUESE_BRAZILIAN );
     m_MainLangCodes.Add( wxLANGUAGE_RUSSIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_SLOVAK );
     m_MainLangCodes.Add( wxLANGUAGE_SPANISH );
     m_MainLangCodes.Add( wxLANGUAGE_SWEDISH );
     m_MainLangCodes.Add( wxLANGUAGE_THAI );
+    m_MainLangCodes.Add( wxLANGUAGE_TURKISH );
     m_MainLangCodes.Add( wxLANGUAGE_UKRAINIAN );
 
     m_LFMLangNames.Add( _( "Default" ) );        m_LFMLangIds.Add( wxEmptyString );
