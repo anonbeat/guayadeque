@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-19 10:52+0000\n"
+"POT-Creation-Date: 2012-04-01 09:23+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,7 +19,7 @@ msgstr ""
 
 #: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
 #: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1433
-#: MainFrame.cpp:4475 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
+#: MainFrame.cpp:4479 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
 #: SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Preferences"
 msgstr ""
@@ -261,7 +261,7 @@ msgstr ""
 msgid "Repeat Current Track"
 msgstr ""
 
-#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3769
+#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3773
 msgid "Save Layout"
 msgstr ""
 
@@ -675,12 +675,12 @@ msgid "Create a smart playlist from this track"
 msgstr ""
 
 #: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2123
-#: PlayListPanel.cpp:1386 TreePanel.cpp:1323
+#: PlayListPanel.cpp:1387 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr ""
 
 #: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
-#: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1495
+#: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1496
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr ""
@@ -1614,7 +1614,7 @@ msgstr ""
 msgid "Are you sure to delete the selected album cover?"
 msgstr ""
 
-#: LibPanel.cpp:1635 PlayListPanel.cpp:1664 TreePanel.cpp:1599
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1665 TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr ""
 
@@ -1657,7 +1657,7 @@ msgid "Radios"
 msgstr ""
 
 #: LocationPanel.cpp:215 MainFrame.cpp:1066 MainFrame.cpp:2775
-#: MainFrame.cpp:3493 PodcastsPanel.cpp:916 Preferences.cpp:243
+#: MainFrame.cpp:3497 PodcastsPanel.cpp:916 Preferences.cpp:243
 msgid "Podcasts"
 msgstr ""
 
@@ -1965,7 +1965,7 @@ msgstr ""
 msgid "Filters"
 msgstr ""
 
-#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4269
+#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4273
 msgid "VU Meters"
 msgstr ""
 
@@ -2034,7 +2034,7 @@ msgstr ""
 msgid "Show/Hide the player playlist panel"
 msgstr ""
 
-#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4287
+#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4291
 msgid "Sources"
 msgstr ""
 
@@ -2054,7 +2054,7 @@ msgstr ""
 msgid "Show/Hide the player vumeter"
 msgstr ""
 
-#: MainFrame.cpp:1375 MainFrame.cpp:4303
+#: MainFrame.cpp:1375 MainFrame.cpp:4307
 msgid "Cover"
 msgstr ""
 
@@ -2287,7 +2287,7 @@ msgid "Stream:"
 msgstr ""
 
 #: MainFrame.cpp:2151 MainFrame.cpp:2221 MainFrame.cpp:2270 MainFrame.cpp:2307
-#: MainFrame.cpp:4478
+#: MainFrame.cpp:4482
 msgid "Copy To..."
 msgstr ""
 
@@ -2295,68 +2295,68 @@ msgstr ""
 msgid "Select destination directory"
 msgstr ""
 
-#: MainFrame.cpp:3208
+#: MainFrame.cpp:3212
 msgid "station"
 msgstr ""
 
-#: MainFrame.cpp:3208
+#: MainFrame.cpp:3212
 msgid "stations"
 msgstr ""
 
-#: MainFrame.cpp:3217
+#: MainFrame.cpp:3221
 msgid "podcast"
 msgstr ""
 
-#: MainFrame.cpp:3217
+#: MainFrame.cpp:3221
 msgid "podcasts"
 msgstr ""
 
-#: MainFrame.cpp:3232
+#: MainFrame.cpp:3236
 msgid "dir"
 msgstr ""
 
-#: MainFrame.cpp:3232
+#: MainFrame.cpp:3236
 msgid "dirs"
 msgstr ""
 
-#: MainFrame.cpp:3234
+#: MainFrame.cpp:3238
 msgid "file"
 msgstr ""
 
-#: MainFrame.cpp:3234
+#: MainFrame.cpp:3238
 msgid "files"
 msgstr ""
 
-#: MainFrame.cpp:3656 MainFrame.cpp:3662 MainFrame.cpp:3665
+#: MainFrame.cpp:3660 MainFrame.cpp:3666 MainFrame.cpp:3669
 msgid "Load this user defined layout"
 msgstr ""
 
-#: MainFrame.cpp:3657
+#: MainFrame.cpp:3661
 msgid "Delete this user defined layout"
 msgstr ""
 
-#: MainFrame.cpp:3662 MainFrame.cpp:3665
+#: MainFrame.cpp:3666 MainFrame.cpp:3669
 msgid "No Layouts Defined"
 msgstr ""
 
-#: MainFrame.cpp:3769
+#: MainFrame.cpp:3773
 msgid "Layout:"
 msgstr ""
 
-#: MainFrame.cpp:3769
+#: MainFrame.cpp:3773
 #, c-format
 msgid "Layout %u"
 msgstr ""
 
-#: MainFrame.cpp:4443 MainFrame.cpp:4464
+#: MainFrame.cpp:4447 MainFrame.cpp:4468
 msgid "Copy the current selected songs to a directory or device"
 msgstr ""
 
-#: MainFrame.cpp:4475
+#: MainFrame.cpp:4479
 msgid "Add Copy To patterns in preferences"
 msgstr ""
 
-#: MainFrame.cpp:4478
+#: MainFrame.cpp:4482
 msgid "Copy the selected tracks to a folder or device"
 msgstr ""
 
@@ -2797,7 +2797,7 @@ msgstr ""
 msgid "Are you sure to delete the selected Playlist?"
 msgstr ""
 
-#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1273
+#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1274
 msgid "Select the playlist file"
 msgstr ""
 
