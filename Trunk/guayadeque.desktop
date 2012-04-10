@@ -21,16 +21,16 @@ Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freede
 TargetEnvironment=Unity
 
 [Stop Shortcut Group]
-Name=Stop (+shit Stop at End)
+Name=Stop (+shift Stop at End)
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Stop
 TargetEnvironment=Unity
 
 [Previous Shortcut Group]
-Name=Prev. (+shit Prev. Album)
+Name=Prev. (+shift Prev. Album)
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Prev
 TargetEnvironment=Unity
 
 [Next Shortcut Group]
-Name=Next (+shit Next Album)
+Name=Next (+shift Next Album)
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Next
 TargetEnvironment=Unity
