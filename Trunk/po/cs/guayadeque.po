@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-03-12 11:40+0000\n"
-"PO-Revision-Date: 2012-02-14 08:26+0000\n"
+"POT-Creation-Date: 2012-04-01 12:39+0100\n"
+"PO-Revision-Date: 2012-04-06 18:34+0000\n"
 "Last-Translator: Mank <Mank1@seznam.cz>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 
 #: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
 #: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1433
-#: MainFrame.cpp:4475 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
+#: MainFrame.cpp:4479 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
 #: SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Preferences"
 msgstr "Možnosti"
@@ -31,7 +31,7 @@ msgid "Add commands in preferences"
 msgstr "Přidat přikazy v možnostech"
 
 #: AAListBox.cpp:132 AlListBox.cpp:249 ArListBox.cpp:134 FileBrowser.cpp:327
-#: FileBrowser.cpp:1100 PlayList.cpp:1507 Preferences.cpp:263
+#: FileBrowser.cpp:1100 PlayList.cpp:1507 Preferences.cpp:273
 #: SoListBox.cpp:464 TreePanel.cpp:346
 msgid "Commands"
 msgstr "Příkazy"
@@ -262,7 +262,7 @@ msgstr "Opakovat všechny Skladby"
 msgid "Repeat Current Track"
 msgstr "Opakovat Aktuální skladbu"
 
-#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3769
+#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3773
 msgid "Save Layout"
 msgstr "Uložit rozložení"
 
@@ -421,7 +421,7 @@ msgstr "Return"
 msgid "Enter"
 msgstr "Enter"
 
-#: Accelerators.cpp:348 Preferences.cpp:1553
+#: Accelerators.cpp:348 Preferences.cpp:1563
 msgid "Left"
 msgstr "Vlevo"
 
@@ -429,7 +429,7 @@ msgstr "Vlevo"
 msgid "Up"
 msgstr "Up"
 
-#: Accelerators.cpp:354 Preferences.cpp:1555
+#: Accelerators.cpp:354 Preferences.cpp:1565
 msgid "Right"
 msgstr "Vpravo"
 
@@ -652,7 +652,7 @@ msgid "Albums Labels Editor"
 msgstr "Editor popisku albumů"
 
 #: AlbumBrowser.cpp:1543 AlListBox.cpp:486 ItemListBox.cpp:64
-#: PlayerFilters.cpp:107 Preferences.cpp:1802 Preferences.cpp:1899
+#: PlayerFilters.cpp:107 Preferences.cpp:1812 Preferences.cpp:1909
 #: SmartMode.cpp:396
 msgid "All"
 msgstr "Všechno"
@@ -676,12 +676,12 @@ msgid "Create a smart playlist from this track"
 msgstr "Generovat Chytrý Seznam Souborů z této Skladby"
 
 #: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2123
-#: PlayListPanel.cpp:1386 TreePanel.cpp:1323
+#: PlayListPanel.cpp:1387 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr "Editor popisků skladeb"
 
 #: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
-#: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1495
+#: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1496
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr "Nepojmenované"
@@ -907,7 +907,7 @@ msgid "Album Artist"
 msgstr "Autor alba"
 
 #: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1648
-#: Preferences.cpp:959 SoListBox.cpp:412 SoListBox.cpp:664
+#: Preferences.cpp:969 SoListBox.cpp:412 SoListBox.cpp:664
 #: TreeViewFilterEditor.cpp:67 TreeViewFilterEditor.cpp:123
 msgid "Album"
 msgstr "Album"
@@ -1042,7 +1042,7 @@ msgstr "Minuty"
 msgid "Random"
 msgstr "Zamíchat"
 
-#: DynamicPlayList.cpp:144 Preferences.cpp:613
+#: DynamicPlayList.cpp:144 Preferences.cpp:623
 msgid "minutes"
 msgstr "minuty"
 
@@ -1071,8 +1071,8 @@ msgid "Dynamic Playlist Editor"
 msgstr "Editor dynamických seznamu skladeb"
 
 #: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2102
-#: PortableMedia.cpp:998 Preferences.cpp:2088 Preferences.cpp:2209
-#: Preferences.cpp:2334 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
+#: PortableMedia.cpp:998 Preferences.cpp:2098 Preferences.cpp:2219
+#: Preferences.cpp:2344 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
 msgid "Name:"
 msgstr "Jméno:"
 
@@ -1257,7 +1257,7 @@ msgstr "Pokračovat"
 msgid " Names Preview "
 msgstr "Náhled jména"
 
-#: FileRenamer.cpp:74 Preferences.cpp:2341
+#: FileRenamer.cpp:74 Preferences.cpp:2351
 msgid "Pattern:"
 msgstr "Vzor:"
 
@@ -1296,7 +1296,7 @@ msgstr "Kopírovací Možnosti"
 msgid "Destination Folder:"
 msgstr "Cílová složka:"
 
-#: ImportFiles.cpp:115 Preferences.cpp:1247
+#: ImportFiles.cpp:115 Preferences.cpp:1257
 msgid "Select a folder"
 msgstr "Označit složku"
 
@@ -1357,12 +1357,12 @@ msgid "mpc files"
 msgstr "mpc soubory"
 
 #: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
-#: MediaViewer.cpp:1397 Preferences.cpp:931
+#: MediaViewer.cpp:1397 Preferences.cpp:941
 msgid "track"
 msgstr "skladba"
 
 #: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
-#: MediaViewer.cpp:1397 Preferences.cpp:1036
+#: MediaViewer.cpp:1397 Preferences.cpp:1046
 msgid "tracks"
 msgstr "skladeb"
 
@@ -1615,7 +1615,7 @@ msgstr "Editor popisků autorů"
 msgid "Are you sure to delete the selected album cover?"
 msgstr "Opravdu smazat ?"
 
-#: LibPanel.cpp:1635 PlayListPanel.cpp:1664 TreePanel.cpp:1599
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1665 TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr "Editor polí"
 
@@ -1658,7 +1658,7 @@ msgid "Radios"
 msgstr "Radia"
 
 #: LocationPanel.cpp:215 MainFrame.cpp:1066 MainFrame.cpp:2775
-#: MainFrame.cpp:3493 PodcastsPanel.cpp:916 Preferences.cpp:243
+#: MainFrame.cpp:3497 PodcastsPanel.cpp:916 Preferences.cpp:253
 msgid "Podcasts"
 msgstr "Podcasty"
 
@@ -1667,7 +1667,7 @@ msgid "File Browser"
 msgstr "Prohlížeč souboru"
 
 #: LocationPanel.cpp:291 MainFrame.cpp:1394 MainFrame.cpp:2746
-#: Preferences.cpp:233 TrackEdit.cpp:400
+#: Preferences.cpp:243 TrackEdit.cpp:400
 msgid "Lyrics"
 msgstr "Texty"
 
@@ -1966,7 +1966,7 @@ msgstr "Vítejte v Guayadeque "
 msgid "Filters"
 msgstr "Filtry"
 
-#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4269
+#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4273
 msgid "VU Meters"
 msgstr "VU Meters"
 
@@ -2035,7 +2035,7 @@ msgstr "Seznam Souborů Přehravače"
 msgid "Show/Hide the player playlist panel"
 msgstr "Zobrazit/Skrýt panel seznamu skladeb"
 
-#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4287
+#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4291
 msgid "Sources"
 msgstr "Zdroje"
 
@@ -2055,7 +2055,7 @@ msgstr "Zobrazit/Skrýt panel filtrů"
 msgid "Show/Hide the player vumeter"
 msgstr "Zobrazit/Skrýt vumetr"
 
-#: MainFrame.cpp:1375 MainFrame.cpp:4303
+#: MainFrame.cpp:1375 MainFrame.cpp:4307
 msgid "Cover"
 msgstr "Obal"
 
@@ -2247,7 +2247,7 @@ msgstr "Vynucený bezmezerový režim"
 msgid "Set playback in gapless mode"
 msgstr "Nastavit přehravání v bezmezerovém režimu"
 
-#: MainFrame.cpp:1578 Preferences.cpp:228
+#: MainFrame.cpp:1578 Preferences.cpp:238
 msgid "Audioscrobble"
 msgstr "Audioscrobble"
 
@@ -2288,7 +2288,7 @@ msgid "Stream:"
 msgstr "Stream:"
 
 #: MainFrame.cpp:2151 MainFrame.cpp:2221 MainFrame.cpp:2270 MainFrame.cpp:2307
-#: MainFrame.cpp:4478
+#: MainFrame.cpp:4482
 msgid "Copy To..."
 msgstr "Kopírovat do..."
 
@@ -2296,68 +2296,68 @@ msgstr "Kopírovat do..."
 msgid "Select destination directory"
 msgstr "Označit cílovou složku"
 
-#: MainFrame.cpp:3208
+#: MainFrame.cpp:3212
 msgid "station"
 msgstr "stanice"
 
-#: MainFrame.cpp:3208
+#: MainFrame.cpp:3212
 msgid "stations"
 msgstr "stanic"
 
-#: MainFrame.cpp:3217
+#: MainFrame.cpp:3221
 msgid "podcast"
 msgstr "podcast"
 
-#: MainFrame.cpp:3217
+#: MainFrame.cpp:3221
 msgid "podcasts"
 msgstr "podcasty"
 
-#: MainFrame.cpp:3232
+#: MainFrame.cpp:3236
 msgid "dir"
 msgstr "Adresář"
 
-#: MainFrame.cpp:3232
+#: MainFrame.cpp:3236
 msgid "dirs"
 msgstr "Adresáře"
 
-#: MainFrame.cpp:3234
+#: MainFrame.cpp:3238
 msgid "file"
 msgstr "Soubor"
 
-#: MainFrame.cpp:3234
+#: MainFrame.cpp:3238
 msgid "files"
 msgstr "Soubory"
 
-#: MainFrame.cpp:3656 MainFrame.cpp:3662 MainFrame.cpp:3665
+#: MainFrame.cpp:3660 MainFrame.cpp:3666 MainFrame.cpp:3669
 msgid "Load this user defined layout"
 msgstr "Načíst uživatelské rozložení"
 
-#: MainFrame.cpp:3657
+#: MainFrame.cpp:3661
 msgid "Delete this user defined layout"
 msgstr "Smazat uživatelské rozložení"
 
-#: MainFrame.cpp:3662 MainFrame.cpp:3665
+#: MainFrame.cpp:3666 MainFrame.cpp:3669
 msgid "No Layouts Defined"
 msgstr "Žádný Layout není definován"
 
-#: MainFrame.cpp:3769
+#: MainFrame.cpp:3773
 msgid "Layout:"
 msgstr "Layout:"
 
-#: MainFrame.cpp:3769
+#: MainFrame.cpp:3773
 #, c-format
 msgid "Layout %u"
 msgstr "Rozložení %u"
 
-#: MainFrame.cpp:4443 MainFrame.cpp:4464
+#: MainFrame.cpp:4447 MainFrame.cpp:4468
 msgid "Copy the current selected songs to a directory or device"
 msgstr "Kopírovat označené skladby do složky/zařízení"
 
-#: MainFrame.cpp:4475
+#: MainFrame.cpp:4479
 msgid "Add Copy To patterns in preferences"
 msgstr "Přidat Kopírovat Do Značek v nastavení"
 
-#: MainFrame.cpp:4478
+#: MainFrame.cpp:4482
 msgid "Copy the selected tracks to a folder or device"
 msgstr "Kopírovat označené soubory do složky/zařízení"
 
@@ -2401,7 +2401,7 @@ msgstr "Nová filtr"
 msgid "Collection"
 msgstr "Kolekce"
 
-#: MediaViewer.cpp:1140 Preferences.cpp:3066
+#: MediaViewer.cpp:1140 Preferences.cpp:3076
 msgid "Select library path"
 msgstr "Vybrat cestu knihovny"
 
@@ -2423,7 +2423,7 @@ msgstr "Nemohu najít album v knihovně\nMěli byste obnovit knihovnu."
 msgid " smart playlist"
 msgstr " Chytrý Seznam Skladeb"
 
-#: MediaViewer.cpp:2159 PlayerPanel.cpp:245 PlayerPanel.cpp:2236
+#: MediaViewer.cpp:2159 PlayerPanel.cpp:245 PlayerPanel.cpp:2238
 msgid "Playlist"
 msgstr "Seznam Skladeb"
 
@@ -2469,7 +2469,7 @@ msgstr "Zobrazit text pro filtraci podcast kanálu"
 msgid "Add search links in preferences"
 msgstr "Přidaní odkazu na hledaní v Možnostech"
 
-#: OnlineLinks.cpp:72 Preferences.cpp:258
+#: OnlineLinks.cpp:72 Preferences.cpp:268
 msgid "Links"
 msgstr "Linky"
 
@@ -2485,8 +2485,8 @@ msgstr "Povolit:"
 msgid "Deny:"
 msgstr "Zakázat:"
 
-#: PlayerFilters.cpp:123 Preferences.cpp:1805 Preferences.cpp:1902
-#: Preferences.cpp:1925 SmartMode.cpp:450
+#: PlayerFilters.cpp:123 Preferences.cpp:1815 Preferences.cpp:1912
+#: Preferences.cpp:1935 SmartMode.cpp:450
 msgid "None"
 msgstr "Nic"
 
@@ -2510,7 +2510,7 @@ msgstr "Stop přehrávání"
 msgid "Record to file"
 msgstr "Nahrát do souboru"
 
-#: PlayerPanel.cpp:205 PlayerPanel.cpp:2871
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2873
 msgid "Volume"
 msgstr "Hlasitost"
 
@@ -2518,17 +2518,17 @@ msgstr "Hlasitost"
 msgid "Show the equalizer"
 msgstr "Zobrazit equalizer"
 
-#: PlayerPanel.cpp:218 PlayerPanel.cpp:2177
+#: PlayerPanel.cpp:218 PlayerPanel.cpp:2179
 msgid "Smart Play: "
 msgstr "Chytré Hraní: "
 
-#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2180
-#: Preferences.cpp:959
+#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2182
+#: Preferences.cpp:969
 msgid "Disabled"
 msgstr "Zakázat"
 
-#: PlayerPanel.cpp:225 PlayerPanel.cpp:2184 Preferences.cpp:1346
-#: Preferences.cpp:1381
+#: PlayerPanel.cpp:225 PlayerPanel.cpp:2186 Preferences.cpp:1356
+#: Preferences.cpp:1391
 msgid "Enabled"
 msgstr "Povolit"
 
@@ -2536,8 +2536,8 @@ msgstr "Povolit"
 msgid "Repeat: "
 msgstr "Opakovat: "
 
-#: PlayerPanel.cpp:241 PlayerPanel.cpp:2232 PlayList.cpp:1636
-#: Preferences.cpp:959
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1636
+#: Preferences.cpp:969
 msgid "Track"
 msgstr "Skladba"
 
@@ -2577,11 +2577,11 @@ msgstr "Zobrazit bitrate aktualní skladby"
 msgid "Buffering..."
 msgstr "Buffering..."
 
-#: PlayerPanel.cpp:2225
+#: PlayerPanel.cpp:2227
 msgid "Repeat Mode: "
 msgstr "Režim Opakování:"
 
-#: PlayerPanel.cpp:2228
+#: PlayerPanel.cpp:2230
 msgid "Off"
 msgstr "Off"
 
@@ -2798,7 +2798,7 @@ msgstr "Zadejte nové jméno seznamu skladeb"
 msgid "Are you sure to delete the selected Playlist?"
 msgstr "Opravdu smazat ?"
 
-#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1273
+#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1274
 msgid "Select the playlist file"
 msgstr "Označit Soubor Seznamu Skladeb"
 
@@ -2918,11 +2918,11 @@ msgstr "vloženo"
 msgid "Portable Media Properties"
 msgstr "Přenosné hudební zařízení Možnosti"
 
-#: PortableMedia.cpp:991 Preferences.cpp:1254
+#: PortableMedia.cpp:991 Preferences.cpp:1264
 msgid " Properties "
 msgstr "Vlastnosti"
 
-#: PortableMedia.cpp:1007 Preferences.cpp:2366
+#: PortableMedia.cpp:1007 Preferences.cpp:2376
 msgid "Path:"
 msgstr "Cesta"
 
@@ -2968,7 +2968,7 @@ msgstr "Jen nepodporvané formaty"
 msgid "always"
 msgstr "pořád"
 
-#: PortableMedia.cpp:1114 Preferences.cpp:1273
+#: PortableMedia.cpp:1114 Preferences.cpp:1283
 msgid "Quality:"
 msgstr "Kvalita:"
 
@@ -3016,7 +3016,7 @@ msgstr "Format seznamu skladeb"
 msgid "Cover format"
 msgstr "Format Obalu"
 
-#: Preferences.cpp:133 Preferences.cpp:169 Preferences.cpp:2519
+#: Preferences.cpp:133 Preferences.cpp:179 Preferences.cpp:2529
 msgid "Default"
 msgstr "Default"
 
@@ -3028,596 +3028,616 @@ msgstr "Český"
 msgid "Dutch"
 msgstr "Holandský"
 
-#: Preferences.cpp:136 Preferences.cpp:170
+#: Preferences.cpp:136 Preferences.cpp:180
 msgid "English"
 msgstr "English"
 
-#: Preferences.cpp:137 Preferences.cpp:171
+#: Preferences.cpp:137 Preferences.cpp:181
 msgid "French"
 msgstr "French"
 
-#: Preferences.cpp:138 Preferences.cpp:172
+#: Preferences.cpp:138 Preferences.cpp:182
 msgid "German"
 msgstr "German"
 
 #: Preferences.cpp:139
+msgid "Greek"
+msgstr "Řečtina"
+
+#: Preferences.cpp:140
 msgid "Hungarian"
 msgstr "Maďarský"
 
-#: Preferences.cpp:140
+#: Preferences.cpp:141
 msgid "Icelandic"
 msgstr "Islandský"
 
-#: Preferences.cpp:141 Preferences.cpp:173
+#: Preferences.cpp:142 Preferences.cpp:183
 msgid "Italian"
 msgstr "Italian"
 
-#: Preferences.cpp:142
+#: Preferences.cpp:143
+msgid "Japanese"
+msgstr "Japonština"
+
+#: Preferences.cpp:144
 msgid "Norwegian Bokmal"
 msgstr "Norwegian Bokmal"
 
-#: Preferences.cpp:143 Preferences.cpp:174
+#: Preferences.cpp:145
+msgid "Polish"
+msgstr "Polština"
+
+#: Preferences.cpp:146 Preferences.cpp:184
 msgid "Portuguese"
 msgstr "Portuguese"
 
-#: Preferences.cpp:144
+#: Preferences.cpp:147
 msgid "Portuguese-Brazilian"
 msgstr "Brazilská Portugalština"
 
-#: Preferences.cpp:145
+#: Preferences.cpp:148
 msgid "Russian"
 msgstr "Ruský"
 
-#: Preferences.cpp:146 Preferences.cpp:175
+#: Preferences.cpp:149
+msgid "Slovak"
+msgstr "Slovenština"
+
+#: Preferences.cpp:150 Preferences.cpp:185
 msgid "Spanish"
 msgstr "Spanish"
 
-#: Preferences.cpp:147
+#: Preferences.cpp:151
 msgid "Swedish"
 msgstr "Švédský"
 
-#: Preferences.cpp:148
+#: Preferences.cpp:152
 msgid "Thai"
 msgstr "Thajský"
 
-#: Preferences.cpp:149
+#: Preferences.cpp:153
+msgid "Turkish"
+msgstr "Turečtina"
+
+#: Preferences.cpp:154
 msgid "Ukrainian"
 msgstr "Ukrajinský"
 
-#: Preferences.cpp:204
+#: Preferences.cpp:214
 msgid "General"
 msgstr "Hlavní"
 
-#: Preferences.cpp:208
+#: Preferences.cpp:218
 msgid "Collections"
 msgstr "Kolekce"
 
-#: Preferences.cpp:213
+#: Preferences.cpp:223
 msgid "Playback"
 msgstr "Přehrávání"
 
-#: Preferences.cpp:218
+#: Preferences.cpp:228
 msgid "Crossfader"
 msgstr "Crossfader"
 
-#: Preferences.cpp:223
+#: Preferences.cpp:233
 msgid "Record"
 msgstr "Záznam"
 
-#: Preferences.cpp:238
+#: Preferences.cpp:248
 msgid "Online"
 msgstr "Online"
 
-#: Preferences.cpp:268
+#: Preferences.cpp:278
 msgid "Copy to"
 msgstr "Kopírovat do"
 
-#: Preferences.cpp:273
+#: Preferences.cpp:283
 msgid "Shortcuts"
 msgstr "Zkratky"
 
-#: Preferences.cpp:355
+#: Preferences.cpp:365
 msgid " Accept "
 msgstr " Budiž "
 
-#: Preferences.cpp:357
+#: Preferences.cpp:367
 msgid " Cancel "
 msgstr " Storno "
 
-#: Preferences.cpp:571
+#: Preferences.cpp:581
 msgid " On Start "
 msgstr "Při startě"
 
-#: Preferences.cpp:575 Preferences.cpp:1617
+#: Preferences.cpp:585 Preferences.cpp:1627
 msgid "Language:"
 msgstr "Jazyk:"
 
-#: Preferences.cpp:586
+#: Preferences.cpp:596
 msgid "(Needs restart)"
 msgstr "(vyžaduje restart)"
 
-#: Preferences.cpp:592
+#: Preferences.cpp:602
 msgid "Show splash screen"
 msgstr "Zobrazit úvodní obrazovku"
 
-#: Preferences.cpp:596
+#: Preferences.cpp:606
 msgid "Start minimized"
 msgstr "Spouštět minimalizovaně"
 
-#: Preferences.cpp:602
+#: Preferences.cpp:612
 msgid "Restore position for tracks longer than"
 msgstr "Obnovit pozici pro skladby delší než"
 
-#: Preferences.cpp:609
+#: Preferences.cpp:619
 msgid "set the minimun length in minutes to save track position"
 msgstr "Nastavit minimální délku skladby v minutách pro ukládaní pozice skladby"
 
-#: Preferences.cpp:619
+#: Preferences.cpp:629
 msgid "Load default layout"
 msgstr "Načíst Stadartní Layout"
 
-#: Preferences.cpp:625
+#: Preferences.cpp:635
 msgid " Behaviour "
 msgstr "Chování"
 
-#: Preferences.cpp:627
+#: Preferences.cpp:637
 msgid "Activate task bar icon"
 msgstr "Zapnout ikonu v oznamovací oblasti"
 
-#: Preferences.cpp:642
+#: Preferences.cpp:652
 msgid "Integrate into SoundMenu"
 msgstr "Integrovat do SoundMenu"
 
-#: Preferences.cpp:648
+#: Preferences.cpp:658
 msgid "Enqueue as default action"
 msgstr "Do fronty jako defaultní akce"
 
-#: Preferences.cpp:652
+#: Preferences.cpp:662
 msgid "Drop files clear playlist"
 msgstr "Odstranit soubory ze seznamu skladeb"
 
-#: Preferences.cpp:656
+#: Preferences.cpp:666
 msgid "Instant text search"
 msgstr "Rychlé Hledaní "
 
-#: Preferences.cpp:660
+#: Preferences.cpp:670
 msgid "When searching, pressing enter queues the result"
 msgstr "Když Hledate, zmačkněte enter pro frontu výsledků"
 
-#: Preferences.cpp:665
+#: Preferences.cpp:675
 msgid "Show CD cover frame in player"
 msgstr "Zobrazit Obal v CD-rámu v přehravači"
 
-#: Preferences.cpp:671
+#: Preferences.cpp:681
 msgid " On Close "
 msgstr "Při zavření"
 
-#: Preferences.cpp:673
+#: Preferences.cpp:683
 msgid "Save playlist on close"
 msgstr "Uložit seznam skladeb při ukončení"
 
-#: Preferences.cpp:677
+#: Preferences.cpp:687
 msgid "Close to task bar icon"
 msgstr "Zavírat do oznamovací oblasti"
 
-#: Preferences.cpp:682
+#: Preferences.cpp:692
 msgid "Ask confirmation on exit"
 msgstr "Ptát se při ukončení"
 
-#: Preferences.cpp:724
+#: Preferences.cpp:734
 msgid " Collections "
 msgstr " Kolekce "
 
-#: Preferences.cpp:772
+#: Preferences.cpp:782
 msgid " Paths "
 msgstr "Cesty"
 
-#: Preferences.cpp:792
+#: Preferences.cpp:802
 msgid " Words to detect covers "
 msgstr "Slova pro detekci obalu"
 
-#: Preferences.cpp:820 Preferences.cpp:2327
+#: Preferences.cpp:830 Preferences.cpp:2337
 msgid " Options "
 msgstr "Možnosti"
 
-#: Preferences.cpp:822
+#: Preferences.cpp:832
 msgid "Update when opened "
 msgstr "Obnovit když otevírá"
 
-#: Preferences.cpp:826
+#: Preferences.cpp:836
 msgid "Create playlists on scan"
 msgstr "Vytvořit Seznamu Skladeb při scanovaní"
 
-#: Preferences.cpp:831
+#: Preferences.cpp:841
 msgid "Follow symbolic links on scan"
 msgstr "Následovat symbolické linky při scanovaní"
 
-#: Preferences.cpp:835
+#: Preferences.cpp:845
 msgid "Scan embedded covers in audio files"
 msgstr "Prohledat na vložene obaly v audio souborech"
 
-#: Preferences.cpp:840
+#: Preferences.cpp:850
 msgid "Embed rating, play count and labels"
 msgstr "Vkládat do Souboru hodnocení,počet hraní a popisky"
 
-#: Preferences.cpp:846
+#: Preferences.cpp:856
 msgid "Default copy action"
 msgstr "Standartní Kopírovací akce"
 
-#: Preferences.cpp:927
+#: Preferences.cpp:937
 msgid "Play random"
 msgstr "Zamíchat"
 
-#: Preferences.cpp:931
+#: Preferences.cpp:941
 msgid "album"
 msgstr "Album"
 
-#: Preferences.cpp:939
+#: Preferences.cpp:949
 msgid "when playlist is empty"
 msgstr "Pokud seznam skladeb prázdný"
 
-#: Preferences.cpp:945
+#: Preferences.cpp:955
 msgid "Delete played tracks from playlist"
 msgstr "Smazat přehrané skladby z seznamu"
 
-#: Preferences.cpp:949
+#: Preferences.cpp:959
 msgid "Show notifications"
 msgstr "Zobrazit Notifikace"
 
-#: Preferences.cpp:955
+#: Preferences.cpp:965
 msgid "ReplayGain mode:"
 msgstr ""
 
-#: Preferences.cpp:966
+#: Preferences.cpp:976
 msgid "PreAmp:"
 msgstr ""
 
-#: Preferences.cpp:985
-msgid " Random / Smart play modes "
-msgstr ""
-
 #: Preferences.cpp:995
+msgid " Random / Smart play modes "
+msgstr " Nahodný / Chytrý mód hraní "
+
+#: Preferences.cpp:1005
 msgid "Tracks left to start search"
 msgstr "Počet skladeb po kterých se začne vyhledávat"
 
-#: Preferences.cpp:1003
+#: Preferences.cpp:1013
 msgid "Tracks added each time"
 msgstr "Skladeb přidaných na jedno hledaní"
 
-#: Preferences.cpp:1012
+#: Preferences.cpp:1022
 msgid "Max played tracks kept in playlist"
 msgstr "Maximální počet skladeb , které zůstanou v seznamu skladeb"
 
-#: Preferences.cpp:1020
+#: Preferences.cpp:1030
 msgid "Don't repeat last"
 msgstr "Neopakovat poslední hrané"
 
-#: Preferences.cpp:1028
+#: Preferences.cpp:1038
 msgid "artists or"
 msgstr "autor nebo"
 
-#: Preferences.cpp:1044
+#: Preferences.cpp:1054
 msgid " Silence detector "
 msgstr "Detektor ticha"
 
-#: Preferences.cpp:1049
+#: Preferences.cpp:1059
 msgid "Skip at"
 msgstr "Přeskočit na"
 
-#: Preferences.cpp:1068
+#: Preferences.cpp:1078
 msgid "In the last"
 msgstr ""
 
-#: Preferences.cpp:1078 Preferences.cpp:1311
+#: Preferences.cpp:1088 Preferences.cpp:1321
 msgid "seconds"
 msgstr "vteřin"
 
-#: Preferences.cpp:1086
+#: Preferences.cpp:1096
 msgid " Output device "
 msgstr " Výstupní Zařízení "
 
-#: Preferences.cpp:1089
+#: Preferences.cpp:1099
 msgid "Automatic"
 msgstr "Automatické"
 
-#: Preferences.cpp:1090
+#: Preferences.cpp:1100
 msgid "GConf Defined"
 msgstr "Gconf definované"
 
-#: Preferences.cpp:1139
+#: Preferences.cpp:1149
 msgid " Crossfader "
 msgstr " Crossfader "
 
-#: Preferences.cpp:1146
+#: Preferences.cpp:1156
 msgid "Fade-out length:"
 msgstr ""
 
-#: Preferences.cpp:1155
+#: Preferences.cpp:1165
 msgid "Select the length of the fade out. 0 for gapless playback"
 msgstr "Označit délku pro fade out. 0 pro  bezmezerové přehrávání"
 
-#: Preferences.cpp:1158
+#: Preferences.cpp:1168
 msgid "Fade-in length:"
 msgstr ""
 
-#: Preferences.cpp:1167
+#: Preferences.cpp:1177
 msgid "Select the length of the fade in"
 msgstr "Označit délku fade in efektu"
 
-#: Preferences.cpp:1170
+#: Preferences.cpp:1180
 msgid "Fade-in volume:"
 msgstr ""
 
-#: Preferences.cpp:1179
+#: Preferences.cpp:1189
 msgid "Select the initial volume of the fade in"
 msgstr "Označit počáteční hlasitost fade in efektu"
 
-#: Preferences.cpp:1182
+#: Preferences.cpp:1192
 msgid "Fade-in start:"
 msgstr ""
 
-#: Preferences.cpp:1191
+#: Preferences.cpp:1201
 msgid "Select at which volume of the fade out the fade in starts"
 msgstr "Označit hlasitost fade out / fade in efektu (začátku ef.)"
 
-#: Preferences.cpp:1235
+#: Preferences.cpp:1245
 msgid " Record "
 msgstr "Záznam"
 
-#: Preferences.cpp:1237
+#: Preferences.cpp:1247
 msgid "Enable recording"
 msgstr "Povolit nahrávání"
 
-#: Preferences.cpp:1243
+#: Preferences.cpp:1253
 msgid "Save to:"
 msgstr "Uložit do"
 
-#: Preferences.cpp:1261 Preferences.cpp:2348
+#: Preferences.cpp:1271 Preferences.cpp:2358
 msgid "Format:"
 msgstr "Format:"
 
-#: Preferences.cpp:1278 Transcode.cpp:343
+#: Preferences.cpp:1288 Transcode.cpp:343
 msgid "Very High"
 msgstr "Velmi vysoký"
 
-#: Preferences.cpp:1279 Transcode.cpp:344
+#: Preferences.cpp:1289 Transcode.cpp:344
 msgid "High"
 msgstr "Vysoký"
 
-#: Preferences.cpp:1280 Transcode.cpp:347
+#: Preferences.cpp:1290 Transcode.cpp:347
 msgid "Normal"
 msgstr "Normální"
 
-#: Preferences.cpp:1281 Transcode.cpp:348
+#: Preferences.cpp:1291 Transcode.cpp:348
 msgid "Low"
 msgstr "Nízký"
 
-#: Preferences.cpp:1282 Transcode.cpp:349
+#: Preferences.cpp:1292 Transcode.cpp:349
 msgid "Very Low"
 msgstr "Velmi nízký"
 
-#: Preferences.cpp:1294
+#: Preferences.cpp:1304
 msgid "Split tracks"
 msgstr "Sloučit skladby"
 
-#: Preferences.cpp:1301
+#: Preferences.cpp:1311
 msgid "Delete tracks shorter than"
 msgstr "Smazat Skladby Kratší než"
 
-#: Preferences.cpp:1344
+#: Preferences.cpp:1354
 msgid " Last.fm audioscrobble "
 msgstr " Last.fm audioscrobble "
 
-#: Preferences.cpp:1354 Preferences.cpp:1389
+#: Preferences.cpp:1364 Preferences.cpp:1399
 msgid "Username:"
 msgstr "Uživatelské Jméno:"
 
-#: Preferences.cpp:1362 Preferences.cpp:1397
+#: Preferences.cpp:1372 Preferences.cpp:1407
 msgid "Password:"
 msgstr "Heslo:"
 
-#: Preferences.cpp:1379
+#: Preferences.cpp:1389
 msgid " Libre.fm audioscrobble "
 msgstr " Libre.fm audioscrobble "
 
-#: Preferences.cpp:1418
+#: Preferences.cpp:1428
 msgid "Join the Guayadeque Last.fm users group"
 msgstr "Připojit k  Guayadeque Last.fm uživatelské skupině"
 
-#: Preferences.cpp:1450
+#: Preferences.cpp:1460
 msgid " Sources "
 msgstr " Zdroje "
 
-#: Preferences.cpp:1494
+#: Preferences.cpp:1504
 msgid " Targets "
 msgstr " Cíle "
 
-#: Preferences.cpp:1534
+#: Preferences.cpp:1544
 msgid " Font "
 msgstr " Font "
 
-#: Preferences.cpp:1536
+#: Preferences.cpp:1546
 msgid "Font:"
 msgstr "Font:"
 
-#: Preferences.cpp:1548
+#: Preferences.cpp:1558
 msgid "Align:"
 msgstr "Zarovnání:"
 
-#: Preferences.cpp:1554
+#: Preferences.cpp:1564
 msgid "Center"
 msgstr "Uprostřed"
 
-#: Preferences.cpp:1596
+#: Preferences.cpp:1606
 msgid " Filters "
 msgstr "Filtry"
 
-#: Preferences.cpp:1615
+#: Preferences.cpp:1625
 msgid " Language "
 msgstr " Jazyk"
 
-#: Preferences.cpp:1631
+#: Preferences.cpp:1641
 msgid " Browser command "
 msgstr " Přikaz Webového Prohlížeče"
 
-#: Preferences.cpp:1652
+#: Preferences.cpp:1662
 msgid " Minimum radio allowed bit rate "
 msgstr " Minimmální povolený bitrate radií "
 
-#: Preferences.cpp:1660
+#: Preferences.cpp:1670
 msgid " Player online buffer size "
 msgstr "buffer při online přehrávaní"
 
-#: Preferences.cpp:1696
+#: Preferences.cpp:1706
 msgid " Podcasts "
 msgstr " Podcasts "
 
-#: Preferences.cpp:1700
+#: Preferences.cpp:1710
 msgid "Destination directory:"
 msgstr "Cílová cesta"
 
-#: Preferences.cpp:1704
+#: Preferences.cpp:1714
 msgid "Select podcasts folder"
 msgstr "Označit podcast složku"
 
-#: Preferences.cpp:1712
+#: Preferences.cpp:1722
 msgid "Check every"
 msgstr "Kontrolovat každou"
 
-#: Preferences.cpp:1717
+#: Preferences.cpp:1727
 msgid "Hour"
 msgstr "Hodina"
 
-#: Preferences.cpp:1717
+#: Preferences.cpp:1727
 msgid "Day"
 msgstr "Den"
 
-#: Preferences.cpp:1717
+#: Preferences.cpp:1727
 msgid "Week"
 msgstr "Týden"
 
-#: Preferences.cpp:1717
+#: Preferences.cpp:1727
 msgid "Month"
 msgstr "Měsíc"
 
-#: Preferences.cpp:1728
+#: Preferences.cpp:1738
 msgid "Delete after"
 msgstr "Smazat po"
 
-#: Preferences.cpp:1737
+#: Preferences.cpp:1747
 msgid "Days"
 msgstr "Dny"
 
-#: Preferences.cpp:1737
+#: Preferences.cpp:1747
 msgid "Weeks"
 msgstr "Týdny"
 
-#: Preferences.cpp:1737
+#: Preferences.cpp:1747
 msgid "Months"
 msgstr "Měsíce"
 
-#: Preferences.cpp:1746
+#: Preferences.cpp:1756
 msgid "Only if played"
 msgstr "Pokud přehrané"
 
-#: Preferences.cpp:1774 Preferences.cpp:1867 RadioGenreEditor.cpp:37
+#: Preferences.cpp:1784 Preferences.cpp:1877 RadioGenreEditor.cpp:37
 msgid " Genres "
 msgstr "Žánry"
 
-#: Preferences.cpp:1808 Preferences.cpp:1905
+#: Preferences.cpp:1818 Preferences.cpp:1915
 msgid "Invert"
 msgstr "Otočit"
 
-#: Preferences.cpp:1822
+#: Preferences.cpp:1832
 msgid "Audio format:"
 msgstr "Format Audia:"
 
-#: Preferences.cpp:1833
+#: Preferences.cpp:1843
 msgid "Torrent command:"
 msgstr " Přikaz torentu"
 
-#: Preferences.cpp:1919
+#: Preferences.cpp:1929
 msgid "Membership :"
 msgstr "Membership :"
 
-#: Preferences.cpp:1926
+#: Preferences.cpp:1936
 msgid "Streaming"
 msgstr "Streaming"
 
-#: Preferences.cpp:1927
+#: Preferences.cpp:1937
 msgid "Downloading"
 msgstr "Stahuje"
 
-#: Preferences.cpp:1941
+#: Preferences.cpp:1951
 msgid "Username :"
 msgstr "Uživatelské Jméno:"
 
-#: Preferences.cpp:1949
+#: Preferences.cpp:1959
 msgid "Password :"
 msgstr "Heslo:"
 
-#: Preferences.cpp:1967
+#: Preferences.cpp:1977
 msgid "Stream as :"
 msgstr "Stream jako"
 
-#: Preferences.cpp:1981
+#: Preferences.cpp:1991
 msgid "Download as :"
 msgstr "Stahnout jako:"
 
-#: Preferences.cpp:1985
+#: Preferences.cpp:1995
 msgid "Download Page"
 msgstr "Stranka stahnovaní"
 
-#: Preferences.cpp:2026
+#: Preferences.cpp:2036
 msgid " Links "
 msgstr "Linky"
 
-#: Preferences.cpp:2081
+#: Preferences.cpp:2091
 msgid "URL:"
 msgstr "URL:"
 
-#: Preferences.cpp:2106
+#: Preferences.cpp:2116
 msgid " Define URLs using "
 msgstr " Definovat URL podle "
 
-#: Preferences.cpp:2112
+#: Preferences.cpp:2122
 msgid ""
 "2 letters language code\n"
 "Text to search"
 msgstr "2 znakový kód jazyků\nText pro Hledaní"
 
-#: Preferences.cpp:2149
+#: Preferences.cpp:2159
 msgid " Commands "
 msgstr "Příkazy"
 
-#: Preferences.cpp:2202
+#: Preferences.cpp:2212
 msgid "Command:"
 msgstr "Příkaz"
 
-#: Preferences.cpp:2227
+#: Preferences.cpp:2237
 msgid " Define commands using "
 msgstr " Definovat přikaz podle "
 
-#: Preferences.cpp:2233
+#: Preferences.cpp:2243
 msgid ""
 "Album path\n"
 "Album cover file path\n"
 "Track path"
 msgstr "Cesta Album \nCesta Obalu Albu\nCesta Skladby"
 
-#: Preferences.cpp:2270
+#: Preferences.cpp:2280
 msgid " Patterns "
 msgstr "Vzor:"
 
-#: Preferences.cpp:2382
+#: Preferences.cpp:2392
 msgid "Remove source files"
 msgstr "Odstranit zdrojove soubory"
 
-#: Preferences.cpp:2399
+#: Preferences.cpp:2409
 msgid " Define patterns using "
 msgstr " Definovat značky podla "
 
-#: Preferences.cpp:2405
+#: Preferences.cpp:2415
 msgid ""
 "Artist\n"
 "Album Artist\n"
@@ -3625,7 +3645,7 @@ msgid ""
 "Album"
 msgstr "Autor\nAutor Alba\n{aa} nebo {a}\nAlbum"
 
-#: Preferences.cpp:2413
+#: Preferences.cpp:2423
 msgid ""
 "Composer\n"
 "Disk\n"
@@ -3633,7 +3653,7 @@ msgid ""
 "Genre"
 msgstr "Skladatel\nDisk\nSoubor\nŽánr"
 
-#: Preferences.cpp:2421
+#: Preferences.cpp:2431
 msgid ""
 "Index\n"
 "Number\n"
@@ -3641,55 +3661,55 @@ msgid ""
 "Year"
 msgstr "Index\nČíslo\nNázev\nRok"
 
-#: Preferences.cpp:2477
+#: Preferences.cpp:2487
 msgid " Accelerators "
 msgstr " Klavesové Zkratky "
 
-#: Preferences.cpp:2482
+#: Preferences.cpp:2492
 msgid "Action"
 msgstr "Akce"
 
-#: Preferences.cpp:2486
+#: Preferences.cpp:2496
 msgid "Key"
 msgstr "Klíč"
 
-#: Preferences.cpp:2918 Preferences.cpp:2938
+#: Preferences.cpp:2928 Preferences.cpp:2948
 msgid "Collection: "
 msgstr "Kolekce"
 
-#: Preferences.cpp:2918 Preferences.cpp:2938
+#: Preferences.cpp:2928 Preferences.cpp:2948
 msgid "Enter the collection name"
 msgstr "Zadat Jméno Kolekce"
 
-#: Preferences.cpp:3044
+#: Preferences.cpp:3054
 msgid "Change library path"
 msgstr "Změnit cestu ke knihovně"
 
-#: Preferences.cpp:3122 Preferences.cpp:3142
+#: Preferences.cpp:3132 Preferences.cpp:3152
 msgid "Word: "
 msgstr "Slovo:"
 
-#: Preferences.cpp:3122 Preferences.cpp:3142
+#: Preferences.cpp:3132 Preferences.cpp:3152
 msgid "Enter the text to find covers"
 msgstr "Zadejte text pro nalezení obalu"
 
-#: Preferences.cpp:3631 Preferences.cpp:3661
+#: Preferences.cpp:3641 Preferences.cpp:3671
 msgid "Filter: "
 msgstr "Filtr"
 
-#: Preferences.cpp:3631
+#: Preferences.cpp:3641
 msgid "Enter the text to filter"
 msgstr "Zadejte řetězec filtru"
 
-#: Preferences.cpp:3661
+#: Preferences.cpp:3671
 msgid "Edit the text to filter"
 msgstr "Zadejte řetězec filtru"
 
-#: Preferences.cpp:4174
+#: Preferences.cpp:4184
 msgid "Select path"
 msgstr "Označit Cestu"
 
-#: Preferences.cpp:4372
+#: Preferences.cpp:4382
 msgid "Key used by '"
 msgstr "Klič pouziván pro"
 
