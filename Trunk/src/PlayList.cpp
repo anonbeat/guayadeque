@@ -254,7 +254,7 @@ void guPlayList::OnDropBegin( void )
     if( GetItemCount() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "general" ) ) )
+        if( Config->ReadBool( wxT( "DropFilesClearPlaylist" ), false, wxT( "general" ) ) )
         {
             ClearItems();
             RefreshAll();
@@ -307,7 +307,7 @@ void guPlayList::OnDropEnd( void )
     // Once finished send the update guPlayList event to the guPlayList object
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "general" ) ) )
+    if( Config->ReadBool( wxT( "DropFilesClearPlaylist" ), false, wxT( "general" ) ) )
     {
         event.SetExtraLong( 1 );
     }
