@@ -144,7 +144,7 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
                     NULL,
                     "EndSessionResponse" );
 
-                dbus_bool_t = true;
+                dbus_bool_t IsOk = true;
 
                 const char * Reason = "No reason given";
 
