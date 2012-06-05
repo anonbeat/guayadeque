@@ -660,7 +660,7 @@ void guPrefDialog::BuildGeneralPage( void )
 	BehaviSizer->Add( m_EnqueueChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_DropFilesChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Drop files clear playlist"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_DropFilesChkBox->SetValue( m_Config->ReadBool( wxT( "DropFilesClearPlayList" ), false, wxT( "general" ) ) );
+    m_DropFilesChkBox->SetValue( m_Config->ReadBool( wxT( "DropFilesClearPlaylist" ), false, wxT( "general" ) ) );
 	BehaviSizer->Add( m_DropFilesChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_InstantSearchChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Instant text search" ), wxDefaultPosition, wxDefaultSize, 0 );
