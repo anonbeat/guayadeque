@@ -1949,6 +1949,7 @@ int guMediaVieweriPodDevice::CopyTo( const guTrack * track, wxString &filename )
     iPodTrack->type2 = track->m_Format == wxT( "mp3" ) ? 1 : 0;
     iPodTrack->compilation = 0; //!track->m_AlbumArtist.IsEmpty();
     iPodTrack->mediatype = ITDB_MEDIATYPE_AUDIO;
+    iPodTrack->time_added = track->m_AddedTime;
 
     wxString CoverPath;
     if( track->m_CoverId && track->m_MediaViewer )
