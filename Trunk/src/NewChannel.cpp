@@ -108,7 +108,7 @@ guNewPodcastChannelSelector::guNewPodcastChannelSelector( wxWindow * parent ) :
 	DirectoryTopSizer->Add( m_DirectoryInfoStaticText, 1, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	m_FilterDirectory = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_FilterDirectory->SetToolTip( _( "Search in the podcast directoy" ) );
+	m_FilterDirectory->SetToolTip( _( "Search in the podcast directory" ) );
 	DirectoryTopSizer->Add( m_FilterDirectory, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT, 5 );
 
 	m_DirectoryReload = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
