@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-05-07 19:48+0000\n"
+"PO-Revision-Date: 2012-07-16 09:54+0000\n"
 "Last-Translator: Irmak Bıçakçıgil <red.nihi@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2963,7 +2963,7 @@ msgstr ""
 
 #: PortableMedia.cpp:1101
 msgid "Unsupported formats only"
-msgstr ""
+msgstr "Sadece desteklenmeyen biçimler"
 
 #: PortableMedia.cpp:1101
 msgid "always"

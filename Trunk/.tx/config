@@ -24,4 +24,6 @@ trans.sv_SE = po/sv/guayadeque.po
 trans.th_TH = po/th/guayadeque.po
 trans.tr_TR = po/tr/guayadeque.po
 trans.uk_UA = po/uk/guayadeque.po
+trans.bg = po/bg/guayadeque.po
+
 
