@@ -6,12 +6,13 @@
 #   <helix84@centrum.sk>, 2011.
 #   <linux@slavino.sk>, 2012.
 # Matej Moško <matej.mosko@gmail.com>, 2011.
+# Slavko  <linux@slavino.sk>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-05-22 18:00+0000\n"
+"PO-Revision-Date: 2012-07-16 14:10+0000\n"
 "Last-Translator: Slavko <linux@slavino.sk>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -183,7 +184,7 @@ msgstr "Audio Scrobbling"
 
 #: Accelerators.cpp:110 MainFrame.cpp:1492 PlayList.cpp:1601
 msgid "Clear Playlist"
-msgstr "Vyčistiť Playlist"
+msgstr "Vyprázdniť Playlist"
 
 #: Accelerators.cpp:111
 msgid "Close Window"
@@ -201,7 +202,7 @@ msgstr "Upraviť popisky"
 
 #: Accelerators.cpp:114 FileBrowser.cpp:375 FileBrowser.cpp:1154
 msgid "Edit Tracks"
-msgstr "Upraviť Skladby"
+msgstr "Upraviť skladby"
 
 #: Accelerators.cpp:116
 msgid "Enqueue After Track"
@@ -573,7 +574,7 @@ msgstr "Zahrnúť obal"
 
 #: AlbumBrowser.cpp:394 AlbumBrowser.cpp:1852
 msgid "Embed the cover to the selected album tracks"
-msgstr "Zahrnúť obal do zvolených stôp albumu"
+msgstr "Zahrnúť obal do zvolených skladieb albumu"
 
 #: AlbumBrowser.cpp:405 AlListBox.cpp:318 FileBrowser.cpp:763
 #: RadioPanel.cpp:730
@@ -651,7 +652,7 @@ msgstr "Kopírovať informácie o albume do schránky"
 
 #: AlbumBrowser.cpp:1354 LibPanel.cpp:1149 TreePanel.cpp:1059
 msgid "Albums Labels Editor"
-msgstr ""
+msgstr "Editor menoviek albumov"
 
 #: AlbumBrowser.cpp:1543 AlListBox.cpp:486 ItemListBox.cpp:64
 #: PlayerFilters.cpp:107 Preferences.cpp:1812 Preferences.cpp:1909
@@ -680,7 +681,7 @@ msgstr ""
 #: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2123
 #: PlayListPanel.cpp:1387 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
-msgstr ""
+msgstr "Editor menoviek skladieb"
 
 #: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
 #: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1496
@@ -711,12 +712,12 @@ msgstr "Prehrať aktuálne zvolené albumy"
 
 #: AlListBox.cpp:270
 msgid "Add current selected albums to the Playlist"
-msgstr ""
+msgstr "Pridať aktuálne zvolené albumy do playlistu"
 
 #: AlListBox.cpp:278 AlListBox.cpp:284 AlListBox.cpp:290 CoListBox.cpp:120
 #: CoListBox.cpp:127 CoListBox.cpp:134
 msgid "Add current selected albums to the Playlist as Next Tracks"
-msgstr ""
+msgstr "Pridať aktuálne zvolený album do playlistu ako Ďalšie skladby"
 
 #: AlListBox.cpp:294 CoListBox.cpp:139
 msgid "Add the selected albums after"
@@ -764,7 +765,7 @@ msgstr "Prehrať aktuálne zvolených umelcov"
 
 #: ArListBox.cpp:155
 msgid "Add current selected artists to playlist"
-msgstr ""
+msgstr "Pridať aktuálne zvolených umelcov do playlistu"
 
 #: ArListBox.cpp:191
 msgid "Edit the labels assigned to the selected artists"
@@ -836,7 +837,7 @@ msgstr "Prosím, potvrďte"
 
 #: ConfirmExit.cpp:39
 msgid "Are you sure you want to exit the application?"
-msgstr "Ste si istý, že chcete ukončiť aplikáciu?"
+msgstr "Naozaj chcete ukončiť aplikáciu?"
 
 #: ConfirmExit.cpp:45
 msgid "Don't ask again"
@@ -877,7 +878,7 @@ msgstr "Vložiť do skladby"
 #: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1777 DbLibrary.cpp:1789
 #: DbLibrary.cpp:1855 DbLibrary.cpp:1867 Jamendo.cpp:642 PlayerPanel.cpp:1453
 msgid "Unknown"
-msgstr "Neznáme"
+msgstr "Neznámy"
 
 #: DbLibrary.cpp:643
 msgid "Recently added tracks"
@@ -1070,7 +1071,7 @@ msgstr ""
 
 #: DynamicPlayList.cpp:440
 msgid "Dynamic Playlist Editor"
-msgstr ""
+msgstr "Editor dynamického Playlistu"
 
 #: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2102
 #: PortableMedia.cpp:998 Preferences.cpp:2098 Preferences.cpp:2219
@@ -1128,15 +1129,15 @@ msgstr "Prehrať zvolený priečinok"
 
 #: FileBrowser.cpp:346
 msgid "Add the selected folder to playlist"
-msgstr ""
+msgstr "Pridať zvolenú zložku do Playlistu"
 
 #: FileBrowser.cpp:376
 msgid "Edit the tracks in the selected folder"
-msgstr "Upraviť stopy v zvolenom priečinku"
+msgstr "Upraviť skladby v zvolenej zložke"
 
 #: FileBrowser.cpp:384
 msgid "Add the tracks in the selected folder to a playlist"
-msgstr ""
+msgstr "Pridať skladby zvolenej zložky do Playlistu"
 
 #: FileBrowser.cpp:391 FileBrowser.cpp:1170
 msgid "Copy"
@@ -1180,7 +1181,7 @@ msgstr "Odstrániť zvolený priečinok"
 
 #: FileBrowser.cpp:552
 msgid "Are you sure to delete the selected path ?"
-msgstr "naozaj chcete odstrániť zvolenú cestu?"
+msgstr "Naozaj chcete odstrániť zvolenú cestu?"
 
 #: FileBrowser.cpp:553 FileBrowser.cpp:2204 LabelEditor.cpp:310
 #: LibPanel.cpp:1227 PlayListPanel.cpp:1115 PodcastsPanel.cpp:1237
@@ -1239,7 +1240,7 @@ msgstr "Priečinky"
 
 #: FileBrowser.cpp:2203
 msgid "Are you sure to delete the selected files ?"
-msgstr "Ste si istý, že chcete vymazať vybrané súbory?"
+msgstr "Naozaj chcete vymazať vybrané súbory?"
 
 #: FileBrowser.cpp:2221
 msgid "There was an error deleting "
@@ -1461,15 +1462,15 @@ msgstr ""
 #: LabelEditor.cpp:286 RadioPanel.cpp:1010 RadioPanel.cpp:1049
 #: TaListBox.cpp:185 TaListBox.cpp:226
 msgid "Label Name: "
-msgstr ""
+msgstr "Názov menovky: "
 
 #: LabelEditor.cpp:286 RadioPanel.cpp:1010 TaListBox.cpp:185
 msgid "Please enter the label name"
-msgstr ""
+msgstr "Prosím, zadajte názov menovky"
 
 #: LabelEditor.cpp:309 RadioPanel.cpp:1027 TaListBox.cpp:202
 msgid "Are you sure to delete the selected labels?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolené menovky?"
 
 #: LastFMPanel.cpp:440 LastFMPanel.cpp:675
 msgid "Less..."
@@ -1482,25 +1483,25 @@ msgstr "Viac..."
 #: LastFMPanel.cpp:557 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
 #: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164
 msgid "Play the artist tracks"
-msgstr "Prehrať stopy umelca"
+msgstr "Prehrať skladby umelca"
 
 #: LastFMPanel.cpp:561 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
 #: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168
 msgid "Enqueue the artist tracks to the playlist"
-msgstr ""
+msgstr "Zaradiť skladby umelca do Playlistu"
 
 #: LastFMPanel.cpp:597
 msgid "Copy the artist name to clipboard"
-msgstr ""
+msgstr "Kopírovať meno umelca do schránky"
 
 #: LastFMPanel.cpp:605 LastFMPanel.cpp:867 LastFMPanel.cpp:1063
 #: LastFMPanel.cpp:1268 LastFMPanel.cpp:1473 LastFMPanel.cpp:1598
 msgid "Visit last.fm page for this item"
-msgstr ""
+msgstr "Navštíviť stránku last.fm tejto položky"
 
 #: LastFMPanel.cpp:630
 msgid "There is no information available for this artist."
-msgstr ""
+msgstr "Nie je dostupná informácia o tomto umelcovi."
 
 #: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
 msgid "Show Artist Info"
@@ -1508,7 +1509,7 @@ msgstr "Zobraziť informácie o umelcovi"
 
 #: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
 msgid "Update the information with the current selected artist"
-msgstr ""
+msgstr "Aktualizovať informácie z aktuálne zvoleného umelca"
 
 #: LastFMPanel.cpp:1055
 msgid "Copy the artist info to clipboard"
@@ -1516,22 +1517,22 @@ msgstr "Kopírovať informácie o umelcovi do schránky"
 
 #: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
 msgid "Search Track"
-msgstr "Hľadať stopu"
+msgstr "Hľadať skladbu"
 
 #: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
 msgid "Search the track in the library"
-msgstr "Hľadať stopu v knižnici"
+msgstr "Hľadať skladbu v knižnici"
 
 #: LastFMPanel.cpp:1260 LastFMPanel.cpp:1465
 msgid "Copy the track info to clipboard"
-msgstr "Kopírovať informácie o stope do schránky"
+msgstr "Kopírovať informácie o skladbe do schránky"
 
 #: LastFMPanel.cpp:1359
 #, c-format
 msgid ""
 "%s\n"
 "%i plays by %u users"
-msgstr ""
+msgstr "%s\n%i prehratí %u používateľmi"
 
 #: LastFMPanel.cpp:1590
 msgid "Copy the event info to clipboard"
@@ -1539,11 +1540,11 @@ msgstr "Kopírovať informácie o udalosti do schránky"
 
 #: LastFMPanel.cpp:1665 LyricsPanel.cpp:81
 msgid "Follow player"
-msgstr ""
+msgstr "Nasledovať prehrávač"
 
 #: LastFMPanel.cpp:1691 LyricsPanel.cpp:121 TrackEdit.cpp:380
 msgid "Track:"
-msgstr "Stopa:"
+msgstr "Skladba:"
 
 #: LastFMPanel.cpp:1711
 msgid "Artist Info"
@@ -1555,7 +1556,7 @@ msgstr "Naj albumy"
 
 #: LastFMPanel.cpp:1788
 msgid "Top Tracks"
-msgstr "Naj stopy"
+msgstr "Naj skladby"
 
 #: LastFMPanel.cpp:1829
 msgid "Similar Artists"
@@ -1563,7 +1564,7 @@ msgstr "Podobní umelci"
 
 #: LastFMPanel.cpp:1870
 msgid "Similar Tracks"
-msgstr "Podobné stopy"
+msgstr "Podobné skladby"
 
 #: LastFMPanel.cpp:1911
 msgid "Events"
@@ -1603,29 +1604,29 @@ msgstr "Hodnotenia"
 #: LibPanel.cpp:349 LibPanel.cpp:356 LibPanel.cpp:536 LocationPanel.cpp:436
 #: MainFrame.cpp:1215
 msgid "Composers"
-msgstr ""
+msgstr "Skladatelia"
 
 #: LibPanel.cpp:538 LocationPanel.cpp:441 MainFrame.cpp:1220
 msgid "Album Artists"
-msgstr ""
+msgstr "Autori albumov"
 
 #: LibPanel.cpp:958 TreePanel.cpp:1059
 msgid "Artist Labels Editor"
-msgstr ""
+msgstr "Editor menoviek umelcov"
 
 #: LibPanel.cpp:1226
 msgid "Are you sure to delete the selected album cover?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť obaly zvolených albumov?"
 
 #: LibPanel.cpp:1635 PlayListPanel.cpp:1665 TreePanel.cpp:1599
 msgid "Field Editor"
-msgstr ""
+msgstr "Editor polí"
 
 #: LibPanel.cpp:2774
 msgid ""
 "Are you sure to delete the selected tracks from your drive?\n"
 "This will permanently erase the selected tracks."
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolené skladby zo svojho disku?\nZvolené skladby budú nenávratne odstránené."
 
 #: LibPanel.cpp:2775
 msgid "Remove tracks from drive"
@@ -1645,7 +1646,7 @@ msgstr "Lokálna hudba"
 
 #: LocationPanel.cpp:99
 msgid "Online Music"
-msgstr ""
+msgstr "Online hudba"
 
 #: LocationPanel.cpp:101
 msgid "Portable Devices"
@@ -1690,7 +1691,7 @@ msgstr "Textové hľadanie"
 
 #: LocationPanel.cpp:319 MainFrame.cpp:999
 msgid "Show/Hide the radio text search"
-msgstr ""
+msgstr "Zobraziť/Skryť hľadanie textu rádia"
 
 #: LocationPanel.cpp:324 MainFrame.cpp:1004
 msgid "Show/Hide the radio labels"
@@ -1762,11 +1763,11 @@ msgstr "Zobraziť umelcov knižnice"
 
 #: LocationPanel.cpp:436 MainFrame.cpp:1215
 msgid "View the library composers"
-msgstr ""
+msgstr "Zobraziť knižnicu skaldateľov"
 
 #: LocationPanel.cpp:441 MainFrame.cpp:1220
 msgid "View the library album artists"
-msgstr ""
+msgstr "Zobraziť knižnicu umelcov albumu"
 
 #: LocationPanel.cpp:446 MainFrame.cpp:1225
 msgid "View the library albums"
@@ -1782,11 +1783,11 @@ msgstr "Zobraziť hodnotenia knižnice"
 
 #: LocationPanel.cpp:461
 msgid "Play Counts"
-msgstr ""
+msgstr "Počet prehratí"
 
 #: LocationPanel.cpp:461 MainFrame.cpp:1240
 msgid "View the library play counts"
-msgstr ""
+msgstr "Zobraziť počet prehratí knižnice"
 
 #: LocationPanel.cpp:466 LocationPanel.cpp:470 MainFrame.cpp:1245
 #: MainFrame.cpp:1249 TreePanel.cpp:89
@@ -1795,11 +1796,11 @@ msgstr "Knižnica"
 
 #: LocationPanel.cpp:476 MainFrame.cpp:1255
 msgid "Album Browser"
-msgstr ""
+msgstr "Správca albumov"
 
 #: LocationPanel.cpp:476 MainFrame.cpp:1255
 msgid "View the collection album browser"
-msgstr ""
+msgstr "Zobraziť správcu albumov zbierky"
 
 #: LocationPanel.cpp:481 MainFrame.cpp:1260 TreePanel.cpp:828
 #: TreePanel.cpp:853
@@ -1808,12 +1809,12 @@ msgstr "Strom"
 
 #: LocationPanel.cpp:481 MainFrame.cpp:1260
 msgid "View the collection tree view"
-msgstr ""
+msgstr "Zobraziť stromový pohľad znierky"
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1265 MediaViewer.cpp:235
 #: PlayListPanel.cpp:808 PlayListPanel.cpp:834 PortableMedia.cpp:1168
 msgid "Playlists"
-msgstr ""
+msgstr "Playlisty"
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1265
 msgid "View the collection playlists"
@@ -1833,60 +1834,60 @@ msgstr "Importovať súbory do zbierky"
 
 #: LyricsPanel.cpp:82
 msgid "Search the lyrics for the current playing track"
-msgstr ""
+msgstr "Hľadať texty aktuálne prehrávanej skladby"
 
 #: LyricsPanel.cpp:88
 msgid "Configure lyrics preferences"
-msgstr ""
+msgstr "Nastaviť predvoľby textu"
 
 #: LyricsPanel.cpp:92 TrackEdit.cpp:388
 msgid "Search for lyrics"
-msgstr ""
+msgstr "Hľadať text"
 
 #: LyricsPanel.cpp:97
 msgid "Edit the lyrics"
-msgstr ""
+msgstr "Upraviť text"
 
 #: LyricsPanel.cpp:103
 msgid "Save the lyrics"
-msgstr ""
+msgstr "Uložiť text"
 
 #: LyricsPanel.cpp:108
 msgid "Search the lyrics on the web"
-msgstr ""
+msgstr "Hľadať text na webe"
 
 #: LyricsPanel.cpp:287
 msgid "Copy the content of the lyric to clipboard"
-msgstr ""
+msgstr "Kopírovať obsah textu do schránky"
 
 #: LyricsPanel.cpp:299
 msgid "Paste the content of the lyric from clipboard"
-msgstr ""
+msgstr "Vložiť obsah textu zo schránky"
 
 #: LyricsPanel.cpp:308
 msgid "Print the content of the lyrics"
-msgstr "Hľadať stopu v knižnici"
+msgstr ""
 
 #: LyricsPanel.cpp:442 LyricsPanel.cpp:561 LyricsPanel.cpp:844
 #: LyricsPanel.cpp:846
 msgid "Searching..."
-msgstr ""
+msgstr "Hľadanie"
 
 #: LyricsPanel.cpp:757 LyricsPanel.cpp:850
 msgid "No lyrics found"
-msgstr ""
+msgstr "Text nenájdený"
 
 #: LyricsPanel.cpp:842
 msgid "Lyrics from "
-msgstr ""
+msgstr "Texty z "
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Target Editor"
-msgstr ""
+msgstr "Editor cieľov textov"
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Source Editor"
-msgstr ""
+msgstr "Editor zdrojov textov"
 
 #: LyricsPanel.cpp:2111
 msgid "Type:"
@@ -1950,11 +1951,11 @@ msgstr "Koniec:"
 
 #: LyricsPanel.cpp:2551
 msgid "Exclude option editor"
-msgstr ""
+msgstr "Editor volieb vylúčenia"
 
 #: LyricsPanel.cpp:2557
 msgid "Not Found option editor"
-msgstr ""
+msgstr "Editor volieb nenájdených"
 
 #: LyricsPanel.cpp:2558 LyricsPanel.cpp:2559
 msgid "Tag:"
@@ -1962,7 +1963,7 @@ msgstr "Značka:"
 
 #: MainFrame.cpp:248
 msgid "Welcome to Guayadeque "
-msgstr ""
+msgstr "Vitajte v Guayadeque "
 
 #: MainFrame.cpp:263 MainFrame.cpp:357 TreeViewFilterEditor.cpp:54
 msgid "Filters"
@@ -1987,11 +1988,11 @@ msgstr "Vytvoriť novú zbierku"
 
 #: MainFrame.cpp:976
 msgid "Show/Hide the file browser panel"
-msgstr ""
+msgstr "Zobraziť/Skryť panel správcu súborov"
 
 #: MainFrame.cpp:1016
 msgid "Update the radio stations"
-msgstr ""
+msgstr "Aktualizovať stanice rádia"
 
 #: MainFrame.cpp:1027 MainFrame.cpp:2612
 msgid "Radio"
@@ -2011,7 +2012,7 @@ msgstr ""
 
 #: MainFrame.cpp:1119
 msgid "Show the selected portable devices"
-msgstr ""
+msgstr "Zobraziť zvolené prenosné zariadenia"
 
 #: MainFrame.cpp:1126
 msgid "No Device Found"
@@ -2031,11 +2032,11 @@ msgstr "ukladá aktuálny vzhľad"
 
 #: MainFrame.cpp:1343
 msgid "Player Playlist"
-msgstr ""
+msgstr "Playlist prehrávača"
 
 #: MainFrame.cpp:1344
 msgid "Show/Hide the player playlist panel"
-msgstr ""
+msgstr "Zobraziť/Skryť panel Plalistu prehrávača"
 
 #: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4291
 msgid "Sources"
@@ -2047,11 +2048,11 @@ msgstr "Zobraziť/Skryť umiestnenia"
 
 #: MainFrame.cpp:1359
 msgid "Player Filters"
-msgstr ""
+msgstr "Filtre prehrávača"
 
 #: MainFrame.cpp:1360
 msgid "Show/Hide the player filters panel"
-msgstr ""
+msgstr "Zobraziť/Skryť panel filtrovania prehrávača"
 
 #: MainFrame.cpp:1368
 msgid "Show/Hide the player vumeter"
@@ -2075,11 +2076,11 @@ msgstr "Zobraziť/Skryť panel Last.fm"
 
 #: MainFrame.cpp:1395
 msgid "Show/Hide the lyrics panel"
-msgstr ""
+msgstr "Zobraziť/Skryť panel textov"
 
 #: MainFrame.cpp:1405
 msgid "Show/Restore the main window in full screen"
-msgstr ""
+msgstr "Zobraziť/Obnoviť hlavné okno v celej obrazovke"
 
 #: MainFrame.cpp:1410
 msgid "Statusbar"
@@ -2091,11 +2092,11 @@ msgstr "Zobraziť/Skryť stavový panel"
 
 #: MainFrame.cpp:1416
 msgid "Show Captions"
-msgstr ""
+msgstr "Zobraziť titulky"
 
 #: MainFrame.cpp:1417
 msgid "Show/Hide the windows caption"
-msgstr ""
+msgstr "Zobraziť skryť titulok okna"
 
 #: MainFrame.cpp:1424
 msgid "Close Current Tab"
@@ -2115,7 +2116,7 @@ msgstr "Načítať vzhľad"
 
 #: MainFrame.cpp:1445
 msgid "Set current view from a user defined layout"
-msgstr ""
+msgstr "Nastaviť aktuálny vzhľad z používateľského vzhľadu"
 
 #: MainFrame.cpp:1446
 msgid "Delete Layout"
@@ -2127,19 +2128,19 @@ msgstr "Odstrániť používateľský vzhľad"
 
 #: MainFrame.cpp:1455 TaskBar.cpp:122
 msgid "Next Track"
-msgstr "Ďalšia stopa"
+msgstr "Ďalšia skladba"
 
 #: MainFrame.cpp:1456
 msgid "Play the next track in the playlist"
-msgstr ""
+msgstr "Prehrať ďalšiu skladbu v Playliste"
 
 #: MainFrame.cpp:1459
 msgid "Prev. Track"
-msgstr "Predošlá stopa"
+msgstr "Predošlá skladba"
 
 #: MainFrame.cpp:1460
 msgid "Play the previous track in the playlist"
-msgstr ""
+msgstr "Prehrať predošlú skladbu v Playliste"
 
 #: MainFrame.cpp:1464 TaskBar.cpp:126
 msgid "Next Album"
@@ -2147,7 +2148,7 @@ msgstr "Ďalší album"
 
 #: MainFrame.cpp:1465
 msgid "Play the next album in the playlist"
-msgstr ""
+msgstr "Prehrať ďalší album v Playliste"
 
 #: MainFrame.cpp:1469
 msgid "Prev. Album"
@@ -2155,15 +2156,15 @@ msgstr "Predošlý album"
 
 #: MainFrame.cpp:1470
 msgid "Play the previous album in the playlist"
-msgstr ""
+msgstr "Prehrať predošlý album v playliste"
 
 #: MainFrame.cpp:1477
 msgid "Play or Pause the current track in the playlist"
-msgstr "Importovať súbory do zbierky"
+msgstr "Prehrať alebo prerušiť aktuálnu skladbu v Playliste"
 
 #: MainFrame.cpp:1481
 msgid "Stop the current played track"
-msgstr "Zastaviť prehrávanie aktuálnej stopy"
+msgstr "Zastaviť prehrávanie aktuálnej skladby"
 
 #: MainFrame.cpp:1486
 msgid "Stop after current playing or selected track"
@@ -2171,7 +2172,7 @@ msgstr ""
 
 #: MainFrame.cpp:1493
 msgid "Clear the now playing playlist"
-msgstr ""
+msgstr "Vymazať práve prehrávaný Playlist"
 
 #: MainFrame.cpp:1503 PlayList.cpp:1549 SoListBox.cpp:589 TaskBar.cpp:143
 msgid "Set the rating to 0"
@@ -2199,47 +2200,47 @@ msgstr "Nastaviť hodnotenie na 5"
 
 #: MainFrame.cpp:1531 SoListBox.cpp:617
 msgid "Set Rating"
-msgstr ""
+msgstr "Nastaviť hodnotenie"
 
 #: MainFrame.cpp:1531
 msgid "Set the rating of the current track"
-msgstr ""
+msgstr "Nastaviť hodnotenie aktuálnej skladby"
 
 #: MainFrame.cpp:1537 TaskBar.cpp:165
 msgid "Update playlist based on Last.fm statics"
-msgstr ""
+msgstr "Aktualizovať Playlist podľa štatistík Last.fm"
 
 #: MainFrame.cpp:1542
 msgid "Randomize"
-msgstr ""
+msgstr "Náhodné"
 
 #: MainFrame.cpp:1543 TaskBar.cpp:177
 msgid "Randomize the playlist"
-msgstr ""
+msgstr "Náhodné poradie v Playliste"
 
 #: MainFrame.cpp:1546
 msgid "Repeat Playlist"
-msgstr ""
+msgstr "Opakovať Playlist"
 
 #: MainFrame.cpp:1547 TaskBar.cpp:169
 msgid "Repeat the tracks in the playlist"
-msgstr ""
+msgstr "Opakovať skladby v Playliste"
 
 #: MainFrame.cpp:1552
 msgid "Repeat Track"
-msgstr ""
+msgstr "Opakovať skladby"
 
 #: MainFrame.cpp:1553 TaskBar.cpp:173
 msgid "Repeat the current track in the playlist"
-msgstr ""
+msgstr "Opakovať aktuálnu skladbu v Playliste"
 
 #: MainFrame.cpp:1561
 msgid "Increment the volume level"
-msgstr ""
+msgstr "Zvýšiť úroveň hlasitosti"
 
 #: MainFrame.cpp:1566
 msgid "Decrement the volume level"
-msgstr ""
+msgstr "Znížiť úroveň hlasitosti"
 
 #: MainFrame.cpp:1572 TaskBar.cpp:183
 msgid "Force Gapless Mode"
@@ -2251,11 +2252,11 @@ msgstr ""
 
 #: MainFrame.cpp:1578 Preferences.cpp:238
 msgid "Audioscrobble"
-msgstr ""
+msgstr "Audioscrobble"
 
 #: MainFrame.cpp:1579 TaskBar.cpp:187
 msgid "Send played tracks information"
-msgstr ""
+msgstr "Odoslať informácie o prehrávaných skladbách"
 
 #: MainFrame.cpp:1596
 msgid "Get help using guayadeque"
@@ -2263,56 +2264,56 @@ msgstr ""
 
 #: MainFrame.cpp:1600
 msgid "Community"
-msgstr ""
+msgstr "Komunita"
 
 #: MainFrame.cpp:1601
 msgid "Get guayadeque support from guayadeque.org"
-msgstr ""
+msgstr "Získať podporu z guayadeque.org"
 
 #: MainFrame.cpp:1606
 msgid "About"
-msgstr ""
+msgstr "O programe"
 
 #: MainFrame.cpp:1607
 msgid "Show information about guayadeque music player"
-msgstr ""
+msgstr "Zobraziť informácie o prehrávači hudby guayadeque"
 
 #: MainFrame.cpp:1634
 msgid "View"
-msgstr ""
+msgstr "Zobraziť"
 
 #: MainFrame.cpp:1642
 msgid "Controls"
-msgstr ""
+msgstr "Ovládanie"
 
 #: MainFrame.cpp:1973
 msgid "Stream:"
-msgstr ""
+msgstr "Stream:"
 
 #: MainFrame.cpp:2151 MainFrame.cpp:2221 MainFrame.cpp:2270 MainFrame.cpp:2307
 #: MainFrame.cpp:4482
 msgid "Copy To..."
-msgstr ""
+msgstr "Kopírovať do…"
 
 #: MainFrame.cpp:2167
 msgid "Select destination directory"
-msgstr ""
+msgstr "Zvoľte cieľovú zložku"
 
 #: MainFrame.cpp:3212
 msgid "station"
-msgstr ""
+msgstr "stanica"
 
 #: MainFrame.cpp:3212
 msgid "stations"
-msgstr ""
+msgstr "stanice"
 
 #: MainFrame.cpp:3221
 msgid "podcast"
-msgstr ""
+msgstr "podcast"
 
 #: MainFrame.cpp:3221
 msgid "podcasts"
-msgstr ""
+msgstr "podcasty"
 
 #: MainFrame.cpp:3236
 msgid "dir"
@@ -2332,15 +2333,15 @@ msgstr "súbory"
 
 #: MainFrame.cpp:3660 MainFrame.cpp:3666 MainFrame.cpp:3669
 msgid "Load this user defined layout"
-msgstr ""
+msgstr "Načítať tento používateľský vzhľad"
 
 #: MainFrame.cpp:3661
 msgid "Delete this user defined layout"
-msgstr ""
+msgstr "Odstrániť tento používateľský vzhľad"
 
 #: MainFrame.cpp:3666 MainFrame.cpp:3669
 msgid "No Layouts Defined"
-msgstr ""
+msgstr "Nie sú definované vzhľady"
 
 #: MainFrame.cpp:3773
 msgid "Layout:"
@@ -2353,7 +2354,7 @@ msgstr "Vzhľad %u"
 
 #: MainFrame.cpp:4447 MainFrame.cpp:4468
 msgid "Copy the current selected songs to a directory or device"
-msgstr ""
+msgstr "Kopírovať zvolené skladby do adresára alebo na disk"
 
 #: MainFrame.cpp:4479
 msgid "Add Copy To patterns in preferences"
@@ -2361,7 +2362,7 @@ msgstr ""
 
 #: MainFrame.cpp:4482
 msgid "Copy the selected tracks to a folder or device"
-msgstr ""
+msgstr "Kopírovať zvolené skladby do zložky alebo zariadenia"
 
 #: MediaViewer.cpp:213
 msgid "All Albums"
@@ -2369,31 +2370,31 @@ msgstr "Všetky albumy"
 
 #: MediaViewer.cpp:223
 msgid "Library view"
-msgstr ""
+msgstr "Zobrazenie knižnice"
 
 #: MediaViewer.cpp:227
 msgid "Album Browser view"
-msgstr ""
+msgstr "Zobrazenie správcu albumov"
 
 #: MediaViewer.cpp:231
 msgid "Tree view"
-msgstr ""
+msgstr "Zobrazenie stromu"
 
 #: MediaViewer.cpp:246
 msgid "View the current defined filters"
-msgstr ""
+msgstr "Zobraziť aktuálne definované filtre"
 
 #: MediaViewer.cpp:251
 msgid "Add a new album browser filter"
-msgstr ""
+msgstr "Pridať nový filter správcu albumov"
 
 #: MediaViewer.cpp:255
 msgid "Delete the current selected filter"
-msgstr ""
+msgstr "Odstrániť aktuálne zvolený filter"
 
 #: MediaViewer.cpp:260
 msgid "Edit the current selected filter"
-msgstr ""
+msgstr "Upraviť aktuálne zvolený filter"
 
 #: MediaViewer.cpp:836 TreePanel.cpp:1189
 msgid "New Filter"
@@ -2419,15 +2420,15 @@ msgstr "Chyba pridania cesty"
 msgid ""
 "Could not find the Album in the songs library.\n"
 "You should update the library."
-msgstr ""
+msgstr "Nemožno nájsť album v knižnici skladieb.\nMali by ste aktualizovať knižnicu."
 
 #: MediaViewer.cpp:2150
 msgid " smart playlist"
-msgstr ""
+msgstr "Aktualizovať stanice rádia"
 
 #: MediaViewer.cpp:2159 PlayerPanel.cpp:245 PlayerPanel.cpp:2238
 msgid "Playlist"
-msgstr ""
+msgstr "Playlist"
 
 #: NewChannel.cpp:87
 msgid "New Podcast Channel"
@@ -2435,15 +2436,15 @@ msgstr "Nový kanál podkastu"
 
 #: NewChannel.cpp:100
 msgid " Digital Podcast Directory "
-msgstr ""
+msgstr " Zložka digitálnych podkastov "
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directoy"
-msgstr "Hľadať v adresári podkastu"
+msgstr "Hľadať v zložke podkastu"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
-msgstr ""
+msgstr "Obnoviť zoznam zložiek podkastov"
 
 #: NewChannel.cpp:227
 msgid "Filtered channels"
@@ -2461,11 +2462,11 @@ msgstr "%u kategórií, %u kanálov"
 
 #: NewChannel.cpp:374
 msgid "Filter Text: "
-msgstr ""
+msgstr "Text filtra: "
 
 #: NewChannel.cpp:374
 msgid "Enter the text to filter podcasts channels"
-msgstr ""
+msgstr "Zadajte text na filtrovanie kanálov podkastov"
 
 #: OnlineLinks.cpp:69
 msgid "Add search links in preferences"
@@ -2477,7 +2478,7 @@ msgstr "Odkazy"
 
 #: PcListBox.cpp:112
 msgid "Play current selected tracks"
-msgstr ""
+msgstr "Prehrať aktuálne zvolené skladby"
 
 #: PlayerFilters.cpp:42
 msgid "Allow:"
@@ -2490,19 +2491,19 @@ msgstr "Zakázať:"
 #: PlayerFilters.cpp:123 Preferences.cpp:1815 Preferences.cpp:1912
 #: Preferences.cpp:1935 SmartMode.cpp:450
 msgid "None"
-msgstr ""
+msgstr "Žiadne"
 
 #: PlayerPanel.cpp:177
 msgid "Go to the playlist previous track"
-msgstr ""
+msgstr "Prejsť na predošlú skladbu v Playliste"
 
 #: PlayerPanel.cpp:182
 msgid "Play or pause the current track"
-msgstr ""
+msgstr "Prehrať alebo zastaviť aktuálnu stopu"
 
 #: PlayerPanel.cpp:187
 msgid "Go to the playlist next track"
-msgstr ""
+msgstr "Prejsť na ďalšiu skladbu v Playliste"
 
 #: PlayerPanel.cpp:192
 msgid "Stop playing"
@@ -2527,53 +2528,53 @@ msgstr ""
 #: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2182
 #: Preferences.cpp:969
 msgid "Disabled"
-msgstr ""
+msgstr "Zakázané"
 
 #: PlayerPanel.cpp:225 PlayerPanel.cpp:2186 Preferences.cpp:1356
 #: Preferences.cpp:1391
 msgid "Enabled"
-msgstr ""
+msgstr "Povolené"
 
 #: PlayerPanel.cpp:234
 msgid "Repeat: "
-msgstr ""
+msgstr "Opakovať: "
 
 #: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1636
 #: Preferences.cpp:969
 msgid "Track"
-msgstr ""
+msgstr "Skladba"
 
 #: PlayerPanel.cpp:253
 msgid "Randomize the tracks in playlist"
-msgstr ""
+msgstr "Náhodné poradie skladieb v Playliste"
 
 #: PlayerPanel.cpp:271
 msgid "Show the name of the current track"
-msgstr ""
+msgstr "Zobraziť názov aktuálnej skladby"
 
 #: PlayerPanel.cpp:281
 msgid "Show the album name of the current track"
-msgstr ""
+msgstr "Zobraziť názov albumu aktuálnej skladby"
 
 #: PlayerPanel.cpp:292
 msgid "Show the artist name of the current track"
-msgstr ""
+msgstr "Zobraziť meno umelca aktuálnej skladby"
 
 #: PlayerPanel.cpp:303
 msgid "Show the year of the current track"
-msgstr ""
+msgstr "Zobraziť rok aktuálnej skladby"
 
 #: PlayerPanel.cpp:306
 msgid "00:00 of 00:00"
-msgstr ""
+msgstr "00:00 z 00:00"
 
 #: PlayerPanel.cpp:307
 msgid "Show the current position and song length of the current track"
-msgstr ""
+msgstr "Zobraziť aktuálnu pozíciu a dĺžku aktuálnej skladby"
 
 #: PlayerPanel.cpp:326
 msgid "Show the bit rate of the current track"
-msgstr ""
+msgstr "Zobraziť dátový tok aktuálnej skladby"
 
 #: PlayerPanel.cpp:1365
 msgid "Buffering..."
@@ -2581,7 +2582,7 @@ msgstr ""
 
 #: PlayerPanel.cpp:2227
 msgid "Repeat Mode: "
-msgstr ""
+msgstr "Režim opakovania: "
 
 #: PlayerPanel.cpp:2230
 msgid "Off"
@@ -2589,23 +2590,23 @@ msgstr ""
 
 #: PlayListAppend.cpp:49
 msgid "Playlist:"
-msgstr ""
+msgstr "Playlist:"
 
 #: PlayListAppend.cpp:61
 msgid "New playlist"
-msgstr ""
+msgstr "Nový Playlist"
 
 #: PlayListAppend.cpp:65
 msgid "Where:"
-msgstr ""
+msgstr "Kde:"
 
 #: PlayListAppend.cpp:69
 msgid "Beginning"
-msgstr ""
+msgstr "Začiatok"
 
 #: PlayListAppend.cpp:75
 msgid "Tracks:"
-msgstr ""
+msgstr "Skladby:"
 
 #: PlayList.cpp:1518
 msgid "Empty Playlist"
@@ -2613,19 +2614,19 @@ msgstr ""
 
 #: PlayList.cpp:1518
 msgid "The playlist is empty"
-msgstr ""
+msgstr "Playlist je prázdny"
 
 #: PlayList.cpp:1528
 msgid "Edit the current selected tracks labels"
-msgstr ""
+msgstr "Upraviť menovky aktuálne zvolených skladieb"
 
 #: PlayList.cpp:1534
 msgid "Edit the current selected songs"
-msgstr ""
+msgstr "Upraviť aktuálne zvolené skladby"
 
 #: PlayList.cpp:1543
 msgid "Set as Next Track"
-msgstr "Nastaviť ako ďalšiu stopu"
+msgstr "Nastaviť ako ďalšiu skladbu"
 
 #: PlayList.cpp:1544
 msgid "Move the selected tracks to be played next"
@@ -2633,7 +2634,7 @@ msgstr ""
 
 #: PlayList.cpp:1562
 msgid "Set the current selected tracks rating"
-msgstr ""
+msgstr "nastaviť hodnotenie aktuálne zvolených skladieb"
 
 #: PlayList.cpp:1569
 msgid "Search a track in the playlist by name"
@@ -2649,11 +2650,11 @@ msgstr ""
 
 #: PlayList.cpp:1609 PLSoListBox.cpp:168
 msgid "Remove from Playlist"
-msgstr ""
+msgstr "Odstrániť z Palylistu"
 
 #: PlayList.cpp:1610
 msgid "Remove the selected tracks from playlist"
-msgstr ""
+msgstr "Odstrániť zvolené skladby z Playlistu"
 
 #: PlayList.cpp:1617 SoListBox.cpp:638
 msgid "Remove from Library"
@@ -2661,7 +2662,7 @@ msgstr "Odstrániť z knižnice"
 
 #: PlayList.cpp:1618
 msgid "Remove the selected tracks from library"
-msgstr "Odstrániť zvolené stopy z  knižnice"
+msgstr "Odstrániť zvolené skladby z  knižnice"
 
 #: PlayList.cpp:1623 SoListBox.cpp:643
 msgid "Delete from Drive"
@@ -2669,35 +2670,35 @@ msgstr "Odstrániť zo zariadenia"
 
 #: PlayList.cpp:1624
 msgid "Remove the selected tracks from drive"
-msgstr "Odstrániť zvolené stopy zo zariadenia"
+msgstr "Odstrániť zvolené skladby zo zariadenia"
 
 #: PlayList.cpp:1636
 msgid "Selects the current selected track in the library"
-msgstr ""
+msgstr "Vyberie aktuálne zvolenú skladbu v knižnici"
 
 #: PlayList.cpp:1639 SoListBox.cpp:655
 msgid "Selects the artist of the current song"
-msgstr ""
+msgstr "Vyberie umelca aktuálnej skladby"
 
 #: PlayList.cpp:1642
 msgid "Select the album artist of the current song"
-msgstr ""
+msgstr "Vyberie umelca albumu aktuálnej skladby"
 
 #: PlayList.cpp:1645
 msgid "Select the composer of the current song"
-msgstr ""
+msgstr "Vyberie skladateľa aktuálnej skladby"
 
 #: PlayList.cpp:1648 SoListBox.cpp:664
 msgid "Select the album of the current song"
-msgstr ""
+msgstr "Vyberie album aktuálnej skladby"
 
 #: PlayList.cpp:1651
 msgid "Select the year of the current song"
-msgstr ""
+msgstr "Vyberie rok aktuálnej skladby"
 
 #: PlayList.cpp:1654
 msgid "Select the genre of the current song"
-msgstr ""
+msgstr "Vyberie žáner aktuálnej skladby"
 
 #: PlayList.cpp:1657 SoListBox.cpp:667
 msgid "Search in the library"
@@ -2713,20 +2714,20 @@ msgstr "Prosím, zadajte hľadaný výraz"
 
 #: PlayList.cpp:2733
 msgid "Loading tracks. Please wait"
-msgstr ""
+msgstr "Načítavam skladby. Prosím počkajte"
 
 #: PlayListPanel.cpp:83
 msgid "Static playlists"
-msgstr ""
+msgstr "Statické Playlisty"
 
 #: PlayListPanel.cpp:84
 msgid "Dynamic playlists"
-msgstr ""
+msgstr "Dynamické Playlisty"
 
 #: PlayListPanel.cpp:224 PodcastsPanel.cpp:2051 RadioPanel.cpp:835
 #: SoListBox.cpp:526 TreePanel.cpp:388
 msgid "Play current selected songs"
-msgstr ""
+msgstr "Prehrať aktuálne zvolené skladby"
 
 #: PlayListPanel.cpp:230 SoListBox.cpp:533 TreePanel.cpp:394
 msgid "Add current selected songs to the playlist"
@@ -2734,11 +2735,11 @@ msgstr ""
 
 #: PlayListPanel.cpp:260
 msgid "New Dynamic Playlist"
-msgstr ""
+msgstr "Nový dynamický Playlist"
 
 #: PlayListPanel.cpp:260
 msgid "Create a new dynamic playlist"
-msgstr ""
+msgstr "vytvoriť nový dynamický Playlist"
 
 #: PlayListPanel.cpp:266 RadioPanel.cpp:467
 msgid "Import"
@@ -2746,7 +2747,7 @@ msgstr "Importovať"
 
 #: PlayListPanel.cpp:266
 msgid "Import a playlist"
-msgstr ""
+msgstr "Importovať Playlist"
 
 #: PlayListPanel.cpp:272 RadioPanel.cpp:471
 msgid "Export"
@@ -2754,7 +2755,7 @@ msgstr "Exportovať"
 
 #: PlayListPanel.cpp:272
 msgid "Export the playlist"
-msgstr ""
+msgstr "Exportovať Playlist"
 
 #: PlayListPanel.cpp:282 SoListBox.cpp:494 TreePanel.cpp:371
 msgid "Edit"
@@ -2762,19 +2763,19 @@ msgstr "Upraviť"
 
 #: PlayListPanel.cpp:282
 msgid "Edit the selected playlist"
-msgstr ""
+msgstr "Upraviť zvolený Playlist"
 
 #: PlayListPanel.cpp:286
 msgid "Save the selected playlist as a Static Playlist"
-msgstr ""
+msgstr "Uložiť zvolený Playlist ako Statický"
 
 #: PlayListPanel.cpp:291
 msgid "Change the name of the selected playlist"
-msgstr ""
+msgstr "Zmeniť názov zvoleného Playlistu"
 
 #: PlayListPanel.cpp:296 PlayListPanel.cpp:306
 msgid "Delete the selected playlist"
-msgstr ""
+msgstr "Odstrániť zvolený Playlist"
 
 #: PlayListPanel.cpp:302
 msgid "Set as Alow Filter"
@@ -2790,27 +2791,27 @@ msgstr ""
 
 #: PlayListPanel.cpp:1073 PlayListPanel.cpp:1214
 msgid "Playlist Name: "
-msgstr ""
+msgstr "Názov Playlistu:"
 
 #: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
 msgid "Enter the new playlist name"
-msgstr ""
+msgstr "Zadajte nový názov Palylistu"
 
 #: PlayListPanel.cpp:1114
 msgid "Are you sure to delete the selected Playlist?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolený Playlist"
 
 #: PlayListPanel.cpp:1199 PlayListPanel.cpp:1274
 msgid "Select the playlist file"
-msgstr ""
+msgstr "Zobraziť aktuálne definované filtre"
 
 #: PlayListPanel.cpp:1226
 msgid "New Playlist"
-msgstr ""
+msgstr "Nový Playlist"
 
 #: PLSoListBox.cpp:168
 msgid "Delete the current selected tracks"
-msgstr ""
+msgstr "Odstrániť aktuálne zvolené skladby"
 
 #: PodcastsPanel.cpp:928 TrackEdit.cpp:466
 msgid " Details "
@@ -2822,55 +2823,55 @@ msgstr "Odkaz:"
 
 #: PodcastsPanel.cpp:994 TrackEdit.cpp:183 TrackEdit.cpp:423 TrackEdit.cpp:520
 msgid "Title:"
-msgstr ""
+msgstr "Názov:"
 
 #: PodcastsPanel.cpp:1004
 msgid "Sumary:"
-msgstr ""
+msgstr "Zhrnutie:"
 
 #: PodcastsPanel.cpp:1014 TrackEdit.cpp:507
 msgid "Date:"
-msgstr ""
+msgstr "Dátum:"
 
 #: PodcastsPanel.cpp:1024 TrackEdit.cpp:531
 msgid "Length:"
-msgstr ""
+msgstr "Dĺžka:"
 
 #: PodcastsPanel.cpp:1045
 msgid "Podcast Details"
-msgstr ""
+msgstr "Podrobnosti podkastu"
 
 #: PodcastsPanel.cpp:1236
 msgid "Are you sure to delete the selected podcast channel?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolený kanál podkastu?"
 
 #: PodcastsPanel.cpp:1622
 msgid "Are you sure to delete the selected podcast item?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolenú položku podkastu?"
 
 #: PodcastsPanel.cpp:1745
 msgid "New Channel"
-msgstr ""
+msgstr "Nový kanál"
 
 #: PodcastsPanel.cpp:1745
 msgid "Add a new podcast channel"
-msgstr ""
+msgstr "Pridať nový kanál podkastu"
 
 #: PodcastsPanel.cpp:1751
 msgid "delete this podcast channels and all its items"
-msgstr ""
+msgstr "Odstrániť tento kanál podkastu a všetky jeho položky"
 
 #: PodcastsPanel.cpp:1757
 msgid "Update the podcast items of the selected channels"
-msgstr ""
+msgstr "Aktualizovať položky zvoleného podkastu"
 
 #: PodcastsPanel.cpp:1763
 msgid "Edit the podcast channel"
-msgstr ""
+msgstr "Upraviť kanál podkastu"
 
 #: PodcastsPanel.cpp:1801
 msgid "Status"
-msgstr ""
+msgstr "Stav"
 
 #: PodcastsPanel.cpp:1803
 msgid "Channel"
@@ -2898,11 +2899,11 @@ msgstr ""
 
 #: PodcastsPanel.cpp:2085
 msgid "Delete the current selected podcasts"
-msgstr ""
+msgstr "Odstrániť aktuálne zvolený podkast"
 
 #: PodcastsPanel.cpp:2091
 msgid "Download the current selected podcasts"
-msgstr ""
+msgstr "Stiahnuť aktuálne zvolený podkast"
 
 #: PodcastsPanel.cpp:2103
 msgid "No selected items..."
@@ -2910,7 +2911,7 @@ msgstr "Žiadne zvolené položky..."
 
 #: PodcastsPanel.cpp:2103
 msgid "Copy the current selected podcasts to a directory or device"
-msgstr ""
+msgstr "Kopírovať aktuálne zvolený podkast do adresára alebo na disk"
 
 #: PortableMedia.cpp:473 PortableMedia.cpp:1477
 msgid "embedded"
@@ -2939,7 +2940,7 @@ msgstr "%s voľné z %s"
 
 #: PortableMedia.cpp:1048
 msgid "Name Pattern:"
-msgstr ""
+msgstr "Vzor názvu:"
 
 #: PortableMedia.cpp:1053
 msgid ""
@@ -2948,23 +2949,23 @@ msgid ""
 "{f}\t: Filename\t\t{g}\t : Genre\n"
 "{n}\t: Number\t\t\t{t}\t : Title\n"
 "{y}\t: Year"
-msgstr ""
+msgstr "{a}\t: Umelec\t\t{aa}\t: Umelec albumu\n{b}\t: Album\t\t\t{d}\t: Disk\n{f}\t: Meno súboru\t\t{g}\t: Žáner\n{n}\t: Číslo\t\t\t{t}\t: Názov\n{y}\t: Rok"
 
 #: PortableMedia.cpp:1058
 msgid "Audio Folders:"
-msgstr ""
+msgstr "Zložky audia:"
 
 #: PortableMedia.cpp:1069
 msgid "Audio Formats:"
-msgstr ""
+msgstr "Formáty audia:"
 
 #: PortableMedia.cpp:1080
 msgid "Transcode to:"
-msgstr ""
+msgstr "Prekódovať do:"
 
 #: PortableMedia.cpp:1101
 msgid "Unsupported formats only"
-msgstr ""
+msgstr "Len nepodporované formáty"
 
 #: PortableMedia.cpp:1101
 msgid "always"
@@ -2976,15 +2977,15 @@ msgstr "Kvalita:"
 
 #: PortableMedia.cpp:1132
 msgid "Audio"
-msgstr ""
+msgstr "Audio"
 
 #: PortableMedia.cpp:1144
 msgid "Playlist Folders:"
-msgstr ""
+msgstr "stanica"
 
 #: PortableMedia.cpp:1154
 msgid "Playlist Format:"
-msgstr ""
+msgstr "Formát Playlistu:"
 
 #: PortableMedia.cpp:1178
 msgid "Cover Format:"
@@ -2996,7 +2997,7 @@ msgstr "Meno obalu:"
 
 #: PortableMedia.cpp:1202
 msgid "Covers Size (pixels):"
-msgstr "Veľkosť obalu [px]:"
+msgstr "Veľkosť obalov [px]:"
 
 #: PortableMedia.cpp:1212
 msgid "Covers"
@@ -3004,15 +3005,15 @@ msgstr "Obaly"
 
 #: PortableMedia.cpp:1310 PortableMedia.cpp:1405
 msgid "Select audio folder"
-msgstr ""
+msgstr "Zvoľte zložku audia"
 
 #: PortableMedia.cpp:1379
 msgid "Audio format"
-msgstr ""
+msgstr "Formát audia"
 
 #: PortableMedia.cpp:1454
 msgid "Playlist format"
-msgstr ""
+msgstr "Formát Playlistu"
 
 #: PortableMedia.cpp:1506
 msgid "Cover format"
@@ -3044,7 +3045,7 @@ msgstr "nemčina"
 
 #: Preferences.cpp:139
 msgid "Greek"
-msgstr ""
+msgstr "gréčtina"
 
 #: Preferences.cpp:140
 msgid "Hungarian"
@@ -3060,7 +3061,7 @@ msgstr "taliančina"
 
 #: Preferences.cpp:143
 msgid "Japanese"
-msgstr ""
+msgstr "japončina"
 
 #: Preferences.cpp:144
 msgid "Norwegian Bokmal"
@@ -3068,7 +3069,7 @@ msgstr ""
 
 #: Preferences.cpp:145
 msgid "Polish"
-msgstr ""
+msgstr "poľština"
 
 #: Preferences.cpp:146 Preferences.cpp:184
 msgid "Portuguese"
@@ -3084,7 +3085,7 @@ msgstr "ruština"
 
 #: Preferences.cpp:149
 msgid "Slovak"
-msgstr ""
+msgstr "slovenčina"
 
 #: Preferences.cpp:150 Preferences.cpp:185
 msgid "Spanish"
@@ -3100,19 +3101,19 @@ msgstr ""
 
 #: Preferences.cpp:153
 msgid "Turkish"
-msgstr ""
+msgstr "turečtina"
 
 #: Preferences.cpp:154
 msgid "Ukrainian"
-msgstr ""
+msgstr "Ukrajinský"
 
 #: Preferences.cpp:214
 msgid "General"
-msgstr ""
+msgstr "Všeobecné"
 
 #: Preferences.cpp:218
 msgid "Collections"
-msgstr ""
+msgstr "Zbierky"
 
 #: Preferences.cpp:223
 msgid "Playback"
@@ -3124,51 +3125,51 @@ msgstr ""
 
 #: Preferences.cpp:233
 msgid "Record"
-msgstr ""
+msgstr "Nahrať"
 
 #: Preferences.cpp:248
 msgid "Online"
-msgstr ""
+msgstr "Online"
 
 #: Preferences.cpp:278
 msgid "Copy to"
-msgstr ""
+msgstr "kopírovať do"
 
 #: Preferences.cpp:283
 msgid "Shortcuts"
-msgstr ""
+msgstr "Klávesoví skratky"
 
 #: Preferences.cpp:365
 msgid " Accept "
-msgstr ""
+msgstr " Prijať "
 
 #: Preferences.cpp:367
 msgid " Cancel "
-msgstr ""
+msgstr " Zrušiť "
 
 #: Preferences.cpp:581
 msgid " On Start "
-msgstr ""
+msgstr " Pri spustení "
 
 #: Preferences.cpp:585 Preferences.cpp:1627
 msgid "Language:"
-msgstr ""
+msgstr "Jazyk:"
 
 #: Preferences.cpp:596
 msgid "(Needs restart)"
-msgstr ""
+msgstr "(Vyžaduje reštart)"
 
 #: Preferences.cpp:602
 msgid "Show splash screen"
-msgstr ""
+msgstr "Zobraziť úvodnú obrazovku"
 
 #: Preferences.cpp:606
 msgid "Start minimized"
-msgstr ""
+msgstr "Spustiť minimalizované"
 
 #: Preferences.cpp:612
 msgid "Restore position for tracks longer than"
-msgstr ""
+msgstr "Obnoviť pozíciu skladieb dlhších ako"
 
 #: Preferences.cpp:619
 msgid "set the minimun length in minutes to save track position"
@@ -3176,15 +3177,15 @@ msgstr ""
 
 #: Preferences.cpp:629
 msgid "Load default layout"
-msgstr ""
+msgstr "Načítať predvolený vzhľad"
 
 #: Preferences.cpp:635
 msgid " Behaviour "
-msgstr ""
+msgstr " Správanie "
 
 #: Preferences.cpp:637
 msgid "Activate task bar icon"
-msgstr ""
+msgstr "Aktivovať ikonu oznamovacej oblasti"
 
 #: Preferences.cpp:652
 msgid "Integrate into SoundMenu"
@@ -3192,7 +3193,7 @@ msgstr ""
 
 #: Preferences.cpp:658
 msgid "Enqueue as default action"
-msgstr ""
+msgstr "Zaradiť, ako predvolená akcia"
 
 #: Preferences.cpp:662
 msgid "Drop files clear playlist"
@@ -3200,7 +3201,7 @@ msgstr ""
 
 #: Preferences.cpp:666
 msgid "Instant text search"
-msgstr ""
+msgstr "Rýchle hľadanie textu"
 
 #: Preferences.cpp:670
 msgid "When searching, pressing enter queues the result"
@@ -3208,23 +3209,23 @@ msgstr ""
 
 #: Preferences.cpp:675
 msgid "Show CD cover frame in player"
-msgstr ""
+msgstr "Zobraziť rám obalu CD v prehrávači"
 
 #: Preferences.cpp:681
 msgid " On Close "
-msgstr ""
+msgstr " Pri ukončení "
 
 #: Preferences.cpp:683
 msgid "Save playlist on close"
-msgstr ""
+msgstr "Uložiť Playlist pri skončení"
 
 #: Preferences.cpp:687
 msgid "Close to task bar icon"
-msgstr ""
+msgstr "Zatvoriť do oznamovacej oblasti"
 
 #: Preferences.cpp:692
 msgid "Ask confirmation on exit"
-msgstr ""
+msgstr "Potvrdiť ukončenie"
 
 #: Preferences.cpp:734
 msgid " Collections "
@@ -3236,7 +3237,7 @@ msgstr " Cesty "
 
 #: Preferences.cpp:802
 msgid " Words to detect covers "
-msgstr ""
+msgstr " Slová na identifikovanie obalov "
 
 #: Preferences.cpp:830 Preferences.cpp:2337
 msgid " Options "
@@ -3252,15 +3253,15 @@ msgstr ""
 
 #: Preferences.cpp:841
 msgid "Follow symbolic links on scan"
-msgstr ""
+msgstr "Pri skenovaní nasledovať symb. odkazy"
 
 #: Preferences.cpp:845
 msgid "Scan embedded covers in audio files"
-msgstr ""
+msgstr "Skenovať obaly zahrnuté v audio súboroch"
 
 #: Preferences.cpp:850
 msgid "Embed rating, play count and labels"
-msgstr ""
+msgstr "Zahrnúť hodnotenie, počet prehraní a menovky"
 
 #: Preferences.cpp:856
 msgid "Default copy action"
@@ -3276,11 +3277,11 @@ msgstr "album"
 
 #: Preferences.cpp:949
 msgid "when playlist is empty"
-msgstr ""
+msgstr "keď je Playlist prázdny"
 
 #: Preferences.cpp:955
 msgid "Delete played tracks from playlist"
-msgstr ""
+msgstr "Odstrániť prehrané skladby z Playlistu"
 
 #: Preferences.cpp:959
 msgid "Show notifications"
@@ -3304,23 +3305,23 @@ msgstr ""
 
 #: Preferences.cpp:1013
 msgid "Tracks added each time"
-msgstr ""
+msgstr "Skladby vždy pridané"
 
 #: Preferences.cpp:1022
 msgid "Max played tracks kept in playlist"
-msgstr ""
+msgstr "Maximálny počet skladieb uchovávaných v Playliste"
 
 #: Preferences.cpp:1030
 msgid "Don't repeat last"
-msgstr ""
+msgstr "Neopakovať posledné"
 
 #: Preferences.cpp:1038
 msgid "artists or"
-msgstr ""
+msgstr "umelec alebo"
 
 #: Preferences.cpp:1054
 msgid " Silence detector "
-msgstr ""
+msgstr " Detektor ticha "
 
 #: Preferences.cpp:1059
 msgid "Skip at"
@@ -3336,11 +3337,11 @@ msgstr "sekundy"
 
 #: Preferences.cpp:1096
 msgid " Output device "
-msgstr ""
+msgstr " Výstupné zariadenie "
 
 #: Preferences.cpp:1099
 msgid "Automatic"
-msgstr ""
+msgstr "Autoamticky"
 
 #: Preferences.cpp:1100
 msgid "GConf Defined"
@@ -3376,7 +3377,7 @@ msgstr ""
 
 #: Preferences.cpp:1192
 msgid "Fade-in start:"
-msgstr ""
+msgstr "Začiatok fade-in"
 
 #: Preferences.cpp:1201
 msgid "Select at which volume of the fade out the fade in starts"
@@ -3384,11 +3385,11 @@ msgstr ""
 
 #: Preferences.cpp:1245
 msgid " Record "
-msgstr ""
+msgstr " Záznam "
 
 #: Preferences.cpp:1247
 msgid "Enable recording"
-msgstr ""
+msgstr "Povoliť záznam"
 
 #: Preferences.cpp:1253
 msgid "Save to:"
@@ -3396,35 +3397,35 @@ msgstr "Uložiť do:"
 
 #: Preferences.cpp:1271 Preferences.cpp:2358
 msgid "Format:"
-msgstr ""
+msgstr "Formát:"
 
 #: Preferences.cpp:1288 Transcode.cpp:343
 msgid "Very High"
-msgstr ""
+msgstr "Veľmi vysoká"
 
 #: Preferences.cpp:1289 Transcode.cpp:344
 msgid "High"
-msgstr ""
+msgstr "Vysoká"
 
 #: Preferences.cpp:1290 Transcode.cpp:347
 msgid "Normal"
-msgstr ""
+msgstr "Normálna"
 
 #: Preferences.cpp:1291 Transcode.cpp:348
 msgid "Low"
-msgstr ""
+msgstr "Nízka"
 
 #: Preferences.cpp:1292 Transcode.cpp:349
 msgid "Very Low"
-msgstr ""
+msgstr "Veľmi nízka"
 
 #: Preferences.cpp:1304
 msgid "Split tracks"
-msgstr ""
+msgstr "Rozdeliť skladby"
 
 #: Preferences.cpp:1311
 msgid "Delete tracks shorter than"
-msgstr "švédčina"
+msgstr "Odstrániť skladby kratšie ako"
 
 #: Preferences.cpp:1354
 msgid " Last.fm audioscrobble "
@@ -3432,11 +3433,11 @@ msgstr ""
 
 #: Preferences.cpp:1364 Preferences.cpp:1399
 msgid "Username:"
-msgstr ""
+msgstr "Meno používateľa:"
 
 #: Preferences.cpp:1372 Preferences.cpp:1407
 msgid "Password:"
-msgstr ""
+msgstr "Heslo:"
 
 #: Preferences.cpp:1389
 msgid " Libre.fm audioscrobble "
@@ -3444,200 +3445,200 @@ msgstr ""
 
 #: Preferences.cpp:1428
 msgid "Join the Guayadeque Last.fm users group"
-msgstr ""
+msgstr "Staňte sa členom používateľskej skupiny Guayadeque na Last.fm"
 
 #: Preferences.cpp:1460
 msgid " Sources "
-msgstr ""
+msgstr " Zdroje "
 
 #: Preferences.cpp:1504
 msgid " Targets "
-msgstr ""
+msgstr " Ciele "
 
 #: Preferences.cpp:1544
 msgid " Font "
-msgstr ""
+msgstr " Písmo "
 
 #: Preferences.cpp:1546
 msgid "Font:"
-msgstr ""
+msgstr "Písmo:"
 
 #: Preferences.cpp:1558
 msgid "Align:"
-msgstr ""
+msgstr "Zarovnať:"
 
 #: Preferences.cpp:1564
 msgid "Center"
-msgstr ""
+msgstr "Na stred"
 
 #: Preferences.cpp:1606
 msgid " Filters "
-msgstr ""
+msgstr " Filtre "
 
 #: Preferences.cpp:1625
 msgid " Language "
-msgstr ""
+msgstr " Jazyk "
 
 #: Preferences.cpp:1641
 msgid " Browser command "
-msgstr ""
+msgstr " Príkaz prehliadača "
 
 #: Preferences.cpp:1662
 msgid " Minimum radio allowed bit rate "
-msgstr ""
+msgstr " Minimálny povolený dátový tok rádia "
 
 #: Preferences.cpp:1670
 msgid " Player online buffer size "
-msgstr ""
+msgstr " Veľkosť online bufera prehrávača"
 
 #: Preferences.cpp:1706
 msgid " Podcasts "
-msgstr ""
+msgstr " Podkasty "
 
 #: Preferences.cpp:1710
 msgid "Destination directory:"
-msgstr ""
+msgstr "Cieľová zložka:"
 
 #: Preferences.cpp:1714
 msgid "Select podcasts folder"
-msgstr ""
+msgstr "Zvoľte zložku podkastov"
 
 #: Preferences.cpp:1722
 msgid "Check every"
-msgstr ""
+msgstr "Kontrolovať každých"
 
 #: Preferences.cpp:1727
 msgid "Hour"
-msgstr ""
+msgstr "Hod"
 
 #: Preferences.cpp:1727
 msgid "Day"
-msgstr ""
+msgstr "Deň"
 
 #: Preferences.cpp:1727
 msgid "Week"
-msgstr ""
+msgstr "Týždeň"
 
 #: Preferences.cpp:1727
 msgid "Month"
-msgstr ""
+msgstr "Mesiac"
 
 #: Preferences.cpp:1738
 msgid "Delete after"
-msgstr ""
+msgstr "Odstrániť po"
 
 #: Preferences.cpp:1747
 msgid "Days"
-msgstr ""
+msgstr "Dňoch"
 
 #: Preferences.cpp:1747
 msgid "Weeks"
-msgstr ""
+msgstr "Týždňoch"
 
 #: Preferences.cpp:1747
 msgid "Months"
-msgstr ""
+msgstr "Mesiacoch"
 
 #: Preferences.cpp:1756
 msgid "Only if played"
-msgstr ""
+msgstr "Len po prehraní"
 
 #: Preferences.cpp:1784 Preferences.cpp:1877 RadioGenreEditor.cpp:37
 msgid " Genres "
-msgstr ""
+msgstr " Žánre "
 
 #: Preferences.cpp:1818 Preferences.cpp:1915
 msgid "Invert"
-msgstr ""
+msgstr "Invertovať"
 
 #: Preferences.cpp:1832
 msgid "Audio format:"
-msgstr ""
+msgstr "Formát audia:"
 
 #: Preferences.cpp:1843
 msgid "Torrent command:"
-msgstr ""
+msgstr "Príkaz torrentu:"
 
 #: Preferences.cpp:1929
 msgid "Membership :"
-msgstr ""
+msgstr "Členstvo:"
 
 #: Preferences.cpp:1936
 msgid "Streaming"
-msgstr ""
+msgstr "Streamovanie"
 
 #: Preferences.cpp:1937
 msgid "Downloading"
-msgstr ""
+msgstr "Sťahovanie"
 
 #: Preferences.cpp:1951
 msgid "Username :"
-msgstr ""
+msgstr "Prihl. meno:"
 
 #: Preferences.cpp:1959
 msgid "Password :"
-msgstr ""
+msgstr "Heslo:"
 
 #: Preferences.cpp:1977
 msgid "Stream as :"
-msgstr ""
+msgstr "Streamovať ako:"
 
 #: Preferences.cpp:1991
 msgid "Download as :"
-msgstr ""
+msgstr "Stiahnuť ako:"
 
 #: Preferences.cpp:1995
 msgid "Download Page"
-msgstr ""
+msgstr "Stránka sťahovania"
 
 #: Preferences.cpp:2036
 msgid " Links "
-msgstr ""
+msgstr " Odkazy "
 
 #: Preferences.cpp:2091
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: Preferences.cpp:2116
 msgid " Define URLs using "
-msgstr ""
+msgstr " Definuje použité URL "
 
 #: Preferences.cpp:2122
 msgid ""
 "2 letters language code\n"
 "Text to search"
-msgstr ""
+msgstr "2-písmenový kód jazyka\nHľadaný text"
 
 #: Preferences.cpp:2159
 msgid " Commands "
-msgstr ""
+msgstr " Príkazy "
 
 #: Preferences.cpp:2212
 msgid "Command:"
-msgstr ""
+msgstr "Príkaz:"
 
 #: Preferences.cpp:2237
 msgid " Define commands using "
-msgstr ""
+msgstr " Definuje použité príkazy "
 
 #: Preferences.cpp:2243
 msgid ""
 "Album path\n"
 "Album cover file path\n"
 "Track path"
-msgstr ""
+msgstr "Cesta albumu\nCesta súboru obalu albumu\nCesta skladby"
 
 #: Preferences.cpp:2280
 msgid " Patterns "
-msgstr ""
+msgstr " Vzory "
 
 #: Preferences.cpp:2392
 msgid "Remove source files"
-msgstr ""
+msgstr "Odstrániť zdrojové súbory"
 
 #: Preferences.cpp:2409
 msgid " Define patterns using "
-msgstr ""
+msgstr " Definuje použité vzory "
 
 #: Preferences.cpp:2415
 msgid ""
@@ -3645,7 +3646,7 @@ msgid ""
 "Album Artist\n"
 "{aa} or {a}\n"
 "Album"
-msgstr ""
+msgstr "Umelec\nUmelec albumu\n{aa} alebo {a}\nAlbum"
 
 #: Preferences.cpp:2423
 msgid ""
@@ -3653,7 +3654,7 @@ msgid ""
 "Disk\n"
 "Filename\n"
 "Genre"
-msgstr ""
+msgstr "Skladateľ\nDisk\nMeno súboru\nŽáner"
 
 #: Preferences.cpp:2431
 msgid ""
@@ -3661,7 +3662,7 @@ msgid ""
 "Number\n"
 "Title\n"
 "Year"
-msgstr ""
+msgstr "Index\nČíslo\nNázov\nRok"
 
 #: Preferences.cpp:2487
 msgid " Accelerators "
@@ -3669,47 +3670,47 @@ msgstr "Uložiť do:"
 
 #: Preferences.cpp:2492
 msgid "Action"
-msgstr ""
+msgstr "Akcia"
 
 #: Preferences.cpp:2496
 msgid "Key"
-msgstr ""
+msgstr "Kľúč"
 
 #: Preferences.cpp:2928 Preferences.cpp:2948
 msgid "Collection: "
-msgstr ""
+msgstr "Zbierka: "
 
 #: Preferences.cpp:2928 Preferences.cpp:2948
 msgid "Enter the collection name"
-msgstr ""
+msgstr "Zdajte meno zbierky"
 
 #: Preferences.cpp:3054
 msgid "Change library path"
-msgstr ""
+msgstr "Zmeniť cestu knižnice"
 
 #: Preferences.cpp:3132 Preferences.cpp:3152
 msgid "Word: "
-msgstr ""
+msgstr "Slovo: "
 
 #: Preferences.cpp:3132 Preferences.cpp:3152
 msgid "Enter the text to find covers"
-msgstr ""
+msgstr "Zadajte text na nájdenie obalov"
 
 #: Preferences.cpp:3641 Preferences.cpp:3671
 msgid "Filter: "
-msgstr ""
+msgstr "Filter: "
 
 #: Preferences.cpp:3641
 msgid "Enter the text to filter"
-msgstr ""
+msgstr "Zadajte text na filtrovanie"
 
 #: Preferences.cpp:3671
 msgid "Edit the text to filter"
-msgstr ""
+msgstr "Upraviť text na filtrovanie"
 
 #: Preferences.cpp:4184
 msgid "Select path"
-msgstr ""
+msgstr "Vyberte cestu"
 
 #: Preferences.cpp:4382
 msgid "Key used by '"
@@ -3717,15 +3718,15 @@ msgstr ""
 
 #: RadioGenreEditor.cpp:27
 msgid "Radio Genre Editor"
-msgstr ""
+msgstr "Editor žánrov rádií"
 
 #: RadioGenreEditor.cpp:48
 msgid "Other:"
-msgstr ""
+msgstr "Iné:"
 
 #: RadioPanel.cpp:89
 msgid " Radio Search "
-msgstr ""
+msgstr " Hľadanie rádia "
 
 #: RadioPanel.cpp:104
 msgid "Search in now playing info"
@@ -3741,7 +3742,7 @@ msgstr ""
 
 #: RadioPanel.cpp:116
 msgid "Include results from all genres"
-msgstr ""
+msgstr "Zahrnúť výsledky zo všetkých žánrov"
 
 #: RadioPanel.cpp:312
 msgid "Shoutcast"
@@ -3749,159 +3750,159 @@ msgstr ""
 
 #: RadioPanel.cpp:314
 msgid "Searches"
-msgstr ""
+msgstr "Hľadania"
 
 #: RadioPanel.cpp:315
 msgid "User Defined"
-msgstr ""
+msgstr "Používateľské"
 
 #: RadioPanel.cpp:415
 msgid "Add Genre"
-msgstr ""
+msgstr "Pridať žáner"
 
 #: RadioPanel.cpp:415
 msgid "Create a new genre"
-msgstr ""
+msgstr "Vytvoriť nový žáner"
 
 #: RadioPanel.cpp:421
 msgid "Edit genre"
-msgstr ""
+msgstr "Upraviť žáner"
 
 #: RadioPanel.cpp:421
 msgid "Change the selected genre"
-msgstr ""
+msgstr "Zmeniť zvolený žáner"
 
 #: RadioPanel.cpp:425
 msgid "Delete genre"
-msgstr ""
+msgstr "Odstrániť žáner"
 
 #: RadioPanel.cpp:425 RadioPanel.cpp:448
 msgid "Delete the selected search"
-msgstr ""
+msgstr "Odstrániť zvolené hľadanie"
 
 #: RadioPanel.cpp:432 RadioPanel.cpp:455 RadioPanel.cpp:477
 msgid "Update Radio Stations"
-msgstr ""
+msgstr "Aktualizovať stanice rádia"
 
 #: RadioPanel.cpp:438
 msgid "Add Search"
-msgstr ""
+msgstr "Pridať hľadanie"
 
 #: RadioPanel.cpp:438
 msgid "Create a new search"
-msgstr ""
+msgstr "Vytvoriť nové hľadanie"
 
 #: RadioPanel.cpp:444
 msgid "Edit search"
-msgstr ""
+msgstr "Upraviť hľadanie"
 
 #: RadioPanel.cpp:444
 msgid "Change the selected search"
-msgstr ""
+msgstr "Zmeniť zvolené hľadanie"
 
 #: RadioPanel.cpp:448
 msgid "Delete search"
-msgstr ""
+msgstr "Odstrániť hľadanie"
 
 #: RadioPanel.cpp:461 RadioPanel.cpp:809
 msgid "Add Radio"
-msgstr ""
+msgstr "Pridať rádio"
 
 #: RadioPanel.cpp:461
 msgid "Create a new radio"
-msgstr ""
+msgstr "Vytvoriť nové rádio"
 
 #: RadioPanel.cpp:467
 msgid "Import the radio stations"
-msgstr ""
+msgstr "Importovať rádiové stanice"
 
 #: RadioPanel.cpp:471
 msgid "Export all the radio stations"
-msgstr ""
+msgstr "Exportovať všetky rádiové stanice"
 
 #: RadioPanel.cpp:540
 msgid "Genre Name: "
-msgstr ""
+msgstr "Názov žánru:"
 
 #: RadioPanel.cpp:540
 msgid "Enter the new Genre Name"
-msgstr ""
+msgstr "Zadajte názov nového žánru:"
 
 #: RadioPanel.cpp:560
 msgid "Are you sure to delete the selected radio genres?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolené žánre rádia?"
 
 #: RadioPanel.cpp:731
 msgid "BitRate"
-msgstr ""
+msgstr "Dátový tok"
 
 #: RadioPanel.cpp:732
 msgid "Listeners"
-msgstr ""
+msgstr "Poslucháči"
 
 #: RadioPanel.cpp:733 SoListBox.cpp:423
 msgid "Format"
-msgstr ""
+msgstr "Formát"
 
 #: RadioPanel.cpp:809
 msgid "Add a radio"
-msgstr ""
+msgstr "Pridať rádio"
 
 #: RadioPanel.cpp:821 RadioPanel.cpp:1658 RadioPanel.cpp:1687
 msgid "Edit Radio"
-msgstr ""
+msgstr "Upraviť rádio"
 
 #: RadioPanel.cpp:822
 msgid "Change the selected radio"
-msgstr ""
+msgstr "Zmeniť zvolené rádio"
 
 #: RadioPanel.cpp:826
 msgid "Delete Radio"
-msgstr ""
+msgstr "Odstrániť rádio"
 
 #: RadioPanel.cpp:826
 msgid "Delete the selected radio"
-msgstr ""
+msgstr "Odstrániť zvolené rádio"
 
 #: RadioPanel.cpp:874
 msgid "Edit the labels assigned to the selected stations"
-msgstr ""
+msgstr "Upraviť menovky priradené zvolenej stanici"
 
 #: RadioPanel.cpp:990
 msgid "Add Label"
-msgstr ""
+msgstr "Pridať menovku"
 
 #: RadioPanel.cpp:990 TaListBox.cpp:104
 msgid "Create a new label"
-msgstr ""
+msgstr "Vytvoriť novú menovku"
 
 #: RadioPanel.cpp:996
 msgid "Edit Label"
-msgstr ""
+msgstr "Upraviť menovku"
 
 #: RadioPanel.cpp:996 TaListBox.cpp:111
 msgid "Change selected label"
-msgstr ""
+msgstr "Zmeniť zvolenú menovku"
 
 #: RadioPanel.cpp:1000
 msgid "Delete label"
-msgstr ""
+msgstr "Odstrániť menovku"
 
 #: RadioPanel.cpp:1000 TaListBox.cpp:115
 msgid "Delete selected labels"
-msgstr ""
+msgstr "Odstrániť zvolené menovky"
 
 #: RadioPanel.cpp:1049 TaListBox.cpp:227
 msgid "Enter the new label name"
-msgstr ""
+msgstr "Zadajte názov novej menovky"
 
 #: RadioPanel.cpp:1173 RadioPanel.cpp:1187
 msgid "Stations"
-msgstr ""
+msgstr "Stanice"
 
 #: RadioPanel.cpp:1418
 msgid "Stations Labels Editor"
-msgstr ""
+msgstr "Editor menoviek staníc"
 
 #: RadioPanel.cpp:1651
 msgid "There are not entries for this Radio Station"
@@ -3909,23 +3910,23 @@ msgstr ""
 
 #: RadioPanel.cpp:1763
 msgid "Are you sure to delete the selected radio searches?"
-msgstr ""
+msgstr "naozaj chcete odstrániť zvolené hľadania rádií?"
 
 #: RaListBox.cpp:144
 msgid "Play the selected tracks"
-msgstr ""
+msgstr "Prehrať zvolené skladby"
 
 #: SelCoverFile.cpp:30
 msgid "Select Cover File"
-msgstr ""
+msgstr "Vyberte súbor obalu"
 
 #: SelCoverFile.cpp:55
 msgid "Cover:"
-msgstr ""
+msgstr "Obal:"
 
 #: SelCoverFile.cpp:114
 msgid "Select the cover filename"
-msgstr ""
+msgstr "Vyberte meno súboru obalu"
 
 #: SmartMode.cpp:391
 msgid "Generate Smart Playlist"
@@ -3933,31 +3934,31 @@ msgstr ""
 
 #: SmartMode.cpp:411
 msgid "Save to"
-msgstr ""
+msgstr "Uložiť ako"
 
 #: SmartMode.cpp:431
 msgid "Allow"
-msgstr ""
+msgstr "Povoliť"
 
 #: SmartMode.cpp:446
 msgid "Deny"
-msgstr ""
+msgstr "Zakázať"
 
 #: SmartMode.cpp:469
 msgid "Hours"
-msgstr ""
+msgstr "Predošlá skladba"
 
 #: SmartMode.cpp:470
 msgid "MiBytes"
-msgstr ""
+msgstr "MiB"
 
 #: SmartMode.cpp:471
 msgid "GiBytes"
-msgstr ""
+msgstr "GiB"
 
 #: SoListBox.cpp:425
 msgid "Offset"
-msgstr ""
+msgstr "Posun"
 
 #: SoListBox.cpp:497
 msgid "Edit the clicked column for the selected tracks"
@@ -3965,7 +3966,7 @@ msgstr ""
 
 #: SoListBox.cpp:503
 msgid "Set"
-msgstr ""
+msgstr "Nastaviť"
 
 #: SoListBox.cpp:510
 msgid "Set the clicked column for the selected tracks"
@@ -3977,23 +3978,23 @@ msgstr ""
 
 #: SoListBox.cpp:577
 msgid "Edit the songs selected"
-msgstr ""
+msgstr "Upraviť zvolené skladby"
 
 #: SoListBox.cpp:617 TaskBar.cpp:162
 msgid "Set the current track rating"
-msgstr ""
+msgstr "Nastaviť hodnotenie aktuálnej skladby"
 
 #: SoListBox.cpp:624
 msgid "Save all selected tracks as a playlist"
-msgstr ""
+msgstr "Uložiť všetky zvolené skladby ako Playlist"
 
 #: SoListBox.cpp:638
 msgid "Remove the current selected tracks from library"
-msgstr ""
+msgstr "Odstrániť aktuálne zvolené skladby z knižnice"
 
 #: SoListBox.cpp:643
 msgid "Remove the current selected tracks from drive"
-msgstr ""
+msgstr "odstrániť aktuálne zvolené skladby zo zariadenia"
 
 #: SoListBox.cpp:652
 msgid "Selects the genre of the current song"
@@ -4009,11 +4010,11 @@ msgstr ""
 
 #: SplashWin.cpp:62
 msgid "guayadeque.org"
-msgstr ""
+msgstr "guayadeque.org"
 
 #: SplashWin.cpp:69
 msgid "Please Donate!"
-msgstr ""
+msgstr "Prosím, podporte!"
 
 #: StatusBar.cpp:163 StatusBar.cpp:265
 msgid "Enable audioscrobbling"
@@ -4029,7 +4030,7 @@ msgstr ""
 
 #: StatusBar.cpp:169
 msgid "Shows information about the selected items"
-msgstr ""
+msgstr "Zobraziť informácie o zvolených položkách"
 
 #: StatusBar.cpp:265
 msgid "Disable audioscrobbling"
@@ -4037,11 +4038,11 @@ msgstr ""
 
 #: TaListBox.cpp:104 TreePanel.cpp:367
 msgid "Create"
-msgstr ""
+msgstr "Vytvoriť"
 
 #: TaListBox.cpp:124
 msgid "Play current selected labels"
-msgstr ""
+msgstr "Prehrať zvolené menovky"
 
 #: TaListBox.cpp:131
 msgid "Add current selected labels to playlist"
@@ -4049,15 +4050,15 @@ msgstr ""
 
 #: TaskBar.cpp:112
 msgid "Pause"
-msgstr ""
+msgstr "Prerušiť"
 
 #: TaskBar.cpp:112 TaskBar.cpp:116
 msgid "Play current playlist"
-msgstr ""
+msgstr "Prehrať aktuálny Playlist"
 
 #: TaskBar.cpp:122
 msgid "Skip to next track in current playlist"
-msgstr ""
+msgstr "prejsť na ďalšiu skladbu v Playliste"
 
 #: TaskBar.cpp:126
 msgid "Skip to next album track in current playlist"
@@ -4065,7 +4066,7 @@ msgstr ""
 
 #: TaskBar.cpp:130
 msgid "Prev Track"
-msgstr ""
+msgstr "Predošlá skladba"
 
 #: TaskBar.cpp:130
 msgid "Skip to previous track in current playlist"
@@ -4073,11 +4074,11 @@ msgstr ""
 
 #: TaskBar.cpp:134
 msgid "Prev Album"
-msgstr ""
+msgstr "Predošlý album"
 
 #: TaskBar.cpp:134
 msgid "Skip to previous album track in current playlist"
-msgstr ""
+msgstr "Nastaviť hodnotenie aktuálnej skladby"
 
 #: TaskBar.cpp:165
 msgid "&Smart Play"
@@ -4085,15 +4086,15 @@ msgstr ""
 
 #: TaskBar.cpp:169
 msgid "&Repeat Playlist"
-msgstr ""
+msgstr "&Opakovať Playlist"
 
 #: TaskBar.cpp:173
 msgid "&Repeat Track"
-msgstr ""
+msgstr "Opakovať &skladbu"
 
 #: TaskBar.cpp:177
 msgid "R&andomize"
-msgstr ""
+msgstr "&Náhodne"
 
 #: TaskBar.cpp:187
 msgid "Audioscrobbling"
@@ -4101,19 +4102,19 @@ msgstr ""
 
 #: TaskBar.cpp:193
 msgid "Exit"
-msgstr ""
+msgstr "Skončiť"
 
 #: TaskBar.cpp:193
 msgid "Exit this program"
-msgstr ""
+msgstr "Skončiť tento program"
 
 #: TrackEdit.cpp:89
 msgid "Songs Editor"
-msgstr ""
+msgstr "Editor piesní"
 
 #: TrackEdit.cpp:102
 msgid " Songs "
-msgstr ""
+msgstr " Piesne "
 
 #: TrackEdit.cpp:110
 msgid "Move the track to the previous position"
@@ -4133,7 +4134,7 @@ msgstr ""
 
 #: TrackEdit.cpp:160 TrackEdit.cpp:485
 msgid "A. Artist:"
-msgstr ""
+msgstr "A. Umelec:"
 
 #: TrackEdit.cpp:161
 msgid "shows the album artist of the track"
@@ -4153,7 +4154,7 @@ msgstr ""
 
 #: TrackEdit.cpp:195
 msgid "Composer:"
-msgstr ""
+msgstr "Skladateľ:"
 
 #: TrackEdit.cpp:203
 msgid "Copy the comment to all the tracks you are editing"
@@ -4161,11 +4162,11 @@ msgstr ""
 
 #: TrackEdit.cpp:207
 msgid "Comment:"
-msgstr ""
+msgstr "Komentár:"
 
 #: TrackEdit.cpp:216
 msgid "Copy the number to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať číslo do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:219 TrackEdit.cpp:543
 msgid "Number:"
@@ -4181,7 +4182,7 @@ msgstr ""
 
 #: TrackEdit.cpp:243
 msgid "Disk:"
-msgstr ""
+msgstr "Disk:"
 
 #: TrackEdit.cpp:253
 msgid "Copy the genre name to all songs you are editing"
@@ -4189,43 +4190,43 @@ msgstr ""
 
 #: TrackEdit.cpp:256
 msgid "Genre:"
-msgstr ""
+msgstr "Žáner:"
 
 #: TrackEdit.cpp:264
 msgid "Copy the year to all songs you are editing"
-msgstr ""
+msgstr "Kopírovať rok do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:267
 msgid "Year:"
-msgstr ""
+msgstr "Rok:"
 
 #: TrackEdit.cpp:283
 msgid "Rating:"
-msgstr ""
+msgstr "Hodnotenie:"
 
 #: TrackEdit.cpp:332
 msgid "Add a picture from file to the current track"
-msgstr ""
+msgstr "Pridať obrázok zo súboru do aktuálnej skladby"
 
 #: TrackEdit.cpp:336
 msgid "Delete the picture from the current track"
-msgstr ""
+msgstr "Odstrániť obrázok z aktuálnej skladby"
 
 #: TrackEdit.cpp:340
 msgid "Save the current picture to file"
-msgstr ""
+msgstr "Uložiť aktuálny obrázok do súboru"
 
 #: TrackEdit.cpp:344
 msgid "Search the album cover"
-msgstr ""
+msgstr "turečtina"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picute to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať obrázok do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"
-msgstr ""
+msgstr "Obrázky"
 
 #: TrackEdit.cpp:420
 msgid "Type the artist name to search in musicbrainz"
@@ -4253,92 +4254,92 @@ msgstr ""
 
 #: TrackEdit.cpp:482
 msgid "Copy the artist to the edited tracks"
-msgstr ""
+msgstr "Kopírovať umelca do upravovaných skladieb"
 
 #: TrackEdit.cpp:493
 msgid "Copy the album artist to the edited tracks"
-msgstr ""
+msgstr "Kopírovať umelca albumu do upravovaných skladieb"
 
 #: TrackEdit.cpp:504
 msgid "Copy the album to the edited tracks"
-msgstr ""
+msgstr "Kopírovať album do upravovaných skladieb"
 
 #: TrackEdit.cpp:517
 msgid "Copy the date to the edited tracks"
-msgstr ""
+msgstr "Kopírovať dátum do upravovaných skladieb"
 
 #: TrackEdit.cpp:528
 msgid "Copy the song names to the edited tracks"
-msgstr ""
+msgstr "Kopírovať názvy skladieb do upravovaných skladieb"
 
 #: TrackEdit.cpp:553
 msgid "Copy the number to the edited tracks"
-msgstr ""
+msgstr "Kopírovať číslo do upravovaných skladieb"
 
 #: TrackEdit.cpp:919
 #, c-format
 msgid ""
 "File Type\t: %s\n"
 "Length\t: %s"
-msgstr ""
+msgstr "Typ súboru\t: %s\nDĺžka\t\t: %s"
 
 #: TrackEdit.cpp:923
 #, c-format
 msgid ""
 "BitRate\t: %u Kbps\n"
 "File Size\t: %s"
-msgstr ""
+msgstr "Dátový tok\t\t: %u kb/s\nVeľkosť súboru\t: %s"
 
 #: TrackEdit.cpp:1673
 #, c-format
 msgid "Error: The album have %u tracks and you are editing %u"
-msgstr ""
+msgstr "Chyba: Album má %u skladieb a vy upravujete %u"
 
 #: TrackEdit.cpp:1678
 msgid ""
 "\n"
 "Warning: The length of some edited tracks don't match"
-msgstr ""
+msgstr "\nUpozornenie: Dĺžka niektorých upravovaných skladieb nesúhlasí"
 
 #: Transcode.cpp:319
 msgid "Keep Format"
-msgstr ""
+msgstr "Zachovať formát"
 
 #: Transcode.cpp:342
 msgid "Keep Quality"
-msgstr ""
+msgstr "Zachovať kvalitu"
 
 #: Transcode.cpp:345
 msgid "Very Good"
-msgstr ""
+msgstr "Veľmi dobré"
 
 #: Transcode.cpp:346
 msgid "Good"
-msgstr ""
+msgstr "Dobré"
 
 #: TreePanel.cpp:72
 msgid "Genres,Artists,Albums"
-msgstr ""
+msgstr "Žánre, umelci, albumy"
 
 #: TreePanel.cpp:73
 msgid "Genres,Year,Artists,Albums"
-msgstr ""
+msgstr "Žánre, roky, umelci, albumy"
 
 #: TreePanel.cpp:88
 msgid "Sortings"
-msgstr ""
+msgstr "Radenia"
 
 #: TreePanel.cpp:367
 msgid "Create a new filter"
-msgstr ""
+msgstr "Vytvoriť nový filter"
 
 #: TreePanel.cpp:371
 msgid "Edit the selected filter"
-msgstr ""
+msgstr "Upraviť zvolený filter"
 
 #: TreePanel.cpp:375
 msgid "Delete the selected filter"
-msgstr ""
+msgstr "Odstrániť zvolený filter"
 
 #: TreePanel.cpp:431
 msgid "Edit the labels assigned to the selected items"
@@ -4346,19 +4347,19 @@ msgstr ""
 
 #: TreePanel.cpp:1231
 msgid "Are you sure to delete the selected filter?"
-msgstr ""
+msgstr "Naozaj chcete odstrániť zvolený filter?"
 
 #: TreeViewFilterEditor.cpp:33
 msgid "Filter Editor"
-msgstr ""
+msgstr "Editor filtra"
 
 #: TreeViewFilterEditor.cpp:70
 msgid "Play Count"
-msgstr ""
+msgstr "Počet prehratí"
 
 #: TreeViewFilterEditor.cpp:119
 msgid "Filter:"
-msgstr ""
+msgstr "Filter:"
 
 #: TreeViewFilterEditor.cpp:123
 msgid "PlayCount"

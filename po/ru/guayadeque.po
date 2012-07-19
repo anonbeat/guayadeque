@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-04-02 08:14+0000\n"
+"PO-Revision-Date: 2012-06-24 16:13+0000\n"
 "Last-Translator: Andres <kovtunos@yandex.ru>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1876,7 +1876,7 @@ msgstr "Текст не найден"
 
 #: LyricsPanel.cpp:842
 msgid "Lyrics from "
-msgstr "Текст песни из"
+msgstr "Текст песни из "
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Target Editor"
@@ -3042,7 +3042,7 @@ msgstr "Немецкий"
 
 #: Preferences.cpp:139
 msgid "Greek"
-msgstr ""
+msgstr "Греческий"
 
 #: Preferences.cpp:140
 msgid "Hungarian"
@@ -3058,7 +3058,7 @@ msgstr "Итальянский"
 
 #: Preferences.cpp:143
 msgid "Japanese"
-msgstr ""
+msgstr "Японский"
 
 #: Preferences.cpp:144
 msgid "Norwegian Bokmal"
@@ -3066,7 +3066,7 @@ msgstr "Норвежский (Букмол)"
 
 #: Preferences.cpp:145
 msgid "Polish"
-msgstr ""
+msgstr "Польский"
 
 #: Preferences.cpp:146 Preferences.cpp:184
 msgid "Portuguese"
@@ -3082,7 +3082,7 @@ msgstr "Русский"
 
 #: Preferences.cpp:149
 msgid "Slovak"
-msgstr ""
+msgstr "Словакский"
 
 #: Preferences.cpp:150 Preferences.cpp:185
 msgid "Spanish"
@@ -3098,11 +3098,11 @@ msgstr "Тайский"
 
 #: Preferences.cpp:153
 msgid "Turkish"
-msgstr ""
+msgstr "Турецкий"
 
 #: Preferences.cpp:154
 msgid "Ukrainian"
-msgstr "украинский"
+msgstr "Украинский"
 
 #: Preferences.cpp:214
 msgid "General"

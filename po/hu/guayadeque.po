@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-04-24 14:15+0000\n"
+"PO-Revision-Date: 2012-06-07 08:59+0000\n"
 "Last-Translator: László Andrássy <andrassy.laszlo@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1273,7 +1273,7 @@ msgid ""
 "{n} : Number\n"
 "{y} : Year\n"
 "{d} : Disk"
-msgstr "Sablon kapcsolók:\n{g} : Műfaj\n{a} : Előadó\n{aa}: Album Előadó\n{A} : {aa} or {a}\n{b} : Album\n{t} : Zeneszám címe\n{n} : Zeneszám sorszáma\n{y} : Zeneszám év\n{d} : Lemez"
+msgstr "Sablon kapcsolók:\n{g} : Műfaj\n{a} : Előadó\n{aa}: Album Előadó\n{A} : {aa} vagy {a}\n{b} : Album\n{t} : Zeneszám címe\n{n} : Zeneszám sorszáma\n{y} : Zeneszám év\n{d} : Lemez"
 
 #: GeListBox.cpp:93
 msgid "Play current selected genres"
@@ -1973,7 +1973,7 @@ msgstr "Kivezérlésjelző"
 #: MainFrame.cpp:359 MainFrame.cpp:718 MainFrame.cpp:2130 MainFrame.cpp:2873
 #: MainFrame.cpp:2890 PlayList.cpp:76 RadioPanel.cpp:734
 msgid "Now Playing"
-msgstr "Most játszott"
+msgstr "Aktuális lejátszólista"
 
 #: MainFrame.cpp:955
 msgid "New Collection"
@@ -2169,7 +2169,7 @@ msgstr "Megállítás az aktuális vagy a kiválasztott zeneszám után"
 
 #: MainFrame.cpp:1493
 msgid "Clear the now playing playlist"
-msgstr "A most játszott lejátszási sor törlése"
+msgstr "Az aktuális lejátszólista törlése"
 
 #: MainFrame.cpp:1503 PlayList.cpp:1549 SoListBox.cpp:589 TaskBar.cpp:143
 msgid "Set the rating to 0"
@@ -3202,7 +3202,7 @@ msgstr "Gyors szövegkeresés"
 
 #: Preferences.cpp:670
 msgid "When searching, pressing enter queues the result"
-msgstr "Keresésnél, nyomja meg az ENTER-t a találatok sorbaállításához"
+msgstr "Keresésnél ENTER megnyomására az eredmény sorbaállításra kerül"
 
 #: Preferences.cpp:675
 msgid "Show CD cover frame in player"
@@ -3298,11 +3298,11 @@ msgstr " Véletlenszerű / Intelligens lejátszási mód "
 
 #: Preferences.cpp:1005
 msgid "Tracks left to start search"
-msgstr "Zeneszámok elhagyása a keresés indításához"
+msgstr "Zeneszám elhagyása a keresés indításához"
 
 #: Preferences.cpp:1013
 msgid "Tracks added each time"
-msgstr "Zeneszámok hozzáadása minden alkalommal"
+msgstr "Zeneszám hozzáadása minden alkalommal"
 
 #: Preferences.cpp:1022
 msgid "Max played tracks kept in playlist"
@@ -3727,7 +3727,7 @@ msgstr " Rádió keresés "
 
 #: RadioPanel.cpp:104
 msgid "Search in now playing info"
-msgstr "A most játszott információinak keresése"
+msgstr "Keresés az aktuális lejátszólistában"
 
 #: RadioPanel.cpp:108
 msgid "Search in genre names"
@@ -4051,7 +4051,7 @@ msgstr "Szünet"
 
 #: TaskBar.cpp:112 TaskBar.cpp:116
 msgid "Play current playlist"
-msgstr "Az aktuális lejátszólista lejátszása"
+msgstr "Az altuális lejátszólista elindítása"
 
 #: TaskBar.cpp:122
 msgid "Skip to next track in current playlist"
