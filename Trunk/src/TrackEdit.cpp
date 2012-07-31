@@ -350,7 +350,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	PictureButtonSizer->Add( 10, 0, 0, wxEXPAND, 5 );
 
 	m_CopyPicButton = new wxBitmapButton( PicturePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_CopyPicButton->SetToolTip( _( "Copy the current picute to all the tracks you are editing" ) );
+	m_CopyPicButton->SetToolTip( _( "Copy the current picture to all the tracks you are editing" ) );
 	PictureButtonSizer->Add( m_CopyPicButton, 0, wxALL, 5 );
 
 	PictureSizer->Add( PictureButtonSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
