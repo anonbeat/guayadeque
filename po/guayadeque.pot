@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -2435,7 +2435,7 @@ msgid " Digital Podcast Directory "
 msgstr ""
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
+msgid "Search in the podcast directory"
 msgstr ""
 
 #: NewChannel.cpp:115
@@ -4217,7 +4217,7 @@ msgid "Search the album cover"
 msgstr ""
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
+msgid "Copy the current picture to all the tracks you are editing"
 msgstr ""
 
 #: TrackEdit.cpp:361
