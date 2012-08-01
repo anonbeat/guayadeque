@@ -1,0 +1,4363 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# 
+# Translators:
+#   <milke.kv@gmail.com>, 2012.
+msgid ""
+msgstr ""
+"Project-Id-Version: Guayadeque\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"Last-Translator: milke <milke.kv@gmail.com>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: sr@latin\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+
+#: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
+#: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1433
+#: MainFrame.cpp:4479 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
+#: SoListBox.cpp:461 TreePanel.cpp:342
+msgid "Preferences"
+msgstr "Postavke"
+
+#: AAListBox.cpp:129 AlListBox.cpp:246 ArListBox.cpp:131 FileBrowser.cpp:324
+#: FileBrowser.cpp:1097 PlayList.cpp:1504 SoListBox.cpp:461 TreePanel.cpp:342
+msgid "Add commands in preferences"
+msgstr "Dodaj komande u podešavanjima"
+
+#: AAListBox.cpp:132 AlListBox.cpp:249 ArListBox.cpp:134 FileBrowser.cpp:327
+#: FileBrowser.cpp:1100 PlayList.cpp:1507 Preferences.cpp:273
+#: SoListBox.cpp:464 TreePanel.cpp:346
+msgid "Commands"
+msgstr "Komande"
+
+#: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:322
+#: AlbumBrowser.cpp:1780 AlbumBrowser.cpp:1915 AlListBox.cpp:263
+#: ArListBox.cpp:147 CoListBox.cpp:103 FileBrowser.cpp:339
+#: FileBrowser.cpp:1112 GeListBox.cpp:92 LastFMPanel.cpp:557
+#: LastFMPanel.cpp:819 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
+#: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164 MainFrame.cpp:1476
+#: PcListBox.cpp:111 PlayListPanel.cpp:224 PodcastsPanel.cpp:2050
+#: RadioPanel.cpp:834 RaListBox.cpp:143 SoListBox.cpp:525 TaListBox.cpp:123
+#: TaskBar.cpp:112 TreePanel.cpp:388 YeListBox.cpp:103
+msgid "Play"
+msgstr "Pusti"
+
+#: AAListBox.cpp:146
+msgid "Play current selected album artist"
+msgstr "Pusti trenutno izabranog umetnika albuma"
+
+#: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:326
+#: AlbumBrowser.cpp:1784 AlbumBrowser.cpp:1919 AlListBox.cpp:269
+#: ArListBox.cpp:154 CoListBox.cpp:110 FileBrowser.cpp:345
+#: FileBrowser.cpp:1118 GeListBox.cpp:99 LastFMPanel.cpp:561
+#: LastFMPanel.cpp:823 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
+#: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168 PcListBox.cpp:118
+#: PlayListPanel.cpp:229 PodcastsPanel.cpp:2056 RadioPanel.cpp:840
+#: RaListBox.cpp:150 SoListBox.cpp:532 TaListBox.cpp:130 TreePanel.cpp:393
+#: YeListBox.cpp:110
+msgid "Enqueue"
+msgstr "Uvrsti"
+
+#: AAListBox.cpp:153 CoListBox.cpp:111 PcListBox.cpp:119 RaListBox.cpp:151
+#: YeListBox.cpp:111
+msgid "Add current selected tracks to playlist"
+msgstr "Dodaj selektovane numere u listu"
+
+#: AAListBox.cpp:161 AlbumBrowser.cpp:333 AlbumBrowser.cpp:1791
+#: AlbumBrowser.cpp:1926 AlListBox.cpp:277 ArListBox.cpp:163 CoListBox.cpp:119
+#: FileBrowser.cpp:353 FileBrowser.cpp:1126 GeListBox.cpp:108
+#: LastFMPanel.cpp:568 LastFMPanel.cpp:830 LastFMPanel.cpp:1024
+#: LastFMPanel.cpp:1224 LastFMPanel.cpp:1432 LastFMPanel.cpp:3175
+#: PcListBox.cpp:127 PlayListPanel.cpp:237 PodcastsPanel.cpp:2064
+#: RadioPanel.cpp:848 RaListBox.cpp:159 SoListBox.cpp:541 TaListBox.cpp:139
+#: TreePanel.cpp:401 YeListBox.cpp:119
+msgid "Current Track"
+msgstr "Trenutne numere"
+
+#: AAListBox.cpp:162 AlbumBrowser.cpp:334 AlbumBrowser.cpp:1792
+#: AlbumBrowser.cpp:1927 ArListBox.cpp:164 FileBrowser.cpp:354
+#: FileBrowser.cpp:1127 GeListBox.cpp:109 LastFMPanel.cpp:569
+#: LastFMPanel.cpp:831 LastFMPanel.cpp:1025 LastFMPanel.cpp:1225
+#: LastFMPanel.cpp:1433 LastFMPanel.cpp:3176 PcListBox.cpp:128
+#: PlayListPanel.cpp:238 PodcastsPanel.cpp:2065 RadioPanel.cpp:849
+#: RaListBox.cpp:160 SoListBox.cpp:542 TaListBox.cpp:140 TreePanel.cpp:402
+#: YeListBox.cpp:120
+msgid "Add current selected tracks to playlist after the current track"
+msgstr "Dodaj izabrane numere u listu nakon trenutne numere"
+
+#: AAListBox.cpp:168 AlbumBrowser.cpp:339 AlbumBrowser.cpp:1797
+#: AlbumBrowser.cpp:1932 AlListBox.cpp:283 ArListBox.cpp:170 CoListBox.cpp:126
+#: FileBrowser.cpp:359 FileBrowser.cpp:1133 GeListBox.cpp:115
+#: LastFMPanel.cpp:574 LastFMPanel.cpp:836 LastFMPanel.cpp:1030
+#: LastFMPanel.cpp:1230 LastFMPanel.cpp:1438 LastFMPanel.cpp:3181
+#: PcListBox.cpp:134 PlayListPanel.cpp:243 PodcastsPanel.cpp:2070
+#: RadioPanel.cpp:855 RaListBox.cpp:166 SoListBox.cpp:548 TaListBox.cpp:146
+#: TreePanel.cpp:407 YeListBox.cpp:126
+msgid "Current Album"
+msgstr "Trenutnog albuma"
+
+#: AAListBox.cpp:169 AlbumBrowser.cpp:340 AlbumBrowser.cpp:1798
+#: AlbumBrowser.cpp:1933 ArListBox.cpp:171 FileBrowser.cpp:360
+#: FileBrowser.cpp:1134 GeListBox.cpp:116 LastFMPanel.cpp:575
+#: LastFMPanel.cpp:837 LastFMPanel.cpp:1031 LastFMPanel.cpp:1231
+#: LastFMPanel.cpp:1439 LastFMPanel.cpp:3182 PcListBox.cpp:135
+#: PlayListPanel.cpp:244 PodcastsPanel.cpp:2071 RadioPanel.cpp:856
+#: RaListBox.cpp:167 SoListBox.cpp:549 TaListBox.cpp:147 TreePanel.cpp:408
+#: YeListBox.cpp:127
+msgid "Add current selected tracks to playlist after the current album"
+msgstr "Dodaj izabrane numere u listu posle trenutnog albuma"
+
+#: AAListBox.cpp:175 AlbumBrowser.cpp:345 AlbumBrowser.cpp:1803
+#: AlbumBrowser.cpp:1938 AlListBox.cpp:289 ArListBox.cpp:177 CoListBox.cpp:133
+#: FileBrowser.cpp:365 FileBrowser.cpp:1140 GeListBox.cpp:122
+#: LastFMPanel.cpp:580 LastFMPanel.cpp:842 LastFMPanel.cpp:1036
+#: LastFMPanel.cpp:1236 LastFMPanel.cpp:1444 LastFMPanel.cpp:3187
+#: PcListBox.cpp:141 PlayListPanel.cpp:249 PodcastsPanel.cpp:2076
+#: RadioPanel.cpp:862 RaListBox.cpp:173 SoListBox.cpp:555 TaListBox.cpp:153
+#: TreePanel.cpp:413 YeListBox.cpp:133
+msgid "Current Artist"
+msgstr "Trenutnog izvođača"
+
+#: AAListBox.cpp:176 AlbumBrowser.cpp:346 AlbumBrowser.cpp:1804
+#: AlbumBrowser.cpp:1939 ArListBox.cpp:178 FileBrowser.cpp:366
+#: FileBrowser.cpp:1141 GeListBox.cpp:123 LastFMPanel.cpp:581
+#: LastFMPanel.cpp:843 LastFMPanel.cpp:1037 LastFMPanel.cpp:1237
+#: LastFMPanel.cpp:1445 LastFMPanel.cpp:3188 PcListBox.cpp:142
+#: PlayListPanel.cpp:250 PodcastsPanel.cpp:2077 RadioPanel.cpp:863
+#: RaListBox.cpp:174 SoListBox.cpp:556 TaListBox.cpp:154 TreePanel.cpp:414
+#: YeListBox.cpp:134
+msgid "Add current selected tracks to playlist after the current artist"
+msgstr "Dodaj izabrane numere u listu nakon trenutnog izvođača"
+
+#: AAListBox.cpp:181 AlbumBrowser.cpp:350 AlbumBrowser.cpp:1808
+#: AlbumBrowser.cpp:1943 AlListBox.cpp:294 ArListBox.cpp:183 CoListBox.cpp:139
+#: FileBrowser.cpp:370 FileBrowser.cpp:1146 GeListBox.cpp:128
+#: LastFMPanel.cpp:585 LastFMPanel.cpp:847 LastFMPanel.cpp:1041
+#: LastFMPanel.cpp:1241 LastFMPanel.cpp:1449 LastFMPanel.cpp:3192
+#: PcListBox.cpp:147 PlayListPanel.cpp:254 PodcastsPanel.cpp:2081
+#: RadioPanel.cpp:868 RaListBox.cpp:179 SoListBox.cpp:561 TaListBox.cpp:159
+#: TreePanel.cpp:418 YeListBox.cpp:139
+msgid "Enqueue After"
+msgstr "Uvrsti nakon"
+
+#: AAListBox.cpp:190 AlbumBrowser.cpp:360 AlbumBrowser.cpp:1818
+#: AlbumBrowser.cpp:1953 AlListBox.cpp:307 ArListBox.cpp:198 PcListBox.cpp:156
+#: PlayList.cpp:1533 RaListBox.cpp:188 SoListBox.cpp:576 TreePanel.cpp:440
+#: YeListBox.cpp:148
+msgid "Edit Songs"
+msgstr "Izmeni pesmu"
+
+#: AAListBox.cpp:191 CoListBox.cpp:149 PcListBox.cpp:157 RaListBox.cpp:189
+#: TreePanel.cpp:441 YeListBox.cpp:149
+msgid "Edit the selected tracks"
+msgstr "Izmeni izabrane numere"
+
+#: AAListBox.cpp:199 Accelerators.cpp:141 AlbumBrowser.cpp:1961
+#: AlListBox.cpp:335 ArListBox.cpp:207 CoListBox.cpp:157 FileBrowser.cpp:383
+#: FileBrowser.cpp:1162 GeListBox.cpp:135 LastFMPanel.cpp:3196
+#: PcListBox.cpp:165 PlayListAppend.cpp:25 PlayList.cpp:1584
+#: PlayListPanel.cpp:286 RaListBox.cpp:197 SoListBox.cpp:623 TaListBox.cpp:166
+#: TreePanel.cpp:449 YeListBox.cpp:157
+msgid "Save to Playlist"
+msgstr "Sačuvaj u listu"
+
+#: AAListBox.cpp:200 AlListBox.cpp:336 YeListBox.cpp:158
+msgid "Save the selected tracks to Playlist"
+msgstr "Sačuvaj izabrane numere u listu"
+
+#: Accelerators.cpp:108
+msgid "Add Folder"
+msgstr "Dodaj fasciklu"
+
+#: Accelerators.cpp:109
+msgid "Audio Scrobbling"
+msgstr "Audio skroblovanje"
+
+#: Accelerators.cpp:110 MainFrame.cpp:1492 PlayList.cpp:1601
+msgid "Clear Playlist"
+msgstr "Očisti listu"
+
+#: Accelerators.cpp:111
+msgid "Close Window"
+msgstr "Zatvori prozor"
+
+#: Accelerators.cpp:112
+msgid "Community Forums"
+msgstr "Forum zajednice"
+
+#: Accelerators.cpp:113 AlbumBrowser.cpp:354 AlbumBrowser.cpp:1812
+#: AlbumBrowser.cpp:1947 AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1527
+#: RadioPanel.cpp:873 SoListBox.cpp:568 TreePanel.cpp:430
+msgid "Edit Labels"
+msgstr "Izmeni etiketu"
+
+#: Accelerators.cpp:114 FileBrowser.cpp:375 FileBrowser.cpp:1154
+msgid "Edit Tracks"
+msgstr "Izmeni numeru"
+
+#: Accelerators.cpp:116
+msgid "Enqueue After Track"
+msgstr "Uvrsti nakon numere"
+
+#: Accelerators.cpp:117
+msgid "Enqueue After Album"
+msgstr "Uvrsti nakon albuma"
+
+#: Accelerators.cpp:119
+msgid "Enqueue After Artist"
+msgstr "Uvrsti nakon izvođača"
+
+#: Accelerators.cpp:120 MainFrame.cpp:1404
+msgid "Full Screen"
+msgstr "Pun ekran"
+
+#: Accelerators.cpp:121
+msgid "Gapless/Crossfading"
+msgstr "Bez pauze/Pretapanje"
+
+#: Accelerators.cpp:122 Accelerators.cpp:411 MainFrame.cpp:1595
+#: MainFrame.cpp:1650
+msgid "Help"
+msgstr "Pomoć"
+
+#: Accelerators.cpp:124
+msgid "Play All"
+msgstr "Pusti sve"
+
+#: Accelerators.cpp:125
+msgid "Play/Pause"
+msgstr "Pusti/Pauza"
+
+#: Accelerators.cpp:126 MainFrame.cpp:1081 MainFrame.cpp:1974
+msgid "Play Stream"
+msgstr "Pusti tok"
+
+#: Accelerators.cpp:128 MainFrame.cpp:1135
+msgid "Quit"
+msgstr "Izađi"
+
+#: Accelerators.cpp:130 PlayList.cpp:1596 PLSoListBox.cpp:160
+msgid "Randomize Playlist"
+msgstr "Pomešaj listu"
+
+#: Accelerators.cpp:131 Accelerators.cpp:132 Accelerators.cpp:133
+#: Accelerators.cpp:134 Accelerators.cpp:135 Accelerators.cpp:136
+#: DynamicPlayList.cpp:56 DynamicPlayList.cpp:134 PlayList.cpp:1562
+#: SoListBox.cpp:419 TaskBar.cpp:162 TreeViewFilterEditor.cpp:69
+#: TreeViewFilterEditor.cpp:123
+msgid "Rating"
+msgstr "Ocena"
+
+#: Accelerators.cpp:137
+msgid "Repeat All Tracks"
+msgstr "Ponovi sve numere"
+
+#: Accelerators.cpp:138
+msgid "Repeat Current Track"
+msgstr "Ponovi trenutnu numeru"
+
+#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3773
+msgid "Save Layout"
+msgstr "Sačuvaj raspored"
+
+#: Accelerators.cpp:142 PlayList.cpp:1568
+msgid "Search"
+msgstr "Traži"
+
+#: Accelerators.cpp:143
+msgid "Show Browser"
+msgstr "Prikaži pregledač"
+
+#: Accelerators.cpp:144
+msgid "Show Covers"
+msgstr "Prikaži omote"
+
+#: Accelerators.cpp:145
+msgid "Show Playlist"
+msgstr "Prikaži liste"
+
+#: Accelerators.cpp:146
+msgid "Show Files"
+msgstr "Prikaži fajlove"
+
+#: Accelerators.cpp:147
+msgid "Show Filters"
+msgstr "Prikaži filtre"
+
+#: Accelerators.cpp:148
+msgid "Show Last.fm"
+msgstr "Prikaži Last.fm"
+
+#: Accelerators.cpp:149
+msgid "Show Library"
+msgstr "Prikaži biblioteku"
+
+#: Accelerators.cpp:150
+msgid "Show Lyrics"
+msgstr "Prikaži tekstove"
+
+#: Accelerators.cpp:152
+msgid "Show Radio"
+msgstr "Prikaži radio"
+
+#: Accelerators.cpp:153
+msgid "Show Playlists"
+msgstr "Prikaži liste"
+
+#: Accelerators.cpp:154
+msgid "Show Podcasts"
+msgstr "Prikaži podemisije"
+
+#: Accelerators.cpp:155
+msgid "Show Sources"
+msgstr "Pokaži izvore"
+
+#: Accelerators.cpp:156
+msgid "Show Status Bar"
+msgstr "Pokaži statusnu traku"
+
+#: Accelerators.cpp:157
+msgid "Show VU Meters"
+msgstr "Pokaži VU metre"
+
+#: Accelerators.cpp:158
+msgid "Skip Next"
+msgstr "Preskoči sledeće"
+
+#: Accelerators.cpp:159
+msgid "Skip Next Album"
+msgstr "Preskoči sledeći album"
+
+#: Accelerators.cpp:160
+msgid "Skip Previous"
+msgstr "Preskoči prethodno"
+
+#: Accelerators.cpp:161
+msgid "Skip Previous Album"
+msgstr "Preskoči prethodni album"
+
+#: Accelerators.cpp:163 MainFrame.cpp:1536
+msgid "Smart Play"
+msgstr "Pametno puštanje"
+
+#: Accelerators.cpp:164 MainFrame.cpp:1480 TaskBar.cpp:116
+msgid "Stop"
+msgstr "Zaustavi"
+
+#: Accelerators.cpp:165 MainFrame.cpp:1485
+msgid "Stop at End"
+msgstr "Zaustavi na kraju"
+
+#: Accelerators.cpp:166
+msgid "Update Covers"
+msgstr "Ažuriraj omote"
+
+#: Accelerators.cpp:167 iPodMedia.cpp:1682 Jamendo.cpp:1128
+#: LocationPanel.cpp:336 LocationPanel.cpp:374 LocationPanel.cpp:509
+#: Magnatune.cpp:1022 MainFrame.cpp:1016 MainFrame.cpp:1054 MainFrame.cpp:1288
+#: MediaViewer.cpp:952 PodcastsPanel.cpp:1757 PortableMedia.cpp:1888
+msgid "Update"
+msgstr "Ažuriraj"
+
+#: Accelerators.cpp:168
+msgid "Update (Forced)"
+msgstr "Ažuriraj (na silu)"
+
+#: Accelerators.cpp:169
+msgid "Update Podcasts"
+msgstr "Ažuriraj podemisije"
+
+#: Accelerators.cpp:170 MainFrame.cpp:1565
+msgid "Volume Down"
+msgstr "Pojačaj"
+
+#: Accelerators.cpp:171 MainFrame.cpp:1560
+msgid "Volume Up"
+msgstr "Utišaj"
+
+#: Accelerators.cpp:274
+msgid "Shift"
+msgstr "Shift"
+
+#: Accelerators.cpp:278
+msgid "Ctrl"
+msgstr "Ctrl"
+
+#: Accelerators.cpp:282
+msgid "Alt"
+msgstr "Alt"
+
+#: Accelerators.cpp:286
+msgid "Meta"
+msgstr "Meta"
+
+#: Accelerators.cpp:303 AlbumBrowser.cpp:846
+msgid "Back"
+msgstr "Nazad"
+
+#: Accelerators.cpp:305
+msgid "Escape"
+msgstr "Escape"
+
+#: Accelerators.cpp:308
+msgid "Space"
+msgstr "Razmak"
+
+#: Accelerators.cpp:311
+msgid "Tab"
+msgstr "Tab"
+
+#: Accelerators.cpp:313
+msgid "Return"
+msgstr "Return"
+
+#: Accelerators.cpp:315
+msgid "Enter"
+msgstr "Enter"
+
+#: Accelerators.cpp:348 Preferences.cpp:1563
+msgid "Left"
+msgstr "Levo"
+
+#: Accelerators.cpp:351
+msgid "Up"
+msgstr "Gore"
+
+#: Accelerators.cpp:354 Preferences.cpp:1565
+msgid "Right"
+msgstr "Desno"
+
+#: Accelerators.cpp:357
+msgid "Down"
+msgstr "Dole"
+
+#: Accelerators.cpp:359 Accelerators.cpp:415
+msgid "Home"
+msgstr "Home"
+
+#: Accelerators.cpp:362 Accelerators.cpp:369
+msgid "Page Up"
+msgstr "Page Up"
+
+#: Accelerators.cpp:365 Accelerators.cpp:372
+msgid "Page Down"
+msgstr "Page Down"
+
+#: Accelerators.cpp:375 PlayListAppend.cpp:69
+msgid "End"
+msgstr "End"
+
+#: Accelerators.cpp:377
+msgid "Begin"
+msgstr "Begin"
+
+#: Accelerators.cpp:379 Accelerators.cpp:410
+msgid "Insert"
+msgstr "Insert"
+
+#: Accelerators.cpp:382 PlayListPanel.cpp:296 PodcastsPanel.cpp:1751
+#: PodcastsPanel.cpp:2085 TaListBox.cpp:115 TreePanel.cpp:375
+msgid "Delete"
+msgstr "Delete"
+
+#: Accelerators.cpp:393
+msgid "Separator"
+msgstr "Razdvajač"
+
+#: Accelerators.cpp:406 PlayList.cpp:1657 SoListBox.cpp:667
+msgid "Select"
+msgstr "Izaberi"
+
+#: Accelerators.cpp:407 LyricsPanel.cpp:308
+msgid "Print"
+msgstr "Štampaj"
+
+#: Accelerators.cpp:408
+msgid "Execute"
+msgstr "Izvrši"
+
+#: Accelerators.cpp:409
+msgid "Snapshot"
+msgstr "Snimak"
+
+#: Accelerators.cpp:412
+msgid "Cancel"
+msgstr "Otkaži"
+
+#: Accelerators.cpp:413
+msgid "Menu"
+msgstr "Izbor"
+
+#: Accelerators.cpp:414
+msgid "Capital"
+msgstr "Veliko"
+
+#: AlbumBrowser.cpp:284 AlbumBrowser.cpp:1569 AlbumBrowser.cpp:2397
+#: DynamicPlayList.cpp:118 LibPanel.cpp:395 LibPanel.cpp:540 SmartMode.cpp:467
+msgid "Tracks"
+msgstr "Numere"
+
+#: AlbumBrowser.cpp:322 AlbumBrowser.cpp:1780 AlbumBrowser.cpp:1915
+#: LastFMPanel.cpp:819
+msgid "Play the album tracks"
+msgstr "Pusti numere sa albuma"
+
+#: AlbumBrowser.cpp:326 AlbumBrowser.cpp:1784 AlbumBrowser.cpp:1919
+#: LastFMPanel.cpp:823
+msgid "Enqueue the album tracks to the playlist"
+msgstr "Uvrsti numere iz albuma u listu"
+
+#: AlbumBrowser.cpp:354 AlbumBrowser.cpp:1812 AlbumBrowser.cpp:1947
+#: AlListBox.cpp:300
+msgid "Edit the labels assigned to the selected albums"
+msgstr "Izmeni etikete dodeljene izabranim albumima"
+
+#: AlbumBrowser.cpp:360 AlbumBrowser.cpp:1818 AlbumBrowser.cpp:1953
+#: AlListBox.cpp:308
+msgid "Edit the selected songs"
+msgstr "Izmeni izabrane pesme"
+
+#: AlbumBrowser.cpp:367 AlbumBrowser.cpp:1825 LastFMPanel.cpp:851
+msgid "Search Album"
+msgstr "Pretraži album"
+
+#: AlbumBrowser.cpp:367 AlbumBrowser.cpp:1825 LastFMPanel.cpp:851
+msgid "Search the album in the library"
+msgstr "Traži album u biblioteci"
+
+#: AlbumBrowser.cpp:371 AlbumBrowser.cpp:1829 LastFMPanel.cpp:589
+#: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
+msgid "Search Artist"
+msgstr "Traži izvođača"
+
+#: AlbumBrowser.cpp:371 AlbumBrowser.cpp:1829 LastFMPanel.cpp:589
+#: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
+msgid "Search the artist in the library"
+msgstr "Traži izvođača u biblioteci"
+
+#: AlbumBrowser.cpp:379 AlbumBrowser.cpp:1837 AlListBox.cpp:344
+msgid "Download Cover"
+msgstr "Preuzmi omot"
+
+#: AlbumBrowser.cpp:379 AlbumBrowser.cpp:1837 AlListBox.cpp:344
+msgid "Download cover for the current selected album"
+msgstr "Preuzmi omot za izabrane albume"
+
+#: AlbumBrowser.cpp:383 AlbumBrowser.cpp:1841 AlListBox.cpp:348
+msgid "Select Cover"
+msgstr "Izaberi omot"
+
+#: AlbumBrowser.cpp:383 AlbumBrowser.cpp:1841 AlListBox.cpp:348
+msgid "Select the cover image file from disk"
+msgstr "Izaberi sliku omota sa diska"
+
+#: AlbumBrowser.cpp:387 AlbumBrowser.cpp:1845 AlListBox.cpp:352
+msgid "Delete Cover"
+msgstr "Izbriši omot"
+
+#: AlbumBrowser.cpp:387 AlbumBrowser.cpp:1845 AlListBox.cpp:352
+msgid "Delete the cover for the selected album"
+msgstr "Izbriši omot za izabrani album"
+
+#: AlbumBrowser.cpp:394 AlbumBrowser.cpp:1852 AlListBox.cpp:359
+msgid "Embed Cover"
+msgstr "Ugnezdi omot"
+
+#: AlbumBrowser.cpp:394 AlbumBrowser.cpp:1852
+msgid "Embed the cover to the selected album tracks"
+msgstr "Ugnezdi omot u izabrane numere albuma"
+
+#: AlbumBrowser.cpp:405 AlListBox.cpp:318 FileBrowser.cpp:763
+#: RadioPanel.cpp:730
+msgid "Name"
+msgstr "Ime"
+
+#: AlbumBrowser.cpp:405
+msgid "Sort albums by name"
+msgstr "Razvrstaj albume po imenu"
+
+#: AlbumBrowser.cpp:409 AlListBox.cpp:319 DynamicPlayList.cpp:55
+#: DynamicPlayList.cpp:133 PlayList.cpp:1651 SoListBox.cpp:417
+#: TreeViewFilterEditor.cpp:68 TreeViewFilterEditor.cpp:123
+msgid "Year"
+msgstr "Godina"
+
+#: AlbumBrowser.cpp:409
+msgid "Sort albums by year"
+msgstr "Razvrstaj albume po godini"
+
+#: AlbumBrowser.cpp:413 AlListBox.cpp:320
+msgid "Year Descending"
+msgstr "Godine - opadajući"
+
+#: AlbumBrowser.cpp:413 AlbumBrowser.cpp:429
+msgid "Sort albums by year descendant"
+msgstr "Razvrstaj albume po godinama opadajući"
+
+#: AlbumBrowser.cpp:417
+msgid "Artist Name"
+msgstr "Ime izvođača"
+
+#: AlbumBrowser.cpp:417
+msgid "Sort albums by artist name"
+msgstr "Razvrstaj albume po imenu izvođača"
+
+#: AlbumBrowser.cpp:421 AlListBox.cpp:322
+msgid "Artist, Year"
+msgstr "Izvođač, Godina"
+
+#: AlbumBrowser.cpp:421
+msgid "Sort albums by artist, year"
+msgstr "Razvrstaj albume po izvođaču, godini"
+
+#: AlbumBrowser.cpp:425 AlListBox.cpp:323
+msgid "Artist, Year Descending"
+msgstr "Izvođač, Godine - opadajući"
+
+#: AlbumBrowser.cpp:425
+msgid "Sort albums by artist, year descendant"
+msgstr "Razvrstaj albume po izvođaču, godini - opadajući"
+
+#: AlbumBrowser.cpp:429 DynamicPlayList.cpp:60 DynamicPlayList.cpp:138
+#: PodcastsPanel.cpp:1810 SoListBox.cpp:422
+msgid "Added"
+msgstr "Dodato"
+
+#: AlbumBrowser.cpp:433 AlListBox.cpp:328
+msgid "Sort By"
+msgstr "Razvrstaj po"
+
+#: AlbumBrowser.cpp:433
+msgid "Set the albums sorting"
+msgstr "Podesi razvrstavanje albuma"
+
+#: AlbumBrowser.cpp:437 AlbumBrowser.cpp:1859 LastFMPanel.cpp:597
+#: LastFMPanel.cpp:859 LastFMPanel.cpp:1055 LastFMPanel.cpp:1260
+#: LastFMPanel.cpp:1465 LastFMPanel.cpp:1590 LyricsPanel.cpp:287
+msgid "Copy to Clipboard"
+msgstr "Kopiraj u klipbord"
+
+#: AlbumBrowser.cpp:437 AlbumBrowser.cpp:1859 LastFMPanel.cpp:859
+msgid "Copy the album info to clipboard"
+msgstr "Kopiraj informacije o albumu u klipbord"
+
+#: AlbumBrowser.cpp:1354 LibPanel.cpp:1149 TreePanel.cpp:1059
+msgid "Albums Labels Editor"
+msgstr "Uređivač etiketa albuma"
+
+#: AlbumBrowser.cpp:1543 AlListBox.cpp:486 ItemListBox.cpp:64
+#: PlayerFilters.cpp:107 Preferences.cpp:1812 Preferences.cpp:1909
+#: SmartMode.cpp:396
+msgid "All"
+msgstr "Sve"
+
+#: AlbumBrowser.cpp:1611
+msgid "Page"
+msgstr "Strana"
+
+#: AlbumBrowser.cpp:1962 ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136
+#: LastFMPanel.cpp:3196 PcListBox.cpp:166 PlayList.cpp:1585 RaListBox.cpp:198
+#: TaListBox.cpp:167 TreePanel.cpp:450
+msgid "Save the selected tracks to playlist"
+msgstr "Sačuvaj izabrane numere u listu"
+
+#: AlbumBrowser.cpp:1966 PlayList.cpp:1591 SoListBox.cpp:630
+msgid "Create Smart Playlist"
+msgstr "Kreiraj pametnu listu"
+
+#: AlbumBrowser.cpp:1966 PlayList.cpp:1591 SoListBox.cpp:630
+msgid "Create a smart playlist from this track"
+msgstr "Kreiraj pametnu listu od ovih numera"
+
+#: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2123
+#: PlayListPanel.cpp:1387 TreePanel.cpp:1323
+msgid "Tracks Labels Editor"
+msgstr "Uređivač etiketa numera"
+
+#: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
+#: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1496
+#: TreePanel.cpp:1158 TreePanel.cpp:1430
+msgid "UnNamed"
+msgstr "Neimenovano"
+
+#: AlbumBrowser.cpp:2403 LibPanel.cpp:272 LibPanel.cpp:279 LibPanel.cpp:528
+#: LocationPanel.cpp:446 MainFrame.cpp:1225
+msgid "Albums"
+msgstr "Albumi"
+
+#: AlbumBrowser.cpp:2404 SoListBox.cpp:505
+msgid "to"
+msgstr "u"
+
+#: AlbumBrowser.cpp:2405
+msgid "of"
+msgstr "od"
+
+#: AlListBox.cpp:177
+msgid "by "
+msgstr "Po"
+
+#: AlListBox.cpp:264
+msgid "Play current selected albums"
+msgstr "Pusti izabrane albume"
+
+#: AlListBox.cpp:270
+msgid "Add current selected albums to the Playlist"
+msgstr "Dodaj izabrane albume u listu"
+
+#: AlListBox.cpp:278 AlListBox.cpp:284 AlListBox.cpp:290 CoListBox.cpp:120
+#: CoListBox.cpp:127 CoListBox.cpp:134
+msgid "Add current selected albums to the Playlist as Next Tracks"
+msgstr "Dodaj izabrane albume u listu kao sledeće numere"
+
+#: AlListBox.cpp:294 CoListBox.cpp:139
+msgid "Add the selected albums after"
+msgstr "Dodaj izabrani album iza"
+
+#: AlListBox.cpp:318
+msgid "Albums are sorted by name"
+msgstr "Albumi su razvrstani po imenu"
+
+#: AlListBox.cpp:319
+msgid "Albums are sorted by year"
+msgstr "Albumi su razvrstani po godini"
+
+#: AlListBox.cpp:320
+msgid "Albums are sorted by year descending"
+msgstr "Albumi su razvrstani po godini opadajući"
+
+#: AlListBox.cpp:321
+msgid "Artist, Name"
+msgstr "Izvođač, ime"
+
+#: AlListBox.cpp:321
+msgid "Albums are sorted by artist and album name"
+msgstr "Albumi su razvrstani po imenu izvođača i albuma"
+
+#: AlListBox.cpp:322
+msgid "Albums are sorted by artist and year"
+msgstr "Albumi su razvrstani po izvođaču i godini"
+
+#: AlListBox.cpp:323
+msgid "Albums are sorted by artist and year descending"
+msgstr "Albumi su razvrstani po izvođaču i godini opadajući"
+
+#: AlListBox.cpp:328
+msgid "Sets the albums order"
+msgstr "Postavlja redosled albuma"
+
+#: AlListBox.cpp:359
+msgid "Embed the current cover to the album files"
+msgstr "Ugnezdi trenutni omot u fajlove albuma"
+
+#: ArListBox.cpp:148 YeListBox.cpp:104
+msgid "Play current selected artists"
+msgstr "Pusti izabranog izvođača"
+
+#: ArListBox.cpp:155
+msgid "Add current selected artists to playlist"
+msgstr "Dodaj izabranog izvođača u listu"
+
+#: ArListBox.cpp:191
+msgid "Edit the labels assigned to the selected artists"
+msgstr "Izmeni etikete dodeljene izabranim izvođačima"
+
+#: ArListBox.cpp:199
+msgid "Edit the songs from the selected artists"
+msgstr "Izmeni pesmu izabranog izvođača"
+
+#: ChannelEditor.cpp:36
+msgid "Podcast Channel Editor"
+msgstr "Uređivač kanala podemisija"
+
+#: ChannelEditor.cpp:57
+msgid " Podcast Channel "
+msgstr "Kanali podemisija"
+
+#: ChannelEditor.cpp:99 PodcastsPanel.cpp:948
+msgid "Description:"
+msgstr "Opis"
+
+#: ChannelEditor.cpp:111 PodcastsPanel.cpp:958
+msgid "Author:"
+msgstr "Autor:"
+
+#: ChannelEditor.cpp:121 PodcastsPanel.cpp:968
+msgid "Owner:"
+msgstr "Vlasnik:"
+
+#: ChannelEditor.cpp:132
+msgid "Download:"
+msgstr "Preuzimanje:"
+
+#: ChannelEditor.cpp:139
+msgid "Manually"
+msgstr "Ručno"
+
+#: ChannelEditor.cpp:139
+msgid "Only if contains"
+msgstr "Samo ako sadrži"
+
+#: ChannelEditor.cpp:139
+msgid "Everything"
+msgstr "Sve"
+
+#: ChannelEditor.cpp:152
+msgid "Delete:"
+msgstr "Obriši:"
+
+#: ChannelEditor.cpp:156
+msgid "Allow delete old items"
+msgstr "Dozvoli brisanje starih stavki"
+
+#: CoListBox.cpp:104
+msgid "Play current selected composer"
+msgstr "Pusti izabranog kompozitora"
+
+#: CoListBox.cpp:148
+msgid "Edit songs"
+msgstr "Izmeni pesme"
+
+#: Config.cpp:1364 MainFrame.cpp:90
+msgid "My Music"
+msgstr "Moja muzika"
+
+#: ConfirmExit.cpp:26
+msgid "Please confirm"
+msgstr "Potvrdi"
+
+#: ConfirmExit.cpp:39
+msgid "Are you sure you want to exit the application?"
+msgstr "Da li sigurno želiš da izađeš iz aplikacije?"
+
+#: ConfirmExit.cpp:45
+msgid "Don't ask again"
+msgstr "Ne pitaj ponovo"
+
+#: CopyTo.cpp:872
+#, c-format
+msgid ""
+"Copied %u files (%s)\n"
+"in %s seconds"
+msgstr "Kopirano %u fajlova (%s)\n u %s sekundi"
+
+#: CopyTo.cpp:877
+msgid "Finished copying files"
+msgstr "Završeno kopiranje fajlova"
+
+#: CoverEdit.cpp:54
+msgid "Cover Editor"
+msgstr "Uređivač omota"
+
+#: CoverEdit.cpp:71 LastFMPanel.cpp:1682 LyricsPanel.cpp:111 TrackEdit.cpp:148
+#: TrackEdit.cpp:373 TrackEdit.cpp:415 TrackEdit.cpp:474
+msgid "Artist:"
+msgstr "Izvođač:"
+
+#: CoverEdit.cpp:78 TrackEdit.cpp:172 TrackEdit.cpp:440 TrackEdit.cpp:496
+msgid "Album:"
+msgstr "Album:"
+
+#: CoverEdit.cpp:85
+msgid "From:"
+msgstr "Od:"
+
+#: CoverEdit.cpp:150 SelCoverFile.cpp:67
+msgid "Embed into tracks"
+msgstr "Ugnezdi u numeru"
+
+#: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1777 DbLibrary.cpp:1789
+#: DbLibrary.cpp:1855 DbLibrary.cpp:1867 Jamendo.cpp:642 PlayerPanel.cpp:1453
+msgid "Unknown"
+msgstr "Nepoznato"
+
+#: DbLibrary.cpp:643
+msgid "Recently added tracks"
+msgstr "Skoro dodate numere"
+
+#: DbLibrary.cpp:651
+msgid "Last played tracks"
+msgstr "Poslednje puštane numere"
+
+#: DbLibrary.cpp:658
+msgid "Best rated tracks"
+msgstr "Najbolje ocenjene numere"
+
+#: DynamicPlayList.cpp:46 DynamicPlayList.cpp:126 PodcastsPanel.cpp:1802
+#: SoListBox.cpp:409
+msgid "Title"
+msgstr "Naslov"
+
+#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:127 PlayList.cpp:1639
+#: SoListBox.cpp:410 SoListBox.cpp:655 TreeViewFilterEditor.cpp:64
+#: TreeViewFilterEditor.cpp:123
+msgid "Artist"
+msgstr "Izvođač"
+
+#: DynamicPlayList.cpp:48 DynamicPlayList.cpp:128 LibPanel.cpp:368
+#: LibPanel.cpp:375 PlayList.cpp:1642 SoListBox.cpp:411 SoListBox.cpp:658
+#: TreeViewFilterEditor.cpp:66 TreeViewFilterEditor.cpp:123
+msgid "Album Artist"
+msgstr "Umetnik albuma"
+
+#: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1648
+#: Preferences.cpp:969 SoListBox.cpp:412 SoListBox.cpp:664
+#: TreeViewFilterEditor.cpp:67 TreeViewFilterEditor.cpp:123
+msgid "Album"
+msgstr "Album"
+
+#: DynamicPlayList.cpp:50 DynamicPlayList.cpp:130 PlayList.cpp:1654
+#: RadioPanel.cpp:313 RadioPanel.cpp:1135 SoListBox.cpp:413 SoListBox.cpp:652
+#: TreeViewFilterEditor.cpp:63
+msgid "Genre"
+msgstr "Žanr"
+
+#: DynamicPlayList.cpp:51 DynamicPlayList.cpp:131
+msgid "Label"
+msgstr "Etiketa"
+
+#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:132 PlayList.cpp:1645
+#: SoListBox.cpp:414 SoListBox.cpp:661 TreeViewFilterEditor.cpp:65
+#: TreeViewFilterEditor.cpp:123
+msgid "Composer"
+msgstr "Kompozitor"
+
+#: DynamicPlayList.cpp:53
+msgid "Comment"
+msgstr "Komentar"
+
+#: DynamicPlayList.cpp:54 SoListBox.cpp:424
+msgid "Path"
+msgstr "Putanja"
+
+#: DynamicPlayList.cpp:57 DynamicPlayList.cpp:135 PodcastsPanel.cpp:1806
+#: SoListBox.cpp:416
+msgid "Length"
+msgstr "Dužina"
+
+#: DynamicPlayList.cpp:58 DynamicPlayList.cpp:136 LibPanel.cpp:330
+#: LibPanel.cpp:337 LibPanel.cpp:534 MainFrame.cpp:1240 PodcastsPanel.cpp:1808
+#: SoListBox.cpp:420
+msgid "Plays"
+msgstr "Puštanja"
+
+#: DynamicPlayList.cpp:59 DynamicPlayList.cpp:137 PodcastsPanel.cpp:1809
+#: SoListBox.cpp:421
+msgid "Last Played"
+msgstr "Poslednje pušteno"
+
+#: DynamicPlayList.cpp:61
+msgid "Track Number"
+msgstr "Broj numere"
+
+#: DynamicPlayList.cpp:62 SoListBox.cpp:418
+msgid "Bit Rate"
+msgstr "Bitrejt"
+
+#: DynamicPlayList.cpp:63 FileBrowser.cpp:764
+msgid "Size"
+msgstr "Veličina"
+
+#: DynamicPlayList.cpp:64 SoListBox.cpp:415
+msgid "Disc"
+msgstr "Disk"
+
+#: DynamicPlayList.cpp:65
+msgid "Has Cover"
+msgstr "Ima omot"
+
+#: DynamicPlayList.cpp:70 DynamicPlayList.cpp:80
+msgid "contains"
+msgstr "sadrži"
+
+#: DynamicPlayList.cpp:71 DynamicPlayList.cpp:81
+msgid "does not contain"
+msgstr "ne sadrži"
+
+#: DynamicPlayList.cpp:72 DynamicPlayList.cpp:82 DynamicPlayList.cpp:91
+#: DynamicPlayList.cpp:99
+msgid "is"
+msgstr "je"
+
+#: DynamicPlayList.cpp:73 DynamicPlayList.cpp:83 DynamicPlayList.cpp:92
+#: DynamicPlayList.cpp:100
+msgid "is not"
+msgstr "nije"
+
+#: DynamicPlayList.cpp:74 DynamicPlayList.cpp:84
+msgid "begins with"
+msgstr "počinje sa"
+
+#: DynamicPlayList.cpp:75 DynamicPlayList.cpp:85
+msgid "ends with"
+msgstr "završava se sa"
+
+#: DynamicPlayList.cpp:86
+msgid "not set"
+msgstr "nije podešeno"
+
+#: DynamicPlayList.cpp:93
+msgid "at least"
+msgstr "barem"
+
+#: DynamicPlayList.cpp:94
+msgid "at most"
+msgstr "najviše"
+
+#: DynamicPlayList.cpp:101
+msgid "after"
+msgstr "nakon"
+
+#: DynamicPlayList.cpp:102
+msgid "before"
+msgstr "pre"
+
+#: DynamicPlayList.cpp:107
+msgid "in the last"
+msgstr "u poslednjih"
+
+#: DynamicPlayList.cpp:108
+msgid "before the last"
+msgstr "pre poslednje"
+
+#: DynamicPlayList.cpp:113
+msgid "false"
+msgstr "netačno"
+
+#: DynamicPlayList.cpp:114
+msgid "true"
+msgstr "tačno"
+
+#: DynamicPlayList.cpp:119 SmartMode.cpp:468
+msgid "Minutes"
+msgstr "Minuta"
+
+#: DynamicPlayList.cpp:139
+msgid "Random"
+msgstr "Nasumično"
+
+#: DynamicPlayList.cpp:144 Preferences.cpp:623
+msgid "minutes"
+msgstr "minuta"
+
+#: DynamicPlayList.cpp:145
+msgid "hours"
+msgstr "sata"
+
+#: DynamicPlayList.cpp:146
+msgid "days"
+msgstr "dana"
+
+#: DynamicPlayList.cpp:147
+msgid "weeks"
+msgstr "nedelja"
+
+#: DynamicPlayList.cpp:148
+msgid "months"
+msgstr "meseca"
+
+#: DynamicPlayList.cpp:439
+msgid "Filter Album Browser"
+msgstr "Filtriraj pregledač albuma"
+
+#: DynamicPlayList.cpp:440
+msgid "Dynamic Playlist Editor"
+msgstr "Dinamički uređivač liste"
+
+#: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2102
+#: PortableMedia.cpp:998 Preferences.cpp:2098 Preferences.cpp:2219
+#: Preferences.cpp:2344 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
+msgid "Name:"
+msgstr "Ime:"
+
+#: DynamicPlayList.cpp:467
+msgid " Current Filters "
+msgstr "Trenutni filtri"
+
+#: DynamicPlayList.cpp:548
+msgid " Result "
+msgstr "Rezultat"
+
+#: DynamicPlayList.cpp:553 SmartMode.cpp:456
+msgid "Limit to"
+msgstr "Ograniči na"
+
+#: DynamicPlayList.cpp:573
+msgid "Any filter selects tracks"
+msgstr "Ma koji filtar bira numeru"
+
+#: DynamicPlayList.cpp:584
+msgid "Sort by"
+msgstr "Sortiraj po"
+
+#: DynamicPlayList.cpp:594
+msgid "Descending"
+msgstr "Opadajući"
+
+#: DynamicPlayList.cpp:612
+msgid "Add tracks on any criteria"
+msgstr "Dodaj numere po ma kom kriterijumu"
+
+#: Equalizer.cpp:70
+msgid "Equalizer"
+msgstr "Ekvilajzer"
+
+#: Equalizer.cpp:112
+msgid "Preset:"
+msgstr "Predefinisano:"
+
+#: FileBrowser.cpp:226 FileBrowser.cpp:586
+msgid "See used locations"
+msgstr "Vidi korišćene lokacije"
+
+#: FileBrowser.cpp:227 FileBrowser.cpp:587
+msgid "See system files"
+msgstr "Vidi sistemske fajlove"
+
+#: FileBrowser.cpp:340
+msgid "Play the selected folder"
+msgstr "Pusti izabranu fasciklu"
+
+#: FileBrowser.cpp:346
+msgid "Add the selected folder to playlist"
+msgstr "Dodaj izabranu fasciklu u listu"
+
+#: FileBrowser.cpp:376
+msgid "Edit the tracks in the selected folder"
+msgstr "Izmeni numere u izabranoj fascikli"
+
+#: FileBrowser.cpp:384
+msgid "Add the tracks in the selected folder to a playlist"
+msgstr "Dodaj numere iz izabrane fascikle u listu"
+
+#: FileBrowser.cpp:391 FileBrowser.cpp:1170
+msgid "Copy"
+msgstr "Kopiraj"
+
+#: FileBrowser.cpp:392 FileBrowser.cpp:1170
+msgid "Copy the selected folder to clipboard"
+msgstr "Kopiraj izabranu fasciklu u klipbord"
+
+#: FileBrowser.cpp:398 FileBrowser.cpp:1174 LyricsPanel.cpp:299
+msgid "Paste"
+msgstr "Nalepi"
+
+#: FileBrowser.cpp:399
+msgid "Paste to the selected folder"
+msgstr "Nalepi u izabranu fasciklu"
+
+#: FileBrowser.cpp:414 FileBrowser.cpp:471 FileBrowser.cpp:475
+msgid "New Folder"
+msgstr "Nova fascikla"
+
+#: FileBrowser.cpp:414
+msgid "Create a new folder"
+msgstr "Kreiraj novu fasciklu"
+
+#: FileBrowser.cpp:417 PlayListPanel.cpp:291 TaListBox.cpp:111
+msgid "Rename"
+msgstr "Preimenuj"
+
+#: FileBrowser.cpp:417
+msgid "Rename the selected folder"
+msgstr "Preimenuj izabranu fasciklu"
+
+#: FileBrowser.cpp:421 FileBrowser.cpp:1195
+msgid "Remove"
+msgstr "Ukloni"
+
+#: FileBrowser.cpp:421
+msgid "Remove the selected folder"
+msgstr "Ukloni izabranu fasciklu"
+
+#: FileBrowser.cpp:552
+msgid "Are you sure to delete the selected path ?"
+msgstr "Da li si siguran da želiš da ukloniš izabranu putanju?"
+
+#: FileBrowser.cpp:553 FileBrowser.cpp:2204 LabelEditor.cpp:310
+#: LibPanel.cpp:1227 PlayListPanel.cpp:1115 PodcastsPanel.cpp:1237
+#: PodcastsPanel.cpp:1623 RadioPanel.cpp:561 RadioPanel.cpp:1028
+#: RadioPanel.cpp:1764 TaListBox.cpp:203 TreePanel.cpp:1232
+msgid "Confirm"
+msgstr "Potvrdi"
+
+#: FileBrowser.cpp:563
+msgid "Error deleting the folder "
+msgstr "Greška pri brisanju fascikle"
+
+#: FileBrowser.cpp:564 MediaViewer.cpp:1461 SelCoverFile.cpp:40
+msgid "Error"
+msgstr "Greška"
+
+#: FileBrowser.cpp:765
+msgid "Modified"
+msgstr "Menjano"
+
+#: FileBrowser.cpp:1113
+msgid "Play current selected files"
+msgstr "Pusti izabrane fajlove"
+
+#: FileBrowser.cpp:1119
+msgid "Add current selected files to playlist"
+msgstr "Dodaj izabrane fajlove u listu"
+
+#: FileBrowser.cpp:1155
+msgid "Edit the current selected files"
+msgstr "Izmeni izabrane fajlove"
+
+#: FileBrowser.cpp:1163
+msgid "Add the current selected tracks to a playlist"
+msgstr "Dodaj izabrane numere u listu"
+
+#: FileBrowser.cpp:1174
+msgid "Paste to the selected dir"
+msgstr "Nalepi u izabranu fasciklu"
+
+#: FileBrowser.cpp:1191 FileRenamer.cpp:47
+msgid "Rename Files"
+msgstr "Preimenuj fajlove"
+
+#: FileBrowser.cpp:1191
+msgid "Rename the current selected file"
+msgstr "Preimenuj izabrani fajl"
+
+#: FileBrowser.cpp:1195
+msgid "Delete the selected files"
+msgstr "Obriši izabrani fajl"
+
+#: FileBrowser.cpp:1544 FileBrowser.cpp:1560
+msgid "Directories"
+msgstr "Fascikle"
+
+#: FileBrowser.cpp:2203
+msgid "Are you sure to delete the selected files ?"
+msgstr "Da li si siguran da želiš da izbrišeš izabrane fajlove?"
+
+#: FileBrowser.cpp:2221
+msgid "There was an error deleting "
+msgstr "Došlo je do greške pri brisanju"
+
+#: FileBrowser.cpp:2222
+msgid ""
+"\n"
+"Continue deleting?"
+msgstr "\nNastavi sa brisanjem?"
+
+#: FileBrowser.cpp:2223
+msgid "Continue"
+msgstr "Nastavi"
+
+#: FileRenamer.cpp:55
+msgid " Names Preview "
+msgstr "Pregled imena"
+
+#: FileRenamer.cpp:74 Preferences.cpp:2351
+msgid "Pattern:"
+msgstr "Obrazac:"
+
+#: FileRenamer.cpp:82
+msgid ""
+"Pattern flags:\n"
+"{g} : Genre\n"
+"{a} : Artist\n"
+"{aa}: Album Artist\n"
+"{A} : {aa} or {a}\n"
+"{b} : Album\n"
+"{t} : Title\n"
+"{n} : Number\n"
+"{y} : Year\n"
+"{d} : Disk"
+msgstr "Zastavice obrasca: /n {g} : Žanr /n {a} : Izvođač /n {aa} : Umetnik albuma /n {A} : {aa} ili {a} /n {b} : Album /n {t} : Naslov /n {n} : Broj /n {y} : Godina /n {d} : Disk"
+
+#: GeListBox.cpp:93
+msgid "Play current selected genres"
+msgstr "Pusti izabrane žanrove"
+
+#: GeListBox.cpp:100
+msgid "Add current selected genres to playlist"
+msgstr "Dodaj izabrane žanrove u listu"
+
+#: ImportFiles.cpp:47 LocationPanel.cpp:501 MainFrame.cpp:1280
+#: MediaViewer.cpp:946
+msgid "Import Files"
+msgstr "Uvezi fajlove"
+
+#: ImportFiles.cpp:82
+msgid "Copy to Option:"
+msgstr "Kopiraj u opcije:"
+
+#: ImportFiles.cpp:111
+msgid "Destination Folder:"
+msgstr "Odredišna fascikla:"
+
+#: ImportFiles.cpp:115 Preferences.cpp:1257
+msgid "Select a folder"
+msgstr "Izaberi fasciklu"
+
+#: ImportFiles.cpp:121
+msgid " Files "
+msgstr "Fajlovi"
+
+#: ImportFiles.cpp:228
+msgid "Select files"
+msgstr "Izaberi fajlove"
+
+#: ImportFiles.cpp:229
+msgid "Audio files"
+msgstr "Audio fajlovi"
+
+#: ImportFiles.cpp:230
+msgid "mp3 files"
+msgstr "mp3 fajlovi"
+
+#: ImportFiles.cpp:231
+msgid "ogg files"
+msgstr "ogg fajlovi"
+
+#: ImportFiles.cpp:232
+msgid "flac files"
+msgstr "flac fajlovi"
+
+#: ImportFiles.cpp:233
+msgid "mp4 files"
+msgstr "mp4 fajlovi"
+
+#: ImportFiles.cpp:234
+msgid "wma files"
+msgstr "wma fajlovi"
+
+#: ImportFiles.cpp:235
+msgid "ape files"
+msgstr "ape fajlovi"
+
+#: ImportFiles.cpp:236
+msgid "waf files"
+msgstr "waf fajlovi"
+
+#: ImportFiles.cpp:237
+msgid "aif files"
+msgstr "aif fajlovi"
+
+#: ImportFiles.cpp:238
+msgid "wv files"
+msgstr "wv fajlovi"
+
+#: ImportFiles.cpp:239
+msgid "tta files"
+msgstr "tta fajlovi"
+
+#: ImportFiles.cpp:240
+msgid "mpc files"
+msgstr "mpc fajlovi"
+
+#: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
+#: MediaViewer.cpp:1397 Preferences.cpp:941
+msgid "track"
+msgstr "numera"
+
+#: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
+#: MediaViewer.cpp:1397 Preferences.cpp:1046
+msgid "tracks"
+msgstr "numera"
+
+#: ImportFiles.cpp:327
+msgid "No files added"
+msgstr "Nema dodatih fajlova"
+
+#: iPodMedia.cpp:1682 Jamendo.cpp:1128 LocationPanel.cpp:510
+#: Magnatune.cpp:1022 MainFrame.cpp:1289 MediaViewer.cpp:952
+#: PortableMedia.cpp:1888
+msgid "Update the collection library"
+msgstr "Ažuriraj kolekciju biblioteke"
+
+#: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515
+#: Magnatune.cpp:1025 MainFrame.cpp:1294 MediaViewer.cpp:955
+#: PortableMedia.cpp:1891
+msgid "Rescan"
+msgstr "Skeniraj opet"
+
+#: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:516
+#: Magnatune.cpp:1025 MainFrame.cpp:1295 MediaViewer.cpp:955
+#: PortableMedia.cpp:1891
+msgid "Rescan the collection library"
+msgstr "Preskeniraj kolekciju biblioteke"
+
+#: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:521
+#: Magnatune.cpp:1028 MainFrame.cpp:1300 MediaViewer.cpp:958
+#: PortableMedia.cpp:1894
+msgid "Search Covers"
+msgstr "Traži omote"
+
+#: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:522
+#: Magnatune.cpp:1028 MainFrame.cpp:1301 MediaViewer.cpp:958
+#: PortableMedia.cpp:1894
+msgid "Search the collection missing covers"
+msgstr "Traži omote koji nedostaju u kolekciji"
+
+#: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1309
+#: PortableMedia.cpp:1899
+msgid "Unmount"
+msgstr "Demontiraj"
+
+#: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1309
+#: PortableMedia.cpp:1899
+msgid "Unmount the device"
+msgstr "Demontiraj uređaj"
+
+#: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:343
+#: LocationPanel.cpp:382 LocationPanel.cpp:537 Magnatune.cpp:1033
+#: MainFrame.cpp:1023 MainFrame.cpp:1062 MainFrame.cpp:1316
+#: MediaViewer.cpp:963 PodcastsPanel.cpp:1763 PortableMedia.cpp:1904
+msgid "Properties"
+msgstr "Svojstva"
+
+#: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:537
+#: Magnatune.cpp:1033 MainFrame.cpp:1316 MediaViewer.cpp:963
+#: PortableMedia.cpp:1904
+msgid "Show collection properties"
+msgstr "Prikaži svojstva kolekcije"
+
+#: Jamendo.cpp:1109 Jamendo.cpp:1119 Magnatune.cpp:1008 Magnatune.cpp:1015
+msgid "Download Albums"
+msgstr "Preuzmi albume"
+
+#: Jamendo.cpp:1109 Jamendo.cpp:1112 Jamendo.cpp:1119 Jamendo.cpp:1122
+#: Magnatune.cpp:1008 Magnatune.cpp:1015
+msgid "Download the current selected album"
+msgstr "Preuzmi izabrani album"
+
+#: Jamendo.cpp:1112 Jamendo.cpp:1122
+msgid "Download Albums torrents"
+msgstr "Preuzmi torente albuma"
+
+#: LabelEditor.cpp:70
+msgid " Items "
+msgstr "Stavke"
+
+#: LabelEditor.cpp:91
+msgid " Labels "
+msgstr "Oznake"
+
+#: LabelEditor.cpp:119
+msgid "Add a new label"
+msgstr "Dodaj novu etiketu"
+
+#: LabelEditor.cpp:125
+msgid "Delete the current selected label"
+msgstr "Obriši izabrane etikete"
+
+#: LabelEditor.cpp:131
+msgid "Copy the label selection to all the items"
+msgstr "Kopiraj izabrane etikete na sve stavke"
+
+#: LabelEditor.cpp:286 RadioPanel.cpp:1010 RadioPanel.cpp:1049
+#: TaListBox.cpp:185 TaListBox.cpp:226
+msgid "Label Name: "
+msgstr "Ime etikete:"
+
+#: LabelEditor.cpp:286 RadioPanel.cpp:1010 TaListBox.cpp:185
+msgid "Please enter the label name"
+msgstr "Unesi ime etikete"
+
+#: LabelEditor.cpp:309 RadioPanel.cpp:1027 TaListBox.cpp:202
+msgid "Are you sure to delete the selected labels?"
+msgstr "Da li sigurno želiš da obrišeš izabrane etikete?"
+
+#: LastFMPanel.cpp:440 LastFMPanel.cpp:675
+msgid "Less..."
+msgstr "Manje..."
+
+#: LastFMPanel.cpp:440 LastFMPanel.cpp:675
+msgid "More..."
+msgstr "Više..."
+
+#: LastFMPanel.cpp:557 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
+#: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164
+msgid "Play the artist tracks"
+msgstr "Pusti numere izvođača"
+
+#: LastFMPanel.cpp:561 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
+#: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168
+msgid "Enqueue the artist tracks to the playlist"
+msgstr "Uvrsti numere izvođača u listu"
+
+#: LastFMPanel.cpp:597
+msgid "Copy the artist name to clipboard"
+msgstr "Kopiraj ime izvođača u klipbord"
+
+#: LastFMPanel.cpp:605 LastFMPanel.cpp:867 LastFMPanel.cpp:1063
+#: LastFMPanel.cpp:1268 LastFMPanel.cpp:1473 LastFMPanel.cpp:1598
+msgid "Visit last.fm page for this item"
+msgstr "Poseti last.fm stranu za ovu stavku"
+
+#: LastFMPanel.cpp:630
+msgid "There is no information available for this artist."
+msgstr "Nema informacija o ovom izvođaču."
+
+#: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
+msgid "Show Artist Info"
+msgstr "Prikaži informacije o izvođaču"
+
+#: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
+msgid "Update the information with the current selected artist"
+msgstr "Ažuriraj informacije sa izabranim izvođačem"
+
+#: LastFMPanel.cpp:1055
+msgid "Copy the artist info to clipboard"
+msgstr "Kopiraj informacije o umetniku u klipbord"
+
+#: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
+msgid "Search Track"
+msgstr "Traži numeru"
+
+#: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
+msgid "Search the track in the library"
+msgstr "Traži numeru u biblioteci"
+
+#: LastFMPanel.cpp:1260 LastFMPanel.cpp:1465
+msgid "Copy the track info to clipboard"
+msgstr "Kopiraj informacije numere u klipbord"
+
+#: LastFMPanel.cpp:1359
+#, c-format
+msgid ""
+"%s\n"
+"%i plays by %u users"
+msgstr "%s\n%i puštanja od strane %u korisnika"
+
+#: LastFMPanel.cpp:1590
+msgid "Copy the event info to clipboard"
+msgstr "Kopiraj informacije o događaju u klipbord"
+
+#: LastFMPanel.cpp:1665 LyricsPanel.cpp:81
+msgid "Follow player"
+msgstr "Prati plejer"
+
+#: LastFMPanel.cpp:1691 LyricsPanel.cpp:121 TrackEdit.cpp:380
+msgid "Track:"
+msgstr "Numera:"
+
+#: LastFMPanel.cpp:1711
+msgid "Artist Info"
+msgstr "Informacije o izvođaču"
+
+#: LastFMPanel.cpp:1746
+msgid "Top Albums"
+msgstr "Top albumi"
+
+#: LastFMPanel.cpp:1788
+msgid "Top Tracks"
+msgstr "Top numere"
+
+#: LastFMPanel.cpp:1829
+msgid "Similar Artists"
+msgstr "Slični izvođači"
+
+#: LastFMPanel.cpp:1870
+msgid "Similar Tracks"
+msgstr "Slične numere"
+
+#: LastFMPanel.cpp:1911
+msgid "Events"
+msgstr "Događaji"
+
+#: LastFMPanel.cpp:3340
+msgid "Unnamed"
+msgstr "Neimenovano"
+
+#: LibPanel.cpp:219 LibPanel.cpp:226 LibPanel.cpp:522 LocationPanel.cpp:329
+#: LocationPanel.cpp:426 MainFrame.cpp:1009 MainFrame.cpp:1205
+#: RadioPanel.cpp:1185 TreeViewFilterEditor.cpp:123
+msgid "Genres"
+msgstr "Žanrovi"
+
+#: LibPanel.cpp:237 LibPanel.cpp:244 LibPanel.cpp:524 LocationPanel.cpp:324
+#: LocationPanel.cpp:421 MainFrame.cpp:1004 MainFrame.cpp:1200
+#: RadioPanel.cpp:1145 RadioPanel.cpp:1153 RadioPanel.cpp:1186
+msgid "Labels"
+msgstr "Etikete"
+
+#: LibPanel.cpp:255 LibPanel.cpp:262 LibPanel.cpp:526 LocationPanel.cpp:431
+#: MainFrame.cpp:1210
+msgid "Artists"
+msgstr "Izvođači"
+
+#: LibPanel.cpp:292 LibPanel.cpp:299 LibPanel.cpp:530 LocationPanel.cpp:451
+#: MainFrame.cpp:1230
+msgid "Years"
+msgstr "Godine"
+
+#: LibPanel.cpp:311 LibPanel.cpp:318 LibPanel.cpp:532 LocationPanel.cpp:456
+#: MainFrame.cpp:1235
+msgid "Ratings"
+msgstr "Ocene"
+
+#: LibPanel.cpp:349 LibPanel.cpp:356 LibPanel.cpp:536 LocationPanel.cpp:436
+#: MainFrame.cpp:1215
+msgid "Composers"
+msgstr "Kompozitori"
+
+#: LibPanel.cpp:538 LocationPanel.cpp:441 MainFrame.cpp:1220
+msgid "Album Artists"
+msgstr "Umetnici albuma"
+
+#: LibPanel.cpp:958 TreePanel.cpp:1059
+msgid "Artist Labels Editor"
+msgstr "Uređivač etiketa izvođača"
+
+#: LibPanel.cpp:1226
+msgid "Are you sure to delete the selected album cover?"
+msgstr "Da li si siguran da želiš da obrišeš izabrani omot albuma?"
+
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1665 TreePanel.cpp:1599
+msgid "Field Editor"
+msgstr "Uređivač polja"
+
+#: LibPanel.cpp:2774
+msgid ""
+"Are you sure to delete the selected tracks from your drive?\n"
+"This will permanently erase the selected tracks."
+msgstr "Da li si siguran da želiš da obrišeš izabrane numere sa diska? \n Ovo će trajno obrisati izabrane numere."
+
+#: LibPanel.cpp:2775
+msgid "Remove tracks from drive"
+msgstr "Obriši numere sa diska"
+
+#: ListView.cpp:1475
+msgid "Select Columns"
+msgstr "Izabrane kolone"
+
+#: ListView.cpp:1487
+msgid " Columns "
+msgstr "Kolone"
+
+#: LocationPanel.cpp:97
+msgid "Local Music"
+msgstr "Lokalna muzika"
+
+#: LocationPanel.cpp:99
+msgid "Online Music"
+msgstr "Onlajn muzika"
+
+#: LocationPanel.cpp:101
+msgid "Portable Devices"
+msgstr "Izmenljivi uređaji"
+
+#: LocationPanel.cpp:103
+msgid "Context"
+msgstr "Kontekst"
+
+#: LocationPanel.cpp:210 RadioPanel.cpp:1485 RadioPanel.cpp:1551
+msgid "Radios"
+msgstr "Radio stanice"
+
+#: LocationPanel.cpp:215 MainFrame.cpp:1066 MainFrame.cpp:2775
+#: MainFrame.cpp:3497 PodcastsPanel.cpp:916 Preferences.cpp:253
+msgid "Podcasts"
+msgstr "Podemisije"
+
+#: LocationPanel.cpp:279 MainFrame.cpp:975 MainFrame.cpp:2812
+msgid "File Browser"
+msgstr "Pregledač fajlova"
+
+#: LocationPanel.cpp:291 MainFrame.cpp:1394 MainFrame.cpp:2746
+#: Preferences.cpp:243 TrackEdit.cpp:400
+msgid "Lyrics"
+msgstr "Tekstovi"
+
+#: LocationPanel.cpp:312 LocationPanel.cpp:354 LocationPanel.cpp:401
+#: LocationPanel.cpp:414 MainFrame.cpp:992 MainFrame.cpp:1034
+#: MainFrame.cpp:1180 MainFrame.cpp:1193
+msgid "Show"
+msgstr "Prikaži"
+
+#: LocationPanel.cpp:313 MainFrame.cpp:993
+msgid "Show/Hide the radio panel"
+msgstr "Prikaži/sakrij radio panel"
+
+#: LocationPanel.cpp:319 MainFrame.cpp:999 RadioPanel.cpp:1117
+#: RadioPanel.cpp:1183
+msgid "Text Search"
+msgstr "Pretraga teksta"
+
+#: LocationPanel.cpp:319 MainFrame.cpp:999
+msgid "Show/Hide the radio text search"
+msgstr "Prikaži/sakrij tekstualne pretrage radija"
+
+#: LocationPanel.cpp:324 MainFrame.cpp:1004
+msgid "Show/Hide the radio labels"
+msgstr "Prikaži/sakrij etikete radija"
+
+#: LocationPanel.cpp:329 MainFrame.cpp:1009
+msgid "Show/Hide the radio genres"
+msgstr "Prikaži/sakrij žanrove radija"
+
+#: LocationPanel.cpp:336 RadioPanel.cpp:432 RadioPanel.cpp:455
+#: RadioPanel.cpp:477
+msgid "Update the radio station lists"
+msgstr "Ažuriraj listu radio stanica"
+
+#: LocationPanel.cpp:344 MainFrame.cpp:1024
+msgid "Set the radio preferences"
+msgstr "Podešavanja radija"
+
+#: LocationPanel.cpp:355 MainFrame.cpp:1035
+msgid "Show/Hide the podcasts panel"
+msgstr "Prikaži/sakrij panel podemisija"
+
+#: LocationPanel.cpp:361 MainFrame.cpp:1041 PodcastsPanel.cpp:890
+#: PodcastsPanel.cpp:898 PodcastsPanel.cpp:1055
+msgid "Channels"
+msgstr "Kopiraj u opcije:"
+
+#: LocationPanel.cpp:361 MainFrame.cpp:1041
+msgid "Show/Hide the podcasts channels"
+msgstr "Prikaži/sakrij kanale podemisija"
+
+#: LocationPanel.cpp:366 MainFrame.cpp:1046 PodcastsPanel.cpp:1058
+#: TrackEdit.cpp:310
+msgid "Details"
+msgstr "Detalji"
+
+#: LocationPanel.cpp:366 MainFrame.cpp:1046
+msgid "Show/Hide the podcasts details"
+msgstr "Prikaži/sakrij detalje podemisija"
+
+#: LocationPanel.cpp:375 MainFrame.cpp:1055
+msgid "Update the podcasts added"
+msgstr "Ažuriraj dodate podemisije"
+
+#: LocationPanel.cpp:383 MainFrame.cpp:1063
+msgid "Set the podcasts preferences"
+msgstr "Postavke podešavanja podemisija"
+
+#: LocationPanel.cpp:401 MainFrame.cpp:1180
+msgid "Open the music collection"
+msgstr "Otvori muzičku kolekciju"
+
+#: LocationPanel.cpp:414 LocationPanel.cpp:470 MainFrame.cpp:1193
+#: MainFrame.cpp:1249
+msgid "View the collection library"
+msgstr "Prikaži kolekciju biblioteke"
+
+#: LocationPanel.cpp:421 MainFrame.cpp:1200
+msgid "View the library labels"
+msgstr "Prikaži etikete u biblioteci"
+
+#: LocationPanel.cpp:426 MainFrame.cpp:1205
+msgid "View the library genres"
+msgstr "Prikaži žanrove u biblioteci"
+
+#: LocationPanel.cpp:431 MainFrame.cpp:1210
+msgid "View the library artists"
+msgstr "Prikaži izvočače u biblioteke"
+
+#: LocationPanel.cpp:436 MainFrame.cpp:1215
+msgid "View the library composers"
+msgstr "Prikaži kompozitore u biblioteci"
+
+#: LocationPanel.cpp:441 MainFrame.cpp:1220
+msgid "View the library album artists"
+msgstr "Prikaži umetnike albuma iz biblioteke"
+
+#: LocationPanel.cpp:446 MainFrame.cpp:1225
+msgid "View the library albums"
+msgstr "Prikaži albume u biblioteci"
+
+#: LocationPanel.cpp:451 MainFrame.cpp:1230
+msgid "View the library years"
+msgstr "Prikaži godine u biblioteci"
+
+#: LocationPanel.cpp:456 MainFrame.cpp:1235
+msgid "View the library ratings"
+msgstr "Prikaži ocene u biblioteci"
+
+#: LocationPanel.cpp:461
+msgid "Play Counts"
+msgstr "Broj puštanja"
+
+#: LocationPanel.cpp:461 MainFrame.cpp:1240
+msgid "View the library play counts"
+msgstr "Prikaži broj puštanja u biblioteci"
+
+#: LocationPanel.cpp:466 LocationPanel.cpp:470 MainFrame.cpp:1245
+#: MainFrame.cpp:1249 TreePanel.cpp:89
+msgid "Library"
+msgstr "Biblioteka"
+
+#: LocationPanel.cpp:476 MainFrame.cpp:1255
+msgid "Album Browser"
+msgstr "Pregledač albuma"
+
+#: LocationPanel.cpp:476 MainFrame.cpp:1255
+msgid "View the collection album browser"
+msgstr "Prikaži pregledač kolekcije albuma"
+
+#: LocationPanel.cpp:481 MainFrame.cpp:1260 TreePanel.cpp:828
+#: TreePanel.cpp:853
+msgid "Tree"
+msgstr "Stablo"
+
+#: LocationPanel.cpp:481 MainFrame.cpp:1260
+msgid "View the collection tree view"
+msgstr "Prikaži stablo kolekcije"
+
+#: LocationPanel.cpp:486 MainFrame.cpp:1265 MediaViewer.cpp:235
+#: PlayListPanel.cpp:808 PlayListPanel.cpp:834 PortableMedia.cpp:1168
+msgid "Playlists"
+msgstr "Liste"
+
+#: LocationPanel.cpp:486 MainFrame.cpp:1265
+msgid "View the collection playlists"
+msgstr "Prikaži liste u koleciji"
+
+#: LocationPanel.cpp:497 MainFrame.cpp:1276 MediaViewer.cpp:943
+msgid "Add Path"
+msgstr "Dodaj putanju"
+
+#: LocationPanel.cpp:497 MainFrame.cpp:1276 MediaViewer.cpp:943
+msgid "Add path to the collection"
+msgstr "Dodaj putanju do kolekcije"
+
+#: LocationPanel.cpp:501 MainFrame.cpp:1280 MediaViewer.cpp:946
+msgid "Import files into the collection"
+msgstr "Uvezi fajlove u kolekciju"
+
+#: LyricsPanel.cpp:82
+msgid "Search the lyrics for the current playing track"
+msgstr "Traži tekst za trenutno puštenu numeru"
+
+#: LyricsPanel.cpp:88
+msgid "Configure lyrics preferences"
+msgstr "Namesti podešavanja tekstova"
+
+#: LyricsPanel.cpp:92 TrackEdit.cpp:388
+msgid "Search for lyrics"
+msgstr "Traži tekst"
+
+#: LyricsPanel.cpp:97
+msgid "Edit the lyrics"
+msgstr "Izmeni tekst pesme"
+
+#: LyricsPanel.cpp:103
+msgid "Save the lyrics"
+msgstr "Sačuvaj tekstove pesama"
+
+#: LyricsPanel.cpp:108
+msgid "Search the lyrics on the web"
+msgstr "Traži tekstove na vebu"
+
+#: LyricsPanel.cpp:287
+msgid "Copy the content of the lyric to clipboard"
+msgstr "Kopiraj tekst pesme u klipbord"
+
+#: LyricsPanel.cpp:299
+msgid "Paste the content of the lyric from clipboard"
+msgstr "Nalepi sadržaj teksta pesme iz klipborda"
+
+#: LyricsPanel.cpp:308
+msgid "Print the content of the lyrics"
+msgstr "Štampaj tekst pesme"
+
+#: LyricsPanel.cpp:442 LyricsPanel.cpp:561 LyricsPanel.cpp:844
+#: LyricsPanel.cpp:846
+msgid "Searching..."
+msgstr "Tražim..."
+
+#: LyricsPanel.cpp:757 LyricsPanel.cpp:850
+msgid "No lyrics found"
+msgstr "Tekst nije pronađen"
+
+#: LyricsPanel.cpp:842
+msgid "Lyrics from "
+msgstr "Tekstovi sa"
+
+#: LyricsPanel.cpp:2078
+msgid "Lyrics Target Editor"
+msgstr "Uređivač mete teksta"
+
+#: LyricsPanel.cpp:2078
+msgid "Lyrics Source Editor"
+msgstr "Uređivač izvora teksta"
+
+#: LyricsPanel.cpp:2111
+msgid "Type:"
+msgstr "Tip:"
+
+#: LyricsPanel.cpp:2116
+msgid "Embedded"
+msgstr "Ugneždeno"
+
+#: LyricsPanel.cpp:2117
+msgid "File"
+msgstr "Fajl"
+
+#: LyricsPanel.cpp:2118
+msgid "Command"
+msgstr "Komanda"
+
+#: LyricsPanel.cpp:2120 PodcastsPanel.cpp:2091
+msgid "Download"
+msgstr "Preuzmi"
+
+#: LyricsPanel.cpp:2127
+msgid "Source:"
+msgstr "Izvor"
+
+#: LyricsPanel.cpp:2135 LyricsPanel.cpp:2541
+msgid "Replace:"
+msgstr "Zameni:"
+
+#: LyricsPanel.cpp:2170
+msgid "Extract:"
+msgstr "Raspakuj:"
+
+#: LyricsPanel.cpp:2200
+msgid "Exclude:"
+msgstr "Izuzmi:"
+
+#: LyricsPanel.cpp:2230
+msgid "Not Found:"
+msgstr "Nije pronađeno:"
+
+#: LyricsPanel.cpp:2539
+msgid "Replace option editor"
+msgstr "Uređivač opcije zamenjivanja"
+
+#: LyricsPanel.cpp:2540 RadioPanel.cpp:94
+msgid "Search:"
+msgstr "Traži:"
+
+#: LyricsPanel.cpp:2545
+msgid "Extract option editor"
+msgstr "Uređivač opcija raspakivanja"
+
+#: LyricsPanel.cpp:2546 LyricsPanel.cpp:2552
+msgid "Begin:"
+msgstr "Početak:"
+
+#: LyricsPanel.cpp:2547 LyricsPanel.cpp:2553
+msgid "End:"
+msgstr "Kraj:"
+
+#: LyricsPanel.cpp:2551
+msgid "Exclude option editor"
+msgstr "Uređivač opcije izuzimanja"
+
+#: LyricsPanel.cpp:2557
+msgid "Not Found option editor"
+msgstr "Uređivač opcije nepronalaska"
+
+#: LyricsPanel.cpp:2558 LyricsPanel.cpp:2559
+msgid "Tag:"
+msgstr "Tag:"
+
+#: MainFrame.cpp:248
+msgid "Welcome to Guayadeque "
+msgstr "Dobrodošli u Guayadeque"
+
+#: MainFrame.cpp:263 MainFrame.cpp:357 TreeViewFilterEditor.cpp:54
+msgid "Filters"
+msgstr "Filtri"
+
+#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4273
+msgid "VU Meters"
+msgstr "VU metri"
+
+#: MainFrame.cpp:359 MainFrame.cpp:718 MainFrame.cpp:2130 MainFrame.cpp:2873
+#: MainFrame.cpp:2890 PlayList.cpp:76 RadioPanel.cpp:734
+msgid "Now Playing"
+msgstr "Sada pušteno"
+
+#: MainFrame.cpp:955
+msgid "New Collection"
+msgstr "Nova kolekcija"
+
+#: MainFrame.cpp:955
+msgid "Create a new collection"
+msgstr "Kreiraj novu kolekciju"
+
+#: MainFrame.cpp:976
+msgid "Show/Hide the file browser panel"
+msgstr "Prikaži/sakrij panel pregledača fajlova"
+
+#: MainFrame.cpp:1016
+msgid "Update the radio stations"
+msgstr "Ažuriraj radio stanice"
+
+#: MainFrame.cpp:1027 MainFrame.cpp:2612
+msgid "Radio"
+msgstr "Radio"
+
+#: MainFrame.cpp:1027
+msgid "Set the radio visible panels"
+msgstr "Postavi vidljive panele radija"
+
+#: MainFrame.cpp:1066
+msgid "Set the podcasts visible panels"
+msgstr "Postavke vidljivih panela podemisija"
+
+#: MainFrame.cpp:1082
+msgid "Play a online music stream"
+msgstr "Pusti on-lajn muzički tok"
+
+#: MainFrame.cpp:1119
+msgid "Show the selected portable devices"
+msgstr "Prikaži izabrane prenosne uređaje"
+
+#: MainFrame.cpp:1126
+msgid "No Device Found"
+msgstr "Uređaj nije pronađen"
+
+#: MainFrame.cpp:1126
+msgid "No portable device was detected"
+msgstr "Nije detektovan prenosni uređaj"
+
+#: MainFrame.cpp:1136
+msgid "Exits the application"
+msgstr "Izlazi iz aplikacije"
+
+#: MainFrame.cpp:1333
+msgid "Saves the current layout"
+msgstr "Čuva trenutni raspored"
+
+#: MainFrame.cpp:1343
+msgid "Player Playlist"
+msgstr "Lista plejera"
+
+#: MainFrame.cpp:1344
+msgid "Show/Hide the player playlist panel"
+msgstr "Prikaži/Sakrij panel liste u plejeru"
+
+#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4291
+msgid "Sources"
+msgstr "Izvori"
+
+#: MainFrame.cpp:1352
+msgid "Show/Hide the locatons"
+msgstr "Prikaži/Sakrij lokacije"
+
+#: MainFrame.cpp:1359
+msgid "Player Filters"
+msgstr "Filtri plejera"
+
+#: MainFrame.cpp:1360
+msgid "Show/Hide the player filters panel"
+msgstr "Prikaži/Sakrij panel filtara plejera"
+
+#: MainFrame.cpp:1368
+msgid "Show/Hide the player vumeter"
+msgstr "Prikaži/Sakrij plejerove VU metre"
+
+#: MainFrame.cpp:1375 MainFrame.cpp:4307
+msgid "Cover"
+msgstr "Omot"
+
+#: MainFrame.cpp:1376
+msgid "Show/Hide the cover"
+msgstr "Prikaži/sakrij omot"
+
+#: MainFrame.cpp:1386 MainFrame.cpp:2714
+msgid "Last.fm"
+msgstr "Last.fm"
+
+#: MainFrame.cpp:1387
+msgid "Show/Hide the Last.fm panel"
+msgstr "Prikaži/Sakrij Last.fm panel"
+
+#: MainFrame.cpp:1395
+msgid "Show/Hide the lyrics panel"
+msgstr "Prikaži/Sakrij panel tekstova"
+
+#: MainFrame.cpp:1405
+msgid "Show/Restore the main window in full screen"
+msgstr "Prikaži/Povrati glavni prozor u punom ekranu"
+
+#: MainFrame.cpp:1410
+msgid "Statusbar"
+msgstr "Statusna traka"
+
+#: MainFrame.cpp:1411
+msgid "Show/Hide the statusbar"
+msgstr "Prikaži/sakrij statusnu traku"
+
+#: MainFrame.cpp:1416
+msgid "Show Captions"
+msgstr "Prikaži natpise"
+
+#: MainFrame.cpp:1417
+msgid "Show/Hide the windows caption"
+msgstr "Prikaži/Sakrij natpise nad prozorima"
+
+#: MainFrame.cpp:1424
+msgid "Close Current Tab"
+msgstr "Zatvori trenutni jezičak"
+
+#: MainFrame.cpp:1425
+msgid "Close the current selected tab"
+msgstr "Zatvori izabrani jezičak"
+
+#: MainFrame.cpp:1434
+msgid "View the preferences"
+msgstr "Prikaži podešavanja"
+
+#: MainFrame.cpp:1445
+msgid "Load Layout"
+msgstr "Učitaj raspored"
+
+#: MainFrame.cpp:1445
+msgid "Set current view from a user defined layout"
+msgstr "Postavi trenutni izgled na osnovu korisnikovog def. rasporeda"
+
+#: MainFrame.cpp:1446
+msgid "Delete Layout"
+msgstr "Obriši raspored"
+
+#: MainFrame.cpp:1446
+msgid "Delete a user defined layout"
+msgstr "Obriši raspored definisan od korisnika"
+
+#: MainFrame.cpp:1455 TaskBar.cpp:122
+msgid "Next Track"
+msgstr "Sledeća numera"
+
+#: MainFrame.cpp:1456
+msgid "Play the next track in the playlist"
+msgstr "Pusti sledeću numeru iz liste"
+
+#: MainFrame.cpp:1459
+msgid "Prev. Track"
+msgstr "Prethodna numera"
+
+#: MainFrame.cpp:1460
+msgid "Play the previous track in the playlist"
+msgstr "Pusti prethodnu numeru u listi"
+
+#: MainFrame.cpp:1464 TaskBar.cpp:126
+msgid "Next Album"
+msgstr "Sledeći album"
+
+#: MainFrame.cpp:1465
+msgid "Play the next album in the playlist"
+msgstr "Pusti sledeći album iz liste"
+
+#: MainFrame.cpp:1469
+msgid "Prev. Album"
+msgstr "Prethodni album"
+
+#: MainFrame.cpp:1470
+msgid "Play the previous album in the playlist"
+msgstr "Pusti prethodni album u listi"
+
+#: MainFrame.cpp:1477
+msgid "Play or Pause the current track in the playlist"
+msgstr "Pusti ili pauziraj trenutnu numeru u listi"
+
+#: MainFrame.cpp:1481
+msgid "Stop the current played track"
+msgstr "Zaustavi trenutno puštenu numeru"
+
+#: MainFrame.cpp:1486
+msgid "Stop after current playing or selected track"
+msgstr "Zaustavi nakon trenutne ili izabrane numere"
+
+#: MainFrame.cpp:1493
+msgid "Clear the now playing playlist"
+msgstr "Očisti trenutno puštenu listu"
+
+#: MainFrame.cpp:1503 PlayList.cpp:1549 SoListBox.cpp:589 TaskBar.cpp:143
+msgid "Set the rating to 0"
+msgstr "Postavi ocenu na 0"
+
+#: MainFrame.cpp:1508 PlayList.cpp:1551 SoListBox.cpp:594 TaskBar.cpp:146
+msgid "Set the rating to 1"
+msgstr "Postavi ocenu na 1"
+
+#: MainFrame.cpp:1513 PlayList.cpp:1553 SoListBox.cpp:599 TaskBar.cpp:149
+msgid "Set the rating to 2"
+msgstr "Postavi ocenu na 2"
+
+#: MainFrame.cpp:1518 PlayList.cpp:1555 SoListBox.cpp:604 TaskBar.cpp:152
+msgid "Set the rating to 3"
+msgstr "Postavi ocenu na 3"
+
+#: MainFrame.cpp:1523 PlayList.cpp:1557 SoListBox.cpp:609 TaskBar.cpp:155
+msgid "Set the rating to 4"
+msgstr "Postavi ocenu na 4"
+
+#: MainFrame.cpp:1528 PlayList.cpp:1559 SoListBox.cpp:614 TaskBar.cpp:158
+msgid "Set the rating to 5"
+msgstr "Postavi ocenu na 5"
+
+#: MainFrame.cpp:1531 SoListBox.cpp:617
+msgid "Set Rating"
+msgstr "Oceni"
+
+#: MainFrame.cpp:1531
+msgid "Set the rating of the current track"
+msgstr "Oceni trenutnu numeru"
+
+#: MainFrame.cpp:1537 TaskBar.cpp:165
+msgid "Update playlist based on Last.fm statics"
+msgstr "Ažuriraj listu po statistici na Last.fm"
+
+#: MainFrame.cpp:1542
+msgid "Randomize"
+msgstr "Pomešaj"
+
+#: MainFrame.cpp:1543 TaskBar.cpp:177
+msgid "Randomize the playlist"
+msgstr "Meša listu"
+
+#: MainFrame.cpp:1546
+msgid "Repeat Playlist"
+msgstr "Ponavljaj listu"
+
+#: MainFrame.cpp:1547 TaskBar.cpp:169
+msgid "Repeat the tracks in the playlist"
+msgstr "Ponavljaj numere u listi"
+
+#: MainFrame.cpp:1552
+msgid "Repeat Track"
+msgstr "Ponavljaj numeru"
+
+#: MainFrame.cpp:1553 TaskBar.cpp:173
+msgid "Repeat the current track in the playlist"
+msgstr "Ponavljaj trenutnu numeru u listi"
+
+#: MainFrame.cpp:1561
+msgid "Increment the volume level"
+msgstr "Podigni nivo zvuka"
+
+#: MainFrame.cpp:1566
+msgid "Decrement the volume level"
+msgstr "Snizi nivo zvuka"
+
+#: MainFrame.cpp:1572 TaskBar.cpp:183
+msgid "Force Gapless Mode"
+msgstr "Prisili mod bez pauze"
+
+#: MainFrame.cpp:1573 TaskBar.cpp:183
+msgid "Set playback in gapless mode"
+msgstr "Postavi reprodukciju bez pauze između pesama"
+
+#: MainFrame.cpp:1578 Preferences.cpp:238
+msgid "Audioscrobble"
+msgstr "Skroblovanje"
+
+#: MainFrame.cpp:1579 TaskBar.cpp:187
+msgid "Send played tracks information"
+msgstr "Pošalji informacije o puštanim numerama"
+
+#: MainFrame.cpp:1596
+msgid "Get help using guayadeque"
+msgstr "Pomoć pri korišćenju Guayadeque"
+
+#: MainFrame.cpp:1600
+msgid "Community"
+msgstr "Zajednica"
+
+#: MainFrame.cpp:1601
+msgid "Get guayadeque support from guayadeque.org"
+msgstr "Podrška za Guayadeque na guayadeque.org"
+
+#: MainFrame.cpp:1606
+msgid "About"
+msgstr "O programu"
+
+#: MainFrame.cpp:1607
+msgid "Show information about guayadeque music player"
+msgstr "Prikaži informacije o guayadeque muzičkom plejeru"
+
+#: MainFrame.cpp:1634
+msgid "View"
+msgstr "Pregled"
+
+#: MainFrame.cpp:1642
+msgid "Controls"
+msgstr "Kontrole"
+
+#: MainFrame.cpp:1973
+msgid "Stream:"
+msgstr "Tok:"
+
+#: MainFrame.cpp:2151 MainFrame.cpp:2221 MainFrame.cpp:2270 MainFrame.cpp:2307
+#: MainFrame.cpp:4482
+msgid "Copy To..."
+msgstr "Kopiraj u..."
+
+#: MainFrame.cpp:2167
+msgid "Select destination directory"
+msgstr "Izaberi ciljnu fasciklu"
+
+#: MainFrame.cpp:3212
+msgid "station"
+msgstr "radio stanica"
+
+#: MainFrame.cpp:3212
+msgid "stations"
+msgstr "radio stanice"
+
+#: MainFrame.cpp:3221
+msgid "podcast"
+msgstr "podemisija"
+
+#: MainFrame.cpp:3221
+msgid "podcasts"
+msgstr "podemisije"
+
+#: MainFrame.cpp:3236
+msgid "dir"
+msgstr "fascikle"
+
+#: MainFrame.cpp:3236
+msgid "dirs"
+msgstr "fascikle"
+
+#: MainFrame.cpp:3238
+msgid "file"
+msgstr "fajl"
+
+#: MainFrame.cpp:3238
+msgid "files"
+msgstr "fajlovi"
+
+#: MainFrame.cpp:3660 MainFrame.cpp:3666 MainFrame.cpp:3669
+msgid "Load this user defined layout"
+msgstr "Učitaj ovaj raspored definisan od korisnika"
+
+#: MainFrame.cpp:3661
+msgid "Delete this user defined layout"
+msgstr "Obriši ovaj raspored definisan od korisnika"
+
+#: MainFrame.cpp:3666 MainFrame.cpp:3669
+msgid "No Layouts Defined"
+msgstr "Nema definisanih rasporeda"
+
+#: MainFrame.cpp:3773
+msgid "Layout:"
+msgstr "Raspored"
+
+#: MainFrame.cpp:3773
+#, c-format
+msgid "Layout %u"
+msgstr "Raspored %u"
+
+#: MainFrame.cpp:4447 MainFrame.cpp:4468
+msgid "Copy the current selected songs to a directory or device"
+msgstr "Kopiraj izabranu pesmu u fasciklu ili na uređaj"
+
+#: MainFrame.cpp:4479
+msgid "Add Copy To patterns in preferences"
+msgstr "Dodaj \"Kopiraj u\" šablon u podešavanjima"
+
+#: MainFrame.cpp:4482
+msgid "Copy the selected tracks to a folder or device"
+msgstr "Kopiraj izabrane numere u fasciklu ili na uređaj"
+
+#: MediaViewer.cpp:213
+msgid "All Albums"
+msgstr "Svi albumi"
+
+#: MediaViewer.cpp:223
+msgid "Library view"
+msgstr "Pregled biblioteke"
+
+#: MediaViewer.cpp:227
+msgid "Album Browser view"
+msgstr "Pregled iz pregledača albuma"
+
+#: MediaViewer.cpp:231
+msgid "Tree view"
+msgstr "Pregled stabla"
+
+#: MediaViewer.cpp:246
+msgid "View the current defined filters"
+msgstr "Vidi trenutno definisane filtre"
+
+#: MediaViewer.cpp:251
+msgid "Add a new album browser filter"
+msgstr "Dodaj novi filtar za pregledač albuma"
+
+#: MediaViewer.cpp:255
+msgid "Delete the current selected filter"
+msgstr "Obriši izabrani filtar"
+
+#: MediaViewer.cpp:260
+msgid "Edit the current selected filter"
+msgstr "Izmeni trenutno izabrani filtar"
+
+#: MediaViewer.cpp:836 TreePanel.cpp:1189
+msgid "New Filter"
+msgstr "Novi filtar"
+
+#: MediaViewer.cpp:967
+msgid "Collection"
+msgstr "Kolekcija"
+
+#: MediaViewer.cpp:1140 Preferences.cpp:3076
+msgid "Select library path"
+msgstr "Izaberi putanju biblioteke"
+
+#: MediaViewer.cpp:1170
+msgid "This Path is already in the library"
+msgstr "Putanja je već u biblioteci"
+
+#: MediaViewer.cpp:1171
+msgid "Adding path error"
+msgstr "Greška pri dodavanju putanje"
+
+#: MediaViewer.cpp:1460 SelCoverFile.cpp:39
+msgid ""
+"Could not find the Album in the songs library.\n"
+"You should update the library."
+msgstr "Nisam uspeo da pronađem album u biblioteci pesama. \n Ažuriraj biblioteku."
+
+#: MediaViewer.cpp:2150
+msgid " smart playlist"
+msgstr "pametna lista"
+
+#: MediaViewer.cpp:2159 PlayerPanel.cpp:245 PlayerPanel.cpp:2238
+msgid "Playlist"
+msgstr "Lista"
+
+#: NewChannel.cpp:87
+msgid "New Podcast Channel"
+msgstr "Novi kanal podemisije"
+
+#: NewChannel.cpp:100
+msgid " Digital Podcast Directory "
+msgstr "Fascikla digitalne podemisije"
+
+#: NewChannel.cpp:111
+msgid "Search in the podcast directory"
+msgstr ""
+
+#: NewChannel.cpp:115
+msgid "Refresh the podcast directory list"
+msgstr "Osveži listu fascikli podemisija"
+
+#: NewChannel.cpp:227
+msgid "Filtered channels"
+msgstr "Filtrirani kanali"
+
+#: NewChannel.cpp:301
+#, c-format
+msgid "%u Channels"
+msgstr "%u kanala"
+
+#: NewChannel.cpp:306
+#, c-format
+msgid "%u Categories, %u Channels"
+msgstr "%u kategorija, %u kanala"
+
+#: NewChannel.cpp:374
+msgid "Filter Text: "
+msgstr "Tekst filtra:"
+
+#: NewChannel.cpp:374
+msgid "Enter the text to filter podcasts channels"
+msgstr "Unesi tekst da filtriraš kanale podemisija"
+
+#: OnlineLinks.cpp:69
+msgid "Add search links in preferences"
+msgstr "Dodaj veze za pretragu u podešavanjima"
+
+#: OnlineLinks.cpp:72 Preferences.cpp:268
+msgid "Links"
+msgstr "Veze"
+
+#: PcListBox.cpp:112
+msgid "Play current selected tracks"
+msgstr "Pusti izabrane numere"
+
+#: PlayerFilters.cpp:42
+msgid "Allow:"
+msgstr "Dozvoli:"
+
+#: PlayerFilters.cpp:51
+msgid "Deny:"
+msgstr "Odbij:"
+
+#: PlayerFilters.cpp:123 Preferences.cpp:1815 Preferences.cpp:1912
+#: Preferences.cpp:1935 SmartMode.cpp:450
+msgid "None"
+msgstr "Ništa"
+
+#: PlayerPanel.cpp:177
+msgid "Go to the playlist previous track"
+msgstr "Idi na prethodnu numeru u listi"
+
+#: PlayerPanel.cpp:182
+msgid "Play or pause the current track"
+msgstr "Pusti ili pauziraj trenutnu numeru"
+
+#: PlayerPanel.cpp:187
+msgid "Go to the playlist next track"
+msgstr "Idi na sledeću numeru u listi"
+
+#: PlayerPanel.cpp:192
+msgid "Stop playing"
+msgstr "Zaustavi puštanje"
+
+#: PlayerPanel.cpp:196
+msgid "Record to file"
+msgstr "Snimi u fajl"
+
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2873
+msgid "Volume"
+msgstr "Jačina zvuka"
+
+#: PlayerPanel.cpp:210
+msgid "Show the equalizer"
+msgstr "Prikaži ekvilajzer"
+
+#: PlayerPanel.cpp:218 PlayerPanel.cpp:2179
+msgid "Smart Play: "
+msgstr "Pametno puštanje:"
+
+#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2182
+#: Preferences.cpp:969
+msgid "Disabled"
+msgstr "Onemogućeno"
+
+#: PlayerPanel.cpp:225 PlayerPanel.cpp:2186 Preferences.cpp:1356
+#: Preferences.cpp:1391
+msgid "Enabled"
+msgstr "Omogućeno"
+
+#: PlayerPanel.cpp:234
+msgid "Repeat: "
+msgstr "Ponavljaj:"
+
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1636
+#: Preferences.cpp:969
+msgid "Track"
+msgstr "Numera"
+
+#: PlayerPanel.cpp:253
+msgid "Randomize the tracks in playlist"
+msgstr "Meša numere u listi"
+
+#: PlayerPanel.cpp:271
+msgid "Show the name of the current track"
+msgstr "Prikaži ime trenutne numere"
+
+#: PlayerPanel.cpp:281
+msgid "Show the album name of the current track"
+msgstr "Prikaži ime albuma trenutne numere"
+
+#: PlayerPanel.cpp:292
+msgid "Show the artist name of the current track"
+msgstr "Prikaži ime izvođača trenutne numere"
+
+#: PlayerPanel.cpp:303
+msgid "Show the year of the current track"
+msgstr "Prikaži godinu trenutne numere"
+
+#: PlayerPanel.cpp:306
+msgid "00:00 of 00:00"
+msgstr "00:00 od 00:00"
+
+#: PlayerPanel.cpp:307
+msgid "Show the current position and song length of the current track"
+msgstr "Prikaži trenutnu poziciju i dužinu trenutne numere"
+
+#: PlayerPanel.cpp:326
+msgid "Show the bit rate of the current track"
+msgstr "Prikaži bitrejt trenutne numere"
+
+#: PlayerPanel.cpp:1365
+msgid "Buffering..."
+msgstr "Učitava se..."
+
+#: PlayerPanel.cpp:2227
+msgid "Repeat Mode: "
+msgstr "Mod ponavljanja:"
+
+#: PlayerPanel.cpp:2230
+msgid "Off"
+msgstr "Isključeno"
+
+#: PlayListAppend.cpp:49
+msgid "Playlist:"
+msgstr "Lista:"
+
+#: PlayListAppend.cpp:61
+msgid "New playlist"
+msgstr "Nova lista"
+
+#: PlayListAppend.cpp:65
+msgid "Where:"
+msgstr "Gde:"
+
+#: PlayListAppend.cpp:69
+msgid "Beginning"
+msgstr "Počinje"
+
+#: PlayListAppend.cpp:75
+msgid "Tracks:"
+msgstr "Numere:"
+
+#: PlayList.cpp:1518
+msgid "Empty Playlist"
+msgstr "Prazna lista"
+
+#: PlayList.cpp:1518
+msgid "The playlist is empty"
+msgstr "Lista je prazna"
+
+#: PlayList.cpp:1528
+msgid "Edit the current selected tracks labels"
+msgstr "Izmeni etikete izabranih numera"
+
+#: PlayList.cpp:1534
+msgid "Edit the current selected songs"
+msgstr "Izmeni izabrane pesme"
+
+#: PlayList.cpp:1543
+msgid "Set as Next Track"
+msgstr "Postavi kao sledeću numeru"
+
+#: PlayList.cpp:1544
+msgid "Move the selected tracks to be played next"
+msgstr "Pomeri izabrane numere da budu puštene sledeće"
+
+#: PlayList.cpp:1562
+msgid "Set the current selected tracks rating"
+msgstr "Oceni trenutno izabranu numeru"
+
+#: PlayList.cpp:1569
+msgid "Search a track in the playlist by name"
+msgstr "Traži numeru u listi po imenu"
+
+#: PlayList.cpp:1597 PLSoListBox.cpp:161
+msgid "Randomize the songs in the playlist"
+msgstr "Meša pesme u listi"
+
+#: PlayList.cpp:1602
+msgid "Remove all tracks from playlist"
+msgstr "Ukloni sve numere sa liste"
+
+#: PlayList.cpp:1609 PLSoListBox.cpp:168
+msgid "Remove from Playlist"
+msgstr "Ukloni sa liste"
+
+#: PlayList.cpp:1610
+msgid "Remove the selected tracks from playlist"
+msgstr "Ukloni izabrane numere sa liste"
+
+#: PlayList.cpp:1617 SoListBox.cpp:638
+msgid "Remove from Library"
+msgstr "Ukloni iz biblioteke"
+
+#: PlayList.cpp:1618
+msgid "Remove the selected tracks from library"
+msgstr "Ukloni izabrane numere iz biblioteke"
+
+#: PlayList.cpp:1623 SoListBox.cpp:643
+msgid "Delete from Drive"
+msgstr "Obriši sa diska"
+
+#: PlayList.cpp:1624
+msgid "Remove the selected tracks from drive"
+msgstr "Ukloni izabrane numere sa diska"
+
+#: PlayList.cpp:1636
+msgid "Selects the current selected track in the library"
+msgstr "Bira trenutno izabranu numeru u biblioteci"
+
+#: PlayList.cpp:1639 SoListBox.cpp:655
+msgid "Selects the artist of the current song"
+msgstr "Bira izvođača trenutne pesme"
+
+#: PlayList.cpp:1642
+msgid "Select the album artist of the current song"
+msgstr "Izaberi umetnika albuma trenutne pesme"
+
+#: PlayList.cpp:1645
+msgid "Select the composer of the current song"
+msgstr "Izaberi kompozitora trenutne pesme"
+
+#: PlayList.cpp:1648 SoListBox.cpp:664
+msgid "Select the album of the current song"
+msgstr "Izaberi album trenutne pesme"
+
+#: PlayList.cpp:1651
+msgid "Select the year of the current song"
+msgstr "Izaberi godinu trenutne pesme"
+
+#: PlayList.cpp:1654
+msgid "Select the genre of the current song"
+msgstr "Izaberi žanr trenutne pesme"
+
+#: PlayList.cpp:1657 SoListBox.cpp:667
+msgid "Search in the library"
+msgstr "Traži u biblioteci"
+
+#: PlayList.cpp:2153
+msgid "Search: "
+msgstr "Traži:"
+
+#: PlayList.cpp:2153
+msgid "Please enter the search term"
+msgstr "Unesi stavku za pretragu"
+
+#: PlayList.cpp:2733
+msgid "Loading tracks. Please wait"
+msgstr "Učitavanje numere. Malo strpljenja"
+
+#: PlayListPanel.cpp:83
+msgid "Static playlists"
+msgstr "Statična lista"
+
+#: PlayListPanel.cpp:84
+msgid "Dynamic playlists"
+msgstr "Dinamička lista"
+
+#: PlayListPanel.cpp:224 PodcastsPanel.cpp:2051 RadioPanel.cpp:835
+#: SoListBox.cpp:526 TreePanel.cpp:388
+msgid "Play current selected songs"
+msgstr "Pusti izabranu pesmu"
+
+#: PlayListPanel.cpp:230 SoListBox.cpp:533 TreePanel.cpp:394
+msgid "Add current selected songs to the playlist"
+msgstr "Dodaj izabrane pesme u listu"
+
+#: PlayListPanel.cpp:260
+msgid "New Dynamic Playlist"
+msgstr "Nova dinamička lista"
+
+#: PlayListPanel.cpp:260
+msgid "Create a new dynamic playlist"
+msgstr "Kreiraj novu dinamičku listu"
+
+#: PlayListPanel.cpp:266 RadioPanel.cpp:467
+msgid "Import"
+msgstr "Uvezi"
+
+#: PlayListPanel.cpp:266
+msgid "Import a playlist"
+msgstr "Uvezi listu"
+
+#: PlayListPanel.cpp:272 RadioPanel.cpp:471
+msgid "Export"
+msgstr "Izvezi"
+
+#: PlayListPanel.cpp:272
+msgid "Export the playlist"
+msgstr "Izvezi listu"
+
+#: PlayListPanel.cpp:282 SoListBox.cpp:494 TreePanel.cpp:371
+msgid "Edit"
+msgstr "Izmeni"
+
+#: PlayListPanel.cpp:282
+msgid "Edit the selected playlist"
+msgstr "Izmeni izabranu listu"
+
+#: PlayListPanel.cpp:286
+msgid "Save the selected playlist as a Static Playlist"
+msgstr "Sačuvaj izabranu listu kao statičku listu"
+
+#: PlayListPanel.cpp:291
+msgid "Change the name of the selected playlist"
+msgstr "Promeni ime izabrane liste"
+
+#: PlayListPanel.cpp:296 PlayListPanel.cpp:306
+msgid "Delete the selected playlist"
+msgstr "Obriši izabranu listu"
+
+#: PlayListPanel.cpp:302
+msgid "Set as Alow Filter"
+msgstr "Postavi kao filter za dozvolu"
+
+#: PlayListPanel.cpp:302
+msgid "Set this playlist as the allow filter"
+msgstr "Postavi listu kao filtar za dozvolu"
+
+#: PlayListPanel.cpp:306
+msgid "Set as Deny Filter"
+msgstr "Postavi kao filtar za odbijanje"
+
+#: PlayListPanel.cpp:1073 PlayListPanel.cpp:1214
+msgid "Playlist Name: "
+msgstr "Ime liste:"
+
+#: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
+msgid "Enter the new playlist name"
+msgstr "Unesi ime nove liste"
+
+#: PlayListPanel.cpp:1114
+msgid "Are you sure to delete the selected Playlist?"
+msgstr "Da li sigurno želiš da obrišeš izabranu listu?"
+
+#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1274
+msgid "Select the playlist file"
+msgstr "Izaberi fajl liste"
+
+#: PlayListPanel.cpp:1226
+msgid "New Playlist"
+msgstr "Nova lista"
+
+#: PLSoListBox.cpp:168
+msgid "Delete the current selected tracks"
+msgstr "Obriši izabranu numeru"
+
+#: PodcastsPanel.cpp:928 TrackEdit.cpp:466
+msgid " Details "
+msgstr "Detalji"
+
+#: PodcastsPanel.cpp:979 RadioEditor.cpp:52
+msgid "Link:"
+msgstr "Veza:"
+
+#: PodcastsPanel.cpp:994 TrackEdit.cpp:183 TrackEdit.cpp:423 TrackEdit.cpp:520
+msgid "Title:"
+msgstr "Naslov:"
+
+#: PodcastsPanel.cpp:1004
+msgid "Sumary:"
+msgstr "Suma:"
+
+#: PodcastsPanel.cpp:1014 TrackEdit.cpp:507
+msgid "Date:"
+msgstr "Datum:"
+
+#: PodcastsPanel.cpp:1024 TrackEdit.cpp:531
+msgid "Length:"
+msgstr "Dužina:"
+
+#: PodcastsPanel.cpp:1045
+msgid "Podcast Details"
+msgstr "Detalji podemisije"
+
+#: PodcastsPanel.cpp:1236
+msgid "Are you sure to delete the selected podcast channel?"
+msgstr "Da li sigurno želiš da obrišeš izabrani kanal podemisije?"
+
+#: PodcastsPanel.cpp:1622
+msgid "Are you sure to delete the selected podcast item?"
+msgstr "Da li sigurno želiš da obrišeš izabrane stavke podemisije?"
+
+#: PodcastsPanel.cpp:1745
+msgid "New Channel"
+msgstr "Novi kanal"
+
+#: PodcastsPanel.cpp:1745
+msgid "Add a new podcast channel"
+msgstr "Dodaj novi kanal podemisije"
+
+#: PodcastsPanel.cpp:1751
+msgid "delete this podcast channels and all its items"
+msgstr "obriši ovaj kanal podemisija i sve njegove stavke"
+
+#: PodcastsPanel.cpp:1757
+msgid "Update the podcast items of the selected channels"
+msgstr "Ažuriraj stavke podemisije izabranih kanala"
+
+#: PodcastsPanel.cpp:1763
+msgid "Edit the podcast channel"
+msgstr "Uredi kanal podemisije"
+
+#: PodcastsPanel.cpp:1801
+msgid "Status"
+msgstr "Status"
+
+#: PodcastsPanel.cpp:1803
+msgid "Channel"
+msgstr "Kanal"
+
+#: PodcastsPanel.cpp:1804
+msgid "Category"
+msgstr "Kategorija"
+
+#: PodcastsPanel.cpp:1805
+msgid "Date"
+msgstr "Datum"
+
+#: PodcastsPanel.cpp:1807
+msgid "Author"
+msgstr "Autor"
+
+#: PodcastsPanel.cpp:1978 SoListBox.cpp:246
+msgid "Never"
+msgstr "Nikad"
+
+#: PodcastsPanel.cpp:2057 RadioPanel.cpp:841
+msgid "Add current selected songs to playlist"
+msgstr "Dodaj izabrane pesme u listu"
+
+#: PodcastsPanel.cpp:2085
+msgid "Delete the current selected podcasts"
+msgstr "Obriši izabrane podemisije"
+
+#: PodcastsPanel.cpp:2091
+msgid "Download the current selected podcasts"
+msgstr "Preuzmi izabrane podemisije"
+
+#: PodcastsPanel.cpp:2103
+msgid "No selected items..."
+msgstr "Nema izabranih stavki..."
+
+#: PodcastsPanel.cpp:2103
+msgid "Copy the current selected podcasts to a directory or device"
+msgstr "Kopiraj izabrane podemisije u fasciklu ili na uređaj"
+
+#: PortableMedia.cpp:473 PortableMedia.cpp:1477
+msgid "embedded"
+msgstr "ugneždeno"
+
+#: PortableMedia.cpp:985
+msgid "Portable Media Properties"
+msgstr "Svojstva prenosnih medija"
+
+#: PortableMedia.cpp:991 Preferences.cpp:1264
+msgid " Properties "
+msgstr "Svojstva"
+
+#: PortableMedia.cpp:1007 Preferences.cpp:2376
+msgid "Path:"
+msgstr "Putanja:"
+
+#: PortableMedia.cpp:1016
+msgid "Used:"
+msgstr "Korišćeno:"
+
+#: PortableMedia.cpp:1027
+#, c-format
+msgid "%s free of %s"
+msgstr "%s slobodno od %s"
+
+#: PortableMedia.cpp:1048
+msgid "Name Pattern:"
+msgstr "Šablon imena:"
+
+#: PortableMedia.cpp:1053
+msgid ""
+"{a}\t: Artist\t\t\t{aa} : Album Artist\n"
+"{b}\t: Album\t\t\t{d}\t : Disk\n"
+"{f}\t: Filename\t\t{g}\t : Genre\n"
+"{n}\t: Number\t\t\t{t}\t : Title\n"
+"{y}\t: Year"
+msgstr "{a}»: Izvođač»»»{aa} : Umetnik albuma \n {b}»: Album»»»{d}» : Disk\n {f}»: Filename»»{g}» : Žanr\n {n}»: Broj»»»{t}» : Naslov\n {y}»:"
+
+#: PortableMedia.cpp:1058
+msgid "Audio Folders:"
+msgstr "Audio fascikle:"
+
+#: PortableMedia.cpp:1069
+msgid "Audio Formats:"
+msgstr "Audio formati:"
+
+#: PortableMedia.cpp:1080
+msgid "Transcode to:"
+msgstr "Transkoduj u:"
+
+#: PortableMedia.cpp:1101
+msgid "Unsupported formats only"
+msgstr "Samo nepodržani formati"
+
+#: PortableMedia.cpp:1101
+msgid "always"
+msgstr "uvek"
+
+#: PortableMedia.cpp:1114 Preferences.cpp:1283
+msgid "Quality:"
+msgstr "Kvalitet"
+
+#: PortableMedia.cpp:1132
+msgid "Audio"
+msgstr "Audio"
+
+#: PortableMedia.cpp:1144
+msgid "Playlist Folders:"
+msgstr "Fascikle liste:"
+
+#: PortableMedia.cpp:1154
+msgid "Playlist Format:"
+msgstr "Format liste:"
+
+#: PortableMedia.cpp:1178
+msgid "Cover Format:"
+msgstr "Format omota:"
+
+#: PortableMedia.cpp:1191
+msgid "Cover Name:"
+msgstr "Ime omota:"
+
+#: PortableMedia.cpp:1202
+msgid "Covers Size (pixels):"
+msgstr "Veličina omota (pikseli):"
+
+#: PortableMedia.cpp:1212
+msgid "Covers"
+msgstr "Omoti"
+
+#: PortableMedia.cpp:1310 PortableMedia.cpp:1405
+msgid "Select audio folder"
+msgstr "Izaberi audio fasciklu"
+
+#: PortableMedia.cpp:1379
+msgid "Audio format"
+msgstr "Audio format"
+
+#: PortableMedia.cpp:1454
+msgid "Playlist format"
+msgstr "Format liste"
+
+#: PortableMedia.cpp:1506
+msgid "Cover format"
+msgstr "Format omota"
+
+#: Preferences.cpp:133 Preferences.cpp:179 Preferences.cpp:2529
+msgid "Default"
+msgstr "Podrazumevano"
+
+#: Preferences.cpp:134
+msgid "Czech"
+msgstr "češki"
+
+#: Preferences.cpp:135
+msgid "Dutch"
+msgstr "holandski"
+
+#: Preferences.cpp:136 Preferences.cpp:180
+msgid "English"
+msgstr "engleski"
+
+#: Preferences.cpp:137 Preferences.cpp:181
+msgid "French"
+msgstr "francuski"
+
+#: Preferences.cpp:138 Preferences.cpp:182
+msgid "German"
+msgstr "nemački"
+
+#: Preferences.cpp:139
+msgid "Greek"
+msgstr "grčki"
+
+#: Preferences.cpp:140
+msgid "Hungarian"
+msgstr "mađarski"
+
+#: Preferences.cpp:141
+msgid "Icelandic"
+msgstr "islandski"
+
+#: Preferences.cpp:142 Preferences.cpp:183
+msgid "Italian"
+msgstr "italijanski"
+
+#: Preferences.cpp:143
+msgid "Japanese"
+msgstr "japanski"
+
+#: Preferences.cpp:144
+msgid "Norwegian Bokmal"
+msgstr "norveški"
+
+#: Preferences.cpp:145
+msgid "Polish"
+msgstr "poljski"
+
+#: Preferences.cpp:146 Preferences.cpp:184
+msgid "Portuguese"
+msgstr "portugalski"
+
+#: Preferences.cpp:147
+msgid "Portuguese-Brazilian"
+msgstr "portugalsko-brazilski"
+
+#: Preferences.cpp:148
+msgid "Russian"
+msgstr "ruski"
+
+#: Preferences.cpp:149
+msgid "Slovak"
+msgstr "slovački"
+
+#: Preferences.cpp:150 Preferences.cpp:185
+msgid "Spanish"
+msgstr "šlanski"
+
+#: Preferences.cpp:151
+msgid "Swedish"
+msgstr "švedski"
+
+#: Preferences.cpp:152
+msgid "Thai"
+msgstr "tajvanski"
+
+#: Preferences.cpp:153
+msgid "Turkish"
+msgstr "turski"
+
+#: Preferences.cpp:154
+msgid "Ukrainian"
+msgstr "ukrajinski"
+
+#: Preferences.cpp:214
+msgid "General"
+msgstr "Opšte"
+
+#: Preferences.cpp:218
+msgid "Collections"
+msgstr "Kolekcije"
+
+#: Preferences.cpp:223
+msgid "Playback"
+msgstr "Reprodukcija"
+
+#: Preferences.cpp:228
+msgid "Crossfader"
+msgstr "Pretapanje"
+
+#: Preferences.cpp:233
+msgid "Record"
+msgstr "Snimi"
+
+#: Preferences.cpp:248
+msgid "Online"
+msgstr "Onlajn"
+
+#: Preferences.cpp:278
+msgid "Copy to"
+msgstr "Kopiraj u"
+
+#: Preferences.cpp:283
+msgid "Shortcuts"
+msgstr "Prečice"
+
+#: Preferences.cpp:365
+msgid " Accept "
+msgstr "Prihvati"
+
+#: Preferences.cpp:367
+msgid " Cancel "
+msgstr "Odustani"
+
+#: Preferences.cpp:581
+msgid " On Start "
+msgstr "Pri startu"
+
+#: Preferences.cpp:585 Preferences.cpp:1627
+msgid "Language:"
+msgstr "Jezik:"
+
+#: Preferences.cpp:596
+msgid "(Needs restart)"
+msgstr "(Potreban restart)"
+
+#: Preferences.cpp:602
+msgid "Show splash screen"
+msgstr "Prikaži početni ekran"
+
+#: Preferences.cpp:606
+msgid "Start minimized"
+msgstr "Startuj spušten"
+
+#: Preferences.cpp:612
+msgid "Restore position for tracks longer than"
+msgstr "Povrati poziciju za numere duže od"
+
+#: Preferences.cpp:619
+msgid "set the minimun length in minutes to save track position"
+msgstr "postavi minimalnu dužinu u minutima za čuvanje pozicije numere"
+
+#: Preferences.cpp:629
+msgid "Load default layout"
+msgstr "Učitaj podrazumevani izgled"
+
+#: Preferences.cpp:635
+msgid " Behaviour "
+msgstr "Ponašanje"
+
+#: Preferences.cpp:637
+msgid "Activate task bar icon"
+msgstr "Aktiviraj ikonu alatne trake"
+
+#: Preferences.cpp:652
+msgid "Integrate into SoundMenu"
+msgstr "Integriši u meni zvuka"
+
+#: Preferences.cpp:658
+msgid "Enqueue as default action"
+msgstr "Uvrsti kao podrazumevana akcija"
+
+#: Preferences.cpp:662
+msgid "Drop files clear playlist"
+msgstr "Prevlačenjem fajlova se čisti sve sa liste"
+
+#: Preferences.cpp:666
+msgid "Instant text search"
+msgstr "Momentalna pretraga teksta"
+
+#: Preferences.cpp:670
+msgid "When searching, pressing enter queues the result"
+msgstr "Pri pretrazi, pritiskom na Enter rezultat se uvrštava u listu"
+
+#: Preferences.cpp:675
+msgid "Show CD cover frame in player"
+msgstr "Prikaži okvir omota CD-a u plejeru"
+
+#: Preferences.cpp:681
+msgid " On Close "
+msgstr "Pri izlasku"
+
+#: Preferences.cpp:683
+msgid "Save playlist on close"
+msgstr "Sačuvaj listu pri izlasku"
+
+#: Preferences.cpp:687
+msgid "Close to task bar icon"
+msgstr "Zatvori u ikonu na alatnoj traci"
+
+#: Preferences.cpp:692
+msgid "Ask confirmation on exit"
+msgstr "Pitaj za potrvdu pri izlasku"
+
+#: Preferences.cpp:734
+msgid " Collections "
+msgstr "Kolekcije"
+
+#: Preferences.cpp:782
+msgid " Paths "
+msgstr "Putanje"
+
+#: Preferences.cpp:802
+msgid " Words to detect covers "
+msgstr "Reči za detekciju omota"
+
+#: Preferences.cpp:830 Preferences.cpp:2337
+msgid " Options "
+msgstr "Opcije"
+
+#: Preferences.cpp:832
+msgid "Update when opened "
+msgstr "Ažuriraj pri otvaranju"
+
+#: Preferences.cpp:836
+msgid "Create playlists on scan"
+msgstr "Kreiraj liste pri skeniranju"
+
+#: Preferences.cpp:841
+msgid "Follow symbolic links on scan"
+msgstr "Prati simbolične veze pri skeniranju"
+
+#: Preferences.cpp:845
+msgid "Scan embedded covers in audio files"
+msgstr "Skeniraj ugnežđene omote u audio fajlovima"
+
+#: Preferences.cpp:850
+msgid "Embed rating, play count and labels"
+msgstr "Ugnezdi ocenu, broj puštanja i etikete"
+
+#: Preferences.cpp:856
+msgid "Default copy action"
+msgstr "Podrazumevana akcija za kopiranje"
+
+#: Preferences.cpp:937
+msgid "Play random"
+msgstr "Pusti nasumično"
+
+#: Preferences.cpp:941
+msgid "album"
+msgstr "album"
+
+#: Preferences.cpp:949
+msgid "when playlist is empty"
+msgstr "kada je lista prazna"
+
+#: Preferences.cpp:955
+msgid "Delete played tracks from playlist"
+msgstr "Obriši puštane numere sa liste"
+
+#: Preferences.cpp:959
+msgid "Show notifications"
+msgstr "Prikaži obaveštenja"
+
+#: Preferences.cpp:965
+msgid "ReplayGain mode:"
+msgstr "ReplayGain mod:"
+
+#: Preferences.cpp:976
+msgid "PreAmp:"
+msgstr "PreAmp"
+
+#: Preferences.cpp:995
+msgid " Random / Smart play modes "
+msgstr "Nasumično / Pametno puštanje"
+
+#: Preferences.cpp:1005
+msgid "Tracks left to start search"
+msgstr "Preostale numere do početka pretrage"
+
+#: Preferences.cpp:1013
+msgid "Tracks added each time"
+msgstr "Numere koje se dodaju svaki put"
+
+#: Preferences.cpp:1022
+msgid "Max played tracks kept in playlist"
+msgstr "Maksimalni broj puštanih numera u listi"
+
+#: Preferences.cpp:1030
+msgid "Don't repeat last"
+msgstr "Ne ponavljaj poslednje"
+
+#: Preferences.cpp:1038
+msgid "artists or"
+msgstr "izvođači ili"
+
+#: Preferences.cpp:1054
+msgid " Silence detector "
+msgstr "Detektor tišine"
+
+#: Preferences.cpp:1059
+msgid "Skip at"
+msgstr "Preskoči na"
+
+#: Preferences.cpp:1078
+msgid "In the last"
+msgstr "U poslednjih"
+
+#: Preferences.cpp:1088 Preferences.cpp:1321
+msgid "seconds"
+msgstr "sekundi"
+
+#: Preferences.cpp:1096
+msgid " Output device "
+msgstr "Izlazni uređaj"
+
+#: Preferences.cpp:1099
+msgid "Automatic"
+msgstr "Automatski"
+
+#: Preferences.cpp:1100
+msgid "GConf Defined"
+msgstr "GConf definisan"
+
+#: Preferences.cpp:1149
+msgid " Crossfader "
+msgstr "Pretapanje"
+
+#: Preferences.cpp:1156
+msgid "Fade-out length:"
+msgstr "Dužina utapanja:"
+
+#: Preferences.cpp:1165
+msgid "Select the length of the fade out. 0 for gapless playback"
+msgstr "Izaberi dužinu utapanja. 0 je za reprodukciju bez pauze"
+
+#: Preferences.cpp:1168
+msgid "Fade-in length:"
+msgstr "Dužina izranjanja:"
+
+#: Preferences.cpp:1177
+msgid "Select the length of the fade in"
+msgstr "Izaberi dužinu izranjanja"
+
+#: Preferences.cpp:1180
+msgid "Fade-in volume:"
+msgstr "Jačina zvuka izranjanja:"
+
+#: Preferences.cpp:1189
+msgid "Select the initial volume of the fade in"
+msgstr "Izaberi inicijalnu jačinu zvuka izranjanja"
+
+#: Preferences.cpp:1192
+msgid "Fade-in start:"
+msgstr "Početak izranjanja:"
+
+#: Preferences.cpp:1201
+msgid "Select at which volume of the fade out the fade in starts"
+msgstr "Izaberi pri kojoj jačini zvuka uranjanja će početi izranjanje"
+
+#: Preferences.cpp:1245
+msgid " Record "
+msgstr "Snimi"
+
+#: Preferences.cpp:1247
+msgid "Enable recording"
+msgstr "Omogući snimanje"
+
+#: Preferences.cpp:1253
+msgid "Save to:"
+msgstr "Sačuvaj u:"
+
+#: Preferences.cpp:1271 Preferences.cpp:2358
+msgid "Format:"
+msgstr "Format:"
+
+#: Preferences.cpp:1288 Transcode.cpp:343
+msgid "Very High"
+msgstr "Vrlo visoko"
+
+#: Preferences.cpp:1289 Transcode.cpp:344
+msgid "High"
+msgstr "Visoko"
+
+#: Preferences.cpp:1290 Transcode.cpp:347
+msgid "Normal"
+msgstr "Normalno"
+
+#: Preferences.cpp:1291 Transcode.cpp:348
+msgid "Low"
+msgstr "Nisko"
+
+#: Preferences.cpp:1292 Transcode.cpp:349
+msgid "Very Low"
+msgstr "Vrlo nisko"
+
+#: Preferences.cpp:1304
+msgid "Split tracks"
+msgstr "Podeli numere"
+
+#: Preferences.cpp:1311
+msgid "Delete tracks shorter than"
+msgstr "Obriši numere kraće od"
+
+#: Preferences.cpp:1354
+msgid " Last.fm audioscrobble "
+msgstr "Last.fm skroblovanje"
+
+#: Preferences.cpp:1364 Preferences.cpp:1399
+msgid "Username:"
+msgstr "Korisničko ime:"
+
+#: Preferences.cpp:1372 Preferences.cpp:1407
+msgid "Password:"
+msgstr "Lozinka:"
+
+#: Preferences.cpp:1389
+msgid " Libre.fm audioscrobble "
+msgstr "Libre.fm skroblovanje"
+
+#: Preferences.cpp:1428
+msgid "Join the Guayadeque Last.fm users group"
+msgstr "Priključi se Guayadeque Last.fm grupi"
+
+#: Preferences.cpp:1460
+msgid " Sources "
+msgstr "Izvori"
+
+#: Preferences.cpp:1504
+msgid " Targets "
+msgstr "Odredište"
+
+#: Preferences.cpp:1544
+msgid " Font "
+msgstr "Font"
+
+#: Preferences.cpp:1546
+msgid "Font:"
+msgstr "Font:"
+
+#: Preferences.cpp:1558
+msgid "Align:"
+msgstr "Centriraj:"
+
+#: Preferences.cpp:1564
+msgid "Center"
+msgstr "Centar"
+
+#: Preferences.cpp:1606
+msgid " Filters "
+msgstr "Filtri"
+
+#: Preferences.cpp:1625
+msgid " Language "
+msgstr "Jezik"
+
+#: Preferences.cpp:1641
+msgid " Browser command "
+msgstr "Komande pregledača"
+
+#: Preferences.cpp:1662
+msgid " Minimum radio allowed bit rate "
+msgstr "Minimalna dozvoljena brzina u bitovima radija"
+
+#: Preferences.cpp:1670
+msgid " Player online buffer size "
+msgstr "Veličina onlajn bafera plejera"
+
+#: Preferences.cpp:1706
+msgid " Podcasts "
+msgstr "Podemisije"
+
+#: Preferences.cpp:1710
+msgid "Destination directory:"
+msgstr "Odredišna fascikla:"
+
+#: Preferences.cpp:1714
+msgid "Select podcasts folder"
+msgstr "Izaberi fasciklu podemisija"
+
+#: Preferences.cpp:1722
+msgid "Check every"
+msgstr "Proveri svakih"
+
+#: Preferences.cpp:1727
+msgid "Hour"
+msgstr "Sat"
+
+#: Preferences.cpp:1727
+msgid "Day"
+msgstr "Dan"
+
+#: Preferences.cpp:1727
+msgid "Week"
+msgstr "Nedelja"
+
+#: Preferences.cpp:1727
+msgid "Month"
+msgstr "Mesec"
+
+#: Preferences.cpp:1738
+msgid "Delete after"
+msgstr "Obriši nakon"
+
+#: Preferences.cpp:1747
+msgid "Days"
+msgstr "Dana"
+
+#: Preferences.cpp:1747
+msgid "Weeks"
+msgstr "Nedelja"
+
+#: Preferences.cpp:1747
+msgid "Months"
+msgstr "Meseci"
+
+#: Preferences.cpp:1756
+msgid "Only if played"
+msgstr "Samo ako je puštano"
+
+#: Preferences.cpp:1784 Preferences.cpp:1877 RadioGenreEditor.cpp:37
+msgid " Genres "
+msgstr "Žanrovi"
+
+#: Preferences.cpp:1818 Preferences.cpp:1915
+msgid "Invert"
+msgstr "preokreni"
+
+#: Preferences.cpp:1832
+msgid "Audio format:"
+msgstr "Audio format:"
+
+#: Preferences.cpp:1843
+msgid "Torrent command:"
+msgstr "Torent komanda:"
+
+#: Preferences.cpp:1929
+msgid "Membership :"
+msgstr "Članstvo:"
+
+#: Preferences.cpp:1936
+msgid "Streaming"
+msgstr "Striming"
+
+#: Preferences.cpp:1937
+msgid "Downloading"
+msgstr "Preuzimanje"
+
+#: Preferences.cpp:1951
+msgid "Username :"
+msgstr "Korisničko ime"
+
+#: Preferences.cpp:1959
+msgid "Password :"
+msgstr "Lozinka:"
+
+#: Preferences.cpp:1977
+msgid "Stream as :"
+msgstr "Strimuj kao:"
+
+#: Preferences.cpp:1991
+msgid "Download as :"
+msgstr "Preuzmi kao:"
+
+#: Preferences.cpp:1995
+msgid "Download Page"
+msgstr "Stranica za preuzimanje"
+
+#: Preferences.cpp:2036
+msgid " Links "
+msgstr "Veze"
+
+#: Preferences.cpp:2091
+msgid "URL:"
+msgstr "URL:"
+
+#: Preferences.cpp:2116
+msgid " Define URLs using "
+msgstr "Definiši URL koristeći"
+
+#: Preferences.cpp:2122
+msgid ""
+"2 letters language code\n"
+"Text to search"
+msgstr "dvoslovni kod jezika \n tekst u pretrazi"
+
+#: Preferences.cpp:2159
+msgid " Commands "
+msgstr "Komande"
+
+#: Preferences.cpp:2212
+msgid "Command:"
+msgstr "Komanda:"
+
+#: Preferences.cpp:2237
+msgid " Define commands using "
+msgstr "Definiši komande koristeći"
+
+#: Preferences.cpp:2243
+msgid ""
+"Album path\n"
+"Album cover file path\n"
+"Track path"
+msgstr "Putanja albuma\nPutanja omota albuma\nPutanja fajla"
+
+#: Preferences.cpp:2280
+msgid " Patterns "
+msgstr "Šabloni"
+
+#: Preferences.cpp:2392
+msgid "Remove source files"
+msgstr "Ukloni izvorne fajlove"
+
+#: Preferences.cpp:2409
+msgid " Define patterns using "
+msgstr "Definiši šablon koristeći"
+
+#: Preferences.cpp:2415
+msgid ""
+"Artist\n"
+"Album Artist\n"
+"{aa} or {a}\n"
+"Album"
+msgstr "Izvođač\nUmetnik albuma\n{aa} ili {i}\nAlbum"
+
+#: Preferences.cpp:2423
+msgid ""
+"Composer\n"
+"Disk\n"
+"Filename\n"
+"Genre"
+msgstr "Kompozitor \n Disk \n Ime fajla \n Žanr"
+
+#: Preferences.cpp:2431
+msgid ""
+"Index\n"
+"Number\n"
+"Title\n"
+"Year"
+msgstr "Indeks\nBroj\nNaslov\nGodina"
+
+#: Preferences.cpp:2487
+msgid " Accelerators "
+msgstr "Ubrzivači"
+
+#: Preferences.cpp:2492
+msgid "Action"
+msgstr "Akcija"
+
+#: Preferences.cpp:2496
+msgid "Key"
+msgstr "Ključ"
+
+#: Preferences.cpp:2928 Preferences.cpp:2948
+msgid "Collection: "
+msgstr "Kolekcija:"
+
+#: Preferences.cpp:2928 Preferences.cpp:2948
+msgid "Enter the collection name"
+msgstr "Unesi ime kolekcije"
+
+#: Preferences.cpp:3054
+msgid "Change library path"
+msgstr "Izmeni putanju biblioteke"
+
+#: Preferences.cpp:3132 Preferences.cpp:3152
+msgid "Word: "
+msgstr "Reč:"
+
+#: Preferences.cpp:3132 Preferences.cpp:3152
+msgid "Enter the text to find covers"
+msgstr "Unesi tekst za pronalazak omota"
+
+#: Preferences.cpp:3641 Preferences.cpp:3671
+msgid "Filter: "
+msgstr "Filtar:"
+
+#: Preferences.cpp:3641
+msgid "Enter the text to filter"
+msgstr "Unesi tekst za filtriranje"
+
+#: Preferences.cpp:3671
+msgid "Edit the text to filter"
+msgstr "Izmeni tekst u etiketu"
+
+#: Preferences.cpp:4184
+msgid "Select path"
+msgstr "Izaberi putanju"
+
+#: Preferences.cpp:4382
+msgid "Key used by '"
+msgstr "Ključ korišćen od '"
+
+#: RadioGenreEditor.cpp:27
+msgid "Radio Genre Editor"
+msgstr "Uređivač žanrova radija"
+
+#: RadioGenreEditor.cpp:48
+msgid "Other:"
+msgstr "Drugo:"
+
+#: RadioPanel.cpp:89
+msgid " Radio Search "
+msgstr "Pretraga radija"
+
+#: RadioPanel.cpp:104
+msgid "Search in now playing info"
+msgstr "Traži u informacijama trenutno puštene numere"
+
+#: RadioPanel.cpp:108
+msgid "Search in genre names"
+msgstr "Pretraži u imenima žanrova"
+
+#: RadioPanel.cpp:112
+msgid "Search in station names"
+msgstr "Traži u imenima radio stanica"
+
+#: RadioPanel.cpp:116
+msgid "Include results from all genres"
+msgstr "Uključi rezultate iz svih žanrova"
+
+#: RadioPanel.cpp:312
+msgid "Shoutcast"
+msgstr "Šautkast"
+
+#: RadioPanel.cpp:314
+msgid "Searches"
+msgstr "Pretrage"
+
+#: RadioPanel.cpp:315
+msgid "User Defined"
+msgstr "Definisano od korisnika"
+
+#: RadioPanel.cpp:415
+msgid "Add Genre"
+msgstr "Dodaj žanr"
+
+#: RadioPanel.cpp:415
+msgid "Create a new genre"
+msgstr "Kreiraj novi žanr"
+
+#: RadioPanel.cpp:421
+msgid "Edit genre"
+msgstr "Izmeni žanr"
+
+#: RadioPanel.cpp:421
+msgid "Change the selected genre"
+msgstr "Promeni izabrani žanr"
+
+#: RadioPanel.cpp:425
+msgid "Delete genre"
+msgstr "Obriši žanr"
+
+#: RadioPanel.cpp:425 RadioPanel.cpp:448
+msgid "Delete the selected search"
+msgstr "Obriši izabranu pretragu"
+
+#: RadioPanel.cpp:432 RadioPanel.cpp:455 RadioPanel.cpp:477
+msgid "Update Radio Stations"
+msgstr "Ažuriraj radio stanice"
+
+#: RadioPanel.cpp:438
+msgid "Add Search"
+msgstr "Dodaj pretragu"
+
+#: RadioPanel.cpp:438
+msgid "Create a new search"
+msgstr "Kreiraj novu pretragu"
+
+#: RadioPanel.cpp:444
+msgid "Edit search"
+msgstr "Izmeni pretragu"
+
+#: RadioPanel.cpp:444
+msgid "Change the selected search"
+msgstr "Izmeni izabranu pretragu"
+
+#: RadioPanel.cpp:448
+msgid "Delete search"
+msgstr "Obriši pretragu"
+
+#: RadioPanel.cpp:461 RadioPanel.cpp:809
+msgid "Add Radio"
+msgstr "Dodaj radio"
+
+#: RadioPanel.cpp:461
+msgid "Create a new radio"
+msgstr "Kreiraj novi radio"
+
+#: RadioPanel.cpp:467
+msgid "Import the radio stations"
+msgstr "Uvezi radio stanice"
+
+#: RadioPanel.cpp:471
+msgid "Export all the radio stations"
+msgstr "Izvezi radio stanice"
+
+#: RadioPanel.cpp:540
+msgid "Genre Name: "
+msgstr "Ime žanra:"
+
+#: RadioPanel.cpp:540
+msgid "Enter the new Genre Name"
+msgstr "Unesi novo ime žanra"
+
+#: RadioPanel.cpp:560
+msgid "Are you sure to delete the selected radio genres?"
+msgstr "Da li sigurno želiš da obrišeš izabrane žanrove radija?"
+
+#: RadioPanel.cpp:731
+msgid "BitRate"
+msgstr "Bitrejt"
+
+#: RadioPanel.cpp:732
+msgid "Listeners"
+msgstr "Slušaoci"
+
+#: RadioPanel.cpp:733 SoListBox.cpp:423
+msgid "Format"
+msgstr "Format"
+
+#: RadioPanel.cpp:809
+msgid "Add a radio"
+msgstr "Dodaj radio"
+
+#: RadioPanel.cpp:821 RadioPanel.cpp:1658 RadioPanel.cpp:1687
+msgid "Edit Radio"
+msgstr "Izmeni radio"
+
+#: RadioPanel.cpp:822
+msgid "Change the selected radio"
+msgstr "Izmeni izabrani radio"
+
+#: RadioPanel.cpp:826
+msgid "Delete Radio"
+msgstr "Obriši radio"
+
+#: RadioPanel.cpp:826
+msgid "Delete the selected radio"
+msgstr "Obriši izabrani radio"
+
+#: RadioPanel.cpp:874
+msgid "Edit the labels assigned to the selected stations"
+msgstr "Izmeni etikete dodeljene izabranim stanicama"
+
+#: RadioPanel.cpp:990
+msgid "Add Label"
+msgstr "Dodaj etiketu"
+
+#: RadioPanel.cpp:990 TaListBox.cpp:104
+msgid "Create a new label"
+msgstr "Kreiraj novu etiketu"
+
+#: RadioPanel.cpp:996
+msgid "Edit Label"
+msgstr "Izmeni etikete"
+
+#: RadioPanel.cpp:996 TaListBox.cpp:111
+msgid "Change selected label"
+msgstr "Izmeni izabranu etiketu"
+
+#: RadioPanel.cpp:1000
+msgid "Delete label"
+msgstr "Obriši etiketu"
+
+#: RadioPanel.cpp:1000 TaListBox.cpp:115
+msgid "Delete selected labels"
+msgstr "Obriši izabrane etikete"
+
+#: RadioPanel.cpp:1049 TaListBox.cpp:227
+msgid "Enter the new label name"
+msgstr "Unesi ime nove etikete"
+
+#: RadioPanel.cpp:1173 RadioPanel.cpp:1187
+msgid "Stations"
+msgstr "Radio stanice"
+
+#: RadioPanel.cpp:1418
+msgid "Stations Labels Editor"
+msgstr "Uređivač etiketa radio stanica"
+
+#: RadioPanel.cpp:1651
+msgid "There are not entries for this Radio Station"
+msgstr "Nema unosa za ovu radio stanicu"
+
+#: RadioPanel.cpp:1763
+msgid "Are you sure to delete the selected radio searches?"
+msgstr "Da li sigurno želiš da obrišeš izabrane radio pretrage?"
+
+#: RaListBox.cpp:144
+msgid "Play the selected tracks"
+msgstr "Pusti izabrane numere"
+
+#: SelCoverFile.cpp:30
+msgid "Select Cover File"
+msgstr "Izaberi fajl omota"
+
+#: SelCoverFile.cpp:55
+msgid "Cover:"
+msgstr "Omot:"
+
+#: SelCoverFile.cpp:114
+msgid "Select the cover filename"
+msgstr "Izaberi ime fajla omota"
+
+#: SmartMode.cpp:391
+msgid "Generate Smart Playlist"
+msgstr "Generiši pametnu listu"
+
+#: SmartMode.cpp:411
+msgid "Save to"
+msgstr "Sačuvaj u"
+
+#: SmartMode.cpp:431
+msgid "Allow"
+msgstr "Dozvoli"
+
+#: SmartMode.cpp:446
+msgid "Deny"
+msgstr "Odbij"
+
+#: SmartMode.cpp:469
+msgid "Hours"
+msgstr "Sati"
+
+#: SmartMode.cpp:470
+msgid "MiBytes"
+msgstr "Megabajta"
+
+#: SmartMode.cpp:471
+msgid "GiBytes"
+msgstr "Gigabajta"
+
+#: SoListBox.cpp:425
+msgid "Offset"
+msgstr "Ofset"
+
+#: SoListBox.cpp:497
+msgid "Edit the clicked column for the selected tracks"
+msgstr "Izmeni označenu kolonu za izabranu numeru"
+
+#: SoListBox.cpp:503
+msgid "Set"
+msgstr "Postavi"
+
+#: SoListBox.cpp:510
+msgid "Set the clicked column for the selected tracks"
+msgstr "Postavi obeleženu kolonu za izabranu numeru"
+
+#: SoListBox.cpp:569
+msgid "Edit the labels assigned to the selected songs"
+msgstr "Izmeni etikete dodeljene izabranim pesmama"
+
+#: SoListBox.cpp:577
+msgid "Edit the songs selected"
+msgstr "Izmeni izabrane pesme"
+
+#: SoListBox.cpp:617 TaskBar.cpp:162
+msgid "Set the current track rating"
+msgstr "Oceni trenutnu numeru"
+
+#: SoListBox.cpp:624
+msgid "Save all selected tracks as a playlist"
+msgstr "Sačuvaj sve izabrane numere kao listu"
+
+#: SoListBox.cpp:638
+msgid "Remove the current selected tracks from library"
+msgstr "Ukloni izabrane numere iz biblioteke"
+
+#: SoListBox.cpp:643
+msgid "Remove the current selected tracks from drive"
+msgstr "Ukloni izabrane numere sa diska"
+
+#: SoListBox.cpp:652
+msgid "Selects the genre of the current song"
+msgstr "Bira žanr trenutne pesme"
+
+#: SoListBox.cpp:658
+msgid "Selects the album artist of the current song"
+msgstr "Bira umetnika albuma trenutne numere"
+
+#: SoListBox.cpp:661
+msgid "Selects the composer of the current song"
+msgstr "Bira kompozitora trenutne pesme"
+
+#: SplashWin.cpp:62
+msgid "guayadeque.org"
+msgstr "guayadeque.org"
+
+#: SplashWin.cpp:69
+msgid "Please Donate!"
+msgstr "Molimo donirajte!"
+
+#: StatusBar.cpp:163 StatusBar.cpp:265
+msgid "Enable audioscrobbling"
+msgstr "Omogući skroblovanje"
+
+#: StatusBar.cpp:166 StatusBar.cpp:282
+msgid "Enable crossfading"
+msgstr "Omogući pretapanje"
+
+#: StatusBar.cpp:166 StatusBar.cpp:282
+msgid "Disable crossfading"
+msgstr "Onemogući pretapanje"
+
+#: StatusBar.cpp:169
+msgid "Shows information about the selected items"
+msgstr "Prikazuje informacije o izabranim stavkama"
+
+#: StatusBar.cpp:265
+msgid "Disable audioscrobbling"
+msgstr "Onemogući skroblovanje"
+
+#: TaListBox.cpp:104 TreePanel.cpp:367
+msgid "Create"
+msgstr "Kreiraj"
+
+#: TaListBox.cpp:124
+msgid "Play current selected labels"
+msgstr "Pusti izabrane etikete"
+
+#: TaListBox.cpp:131
+msgid "Add current selected labels to playlist"
+msgstr "Dodaj izabranu etiketu u listu"
+
+#: TaskBar.cpp:112
+msgid "Pause"
+msgstr "Pauza"
+
+#: TaskBar.cpp:112 TaskBar.cpp:116
+msgid "Play current playlist"
+msgstr "Pusti trenutnu listu"
+
+#: TaskBar.cpp:122
+msgid "Skip to next track in current playlist"
+msgstr "Preskoči na sledeću numeru u trenutnoj listi"
+
+#: TaskBar.cpp:126
+msgid "Skip to next album track in current playlist"
+msgstr "Preskoči na sledeću numeru iz albuma u trenutnoj listi"
+
+#: TaskBar.cpp:130
+msgid "Prev Track"
+msgstr "Prethodna numera"
+
+#: TaskBar.cpp:130
+msgid "Skip to previous track in current playlist"
+msgstr "Preskoči na prethodnu numeru u trenutnoj listi"
+
+#: TaskBar.cpp:134
+msgid "Prev Album"
+msgstr "Prethodni album"
+
+#: TaskBar.cpp:134
+msgid "Skip to previous album track in current playlist"
+msgstr "Preskoči na prethodnu numeru iz albuma u trenutnoj listi"
+
+#: TaskBar.cpp:165
+msgid "&Smart Play"
+msgstr "&Pametno puštanje"
+
+#: TaskBar.cpp:169
+msgid "&Repeat Playlist"
+msgstr "&Ponavljaj listu"
+
+#: TaskBar.cpp:173
+msgid "&Repeat Track"
+msgstr "&Ponavljaj numeru"
+
+#: TaskBar.cpp:177
+msgid "R&andomize"
+msgstr "&Pomešaj"
+
+#: TaskBar.cpp:187
+msgid "Audioscrobbling"
+msgstr "Skroblujem"
+
+#: TaskBar.cpp:193
+msgid "Exit"
+msgstr "Izlaz"
+
+#: TaskBar.cpp:193
+msgid "Exit this program"
+msgstr "Napusti ovu aplikaciju"
+
+#: TrackEdit.cpp:89
+msgid "Songs Editor"
+msgstr "Uređivač pesama"
+
+#: TrackEdit.cpp:102
+msgid " Songs "
+msgstr "Pesme"
+
+#: TrackEdit.cpp:110
+msgid "Move the track to the previous position"
+msgstr "Premesti numeru na prethodnu poziciju"
+
+#: TrackEdit.cpp:116
+msgid "Move the track to the next position"
+msgstr "Pomeri numeru na sledeću poziciju"
+
+#: TrackEdit.cpp:145
+msgid "Copy the artist name to all the tracks you are editing"
+msgstr "Kopiraj ime izvođača u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:157
+msgid "Copy the album artist name to all the tracks you are editing"
+msgstr "Kopiraj ime umetnika albuma u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:160 TrackEdit.cpp:485
+msgid "A. Artist:"
+msgstr "A. Izvođač:"
+
+#: TrackEdit.cpp:161
+msgid "shows the album artist of the track"
+msgstr "prikazuje umetnika albuma numere"
+
+#: TrackEdit.cpp:169
+msgid "Copy the album name to all the tracks you are editing"
+msgstr "Kopiraj ime albuma u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:180
+msgid "Copy the title to all the tracks you are editing"
+msgstr "Kopiraj naslov u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:191
+msgid "Copy the composer to all the tracks you are editing"
+msgstr "Kopiraj kompozitora u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:195
+msgid "Composer:"
+msgstr "Kompozitor:"
+
+#: TrackEdit.cpp:203
+msgid "Copy the comment to all the tracks you are editing"
+msgstr "Kopiraj komentar u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:207
+msgid "Comment:"
+msgstr "Komentar:"
+
+#: TrackEdit.cpp:216
+msgid "Copy the number to all the tracks you are editing"
+msgstr "Kopiraj broj u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:219 TrackEdit.cpp:543
+msgid "Number:"
+msgstr "Broj:"
+
+#: TrackEdit.cpp:233
+msgid "Enumerate the tracks in the order they were added for editing"
+msgstr "Numeriši pesme po redu po kome su dodate za izmenu"
+
+#: TrackEdit.cpp:239
+msgid "Copy the disk to all the tracks you are editing"
+msgstr "Kopiraj disk u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:243
+msgid "Disk:"
+msgstr "Disk:"
+
+#: TrackEdit.cpp:253
+msgid "Copy the genre name to all songs you are editing"
+msgstr "Kopiraj ime žanra u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:256
+msgid "Genre:"
+msgstr "Žanr:"
+
+#: TrackEdit.cpp:264
+msgid "Copy the year to all songs you are editing"
+msgstr "Kopiraj godinu u sve numere koje uređuješ"
+
+#: TrackEdit.cpp:267
+msgid "Year:"
+msgstr "Godina:"
+
+#: TrackEdit.cpp:283
+msgid "Rating:"
+msgstr "Ocena"
+
+#: TrackEdit.cpp:332
+msgid "Add a picture from file to the current track"
+msgstr "Dodaj sliku iz fajla trenutnoj numeri"
+
+#: TrackEdit.cpp:336
+msgid "Delete the picture from the current track"
+msgstr "Obriši sliku iz trenutne numere"
+
+#: TrackEdit.cpp:340
+msgid "Save the current picture to file"
+msgstr "Sačuvaj trenutnu sliku u fajl"
+
+#: TrackEdit.cpp:344
+msgid "Search the album cover"
+msgstr "Traži omot albuma"
+
+#: TrackEdit.cpp:353
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr ""
+
+#: TrackEdit.cpp:361
+msgid "Pictures"
+msgstr "Slike"
+
+#: TrackEdit.cpp:420
+msgid "Type the artist name to search in musicbrainz"
+msgstr "Ukucaj ime izvođača da pretražiš musicbrainz"
+
+#: TrackEdit.cpp:428
+msgid "Type the album name to search in musicbrainz"
+msgstr "Ukucaj ime albuma da pretražiš musicbrainz"
+
+#: TrackEdit.cpp:432
+msgid "Clear the search fields so it search using the music fingerprint"
+msgstr "Obriši polja za pretragu tako da pretražuje na osnovu muzičkog otiska"
+
+#: TrackEdit.cpp:446
+msgid "Select the album found in musicbrainz"
+msgstr "Izaberi album pronađen na musicbrainz"
+
+#: TrackEdit.cpp:452
+msgid "Search albums in musicbrainz"
+msgstr "Traži albume na musicbrainz"
+
+#: TrackEdit.cpp:458
+msgid "Copy the content of the album to the edited tracks"
+msgstr "Kopiraj sadržaj albuma u izmenjene numere"
+
+#: TrackEdit.cpp:482
+msgid "Copy the artist to the edited tracks"
+msgstr "Kopiraj izvođača u izmenjene numere"
+
+#: TrackEdit.cpp:493
+msgid "Copy the album artist to the edited tracks"
+msgstr "Kopiraj umetnika albuma u izmenjene numere"
+
+#: TrackEdit.cpp:504
+msgid "Copy the album to the edited tracks"
+msgstr "Kopiraj album u izmenjene numere"
+
+#: TrackEdit.cpp:517
+msgid "Copy the date to the edited tracks"
+msgstr "Kopiraj datum u izmenjene numere"
+
+#: TrackEdit.cpp:528
+msgid "Copy the song names to the edited tracks"
+msgstr "Kopiraj imena pesama u izmenjene numere"
+
+#: TrackEdit.cpp:553
+msgid "Copy the number to the edited tracks"
+msgstr "Kopiraj broj u izmenjene numere"
+
+#: TrackEdit.cpp:919
+#, c-format
+msgid ""
+"File Type\t: %s\n"
+"Length\t: %s"
+msgstr "Tip fajla»: %s\nDužina»: %s"
+
+#: TrackEdit.cpp:923
+#, c-format
+msgid ""
+"BitRate\t: %u Kbps\n"
+"File Size\t: %s"
+msgstr "Bitrejt»: %u Kbps \n Veličina fajla»: %s"
+
+#: TrackEdit.cpp:1673
+#, c-format
+msgid "Error: The album have %u tracks and you are editing %u"
+msgstr "Greška: Album ima %u numera a ti uređuješ %u"
+
+#: TrackEdit.cpp:1678
+msgid ""
+"\n"
+"Warning: The length of some edited tracks don't match"
+msgstr "\nUpozorenje: Dužina nekih izmenjenih numera se ne podudara"
+
+#: Transcode.cpp:319
+msgid "Keep Format"
+msgstr "Zadrži format"
+
+#: Transcode.cpp:342
+msgid "Keep Quality"
+msgstr "Zadrži kvalitet"
+
+#: Transcode.cpp:345
+msgid "Very Good"
+msgstr "Vrlo dobro"
+
+#: Transcode.cpp:346
+msgid "Good"
+msgstr "Dobro"
+
+#: TreePanel.cpp:72
+msgid "Genres,Artists,Albums"
+msgstr "Žanrovi,Izvođači,Albumi"
+
+#: TreePanel.cpp:73
+msgid "Genres,Year,Artists,Albums"
+msgstr "Žanrovi,Godine,Izvođači,Albumi"
+
+#: TreePanel.cpp:88
+msgid "Sortings"
+msgstr "Razvrstavanja"
+
+#: TreePanel.cpp:367
+msgid "Create a new filter"
+msgstr "Kreiraj novi filtar"
+
+#: TreePanel.cpp:371
+msgid "Edit the selected filter"
+msgstr "Izmeni izabrani filtar"
+
+#: TreePanel.cpp:375
+msgid "Delete the selected filter"
+msgstr "Obriši izabrani filtar"
+
+#: TreePanel.cpp:431
+msgid "Edit the labels assigned to the selected items"
+msgstr "Izmeni etikete dodeljene izabranim stavkama"
+
+#: TreePanel.cpp:1231
+msgid "Are you sure to delete the selected filter?"
+msgstr "Da li sigurno želiš da obrišeš izabrani filtar?"
+
+#: TreeViewFilterEditor.cpp:33
+msgid "Filter Editor"
+msgstr "Uređivač filtra"
+
+#: TreeViewFilterEditor.cpp:70
+msgid "Play Count"
+msgstr "Broj puštanja"
+
+#: TreeViewFilterEditor.cpp:119
+msgid "Filter:"
+msgstr "Filtar:"
+
+#: TreeViewFilterEditor.cpp:123
+msgid "PlayCount"
+msgstr "BrojPuštanja"
