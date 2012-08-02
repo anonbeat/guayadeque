@@ -8,10 +8,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-04-06 17:42+0000\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 08:30+0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
-"Language-Team: Portuguese (Portugal) (http://www.transifex.net/projects/p/guayadeque/language/pt_PT/)\n"
+"Language-Team: Portuguese (Portugal) (http://www.transifex.com/projects/p/guayadeque/language/pt_PT/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -830,7 +830,7 @@ msgstr "As minhas faixas"
 
 #: ConfirmExit.cpp:26
 msgid "Please confirm"
-msgstr "Por favor, confirme"
+msgstr "Por favor confirme"
 
 #: ConfirmExit.cpp:39
 msgid "Are you sure you want to exit the application?"
@@ -2436,8 +2436,8 @@ msgid " Digital Podcast Directory "
 msgstr "Diretório Digital Podcast"
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr "Procurar no diretório de podcasts"
+msgid "Search in the podcast directory"
+msgstr ""
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4218,8 +4218,8 @@ msgid "Search the album cover"
 msgstr "Procurar capa de álbum"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
-msgstr "Copiar imagem atual para todas as faixas em edição"
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr ""
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

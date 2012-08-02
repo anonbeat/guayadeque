@@ -1,1 +1,1 @@
-GETTEXT_PROCESS_POFILE( sr guayadeque.mo guayadeque.po )
+GETTEXT_PROCESS_POFILE( es guayadeque.mo guayadeque.po )
