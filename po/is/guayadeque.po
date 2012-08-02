@@ -4,13 +4,14 @@
 # 
 # Translators:
 # Hreinn Hreinn Jónsson <hreinsijons@gmail.com>, 2011, 2012.
+# Hreinn Hreinsi <>, 2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-04-03 16:07+0000\n"
-"Last-Translator: Hreinn Hreinn Jónsson <hreinsijons@gmail.com>\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 22:52+0000\n"
+"Last-Translator: Hreinn Hreinsi <>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2436,8 +2437,8 @@ msgid " Digital Podcast Directory "
 msgstr " Digital Hlaðvarps staðsetning "
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr "Leita í hlaðvarpssafni"
+msgid "Search in the podcast directory"
+msgstr "Leita í hlaðvarps safni"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4218,8 +4219,8 @@ msgid "Search the album cover"
 msgstr "Leita að plötualbúmi"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
-msgstr "Afritar valda mynd við öll breytt lög"
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr "Afrita valda mynd við öll lög sem þú ert að breyta"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

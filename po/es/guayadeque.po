@@ -9,10 +9,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-04-02 08:14+0000\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 08:30+0000\n"
 "Last-Translator: camaron <jordi_ortega@hotmail.com>\n"
-"Language-Team: Spanish (Spain) (http://www.transifex.net/projects/p/guayadeque/language/es_ES/)\n"
+"Language-Team: Spanish (Spain) (http://www.transifex.com/projects/p/guayadeque/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -2437,8 +2437,8 @@ msgid " Digital Podcast Directory "
 msgstr "Digital Podcast Directory"
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr " Localizar en la carpeta de podcasts"
+msgid "Search in the podcast directory"
+msgstr ""
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4219,8 +4219,8 @@ msgid "Search the album cover"
 msgstr "Busar la carátula del álbum"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
-msgstr "Copiar la imágen actual a todas las pistas editadas"
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr ""
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

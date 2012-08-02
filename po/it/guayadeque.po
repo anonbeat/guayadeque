@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-06-08 11:25+0000\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 08:30+0000\n"
 "Last-Translator: Rodolfo Gonella Diaza <rudygonella@gmail.com>\n"
 "Language-Team: Italian (Italy) (http://www.transifex.com/projects/p/guayadeque/language/it_IT/)\n"
 "MIME-Version: 1.0\n"
@@ -2436,8 +2436,8 @@ msgid " Digital Podcast Directory "
 msgstr " Elenco digitale dei Podcast "
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr "Cerca nelle cartelle podcast"
+msgid "Search in the podcast directory"
+msgstr ""
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4218,8 +4218,8 @@ msgid "Search the album cover"
 msgstr "Cerca la copertina dell'album"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
-msgstr "Utilizza questa immagine per tutti i brani che stai modificando"
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr ""
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

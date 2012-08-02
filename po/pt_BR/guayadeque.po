@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-04-18 16:47+0000\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 08:30+0000\n"
 "Last-Translator: Bruno Bacelar <mail2buy8@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2440,8 +2440,8 @@ msgid " Digital Podcast Directory "
 msgstr ""
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr "Procurar na pasta de podcast"
+msgid "Search in the podcast directory"
+msgstr ""
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4222,8 +4222,8 @@ msgid "Search the album cover"
 msgstr "Procurar capa de álbum"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
-msgstr "Copiar a Imagem atual para todas as faixas que você está editando"
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr ""
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

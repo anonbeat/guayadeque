@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-07-16 14:10+0000\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 10:47+0000\n"
 "Last-Translator: Slavko <linux@slavino.sk>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2439,8 +2439,8 @@ msgid " Digital Podcast Directory "
 msgstr " Zložka digitálnych podkastov "
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr "Hľadať v zložke podkastu"
+msgid "Search in the podcast directory"
+msgstr ""
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -2610,7 +2610,7 @@ msgstr "Skladby:"
 
 #: PlayList.cpp:1518
 msgid "Empty Playlist"
-msgstr ""
+msgstr "Prázdny playlist"
 
 #: PlayList.cpp:1518
 msgid "The playlist is empty"
@@ -2630,7 +2630,7 @@ msgstr "Nastaviť ako ďalšiu skladbu"
 
 #: PlayList.cpp:1544
 msgid "Move the selected tracks to be played next"
-msgstr ""
+msgstr "Presunúť zvolené skladby, aby boli prehrané ako ďalšie"
 
 #: PlayList.cpp:1562
 msgid "Set the current selected tracks rating"
@@ -2638,15 +2638,15 @@ msgstr "nastaviť hodnotenie aktuálne zvolených skladieb"
 
 #: PlayList.cpp:1569
 msgid "Search a track in the playlist by name"
-msgstr ""
+msgstr "Hľadať skladbu v playliste podľa mena"
 
 #: PlayList.cpp:1597 PLSoListBox.cpp:161
 msgid "Randomize the songs in the playlist"
-msgstr ""
+msgstr "Náhodné poradie playlistu"
 
 #: PlayList.cpp:1602
 msgid "Remove all tracks from playlist"
-msgstr ""
+msgstr "Odstrániť všetky skladby z playlistu"
 
 #: PlayList.cpp:1609 PLSoListBox.cpp:168
 msgid "Remove from Playlist"
@@ -2731,7 +2731,7 @@ msgstr "Prehrať aktuálne zvolené skladby"
 
 #: PlayListPanel.cpp:230 SoListBox.cpp:533 TreePanel.cpp:394
 msgid "Add current selected songs to the playlist"
-msgstr ""
+msgstr "Pridať zvolené skladby do playlistu"
 
 #: PlayListPanel.cpp:260
 msgid "New Dynamic Playlist"
@@ -3097,7 +3097,7 @@ msgstr "švédčina"
 
 #: Preferences.cpp:152
 msgid "Thai"
-msgstr ""
+msgstr "thajsky"
 
 #: Preferences.cpp:153
 msgid "Turkish"
@@ -3249,7 +3249,7 @@ msgstr "Aktualizovať pri otvorení "
 
 #: Preferences.cpp:836
 msgid "Create playlists on scan"
-msgstr ""
+msgstr "vytvoriť playlist pri skenovaní"
 
 #: Preferences.cpp:841
 msgid "Follow symbolic links on scan"
@@ -3730,15 +3730,15 @@ msgstr " Hľadanie rádia "
 
 #: RadioPanel.cpp:104
 msgid "Search in now playing info"
-msgstr ""
+msgstr "Hľadať v v práve prehrávaných informáciách"
 
 #: RadioPanel.cpp:108
 msgid "Search in genre names"
-msgstr ""
+msgstr "Hľadať v názvoch žánrov"
 
 #: RadioPanel.cpp:112
 msgid "Search in station names"
-msgstr ""
+msgstr "Hľadať v názvoch staníc"
 
 #: RadioPanel.cpp:116
 msgid "Include results from all genres"
@@ -3906,7 +3906,7 @@ msgstr "Editor menoviek staníc"
 
 #: RadioPanel.cpp:1651
 msgid "There are not entries for this Radio Station"
-msgstr ""
+msgstr "Pre túto rádiovú stanicu neexistujú položky"
 
 #: RadioPanel.cpp:1763
 msgid "Are you sure to delete the selected radio searches?"
@@ -3962,7 +3962,7 @@ msgstr "Posun"
 
 #: SoListBox.cpp:497
 msgid "Edit the clicked column for the selected tracks"
-msgstr ""
+msgstr "Upraviť vybraný stĺpec zvolených skladieb"
 
 #: SoListBox.cpp:503
 msgid "Set"
@@ -3970,11 +3970,11 @@ msgstr "Nastaviť"
 
 #: SoListBox.cpp:510
 msgid "Set the clicked column for the selected tracks"
-msgstr ""
+msgstr "Nastaviť vybraný stĺpec zvolených skladieb"
 
 #: SoListBox.cpp:569
 msgid "Edit the labels assigned to the selected songs"
-msgstr ""
+msgstr "Upraviť menovky priradené k zvoleným skladám"
 
 #: SoListBox.cpp:577
 msgid "Edit the songs selected"
@@ -3998,15 +3998,15 @@ msgstr "odstrániť aktuálne zvolené skladby zo zariadenia"
 
 #: SoListBox.cpp:652
 msgid "Selects the genre of the current song"
-msgstr ""
+msgstr "Vyberte žáner aktuálnej skladby"
 
 #: SoListBox.cpp:658
 msgid "Selects the album artist of the current song"
-msgstr ""
+msgstr "Vyberte album aktuálnej skladby"
 
 #: SoListBox.cpp:661
 msgid "Selects the composer of the current song"
-msgstr ""
+msgstr "Vyberte skladateľa aktuálnej skladby"
 
 #: SplashWin.cpp:62
 msgid "guayadeque.org"
@@ -4062,7 +4062,7 @@ msgstr "prejsť na ďalšiu skladbu v Playliste"
 
 #: TaskBar.cpp:126
 msgid "Skip to next album track in current playlist"
-msgstr ""
+msgstr "Preskočiť na skladbu nasledujúceho albumu aktuálneho playlistu"
 
 #: TaskBar.cpp:130
 msgid "Prev Track"
@@ -4070,7 +4070,7 @@ msgstr "Predošlá skladba"
 
 #: TaskBar.cpp:130
 msgid "Skip to previous track in current playlist"
-msgstr ""
+msgstr "Preskočiť na predošlú skladbu aktuálneho playlistu"
 
 #: TaskBar.cpp:134
 msgid "Prev Album"
@@ -4118,19 +4118,19 @@ msgstr " Piesne "
 
 #: TrackEdit.cpp:110
 msgid "Move the track to the previous position"
-msgstr ""
+msgstr "Presunúť skladbu na predošlú pozíciu"
 
 #: TrackEdit.cpp:116
 msgid "Move the track to the next position"
-msgstr ""
+msgstr "Presunúť skladbu na ďalšiu pozíciu"
 
 #: TrackEdit.cpp:145
 msgid "Copy the artist name to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať meno umelca do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:157
 msgid "Copy the album artist name to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať meno umelca albumu do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:160 TrackEdit.cpp:485
 msgid "A. Artist:"
@@ -4142,15 +4142,15 @@ msgstr ""
 
 #: TrackEdit.cpp:169
 msgid "Copy the album name to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať meno názov albumu do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:180
 msgid "Copy the title to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať názov do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:191
 msgid "Copy the composer to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať skladateľa do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:195
 msgid "Composer:"
@@ -4158,7 +4158,7 @@ msgstr "Skladateľ:"
 
 #: TrackEdit.cpp:203
 msgid "Copy the comment to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať komentár do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:207
 msgid "Comment:"
@@ -4178,7 +4178,7 @@ msgstr ""
 
 #: TrackEdit.cpp:239
 msgid "Copy the disk to all the tracks you are editing"
-msgstr ""
+msgstr "Kopírovať disk do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:243
 msgid "Disk:"
@@ -4186,7 +4186,7 @@ msgstr "Disk:"
 
 #: TrackEdit.cpp:253
 msgid "Copy the genre name to all songs you are editing"
-msgstr ""
+msgstr "Kopírovať názov žánru do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:256
 msgid "Genre:"
@@ -4221,7 +4221,7 @@ msgid "Search the album cover"
 msgstr "turečtina"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
+msgid "Copy the current picture to all the tracks you are editing"
 msgstr "Kopírovať obrázok do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:361
@@ -4250,7 +4250,7 @@ msgstr ""
 
 #: TrackEdit.cpp:458
 msgid "Copy the content of the album to the edited tracks"
-msgstr ""
+msgstr "Kopírovať obsah albumu do upravovaných skladieb"
 
 #: TrackEdit.cpp:482
 msgid "Copy the artist to the edited tracks"

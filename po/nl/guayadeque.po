@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-04-01 12:39+0100\n"
-"PO-Revision-Date: 2012-06-17 20:51+0000\n"
+"POT-Creation-Date: 2012-07-31 16:30+0100\n"
+"PO-Revision-Date: 2012-08-01 08:30+0000\n"
 "Last-Translator: Adriaan Callaerts <adriaan.callaerts@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2437,8 +2437,8 @@ msgid " Digital Podcast Directory "
 msgstr "Digitale Podcast Directory"
 
 #: NewChannel.cpp:111
-msgid "Search in the podcast directoy"
-msgstr "Zoek in de podcastmap"
+msgid "Search in the podcast directory"
+msgstr ""
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4219,8 +4219,8 @@ msgid "Search the album cover"
 msgstr "Albumhoes zoeken"
 
 #: TrackEdit.cpp:353
-msgid "Copy the current picute to all the tracks you are editing"
-msgstr "Afbeelding kopiëren naar alle nummers die bewerkt worden"
+msgid "Copy the current picture to all the tracks you are editing"
+msgstr ""
 
 #: TrackEdit.cpp:361
 msgid "Pictures"
