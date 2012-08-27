@@ -1012,7 +1012,7 @@ bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
         m_LastSearchString = searchtext; //m_SearchTextCtrl->GetLineText( 0 );
         if( !m_LastSearchString.IsEmpty() )
         {
-            if( m_LastSearchString.Length() > 1 )
+            if( m_LastSearchString.Length() > 0 )
             {
                 m_TextSearchFilter = guSplitWords( m_LastSearchString );
 

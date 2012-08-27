@@ -894,7 +894,7 @@ bool guPlayListPanel::DoTextSearch( const wxString &textsearch )
         m_LastSearchString = textsearch; //m_InputTextCtrl->GetLineText( 0 );
         if( !m_LastSearchString.IsEmpty() )
         {
-            if( m_LastSearchString.Length() > 1 )
+            if( m_LastSearchString.Length() > 0 )
             {
                 m_NamesTreeCtrl->m_TextSearchFilter = guSplitWords( m_LastSearchString );
                 m_NamesTreeCtrl->ExpandAll();

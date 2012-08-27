@@ -1367,7 +1367,7 @@ bool guRadioPanel::DoTextSearch( void )
     //guLogMessage( wxT( "Should do the search now: '%s'" ), SearchString.c_str() );
     if( !SearchString.IsEmpty() )
     {
-        if( SearchString.Length() > 1 )
+        if( SearchString.Length() > 0 )
         {
             wxArrayString Words = guSplitWords( SearchString );
             m_Db->SetRaTeFilters( Words );

@@ -626,7 +626,7 @@ bool guLibPanel::DoTextSearch( const wxString &searchtext )
     m_LastTextFilter = searchtext; //m_InputTextCtrl->GetLineText( 0 );
     if( !m_LastTextFilter.IsEmpty() )
     {
-        if( m_LastTextFilter.Length() > 1 )
+        if( m_LastTextFilter.Length() > 0 )
         {
             wxArrayString Words = guSplitWords( m_LastTextFilter );
 
