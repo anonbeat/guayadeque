@@ -1785,6 +1785,11 @@ wxDragResult guListViewDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult de
     if( def == wxDragError || def == wxDragNone || def == wxDragCancel )
         return def;
 
+    if( m_ListView->m_DragSelfItems )
+    {
+        return wxDragNone;
+    }
+
     if( !GetData() )
     {
         guLogMessage( wxT( "Error getting drop data" ) );
@@ -1835,6 +1840,7 @@ wxDragResult guListViewDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult de
 // -------------------------------------------------------------------------------- //
 bool guListViewDropTarget::OnDrop( wxCoord x, wxCoord y )
 {
+    //guLogMessage( wxT( "OnDrop %i / %i" ), m_ListView->m_DragSelfItems, m_ListView->m_DragSelfItemsEnabled );
     // We are moving items inside this object.
     if( m_ListView->m_DragSelfItems )
     {

@@ -374,6 +374,7 @@ void guPlayList::RemoveSelected()
 // -------------------------------------------------------------------------------- //
 void guPlayList::MoveSelection( void )
 {
+    //guLogMessage( wxT( "MoveSelection %i" ), m_DragOverItem );
     //
     // Move the Selected Items to the DragOverItem and DragOverFirst
     //
