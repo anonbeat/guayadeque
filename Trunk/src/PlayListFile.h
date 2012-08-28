@@ -65,16 +65,19 @@ class guPlaylistFile
     bool                ReadPlsStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
     bool                ReadM3uStream( wxInputStream &playlist, const wxString &path = wxEmptyString );
     bool                ReadXspfStream( wxInputStream &playlist );
+    bool                ReadAshxStream( wxInputStream &playlist );
     bool                ReadAsxStream( wxInputStream &playlist );
 
     bool                ReadPlsFile( const wxString &filename );
     bool                ReadM3uFile( const wxString &filename );
     bool                ReadXspfFile( const wxString &filename );
+    bool                ReadAshxFile( const wxString &filename );
     bool                ReadAsxFile( const wxString &filename );
 
     bool                WritePlsFile( const wxString &filename, const bool relative = false );
     bool                WriteM3uFile( const wxString &filename, const bool relative = false );
     bool                WriteXspfFile( const wxString &filename, const bool relative = false );
+    bool                WriteAshxFile( const wxString &filename, const bool relative = false );
     bool                WriteAsxFile( const wxString &filename, const bool relative = false );
 
   public :

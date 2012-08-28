@@ -73,6 +73,7 @@ bool guPlaylistFile::IsValidPlayList( const wxString &uri )
     return  PLPath.EndsWith( wxT( ".pls" ) ) ||
             PLPath.EndsWith( wxT( ".m3u" ) ) ||
             PLPath.EndsWith( wxT( ".xspf" ) ) ||
+            PLPath.EndsWith( wxT( ".ashx" ) ) ||
             PLPath.EndsWith( wxT( ".asx" ) );
 }
 
@@ -96,6 +97,10 @@ bool guPlaylistFile::Load( const wxString &uri )
         else if( PLPath.EndsWith( wxT( ".xspf" ) ) )
         {
             return ReadXspfFile( uri );
+        }
+        else if( PLPath.EndsWith( wxT( ".ashx" ) ) )
+        {
+            return ReadAshxFile( uri );
         }
         else if( PLPath.EndsWith( wxT( ".asx" ) ) )
         {
@@ -130,6 +135,10 @@ bool guPlaylistFile::Load( const wxString &uri )
                 {
                     return ReadXspfStream( Ins );
                 }
+                else if( PLPath.EndsWith( wxT( ".ashx" ) ) )
+                {
+                    return ReadAshxStream( Ins );
+                }
                 else if( PLPath.EndsWith( wxT( ".asx" ) ) )
                 {
                     return ReadAsxStream( Ins );
@@ -154,6 +163,10 @@ bool guPlaylistFile::Save( const wxString &filename, const bool relative )
     else if( filename.Lower().EndsWith( wxT( ".xspf" ) ) )
     {
         return WriteXspfFile( filename, relative );
+    }
+    else if( filename.Lower().EndsWith( wxT( ".ashx" ) ) )
+    {
+        return WriteAshxFile( filename, relative );
     }
     else if( filename.Lower().EndsWith( wxT( ".asx" ) ) )
     {
@@ -461,6 +474,53 @@ bool guPlaylistFile::ReadAsxFile( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guPlaylistFile::ReadAshxStream( wxInputStream &playlist )
+{
+    wxString AshxFile;
+    wxStringOutputStream Outs( &AshxFile );
+    playlist.Read( Outs );
+
+    if( !AshxFile.IsEmpty() )
+    {
+        //guLogMessage( wxT( "Content...\n%s" ), AshxFile.c_str() );
+        wxArrayString Lines = wxStringTokenize( AshxFile, wxT( "\n" ) );
+
+        int Index;
+        int Count = Lines.Count();
+        for( Index = 0; Index < Count; Index++ )
+        {
+            Lines[ Index ].Trim( wxString::both );
+            if( !Lines[ Index ].IsEmpty() )
+            {
+                wxURI Uri( Lines[ Index ] );
+                m_Playlist.Add( new guPlaylistItem( Lines[ Index ], Lines[ Index ].AfterLast( wxT( '/' ) ) ) );
+            }
+        }
+        return true;
+    }
+    else
+    {
+        guLogError( wxT( "Empty playlist file stream" ) );
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlaylistFile::ReadAshxFile( const wxString &filename )
+{
+    wxFileInputStream Ins( filename );
+    if( Ins.IsOk() )
+    {
+        return ReadAshxStream( Ins );
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the playlist file '%s'" ), filename.c_str() );
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 bool guPlaylistFile::WritePlsFile( const wxString &filename, const bool relative )
 {
     wxFile PlsFile;
@@ -543,6 +603,27 @@ bool guPlaylistFile::WriteXspfFile( const wxString &filename, const bool relativ
     RootNode->AddChild( TrackListNode );
     OutXml.SetRoot( RootNode );
     return OutXml.Save( filename );
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlaylistFile::WriteAshxFile( const wxString &filename, const bool relative )
+{
+    wxFile AshxFile;
+    if( AshxFile.Create( filename, true ) && AshxFile.IsOpened() )
+    {
+        int Count = m_Playlist.Count();
+        for( int Index = 0; Index < Count; Index++ )
+        {
+            AshxFile.Write( m_Playlist[ Index ].GetLocation( relative, wxPathOnly( filename ) ) );
+            AshxFile.Write( wxT( "\n" ) );
+        }
+        AshxFile.Close();
+    }
+    else
+    {
+        guLogError( wxT( "Could not open the m3ufile '%s'" ), filename.c_str() );
+    }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
