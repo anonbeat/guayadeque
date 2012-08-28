@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"PO-Revision-Date: 2012-08-10 16:38+0000\n"
 "Last-Translator: Alexander Ivanov <ttecss@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2437,7 +2437,7 @@ msgstr " Дигитална подкаст директория "
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directory"
-msgstr ""
+msgstr "Търси в подкаст директорията"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4219,7 +4219,7 @@ msgstr "Търси за обложка на албума"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
-msgstr ""
+msgstr "Копиране на текущата снимка във всички песни които редактирате"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

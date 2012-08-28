@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"PO-Revision-Date: 2012-08-09 13:27+0000\n"
 "Last-Translator: dominik232 <dominik232@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1880,7 +1880,7 @@ msgstr "Tekst z "
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Target Editor"
-msgstr ""
+msgstr "Edytor źródeł tekstów utworów"
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Source Editor"
@@ -1936,7 +1936,7 @@ msgstr "Szukaj:"
 
 #: LyricsPanel.cpp:2545
 msgid "Extract option editor"
-msgstr ""
+msgstr "Edytor opcji wypakowywania"
 
 #: LyricsPanel.cpp:2546 LyricsPanel.cpp:2552
 msgid "Begin:"
@@ -3442,7 +3442,7 @@ msgstr " Libre.fm audioscrobble "
 
 #: Preferences.cpp:1428
 msgid "Join the Guayadeque Last.fm users group"
-msgstr ""
+msgstr "Dołącz do grupy użytkowników Guayadeque w Last.fm"
 
 #: Preferences.cpp:1460
 msgid " Sources "
@@ -3604,7 +3604,7 @@ msgstr " Definicja używanych adresów URL "
 msgid ""
 "2 letters language code\n"
 "Text to search"
-msgstr ""
+msgstr "2-literowy kod języka\nTekst do wyszukania"
 
 #: Preferences.cpp:2159
 msgid " Commands "
@@ -3627,15 +3627,15 @@ msgstr "Ścieżka albumu\nŚcieżka pliku okładki\nŚcieżka utworu"
 
 #: Preferences.cpp:2280
 msgid " Patterns "
-msgstr ""
+msgstr "Wzorce"
 
 #: Preferences.cpp:2392
 msgid "Remove source files"
-msgstr ""
+msgstr "Usuń pliki źródłowe"
 
 #: Preferences.cpp:2409
 msgid " Define patterns using "
-msgstr ""
+msgstr "Zdefiniuj wzorce używając"
 
 #: Preferences.cpp:2415
 msgid ""
@@ -3643,7 +3643,7 @@ msgid ""
 "Album Artist\n"
 "{aa} or {a}\n"
 "Album"
-msgstr ""
+msgstr "Artysta\nArtysta albumu\n{aa} lub {a}\nAlbum"
 
 #: Preferences.cpp:2423
 msgid ""
@@ -3651,7 +3651,7 @@ msgid ""
 "Disk\n"
 "Filename\n"
 "Genre"
-msgstr ""
+msgstr "Kompozytor\nDysk\nNazwa pliku\nGatunek"
 
 #: Preferences.cpp:2431
 msgid ""
@@ -3659,47 +3659,47 @@ msgid ""
 "Number\n"
 "Title\n"
 "Year"
-msgstr ""
+msgstr "Indeks\nNumer\nTytuł\nRok"
 
 #: Preferences.cpp:2487
 msgid " Accelerators "
-msgstr ""
+msgstr "Przyspieszacze"
 
 #: Preferences.cpp:2492
 msgid "Action"
-msgstr ""
+msgstr "Akcja"
 
 #: Preferences.cpp:2496
 msgid "Key"
-msgstr ""
+msgstr "Klucz"
 
 #: Preferences.cpp:2928 Preferences.cpp:2948
 msgid "Collection: "
-msgstr ""
+msgstr "Kolekcja:"
 
 #: Preferences.cpp:2928 Preferences.cpp:2948
 msgid "Enter the collection name"
-msgstr ""
+msgstr "Wprowadź nazwę kolekcji"
 
 #: Preferences.cpp:3054
 msgid "Change library path"
-msgstr ""
+msgstr "Zmień ścieżkę biblioteki"
 
 #: Preferences.cpp:3132 Preferences.cpp:3152
 msgid "Word: "
-msgstr ""
+msgstr "Słowo:"
 
 #: Preferences.cpp:3132 Preferences.cpp:3152
 msgid "Enter the text to find covers"
-msgstr ""
+msgstr "Wprowadź tekst do znalezienia okładek"
 
 #: Preferences.cpp:3641 Preferences.cpp:3671
 msgid "Filter: "
-msgstr ""
+msgstr "Filtr:"
 
 #: Preferences.cpp:3641
 msgid "Enter the text to filter"
-msgstr ""
+msgstr "Wprowadź tekst do filtra"
 
 #: Preferences.cpp:3671
 msgid "Edit the text to filter"
@@ -3903,27 +3903,27 @@ msgstr "Edytor etykiet stacji"
 
 #: RadioPanel.cpp:1651
 msgid "There are not entries for this Radio Station"
-msgstr ""
+msgstr "Brak wpisów dla tej stacji radiowej"
 
 #: RadioPanel.cpp:1763
 msgid "Are you sure to delete the selected radio searches?"
-msgstr ""
+msgstr "Czy na pewno usunąć wybrane wyniki wyszukiwania?"
 
 #: RaListBox.cpp:144
 msgid "Play the selected tracks"
-msgstr ""
+msgstr "Odtwórz wybrane utwory"
 
 #: SelCoverFile.cpp:30
 msgid "Select Cover File"
-msgstr ""
+msgstr "Wybierz plik okładki"
 
 #: SelCoverFile.cpp:55
 msgid "Cover:"
-msgstr ""
+msgstr "Okładka:"
 
 #: SelCoverFile.cpp:114
 msgid "Select the cover filename"
-msgstr ""
+msgstr "Wybierz nazwę pliku okładki"
 
 #: SmartMode.cpp:391
 msgid "Generate Smart Playlist"
@@ -3963,7 +3963,7 @@ msgstr ""
 
 #: SoListBox.cpp:503
 msgid "Set"
-msgstr ""
+msgstr "Ustaw"
 
 #: SoListBox.cpp:510
 msgid "Set the clicked column for the selected tracks"
@@ -3979,7 +3979,7 @@ msgstr ""
 
 #: SoListBox.cpp:617 TaskBar.cpp:162
 msgid "Set the current track rating"
-msgstr ""
+msgstr "Wybierz ocenę bieżącego utworu"
 
 #: SoListBox.cpp:624
 msgid "Save all selected tracks as a playlist"
@@ -4007,39 +4007,39 @@ msgstr ""
 
 #: SplashWin.cpp:62
 msgid "guayadeque.org"
-msgstr ""
+msgstr "guayadeque.org"
 
 #: SplashWin.cpp:69
 msgid "Please Donate!"
-msgstr ""
+msgstr "Wspomóż darowizną!"
 
 #: StatusBar.cpp:163 StatusBar.cpp:265
 msgid "Enable audioscrobbling"
-msgstr ""
+msgstr "Włącz audioscrobbling"
 
 #: StatusBar.cpp:166 StatusBar.cpp:282
 msgid "Enable crossfading"
-msgstr ""
+msgstr "Włącz crossfading"
 
 #: StatusBar.cpp:166 StatusBar.cpp:282
 msgid "Disable crossfading"
-msgstr ""
+msgstr "Wyłącz crossfading"
 
 #: StatusBar.cpp:169
 msgid "Shows information about the selected items"
-msgstr ""
+msgstr "Pokaż informacje o wybranym elemencie"
 
 #: StatusBar.cpp:265
 msgid "Disable audioscrobbling"
-msgstr ""
+msgstr "Wyłącz audioscrobbling"
 
 #: TaListBox.cpp:104 TreePanel.cpp:367
 msgid "Create"
-msgstr ""
+msgstr "Stwórz"
 
 #: TaListBox.cpp:124
 msgid "Play current selected labels"
-msgstr ""
+msgstr "Odtwórz wybrane etykiety"
 
 #: TaListBox.cpp:131
 msgid "Add current selected labels to playlist"
@@ -4047,7 +4047,7 @@ msgstr ""
 
 #: TaskBar.cpp:112
 msgid "Pause"
-msgstr ""
+msgstr "Wstrzymaj"
 
 #: TaskBar.cpp:112 TaskBar.cpp:116
 msgid "Play current playlist"
@@ -4063,15 +4063,15 @@ msgstr ""
 
 #: TaskBar.cpp:130
 msgid "Prev Track"
-msgstr ""
+msgstr "Poprz. utwór"
 
 #: TaskBar.cpp:130
 msgid "Skip to previous track in current playlist"
-msgstr ""
+msgstr "Pomiń poprzedni utwór w playliście"
 
 #: TaskBar.cpp:134
 msgid "Prev Album"
-msgstr ""
+msgstr "Poprz. album"
 
 #: TaskBar.cpp:134
 msgid "Skip to previous album track in current playlist"
@@ -4079,59 +4079,59 @@ msgstr ""
 
 #: TaskBar.cpp:165
 msgid "&Smart Play"
-msgstr ""
+msgstr "Inteligentne odtwarzanie"
 
 #: TaskBar.cpp:169
 msgid "&Repeat Playlist"
-msgstr ""
+msgstr "Powtórz playlistę"
 
 #: TaskBar.cpp:173
 msgid "&Repeat Track"
-msgstr ""
+msgstr "Powtórz utwór"
 
 #: TaskBar.cpp:177
 msgid "R&andomize"
-msgstr ""
+msgstr "Wymiesz&aj"
 
 #: TaskBar.cpp:187
 msgid "Audioscrobbling"
-msgstr ""
+msgstr "Audioscrobbling"
 
 #: TaskBar.cpp:193
 msgid "Exit"
-msgstr ""
+msgstr "Wyjście"
 
 #: TaskBar.cpp:193
 msgid "Exit this program"
-msgstr ""
+msgstr "Zakończ program"
 
 #: TrackEdit.cpp:89
 msgid "Songs Editor"
-msgstr ""
+msgstr "Edytor utworów"
 
 #: TrackEdit.cpp:102
 msgid " Songs "
-msgstr ""
+msgstr "Utwory"
 
 #: TrackEdit.cpp:110
 msgid "Move the track to the previous position"
-msgstr ""
+msgstr "Przesuń utwór na poprzednią pozycję"
 
 #: TrackEdit.cpp:116
 msgid "Move the track to the next position"
-msgstr ""
+msgstr "Przesuń utwór na następną pozycję"
 
 #: TrackEdit.cpp:145
 msgid "Copy the artist name to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj wykonawcę do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:157
 msgid "Copy the album artist name to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj artystę albumu do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:160 TrackEdit.cpp:485
 msgid "A. Artist:"
-msgstr ""
+msgstr "Artysta albumu:"
 
 #: TrackEdit.cpp:161
 msgid "shows the album artist of the track"
@@ -4139,35 +4139,35 @@ msgstr ""
 
 #: TrackEdit.cpp:169
 msgid "Copy the album name to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj nazwę albumu do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:180
 msgid "Copy the title to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj tytuł do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:191
 msgid "Copy the composer to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj kompozytora do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:195
 msgid "Composer:"
-msgstr ""
+msgstr "Kompozytor:"
 
 #: TrackEdit.cpp:203
 msgid "Copy the comment to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj komentarz do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:207
 msgid "Comment:"
-msgstr ""
+msgstr "Komentarz:"
 
 #: TrackEdit.cpp:216
 msgid "Copy the number to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj numer do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:219 TrackEdit.cpp:543
 msgid "Number:"
-msgstr ""
+msgstr "Numer:"
 
 #: TrackEdit.cpp:233
 msgid "Enumerate the tracks in the order they were added for editing"
@@ -4175,31 +4175,31 @@ msgstr ""
 
 #: TrackEdit.cpp:239
 msgid "Copy the disk to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj dysk do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:243
 msgid "Disk:"
-msgstr ""
+msgstr "Dysk:"
 
 #: TrackEdit.cpp:253
 msgid "Copy the genre name to all songs you are editing"
-msgstr ""
+msgstr "Skopiuj gatunek do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:256
 msgid "Genre:"
-msgstr ""
+msgstr "Gatunek:"
 
 #: TrackEdit.cpp:264
 msgid "Copy the year to all songs you are editing"
-msgstr ""
+msgstr "Skopiuj rok do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:267
 msgid "Year:"
-msgstr ""
+msgstr "Rok"
 
 #: TrackEdit.cpp:283
 msgid "Rating:"
-msgstr ""
+msgstr "Ocena:"
 
 #: TrackEdit.cpp:332
 msgid "Add a picture from file to the current track"
@@ -4219,11 +4219,11 @@ msgstr ""
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
-msgstr ""
+msgstr "Skopiuj bieżący obraz do wszystkich utworów, które edytujesz"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"
-msgstr ""
+msgstr "Obrazy"
 
 #: TrackEdit.cpp:420
 msgid "Type the artist name to search in musicbrainz"

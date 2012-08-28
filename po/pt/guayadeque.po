@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"PO-Revision-Date: 2012-08-09 18:12+0000\n"
 "Last-Translator: Sérgio Marques <smarquespt@gmail.com>\n"
 "Language-Team: Portuguese (Portugal) (http://www.transifex.com/projects/p/guayadeque/language/pt_PT/)\n"
 "MIME-Version: 1.0\n"
@@ -1688,7 +1688,7 @@ msgstr "Procura de texto"
 
 #: LocationPanel.cpp:319 MainFrame.cpp:999
 msgid "Show/Hide the radio text search"
-msgstr "Mostrar/ocultar campo de pesquisa de rádios"
+msgstr "Mostrar/ocultar campo de procura de rádios"
 
 #: LocationPanel.cpp:324 MainFrame.cpp:1004
 msgid "Show/Hide the radio labels"
@@ -1851,7 +1851,7 @@ msgstr "Gravar letras"
 
 #: LyricsPanel.cpp:108
 msgid "Search the lyrics on the web"
-msgstr "Procurar letras na Internet"
+msgstr "Procurar letras na web"
 
 #: LyricsPanel.cpp:287
 msgid "Copy the content of the lyric to clipboard"
@@ -2437,7 +2437,7 @@ msgstr "Diretório Digital Podcast"
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directory"
-msgstr ""
+msgstr "Procurar no diretório de podcsts"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -3727,7 +3727,7 @@ msgstr "Procura de rádios"
 
 #: RadioPanel.cpp:104
 msgid "Search in now playing info"
-msgstr "Procurar na info de \"Em reprodução\""
+msgstr "Procurar na informação de \"Em reprodução\""
 
 #: RadioPanel.cpp:108
 msgid "Search in genre names"
@@ -4219,7 +4219,7 @@ msgstr "Procurar capa de álbum"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
-msgstr ""
+msgstr "Copiar a imagem atual para todas as faixas em edição"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"PO-Revision-Date: 2012-08-09 10:18+0000\n"
 "Last-Translator: Adriaan Callaerts <adriaan.callaerts@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -485,7 +485,7 @@ msgstr "Voer uit"
 
 #: Accelerators.cpp:409
 msgid "Snapshot"
-msgstr ""
+msgstr "Schermafdruk"
 
 #: Accelerators.cpp:412
 msgid "Cancel"
@@ -1929,7 +1929,7 @@ msgstr "Niet gevonden:"
 
 #: LyricsPanel.cpp:2539
 msgid "Replace option editor"
-msgstr ""
+msgstr "Vervang-optie bewerken"
 
 #: LyricsPanel.cpp:2540 RadioPanel.cpp:94
 msgid "Search:"
@@ -1937,7 +1937,7 @@ msgstr "Zoek:"
 
 #: LyricsPanel.cpp:2545
 msgid "Extract option editor"
-msgstr ""
+msgstr "Exporteer-optie bewerken"
 
 #: LyricsPanel.cpp:2546 LyricsPanel.cpp:2552
 msgid "Begin:"
@@ -1949,11 +1949,11 @@ msgstr "Einde:"
 
 #: LyricsPanel.cpp:2551
 msgid "Exclude option editor"
-msgstr ""
+msgstr "Uitsluit-optie bewerken"
 
 #: LyricsPanel.cpp:2557
 msgid "Not Found option editor"
-msgstr ""
+msgstr "Niet gevonden-optie bewerken"
 
 #: LyricsPanel.cpp:2558 LyricsPanel.cpp:2559
 msgid "Tag:"
@@ -2090,11 +2090,11 @@ msgstr "Toon/Verberg de statusbalk"
 
 #: MainFrame.cpp:1416
 msgid "Show Captions"
-msgstr ""
+msgstr "Toon venstertitels"
 
 #: MainFrame.cpp:1417
 msgid "Show/Hide the windows caption"
-msgstr ""
+msgstr "Toon/verberg de venster-vertaling"
 
 #: MainFrame.cpp:1424
 msgid "Close Current Tab"
@@ -2438,7 +2438,7 @@ msgstr "Digitale Podcast Directory"
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directory"
-msgstr ""
+msgstr "Zoek in de podcast map"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -3351,7 +3351,7 @@ msgstr "Crossfader"
 
 #: Preferences.cpp:1156
 msgid "Fade-out length:"
-msgstr ""
+msgstr "Duur van fade-out:"
 
 #: Preferences.cpp:1165
 msgid "Select the length of the fade out. 0 for gapless playback"
@@ -3359,7 +3359,7 @@ msgstr "Selecteer de lengte van de fade out. 0 voor afspelen zonder tussenpause"
 
 #: Preferences.cpp:1168
 msgid "Fade-in length:"
-msgstr ""
+msgstr "Duur van fade-in:"
 
 #: Preferences.cpp:1177
 msgid "Select the length of the fade in"
@@ -3367,7 +3367,7 @@ msgstr "Selecteer de duur van de fade in"
 
 #: Preferences.cpp:1180
 msgid "Fade-in volume:"
-msgstr ""
+msgstr "Fade-in volume:"
 
 #: Preferences.cpp:1189
 msgid "Select the initial volume of the fade in"
@@ -3375,7 +3375,7 @@ msgstr "Kies het initiële volume voor de fade in"
 
 #: Preferences.cpp:1192
 msgid "Fade-in start:"
-msgstr ""
+msgstr "Begin van fade-in:"
 
 #: Preferences.cpp:1201
 msgid "Select at which volume of the fade out the fade in starts"
@@ -3956,7 +3956,7 @@ msgstr "GiBytes"
 
 #: SoListBox.cpp:425
 msgid "Offset"
-msgstr ""
+msgstr "Startpunt"
 
 #: SoListBox.cpp:497
 msgid "Edit the clicked column for the selected tracks"
@@ -4220,7 +4220,7 @@ msgstr "Albumhoes zoeken"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
-msgstr ""
+msgstr "Kopieer de huidige afbeelding naar alle nummers die je nu aan het bewerken bent"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"

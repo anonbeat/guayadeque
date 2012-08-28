@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"PO-Revision-Date: 2012-08-10 08:56+0000\n"
 "Last-Translator: Benoit THIBAUD <frombenny@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2437,7 +2437,7 @@ msgstr " Dossier Podcast numérique"
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directory"
-msgstr ""
+msgstr "Rechercher dans le dossier des podcasts"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
@@ -4219,7 +4219,7 @@ msgstr "Rechercher la pochette de l'album"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
-msgstr ""
+msgstr "Copier cette image vers tous les morceaux que vous éditez"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"
