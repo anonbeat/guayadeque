@@ -4,7 +4,9 @@
 # 
 # Translators:
 #   <helix84@centrum.sk>, 2011.
+# Juraj  <kusavica@gmail.com>, 2012.
 #   <linux@slavino.sk>, 2012.
+#   <marianna27@gmail.com>, 2012.
 # Matej Moško <matej.mosko@gmail.com>, 2011.
 # Slavko  <linux@slavino.sk>, 2012.
 msgid ""
@@ -12,8 +14,8 @@ msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 10:47+0000\n"
-"Last-Translator: Slavko <linux@slavino.sk>\n"
+"PO-Revision-Date: 2012-08-24 19:42+0000\n"
+"Last-Translator: mari <marianna27@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -65,7 +67,7 @@ msgstr "Prehrať vybraného umelca"
 #: RaListBox.cpp:150 SoListBox.cpp:532 TaListBox.cpp:130 TreePanel.cpp:393
 #: YeListBox.cpp:110
 msgid "Enqueue"
-msgstr "Zadradiť"
+msgstr "Zaradiť"
 
 #: AAListBox.cpp:153 CoListBox.cpp:111 PcListBox.cpp:119 RaListBox.cpp:151
 #: YeListBox.cpp:111
@@ -210,7 +212,7 @@ msgstr "Zaradiť za aktuálnu skladbu"
 
 #: Accelerators.cpp:117
 msgid "Enqueue After Album"
-msgstr "Zaradiť za aktulány album"
+msgstr "Zaradiť za aktuálny album"
 
 #: Accelerators.cpp:119
 msgid "Enqueue After Artist"
@@ -446,7 +448,7 @@ msgstr "Domov"
 
 #: Accelerators.cpp:362 Accelerators.cpp:369
 msgid "Page Up"
-msgstr "Pege Up"
+msgstr "Page Up"
 
 #: Accelerators.cpp:365 Accelerators.cpp:372
 msgid "Page Down"
@@ -550,7 +552,7 @@ msgstr "Stiahnuť obal"
 
 #: AlbumBrowser.cpp:379 AlbumBrowser.cpp:1837 AlListBox.cpp:344
 msgid "Download cover for the current selected album"
-msgstr "Stiahnuť album aktuálne zvoleného albumu"
+msgstr "Stiahnuť obal aktuálne zvoleného albumu"
 
 #: AlbumBrowser.cpp:383 AlbumBrowser.cpp:1841 AlListBox.cpp:348
 msgid "Select Cover"
@@ -1027,7 +1029,7 @@ msgstr ""
 
 #: DynamicPlayList.cpp:108
 msgid "before the last"
-msgstr "pred posledný"
+msgstr "predposledný"
 
 #: DynamicPlayList.cpp:113
 msgid "false"
@@ -1200,7 +1202,7 @@ msgstr "Chyba"
 
 #: FileBrowser.cpp:765
 msgid "Modified"
-msgstr "Upravné"
+msgstr "Upravené"
 
 #: FileBrowser.cpp:1113
 msgid "Play current selected files"
@@ -1663,7 +1665,7 @@ msgstr "Rádiá"
 #: LocationPanel.cpp:215 MainFrame.cpp:1066 MainFrame.cpp:2775
 #: MainFrame.cpp:3497 PodcastsPanel.cpp:916 Preferences.cpp:253
 msgid "Podcasts"
-msgstr "Podkasty"
+msgstr "Podcasty"
 
 #: LocationPanel.cpp:279 MainFrame.cpp:975 MainFrame.cpp:2812
 msgid "File Browser"
@@ -1751,7 +1753,7 @@ msgstr "Zobraziť knižnicu zbierky"
 
 #: LocationPanel.cpp:421 MainFrame.cpp:1200
 msgid "View the library labels"
-msgstr "Zobraziť menovky zbierky"
+msgstr "Zobraziť menovky knižnice"
 
 #: LocationPanel.cpp:426 MainFrame.cpp:1205
 msgid "View the library genres"
@@ -2650,7 +2652,7 @@ msgstr "Odstrániť všetky skladby z playlistu"
 
 #: PlayList.cpp:1609 PLSoListBox.cpp:168
 msgid "Remove from Playlist"
-msgstr "Odstrániť z Palylistu"
+msgstr "Odstrániť z Playlistu"
 
 #: PlayList.cpp:1610
 msgid "Remove the selected tracks from playlist"
@@ -3137,7 +3139,7 @@ msgstr "kopírovať do"
 
 #: Preferences.cpp:283
 msgid "Shortcuts"
-msgstr "Klávesoví skratky"
+msgstr "Klávesové skratky"
 
 #: Preferences.cpp:365
 msgid " Accept "
@@ -3730,7 +3732,7 @@ msgstr " Hľadanie rádia "
 
 #: RadioPanel.cpp:104
 msgid "Search in now playing info"
-msgstr "Hľadať v v práve prehrávaných informáciách"
+msgstr "Hľadať v práve prehrávaných informáciách"
 
 #: RadioPanel.cpp:108
 msgid "Search in genre names"
@@ -4170,7 +4172,7 @@ msgstr "Kopírovať číslo do všetkých upravovaných skladieb"
 
 #: TrackEdit.cpp:219 TrackEdit.cpp:543
 msgid "Number:"
-msgstr ""
+msgstr "Číslo:"
 
 #: TrackEdit.cpp:233
 msgid "Enumerate the tracks in the order they were added for editing"
@@ -4218,7 +4220,7 @@ msgstr "Uložiť aktuálny obrázok do súboru"
 
 #: TrackEdit.cpp:344
 msgid "Search the album cover"
-msgstr "turečtina"
+msgstr "Hľadať obal albumu"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
