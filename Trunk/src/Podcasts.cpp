@@ -387,17 +387,14 @@ int guPodcastChannel::CheckDownloadItems( guDbPodcasts * db, guMainFrame * mainf
 // -------------------------------------------------------------------------------- //
 void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
 {
-    wxString query;
-    //wxSQLite3ResultSet dbRes;
-
     // Get the config object
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     if( Config->ReadBool( wxT( "Delete" ), false, wxT( "podcasts" ) ) )
     {
-        query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( "
-            "SELECT podcastitem_id FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND podcastch_allowdel = 1 " );
+        wxString query = wxT( "SELECT podcastitem_file FROM podcastitems, podcastchs " );
+
+        wxString Condition = wxT( "WHERE podcastitem_chid = podcastch_id AND podcastch_allowdel = 1 " );
 
         int TimeOption = Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "podcasts" ) );
 
@@ -423,20 +420,39 @@ void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
                 return;
         }
 
-        query += wxString::Format( wxT( "AND podcastitem_time < %u " ), DeleteTime.GetTicks() );
+        Condition += wxString::Format( wxT( "AND podcastitem_time < %u " ), DeleteTime.GetTicks() );
 
         //
         if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) )
         {
-            query += wxT( "AND podcastitem_playcount > 0" );
+            Condition += wxT( "AND podcastitem_playcount > 0" );
         }
 
+        query += Condition;
+
+        wxSQLite3ResultSet dbRes = db->ExecuteQuery( query );
+
+        while( dbRes.NextRow() )
+        {
+            wxString FileToDelete = dbRes.GetString( 0 );
+
+            if( wxFileExists( FileToDelete ) )
+            {
+                if( !wxRemoveFile( FileToDelete ) )
+                {
+                    guLogError( wxT( "Could not delete the file '%s'" ), FileToDelete.c_str() );
+                }
+            }
+        }
+        dbRes.Finalize();
+
+        query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( "
+            "SELECT podcastitem_id FROM podcastitems, podcastchs " );
+        query += Condition;
         query += wxT( ");" );
 
         //guLogMessage( wxT( "Delete : %s" ), query.c_str() );
-
         db->ExecuteUpdate( query );
-
     }
 }
 
