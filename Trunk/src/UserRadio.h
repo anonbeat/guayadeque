@@ -18,47 +18,40 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guDBCACHE_H
-#define guDBCACHE_H
+#ifndef GUUSERRADIO_H
+#define GUUSERRADIO_H
 
-#include "Db.h"
+#include "RadioProvider.h"
 
-#include <wx/image.h>
-
-enum guDBCacheTypes {
-    guDBCACHE_TYPE_TEXT = 0x45545458,
-    guDBCACHE_TYPE_IMAGE_SIZE_TINY      = 0,
-    guDBCACHE_TYPE_IMAGE_SIZE_MID,
-    guDBCACHE_TYPE_IMAGE_SIZE_BIG,
-    guDBCACHE_TYPE_LASTFM,
-    guDBCACHE_TYPE_SHOUTCAST,
-    guDBCACHE_TYPE_TUNEIN
-};
+class guDbRadios;
 
 // -------------------------------------------------------------------------------- //
-class guDbCache : public guDb
+class guUserRadioProvider : public guRadioProvider
 {
-  private :
-    static guDbCache * m_DbCache;
-
   protected :
-    bool        DoSetImage( const wxString &url, wxImage * img, const int imgtype, int imagesize );
+    wxTreeItemId        m_ManualId;
+
+    void               OnRadioAdd( wxCommandEvent &event );
+    void               OnRadioEdit( wxCommandEvent &event );
+    void               OnRadioDelete( wxCommandEvent &event );
+    void               OnRadioImport( wxCommandEvent &event );
+    void               OnRadioExport( wxCommandEvent &event );
 
   public :
-    guDbCache( const wxString &dbname );
-    ~guDbCache();
+    guUserRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios );
+    ~guUserRadioProvider();
 
-    wxImage *           GetImage( const wxString &url, int &imagetype, const int imagesize );
-    bool                SetImage( const wxString &url, wxImage * img, const int imgtype );
-    wxString            GetContent( const wxString &url );
-    bool                SetContent( const wxString &url, const char * str, const int len );
-    bool                SetContent( const wxString &url, const wxString &content, const int type = guDBCACHE_TYPE_TEXT );
+    virtual bool        OnContextMenu( wxMenu * menu, const wxTreeItemId &itemid, const bool forstations = false, const int selcount = 0 );
+    virtual void        Activated( const int id );
+    virtual void        SetSearchText( const wxArrayString &texts );
+    virtual void        RegisterImages( wxImageList * imagelist );
+    virtual void        RegisterItems( guRadioGenreTreeCtrl * genretreectrl, wxTreeItemId &rootitem );
+    virtual bool        HasItemId( const wxTreeItemId &itemid ) { return itemid == m_ManualId; }
+    virtual int         GetStations( guRadioStations * stations, const long minbitrate );
 
-    static guDbCache *  GetDbCache( void ) { return m_DbCache; }
-    void                SetDbCache( void ) { m_DbCache = this; }
-    void                ClearExpired( void );
 
 };
 
 #endif
+
 // -------------------------------------------------------------------------------- //

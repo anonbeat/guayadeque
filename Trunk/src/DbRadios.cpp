@@ -87,14 +87,13 @@ guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )
         ExecuteUpdate( query[ Index ] );
     }
 
-
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
         m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "radios" ) );
         m_StationsOrderDesc = Config->ReadBool( wxT( "StationsOrderDesc" ), false, wxT( "radios" ) );
     }
-    m_RadioSource = guRADIO_SOURCE_GENRE;
+    m_RadioSource = guRADIO_SOURCE_SHOUTCAST_GENRE;
 
     m_RaTeFilters.Empty();
     m_RaGeFilters.Empty();

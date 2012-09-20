@@ -143,10 +143,10 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
 
     //guLogMessage( wxT( "About to get stations for genre '%s'" ), GenreName.c_str() );
     //
-    //guLogMessage( wxT( "GetStations:\n%s" ), wxString::Format( source == guRADIO_SOURCE_GENRE ?
+    //guLogMessage( wxT( "GetStations:\n%s" ), wxString::Format( source == guRADIO_SOURCE_SHOUTCAST_GENRE ?
     //            SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ).c_str() );
 
-    Content = GetUrlContent( wxString::Format( source == guRADIO_SOURCE_GENRE ?
+    Content = GetUrlContent( wxString::Format( source == guRADIO_SOURCE_SHOUTCAST_GENRE ?
                 SHOUTCAST_GET_STATIONS_URL : SHOUTCAST_SEARCH_STATIONS_URL, guURLEncode( GenreName ).c_str() ),
                             wxEmptyString, true );
     //

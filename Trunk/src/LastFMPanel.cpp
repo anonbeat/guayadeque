@@ -343,7 +343,7 @@ void guLastFMInfoCtrl::OnBitmapClicked( wxMouseEvent &event )
     wxString ImageUrl = GetBitmapImageUrl();
     if( !ImageUrl.IsEmpty() )
     {
-        wxImage * Image = m_DbCache->GetImage( ImageUrl, ImageType, guDBCACHE_IMAGE_SIZE_BIG );
+        wxImage * Image = m_DbCache->GetImage( ImageUrl, ImageType, guDBCACHE_TYPE_IMAGE_SIZE_BIG );
         if( Image )
         {
             guShowImage * ShowImage = new guShowImage( GetParent(), Image, ClientToScreen( m_Bitmap->GetPosition() ) );
@@ -3528,19 +3528,19 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
                     int Size;
                     switch( m_ImageSize )
                     {
-                        case guDBCACHE_IMAGE_SIZE_TINY  :
+                        case guDBCACHE_TYPE_IMAGE_SIZE_TINY  :
                         {
                             Size = 50;
                             break;
                         }
 
-                        case guDBCACHE_IMAGE_SIZE_MID   :
+                        case guDBCACHE_TYPE_IMAGE_SIZE_MID   :
                         {
                             Size = 100;
                             break;
                         }
 
-                        default : //case guDBCACHE_IMAGE_SIZE_BIG    :
+                        default : //case guDBCACHE_TYPE_IMAGE_SIZE_BIG    :
                         {
                             Size = 150;
                             break;
@@ -3696,7 +3696,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
                                     ID_LASTFM_UPDATE_ALBUMINFO,
                                     LastFMAlbumInfo,
                                     &LastFMAlbumInfo->m_Image,
-                                    guDBCACHE_IMAGE_SIZE_TINY );
+                                    guDBCACHE_TYPE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the album image download thread %u" ), index );
@@ -3790,7 +3790,7 @@ guFetchTopTracksInfoThread::ExitCode guFetchTopTracksInfoThread::Entry()
                                     ID_LASTFM_UPDATE_TOPTRACKS,
                                     LastFMTopTrackInfo,
                                     &LastFMTopTrackInfo->m_Image,
-                                    guDBCACHE_IMAGE_SIZE_TINY );
+                                    guDBCACHE_TYPE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the album image download thread %u" ), index );
@@ -3872,7 +3872,7 @@ guFetchArtistInfoThread::ExitCode guFetchArtistInfoThread::Entry()
                         ID_LASTFM_UPDATE_ARTISTINFO,
                         LastFMArtistInfo,
                         &LastFMArtistInfo->m_Image,
-                        guDBCACHE_IMAGE_SIZE_MID );
+                        guDBCACHE_TYPE_IMAGE_SIZE_MID );
                     if( !DownloadImageThread )
                     {
                         guLogError( wxT( "Could not create the artist image download thread" ) );
@@ -3964,7 +3964,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
                                 ID_LASTFM_UPDATE_SIMARTIST,
                                 LastFMArtistInfo,
                                 &LastFMArtistInfo->m_Image,
-                                guDBCACHE_IMAGE_SIZE_TINY );
+                                guDBCACHE_TYPE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the similar artist image download thread %u" ), index );
@@ -4060,7 +4060,7 @@ guFetchEventsInfoThread::ExitCode guFetchEventsInfoThread::Entry()
                                 ID_LASTFM_UPDATE_EVENTINFO,
                                 LastFMEventInfo,
                                 &LastFMEventInfo->m_Image,
-                                guDBCACHE_IMAGE_SIZE_TINY );
+                                guDBCACHE_TYPE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the event image download thread %u" ), index );
@@ -4159,7 +4159,7 @@ guFetchSimTracksInfoThread::ExitCode guFetchSimTracksInfoThread::Entry()
                                     ID_LASTFM_UPDATE_SIMTRACK,
                                     LastFMTrackInfo,
                                     &LastFMTrackInfo->m_Image,
-                                    guDBCACHE_IMAGE_SIZE_TINY );
+                                    guDBCACHE_TYPE_IMAGE_SIZE_TINY );
                             if( !DownloadImageThread )
                             {
                                 guLogError( wxT( "Could not create the track image download thread %u" ), index );

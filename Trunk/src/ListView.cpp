@@ -230,20 +230,23 @@ void guListView::DrawBackground( wxDC &dc, const wxRect &rect, const int row, co
 void guListView::OnContextMenu( wxContextMenuEvent& event )
 {
     wxMenu Menu;
-    wxPoint Point = event.GetPosition();
-    // If from keyboard
-    if( Point.x == -1 && Point.y == -1 )
-    {
-        wxSize Size = GetSize();
-        Point.x = Size.x / 2;
-        Point.y = Size.y / 2;
-    }
-    else
-    {
-        Point = ScreenToClient( Point );
-    }
     CreateContextMenu( &Menu );
-    PopupMenu( &Menu, Point.x, Point.y );
+    if( Menu.GetMenuItemCount() )
+    {
+        wxPoint Point = event.GetPosition();
+        // If from keyboard
+        if( Point.x == -1 && Point.y == -1 )
+        {
+            wxSize Size = GetSize();
+            Point.x = Size.x / 2;
+            Point.y = Size.y / 2;
+        }
+        else
+        {
+            Point = ScreenToClient( Point );
+        }
+        PopupMenu( &Menu, Point.x, Point.y );
+    }
 }
 
 

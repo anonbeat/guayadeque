@@ -257,7 +257,7 @@ class guDownloadImageThread : public wxThread
   public:
     guDownloadImageThread( guLastFMPanel * lastfmpanel, guFetchLastFMInfoThread * mainthread,
             guDbCache * dbcache, int index, const wxChar * imageurl, int commandid,
-            void * commanddata, wxImage ** pimage, const int imagesize = guDBCACHE_IMAGE_SIZE_TINY );
+            void * commanddata, wxImage ** pimage, const int imagesize = guDBCACHE_TYPE_IMAGE_SIZE_TINY );
     ~guDownloadImageThread();
 
     virtual ExitCode Entry();

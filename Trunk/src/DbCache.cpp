@@ -137,29 +137,29 @@ bool guDbCache::SetImage( const wxString &url, wxImage * img, const int imgtype 
   wxImage TmpImg( * img );
 //  int Width = 150;
 //  int Height = 150;
-//  int ImageSize = guDBCACHE_IMAGE_SIZE_BIG;
+//  int ImageSize = guDBCACHE_TYPE_IMAGE_SIZE_BIG;
 //  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
   guImageResize( &TmpImg, 150 );
-  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_IMAGE_SIZE_BIG ) )
+  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_TYPE_IMAGE_SIZE_BIG ) )
     return false;
 
 
   TmpImg = * img;
 //  Width = 100;
 //  Height = 100;
-//  ImageSize = guDBCACHE_IMAGE_SIZE_MID;
+//  ImageSize = guDBCACHE_TYPE_IMAGE_SIZE_MID;
 //  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
   guImageResize( &TmpImg, 100 );
-  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_IMAGE_SIZE_MID ) )
+  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_TYPE_IMAGE_SIZE_MID ) )
     return false;
 
   TmpImg = * img;
 //  Width = 50;
 //  Height = 50;
-//  ImageSize = guDBCACHE_IMAGE_SIZE_TINY;
+//  ImageSize = guDBCACHE_TYPE_IMAGE_SIZE_TINY;
 //  TmpImg.Rescale( Width, Height, wxIMAGE_QUALITY_HIGH );
   guImageResize( &TmpImg, 50 );
-  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_IMAGE_SIZE_TINY ) )
+  if( !DoSetImage( url, &TmpImg, imgtype, guDBCACHE_TYPE_IMAGE_SIZE_TINY ) )
     return false;
 
   // delete the expired entries but call it only 5% of the times
@@ -212,13 +212,13 @@ bool guDbCache::SetContent( const wxString &url, const char * str, const int len
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbCache::SetContent( const wxString &url, const wxString &content )
+bool guDbCache::SetContent( const wxString &url, const wxString &content, const int type )
 {
   wxString query = wxString::Format( wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, "
                 "cache_type, cache_time, cache_size ) VALUES( NULL, '%s', '%s', %u, %u, %u );" ),
           escape_query_str( url ).c_str(),
           escape_query_str( content ).c_str(),
-          guDBCACHE_TYPE_TEXT,
+          type,
           wxDateTime::Now().GetTicks(),
           0 );
 
@@ -231,16 +231,28 @@ bool guDbCache::SetContent( const wxString &url, const wxString &content )
   return true;
 }
 
+#define guDAY_SECONDS   (60 * 60 * 24)
+
 // -------------------------------------------------------------------------------- //
 void guDbCache::ClearExpired( void )
 {
+    // TODO : Clear different types with different periods
+
     // last.fm queries are kept only 7 days
     wxString query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
-        wxDateTime::Now().GetTicks() - 604800, guDBCACHE_TYPE_TEXT );
+        wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 7 ), guDBCACHE_TYPE_TEXT );
     ExecuteUpdate( query );
 
     // Images are kept 30 days
-    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u" ), wxDateTime::Now().GetTicks() - 2592000 );
+//    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u" ), wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 30 ) );
+//    ExecuteUpdate( query );
+
+    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+        wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 30 ), guDBCACHE_TYPE_LASTFM );
+    ExecuteUpdate( query );
+
+    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+        wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 3 ), guDBCACHE_TYPE_TUNEIN );
     ExecuteUpdate( query );
 
     guLogMessage( wxT( "Delete expired Cache elements done" ) );

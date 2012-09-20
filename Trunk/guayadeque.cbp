@@ -414,6 +414,10 @@
 		<Unit filename="src/TreeViewFilter.h" />
 		<Unit filename="src/TreeViewFilterEditor.cpp" />
 		<Unit filename="src/TreeViewFilterEditor.h" />
+		<Unit filename="src/TuneInRadio.cpp" />
+		<Unit filename="src/TuneInRadio.h" />
+		<Unit filename="src/UserRadio.cpp" />
+		<Unit filename="src/UserRadio.h" />
 		<Unit filename="src/Utils.cpp" />
 		<Unit filename="src/Utils.h" />
 		<Unit filename="src/Version.h" />

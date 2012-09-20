@@ -149,7 +149,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
 
                 if( !RetVal.IsEmpty() )
                 {
-                    DbCache->SetContent( UrlStr, RetVal );
+                    DbCache->SetContent( UrlStr, RetVal, guDBCACHE_TYPE_LASTFM );
                 }
 
                 free( Buffer );

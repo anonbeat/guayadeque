@@ -1001,10 +1001,10 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
     m_MenuRadTextSearch->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
     m_MenuRadTextSearch->Enable( m_VisiblePanels & guPANEL_MAIN_RADIOS );
 
-    m_MenuRadLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_LABELS, _( "Labels" ), _( "Show/Hide the radio labels" ), wxITEM_CHECK );
-    SubMenu->Append( m_MenuRadLabels );
-    m_MenuRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
-    m_MenuRadLabels->Enable( m_VisiblePanels & guPANEL_MAIN_RADIOS );
+//    m_MenuRadLabels = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_LABELS, _( "Labels" ), _( "Show/Hide the radio labels" ), wxITEM_CHECK );
+//    SubMenu->Append( m_MenuRadLabels );
+//    m_MenuRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
+//    m_MenuRadLabels->Enable( m_VisiblePanels & guPANEL_MAIN_RADIOS );
 
     m_MenuRadGenres = new wxMenuItem( SubMenu, ID_MENU_VIEW_RAD_GENRES, _( "Genres" ), _( "Show/Hide the radio genres" ), wxITEM_CHECK );
     SubMenu->Append( m_MenuRadGenres );
@@ -2625,8 +2625,8 @@ void guMainFrame::OnViewRadio( wxCommandEvent &event )
     m_MenuRadTextSearch->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
     m_MenuRadTextSearch->Enable( IsEnabled );
 
-    m_MenuRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
-    m_MenuRadLabels->Enable( IsEnabled );
+//    m_MenuRadLabels->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
+//    m_MenuRadLabels->Enable( IsEnabled );
 
     m_MenuRadGenres->Check( m_RadioPanel && m_RadioPanel->IsPanelShown( guPANEL_RADIO_GENRES ) );
     m_MenuRadGenres->Enable( IsEnabled );
@@ -2649,10 +2649,10 @@ void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
             m_MenuRadTextSearch->Check( event.IsChecked() );
             break;
 
-        case ID_MENU_VIEW_RAD_LABELS :
-            PanelId = guPANEL_RADIO_LABELS;
-            m_MenuRadLabels->Check( event.IsChecked() );
-            break;
+//        case ID_MENU_VIEW_RAD_LABELS :
+//            PanelId = guPANEL_RADIO_LABELS;
+//            m_MenuRadLabels->Check( event.IsChecked() );
+//            break;
 
         case ID_MENU_VIEW_RAD_GENRES :
             PanelId = guPANEL_RADIO_GENRES;

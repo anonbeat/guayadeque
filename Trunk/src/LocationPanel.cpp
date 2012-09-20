@@ -321,10 +321,10 @@ void inline CreateMenuRadio( wxMenu * menu, const int visiblepanels, guRadioPane
     MenuItem->Check( radiopanel && radiopanel->IsPanelShown( guPANEL_RADIO_TEXTSEARCH ) );
     MenuItem->Enable( visiblepanels & guPANEL_MAIN_RADIOS );
 
-    MenuItem = new wxMenuItem( menu, ID_MENU_VIEW_RAD_LABELS, _( "Labels" ), _( "Show/Hide the radio labels" ), wxITEM_CHECK );
-    menu->Append( MenuItem );
-    MenuItem->Check( radiopanel && radiopanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
-    MenuItem->Enable( visiblepanels & guPANEL_MAIN_RADIOS );
+//    MenuItem = new wxMenuItem( menu, ID_MENU_VIEW_RAD_LABELS, _( "Labels" ), _( "Show/Hide the radio labels" ), wxITEM_CHECK );
+//    menu->Append( MenuItem );
+//    MenuItem->Check( radiopanel && radiopanel->IsPanelShown( guPANEL_RADIO_LABELS ) );
+//    MenuItem->Enable( visiblepanels & guPANEL_MAIN_RADIOS );
 
     MenuItem = new wxMenuItem( menu, ID_MENU_VIEW_RAD_GENRES, _( "Genres" ), _( "Show/Hide the radio genres" ), wxITEM_CHECK );
     menu->Append( MenuItem );
