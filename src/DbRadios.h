@@ -105,7 +105,7 @@ class guDbRadios : public guDb
     void                    SetRadioStationsOrder( int OrderValue );
 
     int                     AddRadioGenre( const wxString &name, const int source, const int flags );
-    int                     SetRadioGenre( const int id, const wxString &name, const int source = guRADIO_SOURCE_GENRE,
+    int                     SetRadioGenre( const int id, const wxString &name, const int source = guRADIO_SOURCE_SHOUTCAST_GENRE,
                                             const int flags = 0 );
     int                     DelRadioGenre( const int GenreId );
 

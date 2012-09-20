@@ -76,7 +76,7 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 	TagEditorBtnSizerOK->SetDefault();
 
     // By default enable already added items
-    m_Db->GetRadioGenres( guRADIO_SOURCE_GENRE, &m_AddedGenres, false );
+    m_Db->GetRadioGenres( guRADIO_SOURCE_SHOUTCAST_GENRE, &m_AddedGenres, false );
     int index;
     int count = m_AddedGenres.Count();
     int item;

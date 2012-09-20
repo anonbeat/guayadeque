@@ -282,6 +282,14 @@ ADD_EXECUTABLE( guayadeque
 	SmartMode.h
 	Yahoo.cpp
 	Yahoo.h
+	RadioProvider.cpp
+	RadioProvider.h
+	UserRadio.cpp
+	UserRadio.h
+	TuneInRadio.cpp
+	TuneInRadio.h
+	ShoutcastRadio.cpp
+	ShoutcastRadio.h
 	${WXSQLITE3_SOURCES}
 	${CURL_SOURCES}
     	${DBUS_SOURCES}
