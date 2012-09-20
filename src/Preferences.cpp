@@ -858,7 +858,7 @@ void guPrefDialog::BuildLibraryPage( void )
 	LibOptCopyToSizer->Add( LibOptCopyToLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	wxArrayString CopyToChoices;
-	CopyToChoices.Add( wxEmptyString );
+	CopyToChoices.Add( _( "None" ) );
 	wxArrayString CopyToOptions = m_Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
 	Count = CopyToOptions.Count();
 	for( Index = 0; Index < Count; Index++ )
