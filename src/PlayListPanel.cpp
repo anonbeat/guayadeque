@@ -681,7 +681,8 @@ wxDragResult guPLNamesDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult def
             m_PLNamesTreeCtrl->OnDropTracks( Tracks );
             m_PLNamesTreeCtrl->OnDropEnd();
 
-            delete Tracks;
+//            if( Tracks )
+//                delete Tracks;
         }
     }
     else if( ReceivedFormat == wxDataFormat( wxDF_FILENAME ) )

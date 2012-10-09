@@ -308,11 +308,14 @@ void guPLSoListBox::MoveSelection( void )
 int guPLSoListBox::GetPlayListSetIds( wxArrayInt * setids ) const
 {
     unsigned long cookie;
-    int item = GetFirstSelected( cookie );
-    while( item != wxNOT_FOUND )
+    if( m_PLSetIds.Count() )
     {
-        setids->Add( m_PLSetIds[ item ] );
-        item = GetNextSelected( cookie );
+        int item = GetFirstSelected( cookie );
+        while( item != wxNOT_FOUND )
+        {
+            setids->Add( m_PLSetIds[ item ] );
+            item = GetNextSelected( cookie );
+        }
     }
     return setids->Count();
 }
