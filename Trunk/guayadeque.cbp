@@ -377,6 +377,8 @@
 		<Unit filename="src/Settings.h" />
 		<Unit filename="src/Shoutcast.cpp" />
 		<Unit filename="src/Shoutcast.h" />
+		<Unit filename="src/ShoutcastRadio.cpp" />
+		<Unit filename="src/ShoutcastRadio.h" />
 		<Unit filename="src/ShowImage.cpp" />
 		<Unit filename="src/ShowImage.h" />
 		<Unit filename="src/SmartMode.cpp" />
