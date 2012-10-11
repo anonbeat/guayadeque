@@ -24,7 +24,7 @@
 
 // -------------------------------------------------------------------------------- //
 guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent, wxAuiManager * manager ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ), wxTAB_TRAVERSAL )
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER )
 {
     m_Manager = manager;
 

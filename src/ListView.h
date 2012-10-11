@@ -314,7 +314,7 @@ class guListView : public wxScrolledWindow
   public :
     guListView( wxWindow * parent, const int flags = wxLB_MULTIPLE, wxWindowID id = wxID_ANY,
                 const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize,
-                long style = wxHSCROLL|wxVSCROLL );
+                long style = wxHSCROLL|wxVSCROLL|wxNO_BORDER );
     ~guListView();
 
     void                    SetItemCount( const int count );

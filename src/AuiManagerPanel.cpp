@@ -55,22 +55,23 @@ guAuiManagerPanel::guAuiManagerPanel( wxWindow * parent ) :
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, BaseColor );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( BaseColor, 110 ) );
+            wxAuiStepColour( BaseColor, 80 ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
                           BaseColor );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( BaseColor, 110 ) );
+            wxAuiStepColour( BaseColor, 80 ) );
 
-    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, BaseColor );
+    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, wxAuiStepColour( BaseColor, 90 ) );
 
-    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 0 );
+    //AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BUTTON_SIZE, 16 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 22 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 4 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 3 );
 
-    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL );
 
     m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guAuiManagerPanel::OnPaneClose ), NULL, this );
 }
