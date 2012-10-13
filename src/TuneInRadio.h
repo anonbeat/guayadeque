@@ -38,6 +38,7 @@ class guTuneInReadStationsThread : public wxThread
     guTuneInRadioProvider *     m_TuneInProvider;
     wxString                    m_Url;
     guRadioStations *           m_RadioStations;
+    wxArrayString               m_MoreStations;
     long                        m_MinBitRate;
 
     void                       ReadStations( wxXmlNode * xmlnode, wxTreeItemId parentitem, guRadioGenreTreeCtrl * radiogenretree, guRadioStations * stations, const long minbitrate );

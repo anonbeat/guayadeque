@@ -283,7 +283,7 @@ bool SearchFilterTexts( wxArrayString &texts, const wxString &name )
 // -------------------------------------------------------------------------------- //
 void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId parentitem, guRadioGenreTreeCtrl * radiogenretree, guRadioStations * stations, const long minbitrate )
 {
-    wxString MoreStationsUrl;
+//    wxString MoreStationsUrl;
     while( xmlnode && !TestDestroy() )
     {
         wxString Type;
@@ -299,12 +299,14 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
             xmlnode->GetPropVal( wxT( "text" ), &Name );
             xmlnode->GetPropVal( wxT( "URL" ), &Url );
 
+            //guLogMessage( wxT( "ReadStations -> Type : '%s' Name : '%s' " ), Type.c_str(), Name.c_str() );
             if( Name == wxT( "Find by Name" ) )
             {
             }
             else if( Name == wxT( "More Stations" ) )
             {
-                MoreStationsUrl = Url;
+                //MoreStationsUrl = Url;
+                m_MoreStations.Add( Url );
             }
             else
             {
@@ -312,7 +314,7 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
                 m_TuneInProvider->AddPendingItem( Name + wxT( "|" ) + Url );
                 wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_CREATE_TREE_ITEM );
                 wxPostEvent( m_RadioPanel, Event );
-                Sleep( 50 );
+                Sleep( 20 );
             }
         }
         else if( Type == wxT( "audio" ) )
@@ -371,10 +373,10 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
 //        wxPostEvent( m_RadioPanel, Event );
 //    }
 
-    if( !MoreStationsUrl.IsEmpty() )
-    {
-        AddStations( MoreStationsUrl, stations, minbitrate );
-    }
+//    if( !MoreStationsUrl.IsEmpty() )
+//    {
+//        AddStations( MoreStationsUrl, stations, minbitrate );
+//    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -449,6 +451,12 @@ guTuneInReadStationsThread::ExitCode guTuneInReadStationsThread::Entry()
         RadioTreeCtrl->DeleteChildren( SelectedItem );
 
         AddStations( m_Url, m_RadioStations, m_MinBitRate );
+
+        while( !TestDestroy() && m_MoreStations.Count() )
+        {
+            AddStations( m_MoreStations[ 0 ], m_RadioStations, m_MinBitRate );
+            m_MoreStations.RemoveAt( 0 );
+        }
     }
 
     return 0;

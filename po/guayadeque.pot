@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-21 07:01+0100\n"
+"POT-Creation-Date: 2012-10-11 22:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -675,12 +675,12 @@ msgid "Create a smart playlist from this track"
 msgstr ""
 
 #: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2124
-#: PlayListPanel.cpp:1387 TreePanel.cpp:1323
+#: PlayListPanel.cpp:1388 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr ""
 
 #: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
-#: LibPanel.cpp:1432 PlayList.cpp:1974 PlayListPanel.cpp:1496
+#: LibPanel.cpp:1432 PlayList.cpp:1974 PlayListPanel.cpp:1497
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr ""
@@ -1180,7 +1180,7 @@ msgid "Are you sure to delete the selected path ?"
 msgstr ""
 
 #: FileBrowser.cpp:553 FileBrowser.cpp:2204 LabelEditor.cpp:310
-#: LibPanel.cpp:1227 PlayListPanel.cpp:1115 PodcastsPanel.cpp:1237
+#: LibPanel.cpp:1227 PlayListPanel.cpp:1116 PodcastsPanel.cpp:1237
 #: PodcastsPanel.cpp:1623 ShoutcastRadio.cpp:368 ShoutcastRadio.cpp:448
 #: TaListBox.cpp:203 TreePanel.cpp:1232
 msgid "Confirm"
@@ -1612,7 +1612,7 @@ msgstr ""
 msgid "Are you sure to delete the selected album cover?"
 msgstr ""
 
-#: LibPanel.cpp:1635 PlayListPanel.cpp:1665 TreePanel.cpp:1599
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1666 TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr ""
 
@@ -1801,7 +1801,7 @@ msgid "View the collection tree view"
 msgstr ""
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1265 MediaViewer.cpp:235
-#: PlayListPanel.cpp:808 PlayListPanel.cpp:834 PortableMedia.cpp:1168
+#: PlayListPanel.cpp:809 PlayListPanel.cpp:835 PortableMedia.cpp:1168
 msgid "Playlists"
 msgstr ""
 
@@ -2778,23 +2778,23 @@ msgstr ""
 msgid "Set as Deny Filter"
 msgstr ""
 
-#: PlayListPanel.cpp:1073 PlayListPanel.cpp:1214
+#: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
 msgid "Playlist Name: "
 msgstr ""
 
-#: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
+#: PlayListPanel.cpp:1075 PlayListPanel.cpp:1216
 msgid "Enter the new playlist name"
 msgstr ""
 
-#: PlayListPanel.cpp:1114
+#: PlayListPanel.cpp:1115
 msgid "Are you sure to delete the selected Playlist?"
 msgstr ""
 
-#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1274
+#: PlayListPanel.cpp:1200 PlayListPanel.cpp:1275
 msgid "Select the playlist file"
 msgstr ""
 
-#: PlayListPanel.cpp:1226
+#: PlayListPanel.cpp:1227
 msgid "New Playlist"
 msgstr ""
 
