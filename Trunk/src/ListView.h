@@ -46,6 +46,8 @@ DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_CLICKED, wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxID_ANY )
 #define EVT_LISTBOX_ITEM_COL_RCLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_RCLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
 
+extern wxColor wxAuiStepColour( const wxColor & c, int percent );
+
 // -------------------------------------------------------------------------------- //
 class guDataObjectComposite : public wxDataObjectComposite
 {
@@ -129,14 +131,8 @@ class guListViewAttr
         //guLogMessage( wxT( "SelBgColor: %s" ), m_SelBgColor.GetAsString( wxC2S_HTML_SYNTAX ).c_str() );
         m_SelFgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHTTEXT );
         m_EveBgColor  = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOX );
-        if( m_EveBgColor.Red() > 0x0A && m_EveBgColor.Green() > 0x0A && m_EveBgColor.Blue() > 0x0A )
-        {
-            m_OddBgColor.Set( m_EveBgColor.Red() - 0xA, m_EveBgColor.Green() - 0x0A, m_EveBgColor.Blue() - 0x0A );
-        }
-        else
-        {
-            m_OddBgColor.Set( m_EveBgColor.Red() + 0xA, m_EveBgColor.Green() + 0x0A, m_EveBgColor.Blue() + 0x0A );
-        }
+        m_OddBgColor  = wxAuiStepColour( m_EveBgColor, m_EveBgColor.Red() + m_EveBgColor.Green() + m_EveBgColor.Blue() > 256 ? 97 : 103 );
+
         //m_TextFgColor.Set( m_EveBgColor.Red() ^ 0xFF, m_EveBgColor.Green() ^ 0xFF, m_EveBgColor.Blue() ^ 0xFF );
         m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOXTEXT );
 

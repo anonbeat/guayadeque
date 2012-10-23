@@ -336,20 +336,22 @@ guAuiNotebook::guAuiNotebook( wxWindow * parent, wxWindowID id, const wxPoint &p
             wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            BaseColor );
+            wxAuiStepColour( BaseColor, 93 ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
             wxAuiStepColour( BaseColor, 140 ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            BaseColor );
+            wxAuiStepColour( BaseColor, 93 ) );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 140 ) );
+                          BaseColor );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_BORDER_COLOUR, BaseColor );
 
-    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 17 );
+    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, wxAuiStepColour( BaseColor, 98 ) );
+
+    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 22 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 0 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 5 );
 
