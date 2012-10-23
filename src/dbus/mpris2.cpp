@@ -1074,8 +1074,8 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                           DBUS_TYPE_STRING, &QueryProperty,
                           DBUS_TYPE_INVALID );
 
-                    guLogMessage( wxT( "QIface : %s" ), wxString::FromAscii( QueryIface ).c_str() );
-                    guLogMessage( wxT( "QProp. : %s" ), wxString::FromAscii( QueryProperty ).c_str() );
+                    //guLogMessage( wxT( "QIface : %s" ), wxString::FromAscii( QueryIface ).c_str() );
+                    //guLogMessage( wxT( "QProp. : %s" ), wxString::FromAscii( QueryProperty ).c_str() );
 
                     if( dbus_error_is_set( &error ) )
                     {
