@@ -2864,6 +2864,7 @@ void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     bool IsFull = event.IsChecked();
+    guLogMessage( wxT( "OnViewFullScreen %i" ), IsFull );
 
     if( IsFull )
     {
@@ -2899,6 +2900,16 @@ void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
         wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "mainwindow" ) );
 
         LoadPerspective( Perspective );
+    }
+
+    if( m_MenuFullScreen )
+    {
+        m_MenuFullScreen->Check( IsFull );
+    }
+
+    if( m_MPRIS2 )
+    {
+        m_MPRIS2->OnFullscreenChanged();
     }
 }
 

@@ -44,6 +44,8 @@ const char * guMPRIS2_INTROSPECTION_XML =
 	"    <method name='Raise'/>\n"
 	"    <method name='Quit'/>\n"
 	"    <property name='CanQuit' type='b' access='read'/>\n"
+	"    <property name='Fullscreen' type='b' access='readwrite'/>\n"
+	"    <property name='CanSetFullscreen' type='b' access='read'/>\n"
 	"    <property name='CanRaise' type='b' access='read'/>\n"
 	"    <property name='HasTrackList' type='b' access='read'/>\n"
 	"    <property name='Identity' type='s' access='read'/>\n"
@@ -715,6 +717,41 @@ void guMPRIS2::OnTrackListChange( void )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMPRIS2::OnFullscreenChanged( void )
+{
+    guDBusSignal * signal = new guDBusSignal( GUAYADEQUE_MPRIS2_OBJECT_PATH, GUAYADEQUE_PROPERTIES_INTERFACE, "PropertiesChanged" );
+    if( signal )
+    {
+        DBusMessageIter dict;
+        DBusMessageIter args;
+
+        dbus_message_iter_init_append( signal->GetMessage(), &args );
+
+        const char * Interface = GUAYADEQUE_MPRIS2_INTERFACE_ROOT;
+        dbus_message_iter_append_basic( &args, DBUS_TYPE_STRING, &Interface );
+
+        dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
+
+        guMainFrame * MainFrame = guMainFrame::GetMainFrame();
+        dbus_bool_t FullScreen = MainFrame->IsFullScreen();
+        FillMetadataDetails( &dict, "Fullscreen", FullScreen );
+
+        dbus_message_iter_close_container( &args, &dict );
+
+        dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "s", &dict );
+        dbus_message_iter_close_container( &args, &dict );
+
+        Send( signal );
+        Flush();
+        delete signal;
+    }
+    else
+    {
+        guLogError( wxT( "Could not create EmitPropertyChangedSignal object" ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void inline IterAppendBasic( DBusMessageIter * iter, const int type, const char * value )
 {
     dbus_message_iter_append_basic( iter, type, &value );
@@ -843,12 +880,16 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                         if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
                         {
                             dbus_bool_t ReplyVal = true;
+                            guMainFrame * MainFrame = guMainFrame::GetMainFrame();
+                            dbus_bool_t FullScreen = MainFrame->IsFullScreen();
 
                             dbus_message_iter_init_append( reply->GetMessage(), &args );
 
                             dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "{sv}", &dict );
 
                             FillMetadataDetails( &dict, "CanQuit", ReplyVal );
+                            FillMetadataDetails( &dict, "Fullscreen", FullScreen );
+                            FillMetadataDetails( &dict, "CanSetFullscreen", ReplyVal );
                             FillMetadataDetails( &dict, "CanRaise", ReplyVal );
                             FillMetadataDetails( &dict, "HasTrackList", ReplyVal );
                             const char * AppName = "Guayadeque Music Player";
@@ -945,7 +986,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
 
                             ////////////////////////////////////////////////////////////////////////
-                            double CurPosition = m_PlayerPanel->GetPosition() * 1000;
+                            gint64 CurPosition = m_PlayerPanel->GetPosition() * 1000;
                             FillMetadataDetails( &dict, "Position", CurPosition );
 
 
@@ -964,7 +1005,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
                             ////////////////////////////////////////////////////////////////////////
                             dbus_bool_t CanGoPrev = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV ) > 0;
-                            FillMetadataDetails( &dict, "CanGoPrev", CanGoPrev );
+                            FillMetadataDetails( &dict, "CanGoPrevious", CanGoPrev );
 
 
                             ////////////////////////////////////////////////////////////////////////
@@ -1033,8 +1074,8 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                           DBUS_TYPE_STRING, &QueryProperty,
                           DBUS_TYPE_INVALID );
 
-//                    guLogMessage( wxT( "QIface : %s" ), wxString::FromAscii( QueryIface ).c_str() );
-//                    guLogMessage( wxT( "QProp. : %s" ), wxString::FromAscii( QueryProperty ).c_str() );
+                    guLogMessage( wxT( "QIface : %s" ), wxString::FromAscii( QueryIface ).c_str() );
+                    guLogMessage( wxT( "QProp. : %s" ), wxString::FromAscii( QueryProperty ).c_str() );
 
                     if( dbus_error_is_set( &error ) )
                     {
@@ -1048,6 +1089,27 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
                             {
                                 if( !strcmp( QueryProperty, "CanQuit" ) )
+                                {
+                                    dbus_bool_t ReplyVal = true;
+                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &ReplyVal ) )
+                                    {
+                                        Send( reply );
+                                        Flush();
+                                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                                    }
+                                }
+                                else if( !strcmp( QueryProperty, "Fullscreen" ) )
+                                {
+                                    guMainFrame * MainFrame = guMainFrame::GetMainFrame();
+                                    dbus_bool_t FullScreen = MainFrame->IsFullScreen();
+                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &FullScreen ) )
+                                    {
+                                        Send( reply );
+                                        Flush();
+                                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                                    }
+                                }
+                                else if( !strcmp( QueryProperty, "CanSetFullscreen" ) )
                                 {
                                     dbus_bool_t ReplyVal = true;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &ReplyVal ) )
@@ -1148,6 +1210,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             }
                             else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Player" ) )
                             {
+                                //guLogMessage( wxT( "Query: '%s'" ), QueryProperty );
                                 if( !strcmp( QueryProperty, "PlaybackStatus" ) )
                                 {
                                     const char * PlaybackStatus;
@@ -1226,8 +1289,8 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "Position" ) )
                                 {
-                                    double CurPosition = m_PlayerPanel->GetPosition() * 1000;
-                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_DOUBLE, &CurPosition ) )
+                                    gint64 CurPosition = m_PlayerPanel->GetPosition() * 1000;
+                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_INT64, &CurPosition ) )
                                     {
                                         Send( reply );
                                         Flush();
@@ -1264,7 +1327,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                                     }
                                 }
-                                else if( !strcmp( QueryProperty, "CanGoPrevious" ) )
+                                else if( !strcmp( QueryProperty, "CanGoPreviouss" ) )
                                 {
                                     dbus_bool_t CanGoPrev = ( m_PlayerPanel->GetCaps() & MPRIS_CAPS_CAN_GO_PREV ) > 0;
                                     if( AddVariant( reply->GetMessage(), DBUS_TYPE_BOOLEAN, &CanGoPrev ) )
@@ -1346,7 +1409,26 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                         }
                         else if( !strcmp( Member, "Set" ) )
                         {
-                            if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Player" ) )
+                            if( !strcmp( QueryIface, "org.mpris.MediaPlayer2" ) )
+                            {
+                                if( !strcmp( QueryProperty, "Fullscreen" ) )
+                                {
+                                    dbus_bool_t FullScreen;
+                                    if( GetVariant( msg->GetMessage(), DBUS_TYPE_BOOLEAN, &FullScreen ) )
+                                    {
+                                        guMainFrame * MainFrame = guMainFrame::GetMainFrame();
+
+                                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_VIEW_FULLSCREEN );
+                                        event.SetInt( FullScreen );
+                                        wxPostEvent( MainFrame, event );
+
+                                        Send( reply );
+                                        Flush();
+                                        RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                                    }
+                                }
+                            }
+                            else if( !strcmp( QueryIface, "org.mpris.MediaPlayer2.Player" ) )
                             {
                                 if( !strcmp( QueryProperty, "LoopStatus" ) )
                                 {
