@@ -47,6 +47,7 @@ class guMPRIS2 : public guDBusClient
     void                        OnPlayerCapsChange( void );
     void                        OnPlayerVolumeChange( void );
     void                        OnTrackListChange( void );
+    void                        OnFullscreenChanged( void );
     void                        OnPlayerSeeked( const unsigned int newpos );
 
     bool                        Indicators_Sound_Available( void );

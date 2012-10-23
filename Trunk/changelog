@@ -1,4 +1,8 @@
 
+  * Added mpris 2.2 support
+  * Made Guayadeque Interface more clean
+  * Removed bug that crashed guayadeque when used del in a dynamic playlist
+  * Added TuneIn radio support
   * Added option to rename podcast channel name
   * Added option in Preferences -> Playback the option to write the complete output pipeline
   * Added Seeked mpris2 signal
