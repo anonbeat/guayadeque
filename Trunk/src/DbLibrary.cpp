@@ -1789,7 +1789,14 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating 
                 CurTrack.m_GenreName = _( "Unknown" );
               CurTrack.m_GenreId = GetGenreId( CurTrack.m_GenreName );
 
-              CurTrack.m_FileSize = ( guGetFileSize( CueItem.m_TrackPath ) * CueItem.m_Length ) / TagInfo->m_Length;
+              if( TagInfo->m_Length )
+              {
+                CurTrack.m_FileSize = ( guGetFileSize( CueItem.m_TrackPath ) * CueItem.m_Length ) / TagInfo->m_Length;
+              }
+              else
+              {
+                CurTrack.m_FileSize = 0;
+              }
 
               if( CurTrack.m_SongName.IsEmpty() )
                 CurTrack.m_SongName = CurTrack.m_FileName.AfterLast( wxT( '/' ) ).BeforeLast( wxT( '.' ) );
