@@ -276,25 +276,27 @@
         <item tag="This is an upcoming album and we do not have the"/>
       </notfound>
     </lyricsource>
-    <lyricsource type="download" enabled="true" name="vagalume.uol.com.br" source="http://vagalume.uol.com.br/{al}/{tl}.html">
+    <lyricsource type="download" enabled="true" name="vagalume.com.br" source="http://vagalume.com.br/{al}/{tl}.html">
       <replace>
         <item replace=" _@,;&amp;\/'&quot;." with="-"/>
+        <item replace="!" with=""/>
       </replace>
       <extract>
-        <item tag="&lt;div class=&quot;tab_original&quot;&gt;"/>
+        <item tag="&lt;div itemprop=description&gt;"/>
       </extract>
     </lyricsource>
-    <lyricsource type="download" enabled="true" name="vagalume.uol.com.br (Portuguese translations)" source="http://vagalume.uol.com.br/{al}/{tl}-traducao.html">
+    <lyricsource type="download" enabled="true" name="vagalume.com.br (Portuguese translations)" source="http://vagalume.com.br/{al}/{tl}-traducao.html">
       <replace>
         <item replace=" _@,;&amp;\/'&quot;." with="-"/>
+        <item replace="!" with=""/>
       </replace>
       <extract>
-        <item tag="&lt;div class=&quot;tab_tra_pt&quot;&gt;"/>
+        <item tag="&lt;div itemprop=description&gt;"/>
       </extract>
     </lyricsource>
   </lyricsources>
   <lyrictargets>
-    <lyrictarget type="embedded" enabled="true" name="Embedded" source=""/>
+    <lyrictarget type="embedded" enabled="false" name="Embedded" source=""/>
     <lyrictarget type="file" enabled="false" name="To file" source="~/.guayadeque/lyrics/{a}/{t}.lyric">
       <replace>
         <item replace=" &lt;&gt;:&quot;\/|?*" with="_"/>
