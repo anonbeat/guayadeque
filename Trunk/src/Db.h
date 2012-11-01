@@ -28,7 +28,7 @@
 #include <wx/utils.h>
 
 // wxSqlite3
-#include "wx/wxsqlite3.h"
+#include <wx/wxsqlite3.h>
 
 // -------------------------------------------------------------------------------- //
 void inline escape_query_str( wxString * Str )
