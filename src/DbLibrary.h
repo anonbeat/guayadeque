@@ -33,8 +33,6 @@
 #include <wx/dir.h>
 #include <wx/dynarray.h>
 
-// wxSqlite3
-#include "wx/wxsqlite3.h"
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
                "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
