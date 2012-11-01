@@ -27,5 +27,7 @@ trans.uk_UA = po/uk/guayadeque.po
 trans.bg = po/bg/guayadeque.po
 trans.sr = po/sr/guayadeque.po
 trans.sr@latin = po/sr-latin/guayadeque.po
+trans.ca = po/ca/guayadeque.po
+
 
 

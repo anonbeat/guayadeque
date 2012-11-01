@@ -152,6 +152,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangChoices.Add( _( "Thai" ) );
     m_MainLangChoices.Add( _( "Turkish" ) );
     m_MainLangChoices.Add( _( "Ukrainian" ) );
+    m_MainLangChoices.Add( _( "Bulgarian" ) );
+    m_MainLangChoices.Add( _( "Catalan" ) );
+    m_MainLangChoices.Add( _( "Serbian" ) );
 
     m_MainLangCodes.Add( wxLANGUAGE_DEFAULT );
     m_MainLangCodes.Add( wxLANGUAGE_CZECH );
@@ -175,6 +178,9 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangCodes.Add( wxLANGUAGE_THAI );
     m_MainLangCodes.Add( wxLANGUAGE_TURKISH );
     m_MainLangCodes.Add( wxLANGUAGE_UKRAINIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_BULGARIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_CATALAN );
+    m_MainLangCodes.Add( wxLANGUAGE_SERBIAN );
 
     m_LFMLangNames.Add( _( "Default" ) );        m_LFMLangIds.Add( wxEmptyString );
     m_LFMLangNames.Add( _( "English" ) );        m_LFMLangIds.Add( wxT( "en" ) );

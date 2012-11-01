@@ -8,30 +8,30 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-07-31 16:30+0100\n"
-"PO-Revision-Date: 2012-08-01 08:30+0000\n"
+"POT-Creation-Date: 2012-10-23 22:58+0100\n"
+"PO-Revision-Date: 2012-09-21 08:22+0000\n"
 "Last-Translator: milke <milke.kv@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Language: sr\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
 #: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1433
-#: MainFrame.cpp:4479 OnlineLinks.cpp:69 PlayList.cpp:1504 Preferences.cpp:130
+#: MainFrame.cpp:4490 OnlineLinks.cpp:69 PlayList.cpp:1505 Preferences.cpp:130
 #: SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Preferences"
 msgstr "Поставке"
 
 #: AAListBox.cpp:129 AlListBox.cpp:246 ArListBox.cpp:131 FileBrowser.cpp:324
-#: FileBrowser.cpp:1097 PlayList.cpp:1504 SoListBox.cpp:461 TreePanel.cpp:342
+#: FileBrowser.cpp:1097 PlayList.cpp:1505 SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Add commands in preferences"
 msgstr "Додај команде у подешавањима"
 
 #: AAListBox.cpp:132 AlListBox.cpp:249 ArListBox.cpp:134 FileBrowser.cpp:327
-#: FileBrowser.cpp:1100 PlayList.cpp:1507 Preferences.cpp:273
+#: FileBrowser.cpp:1100 PlayList.cpp:1508 Preferences.cpp:273
 #: SoListBox.cpp:464 TreePanel.cpp:346
 msgid "Commands"
 msgstr "Команде"
@@ -43,7 +43,7 @@ msgstr "Команде"
 #: LastFMPanel.cpp:819 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
 #: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164 MainFrame.cpp:1476
 #: PcListBox.cpp:111 PlayListPanel.cpp:224 PodcastsPanel.cpp:2050
-#: RadioPanel.cpp:834 RaListBox.cpp:143 SoListBox.cpp:525 TaListBox.cpp:123
+#: RadioPanel.cpp:423 RaListBox.cpp:143 SoListBox.cpp:525 TaListBox.cpp:123
 #: TaskBar.cpp:112 TreePanel.cpp:388 YeListBox.cpp:103
 msgid "Play"
 msgstr "Пусти"
@@ -58,7 +58,7 @@ msgstr "Пусти тренутно изабраног уметника албу
 #: FileBrowser.cpp:1118 GeListBox.cpp:99 LastFMPanel.cpp:561
 #: LastFMPanel.cpp:823 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
 #: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168 PcListBox.cpp:118
-#: PlayListPanel.cpp:229 PodcastsPanel.cpp:2056 RadioPanel.cpp:840
+#: PlayListPanel.cpp:229 PodcastsPanel.cpp:2056 RadioPanel.cpp:429
 #: RaListBox.cpp:150 SoListBox.cpp:532 TaListBox.cpp:130 TreePanel.cpp:393
 #: YeListBox.cpp:110
 msgid "Enqueue"
@@ -75,7 +75,7 @@ msgstr "Додај селектоване нумере у листу"
 #: LastFMPanel.cpp:568 LastFMPanel.cpp:830 LastFMPanel.cpp:1024
 #: LastFMPanel.cpp:1224 LastFMPanel.cpp:1432 LastFMPanel.cpp:3175
 #: PcListBox.cpp:127 PlayListPanel.cpp:237 PodcastsPanel.cpp:2064
-#: RadioPanel.cpp:848 RaListBox.cpp:159 SoListBox.cpp:541 TaListBox.cpp:139
+#: RadioPanel.cpp:437 RaListBox.cpp:159 SoListBox.cpp:541 TaListBox.cpp:139
 #: TreePanel.cpp:401 YeListBox.cpp:119
 msgid "Current Track"
 msgstr "Тренутне нумере"
@@ -85,7 +85,7 @@ msgstr "Тренутне нумере"
 #: FileBrowser.cpp:1127 GeListBox.cpp:109 LastFMPanel.cpp:569
 #: LastFMPanel.cpp:831 LastFMPanel.cpp:1025 LastFMPanel.cpp:1225
 #: LastFMPanel.cpp:1433 LastFMPanel.cpp:3176 PcListBox.cpp:128
-#: PlayListPanel.cpp:238 PodcastsPanel.cpp:2065 RadioPanel.cpp:849
+#: PlayListPanel.cpp:238 PodcastsPanel.cpp:2065 RadioPanel.cpp:438
 #: RaListBox.cpp:160 SoListBox.cpp:542 TaListBox.cpp:140 TreePanel.cpp:402
 #: YeListBox.cpp:120
 msgid "Add current selected tracks to playlist after the current track"
@@ -97,7 +97,7 @@ msgstr "Додај изабране нумере у листу након тре
 #: LastFMPanel.cpp:574 LastFMPanel.cpp:836 LastFMPanel.cpp:1030
 #: LastFMPanel.cpp:1230 LastFMPanel.cpp:1438 LastFMPanel.cpp:3181
 #: PcListBox.cpp:134 PlayListPanel.cpp:243 PodcastsPanel.cpp:2070
-#: RadioPanel.cpp:855 RaListBox.cpp:166 SoListBox.cpp:548 TaListBox.cpp:146
+#: RadioPanel.cpp:444 RaListBox.cpp:166 SoListBox.cpp:548 TaListBox.cpp:146
 #: TreePanel.cpp:407 YeListBox.cpp:126
 msgid "Current Album"
 msgstr "Тренутног албума"
@@ -107,7 +107,7 @@ msgstr "Тренутног албума"
 #: FileBrowser.cpp:1134 GeListBox.cpp:116 LastFMPanel.cpp:575
 #: LastFMPanel.cpp:837 LastFMPanel.cpp:1031 LastFMPanel.cpp:1231
 #: LastFMPanel.cpp:1439 LastFMPanel.cpp:3182 PcListBox.cpp:135
-#: PlayListPanel.cpp:244 PodcastsPanel.cpp:2071 RadioPanel.cpp:856
+#: PlayListPanel.cpp:244 PodcastsPanel.cpp:2071 RadioPanel.cpp:445
 #: RaListBox.cpp:167 SoListBox.cpp:549 TaListBox.cpp:147 TreePanel.cpp:408
 #: YeListBox.cpp:127
 msgid "Add current selected tracks to playlist after the current album"
@@ -119,7 +119,7 @@ msgstr "Додај изабране нумере у листу после тре
 #: LastFMPanel.cpp:580 LastFMPanel.cpp:842 LastFMPanel.cpp:1036
 #: LastFMPanel.cpp:1236 LastFMPanel.cpp:1444 LastFMPanel.cpp:3187
 #: PcListBox.cpp:141 PlayListPanel.cpp:249 PodcastsPanel.cpp:2076
-#: RadioPanel.cpp:862 RaListBox.cpp:173 SoListBox.cpp:555 TaListBox.cpp:153
+#: RadioPanel.cpp:451 RaListBox.cpp:173 SoListBox.cpp:555 TaListBox.cpp:153
 #: TreePanel.cpp:413 YeListBox.cpp:133
 msgid "Current Artist"
 msgstr "Тренутног извођача"
@@ -129,7 +129,7 @@ msgstr "Тренутног извођача"
 #: FileBrowser.cpp:1141 GeListBox.cpp:123 LastFMPanel.cpp:581
 #: LastFMPanel.cpp:843 LastFMPanel.cpp:1037 LastFMPanel.cpp:1237
 #: LastFMPanel.cpp:1445 LastFMPanel.cpp:3188 PcListBox.cpp:142
-#: PlayListPanel.cpp:250 PodcastsPanel.cpp:2077 RadioPanel.cpp:863
+#: PlayListPanel.cpp:250 PodcastsPanel.cpp:2077 RadioPanel.cpp:452
 #: RaListBox.cpp:174 SoListBox.cpp:556 TaListBox.cpp:154 TreePanel.cpp:414
 #: YeListBox.cpp:134
 msgid "Add current selected tracks to playlist after the current artist"
@@ -141,14 +141,14 @@ msgstr "Додај изабране нумере у листу након тре
 #: LastFMPanel.cpp:585 LastFMPanel.cpp:847 LastFMPanel.cpp:1041
 #: LastFMPanel.cpp:1241 LastFMPanel.cpp:1449 LastFMPanel.cpp:3192
 #: PcListBox.cpp:147 PlayListPanel.cpp:254 PodcastsPanel.cpp:2081
-#: RadioPanel.cpp:868 RaListBox.cpp:179 SoListBox.cpp:561 TaListBox.cpp:159
+#: RadioPanel.cpp:457 RaListBox.cpp:179 SoListBox.cpp:561 TaListBox.cpp:159
 #: TreePanel.cpp:418 YeListBox.cpp:139
 msgid "Enqueue After"
 msgstr "Уврсти након"
 
 #: AAListBox.cpp:190 AlbumBrowser.cpp:360 AlbumBrowser.cpp:1818
 #: AlbumBrowser.cpp:1953 AlListBox.cpp:307 ArListBox.cpp:198 PcListBox.cpp:156
-#: PlayList.cpp:1533 RaListBox.cpp:188 SoListBox.cpp:576 TreePanel.cpp:440
+#: PlayList.cpp:1534 RaListBox.cpp:188 SoListBox.cpp:576 TreePanel.cpp:440
 #: YeListBox.cpp:148
 msgid "Edit Songs"
 msgstr "Измени песму"
@@ -161,7 +161,7 @@ msgstr "Измени изабране нумере"
 #: AAListBox.cpp:199 Accelerators.cpp:141 AlbumBrowser.cpp:1961
 #: AlListBox.cpp:335 ArListBox.cpp:207 CoListBox.cpp:157 FileBrowser.cpp:383
 #: FileBrowser.cpp:1162 GeListBox.cpp:135 LastFMPanel.cpp:3196
-#: PcListBox.cpp:165 PlayListAppend.cpp:25 PlayList.cpp:1584
+#: PcListBox.cpp:165 PlayListAppend.cpp:25 PlayList.cpp:1585
 #: PlayListPanel.cpp:286 RaListBox.cpp:197 SoListBox.cpp:623 TaListBox.cpp:166
 #: TreePanel.cpp:449 YeListBox.cpp:157
 msgid "Save to Playlist"
@@ -179,7 +179,7 @@ msgstr "Додај фасциклу"
 msgid "Audio Scrobbling"
 msgstr "Аудио скробловање"
 
-#: Accelerators.cpp:110 MainFrame.cpp:1492 PlayList.cpp:1601
+#: Accelerators.cpp:110 MainFrame.cpp:1492 PlayList.cpp:1602
 msgid "Clear Playlist"
 msgstr "Очисти листу"
 
@@ -192,8 +192,8 @@ msgid "Community Forums"
 msgstr "Форум заједнице"
 
 #: Accelerators.cpp:113 AlbumBrowser.cpp:354 AlbumBrowser.cpp:1812
-#: AlbumBrowser.cpp:1947 AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1527
-#: RadioPanel.cpp:873 SoListBox.cpp:568 TreePanel.cpp:430
+#: AlbumBrowser.cpp:1947 AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1528
+#: SoListBox.cpp:568 TreePanel.cpp:430
 msgid "Edit Labels"
 msgstr "Измени етикету"
 
@@ -242,13 +242,13 @@ msgstr "Пусти ток"
 msgid "Quit"
 msgstr "Изађи"
 
-#: Accelerators.cpp:130 PlayList.cpp:1596 PLSoListBox.cpp:160
+#: Accelerators.cpp:130 PlayList.cpp:1597 PLSoListBox.cpp:160
 msgid "Randomize Playlist"
 msgstr "Помешај листу"
 
 #: Accelerators.cpp:131 Accelerators.cpp:132 Accelerators.cpp:133
 #: Accelerators.cpp:134 Accelerators.cpp:135 Accelerators.cpp:136
-#: DynamicPlayList.cpp:56 DynamicPlayList.cpp:134 PlayList.cpp:1562
+#: DynamicPlayList.cpp:56 DynamicPlayList.cpp:134 PlayList.cpp:1563
 #: SoListBox.cpp:419 TaskBar.cpp:162 TreeViewFilterEditor.cpp:69
 #: TreeViewFilterEditor.cpp:123
 msgid "Rating"
@@ -262,11 +262,11 @@ msgstr "Понови све нумере"
 msgid "Repeat Current Track"
 msgstr "Понови тренутну нумеру"
 
-#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3773
+#: Accelerators.cpp:139 MainFrame.cpp:1332 MainFrame.cpp:3784
 msgid "Save Layout"
 msgstr "Сачувај распоред"
 
-#: Accelerators.cpp:142 PlayList.cpp:1568
+#: Accelerators.cpp:142 PlayList.cpp:1569
 msgid "Search"
 msgstr "Тражи"
 
@@ -470,7 +470,7 @@ msgstr "Delete"
 msgid "Separator"
 msgstr "Раздвајач"
 
-#: Accelerators.cpp:406 PlayList.cpp:1657 SoListBox.cpp:667
+#: Accelerators.cpp:406 PlayList.cpp:1658 SoListBox.cpp:667
 msgid "Select"
 msgstr "Изабери"
 
@@ -574,7 +574,7 @@ msgid "Embed the cover to the selected album tracks"
 msgstr "Угнезди омот у изабране нумере албума"
 
 #: AlbumBrowser.cpp:405 AlListBox.cpp:318 FileBrowser.cpp:763
-#: RadioPanel.cpp:730
+#: RadioPanel.cpp:329
 msgid "Name"
 msgstr "Име"
 
@@ -583,7 +583,7 @@ msgid "Sort albums by name"
 msgstr "Разврстај албуме по имену"
 
 #: AlbumBrowser.cpp:409 AlListBox.cpp:319 DynamicPlayList.cpp:55
-#: DynamicPlayList.cpp:133 PlayList.cpp:1651 SoListBox.cpp:417
+#: DynamicPlayList.cpp:133 PlayList.cpp:1652 SoListBox.cpp:417
 #: TreeViewFilterEditor.cpp:68 TreeViewFilterEditor.cpp:123
 msgid "Year"
 msgstr "Година"
@@ -662,26 +662,26 @@ msgid "Page"
 msgstr "Страна"
 
 #: AlbumBrowser.cpp:1962 ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136
-#: LastFMPanel.cpp:3196 PcListBox.cpp:166 PlayList.cpp:1585 RaListBox.cpp:198
+#: LastFMPanel.cpp:3196 PcListBox.cpp:166 PlayList.cpp:1586 RaListBox.cpp:198
 #: TaListBox.cpp:167 TreePanel.cpp:450
 msgid "Save the selected tracks to playlist"
 msgstr "Сачувај изабране нумере у листу"
 
-#: AlbumBrowser.cpp:1966 PlayList.cpp:1591 SoListBox.cpp:630
+#: AlbumBrowser.cpp:1966 PlayList.cpp:1592 SoListBox.cpp:630
 msgid "Create Smart Playlist"
 msgstr "Креирај паметну листу"
 
-#: AlbumBrowser.cpp:1966 PlayList.cpp:1591 SoListBox.cpp:630
+#: AlbumBrowser.cpp:1966 PlayList.cpp:1592 SoListBox.cpp:630
 msgid "Create a smart playlist from this track"
 msgstr "Креирај паметну листу од ових нумера"
 
-#: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2123
-#: PlayListPanel.cpp:1387 TreePanel.cpp:1323
+#: AlbumBrowser.cpp:2032 LibPanel.cpp:1359 PlayList.cpp:2124
+#: PlayListPanel.cpp:1388 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr "Уређивач етикета нумера"
 
 #: AlbumBrowser.cpp:2354 FileBrowser.cpp:1961 FileBrowser.cpp:2098
-#: LibPanel.cpp:1432 PlayList.cpp:1973 PlayListPanel.cpp:1496
+#: LibPanel.cpp:1432 PlayList.cpp:1974 PlayListPanel.cpp:1497
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr "Неименовано"
@@ -894,27 +894,27 @@ msgstr "Најбоље оцењене нумере"
 msgid "Title"
 msgstr "Наслов"
 
-#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:127 PlayList.cpp:1639
+#: DynamicPlayList.cpp:47 DynamicPlayList.cpp:127 PlayList.cpp:1640
 #: SoListBox.cpp:410 SoListBox.cpp:655 TreeViewFilterEditor.cpp:64
 #: TreeViewFilterEditor.cpp:123
 msgid "Artist"
 msgstr "Извођач"
 
 #: DynamicPlayList.cpp:48 DynamicPlayList.cpp:128 LibPanel.cpp:368
-#: LibPanel.cpp:375 PlayList.cpp:1642 SoListBox.cpp:411 SoListBox.cpp:658
+#: LibPanel.cpp:375 PlayList.cpp:1643 SoListBox.cpp:411 SoListBox.cpp:658
 #: TreeViewFilterEditor.cpp:66 TreeViewFilterEditor.cpp:123
 msgid "Album Artist"
 msgstr "Уметник албума"
 
-#: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1648
+#: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1649
 #: Preferences.cpp:969 SoListBox.cpp:412 SoListBox.cpp:664
 #: TreeViewFilterEditor.cpp:67 TreeViewFilterEditor.cpp:123
 msgid "Album"
 msgstr "Албум"
 
-#: DynamicPlayList.cpp:50 DynamicPlayList.cpp:130 PlayList.cpp:1654
-#: RadioPanel.cpp:313 RadioPanel.cpp:1135 SoListBox.cpp:413 SoListBox.cpp:652
-#: TreeViewFilterEditor.cpp:63
+#: DynamicPlayList.cpp:50 DynamicPlayList.cpp:130 PlayList.cpp:1655
+#: RadioPanel.cpp:589 ShoutcastRadio.cpp:140 SoListBox.cpp:413
+#: SoListBox.cpp:652 TreeViewFilterEditor.cpp:63
 msgid "Genre"
 msgstr "Жанр"
 
@@ -922,7 +922,7 @@ msgstr "Жанр"
 msgid "Label"
 msgstr "Етикета"
 
-#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:132 PlayList.cpp:1645
+#: DynamicPlayList.cpp:52 DynamicPlayList.cpp:132 PlayList.cpp:1646
 #: SoListBox.cpp:414 SoListBox.cpp:661 TreeViewFilterEditor.cpp:65
 #: TreeViewFilterEditor.cpp:123
 msgid "Composer"
@@ -1181,9 +1181,9 @@ msgid "Are you sure to delete the selected path ?"
 msgstr "Да ли си сигуран да желиш да уклониш изабрану путању?"
 
 #: FileBrowser.cpp:553 FileBrowser.cpp:2204 LabelEditor.cpp:310
-#: LibPanel.cpp:1227 PlayListPanel.cpp:1115 PodcastsPanel.cpp:1237
-#: PodcastsPanel.cpp:1623 RadioPanel.cpp:561 RadioPanel.cpp:1028
-#: RadioPanel.cpp:1764 TaListBox.cpp:203 TreePanel.cpp:1232
+#: LibPanel.cpp:1227 PlayListPanel.cpp:1116 PodcastsPanel.cpp:1237
+#: PodcastsPanel.cpp:1623 ShoutcastRadio.cpp:368 ShoutcastRadio.cpp:448
+#: TaListBox.cpp:203 TreePanel.cpp:1232
 msgid "Confirm"
 msgstr "Потврди"
 
@@ -1456,16 +1456,15 @@ msgstr "Обриши изабране етикете"
 msgid "Copy the label selection to all the items"
 msgstr "Копирај изабране етикете на све ставке"
 
-#: LabelEditor.cpp:286 RadioPanel.cpp:1010 RadioPanel.cpp:1049
-#: TaListBox.cpp:185 TaListBox.cpp:226
+#: LabelEditor.cpp:286 TaListBox.cpp:185 TaListBox.cpp:226
 msgid "Label Name: "
 msgstr "Име етикете:"
 
-#: LabelEditor.cpp:286 RadioPanel.cpp:1010 TaListBox.cpp:185
+#: LabelEditor.cpp:286 TaListBox.cpp:185
 msgid "Please enter the label name"
 msgstr "Унеси име етикете"
 
-#: LabelEditor.cpp:309 RadioPanel.cpp:1027 TaListBox.cpp:202
+#: LabelEditor.cpp:309 TaListBox.cpp:202
 msgid "Are you sure to delete the selected labels?"
 msgstr "Да ли сигурно желиш да обришеш изабране етикете?"
 
@@ -1573,13 +1572,12 @@ msgstr "Неименовано"
 
 #: LibPanel.cpp:219 LibPanel.cpp:226 LibPanel.cpp:522 LocationPanel.cpp:329
 #: LocationPanel.cpp:426 MainFrame.cpp:1009 MainFrame.cpp:1205
-#: RadioPanel.cpp:1185 TreeViewFilterEditor.cpp:123
+#: RadioPanel.cpp:620 TreeViewFilterEditor.cpp:123
 msgid "Genres"
 msgstr "Жанрови"
 
-#: LibPanel.cpp:237 LibPanel.cpp:244 LibPanel.cpp:524 LocationPanel.cpp:324
-#: LocationPanel.cpp:421 MainFrame.cpp:1004 MainFrame.cpp:1200
-#: RadioPanel.cpp:1145 RadioPanel.cpp:1153 RadioPanel.cpp:1186
+#: LibPanel.cpp:237 LibPanel.cpp:244 LibPanel.cpp:524 LocationPanel.cpp:421
+#: MainFrame.cpp:1200
 msgid "Labels"
 msgstr "Етикете"
 
@@ -1615,7 +1613,7 @@ msgstr "Уређивач етикета извођача"
 msgid "Are you sure to delete the selected album cover?"
 msgstr "Да ли си сигуран да желиш да обришеш изабрани омот албума?"
 
-#: LibPanel.cpp:1635 PlayListPanel.cpp:1665 TreePanel.cpp:1599
+#: LibPanel.cpp:1635 PlayListPanel.cpp:1666 TreePanel.cpp:1599
 msgid "Field Editor"
 msgstr "Уређивач поља"
 
@@ -1629,11 +1627,11 @@ msgstr "Да ли си сигуран да желиш да обришеш иза
 msgid "Remove tracks from drive"
 msgstr "Обриши нумере са диска"
 
-#: ListView.cpp:1475
+#: ListView.cpp:1478
 msgid "Select Columns"
 msgstr "Изабране колоне"
 
-#: ListView.cpp:1487
+#: ListView.cpp:1490
 msgid " Columns "
 msgstr "Колоне"
 
@@ -1653,12 +1651,12 @@ msgstr "Изменљиви уређаји"
 msgid "Context"
 msgstr "Контекст"
 
-#: LocationPanel.cpp:210 RadioPanel.cpp:1485 RadioPanel.cpp:1551
+#: LocationPanel.cpp:210 ShoutcastRadio.cpp:273
 msgid "Radios"
 msgstr "Радио станице"
 
 #: LocationPanel.cpp:215 MainFrame.cpp:1066 MainFrame.cpp:2775
-#: MainFrame.cpp:3497 PodcastsPanel.cpp:916 Preferences.cpp:253
+#: MainFrame.cpp:3508 PodcastsPanel.cpp:916 Preferences.cpp:253
 msgid "Podcasts"
 msgstr "Подемисије"
 
@@ -1681,8 +1679,8 @@ msgstr "Прикажи"
 msgid "Show/Hide the radio panel"
 msgstr "Прикажи/сакриј радио панел"
 
-#: LocationPanel.cpp:319 MainFrame.cpp:999 RadioPanel.cpp:1117
-#: RadioPanel.cpp:1183
+#: LocationPanel.cpp:319 MainFrame.cpp:999 RadioPanel.cpp:571
+#: RadioPanel.cpp:618
 msgid "Text Search"
 msgstr "Претрага текста"
 
@@ -1690,16 +1688,11 @@ msgstr "Претрага текста"
 msgid "Show/Hide the radio text search"
 msgstr "Прикажи/сакриј текстуалне претраге радија"
 
-#: LocationPanel.cpp:324 MainFrame.cpp:1004
-msgid "Show/Hide the radio labels"
-msgstr "Прикажи/сакриј етикете радија"
-
 #: LocationPanel.cpp:329 MainFrame.cpp:1009
 msgid "Show/Hide the radio genres"
 msgstr "Прикажи/сакриј жанрове радија"
 
-#: LocationPanel.cpp:336 RadioPanel.cpp:432 RadioPanel.cpp:455
-#: RadioPanel.cpp:477
+#: LocationPanel.cpp:336 ShoutcastRadio.cpp:120
 msgid "Update the radio station lists"
 msgstr "Ажурирај листу радио станица"
 
@@ -1809,7 +1802,7 @@ msgid "View the collection tree view"
 msgstr "Прикажи стабло колекције"
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1265 MediaViewer.cpp:235
-#: PlayListPanel.cpp:808 PlayListPanel.cpp:834 PortableMedia.cpp:1168
+#: PlayListPanel.cpp:809 PlayListPanel.cpp:835 PortableMedia.cpp:1168
 msgid "Playlists"
 msgstr "Листе"
 
@@ -1930,7 +1923,7 @@ msgstr "Није пронађено:"
 msgid "Replace option editor"
 msgstr "Уређивач опције замењивања"
 
-#: LyricsPanel.cpp:2540 RadioPanel.cpp:94
+#: LyricsPanel.cpp:2540 RadioPanel.cpp:1173
 msgid "Search:"
 msgstr "Тражи:"
 
@@ -1966,12 +1959,12 @@ msgstr "Добродошли у Guayadeque"
 msgid "Filters"
 msgstr "Филтри"
 
-#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4273
+#: MainFrame.cpp:355 MainFrame.cpp:1367 MainFrame.cpp:4284
 msgid "VU Meters"
 msgstr "ВУ метри"
 
-#: MainFrame.cpp:359 MainFrame.cpp:718 MainFrame.cpp:2130 MainFrame.cpp:2873
-#: MainFrame.cpp:2890 PlayList.cpp:76 RadioPanel.cpp:734
+#: MainFrame.cpp:359 MainFrame.cpp:718 MainFrame.cpp:2130 MainFrame.cpp:2874
+#: MainFrame.cpp:2891 PlayList.cpp:76 RadioPanel.cpp:333
 msgid "Now Playing"
 msgstr "Сада пуштено"
 
@@ -2035,7 +2028,7 @@ msgstr "Листа плејера"
 msgid "Show/Hide the player playlist panel"
 msgstr "Прикажи/Сакриј панел листе у плејеру"
 
-#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4291
+#: MainFrame.cpp:1351 MainFrame.cpp:1626 MainFrame.cpp:4302
 msgid "Sources"
 msgstr "Извори"
 
@@ -2055,7 +2048,7 @@ msgstr "Прикажи/Сакриј панел филтара плејера"
 msgid "Show/Hide the player vumeter"
 msgstr "Прикажи/Сакриј плејерове ВУ метре"
 
-#: MainFrame.cpp:1375 MainFrame.cpp:4307
+#: MainFrame.cpp:1375 MainFrame.cpp:4318
 msgid "Cover"
 msgstr "Омот"
 
@@ -2171,27 +2164,27 @@ msgstr "Заустави након тренутне или изабране н�
 msgid "Clear the now playing playlist"
 msgstr "Очисти тренутно пуштену листу"
 
-#: MainFrame.cpp:1503 PlayList.cpp:1549 SoListBox.cpp:589 TaskBar.cpp:143
+#: MainFrame.cpp:1503 PlayList.cpp:1550 SoListBox.cpp:589 TaskBar.cpp:143
 msgid "Set the rating to 0"
 msgstr "Постави оцену на 0"
 
-#: MainFrame.cpp:1508 PlayList.cpp:1551 SoListBox.cpp:594 TaskBar.cpp:146
+#: MainFrame.cpp:1508 PlayList.cpp:1552 SoListBox.cpp:594 TaskBar.cpp:146
 msgid "Set the rating to 1"
 msgstr "Постави оцену на 1"
 
-#: MainFrame.cpp:1513 PlayList.cpp:1553 SoListBox.cpp:599 TaskBar.cpp:149
+#: MainFrame.cpp:1513 PlayList.cpp:1554 SoListBox.cpp:599 TaskBar.cpp:149
 msgid "Set the rating to 2"
 msgstr "Постави оцену на 2"
 
-#: MainFrame.cpp:1518 PlayList.cpp:1555 SoListBox.cpp:604 TaskBar.cpp:152
+#: MainFrame.cpp:1518 PlayList.cpp:1556 SoListBox.cpp:604 TaskBar.cpp:152
 msgid "Set the rating to 3"
 msgstr "Постави оцену на 3"
 
-#: MainFrame.cpp:1523 PlayList.cpp:1557 SoListBox.cpp:609 TaskBar.cpp:155
+#: MainFrame.cpp:1523 PlayList.cpp:1558 SoListBox.cpp:609 TaskBar.cpp:155
 msgid "Set the rating to 4"
 msgstr "Постави оцену на 4"
 
-#: MainFrame.cpp:1528 PlayList.cpp:1559 SoListBox.cpp:614 TaskBar.cpp:158
+#: MainFrame.cpp:1528 PlayList.cpp:1560 SoListBox.cpp:614 TaskBar.cpp:158
 msgid "Set the rating to 5"
 msgstr "Постави оцену на 5"
 
@@ -2288,7 +2281,7 @@ msgid "Stream:"
 msgstr "Ток:"
 
 #: MainFrame.cpp:2151 MainFrame.cpp:2221 MainFrame.cpp:2270 MainFrame.cpp:2307
-#: MainFrame.cpp:4482
+#: MainFrame.cpp:4493
 msgid "Copy To..."
 msgstr "Копирај у..."
 
@@ -2296,68 +2289,68 @@ msgstr "Копирај у..."
 msgid "Select destination directory"
 msgstr "Изабери циљну фасциклу"
 
-#: MainFrame.cpp:3212
+#: MainFrame.cpp:3223
 msgid "station"
 msgstr "радио станица"
 
-#: MainFrame.cpp:3212
+#: MainFrame.cpp:3223
 msgid "stations"
 msgstr "радио станице"
 
-#: MainFrame.cpp:3221
+#: MainFrame.cpp:3232
 msgid "podcast"
 msgstr "подемисија"
 
-#: MainFrame.cpp:3221
+#: MainFrame.cpp:3232
 msgid "podcasts"
 msgstr "подемисије"
 
-#: MainFrame.cpp:3236
+#: MainFrame.cpp:3247
 msgid "dir"
 msgstr "фасцикле"
 
-#: MainFrame.cpp:3236
+#: MainFrame.cpp:3247
 msgid "dirs"
 msgstr "фасцикле"
 
-#: MainFrame.cpp:3238
+#: MainFrame.cpp:3249
 msgid "file"
 msgstr "фајл"
 
-#: MainFrame.cpp:3238
+#: MainFrame.cpp:3249
 msgid "files"
 msgstr "фајлови"
 
-#: MainFrame.cpp:3660 MainFrame.cpp:3666 MainFrame.cpp:3669
+#: MainFrame.cpp:3671 MainFrame.cpp:3677 MainFrame.cpp:3680
 msgid "Load this user defined layout"
 msgstr "Учитај овај распоред дефинисан од корисника"
 
-#: MainFrame.cpp:3661
+#: MainFrame.cpp:3672
 msgid "Delete this user defined layout"
 msgstr "Обриши овај распоред дефинисан од корисника"
 
-#: MainFrame.cpp:3666 MainFrame.cpp:3669
+#: MainFrame.cpp:3677 MainFrame.cpp:3680
 msgid "No Layouts Defined"
 msgstr "Нема дефинисаних распореда"
 
-#: MainFrame.cpp:3773
+#: MainFrame.cpp:3784
 msgid "Layout:"
 msgstr "Распоред"
 
-#: MainFrame.cpp:3773
+#: MainFrame.cpp:3784
 #, c-format
 msgid "Layout %u"
 msgstr "Распоред %u"
 
-#: MainFrame.cpp:4447 MainFrame.cpp:4468
+#: MainFrame.cpp:4458 MainFrame.cpp:4479
 msgid "Copy the current selected songs to a directory or device"
 msgstr "Копирај изабрану песму у фасциклу или на уређај"
 
-#: MainFrame.cpp:4479
+#: MainFrame.cpp:4490
 msgid "Add Copy To patterns in preferences"
 msgstr "Додај \"Копирај у\" шаблон у подешавањима"
 
-#: MainFrame.cpp:4482
+#: MainFrame.cpp:4493
 msgid "Copy the selected tracks to a folder or device"
 msgstr "Копирај изабране нумере у фасциклу или на уређај"
 
@@ -2485,8 +2478,8 @@ msgstr "Дозволи:"
 msgid "Deny:"
 msgstr "Одбиј:"
 
-#: PlayerFilters.cpp:123 Preferences.cpp:1815 Preferences.cpp:1912
-#: Preferences.cpp:1935 SmartMode.cpp:450
+#: PlayerFilters.cpp:123 Preferences.cpp:861 Preferences.cpp:1815
+#: Preferences.cpp:1912 Preferences.cpp:1935 SmartMode.cpp:450
 msgid "None"
 msgstr "Ништа"
 
@@ -2536,7 +2529,7 @@ msgstr "Омогућено"
 msgid "Repeat: "
 msgstr "Понављај:"
 
-#: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1636
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1637
 #: Preferences.cpp:969
 msgid "Track"
 msgstr "Нумера"
@@ -2605,111 +2598,111 @@ msgstr "Почиње"
 msgid "Tracks:"
 msgstr "Нумере:"
 
-#: PlayList.cpp:1518
+#: PlayList.cpp:1519
 msgid "Empty Playlist"
 msgstr "Празна листа"
 
-#: PlayList.cpp:1518
+#: PlayList.cpp:1519
 msgid "The playlist is empty"
 msgstr "Листа је празна"
 
-#: PlayList.cpp:1528
+#: PlayList.cpp:1529
 msgid "Edit the current selected tracks labels"
 msgstr "Измени етикете изабраних нумера"
 
-#: PlayList.cpp:1534
+#: PlayList.cpp:1535
 msgid "Edit the current selected songs"
 msgstr "Измени изабране песме"
 
-#: PlayList.cpp:1543
+#: PlayList.cpp:1544
 msgid "Set as Next Track"
 msgstr "Постави као следећу нумеру"
 
-#: PlayList.cpp:1544
+#: PlayList.cpp:1545
 msgid "Move the selected tracks to be played next"
 msgstr "Помери изабране нумере да буду пуштене следеће"
 
-#: PlayList.cpp:1562
+#: PlayList.cpp:1563
 msgid "Set the current selected tracks rating"
 msgstr "Оцени тренутно изабрану нумеру"
 
-#: PlayList.cpp:1569
+#: PlayList.cpp:1570
 msgid "Search a track in the playlist by name"
 msgstr "Тражи нумеру у листи по имену"
 
-#: PlayList.cpp:1597 PLSoListBox.cpp:161
+#: PlayList.cpp:1598 PLSoListBox.cpp:161
 msgid "Randomize the songs in the playlist"
 msgstr "Меша песме у листи"
 
-#: PlayList.cpp:1602
+#: PlayList.cpp:1603
 msgid "Remove all tracks from playlist"
 msgstr "Уклони све нумере са листе"
 
-#: PlayList.cpp:1609 PLSoListBox.cpp:168
+#: PlayList.cpp:1610 PLSoListBox.cpp:168
 msgid "Remove from Playlist"
 msgstr "Уклони са листе"
 
-#: PlayList.cpp:1610
+#: PlayList.cpp:1611
 msgid "Remove the selected tracks from playlist"
 msgstr "Уклони изабране нумере са листе"
 
-#: PlayList.cpp:1617 SoListBox.cpp:638
+#: PlayList.cpp:1618 SoListBox.cpp:638
 msgid "Remove from Library"
 msgstr "Уклони из библиотеке"
 
-#: PlayList.cpp:1618
+#: PlayList.cpp:1619
 msgid "Remove the selected tracks from library"
 msgstr "Уклони изабране нумере из библиотеке"
 
-#: PlayList.cpp:1623 SoListBox.cpp:643
+#: PlayList.cpp:1624 SoListBox.cpp:643
 msgid "Delete from Drive"
 msgstr "Обриши са диска"
 
-#: PlayList.cpp:1624
+#: PlayList.cpp:1625
 msgid "Remove the selected tracks from drive"
 msgstr "Уклони изабране нумере са диска"
 
-#: PlayList.cpp:1636
+#: PlayList.cpp:1637
 msgid "Selects the current selected track in the library"
 msgstr "Бира тренутно изабрану нумеру у библиотеци"
 
-#: PlayList.cpp:1639 SoListBox.cpp:655
+#: PlayList.cpp:1640 SoListBox.cpp:655
 msgid "Selects the artist of the current song"
 msgstr "Бира извођача тренутне песме"
 
-#: PlayList.cpp:1642
+#: PlayList.cpp:1643
 msgid "Select the album artist of the current song"
 msgstr "Изабери уметника албума тренутне песме"
 
-#: PlayList.cpp:1645
+#: PlayList.cpp:1646
 msgid "Select the composer of the current song"
 msgstr "Изабери композитора тренутне песме"
 
-#: PlayList.cpp:1648 SoListBox.cpp:664
+#: PlayList.cpp:1649 SoListBox.cpp:664
 msgid "Select the album of the current song"
 msgstr "Изабери албум тренутне песме"
 
-#: PlayList.cpp:1651
+#: PlayList.cpp:1652
 msgid "Select the year of the current song"
 msgstr "Изабери годину тренутне песме"
 
-#: PlayList.cpp:1654
+#: PlayList.cpp:1655
 msgid "Select the genre of the current song"
 msgstr "Изабери жанр тренутне песме"
 
-#: PlayList.cpp:1657 SoListBox.cpp:667
+#: PlayList.cpp:1658 SoListBox.cpp:667
 msgid "Search in the library"
 msgstr "Тражи у библиотеци"
 
-#: PlayList.cpp:2153
+#: PlayList.cpp:2154
 msgid "Search: "
 msgstr "Тражи:"
 
-#: PlayList.cpp:2153
+#: PlayList.cpp:2154
 msgid "Please enter the search term"
 msgstr "Унеси ставку за претрагу"
 
-#: PlayList.cpp:2733
+#: PlayList.cpp:2734
 msgid "Loading tracks. Please wait"
 msgstr "Учитавање нумере. Мало стрпљења"
 
@@ -2721,7 +2714,7 @@ msgstr "Статична листа"
 msgid "Dynamic playlists"
 msgstr "Динамичка листа"
 
-#: PlayListPanel.cpp:224 PodcastsPanel.cpp:2051 RadioPanel.cpp:835
+#: PlayListPanel.cpp:224 PodcastsPanel.cpp:2051 RadioPanel.cpp:424
 #: SoListBox.cpp:526 TreePanel.cpp:388
 msgid "Play current selected songs"
 msgstr "Пусти изабрану песму"
@@ -2738,7 +2731,7 @@ msgstr "Нова динамичка листа"
 msgid "Create a new dynamic playlist"
 msgstr "Креирај нову динамичку листу"
 
-#: PlayListPanel.cpp:266 RadioPanel.cpp:467
+#: PlayListPanel.cpp:266 UserRadio.cpp:74
 msgid "Import"
 msgstr "Увези"
 
@@ -2746,7 +2739,7 @@ msgstr "Увези"
 msgid "Import a playlist"
 msgstr "Увези листу"
 
-#: PlayListPanel.cpp:272 RadioPanel.cpp:471
+#: PlayListPanel.cpp:272 UserRadio.cpp:78
 msgid "Export"
 msgstr "Извези"
 
@@ -2786,23 +2779,23 @@ msgstr "Постави листу као филтар за дозволу"
 msgid "Set as Deny Filter"
 msgstr "Постави као филтар за одбијање"
 
-#: PlayListPanel.cpp:1073 PlayListPanel.cpp:1214
+#: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
 msgid "Playlist Name: "
 msgstr "Име листе:"
 
-#: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
+#: PlayListPanel.cpp:1075 PlayListPanel.cpp:1216
 msgid "Enter the new playlist name"
 msgstr "Унеси име нове листе"
 
-#: PlayListPanel.cpp:1114
+#: PlayListPanel.cpp:1115
 msgid "Are you sure to delete the selected Playlist?"
 msgstr "Да ли сигурно желиш да обришеш изабрану листу?"
 
-#: PlayListPanel.cpp:1199 PlayListPanel.cpp:1274
+#: PlayListPanel.cpp:1200 PlayListPanel.cpp:1275
 msgid "Select the playlist file"
 msgstr "Изабери фајл листе"
 
-#: PlayListPanel.cpp:1226
+#: PlayListPanel.cpp:1227
 msgid "New Playlist"
 msgstr "Нова листа"
 
@@ -2890,7 +2883,7 @@ msgstr "Аутор"
 msgid "Never"
 msgstr "Никад"
 
-#: PodcastsPanel.cpp:2057 RadioPanel.cpp:841
+#: PodcastsPanel.cpp:2057 RadioPanel.cpp:430
 msgid "Add current selected songs to playlist"
 msgstr "Додај изабране песме у листу"
 
@@ -3721,193 +3714,45 @@ msgstr "Уређивач жанрова радија"
 msgid "Other:"
 msgstr "Друго:"
 
-#: RadioPanel.cpp:89
-msgid " Radio Search "
-msgstr "Претрага радија"
-
-#: RadioPanel.cpp:104
-msgid "Search in now playing info"
-msgstr "Тражи у информацијама тренутно пуштене нумере"
-
-#: RadioPanel.cpp:108
-msgid "Search in genre names"
-msgstr "Претражи у именима жанрова"
-
-#: RadioPanel.cpp:112
-msgid "Search in station names"
-msgstr "Тражи у именима радио станица"
-
-#: RadioPanel.cpp:116
-msgid "Include results from all genres"
-msgstr "Укључи резултате из свих жанрова"
-
-#: RadioPanel.cpp:312
-msgid "Shoutcast"
-msgstr "Шауткаст"
-
-#: RadioPanel.cpp:314
-msgid "Searches"
-msgstr "Претраге"
-
-#: RadioPanel.cpp:315
-msgid "User Defined"
-msgstr "Дефинисано од корисника"
-
-#: RadioPanel.cpp:415
-msgid "Add Genre"
-msgstr "Додај жанр"
-
-#: RadioPanel.cpp:415
-msgid "Create a new genre"
-msgstr "Креирај нови жанр"
-
-#: RadioPanel.cpp:421
-msgid "Edit genre"
-msgstr "Измени жанр"
-
-#: RadioPanel.cpp:421
-msgid "Change the selected genre"
-msgstr "Промени изабрани жанр"
-
-#: RadioPanel.cpp:425
-msgid "Delete genre"
-msgstr "Обриши жанр"
-
-#: RadioPanel.cpp:425 RadioPanel.cpp:448
-msgid "Delete the selected search"
-msgstr "Обриши изабрану претрагу"
-
-#: RadioPanel.cpp:432 RadioPanel.cpp:455 RadioPanel.cpp:477
-msgid "Update Radio Stations"
-msgstr "Ажурирај радио станице"
-
-#: RadioPanel.cpp:438
-msgid "Add Search"
-msgstr "Додај претрагу"
-
-#: RadioPanel.cpp:438
-msgid "Create a new search"
-msgstr "Креирај нову претрагу"
-
-#: RadioPanel.cpp:444
-msgid "Edit search"
-msgstr "Измени претрагу"
-
-#: RadioPanel.cpp:444
-msgid "Change the selected search"
-msgstr "Измени изабрану претрагу"
-
-#: RadioPanel.cpp:448
-msgid "Delete search"
-msgstr "Обриши претрагу"
-
-#: RadioPanel.cpp:461 RadioPanel.cpp:809
-msgid "Add Radio"
-msgstr "Додај радио"
-
-#: RadioPanel.cpp:461
-msgid "Create a new radio"
-msgstr "Креирај нови радио"
-
-#: RadioPanel.cpp:467
-msgid "Import the radio stations"
-msgstr "Увези радио станице"
-
-#: RadioPanel.cpp:471
-msgid "Export all the radio stations"
-msgstr "Извези радио станице"
-
-#: RadioPanel.cpp:540
-msgid "Genre Name: "
-msgstr "Име жанра:"
-
-#: RadioPanel.cpp:540
-msgid "Enter the new Genre Name"
-msgstr "Унеси ново име жанра"
-
-#: RadioPanel.cpp:560
-msgid "Are you sure to delete the selected radio genres?"
-msgstr "Да ли сигурно желиш да обришеш изабране жанрове радија?"
-
-#: RadioPanel.cpp:731
+#: RadioPanel.cpp:330
 msgid "BitRate"
 msgstr "Битрејт"
 
-#: RadioPanel.cpp:732
+#: RadioPanel.cpp:331
 msgid "Listeners"
 msgstr "Слушаоци"
 
-#: RadioPanel.cpp:733 SoListBox.cpp:423
+#: RadioPanel.cpp:332 SoListBox.cpp:423
 msgid "Format"
 msgstr "Формат"
 
-#: RadioPanel.cpp:809
-msgid "Add a radio"
-msgstr "Додај радио"
-
-#: RadioPanel.cpp:821 RadioPanel.cpp:1658 RadioPanel.cpp:1687
-msgid "Edit Radio"
-msgstr "Измени радио"
-
-#: RadioPanel.cpp:822
-msgid "Change the selected radio"
-msgstr "Измени изабрани радио"
-
-#: RadioPanel.cpp:826
-msgid "Delete Radio"
-msgstr "Обриши радио"
-
-#: RadioPanel.cpp:826
-msgid "Delete the selected radio"
-msgstr "Обриши изабрани радио"
-
-#: RadioPanel.cpp:874
-msgid "Edit the labels assigned to the selected stations"
-msgstr "Измени етикете додељене изабраним станицама"
-
-#: RadioPanel.cpp:990
-msgid "Add Label"
-msgstr "Додај етикету"
-
-#: RadioPanel.cpp:990 TaListBox.cpp:104
-msgid "Create a new label"
-msgstr "Креирај нову етикету"
-
-#: RadioPanel.cpp:996
-msgid "Edit Label"
-msgstr "Измени етикете"
-
-#: RadioPanel.cpp:996 TaListBox.cpp:111
-msgid "Change selected label"
-msgstr "Измени изабрану етикету"
-
-#: RadioPanel.cpp:1000
-msgid "Delete label"
-msgstr "Обриши етикету"
-
-#: RadioPanel.cpp:1000 TaListBox.cpp:115
-msgid "Delete selected labels"
-msgstr "Обриши изабране етикете"
-
-#: RadioPanel.cpp:1049 TaListBox.cpp:227
-msgid "Enter the new label name"
-msgstr "Унеси име нове етикете"
-
-#: RadioPanel.cpp:1173 RadioPanel.cpp:1187
+#: RadioPanel.cpp:608 RadioPanel.cpp:622
 msgid "Stations"
 msgstr "Радио станице"
 
-#: RadioPanel.cpp:1418
-msgid "Stations Labels Editor"
-msgstr "Уређивач етикета радио станица"
-
-#: RadioPanel.cpp:1651
+#: RadioPanel.cpp:1118
 msgid "There are not entries for this Radio Station"
 msgstr "Нема уноса за ову радио станицу"
 
-#: RadioPanel.cpp:1763
-msgid "Are you sure to delete the selected radio searches?"
-msgstr "Да ли сигурно желиш да обришеш изабране радио претраге?"
+#: RadioPanel.cpp:1168
+msgid " Radio Search "
+msgstr "Претрага радија"
+
+#: RadioPanel.cpp:1183
+msgid "Search in now playing info"
+msgstr "Тражи у информацијама тренутно пуштене нумере"
+
+#: RadioPanel.cpp:1187
+msgid "Search in genre names"
+msgstr "Претражи у именима жанрова"
+
+#: RadioPanel.cpp:1191
+msgid "Search in station names"
+msgstr "Тражи у именима радио станица"
+
+#: RadioPanel.cpp:1195
+msgid "Include results from all genres"
+msgstr "Укључи резултате из свих жанрова"
 
 #: RaListBox.cpp:144
 msgid "Play the selected tracks"
@@ -3924,6 +3769,74 @@ msgstr "Омот:"
 #: SelCoverFile.cpp:114
 msgid "Select the cover filename"
 msgstr "Изабери име фајла омота"
+
+#: ShoutcastRadio.cpp:70
+msgid "Add Genre"
+msgstr "Додај жанр"
+
+#: ShoutcastRadio.cpp:70
+msgid "Create a new genre"
+msgstr "Креирај нови жанр"
+
+#: ShoutcastRadio.cpp:76
+msgid "Edit genre"
+msgstr "Измени жанр"
+
+#: ShoutcastRadio.cpp:76
+msgid "Change the selected genre"
+msgstr "Промени изабрани жанр"
+
+#: ShoutcastRadio.cpp:80
+msgid "Delete genre"
+msgstr "Обриши жанр"
+
+#: ShoutcastRadio.cpp:80 ShoutcastRadio.cpp:105
+msgid "Delete the selected search"
+msgstr "Обриши изабрану претрагу"
+
+#: ShoutcastRadio.cpp:95
+msgid "Add Search"
+msgstr "Додај претрагу"
+
+#: ShoutcastRadio.cpp:95
+msgid "Create a new search"
+msgstr "Креирај нову претрагу"
+
+#: ShoutcastRadio.cpp:101
+msgid "Edit search"
+msgstr "Измени претрагу"
+
+#: ShoutcastRadio.cpp:101
+msgid "Change the selected search"
+msgstr "Измени изабрану претрагу"
+
+#: ShoutcastRadio.cpp:105
+msgid "Delete search"
+msgstr "Обриши претрагу"
+
+#: ShoutcastRadio.cpp:120
+msgid "Update Radio Stations"
+msgstr "Ажурирај радио станице"
+
+#: ShoutcastRadio.cpp:141
+msgid "Searches"
+msgstr "Претраге"
+
+#: ShoutcastRadio.cpp:343
+msgid "Genre Name: "
+msgstr "Име жанра:"
+
+#: ShoutcastRadio.cpp:343
+msgid "Enter the new Genre Name"
+msgstr "Унеси ново име жанра"
+
+#: ShoutcastRadio.cpp:367
+msgid "Are you sure to delete the selected radio genres?"
+msgstr "Да ли сигурно желиш да обришеш изабране жанрове радија?"
+
+#: ShoutcastRadio.cpp:447
+msgid "Are you sure to delete the selected radio searches?"
+msgstr "Да ли сигурно желиш да обришеш изабране радио претраге?"
 
 #: SmartMode.cpp:391
 msgid "Generate Smart Playlist"
@@ -4037,6 +3950,18 @@ msgstr "Онемогући скробловање"
 msgid "Create"
 msgstr "Креирај"
 
+#: TaListBox.cpp:104
+msgid "Create a new label"
+msgstr "Креирај нову етикету"
+
+#: TaListBox.cpp:111
+msgid "Change selected label"
+msgstr "Измени изабрану етикету"
+
+#: TaListBox.cpp:115
+msgid "Delete selected labels"
+msgstr "Обриши изабране етикете"
+
 #: TaListBox.cpp:124
 msgid "Play current selected labels"
 msgstr "Пусти изабране етикете"
@@ -4044,6 +3969,10 @@ msgstr "Пусти изабране етикете"
 #: TaListBox.cpp:131
 msgid "Add current selected labels to playlist"
 msgstr "Додај изабрану етикету у листу"
+
+#: TaListBox.cpp:227
+msgid "Enter the new label name"
+msgstr "Унеси име нове етикете"
 
 #: TaskBar.cpp:112
 msgid "Pause"
@@ -4361,3 +4290,39 @@ msgstr "Филтар:"
 #: TreeViewFilterEditor.cpp:123
 msgid "PlayCount"
 msgstr "БројПуштања"
+
+#: UserRadio.cpp:55
+msgid "Add Radio"
+msgstr "Додај радио"
+
+#: UserRadio.cpp:55
+msgid "Create a new radio"
+msgstr "Креирај нови радио"
+
+#: UserRadio.cpp:62 UserRadio.cpp:122 UserRadio.cpp:152
+msgid "Edit Radio"
+msgstr "Измени радио"
+
+#: UserRadio.cpp:63
+msgid "Change the selected radio"
+msgstr "Измени изабрани радио"
+
+#: UserRadio.cpp:67
+msgid "Delete Radio"
+msgstr "Обриши радио"
+
+#: UserRadio.cpp:67
+msgid "Delete the selected radio"
+msgstr "Обриши изабрани радио"
+
+#: UserRadio.cpp:74
+msgid "Import the radio stations"
+msgstr "Увези радио станице"
+
+#: UserRadio.cpp:78
+msgid "Export all the radio stations"
+msgstr "Извези радио станице"
+
+#: UserRadio.cpp:105
+msgid "User Defined"
+msgstr "Дефинисано од корисника"
