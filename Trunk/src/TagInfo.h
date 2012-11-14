@@ -101,7 +101,7 @@ class guTagInfo
     bool            m_Compilation;
 
     guTagInfo( const wxString &filename = wxEmptyString );
-    ~guTagInfo();
+    virtual ~guTagInfo();
 
     void                SetFileName( const wxString &filename );
     virtual bool        Read( void );

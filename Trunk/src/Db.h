@@ -57,7 +57,7 @@ class guDb
   public :
     guDb( void );
     guDb( const wxString &dbname );
-    ~guDb();
+    virtual ~guDb();
 
     int                 Open( const wxString &dbname );
     int                 Close( void );

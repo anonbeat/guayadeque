@@ -104,7 +104,7 @@ class guDBusClient
 
   public :
     guDBusClient( guDBusServer * server );
-    ~guDBusClient();
+    virtual ~guDBusClient();
 
     bool                        HasOwner( const char * name );
     bool                        RequestName( const char * name );
@@ -135,7 +135,7 @@ class guDBusServer
 
   public :
     guDBusServer( const char * name, bool System = false );
-    ~guDBusServer();
+    virtual ~guDBusServer();
 
 
     bool                        HasOwner( const char * name );
@@ -181,7 +181,7 @@ class guDBusThread : public wxThread
 
   public :
     guDBusThread( guDBusServer * dbusowner );
-    ~guDBusThread();
+    virtual ~guDBusThread();
 
     virtual ExitCode Entry();
 

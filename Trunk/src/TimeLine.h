@@ -73,7 +73,7 @@ class guTimeLine
 
   public :
     guTimeLine( int duration = 1000, wxEvtHandler * parent = NULL );
-    ~guTimeLine();
+    virtual ~guTimeLine();
 
     int             Duration( void ) const { return m_Duration; }
     void            SetDuration( const int duration ) { m_Duration = duration; }

@@ -92,7 +92,7 @@ class guAudioScrobbleSender
 
   public:
                                 guAudioScrobbleSender( guDbLibrary * db, const wxString &serverurl );
-                                ~guAudioScrobbleSender();
+                                virtual ~guAudioScrobbleSender();
 
     void                        SetUserName( const wxString &username ) { m_UserName = username; }
     void                        SetPassword( const wxString &password ) { m_Password = password; }
