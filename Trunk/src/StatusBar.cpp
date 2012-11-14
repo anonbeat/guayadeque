@@ -19,6 +19,8 @@
 //
 // -------------------------------------------------------------------------------- //
 #include "StatusBar.h"
+
+#include "AuiNotebook.h"
 #include "Images.h"
 #include "Utils.h"
 #include "Commands.h"
@@ -515,7 +517,9 @@ void guStatusBar::DrawField( wxDC &dc, int i )
     if( i < GetFieldsCount() - 1 )
     {
         dc.SetPen( m_mediumShadowPen );
-        dc.DrawLine(rect.x + rect.width, rect.y + 1, rect.x + rect.width, rect.y + rect.height - 1 );
+        dc.DrawLine( rect.x + rect.width - 1, rect.y + 1, rect.x + rect.width - 1, rect.y + rect.height - 1 );
+        dc.SetPen( m_hilightPen );
+        dc.DrawLine( rect.x + rect.width, rect.y + 1, rect.x + rect.width, rect.y + rect.height - 1 );
     }
 
     DrawFieldText( dc, i );
