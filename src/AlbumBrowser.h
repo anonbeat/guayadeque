@@ -255,7 +255,6 @@ class guAlbumBrowser : public wxPanel
 
     void                            OnTimerTimeout( wxTimerEvent &event );
 
-  protected :
     void                            CreateControls( void );
 
   public :

@@ -90,7 +90,7 @@ class guConfig
 
   public :
     guConfig( const wxString &conffile = guPATH_CONFIG_FILENAME );
-    ~guConfig();
+    virtual ~guConfig();
 
     static guConfig *   Get( void );
     void                Set( guConfig * config );

@@ -131,7 +131,7 @@ class guTrack
         m_CoverId = 0;
     };
 
-    ~guTrack() {};
+    virtual ~guTrack() {};
 
     bool ReadFromFile( const wxString &file );
 

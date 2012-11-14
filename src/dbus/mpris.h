@@ -50,7 +50,7 @@ class guMPRIS : public guDBusClient
 
   public :
     guMPRIS( guDBusServer * server, guPlayerPanel * playerpanel );
-    ~guMPRIS();
+    virtual ~guMPRIS();
 
     virtual DBusHandlerResult   HandleMessages( guDBusMessage * msg, guDBusMessage * reply = NULL );
 
