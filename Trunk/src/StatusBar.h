@@ -101,6 +101,8 @@ class guStatusBar : public wxStatusBar
     void                SetPlayMode( const bool forcegapless );
     void                SetAudioScrobble( const bool audioscrobble );
 
+    virtual void        DrawField( wxDC &dc, int i );
+
 };
 
 
