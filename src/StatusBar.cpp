@@ -145,13 +145,16 @@ void guGauge::SetRange( int range )
 // -------------------------------------------------------------------------------- //
 // guStatusBar
 // -------------------------------------------------------------------------------- //
-guStatusBar::guStatusBar( wxWindow * parent ) : wxStatusBar( parent, wxID_ANY )
+guStatusBar::guStatusBar( wxWindow * parent ) :
+    wxStatusBar( parent, wxID_ANY, wxST_SIZEGRIP | wxSB_FLAT )
 {
     m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
 
     int FieldWidths[] = { -1, guTRACKCOUNT_PANEL_SIZE, guFORCEGAPLESS_PANEL_SIZE, guAUDIOSCROBBLE_PANEL_SIZE };
     SetFieldsCount( 4 );
     SetStatusWidths( 4, FieldWidths );
+    int FieldStyles[] = { wxSB_FLAT, wxSB_FLAT, wxSB_FLAT, wxSB_FLAT };
+    SetStatusStyles( 4, FieldStyles );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -235,7 +238,7 @@ void guStatusBar::OnSize( wxSizeEvent &event )
     {
         //size = ASBitmap->GetSize();
         GetFieldRect( GetFieldsCount() - 1, rect );
-        m_ASBitmap->Move( rect.x + 3,
+        m_ASBitmap->Move( rect.x + 1,
                         rect.y + 2 );
     }
 
@@ -243,14 +246,14 @@ void guStatusBar::OnSize( wxSizeEvent &event )
     {
         //size = ASBitmap->GetSize();
         GetFieldRect( GetFieldsCount() - 2, rect );
-        m_PlayMode->Move( rect.x + 3,
+        m_PlayMode->Move( rect.x + 1,
                         rect.y + 3 );
     }
 
     if( m_SelInfo )
     {
         GetFieldRect( GetFieldsCount() - 3, rect );
-        m_SelInfo->Move( rect.x + 3, rect.y + 3 );
+        m_SelInfo->Move( rect.x + 1, rect.y + 3 );
     }
 
     event.Skip();
@@ -501,6 +504,21 @@ int guStatusBar::RemoveGauge( int gaugeid )
 void guStatusBar::SetSelInfo( const wxString &label )
 {
     m_SelInfo->SetLabel( label );
+}
+
+// -------------------------------------------------------------------------------- //
+void guStatusBar::DrawField( wxDC &dc, int i )
+{
+    wxRect rect;
+    GetFieldRect( i, rect );
+
+    if( i < GetFieldsCount() - 1 )
+    {
+        dc.SetPen( m_mediumShadowPen );
+        dc.DrawLine(rect.x + rect.width, rect.y + 1, rect.x + rect.width, rect.y + rect.height - 1 );
+    }
+
+    DrawFieldText( dc, i );
 }
 
 // -------------------------------------------------------------------------------- //
