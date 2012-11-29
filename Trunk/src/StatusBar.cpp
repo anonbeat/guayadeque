@@ -513,8 +513,7 @@ void guStatusBar::DrawField( wxDC &dc, int i )
 {
     wxRect rect;
     GetFieldRect( i, rect );
-
-    if( i < GetFieldsCount() - 1 )
+    if( i < ( GetFieldsCount() - 1 ) )
     {
         dc.SetPen( m_mediumShadowPen );
         dc.DrawLine( rect.x + rect.width - 1, rect.y + 1, rect.x + rect.width - 1, rect.y + rect.height - 1 );
