@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-11-14 11:57+0000\n"
+"POT-Creation-Date: 2012-11-29 08:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3937,23 +3937,23 @@ msgstr ""
 msgid "Please Donate!"
 msgstr ""
 
-#: StatusBar.cpp:163 StatusBar.cpp:265
+#: StatusBar.cpp:168 StatusBar.cpp:270
 msgid "Enable audioscrobbling"
 msgstr ""
 
-#: StatusBar.cpp:166 StatusBar.cpp:282
+#: StatusBar.cpp:171 StatusBar.cpp:287
 msgid "Enable crossfading"
 msgstr ""
 
-#: StatusBar.cpp:166 StatusBar.cpp:282
+#: StatusBar.cpp:171 StatusBar.cpp:287
 msgid "Disable crossfading"
 msgstr ""
 
-#: StatusBar.cpp:169
+#: StatusBar.cpp:174
 msgid "Shows information about the selected items"
 msgstr ""
 
-#: StatusBar.cpp:265
+#: StatusBar.cpp:270
 msgid "Disable audioscrobbling"
 msgstr ""
 
