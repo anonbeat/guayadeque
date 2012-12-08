@@ -436,6 +436,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     // Fill the Format extensions array
     guIsValidAudioFile( wxEmptyString );
 
+    if( Config->ReadBool( wxT( "ShowFullScreen" ), IsFullScreen(), wxT( "mainwindow" ) ) != IsFullScreen() )
+    {
+        ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
+    }
+
 //    // Load the layouts menu
 //    CreateLayoutMenus();
 
