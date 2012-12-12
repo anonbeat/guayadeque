@@ -447,7 +447,7 @@ void guMediaViewer::SetViewMode( const int mode )
                 if( !m_LibPanel )
                 {
                     CreateLibraryView();
-                    GetSizer()->Add( m_LibPanel, 1, wxEXPAND, 5 );
+                    GetSizer()->Add( m_LibPanel, 1, wxEXPAND|wxALL, 5 );
                 }
                 else
                 {
@@ -461,7 +461,7 @@ void guMediaViewer::SetViewMode( const int mode )
                 if( !m_AlbumBrowser )
                 {
                     CreateAlbumBrowserView();
-                    GetSizer()->Add( m_AlbumBrowser, 1, wxEXPAND, 5 );
+                    GetSizer()->Add( m_AlbumBrowser, 1, wxEXPAND|wxALL, 5 );
 
                     int SelectedFilter = m_FilterChoice->GetSelection();
                     SetFilter( SelectedFilter ? m_DynFilterArray[ SelectedFilter - 1 ] : wxT( "" ) );
@@ -478,7 +478,7 @@ void guMediaViewer::SetViewMode( const int mode )
                 if( !m_TreeViewPanel )
                 {
                     CreateTreeView();
-                    GetSizer()->Add( m_TreeViewPanel, 1, wxEXPAND, 5 );
+                    GetSizer()->Add( m_TreeViewPanel, 1, wxEXPAND|wxALL, 5 );
                 }
                 else
                 {
@@ -492,7 +492,7 @@ void guMediaViewer::SetViewMode( const int mode )
                 if( !m_PlayListPanel )
                 {
                     CreatePlayListView();
-                    GetSizer()->Add( m_PlayListPanel, 1, wxEXPAND, 5 );
+                    GetSizer()->Add( m_PlayListPanel, 1, wxEXPAND|wxALL, 5 );
                 }
                 else
                 {

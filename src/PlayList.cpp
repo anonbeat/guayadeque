@@ -695,11 +695,6 @@ void guPlayList::DrawBackground( wxDC &dc, const wxRect &rect, const int row, co
     }
 }
 
-// -------------------------------------------------------------------------------- //
-long guPlayList::GetCount()
-{
-    return m_Items.GetCount();
-}
 
 // -------------------------------------------------------------------------------- //
 wxString guPlayList::OnGetItemText( const int row, const int col ) const
@@ -2745,8 +2740,9 @@ void guPlayList::LoadPlaylistTracks( void )
         {
             //guLogMessage( wxT( "%u-%u %s" ), Index, MainApp->argc, MainApp->argv[ Index ] );
             AddPlayListItem( MainApp->argv[ Index ], guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
-            m_StartPlaying = true;
         }
+        m_CurItem = wxNOT_FOUND;
+        m_StartPlaying = true;
     }
     else
     {

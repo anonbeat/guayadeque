@@ -141,7 +141,7 @@ class guPlayList : public guListView
     virtual int                 GetItemId( const int row ) const { return row; }
 
     guTrack *                   GetItem( size_t item );
-    long                        GetCount();
+    long                        GetCount() { return m_Items.GetCount(); }
     guTrack *                   GetCurrent();
     int                         GetCurItem();
     void                        SetCurrent( int curitem, bool delold = false );
