@@ -1049,7 +1049,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const int aftercu
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowplay, const int aftercurrent  )
 {
-    guLogMessage( wxT( "AddToPlayList( ..., %i, %i )" ), allowplay, aftercurrent );
+    guLogDebug( wxT( "AddToPlayList( ..., %i, %i )" ), allowplay, aftercurrent );
     int PrevTrackCount = m_PlayListCtrl->GetItemCount();
 
     int Index;
@@ -1841,7 +1841,7 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 {
-    guLogMessage( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
+    guLogDebug( wxT( "OnMediaLoaded Cur: %i %i   %li" ), m_PlayListCtrl->GetCurItem(), event.GetInt(), m_NextTrackId );
 
     try {
 
@@ -2551,7 +2551,7 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
 {
-    guLogDebug( wxT( "OnPlayButtonClick Cur: %i" ), m_PlayListCtrl->GetCurItem() );
+    guLogDebug( wxT( "OnPlayButtonClick Cur: %i %i %i" ), m_PlayListCtrl->GetCurItem(), m_MediaSong.m_Loaded, m_PlayListCtrl->GetItemCount() );
     guMediaState State;
 
     if( m_PendingNewRecordName )
@@ -2560,9 +2560,8 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     // Get The Current Song From m_PlayListCtrl
     //guTrack * CurItem = m_PlayListCtrl->GetCurrent();
     //if( !m_MediaSong.m_SongId && m_PlayListCtrl->GetItemCount() )
-    if( !m_MediaSong.m_Loaded && m_PlayListCtrl->GetItemCount() )
+    if( !m_MediaSong.m_Loaded && m_PlayListCtrl->GetCount() )
     {
-        //guLogDebug( wxT( "Going to load the track..." ) );
         if( m_PlayListCtrl->GetCurItem() == wxNOT_FOUND )
             m_PlayListCtrl->SetCurrent( 0, m_DelTracksPlayed && !m_PlayLoop );
         //m_MediaSong = * m_PlayListCtrl->GetCurrent();
@@ -3156,6 +3155,7 @@ void guPlayerPanel::MediaViewerClosed( guMediaViewer * mediaviewer )
 void guPlayerPanel::CheckStartPlaying( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
+    guLogDebug( wxT( "CheckStartPlaying: %i" ), m_PlayListCtrl->StartPlaying() );
     // There was a track passed as argument that we will play
     if( m_PlayListCtrl->StartPlaying() )
     {
