@@ -1436,7 +1436,7 @@ bool guFaderPlayBin::BuildOutputBin( void )
     };
 
     int OutputDevice = m_Player->OutputDevice();
-    if( ( OutputDevice > 0 ) && ( OutputDevice < guOUTPUT_DEVICE_OTHER ) )
+    if( ( OutputDevice >= guOUTPUT_DEVICE_AUTOMATIC ) && ( OutputDevice < guOUTPUT_DEVICE_OTHER ) )
     {
         outputsink = gst_element_factory_make( ElementNames[ OutputDevice ], "OutputSink" );
         if( IsValidElement( outputsink ) )
