@@ -104,7 +104,6 @@
 		<Unit filename="src/AutoScrollText.h" />
 		<Unit filename="src/Base64.cpp" />
 		<Unit filename="src/Base64.h" />
-		<Unit filename="src/BgPanel.cpp" />
 		<Unit filename="src/BgPanel.h" />
 		<Unit filename="src/CMakeCache.txt" />
 		<Unit filename="src/CMakeFiles/CMakeDirectoryInformation.cmake" />
