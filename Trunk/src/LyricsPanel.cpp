@@ -1590,7 +1590,7 @@ wxString DoExtractTag( const wxString &content, const wxString &tag )
 {
     if( content.Find( tag ) != wxNOT_FOUND )
     {
-        wxString TagEnd = tag.BeforeFirst( wxT( ' ' ) ) + wxT( ">" );
+        wxString TagEnd = ( tag.Find( wxT( " " ) ) != wxNOT_FOUND ) ? tag.BeforeFirst( wxT( ' ' ) ) + wxT( ">" ) : tag;
         TagEnd.Replace( wxT( "<" ), wxT( "</" ) );
         return DoExtractTags( content, tag, TagEnd );
     }
