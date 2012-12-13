@@ -20,6 +20,7 @@
 // -------------------------------------------------------------------------------- //
 #include "Magnatune.h"
 
+#include "LyricsPanel.h"
 #include "MainFrame.h"
 #include "SelCoverFile.h"
 #include "StatusBar.h"
@@ -1179,14 +1180,6 @@ void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
         wxT( "<URL_FLACZIP>" ),
         wxT( "<URL_WAVZIP>" ),
     };
-    wxString EndLabel[] = {
-        wxT( "</DL_PAGE>" ),
-        wxT( "</URL_VBRZIP>" ),
-        wxT( "</URL_128KMP3ZIP>" ),
-        wxT( "</URL_OGGZIP>" ),
-        wxT( "</URL_FLACZIP>" ),
-        wxT( "</URL_WAVZIP>" ),
-    };
 
     int Index;
     int Count;
@@ -1194,11 +1187,7 @@ void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
         int DownloadFormat = Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "magnatune" ) );
-
-        //guLogMessage( wxT( "DownloadFormat: %i %s  %s" ), DownloadFormat,
-        //             StartLabel[ DownloadFormat ].c_str(),
-        //             EndLabel[ DownloadFormat ].c_str() );
-
+        //guLogMessage( wxT( "DownloadFormat: %i %s" ), DownloadFormat, StartLabel[ DownloadFormat ].c_str() );
         if( ( DownloadFormat < 0 ) || ( DownloadFormat > 5 ) )
         {
             DownloadFormat = 0;
@@ -1215,23 +1204,13 @@ void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
             if( !Content.IsEmpty() )
             {
                 //guLogMessage( wxT( "Result:\n%s" ), Content.c_str() );
-                DownloadUrl = wxEmptyString;
 
-                int Pos = Content.Find( StartLabel[ DownloadFormat ] );
-                if( Pos != wxNOT_FOUND )
-                {
-                    DownloadUrl = Content.Mid( Pos );
-
-                    if( DownloadFormat > 0 )
-                        DownloadUrl = DownloadUrl.Mid( DownloadUrl.Find( wxT( "path=http://" ) ) + 12 );
-                    else
-                        DownloadUrl = DownloadUrl.Mid( StartLabel[ DownloadFormat ].Length() + 7 );
-                    DownloadUrl = DownloadUrl.Mid( 0, DownloadUrl.Find( EndLabel[ DownloadFormat ] ) );
-                }
+                DownloadUrl = DoExtractTag( Content, StartLabel[ DownloadFormat ] );
+                //guLogMessage( wxT( "Extracted url: %s" ), DownloadUrl.c_str() );
 
                 if( !DownloadUrl.IsEmpty() )
                 {
-                    DownloadUrl = wxString::Format( wxT( "http://%s:%s@" ), m_UserName.c_str(), m_Password.c_str() ) + DownloadUrl;
+                    DownloadUrl = wxString::Format( wxT( "http://%s:%s@" ), m_UserName.c_str(), m_Password.c_str() ) + DownloadUrl.Mid( 7 );
                     //guLogMessage( wxT( "Trying to download the url : '%s'" ), DownloadUrl.c_str() );
                     guWebExecute( DownloadUrl );
                 }

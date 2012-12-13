@@ -46,6 +46,12 @@
 #include <wx/html/htmlwin.h>
 #include <wx/panel.h>
 
+
+// -------------------------------------------------------------------------------- //
+wxString DoExtractTags( const wxString &content, const wxString &begin, const wxString &end );
+wxString DoExtractTag( const wxString &content, const wxString &tag );
+
+
 class guLyricSearchEngine;
 class guLyricSearchContext;
 
