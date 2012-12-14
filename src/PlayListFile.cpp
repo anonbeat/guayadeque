@@ -88,19 +88,19 @@ bool guPlaylistFile::Load( const wxString &uri )
     {
         if( LowerPath.EndsWith( wxT( ".pls" ) ) )
         {
-            return ReadPlsFile( uri );
+            return ReadPlsFile( wxURI::Unescape( Uri.GetPath() ) );
         }
         else if( LowerPath.EndsWith( wxT( ".m3u" ) ) )
         {
-            return ReadM3uFile( uri );
+            return ReadM3uFile( wxURI::Unescape( Uri.GetPath() ) );
         }
         else if( LowerPath.EndsWith( wxT( ".xspf" ) ) )
         {
-            return ReadXspfFile( uri );
+            return ReadXspfFile( wxURI::Unescape( Uri.GetPath() ) );
         }
         else if( LowerPath.EndsWith( wxT( ".asx" ) ) )
         {
-            return ReadAsxFile( uri );
+            return ReadAsxFile( wxURI::Unescape( Uri.GetPath() ) );
         }
     }
     else
@@ -193,6 +193,7 @@ bool guPlaylistFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
             int Count;
             if( PlayList->Read( wxT( "numberofentries" ), &Count ) )
             {
+                guLogMessage( wxT( "Found a playlist with %i items" ), Count );
                 if( !Count )
                 {
                     guLogMessage( wxT( "This station playlist is empty" ) );
@@ -243,6 +244,7 @@ bool guPlaylistFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
 // -------------------------------------------------------------------------------- //
 bool guPlaylistFile::ReadPlsFile( const wxString &filename )
 {
+    guLogMessage( wxT( "ReadPlsFile( '%s' )" ), filename.c_str() );
     wxFileInputStream Ins( filename );
     if( Ins.IsOk() )
     {
@@ -819,23 +821,24 @@ bool guCuePlaylistFile::Load( const wxString &location )
     if( !location.IsEmpty() )
     {
         wxURI Uri( location );
+        m_Location = wxURI::Unescape( Uri.GetPath() );
 
         if( Uri.IsReference() )
         {
-            guLogMessage( wxT( "CuePlaylist from file : '%s'" ), location.c_str() );
+            guLogMessage( wxT( "CuePlaylist from file : '%s'" ), m_Location.c_str() );
 
-            wxFile PlaylistFile( location, wxFile::read );
+            wxFile PlaylistFile( m_Location, wxFile::read );
 
             if( !PlaylistFile.IsOpened() )
             {
-                guLogMessage( wxT( "Could not open '%s'" ), location.c_str() );
+                guLogMessage( wxT( "Could not open '%s'" ), m_Location.c_str() );
                 return false;
             }
 
             int DataSize = PlaylistFile.Length();
             if( !DataSize )
             {
-                guLogMessage( wxT( "Playlist '%s' with 0 length" ), location.c_str() );
+                guLogMessage( wxT( "Playlist '%s' with 0 length" ), m_Location.c_str() );
                 return false;
             }
 
