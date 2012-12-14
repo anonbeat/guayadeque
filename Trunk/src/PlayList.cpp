@@ -1294,16 +1294,18 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
     }
     else if( Uri.IsReference() )    // Its a file
     {
-        if( wxFileExists( filename ) )
+        FileName = wxURI::Unescape( Uri.GetPath() );
+        //guLogMessage( wxT( "Loading '%s'" ), FileName.c_str() );
+        if( wxFileExists( FileName ) )
         {
-            if( guIsValidAudioFile( filename ) )
+            if( guIsValidAudioFile( FileName ) )
             {
-                Track.m_FileName = filename;
+                Track.m_FileName = FileName;
 
-                if( !m_Db->FindTrackFile( filename, &Track ) )
+                if( !m_Db->FindTrackFile( FileName, &Track ) )
                 {
                     guDbPodcasts * DbPodcasts = m_MainFrame->GetPodcastsDb();
-                    if( DbPodcasts->GetPodcastItemFile( filename, &PodcastItem ) )
+                    if( DbPodcasts->GetPodcastItemFile( FileName, &PodcastItem ) )
                     {
                         Track.m_Type = guTRACK_TYPE_PODCAST;
                         Track.m_SongId = PodcastItem.m_Id;
@@ -1319,13 +1321,13 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
                     else
                     {
                         //guLogMessage( wxT( "Reading tags from the file..." ) );
-                        if( Track.ReadFromFile( filename ) )
+                        if( Track.ReadFromFile( FileName ) )
                         {
                             Track.m_Type = guTRACK_TYPE_NOTDB;
                         }
                         else
                         {
-                            guLogError( wxT( "Could not read tags from file '%s'" ), filename.c_str() );
+                            guLogError( wxT( "Could not read tags from file '%s'" ), FileName.c_str() );
                         }
                     }
                 }
@@ -1339,9 +1341,9 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
                 guLogError( wxT( "Could not open the file '%s'" ), filename.c_str() );
             }
         }
-        else if( wxDirExists( filename ) )
+        else if( wxDirExists( FileName ) )
         {
-            wxString DirName = filename;
+            wxString DirName = FileName;
             wxDir Dir;
             if( !DirName.EndsWith( wxT( "/" ) ) )
                 DirName += wxT( "/" );
