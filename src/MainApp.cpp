@@ -311,7 +311,7 @@ bool guMainApp::OnInit()
         if( argc > 1 )
         {
             int RetryCnt = 0;
-            while( RetryCnt < 25 )
+            while( RetryCnt++ < 25 )
             {
                 if( SendFilesByMPRIS( argc, argv ) )
                 {
