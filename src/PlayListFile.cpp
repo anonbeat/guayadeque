@@ -86,21 +86,31 @@ bool guPlaylistFile::Load( const wxString &uri )
     //guLogMessage( wxT( "'%s' IsReference:%i" ), uri.c_str(), Uri.IsReference() );
     if( Uri.IsReference() )
     {
+        wxString FileName;
+        if( uri.StartsWith( wxT( "file://" ) ) )
+        {
+            FileName = wxURI::Unescape( Uri.GetPath() );
+        }
+        else
+        {
+            FileName = uri;
+        }
+
         if( LowerPath.EndsWith( wxT( ".pls" ) ) )
         {
-            return ReadPlsFile( wxURI::Unescape( Uri.GetPath() ) );
+            return ReadPlsFile( FileName );
         }
         else if( LowerPath.EndsWith( wxT( ".m3u" ) ) )
         {
-            return ReadM3uFile( wxURI::Unescape( Uri.GetPath() ) );
+            return ReadM3uFile( FileName );
         }
         else if( LowerPath.EndsWith( wxT( ".xspf" ) ) )
         {
-            return ReadXspfFile( wxURI::Unescape( Uri.GetPath() ) );
+            return ReadXspfFile( FileName );
         }
         else if( LowerPath.EndsWith( wxT( ".asx" ) ) )
         {
-            return ReadAsxFile( wxURI::Unescape( Uri.GetPath() ) );
+            return ReadAsxFile( FileName );
         }
     }
     else
@@ -821,7 +831,14 @@ bool guCuePlaylistFile::Load( const wxString &location )
     if( !location.IsEmpty() )
     {
         wxURI Uri( location );
-        m_Location = wxURI::Unescape( Uri.GetPath() );
+        if( location.StartsWith( wxT( "file://" ) ) )
+        {
+            m_Location = wxURI::Unescape( Uri.GetPath() );
+        }
+        else
+        {
+            m_Location = location;
+        }
 
         if( Uri.IsReference() )
         {
