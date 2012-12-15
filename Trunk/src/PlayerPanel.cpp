@@ -3102,7 +3102,7 @@ void guPlayerPanel::OnAddTracks( wxCommandEvent &event )
 
     if( TrackList )
     {
-        AddToPlayList( * TrackList, true, false );
+        AddToPlayList( * TrackList, true, guINSERT_AFTER_CURRENT_NONE );
         delete TrackList;
     }
 }
