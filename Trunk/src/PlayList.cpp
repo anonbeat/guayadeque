@@ -1294,7 +1294,14 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
     }
     else if( Uri.IsReference() )    // Its a file
     {
-        FileName = wxURI::Unescape( Uri.GetPath() );
+        if( filename.StartsWith( wxT( "file://" ) ) )
+        {
+            FileName = wxURI::Unescape( Uri.GetPath() );
+        }
+        else
+        {
+            FileName = filename;
+        }
         //guLogMessage( wxT( "Loading '%s'" ), FileName.c_str() );
         if( wxFileExists( FileName ) )
         {
