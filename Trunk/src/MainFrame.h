@@ -178,7 +178,7 @@ class guMainFrame : public wxFrame
 
     wxMenuItem *                    m_MenuRadios;
     wxMenuItem *                    m_MenuRadTextSearch;
-    wxMenuItem *                    m_MenuRadLabels;
+//    wxMenuItem *                    m_MenuRadLabels;
     wxMenuItem *                    m_MenuRadGenres;
     wxMenuItem *                    m_MenuRadUpdate;
 
