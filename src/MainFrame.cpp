@@ -3137,7 +3137,7 @@ void guMainFrame::DoPageClose( wxPanel * curpage )
     {
         m_MenuRadios->Check( false );
         m_MenuRadTextSearch->Enable( false );
-        m_MenuRadLabels->Enable( false );
+        //m_MenuRadLabels->Enable( false );
         m_MenuRadGenres->Enable( false );
 
         PanelId = guPANEL_MAIN_RADIOS;
