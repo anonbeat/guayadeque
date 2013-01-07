@@ -4557,7 +4557,7 @@ int guDbLibrary::GetAlbumsSongs( const wxArrayInt &Albums, guTrackArray * Songs,
     query += wxT( "song_albumid IN " ) + ArrayIntToStrList( Albums );
     if( ordertoedit )
     {
-        query += wxT( " ORDER BY song_disk, song_number, song_ song_filename" );
+        query += wxT( " ORDER BY song_disk, song_number, song_filename" );
     }
     else
     {
