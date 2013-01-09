@@ -1499,7 +1499,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
   {
     //m_Uri =
     g_object_set( m_Playbin, "uri", ( const char * ) m_Uri.mb_str( wxConvFile ), NULL );
-    g_object_set( m_Playbin, "buffer-size", m_Player->BufferSize() * 1024, NULL );
+    g_object_set( m_Playbin, "buffer-size", gint( m_Player->BufferSize() * 1024 ), NULL );
     //g_object_set( m_Playbin, "volume", 1.0, NULL );
 
     m_Playbackbin = gst_bin_new( "playbackbin" );
@@ -1522,8 +1522,8 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
           {
             if( m_ReplayGain )
             {
-              g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", m_Player->m_ReplayGainMode - 1, NULL );
-              g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", m_Player->m_ReplayGainPreAmp, NULL );
+              g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", gboolean( m_Player->m_ReplayGainMode - 1 ), NULL );
+              g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( m_Player->m_ReplayGainPreAmp ), NULL );
                //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
             }
 
@@ -1532,16 +1532,16 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
             {
               if( m_PlayType == guFADERPLAYBIN_PLAYTYPE_CROSSFADE )
               {
-                g_object_set( m_FaderVolume, "volume", 0.0, NULL );
+                g_object_set( m_FaderVolume, "volume", gdouble( 0.0D ), NULL );
               }
 
               GstElement * level = gst_element_factory_make( "level", "pb_level" );
               if( IsValidElement( level ) )
               {
-                g_object_set( level, "message", TRUE, NULL );
-                g_object_set( level, "interval", 100000000, NULL) ;
-                g_object_set( level, "peak-falloff", 6.0, NULL );
-                g_object_set( level, "peak-ttl", 3 * 300000000, NULL );
+                g_object_set( level, "message", gboolean( true ), NULL );
+                g_object_set( level, "interval", guint64( 100000000 ), NULL) ;
+                g_object_set( level, "peak-falloff", gdouble( 6.0D ), NULL );
+                g_object_set( level, "peak-ttl", guint64( 3 * 300000000 ), NULL );
 
                 m_Volume = gst_element_factory_make( "volume", "pb_volume" );
                 if( IsValidElement( m_Volume ) )
@@ -1588,7 +1588,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
 
                                             g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
 
-                                            g_object_set( G_OBJECT( m_Playbin ), "flags", 0x02 | 0x10, NULL );
+                                            g_object_set( G_OBJECT( m_Playbin ), "flags", GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_SOFT_VOLUME, NULL );
 
                                             g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
                                                 G_CALLBACK( gst_about_to_finish ), ( void * ) this );
@@ -1736,9 +1736,9 @@ bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder,
                 if( IsValidElement( queue ) )
                 {
                     // The bin contains elements that change state asynchronously and not as part of a state change in the entire pipeline.
-                    g_object_set( m_RecordBin, "async-handling", true, NULL );
+                    g_object_set( m_RecordBin, "async-handling", gboolean( true ), NULL );
 
-                    g_object_set( queue, "max-size-buffers", 3, NULL );
+                    g_object_set( queue, "max-size-buffers", guint( 3 ), NULL );
                     //g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                     if( muxer )
@@ -1828,7 +1828,7 @@ void guFaderPlayBin::SendEvent( guMediaEvent &event )
 bool guFaderPlayBin::SetVolume( double volume )
 {
     guLogDebug( wxT( "guFaderPlayBin::SetVolume (%i)  %0.2f" ), m_Id, volume );
-    g_object_set( m_Volume, "volume", volume, NULL );
+    g_object_set( m_Volume, "volume", gdouble( volume ), NULL );
     return true;
 }
 
@@ -1864,7 +1864,7 @@ bool guFaderPlayBin::SetFaderVolume( double volume )
         //guLogDebug( wxT( "guFaderPlayBin::SetFaderVolume (%i)   %0.2f  %i" ), m_Id, volume, m_State == guFADERPLAYBIN_STATE_FADEIN );
         Lock();
         m_LastFadeVolume = volume;
-        g_object_set( m_FaderVolume, "volume", volume, NULL );
+        g_object_set( m_FaderVolume, "volume", gdouble( volume ), NULL );
 
         switch( m_State )
         {
@@ -1948,7 +1948,7 @@ bool guFaderPlayBin::SetEqualizer( const wxArrayInt &eqbands )
 void guFaderPlayBin::SetEqualizerBand( const int band, const int value )
 {
     g_object_set( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
-            band ).char_str(), gdouble( value ) / 10.0, NULL );
+            band ).char_str(), gdouble( value / 10.0D ), NULL );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2331,7 +2331,7 @@ bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, co
     GstElement * Encoder = NULL;
     GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
-    float OggQuality[] = { 0.9, 0.7, 0.5, 0.3, 0.1 };
+    gfloat OggQuality[] = { 0.9f, 0.7f, 0.5f, 0.3f, 0.1f };
     gint FlacQuality[] = { 8, 7, 5, 3, 1 };
 
     //
