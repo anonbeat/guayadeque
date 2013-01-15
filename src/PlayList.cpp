@@ -1302,7 +1302,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
         {
             FileName = filename;
         }
-        //guLogMessage( wxT( "Loading '%s'" ), FileName.c_str() );
+        guLogMessage( wxT( "Loading '%s'" ), FileName.c_str() );
         if( wxFileExists( FileName ) )
         {
             if( guIsValidAudioFile( FileName ) )

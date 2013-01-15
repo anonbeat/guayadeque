@@ -1511,12 +1511,11 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
         GstElement * resample = gst_element_factory_make( "audioresample", "pb_audioresampler" );
         if( IsValidElement( resample ) )
         {
+          m_ReplayGain = NULL;
           if( m_Player->m_ReplayGainMode )
           {
             m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
           }
-          else
-            m_ReplayGain = NULL;
 
           if( !m_Player->m_ReplayGainMode || IsValidElement( m_ReplayGain ) )
           {
