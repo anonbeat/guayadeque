@@ -734,8 +734,8 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
                     GenresToDel.Add( CurrentGenres[ Index ].m_Id );
             }
 
-            query = wxT( "BEGIN TRANSACTION" );
-            m_Db->ExecuteUpdate( query );
+//            query = wxT( "BEGIN TRANSACTION" );
+//            m_Db->ExecuteUpdate( query );
 
             if( GenresToDel.Count() )
             {
@@ -776,20 +776,20 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
                     if( wxGetLocalTime() > LastTime )
                     {
                         LastTime = wxGetLocalTime() + 2;
-                        query = wxT( "END TRANSACTION" );
-                        m_Db->ExecuteUpdate( query );
+//                        query = wxT( "END TRANSACTION" );
+//                        m_Db->ExecuteUpdate( query );
 
                         evtup.SetExtraLong( CurPos );
                         wxPostEvent( wxTheApp->GetTopWindow(), evtup );
 
-                        query = wxT( "BEGIN TRANSACTION" );
-                        m_Db->ExecuteUpdate( query );
+//                        query = wxT( "BEGIN TRANSACTION" );
+//                        m_Db->ExecuteUpdate( query );
                     }
                 }
             }
 
-            query = wxT( "END TRANSACTION" );
-            m_Db->ExecuteUpdate( query );
+//            query = wxT( "END TRANSACTION" );
+//            m_Db->ExecuteUpdate( query );
 
             XmlFile.Close();
         }

@@ -50,7 +50,8 @@ WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray );
 
 #define guALBUMBROWSER_REFRESH_DELAY            60
 #define guALBUMBROWSER_GRID_SIZE_WIDTH          140
-#define guALBUMBROWSER_GRID_SIZE_HEIGHT         175
+//#define guALBUMBROWSER_GRID_SIZE_HEIGHT         180
+static int guALBUMBROWSER_GRID_SIZE_HEIGHT = -1;
 
 #define guALBUMBROWSER_TIMER_ID_REFRESH         3
 #define guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED  4
@@ -144,26 +145,27 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     m_AlbumBrowser = ( guAlbumBrowser * ) parent;
 
     wxFont CurrentFont = GetFont();
+
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
-	m_MainSizer->Add( m_Bitmap, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
+	m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
 
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
 	m_AlbumLabel->SetFont( CurrentFont );
-	m_MainSizer->Add( m_AlbumLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
+	m_MainSizer->Add( m_AlbumLabel, 0, wxRIGHT|wxEXPAND, 5 );
 
 	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
-	m_MainSizer->Add( m_ArtistLabel, 0, wxRIGHT|wxLEFT|wxEXPAND, 5 );
+	m_MainSizer->Add( m_ArtistLabel, 0, wxRIGHT|wxEXPAND, 5 );
 
 	m_TracksLabel = new guAutoScrollText( this, wxEmptyString );
 	m_TracksLabel->SetFont( CurrentFont );
-	m_MainSizer->Add( m_TracksLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxEXPAND, 5 );
+	m_MainSizer->Add( m_TracksLabel, 0, wxRIGHT|wxEXPAND, 5 );
 
 	SetSizer( m_MainSizer );
 	Layout();
@@ -696,6 +698,12 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
+
+    if( guALBUMBROWSER_GRID_SIZE_HEIGHT == -1 )
+    {
+        CalculateMaxItemHeight();
+    }
+
     CreateControls();
 
     CreateAcceleratorTable();
@@ -922,6 +930,17 @@ void guAlbumBrowser::OnGoToSearch( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guAlbumBrowser::CalculateMaxItemHeight( void )
+{
+    int w;
+    int h;
+    int d;
+    GetTextExtent( wxT("Hg"), &w, &h, &d );
+
+    guALBUMBROWSER_GRID_SIZE_HEIGHT = 100 + 4 + ( 3 * h ) + 5;
+}
+
+// -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
 {
     wxSize Size = event.GetSize();
@@ -950,7 +969,7 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
                         m_ItemPanels.Add( new guAlbumBrowserItemPanel( this, Index ) );
                         if( m_BigCoverShowed )
                             m_ItemPanels[ Index ]->Hide();
-                        m_AlbumsSizer->Add( m_ItemPanels[ Index ], 1, wxEXPAND|wxALL, 5 );
+                        m_AlbumsSizer->Add( m_ItemPanels[ Index ], 1, wxEXPAND|wxALL, 2 );
                     }
                 }
                 else //if( m_ItemCount < OldCount )

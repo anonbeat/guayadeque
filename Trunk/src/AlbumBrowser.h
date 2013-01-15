@@ -257,6 +257,8 @@ class guAlbumBrowser : public wxPanel
 
     void                            CreateControls( void );
 
+    void                            CalculateMaxItemHeight( void );
+
   public :
     //guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer );
