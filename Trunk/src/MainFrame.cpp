@@ -4681,6 +4681,14 @@ void guMainFrame::OnConfigUpdated( wxCommandEvent &event )
     {
         m_LyricSearchEngine->Load();
     }
+
+    if( Flags & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
+    {
+        guConfig * Config = ( guConfig * ) guConfig::Get();
+        bool AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) ||
+                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) );
+        m_MenuAudioScrobble->Check( AudioScrobbleEnabled );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
