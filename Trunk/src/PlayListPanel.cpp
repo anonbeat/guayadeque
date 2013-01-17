@@ -299,7 +299,7 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 
         Menu.AppendSeparator();
 
-        MenuItem = new wxMenuItem( &Menu, ID_MAINFRAME_SET_ALLOW_PLAYLIST, _( "Set as Alow Filter" ), _( "Set this playlist as the allow filter" ) );
+        MenuItem = new wxMenuItem( &Menu, ID_MAINFRAME_SET_ALLOW_PLAYLIST, _( "Set as Allow Filter" ), _( "Set this playlist as the allow filter" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_accept ) );
         Menu.Append( MenuItem );
 
