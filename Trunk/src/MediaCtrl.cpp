@@ -1531,7 +1531,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
             {
               if( m_PlayType == guFADERPLAYBIN_PLAYTYPE_CROSSFADE )
               {
-                g_object_set( m_FaderVolume, "volume", gdouble( 0.0D ), NULL );
+                g_object_set( m_FaderVolume, "volume", gdouble( 0.0 ), NULL );
               }
 
               GstElement * level = gst_element_factory_make( "level", "pb_level" );
@@ -1539,7 +1539,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
               {
                 g_object_set( level, "message", gboolean( true ), NULL );
                 g_object_set( level, "interval", guint64( 100000000 ), NULL) ;
-                g_object_set( level, "peak-falloff", gdouble( 6.0D ), NULL );
+                g_object_set( level, "peak-falloff", gdouble( 6.0 ), NULL );
                 g_object_set( level, "peak-ttl", guint64( 3 * 300000000 ), NULL );
 
                 m_Volume = gst_element_factory_make( "volume", "pb_volume" );
@@ -1947,7 +1947,7 @@ bool guFaderPlayBin::SetEqualizer( const wxArrayInt &eqbands )
 void guFaderPlayBin::SetEqualizerBand( const int band, const int value )
 {
     g_object_set( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
-            band ).char_str(), gdouble( value / 10.0D ), NULL );
+            band ).char_str(), gdouble( value / 10.0 ), NULL );
 }
 
 // -------------------------------------------------------------------------------- //
