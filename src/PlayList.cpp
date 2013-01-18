@@ -1713,7 +1713,7 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
     }
 
     int Index = event.GetId() - ID_COPYTO_BASE;
-    if( Index > guCOPYTO_DEVICE_BASE )
+    if( Index >= guCOPYTO_DEVICE_BASE )
     {
         Index -= guCOPYTO_DEVICE_BASE;
         event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
