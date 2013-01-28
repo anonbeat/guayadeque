@@ -1267,7 +1267,7 @@ int guFilesListBox::GetTracksFromFiles( const wxArrayString &files, guTrackArray
         for( Index = 0; Index < Count; Index++ )
         {
             wxString FileName = files[ Index ];
-            //guLogMessage( wxT( "File: %s" ), FileName.c_str() );
+            //guLogMessage( wxT( "GetTracksFromFiles: %s" ), FileName.c_str() );
             wxURI Uri( FileName );
 
             if( Uri.IsReference() )

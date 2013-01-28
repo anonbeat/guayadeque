@@ -43,6 +43,7 @@
 
 #include <xiphcomment.h>
 
+#include <apefile.h>
 #include <mp4tag.h>
 #include <apetag.h>
 #include <id3v2tag.h>
@@ -75,6 +76,18 @@ class guTagInfo
   protected :
     FileRef *       m_TagFile;
     Tag *           m_Tag;
+
+  protected :
+    bool            ReadExtendedTags( ID3v2::Tag * tag );
+    bool            WriteExtendedTags( ID3v2::Tag * tag, const int changedflag );
+    bool            ReadExtendedTags( Ogg::XiphComment * tag );
+    bool            WriteExtendedTags( Ogg::XiphComment * tag, const int changedflag );
+    bool            ReadExtendedTags( MP4::Tag * tag );
+    bool            WriteExtendedTags( MP4::Tag * tag, const int changedflag );
+    bool            ReadExtendedTags( APE::Tag * tag );
+    bool            WriteExtendedTags( APE::Tag * tag, const int changedflag );
+    bool            ReadExtendedTags( ASF::Tag * tag );
+    bool            WriteExtendedTags( ASF::Tag * tag, const int changedflag );
 
   public:
     wxString        m_FileName;
@@ -214,7 +227,8 @@ class guMp4TagInfo : public guTagInfo
 class guApeTagInfo : public guTagInfo
 {
   protected :
-    guApeFile       m_ApeFile;
+    ID3v1::Tag *        m_TagId3v1;
+    APE::Tag *          m_ApeTag;
 
   public :
     guApeTagInfo( const wxString &filename = wxEmptyString );

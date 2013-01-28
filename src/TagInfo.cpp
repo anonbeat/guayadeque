@@ -32,6 +32,7 @@
 
 #include <asfattribute.h>
 #include <popularimeterframe.h>
+#include <id3v1tag.h>
 
 wxArrayString guSupportedFormats;
 wxMutex       guSupportedFormatsMutex;
@@ -793,6 +794,762 @@ bool guTagInfo::SetLyrics( const wxString &lyrics )
     return false;
 }
 
+// -------------------------------------------------------------------------------- //
+void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const wxString &value )
+{
+    ID3v2::UserTextIdentificationFrame * frame;
+    //guLogMessage( wxT( "USERTEXT[ '%s' ] = '%s'" ), wxString( description, wxConvUTF8 ).c_str(), value.c_str() );
+    frame = ID3v2::UserTextIdentificationFrame::find( tagv2, description );
+    if( !frame )
+    {
+        frame = new ID3v2::UserTextIdentificationFrame( TagLib::String::UTF8 );
+        tagv2->addFrame( frame );
+        //frame->setDescription( TagLib::String( description, TagLib::String::UTF8 ) );
+        frame->setDescription( description );
+    }
+
+    if( frame )
+    {
+        frame->setText( wxStringToTString( value ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void Xiph_CheckLabelFrame( Ogg::XiphComment * xiphcomment, const char * description, const wxString &value )
+{
+    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
+    if( xiphcomment->fieldListMap().contains( description ) )
+    {
+        if( !value.IsEmpty() )
+        {
+            xiphcomment->addField( description, wxStringToTString( value ) );
+        }
+        else
+        {
+            xiphcomment->removeField( description );
+        }
+    }
+    else
+    {
+        if( !value.IsEmpty() )
+        {
+            xiphcomment->addField( description, wxStringToTString( value ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal )
+{
+    unsigned long Number;
+    disknum = 0;
+    disktotal = 0;
+    wxString DiskNum = diskstr.BeforeFirst( wxT( '/' ) );
+    if( !DiskNum.IsEmpty() )
+    {
+        if( DiskNum.ToULong( &Number ) )
+        {
+            disknum = Number;
+            if( diskstr.Find( wxT( "/" ) ) )
+            {
+                DiskNum = diskstr.AfterFirst( wxT( '/' ) );
+                if( DiskNum.ToULong( &Number ) )
+                {
+                    disktotal = Number;
+                }
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+void Mp4_CheckLabelFrame( TagLib::MP4::Tag * mp4tag, const char * description, const wxString &value )
+{
+    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
+    if( mp4tag->itemListMap().contains( description ) )
+    {
+        if( !value.IsEmpty() )
+        {
+            mp4tag->itemListMap()[ description ] = TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) );
+        }
+        else
+        {
+            mp4tag->itemListMap().erase( description );
+        }
+    }
+    else
+    {
+        if( !value.IsEmpty() )
+        {
+            mp4tag->itemListMap().insert( description, TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void Ape_CheckLabelFrame( TagLib::APE::Tag * apetag, const char * description, const wxString &value )
+{
+    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
+    if( apetag->itemListMap().contains( description ) )
+        apetag->removeItem( description );
+    if( !value.IsEmpty() )
+    {
+        apetag->addValue( description, wxStringToTString( value ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void ASF_CheckLabelFrame( ASF::Tag * asftag, const char * description, const wxString &value )
+{
+    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
+    if( asftag->attributeListMap().contains( description ) )
+        asftag->removeItem( description );
+    if( !value.IsEmpty() )
+    {
+        asftag->setAttribute( description, wxStringToTString( value ) );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::ReadExtendedTags( ID3v2::Tag * tag )
+{
+    if( tag )
+    {
+        if( tag->frameListMap().contains( "TPOS" ) )
+        {
+            m_Disk = TStringTowxString( tag->frameListMap()[ "TPOS" ].front()->toString() );
+        }
+
+        if( tag->frameListMap().contains( "TCOM" ) )
+        {
+            m_Composer = TStringTowxString( tag->frameListMap()[ "TCOM" ].front()->toString() );
+        }
+
+        if( tag->frameListMap().contains( "TPE2" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->frameListMap()[ "TPE2" ].front()->toString() );
+        }
+
+        if( tag->frameListMap().contains( "TCMP" ) )
+        {
+            m_Compilation = TStringTowxString( tag->frameListMap()[ "TCMP" ].front()->toString() ) == wxT( "1" );
+        }
+
+        TagLib::ID3v2::PopularimeterFrame * PopMFrame = NULL;
+
+        PopMFrame = GetPopM( tag, "Guayadeque" );
+        if( !PopMFrame )
+            PopMFrame = GetPopM( tag, "" );
+
+        if( PopMFrame )
+        {
+            m_Rating = guPopMToRating( PopMFrame->rating() );
+            m_PlayCount = PopMFrame->counter();
+        }
+
+
+        if( m_TrackLabels.Count() == 0 )
+        {
+            ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tag, "TRACK_LABELS" );
+            if( !Frame )
+                Frame = ID3v2::UserTextIdentificationFrame::find( tag, "guTRLABELS" );
+            if( Frame )
+            {
+                //guLogMessage( wxT( "*Track Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
+                // [guTRLABELS] guTRLABELS labels
+                StringList TrLabelsList = Frame->fieldList();
+                if( TrLabelsList.size() )
+                {
+                    m_TrackLabelsStr = TStringTowxString( TrLabelsList[ 1 ] );
+                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+                }
+            }
+        }
+
+        if( m_ArtistLabels.Count() == 0 )
+        {
+            ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tag, "ARTIST_LABELS" );
+            if( !Frame )
+                Frame = ID3v2::UserTextIdentificationFrame::find( tag, "guARLABELS" );
+            if( Frame )
+            {
+                //guLogMessage( wxT( "*Artist Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
+                StringList ArLabelsList = Frame->fieldList();
+                if( ArLabelsList.size() )
+                {
+                    m_ArtistLabelsStr = TStringTowxString( ArLabelsList[ 1 ] );
+                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+                }
+            }
+        }
+
+        if( m_AlbumLabels.Count() == 0 )
+        {
+            ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( tag, "ALBUM_LABELS" );
+            if( !Frame )
+                Frame = ID3v2::UserTextIdentificationFrame::find( tag, "guALLABELS" );
+            if( Frame )
+            {
+                //guLogMessage( wxT( "*Album Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
+                StringList AlLabelsList = Frame->fieldList();
+                if( AlLabelsList.size() )
+                {
+                    m_AlbumLabelsStr = TStringTowxString( AlLabelsList[ 1 ] );
+                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+                }
+            }
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::WriteExtendedTags( ID3v2::Tag * tag, const int changedflag )
+{
+    if( tag )
+    {
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            TagLib::ID3v2::TextIdentificationFrame * frame;
+            tag->removeFrames( "TPOS" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
+            frame->setText( wxStringToTString( m_Disk ) );
+            tag->addFrame( frame );
+
+            tag->removeFrames( "TCOM" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
+            frame->setText( wxStringToTString( m_Composer ) );
+            tag->addFrame( frame );
+
+            tag->removeFrames( "TPE2" );
+            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
+            frame->setText( wxStringToTString( m_AlbumArtist ) );
+            tag->addFrame( frame );
+
+            //tag->removeFrames( "TCMP" );
+            //frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
+            //frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+            //tag->addFrame( frame );
+
+            // I have found several TRCK fields in the mp3s
+            tag->removeFrames( "TRCK" );
+            tag->setTrack( m_Track );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_RATING )
+        {
+            guLogMessage( wxT( "Writing ratings and playcount..." ) );
+            TagLib::ID3v2::PopularimeterFrame * PopMFrame = GetPopM( tag, "Guayadeque" );
+            if( !PopMFrame )
+            {
+                PopMFrame = new TagLib::ID3v2::PopularimeterFrame();
+                tag->addFrame( PopMFrame );
+                PopMFrame->setEmail( "Guayadeque" );
+            }
+            PopMFrame->setRating( guRatingToPopM( m_Rating ) );
+            PopMFrame->setCounter( m_PlayCount );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            ID3v2_CheckLabelFrame( tag, "ARTIST_LABELS", m_ArtistLabelsStr );
+            ID3v2_CheckLabelFrame( tag, "ALBUM_LABELS", m_AlbumLabelsStr );
+            ID3v2_CheckLabelFrame( tag, "TRACK_LABELS", m_TrackLabelsStr );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::ReadExtendedTags( Ogg::XiphComment * tag )
+{
+    if( tag )
+    {
+        if( tag->fieldListMap().contains( "COMPOSER" ) )
+        {
+            m_Composer = TStringTowxString( tag->fieldListMap()["COMPOSER"].front() );
+        }
+
+        if( tag->fieldListMap().contains( "DISCNUMBER" ) )
+        {
+            m_Disk = TStringTowxString( tag->fieldListMap()["DISCNUMBER"].front() );
+        }
+
+        if( tag->fieldListMap().contains( "COMPILATION" ) )
+        {
+            m_Compilation = TStringTowxString( tag->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
+        }
+
+        if( tag->fieldListMap().contains( "ALBUMARTIST" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->fieldListMap()["ALBUMARTIST"].front() );
+        }
+        else if( tag->fieldListMap().contains( "ALBUM ARTIST" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->fieldListMap()["ALBUM ARTIST"].front() );
+        }
+
+        // Rating
+        if( tag->fieldListMap().contains( "RATING" ) )
+        {
+            long Rating = 0;
+            if( TStringTowxString( tag->fieldListMap()["RATING"].front() ).ToLong( &Rating ) )
+            {
+                if( Rating )
+                {
+                    if( Rating > 5 )
+                    {
+                        m_Rating = guPopMToRating( Rating );
+                    }
+                    else
+                    {
+                        m_Rating = Rating;
+                    }
+                }
+            }
+        }
+
+        if( tag->fieldListMap().contains( "PLAY_COUNTER" ) )
+        {
+            long PlayCount = 0;
+            if( TStringTowxString( tag->fieldListMap()["PLAY_COUNTER"].front() ).ToLong( &PlayCount ) )
+            {
+                m_PlayCount = PlayCount;
+            }
+        }
+
+        // Labels
+        if( m_TrackLabels.Count() == 0 )
+        {
+            if( tag->fieldListMap().contains( "TRACK_LABELS" ) )
+            {
+                m_TrackLabelsStr = TStringTowxString( tag->fieldListMap()["TRACK_LABELS"].front() );
+                //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
+                m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_ArtistLabels.Count() == 0 )
+        {
+            if( tag->fieldListMap().contains( "ARTIST_LABELS" ) )
+            {
+                m_ArtistLabelsStr = TStringTowxString( tag->fieldListMap()["ARTIST_LABELS"].front() );
+                //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
+                m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_AlbumLabels.Count() == 0 )
+        {
+            if( tag->fieldListMap().contains( "ALBUM_LABELS" ) )
+            {
+                m_AlbumLabelsStr = TStringTowxString( tag->fieldListMap()["ALBUM_LABELS"].front() );
+                //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
+                m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::WriteExtendedTags( Ogg::XiphComment * tag, const int changedflag )
+{
+    if( tag )
+    {
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            tag->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
+            tag->addField( "COMPOSER", wxStringToTString( m_Composer ) );
+            tag->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+            tag->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_RATING )
+        {
+            tag->addField( "RATING", wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
+            tag->addField( "PLAY_COUNTER", wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            Xiph_CheckLabelFrame( tag, "ARTIST_LABELS", m_ArtistLabelsStr );
+            Xiph_CheckLabelFrame( tag, "ALBUM_LABELS", m_AlbumLabelsStr );
+            Xiph_CheckLabelFrame( tag, "TRACK_LABELS", m_TrackLabelsStr );
+        }
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::ReadExtendedTags( MP4::Tag * tag )
+{
+    if( tag )
+    {
+        if( tag->itemListMap().contains( "aART" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->itemListMap()["aART"].toStringList().front() );
+        }
+
+        if( tag->itemListMap().contains( "\xA9wrt" ) )
+        {
+            m_Composer = TStringTowxString( tag->itemListMap()["\xa9wrt"].toStringList().front() );
+        }
+
+        if( tag->itemListMap().contains( "disk" ) )
+        {
+            m_Disk = wxString::Format( wxT( "%i/%i" ),
+                tag->itemListMap()["disk"].toIntPair().first,
+                tag->itemListMap()["disk"].toIntPair().second );
+
+        }
+
+        if( tag->itemListMap().contains( "cpil" ) )
+        {
+            m_Compilation = tag->itemListMap()["cpil"].toBool();
+        }
+
+        // Rating
+        if( tag->itemListMap().contains( "----:com.apple.iTunes:RATING" ) )
+        {
+            long Rating = 0;
+            if( TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:RATING"].toStringList().front() ).ToLong( &Rating ) )
+            {
+                if( Rating )
+                {
+                    if( Rating > 5 )
+                    {
+                        m_Rating = guPopMToRating( Rating );
+                    }
+                    else
+                    {
+                        m_Rating = Rating;
+                    }
+                }
+            }
+        }
+
+        if( tag->itemListMap().contains( "----:com.apple.iTunes:PLAY_COUNTER" ) )
+        {
+            long PlayCount = 0;
+            if( TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:PLAY_COUNTER"].toStringList().front()  ).ToLong( &PlayCount ) )
+            {
+                m_PlayCount = PlayCount;
+            }
+        }
+
+        // Labels
+        if( m_TrackLabels.Count() == 0 )
+        {
+            if( tag->itemListMap().contains( "----:com.apple.iTunes:TRACK_LABELS" ) )
+            {
+                m_TrackLabelsStr = TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:TRACK_LABELS"].toStringList().front() );
+                m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_ArtistLabels.Count() == 0 )
+        {
+            if( tag->itemListMap().contains( "----:com.apple.iTunes:ARTIST_LABELS" ) )
+            {
+                m_ArtistLabelsStr = TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:ARTIST_LABELS"].toStringList().front() );
+                m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_AlbumLabels.Count() == 0 )
+        {
+            if( tag->itemListMap().contains( "----:com.apple.iTunes:ALBUM_LABELS" ) )
+            {
+                m_AlbumLabelsStr = TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:ALBUM_LABELS"].toStringList().front() );
+                m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::WriteExtendedTags( MP4::Tag * tag, const int changedflag )
+{
+    if( tag )
+    {
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
+            tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
+            int first;
+            int second;
+            guStrDiskToDiskNum( m_Disk, first, second );
+            tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
+            tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_RATING )
+        {
+            tag->itemListMap()["----:com.apple.iTunes:RATING" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
+            tag->itemListMap()[ "----:com.apple.iTunes:PLAY_COUNTER" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            Mp4_CheckLabelFrame( tag, "----:com.apple.iTunes:ARTIST_LABELS", m_ArtistLabelsStr );
+            Mp4_CheckLabelFrame( tag, "----:com.apple.iTunes:ALBUM_LABELS", m_AlbumLabelsStr );
+            Mp4_CheckLabelFrame( tag, "----:com.apple.iTunes:TRACK_LABELS", m_TrackLabelsStr );
+        }
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::ReadExtendedTags( APE::Tag * tag )
+{
+    if( tag )
+    {
+        if( tag->itemListMap().contains( "COMPOSER" ) )
+        {
+            m_Composer = TStringTowxString( tag->itemListMap()["COMPOSER"].toStringList().front() );
+        }
+
+        if( tag->itemListMap().contains( "DISCNUMBER" ) )
+        {
+            m_Disk = TStringTowxString( tag->itemListMap()["DISCNUMBER"].toStringList().front() );
+        }
+
+        if( tag->itemListMap().contains( "COMPILATION" ) )
+        {
+            m_Compilation = TStringTowxString( tag->itemListMap()["COMPILATION"].toStringList().front() ) == wxT( "1" );
+        }
+
+        if( tag->itemListMap().contains( "ALBUM ARTIST" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->itemListMap()["ALBUM ARTIST"].toStringList().front() );
+        }
+        else if( tag->itemListMap().contains( "ALBUMARTIST" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->itemListMap()["ALBUMARTIST"].toStringList().front() );
+        }
+
+        // Rating
+        if( tag->itemListMap().contains( "RATING" ) )
+        {
+            long Rating = 0;
+            if( TStringTowxString( tag->itemListMap()["RATING"].toStringList().front() ).ToLong( &Rating ) )
+            {
+                if( Rating )
+                {
+                    if( Rating > 5 )
+                    {
+                        m_Rating = guPopMToRating( Rating );
+                    }
+                    else
+                    {
+                        m_Rating = Rating;
+                    }
+                }
+            }
+        }
+
+        if( tag->itemListMap().contains( "PLAY_COUNTER" ) )
+        {
+            long PlayCount = 0;
+            if( TStringTowxString( tag->itemListMap()["PLAY_COUNTER"].toStringList().front() ).ToLong( &PlayCount ) )
+            {
+                m_PlayCount = PlayCount;
+            }
+        }
+
+        // Labels
+        if( m_TrackLabels.Count() == 0 )
+        {
+            if( tag->itemListMap().contains( "TRACK_LABELS" ) )
+            {
+                m_TrackLabelsStr = TStringTowxString( tag->itemListMap()["TRACK_LABELS"].toStringList().front() );
+                //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
+                m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_ArtistLabels.Count() == 0 )
+        {
+            if( tag->itemListMap().contains( "ARTIST_LABELS" ) )
+            {
+                m_ArtistLabelsStr = TStringTowxString( tag->itemListMap()["ARTIST_LABELS"].toStringList().front() );
+                //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
+                m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_AlbumLabels.Count() == 0 )
+        {
+            if( tag->itemListMap().contains( "ALBUM_LABELS" ) )
+            {
+                m_AlbumLabelsStr = TStringTowxString( tag->itemListMap()["ALBUM_LABELS"].toStringList().front() );
+                //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
+                m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::WriteExtendedTags( APE::Tag * tag, const int changedflag )
+{
+    if( tag )
+    {
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            tag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
+            tag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
+            tag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
+            tag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_RATING )
+        {
+            tag->addValue( "RATING", wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
+            tag->addValue( "PLAY_COUNTER", wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            Ape_CheckLabelFrame( tag, "ARTIST_LABELS", m_ArtistLabelsStr );
+            Ape_CheckLabelFrame( tag, "ALBUM_LABELS", m_AlbumLabelsStr );
+            Ape_CheckLabelFrame( tag, "TRACK_LABELS", m_TrackLabelsStr );
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::ReadExtendedTags( ASF::Tag * tag )
+{
+    if( tag )
+    {
+        if( tag->attributeListMap().contains( "WM/PartOfSet" ) )
+        {
+            m_Disk = TStringTowxString( tag->attributeListMap()[ "WM/PartOfSet" ].front().toString() );
+        }
+
+        if( tag->attributeListMap().contains( "WM/Composer" ) )
+        {
+            m_Composer = TStringTowxString( tag->attributeListMap()[ "WM/Composer" ].front().toString() );
+        }
+
+        if( tag->attributeListMap().contains( "WM/AlbumArtist" ) )
+        {
+            m_AlbumArtist = TStringTowxString( tag->attributeListMap()[ "WM/AlbumArtist" ].front().toString() );
+        }
+
+        long Rating = 0;
+        if( tag->attributeListMap().contains( "WM/SharedUserRating" ) )
+        {
+            TStringTowxString( tag->attributeListMap()[ "WM/SharedUserRating" ].front().toString() ).ToLong( &Rating );
+        }
+
+        if( !Rating && tag->attributeListMap().contains( "Rating" ) )
+        {
+            TStringTowxString( tag->attributeListMap()[ "Rating" ].front().toString() ).ToLong( &Rating );
+        }
+
+        if( Rating )
+        {
+            if( Rating > 5 )
+            {
+                m_Rating = guWMRatingToRating( Rating );
+            }
+            else
+            {
+                m_Rating = Rating;
+            }
+        }
+
+
+        if( m_TrackLabels.Count() == 0 )
+        {
+            if( tag->attributeListMap().contains( "TRACK_LABELS" ) )
+            {
+                m_TrackLabelsStr = TStringTowxString( tag->attributeListMap()[ "TRACK_LABELS" ].front().toString() );
+                m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_ArtistLabels.Count() == 0 )
+        {
+            if( tag->attributeListMap().contains( "ARTIST_LABELS" ) )
+            {
+                m_ArtistLabelsStr = TStringTowxString( tag->attributeListMap()[ "ARTIST_LABELS" ].front().toString() );
+                m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        if( m_AlbumLabels.Count() == 0 )
+        {
+            if( tag->attributeListMap().contains( "ALBUM_LABELS" ) )
+            {
+                m_AlbumLabelsStr = TStringTowxString( tag->attributeListMap()[ "ALBUM_LABELS" ].front().toString() );
+                m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guTagInfo::WriteExtendedTags( ASF::Tag * tag, const int changedflag )
+{
+    if( tag )
+    {
+        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
+        {
+            tag->removeItem( "WM/PartOfSet" );
+            tag->setAttribute( "WM/PartOfSet", wxStringToTString( m_Disk ) );
+
+            tag->removeItem( "WM/Composer" );
+            tag->setAttribute( "WM/Composer", wxStringToTString( m_Composer ) );
+
+            tag->removeItem( "WM/AlbumArtist" );
+            tag->setAttribute( "WM/AlbumArtist", wxStringToTString( m_AlbumArtist ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_RATING )
+        {
+             tag->removeItem( "WM/SharedUserRating" );
+             int WMRatings[] = { 0, 0, 1, 25, 50, 75, 99 };
+             tag->setAttribute( "WM/SharedUserRating", wxStringToTString( wxString::Format( wxT( "%i" ), WMRatings[ m_Rating + 1 ] ) ) );
+        }
+
+        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
+        {
+            // The Labels
+            ASF_CheckLabelFrame( tag, "ARTIST_LABELS", m_ArtistLabelsStr );
+            ASF_CheckLabelFrame( tag, "ALBUM_LABELS", m_AlbumLabelsStr );
+            ASF_CheckLabelFrame( tag, "TRACK_LABELS", m_TrackLabelsStr );
+        }
+        return true;
+    }
+    return false;
+}
 
 
 
@@ -824,90 +1581,7 @@ bool guMp3TagInfo::Read( void )
         // If its a ID3v2 Tag try to load the labels
         if( m_TagId3v2 )
         {
-            if( m_TagId3v2->frameListMap().contains( "TPOS" ) )
-            {
-                m_Disk = TStringTowxString( m_TagId3v2->frameListMap()[ "TPOS" ].front()->toString() );
-            }
-
-            if( m_TagId3v2->frameListMap().contains( "TCOM" ) )
-            {
-                m_Composer = TStringTowxString( m_TagId3v2->frameListMap()[ "TCOM" ].front()->toString() );
-            }
-
-            if( m_TagId3v2->frameListMap().contains( "TPE2" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_TagId3v2->frameListMap()[ "TPE2" ].front()->toString() );
-            }
-
-            if( m_TagId3v2->frameListMap().contains( "TCMP" ) )
-            {
-                m_Compilation = TStringTowxString( m_TagId3v2->frameListMap()[ "TCMP" ].front()->toString() ) == wxT( "1" );
-            }
-
-            TagLib::ID3v2::PopularimeterFrame * PopMFrame = NULL;
-
-            PopMFrame = GetPopM( m_TagId3v2, "Guayadeque" );
-            if( !PopMFrame )
-                PopMFrame = GetPopM( m_TagId3v2, "" );
-
-            if( PopMFrame )
-            {
-                m_Rating = guPopMToRating( PopMFrame->rating() );
-                m_PlayCount = PopMFrame->counter();
-            }
-
-
-            if( m_TrackLabels.Count() == 0 )
-            {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "TRACK_LABELS" );
-                if( !Frame )
-                    Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guTRLABELS" );
-                if( Frame )
-                {
-                    //guLogMessage( wxT( "*Track Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    // [guTRLABELS] guTRLABELS labels
-                    StringList TrLabelsList = Frame->fieldList();
-                    if( TrLabelsList.size() )
-                    {
-                        m_TrackLabelsStr = TStringTowxString( TrLabelsList[ 1 ] );
-                        m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                    }
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "ARTIST_LABELS" );
-                if( !Frame )
-                    Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guARLABELS" );
-                if( Frame )
-                {
-                    //guLogMessage( wxT( "*Artist Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    StringList ArLabelsList = Frame->fieldList();
-                    if( ArLabelsList.size() )
-                    {
-                        m_ArtistLabelsStr = TStringTowxString( ArLabelsList[ 1 ] );
-                        m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                    }
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "ALBUM_LABELS" );
-                if( !Frame )
-                    Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guALLABELS" );
-                if( Frame )
-                {
-                    //guLogMessage( wxT( "*Album Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    StringList AlLabelsList = Frame->fieldList();
-                    if( AlLabelsList.size() )
-                    {
-                        m_AlbumLabelsStr = TStringTowxString( AlLabelsList[ 1 ] );
-                        m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                    }
-                }
-            }
+            ReadExtendedTags( m_TagId3v2 );
         }
     }
     else
@@ -919,79 +1593,11 @@ bool guMp3TagInfo::Read( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void ID3v2_CheckLabelFrame( ID3v2::Tag * tagv2, const char * description, const wxString &value )
-{
-    ID3v2::UserTextIdentificationFrame * frame;
-    //guLogMessage( wxT( "USERTEXT[ '%s' ] = '%s'" ), wxString( description, wxConvUTF8 ).c_str(), value.c_str() );
-    frame = ID3v2::UserTextIdentificationFrame::find( tagv2, description );
-    if( !frame )
-    {
-        frame = new ID3v2::UserTextIdentificationFrame( TagLib::String::UTF8 );
-        tagv2->addFrame( frame );
-        //frame->setDescription( TagLib::String( description, TagLib::String::UTF8 ) );
-        frame->setDescription( description );
-    }
-
-    if( frame )
-    {
-        frame->setText( wxStringToTString( value ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 bool guMp3TagInfo::Write( const int changedflag )
 {
     if( m_TagId3v2 )
     {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            TagLib::ID3v2::TextIdentificationFrame * frame;
-            m_TagId3v2->removeFrames( "TPOS" );
-            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
-            frame->setText( wxStringToTString( m_Disk ) );
-            m_TagId3v2->addFrame( frame );
-
-            m_TagId3v2->removeFrames( "TCOM" );
-            frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
-            frame->setText( wxStringToTString( m_Composer ) );
-            m_TagId3v2->addFrame( frame );
-
-            m_TagId3v2->removeFrames( "TPE2" );
-            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
-            frame->setText( wxStringToTString( m_AlbumArtist ) );
-            m_TagId3v2->addFrame( frame );
-
-            //m_TagId3v2->removeFrames( "TCMP" );
-            //frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
-            //frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-            //m_TagId3v2->addFrame( frame );
-
-            // I have found several TRCK fields in the mp3s
-            m_TagId3v2->removeFrames( "TRCK" );
-            m_TagId3v2->setTrack( m_Track );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            guLogMessage( wxT( "Writing ratings and playcount..." ) );
-            TagLib::ID3v2::PopularimeterFrame * PopMFrame = GetPopM( m_TagId3v2, "Guayadeque" );
-            if( !PopMFrame )
-            {
-                PopMFrame = new TagLib::ID3v2::PopularimeterFrame();
-                m_TagId3v2->addFrame( PopMFrame );
-                PopMFrame->setEmail( "Guayadeque" );
-            }
-            PopMFrame->setRating( guRatingToPopM( m_Rating ) );
-            PopMFrame->setCounter( m_PlayCount );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            ID3v2_CheckLabelFrame( m_TagId3v2, "ARTIST_LABELS", m_ArtistLabelsStr );
-            ID3v2_CheckLabelFrame( m_TagId3v2, "ALBUM_LABELS", m_AlbumLabelsStr );
-            ID3v2_CheckLabelFrame( m_TagId3v2, "TRACK_LABELS", m_TrackLabelsStr );
-        }
+        WriteExtendedTags( m_TagId3v2, changedflag );
     }
 
     return guTagInfo::Write( changedflag );
@@ -1079,149 +1685,16 @@ bool guFlacTagInfo::Read( void )
 {
     if( guTagInfo::Read() )
     {
-        if( m_XiphComment )
-        {
-            if( m_XiphComment->fieldListMap().contains( "COMPOSER" ) )
-            {
-                m_Composer = TStringTowxString( m_XiphComment->fieldListMap()["COMPOSER"].front() );
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "DISCNUMBER" ) )
-            {
-                m_Disk = TStringTowxString( m_XiphComment->fieldListMap()["DISCNUMBER"].front() );
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "COMPILATION" ) )
-            {
-                m_Compilation = TStringTowxString( m_XiphComment->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "ALBUMARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUMARTIST"].front() );
-            }
-            else if( m_XiphComment->fieldListMap().contains( "ALBUM ARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUM ARTIST"].front() );
-            }
-
-            // Rating
-            if( m_XiphComment->fieldListMap().contains( "RATING" ) )
-            {
-                long Rating = 0;
-                if( TStringTowxString( m_XiphComment->fieldListMap()["RATING"].front() ).ToLong( &Rating ) )
-                {
-                    if( Rating )
-                    {
-                        if( Rating > 5 )
-                        {
-                            m_Rating = guPopMToRating( Rating );
-                        }
-                        else
-                        {
-                            m_Rating = Rating;
-                        }
-                    }
-                }
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "PLAY_COUNTER" ) )
-            {
-                long PlayCount = 0;
-                if( TStringTowxString( m_XiphComment->fieldListMap()["PLAY_COUNTER"].front() ).ToLong( &PlayCount ) )
-                {
-                    m_PlayCount = PlayCount;
-                }
-            }
-
-            // Labels
-            if( m_TrackLabels.Count() == 0 )
-            {
-                if( m_XiphComment->fieldListMap().contains( "TRACK_LABELS" ) )
-                {
-                    m_TrackLabelsStr = TStringTowxString( m_XiphComment->fieldListMap()["TRACK_LABELS"].front() );
-                    //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                if( m_XiphComment->fieldListMap().contains( "ARTIST_LABELS" ) )
-                {
-                    m_ArtistLabelsStr = TStringTowxString( m_XiphComment->fieldListMap()["ARTIST_LABELS"].front() );
-                    //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                if( m_XiphComment->fieldListMap().contains( "ALBUM_LABELS" ) )
-                {
-                    m_AlbumLabelsStr = TStringTowxString( m_XiphComment->fieldListMap()["ALBUM_LABELS"].front() );
-                    //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            return true;
-        }
+        ReadExtendedTags( m_XiphComment );
+        return true;
     }
     return false;
 }
 
 // -------------------------------------------------------------------------------- //
-void Xiph_CheckLabelFrame( Ogg::XiphComment * xiphcomment, const char * description, const wxString &value )
-{
-    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
-    if( xiphcomment->fieldListMap().contains( description ) )
-    {
-        if( !value.IsEmpty() )
-        {
-            xiphcomment->addField( description, wxStringToTString( value ) );
-        }
-        else
-        {
-            xiphcomment->removeField( description );
-        }
-    }
-    else
-    {
-        if( !value.IsEmpty() )
-        {
-            xiphcomment->addField( description, wxStringToTString( value ) );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 bool guFlacTagInfo::Write( const int changedflag )
 {
-    if( m_XiphComment )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
-            m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
-            m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-            m_XiphComment->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            m_XiphComment->addField( "RATING", wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
-            m_XiphComment->addField( "PLAY_COUNTER", wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            Xiph_CheckLabelFrame( m_XiphComment, "ARTIST_LABELS", m_ArtistLabelsStr );
-            Xiph_CheckLabelFrame( m_XiphComment, "ALBUM_LABELS", m_AlbumLabelsStr );
-            Xiph_CheckLabelFrame( m_XiphComment, "TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
+    WriteExtendedTags( m_XiphComment, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
@@ -1429,94 +1902,8 @@ bool guOggTagInfo::Read( void )
 {
     if( guTagInfo::Read() )
     {
-        if( m_XiphComment )
-        {
-            if( m_XiphComment->fieldListMap().contains( "COMPOSER" ) )
-            {
-                m_Composer = TStringTowxString( m_XiphComment->fieldListMap()["COMPOSER"].front() );
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "DISCNUMBER" ) )
-            {
-                m_Disk = TStringTowxString( m_XiphComment->fieldListMap()["DISCNUMBER"].front() );
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "COMPILATION" ) )
-            {
-                m_Compilation = TStringTowxString( m_XiphComment->fieldListMap()["COMPILATION"].front() ) == wxT( "1" );
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "ALBUMARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUMARTIST"].front() );
-            }
-            else if( m_XiphComment->fieldListMap().contains( "ALBUM ARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_XiphComment->fieldListMap()["ALBUM ARTIST"].front() );
-            }
-
-            // Rating
-            if( m_XiphComment->fieldListMap().contains( "RATING" ) )
-            {
-                long Rating = 0;
-                if( TStringTowxString( m_XiphComment->fieldListMap()["RATING"].front() ).ToLong( &Rating ) )
-                {
-                    if( Rating )
-                    {
-                        if( Rating > 5 )
-                        {
-                            m_Rating = guPopMToRating( Rating );
-                        }
-                        else
-                        {
-                            m_Rating = Rating;
-                        }
-                    }
-                }
-            }
-
-            if( m_XiphComment->fieldListMap().contains( "PLAY_COUNTER" ) )
-            {
-                long PlayCount = 0;
-                if( TStringTowxString( m_XiphComment->fieldListMap()["PLAY_COUNTER"].front() ).ToLong( &PlayCount ) )
-                {
-                    m_PlayCount = PlayCount;
-                }
-            }
-
-            // Labels
-            if( m_TrackLabels.Count() == 0 )
-            {
-                if( m_XiphComment->fieldListMap().contains( "TRACK_LABELS" ) )
-                {
-                    m_TrackLabelsStr = TStringTowxString( m_XiphComment->fieldListMap()["TRACK_LABELS"].front() );
-                    //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                if( m_XiphComment->fieldListMap().contains( "ARTIST_LABELS" ) )
-                {
-                    m_ArtistLabelsStr = TStringTowxString( m_XiphComment->fieldListMap()["ARTIST_LABELS"].front() );
-                    //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                if( m_XiphComment->fieldListMap().contains( "ALBUM_LABELS" ) )
-                {
-                    m_AlbumLabelsStr = TStringTowxString( m_XiphComment->fieldListMap()["ALBUM_LABELS"].front() );
-                    //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            return true;
-        }
+        ReadExtendedTags( m_XiphComment );
+        return true;
     }
     return false;
 }
@@ -1524,30 +1911,7 @@ bool guOggTagInfo::Read( void )
 // -------------------------------------------------------------------------------- //
 bool guOggTagInfo::Write( const int changedflag )
 {
-    if( m_XiphComment )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            m_XiphComment->addField( "DISCNUMBER", wxStringToTString( m_Disk ) );
-            m_XiphComment->addField( "COMPOSER", wxStringToTString( m_Composer ) );
-            m_XiphComment->addField( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-            m_XiphComment->addField( "ALBUMARTIST", wxStringToTString(  m_AlbumArtist ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            m_XiphComment->addField( "RATING", wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
-            m_XiphComment->addField( "PLAY_COUNTER", wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            Xiph_CheckLabelFrame( m_XiphComment, "ARTIST_LABELS", m_ArtistLabelsStr );
-            Xiph_CheckLabelFrame( m_XiphComment, "ALBUM_LABELS", m_AlbumLabelsStr );
-            Xiph_CheckLabelFrame( m_XiphComment, "TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
+    WriteExtendedTags( m_XiphComment, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
@@ -1613,176 +1977,16 @@ bool guMp4TagInfo::Read( void )
 {
     if( guTagInfo::Read() )
     {
-        if( m_Mp4Tag )
-        {
-            if( m_Mp4Tag->itemListMap().contains( "aART" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_Mp4Tag->itemListMap()["aART"].toStringList().front() );
-            }
-
-            if( m_Mp4Tag->itemListMap().contains( "\xA9wrt" ) )
-            {
-                m_Composer = TStringTowxString( m_Mp4Tag->itemListMap()["\xa9wrt"].toStringList().front() );
-            }
-
-            if( m_Mp4Tag->itemListMap().contains( "disk" ) )
-            {
-                m_Disk = wxString::Format( wxT( "%i/%i" ),
-                    m_Mp4Tag->itemListMap()["disk"].toIntPair().first,
-                    m_Mp4Tag->itemListMap()["disk"].toIntPair().second );
-
-            }
-
-            if( m_Mp4Tag->itemListMap().contains( "cpil" ) )
-            {
-                m_Compilation = m_Mp4Tag->itemListMap()["cpil"].toBool();
-            }
-
-            // Rating
-            if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:RATING" ) )
-            {
-                long Rating = 0;
-                if( TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:RATING"].toStringList().front() ).ToLong( &Rating ) )
-                {
-                    if( Rating )
-                    {
-                        if( Rating > 5 )
-                        {
-                            m_Rating = guPopMToRating( Rating );
-                        }
-                        else
-                        {
-                            m_Rating = Rating;
-                        }
-                    }
-                }
-            }
-
-            if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:PLAY_COUNTER" ) )
-            {
-                long PlayCount = 0;
-                if( TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:PLAY_COUNTER"].toStringList().front()  ).ToLong( &PlayCount ) )
-                {
-                    m_PlayCount = PlayCount;
-                }
-            }
-
-            // Labels
-            if( m_TrackLabels.Count() == 0 )
-            {
-                if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:TRACK_LABELS" ) )
-                {
-                    m_TrackLabelsStr = TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:TRACK_LABELS"].toStringList().front() );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:ARTIST_LABELS" ) )
-                {
-                    m_ArtistLabelsStr = TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:ARTIST_LABELS"].toStringList().front() );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                if( m_Mp4Tag->itemListMap().contains( "----:com.apple.iTunes:ALBUM_LABELS" ) )
-                {
-                    m_AlbumLabelsStr = TStringTowxString( m_Mp4Tag->itemListMap()["----:com.apple.iTunes:ALBUM_LABELS"].toStringList().front() );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-
-
-
-        }
+        ReadExtendedTags( m_Mp4Tag );
         return true;
     }
     return false;
 }
 
 // -------------------------------------------------------------------------------- //
-bool guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal )
-{
-    unsigned long Number;
-    disknum = 0;
-    disktotal = 0;
-    wxString DiskNum = diskstr.BeforeFirst( wxT( '/' ) );
-    if( !DiskNum.IsEmpty() )
-    {
-        if( DiskNum.ToULong( &Number ) )
-        {
-            disknum = Number;
-            if( diskstr.Find( wxT( "/" ) ) )
-            {
-                DiskNum = diskstr.AfterFirst( wxT( '/' ) );
-                if( DiskNum.ToULong( &Number ) )
-                {
-                    disktotal = Number;
-                }
-            }
-            return true;
-        }
-    }
-    return false;
-}
-
-// -------------------------------------------------------------------------------- //
-void Mp4_CheckLabelFrame( TagLib::MP4::Tag * mp4tag, const char * description, const wxString &value )
-{
-    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
-    if( mp4tag->itemListMap().contains( description ) )
-    {
-        if( !value.IsEmpty() )
-        {
-            mp4tag->itemListMap()[ description ] = TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) );
-        }
-        else
-        {
-            mp4tag->itemListMap().erase( description );
-        }
-    }
-    else
-    {
-        if( !value.IsEmpty() )
-        {
-            mp4tag->itemListMap().insert( description, TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) ) );
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::Write( const int changedflag )
 {
-    if( m_Mp4Tag )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            m_Mp4Tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
-            m_Mp4Tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
-            int first;
-            int second;
-            guStrDiskToDiskNum( m_Disk, first, second );
-            m_Mp4Tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
-            m_Mp4Tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            m_Mp4Tag->itemListMap()["----:com.apple.iTunes:RATING" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
-            m_Mp4Tag->itemListMap()[ "----:com.apple.iTunes:PLAY_COUNTER" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            Mp4_CheckLabelFrame( m_Mp4Tag, "----:com.apple.iTunes:ARTIST_LABELS", m_ArtistLabelsStr );
-            Mp4_CheckLabelFrame( m_Mp4Tag, "----:com.apple.iTunes:ALBUM_LABELS", m_AlbumLabelsStr );
-            Mp4_CheckLabelFrame( m_Mp4Tag, "----:com.apple.iTunes:TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
+    WriteExtendedTags( m_Mp4Tag, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
@@ -1851,136 +2055,16 @@ bool guMpcTagInfo::Read( void )
 {
     if( guTagInfo::Read() )
     {
-        if( m_ApeTag )
-        {
-            if( m_ApeTag->itemListMap().contains( "COMPOSER" ) )
-            {
-                m_Composer = TStringTowxString( m_ApeTag->itemListMap()["COMPOSER"].toStringList().front() );
-            }
-
-            if( m_ApeTag->itemListMap().contains( "DISCNUMBER" ) )
-            {
-                m_Disk = TStringTowxString( m_ApeTag->itemListMap()["DISCNUMBER"].toStringList().front() );
-            }
-
-            if( m_ApeTag->itemListMap().contains( "COMPILATION" ) )
-            {
-                m_Compilation = TStringTowxString( m_ApeTag->itemListMap()["COMPILATION"].toStringList().front() ) == wxT( "1" );
-            }
-
-            if( m_ApeTag->itemListMap().contains( "ALBUM ARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUM ARTIST"].toStringList().front() );
-            }
-            else if( m_ApeTag->itemListMap().contains( "ALBUMARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUMARTIST"].toStringList().front() );
-            }
-
-            // Rating
-            if( m_ApeTag->itemListMap().contains( "RATING" ) )
-            {
-                long Rating = 0;
-                if( TStringTowxString( m_ApeTag->itemListMap()["RATING"].toStringList().front() ).ToLong( &Rating ) )
-                {
-                    if( Rating )
-                    {
-                        if( Rating > 5 )
-                        {
-                            m_Rating = guPopMToRating( Rating );
-                        }
-                        else
-                        {
-                            m_Rating = Rating;
-                        }
-                    }
-                }
-            }
-
-            if( m_ApeTag->itemListMap().contains( "PLAY_COUNTER" ) )
-            {
-                long PlayCount = 0;
-                if( TStringTowxString( m_ApeTag->itemListMap()["PLAY_COUNTER"].toStringList().front() ).ToLong( &PlayCount ) )
-                {
-                    m_PlayCount = PlayCount;
-                }
-            }
-
-            // Labels
-            if( m_TrackLabels.Count() == 0 )
-            {
-                if( m_ApeTag->itemListMap().contains( "TRACK_LABELS" ) )
-                {
-                    m_TrackLabelsStr = TStringTowxString( m_ApeTag->itemListMap()["TRACK_LABELS"].toStringList().front() );
-                    //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                if( m_ApeTag->itemListMap().contains( "ARTIST_LABELS" ) )
-                {
-                    m_ArtistLabelsStr = TStringTowxString( m_ApeTag->itemListMap()["ARTIST_LABELS"].toStringList().front() );
-                    //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                if( m_ApeTag->itemListMap().contains( "ALBUM_LABELS" ) )
-                {
-                    m_AlbumLabelsStr = TStringTowxString( m_ApeTag->itemListMap()["ALBUM_LABELS"].toStringList().front() );
-                    //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-        }
+        ReadExtendedTags( m_ApeTag );
         return true;
     }
     return false;
 }
 
 // -------------------------------------------------------------------------------- //
-void Ape_CheckLabelFrame( TagLib::APE::Tag * apetag, const char * description, const wxString &value )
-{
-    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
-    if( apetag->itemListMap().contains( description ) )
-        apetag->removeItem( description );
-    if( !value.IsEmpty() )
-    {
-        apetag->addValue( description, wxStringToTString( value ) );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 bool guMpcTagInfo::Write( const int changedflag )
 {
-    if( m_ApeTag )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            m_ApeTag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
-            m_ApeTag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
-            m_ApeTag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-            m_ApeTag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            m_ApeTag->addValue( "RATING", wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
-            m_ApeTag->addValue( "PLAY_COUNTER", wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            Ape_CheckLabelFrame( m_ApeTag, "ARTIST_LABELS", m_ArtistLabelsStr );
-            Ape_CheckLabelFrame( m_ApeTag, "ALBUM_LABELS", m_AlbumLabelsStr );
-            Ape_CheckLabelFrame( m_ApeTag, "TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
+    WriteExtendedTags( m_ApeTag, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
@@ -2029,92 +2113,7 @@ bool guWavPackTagInfo::Read( void )
 {
     if( guTagInfo::Read() )
     {
-        if( m_ApeTag )
-        {
-            if( m_ApeTag->itemListMap().contains( "COMPOSER" ) )
-            {
-                m_Composer = TStringTowxString( m_ApeTag->itemListMap()["COMPOSER"].toStringList().front() );
-            }
-
-            if( m_ApeTag->itemListMap().contains( "DISCNUMBER" ) )
-            {
-                m_Disk = TStringTowxString( m_ApeTag->itemListMap()["DISCNUMBER"].toStringList().front() );
-            }
-
-            if( m_ApeTag->itemListMap().contains( "COMPILATION" ) )
-            {
-                m_Compilation = TStringTowxString( m_ApeTag->itemListMap()["COMPILATION"].toStringList().front() ) == wxT( "1" );
-            }
-
-            if( m_ApeTag->itemListMap().contains( "ALBUM ARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUM ARTIST"].toStringList().front() );
-            }
-            else if( m_ApeTag->itemListMap().contains( "ALBUMARTIST" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_ApeTag->itemListMap()["ALBUMARTIST"].toStringList().front() );
-            }
-
-            // Rating
-            if( m_ApeTag->itemListMap().contains( "RATING" ) )
-            {
-                long Rating = 0;
-                if( TStringTowxString( m_ApeTag->itemListMap()["RATING"].toStringList().front() ).ToLong( &Rating ) )
-                {
-                    if( Rating )
-                    {
-                        if( Rating > 5 )
-                        {
-                            m_Rating = guPopMToRating( Rating );
-                        }
-                        else
-                        {
-                            m_Rating = Rating;
-                        }
-                    }
-                }
-            }
-
-            if( m_ApeTag->itemListMap().contains( "PLAY_COUNTER" ) )
-            {
-                long PlayCount = 0;
-                if( TStringTowxString( m_ApeTag->itemListMap()["PLAY_COUNTER"].toStringList().front() ).ToLong( &PlayCount ) )
-                {
-                    m_PlayCount = PlayCount;
-                }
-            }
-
-            // Labels
-            if( m_TrackLabels.Count() == 0 )
-            {
-                if( m_ApeTag->itemListMap().contains( "TRACK_LABELS" ) )
-                {
-                    m_TrackLabelsStr = TStringTowxString( m_ApeTag->itemListMap()["TRACK_LABELS"].toStringList().front() );
-                    //guLogMessage( wxT( "*Track Label: '%s'\n" ), m_TrackLabelsStr.c_str() );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                if( m_ApeTag->itemListMap().contains( "ARTIST_LABELS" ) )
-                {
-                    m_ArtistLabelsStr = TStringTowxString( m_ApeTag->itemListMap()["ARTIST_LABELS"].toStringList().front() );
-                    //guLogMessage( wxT( "*Artist Label: '%s'\n" ), m_ArtistLabelsStr.c_str() );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                if( m_ApeTag->itemListMap().contains( "ALBUM_LABELS" ) )
-                {
-                    m_AlbumLabelsStr = TStringTowxString( m_ApeTag->itemListMap()["ALBUM_LABELS"].toStringList().front() );
-                    //guLogMessage( wxT( "*Album Label: '%s'\n" ), m_AlbumLabelsStr.c_str() );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-        }
+        ReadExtendedTags( m_ApeTag );
         return true;
     }
     return false;
@@ -2123,30 +2122,7 @@ bool guWavPackTagInfo::Read( void )
 // -------------------------------------------------------------------------------- //
 bool guWavPackTagInfo::Write( const int changedflag )
 {
-    if( m_ApeTag )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            m_ApeTag->addValue( "COMPOSER", wxStringToTString( m_Composer ) );
-            m_ApeTag->addValue( "DISCNUMBER", wxStringToTString( m_Disk ) );
-            m_ApeTag->addValue( "COMPILATION", wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-            m_ApeTag->addValue( "ALBUM ARTIST", wxStringToTString( m_AlbumArtist ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            m_ApeTag->addValue( "RATING", wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
-            m_ApeTag->addValue( "PLAY_COUNTER", wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            Ape_CheckLabelFrame( m_ApeTag, "ARTIST_LABELS", m_ArtistLabelsStr );
-            Ape_CheckLabelFrame( m_ApeTag, "ALBUM_LABELS", m_AlbumLabelsStr );
-            Ape_CheckLabelFrame( m_ApeTag, "TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
+    WriteExtendedTags( m_ApeTag, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
@@ -2191,8 +2167,16 @@ bool guWavPackTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 // guApeTagInfo
 // -------------------------------------------------------------------------------- //
-guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo(), m_ApeFile( filename )
+guApeTagInfo::guApeTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
+    m_TagId3v1 = NULL;
+    m_ApeTag = NULL;
+    if( m_TagFile && !m_TagFile->isNull() )
+    {
+        m_TagId3v1 = ( ( TagLib::APE::File * ) m_TagFile->file() )->ID3v1Tag();
+
+        m_ApeTag = ( ( TagLib::APE::File * ) m_TagFile->file() )->APETag();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2203,30 +2187,10 @@ guApeTagInfo::~guApeTagInfo()
 // -------------------------------------------------------------------------------- //
 bool guApeTagInfo::Read( void )
 {
-    guApeTag * Tag = m_ApeFile.GetApeTag();
-    if( Tag )
+    if( guTagInfo::Read() )
     {
-        m_TrackName = Tag->GetTitle();
-        m_ArtistName = Tag->GetArtist();
-        m_AlbumName = Tag->GetAlbum();
-        m_GenreName = Tag->GetGenre();
-        m_Track = Tag->GetTrack();
-        m_Year = Tag->GetYear();
-        m_Length = m_ApeFile.GetTrackLength();
-        m_Bitrate = m_ApeFile.GetBitRate();
-
-        m_Comments = Tag->GetItemValue( APE_TAG_KEY_COMMENT );
-        m_Composer = Tag->GetItemValue( APE_TAG_KEY_COMPOSER );
-        m_Disk = Tag->GetItemValue( APE_TAG_KEY_MEDIA );
-        m_AlbumArtist = Tag->GetItemValue( APE_TAG_KEY_ALBUMARTIST );
-        if( m_AlbumArtist.IsEmpty() )
-            m_AlbumArtist = Tag->GetItemValue( wxT( "AlbumArtist" ) );
-
+        ReadExtendedTags( m_ApeTag );
         return true;
-    }
-    else
-    {
-        guLogError( wxT( "Ape file with no tags found" ) );
     }
     return false;
 }
@@ -2234,24 +2198,8 @@ bool guApeTagInfo::Read( void )
 // -------------------------------------------------------------------------------- //
 bool guApeTagInfo::Write( const int changedflag )
 {
-    guApeTag * Tag = m_ApeFile.GetApeTag();
-    if( Tag && ( changedflag & guTRACK_CHANGED_DATA_TAGS ) )
-    {
-        Tag->SetTitle( m_TrackName );
-        Tag->SetArtist( m_ArtistName );
-        Tag->SetAlbum( m_AlbumName );
-        Tag->SetGenre( m_GenreName );
-        Tag->SetTrack( m_Track );
-        Tag->SetYear( m_Year );
-        Tag->SetItem( APE_TAG_KEY_COMMENT, m_Comments );
-        Tag->SetItem( APE_TAG_KEY_COMPOSER, m_Composer );
-        Tag->SetItem( APE_TAG_KEY_MEDIA, m_Disk );
-        Tag->SetItem( APE_TAG_KEY_ALBUMARTIST, m_AlbumArtist );
-
-        m_ApeFile.WriteApeTag();
-        return true;
-    }
-    return false;
+    WriteExtendedTags( m_ApeTag, changedflag );
+    return guTagInfo::Write( changedflag );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2263,22 +2211,13 @@ bool guApeTagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guApeTagInfo::GetLyrics( void )
 {
-    guApeTag * Tag = m_ApeFile.GetApeTag();
-    if( Tag )
-        return Tag->GetItemValue( APE_TAG_KEY_LYRICS );
-    return wxEmptyString;
+    return GetApeLyrics( m_ApeTag );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guApeTagInfo::SetLyrics( const wxString &lyrics )
 {
-    guApeTag * Tag = m_ApeFile.GetApeTag();
-    if( Tag )
-    {
-        Tag->SetItem( APE_TAG_KEY_LYRICS, lyrics );
-        return m_ApeFile.WriteApeTag();
-    }
-    return false;
+    return SetApeLyrics( m_ApeTag, lyrics );
 }
 
 
@@ -2309,146 +2248,20 @@ bool guTrueAudioTagInfo::Read( void )
     if( guTagInfo::Read() )
     {
         // If its a ID3v2 Tag try to load the labels
-        if( m_TagId3v2 )
-        {
-            if( m_TagId3v2->frameListMap().contains( "TPOS" ) )
-            {
-                m_Disk = TStringTowxString( m_TagId3v2->frameListMap()[ "TPOS" ].front()->toString() );
-            }
-
-            if( m_TagId3v2->frameListMap().contains( "TCOM" ) )
-            {
-                m_Composer = TStringTowxString( m_TagId3v2->frameListMap()[ "TCOM" ].front()->toString() );
-            }
-
-            if( m_TagId3v2->frameListMap().contains( "TPE2" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_TagId3v2->frameListMap()[ "TPE2" ].front()->toString() );
-            }
-
-            if( m_TagId3v2->frameListMap().contains( "TCMP" ) )
-            {
-                m_Compilation = TStringTowxString( m_TagId3v2->frameListMap()[ "TCMP" ].front()->toString() ) == wxT( "1" );
-            }
-
-            TagLib::ID3v2::PopularimeterFrame * PopMFrame = NULL;
-
-            PopMFrame = GetPopM( m_TagId3v2, "Guayadeque" );
-            if( !PopMFrame )
-                PopMFrame = GetPopM( m_TagId3v2, "" );
-
-            if( PopMFrame )
-            {
-                m_Rating = guPopMToRating( PopMFrame->rating() );
-                m_PlayCount = PopMFrame->counter();
-            }
-
-
-            if( m_TrackLabels.Count() == 0 )
-            {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "TRACK_LABELS" );
-                if( !Frame )
-                    Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guTRLABELS" );
-                if( Frame )
-                {
-                    //guLogMessage( wxT( "*Track Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    // [guTRLABELS] guTRLABELS labels
-                    m_TrackLabelsStr = TStringTowxString( Frame->fieldList()[ 1 ] );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "ARTIST_LABELS" );
-                if( !Frame )
-                    Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guARLABELS" );
-                if( Frame )
-                {
-                    //guLogMessage( wxT( "*Artist Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    m_ArtistLabelsStr = TStringTowxString( Frame->fieldList()[ 1 ] );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                ID3v2::UserTextIdentificationFrame * Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "ALBUM_LABELS" );
-                if( !Frame )
-                    Frame = ID3v2::UserTextIdentificationFrame::find( m_TagId3v2, "guALLABELS" );
-                if( Frame )
-                {
-                    //guLogMessage( wxT( "*Album Label: '%s'" ), TStringTowxString( Frame->fieldList()[ 1 ] ).c_str() );
-                    m_AlbumLabelsStr = TStringTowxString( Frame->fieldList()[ 1 ] );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-        }
+        ReadExtendedTags( m_TagId3v2 );
+        return true;
     }
     else
     {
       guLogError( wxT( "Could not read tags from file '%s'" ), m_FileName.c_str() );
     }
-
-    return true;
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guTrueAudioTagInfo::Write( const int changedflag )
 {
-    if( m_TagId3v2 )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            TagLib::ID3v2::TextIdentificationFrame * frame;
-            m_TagId3v2->removeFrames( "TPOS" );
-            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPOS" );
-            frame->setText( wxStringToTString( m_Disk ) );
-            m_TagId3v2->addFrame( frame );
-
-            m_TagId3v2->removeFrames( "TCOM" );
-            frame = new TagLib::ID3v2::TextIdentificationFrame( "TCOM" );
-            frame->setText( wxStringToTString( m_Composer ) );
-            m_TagId3v2->addFrame( frame );
-
-            m_TagId3v2->removeFrames( "TPE2" );
-            frame = new TagLib::ID3v2::TextIdentificationFrame( "TPE2" );
-            frame->setText( wxStringToTString( m_AlbumArtist ) );
-            m_TagId3v2->addFrame( frame );
-
-            //m_TagId3v2->removeFrames( "TCMP" );
-            //frame = new TagLib::ID3v2::TextIdentificationFrame( "TCMP" );
-            //frame->setText( wxStringToTString( wxString::Format( wxT( "%u" ), m_Compilation ) ) );
-            //m_TagId3v2->addFrame( frame );
-
-            // I have found several TRCK fields in the mp3s
-            m_TagId3v2->removeFrames( "TRCK" );
-            m_TagId3v2->setTrack( m_Track );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-            guLogMessage( wxT( "Writing ratings and playcount..." ) );
-            TagLib::ID3v2::PopularimeterFrame * PopMFrame = GetPopM( m_TagId3v2, "Guayadeque" );
-            if( !PopMFrame )
-            {
-                PopMFrame = new TagLib::ID3v2::PopularimeterFrame();
-                m_TagId3v2->addFrame( PopMFrame );
-                PopMFrame->setEmail( "Guayadeque" );
-            }
-            PopMFrame->setRating( guRatingToPopM( m_Rating ) );
-            PopMFrame->setCounter( m_PlayCount );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            ID3v2_CheckLabelFrame( m_TagId3v2, "ARTIST_LABELS", m_ArtistLabelsStr );
-            ID3v2_CheckLabelFrame( m_TagId3v2, "ALBUM_LABELS", m_AlbumLabelsStr );
-            ID3v2_CheckLabelFrame( m_TagId3v2, "TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
-
+    WriteExtendedTags( m_TagId3v2, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
@@ -2536,129 +2349,21 @@ bool guASFTagInfo::Read( void )
 {
     if( guTagInfo::Read() )
     {
-        if( m_ASFTag )
-        {
-            if( m_ASFTag->attributeListMap().contains( "WM/PartOfSet" ) )
-            {
-                m_Disk = TStringTowxString( m_ASFTag->attributeListMap()[ "WM/PartOfSet" ].front().toString() );
-            }
-
-            if( m_ASFTag->attributeListMap().contains( "WM/Composer" ) )
-            {
-                m_Composer = TStringTowxString( m_ASFTag->attributeListMap()[ "WM/Composer" ].front().toString() );
-            }
-
-            if( m_ASFTag->attributeListMap().contains( "WM/AlbumArtist" ) )
-            {
-                m_AlbumArtist = TStringTowxString( m_ASFTag->attributeListMap()[ "WM/AlbumArtist" ].front().toString() );
-            }
-
-            long Rating = 0;
-            if( m_ASFTag->attributeListMap().contains( "WM/SharedUserRating" ) )
-            {
-                TStringTowxString( m_ASFTag->attributeListMap()[ "WM/SharedUserRating" ].front().toString() ).ToLong( &Rating );
-            }
-
-            if( !Rating && m_ASFTag->attributeListMap().contains( "Rating" ) )
-            {
-                TStringTowxString( m_ASFTag->attributeListMap()[ "Rating" ].front().toString() ).ToLong( &Rating );
-            }
-
-            if( Rating )
-            {
-                if( Rating > 5 )
-                {
-                    m_Rating = guWMRatingToRating( Rating );
-                }
-                else
-                {
-                    m_Rating = Rating;
-                }
-            }
-
-
-            if( m_TrackLabels.Count() == 0 )
-            {
-                if( m_ASFTag->attributeListMap().contains( "TRACK_LABELS" ) )
-                {
-                    m_TrackLabelsStr = TStringTowxString( m_ASFTag->attributeListMap()[ "TRACK_LABELS" ].front().toString() );
-                    m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_ArtistLabels.Count() == 0 )
-            {
-                if( m_ASFTag->attributeListMap().contains( "ARTIST_LABELS" ) )
-                {
-                    m_ArtistLabelsStr = TStringTowxString( m_ASFTag->attributeListMap()[ "ARTIST_LABELS" ].front().toString() );
-                    m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
-                }
-            }
-
-            if( m_AlbumLabels.Count() == 0 )
-            {
-                if( m_ASFTag->attributeListMap().contains( "ALBUM_LABELS" ) )
-                {
-                    m_AlbumLabelsStr = TStringTowxString( m_ASFTag->attributeListMap()[ "ALBUM_LABELS" ].front().toString() );
-                    m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
-                }
-            }
-
-        }
+        ReadExtendedTags( m_ASFTag );
+        return true;
     }
     else
     {
       guLogError( wxT( "Could not read tags from file '%s'" ), m_FileName.c_str() );
     }
 
-    return true;
-}
-
-// -------------------------------------------------------------------------------- //
-void ASF_CheckLabelFrame( ASF::Tag * asftag, const char * description, const wxString &value )
-{
-    //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
-    if( asftag->attributeListMap().contains( description ) )
-        asftag->removeItem( description );
-    if( !value.IsEmpty() )
-    {
-        asftag->setAttribute( description, wxStringToTString( value ) );
-    }
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guASFTagInfo::Write( const int changedflag )
 {
-    if( m_ASFTag )
-    {
-        if( changedflag & guTRACK_CHANGED_DATA_TAGS )
-        {
-            m_ASFTag->removeItem( "WM/PartOfSet" );
-            m_ASFTag->setAttribute( "WM/PartOfSet", wxStringToTString( m_Disk ) );
-
-            m_ASFTag->removeItem( "WM/Composer" );
-            m_ASFTag->setAttribute( "WM/Composer", wxStringToTString( m_Composer ) );
-
-            m_ASFTag->removeItem( "WM/AlbumArtist" );
-            m_ASFTag->setAttribute( "WM/AlbumArtist", wxStringToTString( m_AlbumArtist ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_RATING )
-        {
-             m_ASFTag->removeItem( "WM/SharedUserRating" );
-             int WMRatings[] = { 0, 0, 1, 25, 50, 75, 99 };
-             m_ASFTag->setAttribute( "WM/SharedUserRating", wxStringToTString( wxString::Format( wxT( "%i" ), WMRatings[ m_Rating + 1 ] ) ) );
-        }
-
-        if( changedflag & guTRACK_CHANGED_DATA_LABELS )
-        {
-            // The Labels
-            ASF_CheckLabelFrame( m_ASFTag, "ARTIST_LABELS", m_ArtistLabelsStr );
-            ASF_CheckLabelFrame( m_ASFTag, "ALBUM_LABELS", m_AlbumLabelsStr );
-            ASF_CheckLabelFrame( m_ASFTag, "TRACK_LABELS", m_TrackLabelsStr );
-        }
-    }
-
+    WriteExtendedTags( m_ASFTag, changedflag );
     return guTagInfo::Write( changedflag );
 }
 
