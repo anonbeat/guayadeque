@@ -760,7 +760,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
         else
         {
             Lock();
-            if( ( m_CurPos == ( int ) m_Items.Count() ) )
+            if( m_CurPos == ( int ) m_Items.Count() )
             {
                 if( m_CurPos )
                 {

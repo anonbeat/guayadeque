@@ -1479,7 +1479,7 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
         }
     }
 
-    if( NewSongs.Count() );
+    if( NewSongs.Count() )
     {
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );

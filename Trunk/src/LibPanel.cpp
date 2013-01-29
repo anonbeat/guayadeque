@@ -1413,7 +1413,7 @@ void guLibPanel::OnSongCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
 {
-    if( tracks.Count() );
+    if( tracks.Count() )
     {
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );

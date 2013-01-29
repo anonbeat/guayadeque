@@ -3073,7 +3073,7 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
         if( m_MediaSong.m_Rating > 0 )
         {
             Body += wxT( "  " );
-            Body.Append( wxT( '★' ), m_MediaSong.m_Rating );
+            Body.Append( wxT( "★" ), m_MediaSong.m_Rating );
         }
         Body +=  wxT( "\n" ) + m_MediaSong.m_ArtistName;
         if( !m_MediaSong.m_AlbumName.IsEmpty() )

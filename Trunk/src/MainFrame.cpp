@@ -2562,19 +2562,19 @@ void guMainFrame::OnCollectionCommand( wxCommandEvent &event )
             {
                 MediaViewer->EditProperties();
             }
-            else if( ( Collection.m_Type == guMEDIA_COLLECTION_TYPE_NORMAL ) )
+            else if( Collection.m_Type == guMEDIA_COLLECTION_TYPE_NORMAL )
             {
                 wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
                 CmdEvent.SetInt( guPREFERENCE_PAGE_LIBRARY );
                 AddPendingEvent( CmdEvent );
             }
-            else if( ( Collection.m_Type == guMEDIA_COLLECTION_TYPE_JAMENDO ) )
+            else if( Collection.m_Type == guMEDIA_COLLECTION_TYPE_JAMENDO )
             {
                 wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
                 CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
                 AddPendingEvent( CmdEvent );
             }
-            else if( ( Collection.m_Type == guMEDIA_COLLECTION_TYPE_MAGNATUNE ) )
+            else if( Collection.m_Type == guMEDIA_COLLECTION_TYPE_MAGNATUNE )
             {
                 wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
                 CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );

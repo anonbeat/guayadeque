@@ -2321,7 +2321,7 @@ void guAlbumBrowser::OnBigCoverTracksPlaylistSave( wxCommandEvent &event )
 {
     guTrackArray Tracks;
     GetSelectedTracks( &Tracks );
-    if( Tracks.Count() );
+    if( Tracks.Count() )
     {
         wxArrayInt TrackIds;
         int Index;

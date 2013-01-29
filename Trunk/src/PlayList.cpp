@@ -967,7 +967,7 @@ guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
 guTrack * guPlayList::GetItem( size_t item )
 {
     size_t ItemsCount = m_Items.Count();
-    if( ItemsCount && item >= 0 && item < ItemsCount )
+    if( ItemsCount && item < ItemsCount )
     {
       return &m_Items[ item ];
     }
