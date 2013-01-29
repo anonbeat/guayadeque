@@ -1457,7 +1457,7 @@ bool guFilesListBox::GetCounters( wxLongLong * count, wxLongLong * len, wxLongLo
     Count = m_Files.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        if( ( m_Files[ Index ].m_Type == guFILEITEM_TYPE_FOLDER ) )
+        if( m_Files[ Index ].m_Type == guFILEITEM_TYPE_FOLDER )
         {
             if( ( m_Files[ Index ].m_Name != wxT( ".." ) ) )
                 ( * len )++;
@@ -1642,7 +1642,7 @@ void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
 
     guLogMessage( wxT( "guFileBrowser::OnDirItemChanged( '%s' )" ), CurPath.c_str() );
 
-    if( m_DirCtrl->GetShowPaths() && guFILEBROWSER_SHOWPATH_LOCATIONS )
+    if( m_DirCtrl->GetShowPaths() & guFILEBROWSER_SHOWPATH_LOCATIONS )
     {
         m_MediaViewer = FindMediaViewerByPath( m_MainFrame, CurPath );
         m_Db = m_MediaViewer ? m_MediaViewer->GetDb() : NULL;
