@@ -580,29 +580,36 @@ void guAlbumBrowserItemPanel::OnMouse( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+int guAlbumBrowserItemPanel::GetDragFiles( guDataObjectComposite * files )
+{
+    guTrackArray Tracks;
+    wxArrayString Filenames;
+    int Index;
+    int Count = m_AlbumBrowser->GetAlbumTracks( m_AlbumBrowserItem->m_AlbumId, &Tracks );
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( Tracks[ Index ].m_Offset )
+            continue;
+        Filenames.Add( guFileDnDEncode( Tracks[ Index ].m_FileName ) );
+    }
+    files->SetTracks( Tracks );
+    files->SetFiles( Filenames );
+    return Count;
+}
+
+// -------------------------------------------------------------------------------- //
 void guAlbumBrowserItemPanel::OnBeginDrag( wxMouseEvent &event )
 {
     if( !m_AlbumBrowserItem )
         return;
 
-    int Index;
-    int Count;
-    //guLogMessage( wxT( "On BeginDrag event..." ) );
-    guTrackArray Tracks;
+    guDataObjectComposite Files;
 
-    m_AlbumBrowser->GetAlbumTracks( m_AlbumBrowserItem->m_AlbumId, &Tracks );
-    if( ( Count = Tracks.Count() ) )
+    if( GetDragFiles( &Files ) )
     {
-        m_AlbumBrowser->NormalizeTracks( &Tracks, true );
-        wxFileDataObject Files;
-        for( Index = 0; Index < Count; Index++ )
-        {
-            Files.AddFile( Tracks[ Index ].m_FileName );
-        }
-
         wxDropSource source( Files, this );
 
-        wxDragResult Result = source.DoDragDrop( wxDrag_CopyOnly );
+        wxDragResult Result = source.DoDragDrop();
         if( Result )
         {
         }
@@ -763,7 +770,7 @@ void guAlbumBrowser::CreateControls( void )
 
 	m_NavSlider = new wxSlider( this, wxID_ANY, 0, 0, 1, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	m_NavSlider->SetFocus();
-	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
 
 	m_AlbumBrowserSizer->Add( NavigatorSizer, 0, wxEXPAND, 5 );
 
