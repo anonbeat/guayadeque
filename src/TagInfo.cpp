@@ -683,7 +683,7 @@ guTagInfo::guTagInfo( const wxString &filename )
     m_Rating = wxNOT_FOUND;
     m_PlayCount = 0;
     m_Compilation = false;
-};
+}
 
 // -------------------------------------------------------------------------------- //
 guTagInfo::~guTagInfo()

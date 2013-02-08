@@ -113,6 +113,7 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnMouse( wxMouseEvent &event );
     void                    OnBeginDrag( wxMouseEvent &event );
     void                    OnCoverBeginDrag( wxMouseEvent &event );
+    int                     GetDragFiles( guDataObjectComposite * files );
 
     void                    OnBitmapClicked( wxMouseEvent &event );
     void                    OnTimer( wxTimerEvent &event );
