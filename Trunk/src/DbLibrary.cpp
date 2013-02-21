@@ -1100,7 +1100,7 @@ wxBitmap * guDbLibrary::GetCoverBitmap( const int coverid, const bool thumb )
       unsigned char * ImgData = ( unsigned char * ) malloc( DataLen );
       memcpy( ImgData, Data, DataLen );
 
-      int ImgSize = thumb ? 38 : 100;
+      int ImgSize = thumb ? GUCOVER_THUMB_SIZE : GUCOVER_IMAGE_SIZE;
       Img = new wxImage( ImgSize, ImgSize, ImgData );
       //TmpImg->SaveFile( wxString::Format( wxT( "/home/jrios/%u.jpg" ), CoverId ), wxBITMAP_TYPE_JPEG );
       RetVal = new wxBitmap( * Img );
@@ -1139,7 +1139,7 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
       CoverHash = coverhash;
 
     //guLogWarning( _T( "Scaling image %i" ), n );
-    TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+    TmpImg.Rescale( GUCOVER_THUMB_SIZE, GUCOVER_THUMB_SIZE, wxIMAGE_QUALITY_HIGH );
     if( TmpImg.IsOk() )
     {
 //      wxFileOutputStream FOut( wxString::Format( wxT( "/home/jrios/%s.jpg" ), coverhash.c_str() ) );
@@ -1149,7 +1149,7 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
       MidImg.LoadFile( coverfile );
       if( MidImg.IsOk() )
       {
-        MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
+        MidImg.Rescale( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE, wxIMAGE_QUALITY_HIGH );
 
 
         wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
@@ -1174,12 +1174,12 @@ int guDbLibrary::AddCoverFile( const wxString &coverfile, const wxString &coverh
       }
       else
       {
-          guLogError( wxT( "Error resizing to 100" ) );
+          guLogError( wxT( "Error resizing to %i" ), GUCOVER_IMAGE_SIZE );
       }
     }
     else
     {
-      guLogError( wxT( "Error resizing to 38" ) );
+      guLogError( wxT( "Error resizing to %i" ), GUCOVER_THUMB_SIZE );
     }
   }
   else
@@ -1199,11 +1199,11 @@ int guDbLibrary::AddCoverImage( const wxImage &image )
   wxString CoverFile;
 
   wxImage MidImg = image;
-  MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
+  MidImg.Rescale( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE, wxIMAGE_QUALITY_HIGH );
   if( MidImg.IsOk() )
   {
     wxImage TinyImg = image;
-    TinyImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+    TinyImg.Rescale( GUCOVER_THUMB_SIZE, GUCOVER_THUMB_SIZE, wxIMAGE_QUALITY_HIGH );
     if( TinyImg.IsOk() )
     {
       wxSQLite3Statement stmt = m_Db->PrepareStatement( wxT( "INSERT INTO covers( cover_id, cover_path, cover_thumb, cover_midsize, cover_hash ) "
@@ -1228,12 +1228,12 @@ int guDbLibrary::AddCoverImage( const wxImage &image )
     }
     else
     {
-      guLogError( wxT( "Error resizing to 38" ) );
+      guLogError( wxT( "Error resizing to %i" ), GUCOVER_THUMB_SIZE );
     }
   }
   else
   {
-    guLogError( wxT( "Error resizing to 100" ) );
+    guLogError( wxT( "Error resizing to %i" ), GUCOVER_IMAGE_SIZE );
   }
   return CoverId;
 }
@@ -1252,13 +1252,13 @@ void guDbLibrary::UpdateCoverFile( int coverid, const wxString &coverfile, const
   if( TmpImg.IsOk() )
   {
     //guLogWarning( _T( "Scaling image %i" ), n );
-    TmpImg.Rescale( 38, 38, wxIMAGE_QUALITY_HIGH );
+    TmpImg.Rescale( GUCOVER_THUMB_SIZE, GUCOVER_THUMB_SIZE, wxIMAGE_QUALITY_HIGH );
 
     if( TmpImg.IsOk() )
     {
       wxImage MidImg;
       MidImg.LoadFile( coverfile );
-      MidImg.Rescale( 100, 100, wxIMAGE_QUALITY_HIGH );
+      MidImg.Rescale( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE, wxIMAGE_QUALITY_HIGH );
       if( MidImg.IsOk() )
       {
         //guLogWarning( wxT( "Cover Image w:%u h:%u " ), TmpImg.GetWidth(), TmpImg.GetHeight() );
