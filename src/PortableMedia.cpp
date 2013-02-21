@@ -1853,6 +1853,7 @@ void guMediaViewerPortableDevice::UpdateCollectionProperties( void )
     m_MediaCollection->m_CoverWords.Empty();
     m_MediaCollection->m_CoverWords.Add( m_PortableDevice->CoverName() );
     m_MediaCollection->m_UpdateOnStart = true;
+    //m_MediaCollection->m_ScanEmbeddedCovers = false;
 }
 
 // -------------------------------------------------------------------------------- //

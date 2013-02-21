@@ -139,7 +139,7 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
 // guAlbumBrowserItemPanel
 // -------------------------------------------------------------------------------- //
 guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int index,
-    guAlbumBrowserItem * albumitem ) : wxPanel( parent, wxID_ANY )
+    guAlbumBrowserItem * albumitem ) : wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS )
 {
     m_AlbumBrowserItem = albumitem;
     m_AlbumBrowser = ( guAlbumBrowser * ) parent;
@@ -149,7 +149,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( 100, 100 ), 0 );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ) );
 	m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
 
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
@@ -206,6 +206,11 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
 	Connect( wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowserItemPanel::OnTimer ), NULL, this );
 
+    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
+    m_Bitmap->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
+    m_AlbumLabel->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
+    m_ArtistLabel->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
+    m_TracksLabel->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -683,7 +688,7 @@ void guAlbumBrowserItemPanel::OnTimer( wxTimerEvent &event )
 // guAlbumBrowser
 // -------------------------------------------------------------------------------- //
 guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer ) :
-    wxPanel( parent, wxID_ANY ),
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS ),
     m_RefreshTimer( this, guALBUMBROWSER_TIMER_ID_REFRESH ),
     m_BitmapClickTimer( this, guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED )
 {
@@ -849,6 +854,8 @@ void guAlbumBrowser::CreateControls( void )
 	m_MainSizer->FitInside( this );
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
+    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, this );
+
 	m_NavSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
 	m_NavSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
 	Connect( guALBUMBROWSER_TIMER_ID_REFRESH, wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnRefreshTimer ), NULL, this );
@@ -944,7 +951,7 @@ void guAlbumBrowser::CalculateMaxItemHeight( void )
     int d;
     GetTextExtent( wxT("Hg"), &w, &h, &d );
 
-    guALBUMBROWSER_GRID_SIZE_HEIGHT = 100 + 4 + ( 3 * h ) + 5;
+    guALBUMBROWSER_GRID_SIZE_HEIGHT = GUCOVER_IMAGE_SIZE + 4 + ( 3 * h ) + 5;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1416,6 +1423,54 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
     }
     Layout();
     m_AlbumItemsMutex.Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::OnKeyDown( wxKeyEvent &event )
+{
+    //guLogMessage( wxT( "OnKeyDown %i" ), event.GetKeyCode() );
+    int CurPos = m_NavSlider->GetValue();
+    int KeyCode = event.GetKeyCode();
+    switch( KeyCode )
+    {
+        case WXK_HOME :
+            CurPos = m_NavSlider->GetMin();
+            break;
+
+        case WXK_END :
+            CurPos = m_NavSlider->GetMax();
+            break;
+
+        case WXK_DOWN :
+        case WXK_RIGHT :
+        case WXK_PAGEDOWN :
+        case WXK_NUMPAD_DOWN :
+        case WXK_NUMPAD_PAGEDOWN :
+            CurPos++;
+            break;
+
+        case WXK_UP :
+        case WXK_LEFT :
+        case WXK_PAGEUP :
+        case WXK_NUMPAD_UP :
+        case WXK_NUMPAD_PAGEUP :
+            CurPos--;
+            break;
+    }
+
+    if( CurPos > m_NavSlider->GetMax() )
+        CurPos = m_NavSlider->GetMax();
+
+    if( CurPos < m_NavSlider->GetMin() )
+        CurPos = m_NavSlider->GetMin();
+
+    m_NavSlider->SetValue( CurPos );
+
+    wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
+    ScrollEvent.SetPosition( CurPos );
+    wxPostEvent( m_NavSlider, ScrollEvent );
+
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

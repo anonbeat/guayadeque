@@ -260,6 +260,8 @@ class guAlbumBrowser : public wxPanel
 
     void                            CalculateMaxItemHeight( void );
 
+    virtual void                   OnKeyDown( wxKeyEvent &event );
+
   public :
     //guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer );

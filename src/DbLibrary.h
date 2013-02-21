@@ -41,6 +41,9 @@
                "song_addedtime, song_lastplay, song_filesize "\
                "FROM songs " )
 
+#define GUCOVER_THUMB_SIZE      38
+#define GUCOVER_IMAGE_SIZE      100
+
 // PLAYLISTS
 #define guPLAYLIST_TYPE_STATIC       0
 #define guPLAYLIST_TYPE_DYNAMIC      1
