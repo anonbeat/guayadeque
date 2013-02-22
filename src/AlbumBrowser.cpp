@@ -149,7 +149,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ) );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ), wxWANTS_CHARS );
 	m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
 
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
@@ -1443,18 +1443,24 @@ void guAlbumBrowser::OnKeyDown( wxKeyEvent &event )
 
         case WXK_DOWN :
         case WXK_RIGHT :
-        case WXK_PAGEDOWN :
         case WXK_NUMPAD_DOWN :
-        case WXK_NUMPAD_PAGEDOWN :
             CurPos++;
             break;
 
         case WXK_UP :
         case WXK_LEFT :
-        case WXK_PAGEUP :
         case WXK_NUMPAD_UP :
-        case WXK_NUMPAD_PAGEUP :
             CurPos--;
+            break;
+
+        case WXK_PAGEDOWN :
+        case WXK_NUMPAD_PAGEDOWN :
+            CurPos += m_NavSlider->GetPageSize();
+            break;
+
+        case WXK_PAGEUP :
+        case WXK_NUMPAD_PAGEUP :
+            CurPos -= m_NavSlider->GetPageSize();
             break;
     }
 
@@ -1765,6 +1771,7 @@ void guAlbumBrowser::DoBackToAlbums( void )
     m_MainSizer->Hide( m_BigCoverSizer, true );
     m_MainSizer->Show( m_AlbumBrowserSizer, true );
     Layout();
+    m_NavSlider->SetFocus();
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
