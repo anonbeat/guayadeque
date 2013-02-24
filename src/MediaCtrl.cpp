@@ -1094,14 +1094,14 @@ bool guMediaCtrl::Stop( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guMediaCtrl::Seek( wxFileOffset where )
+bool guMediaCtrl::Seek( wxFileOffset where, const bool accurate )
 {
     guLogDebug( wxT( "guMediaCtrl::Seek( %lli )" ), where );
     bool Result = false;
     Lock();
     if( m_CurrentPlayBin )
     {
-        Result = m_CurrentPlayBin->Seek( where );
+        Result = m_CurrentPlayBin->Seek( where, accurate );
     }
     Unlock();
     return Result;
@@ -1812,7 +1812,7 @@ bool guFaderPlayBin::DoStartSeek( void )
     m_SeekTimerId = 0;
     if( GST_IS_ELEMENT( m_Playbin ) )
     {
-        return Seek( m_StartOffset );
+        return Seek( m_StartOffset, true );
     }
     return false;
 }
@@ -2295,14 +2295,15 @@ bool guFaderPlayBin::Stop( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guFaderPlayBin::Seek( wxFileOffset where )
+bool guFaderPlayBin::Seek( wxFileOffset where, bool accurate )
 {
     guLogDebug( wxT( "guFaderPlayBin::Seek (%i) %li )" ), m_Id, where );
 
-    return gst_element_seek_simple( m_Playbin,
-                                    GST_FORMAT_TIME,
-                                    GstSeekFlags( GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT ),
-                                    where * GST_MSECOND );
+    GstSeekFlags SeekFlags = GstSeekFlags( GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT );
+    if( accurate )
+        SeekFlags = GstSeekFlags( SeekFlags | GST_SEEK_FLAG_ACCURATE );
+
+    return gst_element_seek_simple( m_Playbin, GST_FORMAT_TIME, SeekFlags, where * GST_MSECOND );
 }
 
 // -------------------------------------------------------------------------------- //
