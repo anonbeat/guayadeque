@@ -300,7 +300,7 @@ class guFaderPlayBin
     bool                StartFade( double volstart, double volend, int timeout );
     void                EndFade( void ) { delete m_FaderTimeLine; m_FaderTimeLine = NULL; }
 
-    bool                Seek( wxFileOffset where );
+    bool                Seek( wxFileOffset where, const bool accurate = false );
     wxFileOffset        Position( void );
     wxFileOffset        Length( void );
 
@@ -394,7 +394,7 @@ class guMediaCtrl : public wxEvtHandler
     bool            Play( void );
     bool            Pause( void );
 
-    bool            Seek( wxFileOffset where );
+    bool            Seek( wxFileOffset where, const bool accurate = false );
     wxFileOffset    Position( void );
     wxFileOffset    Length( void );
 
