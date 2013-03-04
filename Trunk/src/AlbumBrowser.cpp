@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2012 J.Rios
+//	Copyright (C) 2008-2013 J.Rios
 //	anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
@@ -149,7 +149,7 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
     // GUI
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ), wxWANTS_CHARS );
+	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ) );
 	m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
 
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
