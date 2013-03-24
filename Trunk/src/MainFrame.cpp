@@ -1938,9 +1938,13 @@ void guMainFrame::OnCloseTab( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnShowCaptions( wxCommandEvent &event )
 {
-    bool Visible = event.GetInt();
-    //guLogMessage( wxT( "guMainFrame::OnShowCaptions( %i )" ) );
+    OnShowCaptions( event.GetInt() );
+}
 
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnShowCaptions( const bool visible )
+{
+    //guLogMessage( wxT( "guMainFrame::OnShowCaptions( %i )" ) );
     wxAuiPaneInfoArray &PaneInfoArray = m_AuiManager.GetAllPanes();
 
     int Index;
@@ -1952,13 +1956,13 @@ void guMainFrame::OnShowCaptions( wxCommandEvent &event )
         {
             if( PaneInfo.name == wxT( "PlayerPlayList" ) )
                 continue;
-            PaneInfo.CaptionVisible( Visible );
+            PaneInfo.CaptionVisible( visible );
         }
     }
     m_AuiManager.Update();
     //
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "ShowCaptions" ), Visible, wxT( "mainwindow" ) );
+    Config->WriteBool( wxT( "ShowCaptions" ), visible, wxT( "mainwindow" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4339,9 +4343,15 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
     if( PaneInfo.IsOk() )
     {
         if( show )
+        {
             PaneInfo.Show();
+            guConfig * Config = ( guConfig * ) guConfig::Get();
+            OnShowCaptions( Config->ReadBool( wxT( "ShowCaptions" ), true, wxT( "mainwindow" ) ) );
+        }
         else
+        {
             PaneInfo.Hide();
+        }
 
         m_AuiManager.Update();
     }

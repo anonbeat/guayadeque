@@ -4,14 +4,15 @@
 # 
 # Translators:
 #   <anonbeat@gmail.com>, 2011.
+# Javier Capel <capelinux@gmail.com>, 2013.
 #   <jordi_ortega@hotmail.com>, 2011-2012.
 msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-08 09:14+0000\n"
-"PO-Revision-Date: 2013-01-19 08:35+0000\n"
-"Last-Translator: camaron <jordi_ortega@hotmail.com>\n"
+"POT-Creation-Date: 2013-02-28 06:55+0000\n"
+"PO-Revision-Date: 2013-03-14 17:33+0000\n"
+"Last-Translator: capelinux <capelinux@gmail.com>\n"
 "Language-Team: Spanish (Spain) (http://www.transifex.com/projects/p/guayadeque/language/es_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -37,8 +38,8 @@ msgstr "Añadir comandos en preferencias"
 msgid "Commands"
 msgstr "Comandos"
 
-#: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:298
-#: AlbumBrowser.cpp:1773 AlbumBrowser.cpp:1908 AlListBox.cpp:263
+#: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:303
+#: AlbumBrowser.cpp:1842 AlbumBrowser.cpp:1977 AlListBox.cpp:263
 #: ArListBox.cpp:147 CoListBox.cpp:103 FileBrowser.cpp:339
 #: FileBrowser.cpp:1112 GeListBox.cpp:92 LastFMPanel.cpp:557
 #: LastFMPanel.cpp:819 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
@@ -53,8 +54,8 @@ msgstr "Reproducir"
 msgid "Play current selected album artist"
 msgstr "Reproducir el artista principal seleccionado"
 
-#: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:302
-#: AlbumBrowser.cpp:1777 AlbumBrowser.cpp:1912 AlListBox.cpp:269
+#: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:307
+#: AlbumBrowser.cpp:1846 AlbumBrowser.cpp:1981 AlListBox.cpp:269
 #: ArListBox.cpp:154 CoListBox.cpp:110 FileBrowser.cpp:345
 #: FileBrowser.cpp:1118 GeListBox.cpp:99 LastFMPanel.cpp:561
 #: LastFMPanel.cpp:823 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
@@ -70,8 +71,8 @@ msgstr "Añadir al final"
 msgid "Add current selected tracks to playlist"
 msgstr "Añadir las pistas seleccionadas a la lista de reproducción"
 
-#: AAListBox.cpp:161 AlbumBrowser.cpp:309 AlbumBrowser.cpp:1784
-#: AlbumBrowser.cpp:1919 AlListBox.cpp:277 ArListBox.cpp:163 CoListBox.cpp:119
+#: AAListBox.cpp:161 AlbumBrowser.cpp:314 AlbumBrowser.cpp:1853
+#: AlbumBrowser.cpp:1988 AlListBox.cpp:277 ArListBox.cpp:163 CoListBox.cpp:119
 #: FileBrowser.cpp:353 FileBrowser.cpp:1126 GeListBox.cpp:108
 #: LastFMPanel.cpp:568 LastFMPanel.cpp:830 LastFMPanel.cpp:1024
 #: LastFMPanel.cpp:1224 LastFMPanel.cpp:1432 LastFMPanel.cpp:3175
@@ -81,8 +82,8 @@ msgstr "Añadir las pistas seleccionadas a la lista de reproducción"
 msgid "Current Track"
 msgstr "Pista actual"
 
-#: AAListBox.cpp:162 AlbumBrowser.cpp:310 AlbumBrowser.cpp:1785
-#: AlbumBrowser.cpp:1920 ArListBox.cpp:164 FileBrowser.cpp:354
+#: AAListBox.cpp:162 AlbumBrowser.cpp:315 AlbumBrowser.cpp:1854
+#: AlbumBrowser.cpp:1989 ArListBox.cpp:164 FileBrowser.cpp:354
 #: FileBrowser.cpp:1127 GeListBox.cpp:109 LastFMPanel.cpp:569
 #: LastFMPanel.cpp:831 LastFMPanel.cpp:1025 LastFMPanel.cpp:1225
 #: LastFMPanel.cpp:1433 LastFMPanel.cpp:3176 PcListBox.cpp:128
@@ -92,8 +93,8 @@ msgstr "Pista actual"
 msgid "Add current selected tracks to playlist after the current track"
 msgstr "Añadir las pistas seleccionadas a la lista de reproducción depués de la pista actuaol"
 
-#: AAListBox.cpp:168 AlbumBrowser.cpp:315 AlbumBrowser.cpp:1790
-#: AlbumBrowser.cpp:1925 AlListBox.cpp:283 ArListBox.cpp:170 CoListBox.cpp:126
+#: AAListBox.cpp:168 AlbumBrowser.cpp:320 AlbumBrowser.cpp:1859
+#: AlbumBrowser.cpp:1994 AlListBox.cpp:283 ArListBox.cpp:170 CoListBox.cpp:126
 #: FileBrowser.cpp:359 FileBrowser.cpp:1133 GeListBox.cpp:115
 #: LastFMPanel.cpp:574 LastFMPanel.cpp:836 LastFMPanel.cpp:1030
 #: LastFMPanel.cpp:1230 LastFMPanel.cpp:1438 LastFMPanel.cpp:3181
@@ -103,8 +104,8 @@ msgstr "Añadir las pistas seleccionadas a la lista de reproducción depués de 
 msgid "Current Album"
 msgstr "Album actual"
 
-#: AAListBox.cpp:169 AlbumBrowser.cpp:316 AlbumBrowser.cpp:1791
-#: AlbumBrowser.cpp:1926 ArListBox.cpp:171 FileBrowser.cpp:360
+#: AAListBox.cpp:169 AlbumBrowser.cpp:321 AlbumBrowser.cpp:1860
+#: AlbumBrowser.cpp:1995 ArListBox.cpp:171 FileBrowser.cpp:360
 #: FileBrowser.cpp:1134 GeListBox.cpp:116 LastFMPanel.cpp:575
 #: LastFMPanel.cpp:837 LastFMPanel.cpp:1031 LastFMPanel.cpp:1231
 #: LastFMPanel.cpp:1439 LastFMPanel.cpp:3182 PcListBox.cpp:135
@@ -114,8 +115,8 @@ msgstr "Album actual"
 msgid "Add current selected tracks to playlist after the current album"
 msgstr "Añadir las pistas seleccionadas a la lista de reproducción depués del álbum actual"
 
-#: AAListBox.cpp:175 AlbumBrowser.cpp:321 AlbumBrowser.cpp:1796
-#: AlbumBrowser.cpp:1931 AlListBox.cpp:289 ArListBox.cpp:177 CoListBox.cpp:133
+#: AAListBox.cpp:175 AlbumBrowser.cpp:326 AlbumBrowser.cpp:1865
+#: AlbumBrowser.cpp:2000 AlListBox.cpp:289 ArListBox.cpp:177 CoListBox.cpp:133
 #: FileBrowser.cpp:365 FileBrowser.cpp:1140 GeListBox.cpp:122
 #: LastFMPanel.cpp:580 LastFMPanel.cpp:842 LastFMPanel.cpp:1036
 #: LastFMPanel.cpp:1236 LastFMPanel.cpp:1444 LastFMPanel.cpp:3187
@@ -125,8 +126,8 @@ msgstr "Añadir las pistas seleccionadas a la lista de reproducción depués del
 msgid "Current Artist"
 msgstr "Artista actual"
 
-#: AAListBox.cpp:176 AlbumBrowser.cpp:322 AlbumBrowser.cpp:1797
-#: AlbumBrowser.cpp:1932 ArListBox.cpp:178 FileBrowser.cpp:366
+#: AAListBox.cpp:176 AlbumBrowser.cpp:327 AlbumBrowser.cpp:1866
+#: AlbumBrowser.cpp:2001 ArListBox.cpp:178 FileBrowser.cpp:366
 #: FileBrowser.cpp:1141 GeListBox.cpp:123 LastFMPanel.cpp:581
 #: LastFMPanel.cpp:843 LastFMPanel.cpp:1037 LastFMPanel.cpp:1237
 #: LastFMPanel.cpp:1445 LastFMPanel.cpp:3188 PcListBox.cpp:142
@@ -136,8 +137,8 @@ msgstr "Artista actual"
 msgid "Add current selected tracks to playlist after the current artist"
 msgstr "Añadir las pistas seleccionadas a la lista de reproducción depués del artista actual"
 
-#: AAListBox.cpp:181 AlbumBrowser.cpp:326 AlbumBrowser.cpp:1801
-#: AlbumBrowser.cpp:1936 AlListBox.cpp:294 ArListBox.cpp:183 CoListBox.cpp:139
+#: AAListBox.cpp:181 AlbumBrowser.cpp:331 AlbumBrowser.cpp:1870
+#: AlbumBrowser.cpp:2005 AlListBox.cpp:294 ArListBox.cpp:183 CoListBox.cpp:139
 #: FileBrowser.cpp:370 FileBrowser.cpp:1146 GeListBox.cpp:128
 #: LastFMPanel.cpp:585 LastFMPanel.cpp:847 LastFMPanel.cpp:1041
 #: LastFMPanel.cpp:1241 LastFMPanel.cpp:1449 LastFMPanel.cpp:3192
@@ -147,8 +148,8 @@ msgstr "Añadir las pistas seleccionadas a la lista de reproducción depués del
 msgid "Enqueue After"
 msgstr "Añadir depués de"
 
-#: AAListBox.cpp:190 AlbumBrowser.cpp:336 AlbumBrowser.cpp:1811
-#: AlbumBrowser.cpp:1946 AlListBox.cpp:307 ArListBox.cpp:198 PcListBox.cpp:156
+#: AAListBox.cpp:190 AlbumBrowser.cpp:341 AlbumBrowser.cpp:1880
+#: AlbumBrowser.cpp:2015 AlListBox.cpp:307 ArListBox.cpp:198 PcListBox.cpp:156
 #: PlayList.cpp:1538 RaListBox.cpp:188 SoListBox.cpp:576 TreePanel.cpp:440
 #: YeListBox.cpp:148
 msgid "Edit Songs"
@@ -159,7 +160,7 @@ msgstr "Editar pistas"
 msgid "Edit the selected tracks"
 msgstr "Editar la pistas seleccionadas"
 
-#: AAListBox.cpp:199 Accelerators.cpp:141 AlbumBrowser.cpp:1954
+#: AAListBox.cpp:199 Accelerators.cpp:141 AlbumBrowser.cpp:2023
 #: AlListBox.cpp:335 ArListBox.cpp:207 CoListBox.cpp:157 FileBrowser.cpp:383
 #: FileBrowser.cpp:1162 GeListBox.cpp:135 LastFMPanel.cpp:3196
 #: PcListBox.cpp:165 PlayListAppend.cpp:25 PlayList.cpp:1589
@@ -192,8 +193,8 @@ msgstr "Cerrar ventana"
 msgid "Community Forums"
 msgstr "Soporte"
 
-#: Accelerators.cpp:113 AlbumBrowser.cpp:330 AlbumBrowser.cpp:1805
-#: AlbumBrowser.cpp:1940 AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1532
+#: Accelerators.cpp:113 AlbumBrowser.cpp:335 AlbumBrowser.cpp:1874
+#: AlbumBrowser.cpp:2009 AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1532
 #: SoListBox.cpp:568 TreePanel.cpp:430
 msgid "Edit Labels"
 msgstr "Editar etiquetas"
@@ -362,7 +363,7 @@ msgstr "Actualizar carátulas"
 #: Accelerators.cpp:167 iPodMedia.cpp:1682 Jamendo.cpp:1128
 #: LocationPanel.cpp:336 LocationPanel.cpp:374 LocationPanel.cpp:509
 #: Magnatune.cpp:1023 MainFrame.cpp:1021 MainFrame.cpp:1059 MainFrame.cpp:1293
-#: MediaViewer.cpp:952 PodcastsPanel.cpp:1757 PortableMedia.cpp:1888
+#: MediaViewer.cpp:952 PodcastsPanel.cpp:1757 PortableMedia.cpp:1889
 msgid "Update"
 msgstr "Actualizar"
 
@@ -398,7 +399,7 @@ msgstr "Alt"
 msgid "Meta"
 msgstr "Meta"
 
-#: Accelerators.cpp:303 AlbumBrowser.cpp:828
+#: Accelerators.cpp:303 AlbumBrowser.cpp:840
 msgid "Back"
 msgstr "Back"
 
@@ -499,204 +500,204 @@ msgstr "Menú"
 msgid "Capital"
 msgstr "Mayúscula"
 
-#: AlbumBrowser.cpp:260 AlbumBrowser.cpp:1562 AlbumBrowser.cpp:2390
+#: AlbumBrowser.cpp:265 AlbumBrowser.cpp:1630 AlbumBrowser.cpp:2459
 #: DynamicPlayList.cpp:118 LibPanel.cpp:395 LibPanel.cpp:540 SmartMode.cpp:467
 msgid "Tracks"
 msgstr "Pistas"
 
-#: AlbumBrowser.cpp:298 AlbumBrowser.cpp:1773 AlbumBrowser.cpp:1908
+#: AlbumBrowser.cpp:303 AlbumBrowser.cpp:1842 AlbumBrowser.cpp:1977
 #: LastFMPanel.cpp:819
 msgid "Play the album tracks"
 msgstr "Reproducir las pistas del álbum"
 
-#: AlbumBrowser.cpp:302 AlbumBrowser.cpp:1777 AlbumBrowser.cpp:1912
+#: AlbumBrowser.cpp:307 AlbumBrowser.cpp:1846 AlbumBrowser.cpp:1981
 #: LastFMPanel.cpp:823
 msgid "Enqueue the album tracks to the playlist"
 msgstr "Encolar las pistas del álbum"
 
-#: AlbumBrowser.cpp:330 AlbumBrowser.cpp:1805 AlbumBrowser.cpp:1940
+#: AlbumBrowser.cpp:335 AlbumBrowser.cpp:1874 AlbumBrowser.cpp:2009
 #: AlListBox.cpp:300
 msgid "Edit the labels assigned to the selected albums"
 msgstr "Editar las etiquetas asignadas a los álbumes seleccionados"
 
-#: AlbumBrowser.cpp:336 AlbumBrowser.cpp:1811 AlbumBrowser.cpp:1946
+#: AlbumBrowser.cpp:341 AlbumBrowser.cpp:1880 AlbumBrowser.cpp:2015
 #: AlListBox.cpp:308
 msgid "Edit the selected songs"
 msgstr "Editar las pistas seleccionadas"
 
-#: AlbumBrowser.cpp:343 AlbumBrowser.cpp:1818 LastFMPanel.cpp:851
+#: AlbumBrowser.cpp:348 AlbumBrowser.cpp:1887 LastFMPanel.cpp:851
 msgid "Search Album"
 msgstr "Buscar el álbum"
 
-#: AlbumBrowser.cpp:343 AlbumBrowser.cpp:1818 LastFMPanel.cpp:851
+#: AlbumBrowser.cpp:348 AlbumBrowser.cpp:1887 LastFMPanel.cpp:851
 msgid "Search the album in the library"
 msgstr "Buscar el álbum en la fonoteca"
 
-#: AlbumBrowser.cpp:347 AlbumBrowser.cpp:1822 LastFMPanel.cpp:589
+#: AlbumBrowser.cpp:352 AlbumBrowser.cpp:1891 LastFMPanel.cpp:589
 #: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
 msgid "Search Artist"
 msgstr "Localizar artista"
 
-#: AlbumBrowser.cpp:347 AlbumBrowser.cpp:1822 LastFMPanel.cpp:589
+#: AlbumBrowser.cpp:352 AlbumBrowser.cpp:1891 LastFMPanel.cpp:589
 #: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
 msgid "Search the artist in the library"
 msgstr "Buscar el artista en la fonoteca"
 
-#: AlbumBrowser.cpp:355 AlbumBrowser.cpp:1830 AlListBox.cpp:344
+#: AlbumBrowser.cpp:360 AlbumBrowser.cpp:1899 AlListBox.cpp:344
 msgid "Download Cover"
 msgstr "Descargar carátula"
 
-#: AlbumBrowser.cpp:355 AlbumBrowser.cpp:1830 AlListBox.cpp:344
+#: AlbumBrowser.cpp:360 AlbumBrowser.cpp:1899 AlListBox.cpp:344
 msgid "Download cover for the current selected album"
 msgstr "Descargar la carátula para el álbum seleccionado"
 
-#: AlbumBrowser.cpp:359 AlbumBrowser.cpp:1834 AlListBox.cpp:348
+#: AlbumBrowser.cpp:364 AlbumBrowser.cpp:1903 AlListBox.cpp:348
 msgid "Select Cover"
 msgstr "Seleccionar carátula"
 
-#: AlbumBrowser.cpp:359 AlbumBrowser.cpp:1834 AlListBox.cpp:348
+#: AlbumBrowser.cpp:364 AlbumBrowser.cpp:1903 AlListBox.cpp:348
 msgid "Select the cover image file from disk"
 msgstr "Seleccione la carátula desde el disco"
 
-#: AlbumBrowser.cpp:363 AlbumBrowser.cpp:1838 AlListBox.cpp:352
+#: AlbumBrowser.cpp:368 AlbumBrowser.cpp:1907 AlListBox.cpp:352
 msgid "Delete Cover"
 msgstr "Borrar carátula"
 
-#: AlbumBrowser.cpp:363 AlbumBrowser.cpp:1838 AlListBox.cpp:352
+#: AlbumBrowser.cpp:368 AlbumBrowser.cpp:1907 AlListBox.cpp:352
 msgid "Delete the cover for the selected album"
 msgstr "Eliminar la carátula del álbum seleccionado"
 
-#: AlbumBrowser.cpp:370 AlbumBrowser.cpp:1845 AlListBox.cpp:359
+#: AlbumBrowser.cpp:375 AlbumBrowser.cpp:1914 AlListBox.cpp:359
 msgid "Embed Cover"
 msgstr "Incrustar carátula"
 
-#: AlbumBrowser.cpp:370 AlbumBrowser.cpp:1845
+#: AlbumBrowser.cpp:375 AlbumBrowser.cpp:1914
 msgid "Embed the cover to the selected album tracks"
 msgstr "Incrustar la carátula en los archivos seleccionados"
 
-#: AlbumBrowser.cpp:381 AlListBox.cpp:318 FileBrowser.cpp:763
+#: AlbumBrowser.cpp:386 AlListBox.cpp:318 FileBrowser.cpp:763
 #: RadioPanel.cpp:329
 msgid "Name"
 msgstr "Nombre"
 
-#: AlbumBrowser.cpp:381
+#: AlbumBrowser.cpp:386
 msgid "Sort albums by name"
 msgstr "Ordenar por álbum"
 
-#: AlbumBrowser.cpp:385 AlListBox.cpp:319 DynamicPlayList.cpp:55
+#: AlbumBrowser.cpp:390 AlListBox.cpp:319 DynamicPlayList.cpp:55
 #: DynamicPlayList.cpp:133 PlayList.cpp:1656 SoListBox.cpp:417
 #: TreeViewFilterEditor.cpp:68 TreeViewFilterEditor.cpp:123
 msgid "Year"
 msgstr "Año"
 
-#: AlbumBrowser.cpp:385
+#: AlbumBrowser.cpp:390
 msgid "Sort albums by year"
 msgstr "Ordenar álbumes for año"
 
-#: AlbumBrowser.cpp:389 AlListBox.cpp:320
+#: AlbumBrowser.cpp:394 AlListBox.cpp:320
 msgid "Year Descending"
 msgstr "Año descendiente"
 
-#: AlbumBrowser.cpp:389 AlbumBrowser.cpp:405
+#: AlbumBrowser.cpp:394 AlbumBrowser.cpp:410
 msgid "Sort albums by year descendant"
 msgstr "Álbumes ordenados por año descendiente"
 
-#: AlbumBrowser.cpp:393
+#: AlbumBrowser.cpp:398
 msgid "Artist Name"
 msgstr "Artista"
 
-#: AlbumBrowser.cpp:393
+#: AlbumBrowser.cpp:398
 msgid "Sort albums by artist name"
 msgstr "Ordenar por artista"
 
-#: AlbumBrowser.cpp:397 AlListBox.cpp:322
+#: AlbumBrowser.cpp:402 AlListBox.cpp:322
 msgid "Artist, Year"
 msgstr "Artista, Año"
 
-#: AlbumBrowser.cpp:397
+#: AlbumBrowser.cpp:402
 msgid "Sort albums by artist, year"
 msgstr "Albumes ordenados por artista y año"
 
-#: AlbumBrowser.cpp:401 AlListBox.cpp:323
+#: AlbumBrowser.cpp:406 AlListBox.cpp:323
 msgid "Artist, Year Descending"
 msgstr "Artista, Año descendiente"
 
-#: AlbumBrowser.cpp:401
+#: AlbumBrowser.cpp:406
 msgid "Sort albums by artist, year descendant"
 msgstr "Álbumes ordenados por artista y año descendente"
 
-#: AlbumBrowser.cpp:405 DynamicPlayList.cpp:60 DynamicPlayList.cpp:138
+#: AlbumBrowser.cpp:410 DynamicPlayList.cpp:60 DynamicPlayList.cpp:138
 #: PodcastsPanel.cpp:1810 SoListBox.cpp:422
 msgid "Added"
 msgstr "Añadido"
 
-#: AlbumBrowser.cpp:409 AlListBox.cpp:328
+#: AlbumBrowser.cpp:414 AlListBox.cpp:328
 msgid "Sort By"
 msgstr "Ordenar por"
 
-#: AlbumBrowser.cpp:409
+#: AlbumBrowser.cpp:414
 msgid "Set the albums sorting"
 msgstr "Establecer el orden de los álbumes"
 
-#: AlbumBrowser.cpp:413 AlbumBrowser.cpp:1852 LastFMPanel.cpp:597
+#: AlbumBrowser.cpp:418 AlbumBrowser.cpp:1921 LastFMPanel.cpp:597
 #: LastFMPanel.cpp:859 LastFMPanel.cpp:1055 LastFMPanel.cpp:1260
 #: LastFMPanel.cpp:1465 LastFMPanel.cpp:1590 LyricsPanel.cpp:287
 msgid "Copy to Clipboard"
 msgstr "Copiar al portapapeles"
 
-#: AlbumBrowser.cpp:413 AlbumBrowser.cpp:1852 LastFMPanel.cpp:859
+#: AlbumBrowser.cpp:418 AlbumBrowser.cpp:1921 LastFMPanel.cpp:859
 msgid "Copy the album info to clipboard"
 msgstr "Copiar el álbum al portapapeles"
 
-#: AlbumBrowser.cpp:1347 LibPanel.cpp:1149 TreePanel.cpp:1059
+#: AlbumBrowser.cpp:1361 LibPanel.cpp:1149 TreePanel.cpp:1059
 msgid "Albums Labels Editor"
 msgstr "Editor de etiquetas de álbumes"
 
-#: AlbumBrowser.cpp:1536 AlListBox.cpp:486 ItemListBox.cpp:64
+#: AlbumBrowser.cpp:1604 AlListBox.cpp:486 ItemListBox.cpp:64
 #: PlayerFilters.cpp:107 Preferences.cpp:1818 Preferences.cpp:1915
 #: SmartMode.cpp:396
 msgid "All"
 msgstr "Todo"
 
-#: AlbumBrowser.cpp:1604
+#: AlbumBrowser.cpp:1672
 msgid "Page"
 msgstr "Página"
 
-#: AlbumBrowser.cpp:1955 ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136
+#: AlbumBrowser.cpp:2024 ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136
 #: LastFMPanel.cpp:3196 PcListBox.cpp:166 PlayList.cpp:1590 RaListBox.cpp:198
 #: TaListBox.cpp:167 TreePanel.cpp:450
 msgid "Save the selected tracks to playlist"
 msgstr "Guardar pistas seleccionadas en una lista"
 
-#: AlbumBrowser.cpp:1959 PlayList.cpp:1596 SoListBox.cpp:630
+#: AlbumBrowser.cpp:2028 PlayList.cpp:1596 SoListBox.cpp:630
 msgid "Create Smart Playlist"
 msgstr "Crear lista de reproducción inteligente"
 
-#: AlbumBrowser.cpp:1959 PlayList.cpp:1596 SoListBox.cpp:630
+#: AlbumBrowser.cpp:2028 PlayList.cpp:1596 SoListBox.cpp:630
 msgid "Create a smart playlist from this track"
 msgstr "Crear lista inteligente con esta pista"
 
-#: AlbumBrowser.cpp:2025 LibPanel.cpp:1359 PlayList.cpp:2128
+#: AlbumBrowser.cpp:2094 LibPanel.cpp:1359 PlayList.cpp:2128
 #: PlayListPanel.cpp:1388 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
 msgstr "Editor de etiquetas"
 
-#: AlbumBrowser.cpp:2347 FileBrowser.cpp:1961 FileBrowser.cpp:2098
+#: AlbumBrowser.cpp:2416 FileBrowser.cpp:1961 FileBrowser.cpp:2098
 #: LibPanel.cpp:1432 PlayList.cpp:1978 PlayListPanel.cpp:1497
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
 msgstr "Sin Nombre"
 
-#: AlbumBrowser.cpp:2396 LibPanel.cpp:272 LibPanel.cpp:279 LibPanel.cpp:528
+#: AlbumBrowser.cpp:2465 LibPanel.cpp:272 LibPanel.cpp:279 LibPanel.cpp:528
 #: LocationPanel.cpp:446 MainFrame.cpp:1230
 msgid "Albums"
 msgstr "Albumes"
 
-#: AlbumBrowser.cpp:2397 SoListBox.cpp:505
+#: AlbumBrowser.cpp:2466 SoListBox.cpp:505
 msgid "to"
 msgstr "Para"
 
-#: AlbumBrowser.cpp:2398
+#: AlbumBrowser.cpp:2467
 msgid "of"
 msgstr " de "
 
@@ -1373,54 +1374,54 @@ msgstr "No hay archivos añadidos"
 
 #: iPodMedia.cpp:1682 Jamendo.cpp:1128 LocationPanel.cpp:510
 #: Magnatune.cpp:1023 MainFrame.cpp:1294 MediaViewer.cpp:952
-#: PortableMedia.cpp:1888
+#: PortableMedia.cpp:1889
 msgid "Update the collection library"
 msgstr "Actualizar la fonoteca de la colección"
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515
 #: Magnatune.cpp:1026 MainFrame.cpp:1299 MediaViewer.cpp:955
-#: PortableMedia.cpp:1891
+#: PortableMedia.cpp:1892
 msgid "Rescan"
 msgstr "Volver a escanear"
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:516
 #: Magnatune.cpp:1026 MainFrame.cpp:1300 MediaViewer.cpp:955
-#: PortableMedia.cpp:1891
+#: PortableMedia.cpp:1892
 msgid "Rescan the collection library"
 msgstr "Volver a escanear la fonoteca"
 
 #: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:521
 #: Magnatune.cpp:1029 MainFrame.cpp:1305 MediaViewer.cpp:958
-#: PortableMedia.cpp:1894
+#: PortableMedia.cpp:1895
 msgid "Search Covers"
 msgstr "Buscar carátulas"
 
 #: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:522
 #: Magnatune.cpp:1029 MainFrame.cpp:1306 MediaViewer.cpp:958
-#: PortableMedia.cpp:1894
+#: PortableMedia.cpp:1895
 msgid "Search the collection missing covers"
 msgstr "Busar carátulas ausentes de la colección"
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1314
-#: PortableMedia.cpp:1899
+#: PortableMedia.cpp:1900
 msgid "Unmount"
 msgstr "Desmontar"
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1314
-#: PortableMedia.cpp:1899
+#: PortableMedia.cpp:1900
 msgid "Unmount the device"
 msgstr "Desmontar el dispositivo"
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:343
 #: LocationPanel.cpp:382 LocationPanel.cpp:537 Magnatune.cpp:1034
 #: MainFrame.cpp:1028 MainFrame.cpp:1067 MainFrame.cpp:1321
-#: MediaViewer.cpp:963 PodcastsPanel.cpp:1763 PortableMedia.cpp:1904
+#: MediaViewer.cpp:963 PodcastsPanel.cpp:1763 PortableMedia.cpp:1905
 msgid "Properties"
 msgstr "Propiedades"
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:537
 #: Magnatune.cpp:1034 MainFrame.cpp:1321 MediaViewer.cpp:963
-#: PortableMedia.cpp:1904
+#: PortableMedia.cpp:1905
 msgid "Show collection properties"
 msgstr "Mostrar propiedades de la colección"
 
@@ -2770,7 +2771,7 @@ msgstr "Borrar las listas seleccionadas"
 
 #: PlayListPanel.cpp:302
 msgid "Set as Allow Filter"
-msgstr ""
+msgstr "Establecer como filtro permitido"
 
 #: PlayListPanel.cpp:302
 msgid "Set this playlist as the allow filter"
