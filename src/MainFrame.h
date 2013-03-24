@@ -424,6 +424,7 @@ class guMainFrame : public wxFrame
     void                            OnCloseTab( wxCommandEvent &event );
 
     void                            OnShowCaptions( wxCommandEvent &event );
+    void                            OnShowCaptions( const bool visible );
 
     void                            UpdatePodcasts( void );
 
