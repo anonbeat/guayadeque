@@ -1372,6 +1372,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_LastFadeVolume = -1;
     m_StartOffset = startpos;
     m_SeekTimerId = 0;
+    m_RecordAdded = false;
 
     guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%i)  %i" ), m_Id, playtype );
 
@@ -2485,6 +2486,9 @@ bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 {
+    if( m_RecordAdded )
+        return;
+	m_RecordAdded = true;
 	gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
     m_RecordPad = gst_element_get_request_pad( m_Tee, "src%d" );
 
@@ -2508,6 +2512,8 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
 {
+    if( !m_RecordAdded )
+        return;
     g_object_ref( m_RecordBin );
     gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
 
@@ -2518,6 +2524,7 @@ void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
     {
         gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), NULL );
     }
+    m_RecordAdded = false;
 }
 
 

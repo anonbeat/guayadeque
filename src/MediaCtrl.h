@@ -230,6 +230,7 @@ class guFaderPlayBin
     long                m_Id;
     long                m_NextId;
     double              m_LastFadeVolume;
+    bool                m_RecordAdded;
 
 
     int                 m_ErrorCode;
