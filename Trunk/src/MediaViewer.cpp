@@ -2112,6 +2112,16 @@ wxString guMediaViewer::PlaylistPath( void )
 }
 
 // -------------------------------------------------------------------------------- //
+bool guMediaViewer::MoveFiles( void )
+{
+    if( m_CopyToPattern )
+    {
+        return m_CopyToPattern->m_MoveFiles;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
 void guMediaViewer::OnSmartAddTracks( wxCommandEvent &event )
 {
     guLogMessage( wxT( "guMediaViewer::OnSmartAddTracks" ) );
