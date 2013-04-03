@@ -307,6 +307,7 @@ class guMediaViewer : public wxPanel
     virtual int             TranscodeFormat( void );
     virtual int             TranscodeScope( void );
     virtual int             TranscodeQuality( void );
+    virtual bool            MoveFiles( void );
     virtual int             PlaylistFormats( void );
     virtual wxString        PlaylistPath( void );
     virtual int             CoverFormats( void ) { return 2; } //guPORTABLEMEDIA_COVER_FORMAT_JPEG

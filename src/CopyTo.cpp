@@ -86,6 +86,7 @@ guCopyToAction::guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaview
     m_Format = mediaviewer->TranscodeFormat();
     m_Quality = mediaviewer->TranscodeQuality();
     m_DestDir = mediaviewer->AudioPath();
+    m_MoveFiles = mediaviewer->MoveFiles();
     if( m_DestDir.EndsWith( wxT( "//" ) ) )
         m_DestDir.RemoveLast();
     else if( !m_DestDir.EndsWith( wxT( "/" ) ) )
@@ -114,6 +115,7 @@ guCopyToAction::guCopyToAction( wxString * playlistpath, guMediaViewer * mediavi
     m_Format = mediaviewer->TranscodeFormat();
     m_Quality = mediaviewer->TranscodeQuality();
     m_Pattern = mediaviewer->Pattern();
+    m_MoveFiles = mediaviewer->MoveFiles();
     m_DestDir = mediaviewer->AudioPath();
 //    wxArrayString AudioFolders = wxStringTokenize( PortableMediaDevice->AudioFolders(), wxT( "," ) );
 //    m_DestDir += AudioFolders[ 0 ].Trim( true ).Trim( false );
