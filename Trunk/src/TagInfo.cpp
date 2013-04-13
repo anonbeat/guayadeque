@@ -104,7 +104,9 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
         case  9 :
         case 10 : return new guASFTagInfo( filename );
 
+#ifdef TAGLIB_WITH_APE_SUPPORT
         case 11 : return new guApeTagInfo( filename );
+#endif
 
         case 12 :
         case 13 : return new guTagInfo( filename );
@@ -2163,7 +2165,7 @@ bool guWavPackTagInfo::SetLyrics( const wxString &lyrics )
 }
 
 
-
+#ifdef TAGLIB_WITH_APE_SUPPORT
 // -------------------------------------------------------------------------------- //
 // guApeTagInfo
 // -------------------------------------------------------------------------------- //
@@ -2219,7 +2221,7 @@ bool guApeTagInfo::SetLyrics( const wxString &lyrics )
 {
     return SetApeLyrics( m_ApeTag, lyrics );
 }
-
+#endif
 
 
 // -------------------------------------------------------------------------------- //

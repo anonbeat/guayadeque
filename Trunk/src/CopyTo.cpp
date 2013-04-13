@@ -48,6 +48,7 @@ guCopyToAction::guCopyToAction()
 // -------------------------------------------------------------------------------- //
 guCopyToAction::guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
 {
+    guLogMessage( wxT( "guCopyToAction %i files : delete = %i" ), tracks->Count(), movefiles );
     m_Type = guCOPYTO_ACTION_COPYTO;
     m_Tracks = tracks;
     m_MediaViewer = mediaviewer;
@@ -199,6 +200,7 @@ guCopyToThread::~guCopyToThread()
 // -------------------------------------------------------------------------------- //
 void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
 {
+    guLogMessage( wxT( "AddAction %i files : delete = %i" ), tracks->Count(), movefiles );
     guCopyToAction * CopyToAction = new guCopyToAction( tracks, mediaviewer, destdir, pattern, format, quality, movefiles );
     if( CopyToAction )
     {
@@ -827,6 +829,14 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         //wxPostEvent( MediaViewer, evt );
         wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, MediaViewer->GetBaseCommand() + guCOLLECTION_ACTION_UPDATE_LIBRARY );
         wxPostEvent( MediaViewer, Event );
+    }
+    else
+    {
+        if( m_DeleteTracks.Count() )
+        {
+            MediaViewer = m_MainFrame->GetDefaultMediaViewer();
+            MediaViewer->DeleteTracks( &m_DeleteTracks );
+        }
     }
 }
 

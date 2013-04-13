@@ -43,7 +43,9 @@
 
 #include <xiphcomment.h>
 
+#ifdef TAGLIB_WITH_APE_SUPPORT
 #include <apefile.h>
+#endif
 #include <mp4tag.h>
 #include <apetag.h>
 #include <id3v2tag.h>
@@ -223,6 +225,7 @@ class guMp4TagInfo : public guTagInfo
     virtual bool        SetLyrics( const wxString &lyrics );
 };
 
+#ifdef TAGLIB_WITH_APE_SUPPORT
 // -------------------------------------------------------------------------------- //
 class guApeTagInfo : public guTagInfo
 {
@@ -240,6 +243,7 @@ class guApeTagInfo : public guTagInfo
     virtual wxString    GetLyrics( void );
     virtual bool        SetLyrics( const wxString &lyrics );
 };
+#endif
 
 // -------------------------------------------------------------------------------- //
 class guMpcTagInfo : public guTagInfo

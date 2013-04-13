@@ -414,6 +414,7 @@ class guMainFrame : public wxFrame
     guPodcastPanel *                GetPodcastsPanel( void ) { return m_PodcastsPanel; }
 
 
+    guMediaViewer *                 GetDefaultMediaViewer( void );
     const guMediaCollectionArray &  GetMediaCollections( void ) { wxMutexLocker Locker( m_CollectionsMutex ); return m_Collections; }
     bool                            IsCollectionActive( const wxString &uniqueid );
     bool                            IsCollectionPresent( const wxString &uniqueid );
@@ -423,8 +424,8 @@ class guMainFrame : public wxFrame
 
     void                            OnCloseTab( wxCommandEvent &event );
 
+    void                            DoShowCaptions( const bool visible );
     void                            OnShowCaptions( wxCommandEvent &event );
-    void                            OnShowCaptions( const bool visible );
 
     void                            UpdatePodcasts( void );
 

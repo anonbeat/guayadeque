@@ -873,6 +873,20 @@ int guMainFrame::GetMediaViewerIndex( guMediaViewer * mediaviewer )
 }
 
 // -------------------------------------------------------------------------------- //
+guMediaViewer * guMainFrame::GetDefaultMediaViewer( void )
+{
+    //guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
+    int Index;
+    int Count = m_MediaViewers.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        if( m_MediaViewers[ Index ]->IsDefault() )
+            return m_MediaViewers[ Index ];
+    }
+    return NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 guMediaCollection * guMainFrame::FindCollection( const wxString &uniqueid )
 {
     int Index;
@@ -1938,11 +1952,11 @@ void guMainFrame::OnCloseTab( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnShowCaptions( wxCommandEvent &event )
 {
-    OnShowCaptions( event.GetInt() );
+    DoShowCaptions( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnShowCaptions( const bool visible )
+void guMainFrame::DoShowCaptions( const bool visible )
 {
     //guLogMessage( wxT( "guMainFrame::OnShowCaptions( %i )" ) );
     wxAuiPaneInfoArray &PaneInfoArray = m_AuiManager.GetAllPanes();
@@ -4346,7 +4360,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
         {
             PaneInfo.Show();
             guConfig * Config = ( guConfig * ) guConfig::Get();
-            OnShowCaptions( Config->ReadBool( wxT( "ShowCaptions" ), true, wxT( "mainwindow" ) ) );
+            DoShowCaptions( Config->ReadBool( wxT( "ShowCaptions" ), true, wxT( "mainwindow" ) ) );
         }
         else
         {
