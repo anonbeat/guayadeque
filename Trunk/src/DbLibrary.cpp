@@ -2767,14 +2767,16 @@ void guDbLibrary::GetRatings( guListItems * Ratings, const bool FullList )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  if( FullList || !GetFiltersCount() )
+  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ||
+                     m_AAFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ||
+                     m_YeFilters.Count() ) )
   {
     query = wxT( "SELECT DISTINCT song_rating FROM songs WHERE song_rating >= 0 ORDER BY song_rating DESC;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT song_rating FROM songs " ) \
-            wxT( "WHERE song_rating >= 0 AND " ) + FiltersSQL( guLIBRARY_FILTER_SONGS );
+            wxT( "WHERE song_rating >= 0 AND " ) + FiltersSQL( guLIBRARY_FILTER_RATINGS );
     query += wxT( " ORDER BY song_rating DESC;" );
   }
 
@@ -2795,22 +2797,26 @@ void guDbLibrary::GetPlayCounts( guListItems * PlayCounts, const bool FullList )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  if( FullList || !GetFiltersCount() )
+  if( FullList || !( m_TeFilters.Count() || m_LaFilters.Count() || m_GeFilters.Count() ||
+                     m_AAFilters.Count() || m_ArFilters.Count() || m_CoFilters.Count() ||
+                     m_YeFilters.Count() ) )
   {
     query = wxT( "SELECT DISTINCT song_playcount FROM songs ORDER BY song_playcount;" );
   }
   else
   {
     query = wxT( "SELECT DISTINCT song_playcount FROM songs " ) \
-            wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_SONGS );
+            wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_PLAYCOUNTS );
     query += wxT( " ORDER BY song_playcount;" );
   }
+  guLogMessage( query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
   {
     int PlayCount = dbRes.GetInt( 0 );
+    guLogMessage( wxT( "guDbLibrary::GetPlayCounts %i" ), PlayCount );
     // To avoid using the 0 as 0 is used for All
     PlayCounts->Add( new guListItem( PlayCount + 1, wxString::Format( wxT( "%i" ), PlayCount ) ) );
   }
