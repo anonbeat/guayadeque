@@ -1004,7 +1004,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_MinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 4 );
+	m_MinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 10, 4 );
     m_MinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) ) );
 	SmartPlayListFlexGridSizer->Add( m_MinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 

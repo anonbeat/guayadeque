@@ -1917,7 +1917,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     // Check if Smart is enabled
     if( m_PlaySmart &&
         ( ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) || ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) ) &&
-        ( ( m_PlayListCtrl->GetCurItem() + m_SmartPlayMinTracksToPlay ) >= m_PlayListCtrl->GetCount() ) )
+        ( !m_SmartPlayMinTracksToPlay || ( ( m_PlayListCtrl->GetCurItem() + m_SmartPlayMinTracksToPlay ) >= m_PlayListCtrl->GetCount() ) ) )
     {
         SmartAddTracks( m_MediaSong );
     }
