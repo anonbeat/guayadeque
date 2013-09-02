@@ -2809,14 +2809,12 @@ void guDbLibrary::GetPlayCounts( guListItems * PlayCounts, const bool FullList )
             wxT( "WHERE " ) + FiltersSQL( guLIBRARY_FILTER_PLAYCOUNTS );
     query += wxT( " ORDER BY song_playcount;" );
   }
-  guLogMessage( query.c_str() );
 
   dbRes = ExecuteQuery( query );
 
   while( dbRes.NextRow() )
   {
     int PlayCount = dbRes.GetInt( 0 );
-    guLogMessage( wxT( "guDbLibrary::GetPlayCounts %i" ), PlayCount );
     // To avoid using the 0 as 0 is used for All
     PlayCounts->Add( new guListItem( PlayCount + 1, wxString::Format( wxT( "%i" ), PlayCount ) ) );
   }
