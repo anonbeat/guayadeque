@@ -15,6 +15,8 @@ X-Ayatana-Desktop-Shortcuts=PlayPause;Stop;Previous;Next;
 
 Name[en_US]=Guayadeque Music Player
 
+GenericName=
+
 [PlayPause Shortcut Group]
 Name=Play - Pause
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Play

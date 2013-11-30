@@ -71,6 +71,7 @@ bool guIsValidAudioFile( const wxString &filename )
         guSupportedFormats.Add( wxT( "mpc"  ) );
         //
         //guSupportedFormats.Add( wxT( "rmj"  ) );
+        guSupportedFormats.Add( wxT( "opus"  ) );
     }
 
     int Position = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
@@ -93,7 +94,8 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
         case  1 : return new guFlacTagInfo( filename );
 
         case  2 :
-        case  3 : return new guOggTagInfo( filename );
+        case  3 :
+        case 17 : return new guOggTagInfo( filename );
 
         case  4 :
         case  5 :
