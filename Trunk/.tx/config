@@ -28,6 +28,6 @@ trans.bg = po/bg/guayadeque.po
 trans.sr = po/sr/guayadeque.po
 trans.sr@latin = po/sr-latin/guayadeque.po
 trans.ca = po/ca_ES/guayadeque.po
-
+trans.hr = po/hr/guayadeque.po
 
 

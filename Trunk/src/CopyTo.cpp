@@ -396,6 +396,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 
             FileName = DestDir + guExpandTrackMacros( FilePattern, CurTrack, m_CurrentFile - 1 );
 
+            // TODO : Check target file system and filter the appropiate characters for every file system
             // Replace all the special chars <>:" / \ | ? *
             wxRegEx RegEx( wxT( "[<>:\\|?*]" ) );
             RegEx.ReplaceAll( &FileName, wxT( "_" ) );
