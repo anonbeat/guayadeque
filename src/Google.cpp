@@ -29,9 +29,9 @@
 #include <wx/html/htmlpars.h>
 
 //#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
-#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&sout=1&start=%u" )
-
-#define GOOGLE_COVERS_PER_PAGE      15
+//#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&sout=1&start=%u" )
+#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%s&rsz=8&start=%d" )
+#define GOOGLE_COVERS_PER_PAGE      8
 
 // -------------------------------------------------------------------------------- //
 guGoogleCoverFetcher::guGoogleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
@@ -45,10 +45,10 @@ void guGoogleCoverFetcher::ExtractImageInfo( const wxString &content )
 {
     //guLogMessage( wxT( "ExtractImageInfo: '%s'" ), content.c_str() );
     wxArrayString CurImageInfo;
-    CurImageInfo.Add( ExtractString( content, wxT( "<a href=\"/imgres?imgurl=" ), wxT( "&amp;" ) ) );
-    wxString ImgInfo = ExtractString( content, wxT( "&amp;w=" ), wxT( "&amp;" ) );
+    CurImageInfo.Add( ExtractString( content, wxT( "\"url\":\"" ), wxT( "\",\"" ) ) );
+    wxString ImgInfo = ExtractString( content, wxT( "\"width\":\"" ), wxT( "\",\"" ) );
     if( !ImgInfo.IsEmpty() )
-        ImgInfo += wxT( " x " ) + ExtractString( content, wxT( "&amp;h=" ), wxT( "&amp;" ) );
+        ImgInfo += wxT( " x " ) + ExtractString( content, wxT( "\"height\":\"" ), wxT( "\",\"" ) );
     CurImageInfo.Add( ImgInfo );
     m_CoverLinks->Add( CurImageInfo );
 }
@@ -59,27 +59,30 @@ int guGoogleCoverFetcher::ExtractImagesInfo( wxString &content, int count )
     int ImageIndex = 0;
     while( !m_MainThread->TestDestroy() )
     {
-        int FindPos = content.Find( wxT( "<a href=\"/imgres?imgurl=" ) );
-        if( FindPos == wxNOT_FOUND )
-            break;
+        //guLogMessage( wxT( "%s\n" ), content.c_str() );
 
+        int FindPos = content.Find( wxT( "{\"GsearchResultClass\":" ) );
+        if( FindPos == wxNOT_FOUND )
+        {
+            break;
+        }
         content = content.Mid( FindPos );
 
-        FindPos = content.Find( wxT( "</a>" ) );
+        FindPos = content.Find( wxT( "}," ) );
         if( FindPos == wxNOT_FOUND )
             break;
 
-        ExtractImageInfo( content.Mid( 0, FindPos + 4 ) );
+        ExtractImageInfo( content.Mid( 0, FindPos + 1 ) );
         ImageIndex++;
         if( ImageIndex > count )
             break;
 
-        content = content.Mid( FindPos + 4 );
+        content = content.Mid( FindPos + 1 );
         if( content.IsEmpty() )
             break;
     }
 
-    return ImageIndex;
+    return ( ImageIndex == GOOGLE_COVERS_PER_PAGE ) ? ImageIndex : 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -91,7 +94,6 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
     //guLogMessage( wxT( "URL: %u %s" ), pagenum, SearchUrl.c_str() );
     if( !m_MainThread->TestDestroy() )
     {
-        //printf( "Buffer:\n%s\n", Buffer );
         wxString Content = GetUrlContent( SearchUrl );
         if( Content.Length() )
         {
