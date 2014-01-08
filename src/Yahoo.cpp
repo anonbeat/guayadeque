@@ -58,7 +58,7 @@ int guYahooCoverFetcher::ExtractImagesInfo( wxString &content, int count )
     int ImageIndex = 0;
     while( !m_MainThread->TestDestroy() )
     {
-        int FindPos = content.Find( wxT( "<li class=\"ld\"" ) );
+        int FindPos = content.Find( wxT( "<li class=\"ld" ) );
         if( FindPos == wxNOT_FOUND )
             break;
 
