@@ -51,11 +51,6 @@
 #include <id3v2tag.h>
 #include <asftag.h>
 
-// FLAC Dev files
-#include <FLAC/metadata.h>
-#include <FLAC/format.h>
-
-
 #include <wx/string.h>
 #include <wx/arrstr.h>
 #include <wx/image.h>
