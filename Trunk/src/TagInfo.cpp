@@ -1709,47 +1709,42 @@ bool guFlacTagInfo::CanHandleImages( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * GetFlacImage( const wxString &filename, int imagetype )
+wxImage * GetFlacImage( List<FLAC::Picture *> Pictures, TagLib::FLAC::Picture::Type imagetype )
 {
     wxImage * CoverImage = NULL;
 
-    FLAC__Metadata_SimpleIterator * iter = FLAC__metadata_simple_iterator_new();
-    if( iter )
+    for( List<FLAC::Picture *>::Iterator it = Pictures.begin(); it != Pictures.end(); ++it )
     {
-        if( FLAC__metadata_simple_iterator_init( iter, filename.mb_str( wxConvFile ), true, false ) )
+        FLAC::Picture * Pic = ( * it );
+
+        if( Pic->type() == imagetype )
         {
-            while( !CoverImage && FLAC__metadata_simple_iterator_next( iter ) )
+            int ImgType = wxBITMAP_TYPE_INVALID;
+            if( Pic->mimeType() == "image/png" )
             {
-                if( FLAC__metadata_simple_iterator_get_block_type( iter ) == FLAC__METADATA_TYPE_PICTURE )
+                ImgType = wxBITMAP_TYPE_PNG;
+            }
+            else if( Pic->mimeType() == "image/jpeg" )
+            {
+                ImgType = wxBITMAP_TYPE_JPEG;
+            }
+
+            wxMemoryOutputStream ImgOutStream;
+            ImgOutStream.Write( Pic->data().data(), Pic->data().size() );
+            wxMemoryInputStream ImgInputStream( ImgOutStream );
+            wxImage * CoverImage = new wxImage( ImgInputStream, ImgType );
+            if( CoverImage )
+            {
+                if( CoverImage->IsOk() )
                 {
-                    FLAC__StreamMetadata * block = FLAC__metadata_simple_iterator_get_block( iter );
-
-                    if( block->data.picture.type == imagetype )
-                    {
-                        wxMemoryOutputStream ImgOutStream;
-
-                        FLAC__StreamMetadata_Picture * PicInfo = &block->data.picture;
-
-                        ImgOutStream.Write( PicInfo->data, PicInfo->data_length );
-                        wxMemoryInputStream ImgInputStream( ImgOutStream );
-                        CoverImage = new wxImage( ImgInputStream, wxString( PicInfo->mime_type, wxConvUTF8 ) );
-
-                        if( CoverImage )
-                        {
-                            if( !CoverImage->IsOk() )
-                            {
-                                delete CoverImage;
-                                CoverImage = NULL;
-                            }
-                        }
-                    }
-
-                    FLAC__metadata_object_delete( block );
+                    return CoverImage;
+                }
+                else
+                {
+                    delete CoverImage;
                 }
             }
         }
-
-        FLAC__metadata_simple_iterator_delete( iter );
     }
 
     return CoverImage;
@@ -1760,10 +1755,17 @@ wxImage * guFlacTagInfo::GetImage( void )
 {
     wxImage * CoverImage = NULL;
 
-    CoverImage = GetFlacImage( m_FileName, FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER );
-    if( !CoverImage )
+    if( m_TagFile )
     {
-        CoverImage = GetFlacImage( m_FileName, FLAC__STREAM_METADATA_PICTURE_TYPE_OTHER );
+        List<FLAC::Picture *> Pictures = ( ( FLAC::File * ) m_TagFile->file() )->pictureList();
+        if( Pictures.size() > 0 )
+        {
+            CoverImage = GetFlacImage( Pictures, TagLib::FLAC::Picture::FrontCover );
+            if( !CoverImage )
+            {
+                CoverImage = GetFlacImage( Pictures, TagLib::FLAC::Picture::Other );
+            }
+        }
     }
 
     return CoverImage;
@@ -1773,91 +1775,33 @@ wxImage * guFlacTagInfo::GetImage( void )
 bool guFlacTagInfo::SetImage( const wxImage * image )
 {
     bool RetVal = false;
-    FLAC__Metadata_Chain * Chain;
-    FLAC__Metadata_Iterator * Iter;
-
-    Chain = FLAC__metadata_chain_new();
-    if( Chain )
+    if( m_TagFile )
     {
-        if( FLAC__metadata_chain_read( Chain, m_FileName.mb_str( wxConvFile ) ) )
+        FLAC::File * FlacFile = ( FLAC::File * ) m_TagFile->file();
+
+        FlacFile->removePictures();
+
+        if( image )
         {
-            Iter = FLAC__metadata_iterator_new();
-            if( Iter )
+            wxMemoryOutputStream ImgOutputStream;
+            if( image && image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
             {
-                FLAC__metadata_iterator_init( Iter, Chain );
+                ByteVector ImgData( ( TagLib::uint ) ImgOutputStream.GetSize() );
+                ImgOutputStream.CopyTo( ImgData.data(), ImgOutputStream.GetSize() );
 
-                while( FLAC__metadata_iterator_next( Iter ) )
+                FLAC::Picture * Pic = new FLAC::Picture();
+                if( Pic )
                 {
-                    if( FLAC__metadata_iterator_get_block_type( Iter ) == FLAC__METADATA_TYPE_PICTURE )
-                    {
-                        FLAC__StreamMetadata * Picture = FLAC__metadata_iterator_get_block( Iter );
-                        if( Picture->data.picture.type ==  FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER )
-                        {
-                            //
-                            FLAC__metadata_iterator_delete_block( Iter, true );
-                        }
-                    }
-                }
-
-                wxMemoryOutputStream ImgOutputStream;
-                if( image && image->SaveFile( ImgOutputStream, wxBITMAP_TYPE_JPEG ) )
-                {
-                    FLAC__byte * CoverData = ( FLAC__byte * ) malloc( ImgOutputStream.GetSize() );
-                    if( CoverData )
-                    {
-                        const char * PicErrStr;
-
-                        ImgOutputStream.CopyTo( CoverData, ImgOutputStream.GetSize() );
-
-                        //
-                        FLAC__StreamMetadata * Picture;
-                        Picture = FLAC__metadata_object_new( FLAC__METADATA_TYPE_PICTURE );
-                        Picture->data.picture.type = FLAC__STREAM_METADATA_PICTURE_TYPE_FRONT_COVER;
-                        FLAC__metadata_object_picture_set_mime_type( Picture,  ( char * ) "image/jpeg", TRUE );
-
-                        //FLAC__metadata_object_picture_set_description( Picture, ( char * ) "", TRUE );
-                        Picture->data.picture.width  = image->GetWidth();
-                        Picture->data.picture.height = image->GetHeight();
-                        Picture->data.picture.depth  = 0;
-
-                        FLAC__metadata_object_picture_set_data( Picture, CoverData, ( FLAC__uint32 ) ImgOutputStream.GetSize(), FALSE );
-
-                        if( FLAC__metadata_object_picture_is_legal( Picture, &PicErrStr ) )
-                        {
-                            FLAC__metadata_iterator_insert_block_after( Iter, Picture );
-                        }
-                        else
-                        {
-                            FLAC__metadata_object_delete( Picture );
-                        }
-                    }
-                }
-
-                FLAC__metadata_chain_sort_padding( Chain );
-                if( !FLAC__metadata_chain_write( Chain, TRUE, TRUE ) )
-                {
-                    guLogError( wxT( "Could not save the FLAC file" ) );
-                }
-                else
-                {
-                    RetVal = true;
+                    Pic->setData( ImgData );
+                    //Pic->setDescription( "" );
+                    Pic->setMimeType( "image/jpeg" );
+                    Pic->setType( TagLib::FLAC::Picture::FrontCover );
+                    FlacFile->addPicture( Pic );
+                    return true;
                 }
             }
-            else
-            {
-                guLogError( wxT( "Could not create the FLAC Iterator." ) );
-            }
+            return false;
         }
-        else
-        {
-            guLogError( wxT( "Could not read the FLAC metadata." ) );
-        }
-
-        FLAC__metadata_chain_delete( Chain );
-    }
-    else
-    {
-        guLogError( wxT( "Could not create a FLAC chain." ) );
     }
     return RetVal;
 }

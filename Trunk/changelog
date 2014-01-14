@@ -1,4 +1,5 @@
 
+  * Removed Flac library dependency. Now flac images are read/writen using taglib
   * Fixed compilation without external libwxsqlite support
   * Fixed audio output autoconfiguring option
   * Fixed load tracks from command line or file manager
