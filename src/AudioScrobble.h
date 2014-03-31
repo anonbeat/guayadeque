@@ -50,7 +50,7 @@
 #define guAS_MAX_SUBMITTRACKS       50
 
 #define guAS_SUBMIT_RETRY_TIMEOUT   30000
-#define guAS_SUBMIT_TIMEOUT         120000
+#define guAS_SUBMIT_TIMEOUT         1000
 
 #define guAS_ERROR_NOERROR          0
 #define guAS_ERROR_BANNED           1

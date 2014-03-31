@@ -406,7 +406,7 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
     {
         index = event.GetId();
 
-        guConfig * Config = ( guConfig * ) Config->Get();
+        guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );

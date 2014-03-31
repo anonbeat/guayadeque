@@ -2248,7 +2248,7 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
     int Count;
     Index = event.GetId();
 
-    guConfig * Config = ( guConfig * ) Config->Get();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
         wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
@@ -2286,7 +2286,7 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
     int Count;
     Index = event.GetId();
 
-    guConfig * Config = ( guConfig * ) Config->Get();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
         wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );

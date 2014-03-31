@@ -483,6 +483,10 @@ guAlbumInfo guLastFM::AlbumGetInfo( const wxString &Artist, const wxString &Albu
                                 {
                                     RetVal.m_ImageLink = XmlNode->GetNodeContent();
                                 }
+                                else if( ImageSize == wxT( "mega" ) && !XmlNode->GetNodeContent().IsEmpty() )
+                                {
+                                    RetVal.m_ImageLink = XmlNode->GetNodeContent();
+                                }
                             }
                             else if( ItemName == wxT( "toptags" ) )
                             {

@@ -1,3 +1,6 @@
+  * Fixed some Config constructor calls
+
+2014-02-20 0.3.7
 
   * Removed Flac library dependency. Now flac images are read/writen using taglib
   * Fixed compilation without external libwxsqlite support

@@ -1177,7 +1177,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
     {
         index = cmdid;
 
-        guConfig * Config = ( guConfig * ) Config->Get();
+        guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
@@ -1240,7 +1240,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
     {
         Index = cmdid;
 
-        guConfig * Config = ( guConfig * ) Config->Get();
+        guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );

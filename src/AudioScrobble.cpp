@@ -767,7 +767,7 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
         {
             break;
         }
-        Sleep( guAS_SUBMIT_RETRY_TIMEOUT ); // Wait 30 Secs between submit attempts
+        Sleep( guAS_SUBMIT_TIMEOUT ); // Wait 30 Secs between submit attempts
     }
     return 0;
 }

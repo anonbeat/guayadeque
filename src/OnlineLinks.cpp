@@ -79,7 +79,7 @@ void ExecuteOnlineLink( const int linkid, const wxString &text )
     int index = linkid - ID_LINKS_BASE;
     //guLogMessage( wxT( "ExecuteOnlineLink( %i, '%s' )" ), index, text.c_str() );
 
-    guConfig * Config = ( guConfig * ) Config->Get();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
     wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "searchlinks/links" ) );
 
     if( index >= 0 && ( index < ( int ) Links.Count() ) )
