@@ -255,10 +255,7 @@ bool DownloadImage( const wxString &source, const wxString &target, const int im
     {
         if( maxwidth != -1 )
         {
-            if( maxheight != -1 )
-                Image->Rescale( maxwidth, maxheight, wxIMAGE_QUALITY_HIGH );
-            else
-                Image->Rescale( maxwidth, maxwidth, wxIMAGE_QUALITY_HIGH );
+            guImageResize( Image, maxwidth, ( maxheight != -1 ) ? maxheight : maxwidth );
         }
         RetVal = Image->SaveFile( target, imagetype );
 

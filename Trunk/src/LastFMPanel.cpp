@@ -265,7 +265,7 @@ void guLastFMInfoCtrl::OnDoubleClicked( wxMouseEvent &event )
     GetSelectedTracks( &Tracks );
     if( Tracks.Count() )
     {
-        guConfig * Config = ( guConfig * ) Config->Get();
+        guConfig * Config = ( guConfig * ) guConfig::Get();
         if( m_PlayerPanel && Config )
         {
             if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
@@ -391,7 +391,7 @@ guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
 {
     m_Info = NULL;
 
-    guConfig * Config = ( guConfig * ) Config->Get();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
     m_ShowLongBioText = Config->ReadBool( wxT( "ShowLongBioText" ), false, wxT( "lastfm" )  );
 
     CreateControls( parent );
@@ -406,7 +406,7 @@ guArtistInfoCtrl::~guArtistInfoCtrl()
     if( m_Info )
         delete m_Info;
 
-    guConfig * Config = ( guConfig * ) Config->Get();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteBool( wxT( "ShowLongBioText" ), m_ShowLongBioText, wxT( "lastfm" )  );
 
 	m_ShowMoreHyperLink->Disconnect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guArtistInfoCtrl::OnShowMoreLinkClicked ), NULL, this );
