@@ -1596,7 +1596,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
             !m_NextTrackId &&
             ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) &&
             ( CurPos > 0 ) && ( m_LastLength > 0 ) &&
-            ( ( CurPos + 1000 + ( !m_ForceGapless ? m_FadeOutTime : 0 ) ) >= m_LastLength )
+            ( ( CurPos + 4000 + ( !m_ForceGapless ? m_FadeOutTime : 0 ) ) >= m_LastLength )
           )
         {
             //if( !m_ForceGapless && m_FadeOutTime && !m_MediaSong.m_Offset && ( GetState() == guMEDIASTATE_PLAYING ) )
