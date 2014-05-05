@@ -253,6 +253,7 @@ class guFaderPlayBin
 
     int                 m_StartOffset;
     int                 m_SeekTimerId;
+    bool                m_AddedRecord;
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
