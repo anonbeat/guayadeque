@@ -2584,20 +2584,8 @@ void guFaderTimeLine::ValueChanged( float value )
 void guFaderTimeLine::Finished( void )
 {
     m_FaderPlayBin->SetFaderVolume( m_VolEnd );
+
     m_FaderPlayBin->EndFade();
-}
-
-// -------------------------------------------------------------------------------- //
-static bool TimerUpdated( guFaderTimeLine * timeline )
-{
-    timeline->TimerEvent();
-    return true;
-}
-
-// -------------------------------------------------------------------------------- //
-int guFaderTimeLine::TimerCreate( void )
-{
-    return g_timeout_add( m_UpdateInterval, GSourceFunc( TimerUpdated ), this );
 }
 
 

@@ -209,7 +209,7 @@ class guFaderTimeLine : public guTimeLine
 
     virtual void    ValueChanged( float value );
     virtual void    Finished( void );
-    virtual int     TimerCreate( void );
+//    virtual int     TimerCreate( void );
 };
 
 // -------------------------------------------------------------------------------- //

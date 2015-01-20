@@ -109,8 +109,8 @@ void guTimeLine::ChangeCurrentTime( const int msecs )
 
     if( Ended )
     {
-        Finished();
         Stop();
+        Finished();
     }
 }
 
