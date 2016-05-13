@@ -31,9 +31,9 @@ IF( NOT wxWidgets_FOUND)
     MESSAGE( FATAL_ERROR "wxWidgets not found!" )
 ENDIF( NOT wxWidgets_FOUND)
 
-PKG_CHECK_MODULES( GSTREAMER gstreamer-0.10 )
+PKG_CHECK_MODULES( GSTREAMER gstreamer-1.0 )
 IF( NOT GSTREAMER_LIBRARIES )
-	MESSAGE( FATAL_ERROR "gstreamer-0.10 not found!" )
+	MESSAGE( FATAL_ERROR "gstreamer-1.0 not found!" )
 ENDIF( NOT GSTREAMER_LIBRARIES )
 
 #PKG_CHECK_MODULES( GSTREAMER_CTRL gstreamer-controller-0.10 )
