@@ -288,11 +288,13 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
                     gint channels;
                     const GValue * list;
                     const GValue * value;
+                    GValueArray * avalue;
+
 //                    if( !gst_structure_get_clock_time( s, "endtime", &LevelInfo->m_EndTime ) )
 //                        guLogWarning( wxT( "Could not parse endtime" ) );
 //
 //                    LevelInfo->m_EndTime /= GST_MSECOND;
-//
+
 //                    GstFormat format = GST_FORMAT_TIME;
 //                    if( gst_element_query_position( ctrl->OutputSink(), &format, ( gint64 * ) &LevelInfo->m_OutTime ) )
 //                    {
@@ -313,21 +315,30 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
     //                }
 
                     list = gst_structure_get_value( s, "peak" );
-                    channels = LevelInfo->m_Channels = gst_value_list_get_size( list );
-                    value = gst_value_list_get_value( list, 0 );
+                    avalue = ( GValueArray * ) g_value_get_boxed( list );
+
+                    channels = avalue->n_values;
+                    //value = g_value_array_get_nth( avalue, 0 );
+                    value = avalue->values;
                     LevelInfo->m_Peak_L = g_value_get_double( value );
                     if( channels > 1 )
                     {
-                        value = gst_value_list_get_value( list, 1 );
+                        //value = g_value_array_get_nth( avalue, 1 );
+                        value = avalue->values + 1;
                         LevelInfo->m_Peak_R = g_value_get_double( value );
                     }
 
+
                     list = gst_structure_get_value( s, "decay" );
-                    value = gst_value_list_get_value( list, 0 );
+                    avalue = ( GValueArray * ) g_value_get_boxed( list );
+
+                    //value = g_value_array_get_nth( avalue, 0 );
+                    value = avalue->values;
                     LevelInfo->m_Decay_L = g_value_get_double( value );
                     if( channels > 1 )
                     {
-                        value = gst_value_list_get_value( list, 1 );
+                        //value = g_value_array_get_nth( avalue, 1 );
+                        value = avalue->values + 1;
                         LevelInfo->m_Decay_R = g_value_get_double( value );
                     }
 
@@ -433,29 +444,39 @@ static bool pause_timeout( GstElement * playbin )
 }
 
 // -------------------------------------------------------------------------------- //
-static void record_unlocked( GstPad * pad, bool isblocked, GstPad * new_pad )
+static GstPadProbeReturn record_locked( GstPad * pad, GstPadProbeInfo * info, guFaderPlayBin * ctrl )
 {
     guLogDebug( wxT( "Record_Unlocked" ) );
-	GstEvent * segment;
-	if( new_pad == NULL )
-		return;
 
-	// send a very unimaginative new segment through the new pad
-	segment = gst_event_new_new_segment( true, 1.0, GST_FORMAT_DEFAULT, 0, GST_CLOCK_TIME_NONE, 0 );
-	gst_pad_send_event( new_pad, segment );
-	gst_object_unref( new_pad );
+    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
+
+    ctrl->SetRecordFileName();
+
+    return GST_PAD_PROBE_OK;
 }
 
 // -------------------------------------------------------------------------------- //
-static void add_record_element( GstPad * pad, bool isblocked, guFaderPlayBin * ctrl )
+static GstPadProbeReturn add_record_element( GstPad * pad, GstPadProbeInfo * info, guFaderPlayBin * ctrl )
 {
-    ctrl->AddRecordElement( pad, isblocked );
+    guLogDebug( wxT( "add_record_element" ) );
+
+    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
+
+    ctrl->AddRecordElement( pad, true );
+
+    return GST_PAD_PROBE_OK;
 }
 
 // -------------------------------------------------------------------------------- //
-static void remove_record_element( GstPad * pad, bool isblocked, guFaderPlayBin * ctrl )
+static GstPadProbeReturn remove_record_element( GstPad * pad, GstPadProbeInfo * info, guFaderPlayBin * ctrl )
 {
-    ctrl->RemoveRecordElement( pad, isblocked );
+    guLogDebug( wxT( "remove_record_element" ) );
+
+    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
+
+    ctrl->RemoveRecordElement( pad, true );
+
+    return GST_PAD_PROBE_OK;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -509,7 +530,29 @@ guMediaCtrl::~guMediaCtrl()
         m_TickTimeoutId = 0;
     }
 
+    if( m_CleanUpId )
+    {
+        g_source_remove( m_CleanUpId );
+        m_CleanUpId = 0;
+    }
+
+    CleanUp();
+
     gst_deinit();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::CleanUp( void )
+{
+    Lock();
+    int Index;
+    int Count = m_FaderPlayBins.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        delete m_FaderPlayBins[ Index ];
+    }
+
+    Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -521,7 +564,6 @@ void guMediaCtrl::SendEvent( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::UpdatePosition( void )
 {
-    GstFormat Format;
 	gint64 Pos = -1;
 	gint64 Duration = -1;
 
@@ -529,13 +571,12 @@ void guMediaCtrl::UpdatePosition( void )
 	if( m_CurrentPlayBin )
 	{
 	    m_CurrentPlayBin->Lock();
-        Format = GST_FORMAT_TIME;
 		Pos = -1;
-		gst_element_query_position( m_CurrentPlayBin->m_OutputSink, &Format, &Pos );
+		gst_element_query_position( m_CurrentPlayBin->m_OutputSink, GST_FORMAT_TIME, &Pos );
 
-        Format = GST_FORMAT_TIME;
+
 		Duration = -1;
-        gst_element_query_duration( m_CurrentPlayBin->m_OutputSink, &Format, &Duration );
+        gst_element_query_duration( m_CurrentPlayBin->m_OutputSink, GST_FORMAT_TIME, &Duration );
 
         Pos = Pos / GST_MSECOND;
         if( Pos != m_LastPosition )
@@ -1191,9 +1232,8 @@ void guMediaCtrl::FadeOutDone( guFaderPlayBin * faderplaybin )
         case guFADERPLAYBIN_STATE_FADEOUT_PAUSE:
         {
             // try to seek back a bit to account for the fade
-            GstFormat Format = GST_FORMAT_TIME;
             gint64 Pos = -1;
-            gst_element_query_position( faderplaybin->OutputSink(), &Format, &Pos );
+            gst_element_query_position( faderplaybin->OutputSink(), GST_FORMAT_TIME, &Pos );
             if( Pos != -1 )
             {
                 faderplaybin->m_PausePosition = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
@@ -1232,9 +1272,9 @@ bool guMediaCtrl::EnableRecord( const wxString &recfile, const int format, const
 {
     guLogDebug( wxT( "guMediaCtrl::EnableRecord" ) );
     Lock();
-    bool Result = ( m_IsRecording = ( m_CurrentPlayBin && m_CurrentPlayBin->EnableRecord( recfile, format, quality ) ) );
+    m_IsRecording = ( m_CurrentPlayBin && m_CurrentPlayBin->EnableRecord( recfile, format, quality ) );
     Unlock();
-    return  Result;
+    return  m_IsRecording;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1254,6 +1294,7 @@ void guMediaCtrl::DisableRecord( void )
 bool guMediaCtrl::SetRecordFileName( const wxString &filename )
 {
     guLogDebug( wxT( "guMediaCtrl::SetRecordFileName  '%s'" ), filename.c_str() );
+
     Lock();
     bool Result = m_CurrentPlayBin && m_CurrentPlayBin->SetRecordFileName( filename );
     Unlock();
@@ -1372,7 +1413,7 @@ guFaderPlayBin::guFaderPlayBin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_LastFadeVolume = -1;
     m_StartOffset = startpos;
     m_SeekTimerId = 0;
-    m_AddedRecord = false;
+    m_SettingRecordFileName = false;
 
     guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%i)  %i" ), m_Id, playtype );
 
@@ -1495,7 +1536,7 @@ bool guFaderPlayBin::BuildOutputBin( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::BuildPlaybackBin( void )
 {
-  m_Playbin = gst_element_factory_make( "playbin2", "play" );
+  m_Playbin = gst_element_factory_make( "playbin", "play" );
   if( IsValidElement( m_Playbin ) )
   {
     //m_Uri =
@@ -1579,7 +1620,7 @@ bool guFaderPlayBin::BuildPlaybackBin( void )
                                             gst_element_link_many( m_Tee, queue, converter, resample, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
                                         }
 
-                                        GstPad * pad = gst_element_get_pad( m_Tee, "sink" );
+                                        GstPad * pad = gst_element_get_static_pad( m_Tee, "sink" );
                                         if( GST_IS_PAD( pad ) )
                                         {
                                             GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
@@ -1752,11 +1793,11 @@ bool guFaderPlayBin::BuildRecordBin( const wxString &path, GstElement * encoder,
                         gst_element_link_many( queue, converter, resample, encoder, m_FileSink, NULL );
                     }
 
-                    GstPad * pad = gst_element_get_pad( queue, "sink" );
+                    GstPad * pad = gst_element_get_static_pad( queue, "sink" );
                     if( GST_IS_PAD( pad ) )
                     {
-                        m_RecordGhostPad = gst_ghost_pad_new( "sink", pad );
-                        gst_element_add_pad( m_RecordBin, m_RecordGhostPad );
+                        m_RecordSinkPad = gst_ghost_pad_new( "sink", pad );
+                        gst_element_add_pad( m_RecordBin, m_RecordSinkPad );
                         gst_object_unref( pad );
 
                         return true;
@@ -1921,7 +1962,8 @@ bool guFaderPlayBin::SetFaderVolume( double volume )
 		GstMessage * Msg;
 		GstStructure * Struct;
 		//guLogDebug( wxT( "posting %s message for stream %s" ), GST_TO_WXSTRING( Message ).c_str(), faderplaybin->m_Uri.c_str() );
-		Struct = gst_structure_new( Message, NULL );
+
+		Struct = gst_structure_new( Message, NULL, NULL );
 		Msg = gst_message_new_application( GST_OBJECT( m_Playbin ), Struct );
 		gst_element_post_message( GST_ELEMENT( m_Playbin ), Msg );
 	}
@@ -2310,25 +2352,23 @@ bool guFaderPlayBin::Seek( wxFileOffset where, bool accurate )
 // -------------------------------------------------------------------------------- //
 wxFileOffset guFaderPlayBin::Position( void )
 {
-    GstFormat Format = GST_FORMAT_TIME;
     wxFileOffset Position;
-    gst_element_query_position( m_OutputSink, &Format, ( gint64 * ) &Position );
+    gst_element_query_position( m_OutputSink, GST_FORMAT_TIME, ( gint64 * ) &Position );
     return Position;
 }
 
 // -------------------------------------------------------------------------------- //
 wxFileOffset guFaderPlayBin::Length( void )
 {
-    GstFormat Format = GST_FORMAT_TIME;
     wxFileOffset Length;
-    gst_element_query_duration( m_OutputSink, &Format, ( gint64 * ) &Length );
+    gst_element_query_duration( m_OutputSink, GST_FORMAT_TIME, ( gint64 * ) &Length );
     return Length;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, const int quality )
 {
-    guLogMessage( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
+    guLogDebug( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
     GstElement * Encoder = NULL;
     GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
@@ -2340,10 +2380,17 @@ bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, co
     {
         case guRECORD_FORMAT_MP3  :
         {
-            Encoder = gst_element_factory_make( "lame", "rb_lame" );
+            Encoder = gst_element_factory_make( "lamemp3enc", "rb_lame" );
             if( IsValidElement( Encoder ) )
             {
                 g_object_set( Encoder, "bitrate", Mp3Quality[ quality ], NULL );
+
+                Muxer = gst_element_factory_make( "xingmux", "rb_xingmux" );
+                if( !IsValidElement( Muxer ) )
+                {
+                    guLogError( wxT( "Could not create the record xingmux object" ) );
+                    Muxer = NULL;
+                }
             }
             else
             {
@@ -2392,7 +2439,6 @@ bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, co
     {
         if( BuildRecordBin( recfile, Encoder, Muxer ) )
         {
-            bool NeedBlock = true;
             GstPad * AddPad;
             GstPad * BlockPad;
 
@@ -2400,14 +2446,9 @@ bool guFaderPlayBin::EnableRecord( const wxString &recfile, const int format, co
             BlockPad = gst_pad_get_peer( AddPad );
             gst_object_unref( AddPad );
 
-            if( NeedBlock )
-            {
-                gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( add_record_element ), this );
-            }
-            else
-            {
-                add_record_element( BlockPad, false, this );
-            }
+            //gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( add_record_element ), this );
+			gst_pad_add_probe( BlockPad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+				GstPadProbeCallback( add_record_element ), this, NULL );
 
             return true;
         }
@@ -2439,35 +2480,50 @@ void guFaderPlayBin::DisableRecord( void )
 
     if( NeedBlock )
     {
-        gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( remove_record_element ), this );
+        //gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( remove_record_element ), this );
+		gst_pad_add_probe( BlockPad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+			GstPadProbeCallback( remove_record_element ), this, NULL );
     }
     else
     {
-        remove_record_element( BlockPad, false, this );
+        //remove_record_element( BlockPad, false, this );
     }
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
 {
-    guLogDebug( wxT( "guFaderPlayBin::SetRecrodFileName %i" ), m_IsBuffering );
-    if( !m_RecordBin || m_IsBuffering )
+    if( filename == m_LastRecordFileName )
+        return true;
+
+    if( !m_RecordBin || m_IsBuffering || m_SettingRecordFileName )
         return false;
 
-//    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
-    if( !wxDirExists( wxPathOnly( filename ) ) )
-        wxFileName::Mkdir( wxPathOnly( filename ), 0770, wxPATH_MKDIR_FULL );
+    guLogDebug( wxT( "guFaderPlayBin::SetRecordFileName %i" ), m_IsBuffering );
+    m_SettingRecordFileName = true;
+    m_LastRecordFileName = filename;
 
-    gst_pad_set_blocked( m_RecordPad, true );
+    // Once the pad is locked returns into SetRecordFileName()
+    gst_pad_add_probe( m_TeeSrcPad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+        GstPadProbeCallback( record_locked ), this, NULL );
+
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guFaderPlayBin::SetRecordFileName( void )
+{
+//    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
+    if( !wxDirExists( wxPathOnly( m_LastRecordFileName ) ) )
+        wxFileName::Mkdir( wxPathOnly( m_LastRecordFileName ), 0770, wxPATH_MKDIR_FULL );
 
     if( gst_element_set_state( m_RecordBin, GST_STATE_NULL ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Could not reset recordbin state changing location" ) );
     }
 
-    g_object_set( m_FileSink, "location", ( const char * ) filename.mb_str( wxConvFile ), NULL );
+    g_object_set( m_FileSink, "location", ( const char * ) m_LastRecordFileName.mb_str( wxConvFile ), NULL );
 
-    //if( !set_state_and_wait( m_FileSink, PrevState, this ) )
     if( gst_element_set_state( m_RecordBin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
     {
         guLogMessage( wxT( "Could not restore recordbin state changing location" ) );
@@ -2478,7 +2534,8 @@ bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
         guLogMessage( wxT( "Could not set running recordbin changing location" ) );
     }
 
-    gst_pad_set_blocked( m_RecordPad, false );
+    m_SettingRecordFileName = false;
+    //m_LastRecordFileName.
 
     return true;
 }
@@ -2486,53 +2543,45 @@ bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 {
-    Lock();
-    guLogMessage( wxT( "AddRecordElement %d %d\n" ), m_AddedRecord, isblocked );
-    if( !m_AddedRecord )
-    {
-        m_AddedRecord = true;
-        gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
-        m_RecordPad = gst_element_get_request_pad( m_Tee, "src%d" );
+	gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
+    m_TeeSrcPad = gst_element_get_request_pad( m_Tee, "src_%u" );
 
-        gst_pad_link( m_RecordPad, m_RecordGhostPad );
+	gst_pad_link( m_TeeSrcPad, m_RecordSinkPad );
 
-    }
-    Unlock();
-        // if we're supposed to be playing, unblock the sink */
-        if( isblocked )
-        {
-            gst_element_set_state( m_Playbackbin, GST_STATE_PLAYING );
-            gst_object_ref( m_RecordGhostPad );
-            gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), m_RecordGhostPad );
-        }
-        else
-        {
-            gst_element_set_state( m_Playbackbin, GST_STATE_PAUSED );
-            gst_object_ref( m_RecordGhostPad );
-            record_unlocked( NULL, false, m_RecordGhostPad );
-        }
+	// if we're supposed to be playing, unblock the sink */
+	if( isblocked )
+	{
+		gst_element_set_state( m_RecordBin, GST_STATE_PLAYING );
+		gst_object_ref( m_RecordSinkPad );
+		//gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), m_RecordSinkPad );
+		// gst_pad_add_probe( pad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+		// 	GstPadProbeCallback( record_unlocked ), m_RecordSinkPad, NULL );
+	}
+	else
+	{
+		gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
+		gst_object_ref( m_RecordSinkPad );
+		//record_unlocked( NULL, false, m_RecordSinkPad );
+	}
 }
 
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
 {
-    Lock();
-    guLogMessage( wxT( "RemoveRecordElement %d %d\n" ), m_AddedRecord, isblocked );
-    if( m_AddedRecord )
-    {
-        m_AddedRecord = false;
-        g_object_ref( m_RecordBin );
-        gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
+    g_object_ref( m_RecordBin );
+    gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
 
-        gst_element_set_state( m_RecordBin, GST_STATE_NULL );
-        g_object_unref( m_RecordBin );
-        SetRecordBin( NULL );
+    gst_element_set_state( m_RecordBin, GST_STATE_NULL );
+    g_object_unref( m_RecordBin );
+
+    SetRecordBin( NULL );
+
+    if( isblocked )
+    {
+        //gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), NULL );
+		//gst_pad_add_probe( pad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+		//	GstPadProbeCallback( record_unlocked ), NULL, NULL );
     }
-    Unlock();
-        if( isblocked )
-        {
-            gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), NULL );
-        }
 }
 
 
@@ -2584,8 +2633,20 @@ void guFaderTimeLine::ValueChanged( float value )
 void guFaderTimeLine::Finished( void )
 {
     m_FaderPlayBin->SetFaderVolume( m_VolEnd );
-
     m_FaderPlayBin->EndFade();
+}
+
+// -------------------------------------------------------------------------------- //
+static bool TimerUpdated( guFaderTimeLine * timeline )
+{
+    timeline->TimerEvent();
+    return true;
+}
+
+// -------------------------------------------------------------------------------- //
+int guFaderTimeLine::TimerCreate( void )
+{
+    return g_timeout_add( m_UpdateInterval, GSourceFunc( TimerUpdated ), this );
 }
 
 

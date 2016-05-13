@@ -209,7 +209,7 @@ class guFaderTimeLine : public guTimeLine
 
     virtual void    ValueChanged( float value );
     virtual void    Finished( void );
-//    virtual int     TimerCreate( void );
+    virtual int     TimerCreate( void );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -229,8 +229,7 @@ class guFaderPlayBin
     int                 m_AboutToFinishPendingId;
     long                m_Id;
     long                m_NextId;
-    double              m_LastFadeVolume;
-
+    double              m_LastFadeVolume;   
 
     int                 m_ErrorCode;
     int                 m_State;
@@ -248,12 +247,13 @@ class guFaderPlayBin
 
     GstElement *        m_RecordBin;
     GstElement *        m_FileSink;
-    GstPad *            m_RecordGhostPad;
-    GstPad *            m_RecordPad;
+    GstPad *            m_RecordSinkPad;
+    GstPad *            m_TeeSrcPad;
+    bool                m_SettingRecordFileName;
+    wxString            m_LastRecordFileName;
 
     int                 m_StartOffset;
     int                 m_SeekTimerId;
-    bool                m_AddedRecord;
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
@@ -328,6 +328,7 @@ class guFaderPlayBin
     bool                EnableRecord( const wxString &path, const int format, const int quality );
     void                DisableRecord( void );
     bool                SetRecordFileName( const wxString &filename );
+    bool                SetRecordFileName( void );
 
     void                AddRecordElement( GstPad * pad, bool isblocked );
     void                RemoveRecordElement( GstPad * pad, bool isblocked );
@@ -374,6 +375,7 @@ class guMediaCtrl : public wxEvtHandler
     double                  m_ReplayGainPreAmp;
     //double                  m_ReplayGainFallback;
 
+    void                    CleanUp( void );
     bool                    RemovePlayBin( guFaderPlayBin * playbin );
 
     void                    FadeOutDone( guFaderPlayBin * faderplaybin );

@@ -100,7 +100,7 @@ static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, G
   }
 
   /* check media type */
-  caps = gst_pad_get_caps( pad );
+  caps = gst_pad_query_caps( pad, NULL );
   str = gst_caps_get_structure( caps, 0 );
   if( !g_strrstr( gst_structure_get_name( str ), "audio" ) )
   {
@@ -133,7 +133,7 @@ static void on_comp_pad_added( GstElement * comp, GstPad * pad, GstElement * con
   }
 
   /* check media type */
-  caps = gst_pad_get_caps( pad );
+  caps = gst_pad_query_caps( pad, NULL );
   str = gst_caps_get_structure( caps, 0 );
   if( !g_strrstr( gst_structure_get_name( str ), "audio" ) )
   {
@@ -481,7 +481,7 @@ void guTranscodeThread::BuildPipeline( void )
       g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
 
       GstElement * dec;
-      dec = gst_element_factory_make( "decodebin2", "guTransDecoder" );
+      dec = gst_element_factory_make( "decodebin", "guTransDecoder" );
       if( GST_IS_ELEMENT( dec ) )
       {
         GstElement * conv;

@@ -143,7 +143,7 @@ static void on_pad_added( GstElement * comp, GstPad * pad, GstElement * conv )
   }
 
   /* check media type */
-  caps = gst_pad_get_caps( pad );
+  caps = gst_pad_query_caps( pad, NULL );
   str = gst_caps_get_structure( caps, 0 );
   if( !g_strrstr( gst_structure_get_name( str ), "audio" ) )
   {
