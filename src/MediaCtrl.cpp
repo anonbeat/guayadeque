@@ -241,7 +241,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             gst_tag_list_get_string( tags, GST_TAG_TITLE, &RadioTagInfo->m_Title );
             gst_tag_list_get_string( tags, GST_TAG_GENRE, &RadioTagInfo->m_Genre );
 
-            ////guLogDebug( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'\n'%s'" ),
+            //guLogMessage( wxT( "New Tag Found:\n'%s'\n'%s'\n'%s'\n'%s'" ),
             //    wxString( RadioTagInfo->m_Organization, wxConvUTF8 ).c_str(),
             //    wxString( RadioTagInfo->m_Location, wxConvUTF8 ).c_str(),
             //    wxString( RadioTagInfo->m_Title, wxConvUTF8 ).c_str(),
@@ -448,9 +448,9 @@ static GstPadProbeReturn record_locked( GstPad * pad, GstPadProbeInfo * info, gu
 {
     guLogDebug( wxT( "Record_Unlocked" ) );
 
-    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
-
     ctrl->SetRecordFileName();
+
+    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
 
     return GST_PAD_PROBE_OK;
 }
@@ -460,9 +460,9 @@ static GstPadProbeReturn add_record_element( GstPad * pad, GstPadProbeInfo * inf
 {
     guLogDebug( wxT( "add_record_element" ) );
 
-    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
-
     ctrl->AddRecordElement( pad, true );
+
+    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
 
     return GST_PAD_PROBE_OK;
 }
@@ -472,9 +472,9 @@ static GstPadProbeReturn remove_record_element( GstPad * pad, GstPadProbeInfo * 
 {
     guLogDebug( wxT( "remove_record_element" ) );
 
-    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
-
     ctrl->RemoveRecordElement( pad, true );
+
+    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
 
     return GST_PAD_PROBE_OK;
 }
@@ -1866,6 +1866,22 @@ void guFaderPlayBin::SendEvent( guMediaEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guFaderPlayBin::SetBuffering( const bool isbuffering )
+{
+    if( m_IsBuffering != isbuffering )
+    {
+        m_IsBuffering = isbuffering;
+        if( !isbuffering )
+        {
+            if( !m_PendingNewRecordName.IsEmpty() )
+            {
+                SetRecordFileName( m_PendingNewRecordName );
+            }
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 bool guFaderPlayBin::SetVolume( double volume )
 {
     guLogDebug( wxT( "guFaderPlayBin::SetVolume (%i)  %0.2f" ), m_Id, volume );
@@ -2496,12 +2512,19 @@ bool guFaderPlayBin::SetRecordFileName( const wxString &filename )
     if( filename == m_LastRecordFileName )
         return true;
 
-    if( !m_RecordBin || m_IsBuffering || m_SettingRecordFileName )
+    if( !m_RecordBin || m_SettingRecordFileName )
         return false;
+
+    if( m_IsBuffering )
+    {
+        m_PendingNewRecordName = filename;
+        return true;
+    }
 
     guLogDebug( wxT( "guFaderPlayBin::SetRecordFileName %i" ), m_IsBuffering );
     m_SettingRecordFileName = true;
     m_LastRecordFileName = filename;
+    m_PendingNewRecordName.Clear();
 
     // Once the pad is locked returns into SetRecordFileName()
     gst_pad_add_probe( m_TeeSrcPad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
@@ -2535,7 +2558,6 @@ bool guFaderPlayBin::SetRecordFileName( void )
     }
 
     m_SettingRecordFileName = false;
-    //m_LastRecordFileName.
 
     return true;
 }
@@ -2543,7 +2565,9 @@ bool guFaderPlayBin::SetRecordFileName( void )
 // -------------------------------------------------------------------------------- //
 void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 {
-	gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
+    gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
+
+    gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
     m_TeeSrcPad = gst_element_get_request_pad( m_Tee, "src_%u" );
 
 	gst_pad_link( m_TeeSrcPad, m_RecordSinkPad );
@@ -2551,7 +2575,7 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 	// if we're supposed to be playing, unblock the sink */
 	if( isblocked )
 	{
-		gst_element_set_state( m_RecordBin, GST_STATE_PLAYING );
+        gst_element_set_state( m_RecordBin, GST_STATE_PLAYING );
 		gst_object_ref( m_RecordSinkPad );
 		//gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), m_RecordSinkPad );
 		// gst_pad_add_probe( pad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
@@ -2559,7 +2583,7 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 	}
 	else
 	{
-		gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
+        gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
 		gst_object_ref( m_RecordSinkPad );
 		//record_unlocked( NULL, false, m_RecordSinkPad );
 	}
@@ -2569,6 +2593,8 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
 {
     g_object_ref( m_RecordBin );
+    gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
+
     gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
 
     gst_element_set_state( m_RecordBin, GST_STATE_NULL );
@@ -2709,7 +2735,7 @@ bool guMediaRecordCtrl::Start( const guTrack * track )
     if( m_TrackInfo.m_SongName.IsEmpty() )
         m_TrackInfo.m_SongName = wxT( "Record" );
 
-    m_FileName = GetRecordFileName();
+    m_FileName = GenerateRecordFileName();
 
     wxFileName::Mkdir( wxPathOnly( m_FileName ), 0770, wxPATH_MKDIR_FULL );
 
@@ -2734,7 +2760,7 @@ bool guMediaRecordCtrl::Stop( void )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guMediaRecordCtrl::GetRecordFileName( void )
+wxString guMediaRecordCtrl::GenerateRecordFileName( void )
 {
     wxString FileName = m_MainPath;
 
@@ -2762,7 +2788,9 @@ wxString guMediaRecordCtrl::GetRecordFileName( void )
 // -------------------------------------------------------------------------------- //
 void guMediaRecordCtrl::SplitTrack( void )
 {
-    m_FileName = GetRecordFileName();
+    guLogMessage( wxT( "guMediaRecordCtrl::SplitTrack" ) );
+
+    m_FileName = GenerateRecordFileName();
     m_MediaCtrl->SetRecordFileName( m_FileName );
 
     SaveTagInfo( m_PrevFileName, &m_PrevTrack );
@@ -2813,6 +2841,7 @@ bool guMediaRecordCtrl::SaveTagInfo( const wxString &filename, const guTrack * T
 // -------------------------------------------------------------------------------- //
 void guMediaRecordCtrl::SetTrack( const guTrack &track )
 {
+    guLogMessage( wxT( "guMediaRecordCtrl::SetTrack" ) );
     m_TrackInfo = track;
     SplitTrack();
 }
@@ -2820,19 +2849,34 @@ void guMediaRecordCtrl::SetTrack( const guTrack &track )
 // -------------------------------------------------------------------------------- //
 void guMediaRecordCtrl::SetTrackName( const wxString &artistname, const wxString &trackname )
 {
+    bool NeedSplit = false;
+
     // If its the first file Set it so the tags are saved
     if( m_PrevFileName.IsEmpty() )
     {
         m_PrevFileName = m_FileName;
         m_PrevTrack = m_TrackInfo;
     }
-    m_TrackInfo.m_ArtistName = artistname;
-    m_TrackInfo.m_SongName = trackname;
+    if( m_TrackInfo.m_ArtistName != artistname )
+    {
+        m_TrackInfo.m_ArtistName = artistname;
+        NeedSplit = true;
+    }
+    if( m_TrackInfo.m_SongName != trackname )
+    {
+        m_TrackInfo.m_SongName = trackname;
+        NeedSplit = true;
+    }
+    if( NeedSplit )
+    {
+        SplitTrack();
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guMediaRecordCtrl::SetStation( const wxString &station )
 {
+    guLogMessage( wxT( "guMediaRecordCtrl::SetStation" ) );
     if( m_TrackInfo.m_AlbumName != station )
     {
         m_TrackInfo.m_AlbumName = station;

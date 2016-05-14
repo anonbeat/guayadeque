@@ -302,7 +302,7 @@ class guPlayerPanel : public wxPanel
 
     bool                        m_ShowRevTime;
 
-    bool                        m_PendingNewRecordName;
+    //bool                        m_PendingNewRecordName;
 
     bool                        m_ErrorFound;
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-01-20 20:54+0000\n"
+"POT-Creation-Date: 2016-05-13 17:31+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,20 +30,20 @@ msgid "Add commands in preferences"
 msgstr ""
 
 #: AAListBox.cpp:132 AlListBox.cpp:249 ArListBox.cpp:134 FileBrowser.cpp:327
-#: FileBrowser.cpp:1100 PlayList.cpp:1512 Preferences.cpp:279
-#: SoListBox.cpp:464 TreePanel.cpp:346
+#: FileBrowser.cpp:1100 PlayList.cpp:1512 Preferences.cpp:279 SoListBox.cpp:464
+#: TreePanel.cpp:346
 msgid "Commands"
 msgstr ""
 
 #: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:303
 #: AlbumBrowser.cpp:1842 AlbumBrowser.cpp:1977 AlListBox.cpp:263
-#: ArListBox.cpp:147 CoListBox.cpp:103 FileBrowser.cpp:339
-#: FileBrowser.cpp:1112 GeListBox.cpp:92 LastFMPanel.cpp:557
-#: LastFMPanel.cpp:819 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
-#: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164 MainFrame.cpp:1495
-#: PcListBox.cpp:111 PlayListPanel.cpp:224 PodcastsPanel.cpp:2050
-#: RadioPanel.cpp:423 RaListBox.cpp:143 SoListBox.cpp:525 TaListBox.cpp:123
-#: TaskBar.cpp:112 TreePanel.cpp:388 YeListBox.cpp:103
+#: ArListBox.cpp:147 CoListBox.cpp:103 FileBrowser.cpp:339 FileBrowser.cpp:1112
+#: GeListBox.cpp:92 LastFMPanel.cpp:557 LastFMPanel.cpp:819
+#: LastFMPanel.cpp:1013 LastFMPanel.cpp:1213 LastFMPanel.cpp:1421
+#: LastFMPanel.cpp:3164 MainFrame.cpp:1495 PcListBox.cpp:111
+#: PlayListPanel.cpp:224 PodcastsPanel.cpp:2050 RadioPanel.cpp:423
+#: RaListBox.cpp:143 SoListBox.cpp:525 TaListBox.cpp:123 TaskBar.cpp:112
+#: TreePanel.cpp:388 YeListBox.cpp:103
 msgid "Play"
 msgstr ""
 
@@ -53,13 +53,12 @@ msgstr ""
 
 #: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:307
 #: AlbumBrowser.cpp:1846 AlbumBrowser.cpp:1981 AlListBox.cpp:269
-#: ArListBox.cpp:154 CoListBox.cpp:110 FileBrowser.cpp:345
-#: FileBrowser.cpp:1118 GeListBox.cpp:99 LastFMPanel.cpp:561
-#: LastFMPanel.cpp:823 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
-#: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168 PcListBox.cpp:118
-#: PlayListPanel.cpp:229 PodcastsPanel.cpp:2056 RadioPanel.cpp:429
-#: RaListBox.cpp:150 SoListBox.cpp:532 TaListBox.cpp:130 TreePanel.cpp:393
-#: YeListBox.cpp:110
+#: ArListBox.cpp:154 CoListBox.cpp:110 FileBrowser.cpp:345 FileBrowser.cpp:1118
+#: GeListBox.cpp:99 LastFMPanel.cpp:561 LastFMPanel.cpp:823
+#: LastFMPanel.cpp:1017 LastFMPanel.cpp:1217 LastFMPanel.cpp:1425
+#: LastFMPanel.cpp:3168 PcListBox.cpp:118 PlayListPanel.cpp:229
+#: PodcastsPanel.cpp:2056 RadioPanel.cpp:429 RaListBox.cpp:150
+#: SoListBox.cpp:532 TaListBox.cpp:130 TreePanel.cpp:393 YeListBox.cpp:110
 msgid "Enqueue"
 msgstr ""
 
@@ -1369,33 +1368,28 @@ msgstr ""
 msgid "No files added"
 msgstr ""
 
-#: iPodMedia.cpp:1682 Jamendo.cpp:1128 LocationPanel.cpp:510
-#: Magnatune.cpp:1023 MainFrame.cpp:1308 MediaViewer.cpp:952
-#: PortableMedia.cpp:1889
+#: iPodMedia.cpp:1682 Jamendo.cpp:1128 LocationPanel.cpp:510 Magnatune.cpp:1023
+#: MainFrame.cpp:1308 MediaViewer.cpp:952 PortableMedia.cpp:1889
 msgid "Update the collection library"
 msgstr ""
 
-#: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515
-#: Magnatune.cpp:1026 MainFrame.cpp:1313 MediaViewer.cpp:955
-#: PortableMedia.cpp:1892
+#: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515 Magnatune.cpp:1026
+#: MainFrame.cpp:1313 MediaViewer.cpp:955 PortableMedia.cpp:1892
 msgid "Rescan"
 msgstr ""
 
-#: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:516
-#: Magnatune.cpp:1026 MainFrame.cpp:1314 MediaViewer.cpp:955
-#: PortableMedia.cpp:1892
+#: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:516 Magnatune.cpp:1026
+#: MainFrame.cpp:1314 MediaViewer.cpp:955 PortableMedia.cpp:1892
 msgid "Rescan the collection library"
 msgstr ""
 
-#: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:521
-#: Magnatune.cpp:1029 MainFrame.cpp:1319 MediaViewer.cpp:958
-#: PortableMedia.cpp:1895
+#: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:521 Magnatune.cpp:1029
+#: MainFrame.cpp:1319 MediaViewer.cpp:958 PortableMedia.cpp:1895
 msgid "Search Covers"
 msgstr ""
 
-#: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:522
-#: Magnatune.cpp:1029 MainFrame.cpp:1320 MediaViewer.cpp:958
-#: PortableMedia.cpp:1895
+#: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:522 Magnatune.cpp:1029
+#: MainFrame.cpp:1320 MediaViewer.cpp:958 PortableMedia.cpp:1895
 msgid "Search the collection missing covers"
 msgstr ""
 
@@ -1411,14 +1405,13 @@ msgstr ""
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:343
 #: LocationPanel.cpp:382 LocationPanel.cpp:537 Magnatune.cpp:1034
-#: MainFrame.cpp:1042 MainFrame.cpp:1081 MainFrame.cpp:1335
-#: MediaViewer.cpp:963 PodcastsPanel.cpp:1763 PortableMedia.cpp:1905
+#: MainFrame.cpp:1042 MainFrame.cpp:1081 MainFrame.cpp:1335 MediaViewer.cpp:963
+#: PodcastsPanel.cpp:1763 PortableMedia.cpp:1905
 msgid "Properties"
 msgstr ""
 
-#: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:537
-#: Magnatune.cpp:1034 MainFrame.cpp:1335 MediaViewer.cpp:963
-#: PortableMedia.cpp:1905
+#: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:537 Magnatune.cpp:1034
+#: MainFrame.cpp:1335 MediaViewer.cpp:963 PortableMedia.cpp:1905
 msgid "Show collection properties"
 msgstr ""
 
@@ -1791,8 +1784,7 @@ msgstr ""
 msgid "View the collection album browser"
 msgstr ""
 
-#: LocationPanel.cpp:481 MainFrame.cpp:1279 TreePanel.cpp:828
-#: TreePanel.cpp:853
+#: LocationPanel.cpp:481 MainFrame.cpp:1279 TreePanel.cpp:828 TreePanel.cpp:853
 msgid "Tree"
 msgstr ""
 

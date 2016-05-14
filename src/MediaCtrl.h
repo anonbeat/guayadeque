@@ -252,8 +252,10 @@ class guFaderPlayBin
     bool                m_SettingRecordFileName;
     wxString            m_LastRecordFileName;
 
+    wxString            m_PendingNewRecordName;
+
     int                 m_StartOffset;
-    int                 m_SeekTimerId;
+    int                 m_SeekTimerId;   
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
@@ -283,7 +285,7 @@ class guFaderPlayBin
     void                SetState( int state ) { m_State = state; }
 
     bool                IsBuffering( void ) { return m_IsBuffering; }
-    void                SetBuffering( const bool isbuffering ) { m_IsBuffering = isbuffering; }
+    void                SetBuffering( const bool isbuffering );
 
     bool                SetVolume( double volume );
     double              GetFaderVolume( void );
@@ -467,7 +469,7 @@ class guMediaRecordCtrl
     bool            m_SplitTracks;
     bool            m_FirstChange;
 
-    wxString        GetRecordFileName( void );
+    wxString        GenerateRecordFileName( void );
 
   public :
     guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl * mediactrl );
@@ -490,6 +492,8 @@ class guMediaRecordCtrl
     void            SplitTrack( void );
 
     void            UpdatedConfig( void );
+
+    wxString        GetRecordFileName( void ) { return m_FileName; }
 
 };
 

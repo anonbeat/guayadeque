@@ -69,7 +69,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_NotifySrv = NULL;
     m_PlayerFilters = filters;
     m_BufferGaugeId = wxNOT_FOUND;
-    m_PendingNewRecordName = false;
+    //m_PendingNewRecordName = false;
     m_MediaSong.m_Type = guTRACK_TYPE_NOTDB;
     m_MediaSong.m_SongId = 0;
     m_MediaSong.m_Length = 0;
@@ -1673,19 +1673,20 @@ void ExtractMetaData( wxString &title, wxString &artist, wxString &trackname )
 }
 
 
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::SendRecordSplitEvent( void )
-{
-    // If its buffering
-    if( m_BufferGaugeId != wxNOT_FOUND )
-    {
-        m_PendingNewRecordName = true;
-        //guLogDebug( wxT( "Player is buffering. Will rename recording once its finished" ) );
-        return;
-    }
+//// -------------------------------------------------------------------------------- //
+//void guPlayerPanel::SendRecordSplitEvent( void )
+//{
+//    guLogMessage( wxT( "guPlayerPanel::SendRecordSplitEvent" ) );
+//    // If its buffering
+//    if( m_BufferGaugeId != wxNOT_FOUND )
+//    {
+//        m_PendingNewRecordName = true;
+//        //guLogDebug( wxT( "Player is buffering. Will rename recording once its finished" ) );
+//        return;
+//    }
 
-    m_MediaRecordCtrl->SplitTrack();
-}
+//    m_MediaRecordCtrl->SplitTrack();
+//}
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaTags( guMediaEvent &event )
@@ -1775,7 +1776,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                     else
                         m_MediaRecordCtrl->SetTrackName( m_MediaSong.m_ArtistName, m_MediaSong.m_SongName );
 
-                    SendRecordSplitEvent();
+                    //SendRecordSplitEvent();
                 }
 
                 if( m_AudioScrobbleEnabled && m_AudioScrobble && m_AudioScrobble->IsOk() )
@@ -2554,8 +2555,8 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     guLogDebug( wxT( "OnPlayButtonClick Cur: %i %i %i" ), m_PlayListCtrl->GetCurItem(), m_MediaSong.m_Loaded, m_PlayListCtrl->GetItemCount() );
     guMediaState State;
 
-    if( m_PendingNewRecordName )
-        m_PendingNewRecordName = false;
+    //if( m_PendingNewRecordName )
+    //    m_PendingNewRecordName = false;
 
     // Get The Current Song From m_PlayListCtrl
     //guTrack * CurItem = m_PlayListCtrl->GetCurrent();
