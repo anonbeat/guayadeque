@@ -332,8 +332,8 @@ class guFaderPlayBin
     bool                SetRecordFileName( const wxString &filename );
     bool                SetRecordFileName( void );
 
-    void                AddRecordElement( GstPad * pad, bool isblocked );
-    void                RemoveRecordElement( GstPad * pad, bool isblocked );
+    void                AddRecordElement( GstPad * pad );
+    void                RemoveRecordElement( GstPad * pad );
 
     bool                DoStartSeek( void );
 

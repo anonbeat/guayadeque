@@ -460,7 +460,7 @@ static GstPadProbeReturn add_record_element( GstPad * pad, GstPadProbeInfo * inf
 {
     guLogDebug( wxT( "add_record_element" ) );
 
-    ctrl->AddRecordElement( pad, true );
+    ctrl->AddRecordElement( pad );
 
     gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
 
@@ -472,7 +472,7 @@ static GstPadProbeReturn remove_record_element( GstPad * pad, GstPadProbeInfo * 
 {
     guLogDebug( wxT( "remove_record_element" ) );
 
-    ctrl->RemoveRecordElement( pad, true );
+    ctrl->RemoveRecordElement( pad );
 
     gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
 
@@ -2563,7 +2563,7 @@ bool guFaderPlayBin::SetRecordFileName( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlayBin::AddRecordElement( GstPad * pad, bool )
+void guFaderPlayBin::AddRecordElement( GstPad * pad )
 {
     gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
 
@@ -2577,7 +2577,7 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool )
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool )
+void guFaderPlayBin::RemoveRecordElement( GstPad * pad )
 {
     g_object_ref( m_RecordBin );
     gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
