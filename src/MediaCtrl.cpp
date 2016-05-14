@@ -2563,7 +2563,7 @@ bool guFaderPlayBin::SetRecordFileName( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
+void guFaderPlayBin::AddRecordElement( GstPad * pad, bool )
 {
     gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
 
@@ -2572,25 +2572,12 @@ void guFaderPlayBin::AddRecordElement( GstPad * pad, bool isblocked )
 
 	gst_pad_link( m_TeeSrcPad, m_RecordSinkPad );
 
-	// if we're supposed to be playing, unblock the sink */
-	if( isblocked )
-	{
-        gst_element_set_state( m_RecordBin, GST_STATE_PLAYING );
-		gst_object_ref( m_RecordSinkPad );
-		//gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), m_RecordSinkPad );
-		// gst_pad_add_probe( pad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
-		// 	GstPadProbeCallback( record_unlocked ), m_RecordSinkPad, NULL );
-	}
-	else
-	{
-        gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
-		gst_object_ref( m_RecordSinkPad );
-		//record_unlocked( NULL, false, m_RecordSinkPad );
-	}
+    gst_element_set_state( m_RecordBin, GST_STATE_PLAYING );
+    gst_object_ref( m_RecordSinkPad );
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
+void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool )
 {
     g_object_ref( m_RecordBin );
     gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
@@ -2601,13 +2588,6 @@ void guFaderPlayBin::RemoveRecordElement( GstPad * pad, bool isblocked )
     g_object_unref( m_RecordBin );
 
     SetRecordBin( NULL );
-
-    if( isblocked )
-    {
-        //gst_pad_set_blocked_async( pad, false, GstPadBlockCallback( record_unlocked ), NULL );
-		//gst_pad_add_probe( pad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
-		//	GstPadProbeCallback( record_unlocked ), NULL, NULL );
-    }
 }
 
 

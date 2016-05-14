@@ -71,7 +71,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
 
         case GST_MESSAGE_EOS :
         {
-          guLogMessage( wxT( "Transcode EOS Detected..." ) );
+          //guLogMessage( wxT( "Transcode EOS Detected..." ) );
           pobj->Stop();
           break;
         }
@@ -84,7 +84,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
 }
 
 // -------------------------------------------------------------------------------- //
-static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, GstElement * conv )
+static void on_pad_added( GstElement * decodebin, GstPad * pad, GstElement * conv )
 {
   GstCaps * caps;
   GstStructure * str;
@@ -117,36 +117,10 @@ static void on_pad_added( GstElement * decodebin, GstPad * pad, gboolean last, G
 }
 
 // -------------------------------------------------------------------------------- //
-static void on_comp_pad_added( GstElement * comp, GstPad * pad, GstElement * conv )
+static bool seek_timeout( guTranscodeThread * transcodethread )
 {
-  GstCaps * caps;
-  GstStructure * str;
-  GstPad * convpad;
-
-  //guLogMessage( wxT( "New pad created..." ) );
-
-  convpad = gst_element_get_static_pad( conv, "sink" );
-  if( GST_PAD_IS_LINKED( convpad ) )
-  {
-      g_object_unref( convpad );
-      return;
-  }
-
-  /* check media type */
-  caps = gst_pad_query_caps( pad, NULL );
-  str = gst_caps_get_structure( caps, 0 );
-  if( !g_strrstr( gst_structure_get_name( str ), "audio" ) )
-  {
-    gst_caps_unref( caps );
-    gst_object_unref( convpad );
-    return;
-  }
-  gst_caps_unref( caps );
-
-  guLogMessage( wxT( "Linked composer and converter..." ) );
-  /* link'n'play */
-  gst_pad_link( pad, convpad );
-  g_object_unref( convpad );
+    transcodethread->DoStartSeek();
+    return false;
 }
 
 }
@@ -163,6 +137,7 @@ guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * targ
     m_Quality = quality;
     m_StartPos = track->m_Offset;
     m_Length = track->m_Length;
+    m_SeekTimerId = 0;
     guLogMessage( wxT( "Transcode %i - %i '%s' => '%s'\n:::: %i => %i" ),
                     format, quality, track->m_FileName.c_str(), target, m_StartPos, m_Length );
 
@@ -196,16 +171,12 @@ guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * targ
                 m_Format = guTRANSCODE_FORMAT_FLAC;
                 break;
 
-
             default :
                 m_Format = guTRANSCODE_FORMAT_MP3;
         }
     }
 
-    if( m_StartPos )
-        BuildPipelineWithOffset();
-    else
-        BuildPipeline();
+    BuildPipeline();
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -366,12 +337,20 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
     {
         case guTRANSCODE_FORMAT_MP3 :
         {
-            guLogMessage( wxT( "Creating mp3 encoder with %i bitrate" ), guTranscodeMp3Bitrates[ m_Quality ] );
-            * enc = gst_element_factory_make( "lame", "guTransLame" );
+            //guLogMessage( wxT( "Creating mp3 encoder with %i bitrate" ), guTranscodeMp3Bitrates[ m_Quality ] );
+            * enc = gst_element_factory_make( "lamemp3enc", "guTransLame" );
             if( GST_IS_ELEMENT( * enc ) )
             {
                 g_object_set( * enc, "bitrate", guTranscodeMp3Bitrates[ m_Quality ], NULL );
-                return true;
+
+                * mux = gst_element_factory_make( "xingmux", "guTransMp3Mux" );
+                if( GST_IS_ELEMENT( * mux ) )
+                {
+                    return true;
+                }
+
+                g_object_unref( * enc );
+                * enc = NULL;
             }
             break;
         }
@@ -401,6 +380,7 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
             if( GST_IS_ELEMENT( * enc ) )
             {
                 g_object_set( * enc, "quality", guTranscodeFlacQuality[ m_Quality ], NULL );
+
                 return true;
             }
             break;
@@ -451,7 +431,6 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
 // -------------------------------------------------------------------------------- //
 void guTranscodeThread::BuildPipeline( void )
 {
-  guLogMessage( wxT( "guTranscodeThread::BuildPipeline" ) );
   m_Pipeline = gst_pipeline_new( "guTransPipeline" );
   if( GST_IS_ELEMENT( m_Pipeline ) )
   {
@@ -516,7 +495,7 @@ void guTranscodeThread::BuildPipeline( void )
 
               if( gst_element_link( src, dec ) )
               {
-                g_signal_connect( dec, "new-decoded-pad", G_CALLBACK( on_pad_added ), conv );
+                g_signal_connect( dec, "pad-added", G_CALLBACK( on_pad_added ), conv );
 
                 if( mux )
                 {
@@ -528,6 +507,11 @@ void guTranscodeThread::BuildPipeline( void )
                 }
 
                 gst_element_set_state( m_Pipeline, GST_STATE_PAUSED );
+
+                if( m_StartPos )
+                {
+                    m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), this );
+                }
 
                 return;
               }
@@ -594,137 +578,21 @@ bool SetStateAndWait( GstElement * element, GstState state )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTranscodeThread::BuildPipelineWithOffset( void )
+bool guTranscodeThread::DoStartSeek( void )
 {
-  guLogMessage( wxT( "guTranscodeThread::BuildPipelineWithOffset" ) );
-  m_Pipeline = gst_pipeline_new( "guTransPipeline" );
-  if( GST_IS_ELEMENT( m_Pipeline ) )
-  {
-    GstElement * comp;
-    comp = gst_element_factory_make( "gnlcomposition", "guComposition" );
-    if( GST_IS_ELEMENT( comp ) )
+    //guLogMessage( wxT( "DoStartSeek( %i )" ), m_StartPos );
+    if( GST_IS_ELEMENT( m_Pipeline ) )
     {
-      GstElement * conv;
-      conv = gst_element_factory_make( "audioconvert", "guTransAudioConv" );
-      if( GST_IS_ELEMENT( conv ) )
-      {
-        GstElement * enc = NULL;
-        GstElement * mux = NULL;
+        GstSeekFlags SeekFlags = GstSeekFlags( GST_SEEK_FLAG_FLUSH |
+                                               GST_SEEK_FLAG_KEY_UNIT |
+                                               GST_SEEK_FLAG_ACCURATE );
 
-        if( BuildEncoder( &enc, &mux ) )
-        {
-          GstElement * filesink;
-          filesink = gst_element_factory_make( "filesink", "guTransFileSink" );
-          if( GST_IS_ELEMENT( filesink ) )
-          {
-            g_object_set( filesink, "location", ( const char * ) m_Target.mb_str( wxConvFile ), NULL );
+        gst_element_seek_simple( m_Pipeline, GST_FORMAT_TIME, SeekFlags, m_StartPos * GST_MSECOND );
 
-            if( mux )
-            {
-              gst_bin_add_many( GST_BIN( m_Pipeline ), comp, conv, enc, mux, filesink, NULL );
-            }
-            else
-            {
-              gst_bin_add_many( GST_BIN( m_Pipeline ), comp, conv, enc, filesink, NULL );
-            }
-
-            g_object_set( m_Pipeline, "async-handling", true, NULL );
-
-            GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Pipeline ) );
-            gst_bus_add_watch( bus, ( GstBusFunc ) gst_bus_async_callback, this );
-            gst_object_unref( G_OBJECT( bus ) );
-
-            g_signal_connect( comp, "pad-added", G_CALLBACK( on_comp_pad_added ), conv );
-
-            if( mux )
-            {
-              gst_element_link_many( conv, enc, mux, filesink, NULL );
-            }
-            else
-            {
-              gst_element_link_many( conv, enc, filesink, NULL );
-            }
-
-            // Add the source
-            GstElement * src = gst_element_factory_make( "gnlfilesource", "guTransSource" );
-            if( GST_IS_ELEMENT( src ) )
-            {
-              wxString Location;
-              wxURI URI( m_Track->m_FileName );
-              if( URI.IsReference() )
-              {
-                  Location = wxT( "file://" ) + m_Track->m_FileName;
-              }
-              else
-              {
-                  if( !URI.HasScheme() )
-                  {
-                      Location = wxT( "http://" ) + m_Track->m_FileName;
-                  }
-                  else
-                  {
-                    Location = m_Track->m_FileName;
-                  }
-              }
-
-              g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
-              g_object_set( G_OBJECT( src ), "start", 0, NULL );
-              g_object_set( G_OBJECT( src ), "duration", m_Length * GST_MSECOND, NULL );
-              g_object_set( G_OBJECT( src ), "media-start", m_StartPos * GST_MSECOND, NULL );
-              g_object_set( G_OBJECT( src ), "media-duration", m_Length * GST_MSECOND, NULL );
-              guLogMessage( wxT( "Converting from %li to %li" ), m_StartPos * GST_MSECOND, m_Length * GST_MSECOND );
-
-              gst_bin_add_many( GST_BIN( comp ), src, NULL );
-
-              //gst_element_set_state( m_Pipeline, GST_STATE_READY );
-              SetStateAndWait( m_Pipeline, GST_STATE_PAUSED );
-
-              return;
-            }
-            else
-            {
-              guLogError( wxT( "Error creating the transcode compositor filesource" ) );
-            }
-
-            gst_object_unref( filesink );
-          }
-          else
-          {
-            guLogError( wxT( "Error creating the transcode filesink" ) );
-          }
-
-          gst_object_unref( enc );
-          if( mux )
-          {
-            gst_object_unref( mux );
-          }
-        }
-        else
-        {
-          guLogError( wxT( "Error creating the transcode encoder" ) );
-        }
-        gst_object_unref( conv );
-      }
-      else
-      {
-        guLogError( wxT( "Error creating the transcode converter" ) );
-      }
-
-      gst_object_unref( comp );
+        m_SeekTimerId = 0;
+        return true;
     }
-    else
-    {
-      guLogError( wxT( "Error creating the transcode compositor" ) );
-    }
-
-    gst_object_unref( m_Pipeline );
-    m_Pipeline = NULL;
-  }
-  else
-  {
-    guLogError( wxT( "Error creating the transcode pipeline" ) );
-  }
-  m_HasError = true;
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -732,17 +600,34 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
 {
     if( m_Pipeline )
     {
+        // If the seek timer was created...
+        while( m_SeekTimerId )
+        {
+            // Wait for the seek to complete
+            Sleep( 100 );
+        }
+
         //gst_element_set_state( m_Pipeline, GST_STATE_PLAYING );
         SetStateAndWait( m_Pipeline, GST_STATE_PLAYING );
 
         m_Running = true;
         while( !TestDestroy() && m_Running )
         {
+            if( m_StartPos )
+            {
+                wxFileOffset Position;
+                gst_element_query_position( m_Pipeline, GST_FORMAT_TIME, ( gint64 * ) &Position );
+
+                if( m_StartPos + Position > m_StartPos + m_Length )
+                {
+                    Stop();
+                }
+            }
+
             Sleep( 100 );
         }
         Sleep( 500 );
     }
-    //guLogMessage( wxT( "Finished Transcode thread..." ) );
     return 0;
 }
 

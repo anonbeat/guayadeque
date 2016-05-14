@@ -58,19 +58,19 @@ int                 guGetTranscodeFileFormat( const wxString &filetype );
 class guTranscodeThread : public wxThread
 {
   protected :
-    const guTrack * m_Track;
-    wxString        m_Target;
-    int             m_Format;
-    int             m_Quality;
-    int             m_StartPos;
-    int             m_Length;
-    bool            m_Running;
-    GstElement *    m_Pipeline;
-    bool            m_HasError;
+    const guTrack *     m_Track;
+    wxString            m_Target;
+    int                 m_Format;
+    int                 m_Quality;
+    int                 m_StartPos;
+    int                 m_Length;
+    bool                m_Running;
+    GstElement *        m_Pipeline;
+    bool                m_HasError;
+    int                 m_SeekTimerId;
 
-    void            BuildPipeline( void );
-    void            BuildPipelineWithOffset( void );
-    bool            BuildEncoder( GstElement ** enc, GstElement ** mux );
+    void                BuildPipeline( void );
+    bool                BuildEncoder( GstElement ** enc, GstElement ** mux );
 
   public :
     guTranscodeThread( const guTrack * track, const wxChar * target, const int format, const int quality );
@@ -83,6 +83,7 @@ class guTranscodeThread : public wxThread
     void                SetError( bool error ) { m_HasError = error; }
     bool                CheckTrackEnd( void );
     GstElement *        GetPipeline( void ) { return m_Pipeline; }
+    bool                DoStartSeek( void );
 
 };
 
