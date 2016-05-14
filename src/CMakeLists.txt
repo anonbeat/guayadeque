@@ -180,10 +180,6 @@ ADD_EXECUTABLE( guayadeque
 	ApeTag.h
 	Discogs.cpp
 	Discogs.h
-	MusicDns.cpp
-	MusicDns.h
-	MusicBrainz.cpp
-	MusicBrainz.h
 	Podcasts.cpp
 	Podcasts.h
 	PodcastsPanel.cpp

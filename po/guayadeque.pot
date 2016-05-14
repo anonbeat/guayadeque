@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-05-13 17:31+0100\n"
+"POT-Creation-Date: 2016-05-14 21:34+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -853,12 +853,12 @@ msgstr ""
 msgid "Cover Editor"
 msgstr ""
 
-#: CoverEdit.cpp:71 LastFMPanel.cpp:1682 LyricsPanel.cpp:111 TrackEdit.cpp:148
-#: TrackEdit.cpp:373 TrackEdit.cpp:415 TrackEdit.cpp:474
+#: CoverEdit.cpp:71 LastFMPanel.cpp:1682 LyricsPanel.cpp:111 TrackEdit.cpp:145
+#: TrackEdit.cpp:370
 msgid "Artist:"
 msgstr ""
 
-#: CoverEdit.cpp:78 TrackEdit.cpp:172 TrackEdit.cpp:440 TrackEdit.cpp:496
+#: CoverEdit.cpp:78 TrackEdit.cpp:169
 msgid "Album:"
 msgstr ""
 
@@ -1530,7 +1530,7 @@ msgstr ""
 msgid "Follow player"
 msgstr ""
 
-#: LastFMPanel.cpp:1691 LyricsPanel.cpp:121 TrackEdit.cpp:380
+#: LastFMPanel.cpp:1691 LyricsPanel.cpp:121 TrackEdit.cpp:377
 msgid "Track:"
 msgstr ""
 
@@ -1657,7 +1657,7 @@ msgid "File Browser"
 msgstr ""
 
 #: LocationPanel.cpp:291 MainFrame.cpp:1413 MainFrame.cpp:2769
-#: Preferences.cpp:249 TrackEdit.cpp:400
+#: Preferences.cpp:249 TrackEdit.cpp:397
 msgid "Lyrics"
 msgstr ""
 
@@ -1706,7 +1706,7 @@ msgid "Show/Hide the podcasts channels"
 msgstr ""
 
 #: LocationPanel.cpp:366 MainFrame.cpp:1065 PodcastsPanel.cpp:1058
-#: TrackEdit.cpp:310
+#: TrackEdit.cpp:307
 msgid "Details"
 msgstr ""
 
@@ -1821,7 +1821,7 @@ msgstr ""
 msgid "Configure lyrics preferences"
 msgstr ""
 
-#: LyricsPanel.cpp:92 TrackEdit.cpp:388
+#: LyricsPanel.cpp:92 TrackEdit.cpp:385
 msgid "Search for lyrics"
 msgstr ""
 
@@ -2407,7 +2407,7 @@ msgstr ""
 msgid " smart playlist"
 msgstr ""
 
-#: MediaViewer.cpp:2169 PlayerPanel.cpp:245 PlayerPanel.cpp:2238
+#: MediaViewer.cpp:2169 PlayerPanel.cpp:245 PlayerPanel.cpp:2239
 msgid "Playlist"
 msgstr ""
 
@@ -2494,7 +2494,7 @@ msgstr ""
 msgid "Record to file"
 msgstr ""
 
-#: PlayerPanel.cpp:205 PlayerPanel.cpp:2872
+#: PlayerPanel.cpp:205 PlayerPanel.cpp:2873
 msgid "Volume"
 msgstr ""
 
@@ -2502,16 +2502,16 @@ msgstr ""
 msgid "Show the equalizer"
 msgstr ""
 
-#: PlayerPanel.cpp:218 PlayerPanel.cpp:2179
+#: PlayerPanel.cpp:218 PlayerPanel.cpp:2180
 msgid "Smart Play: "
 msgstr ""
 
-#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2182
+#: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2183
 #: Preferences.cpp:975
 msgid "Disabled"
 msgstr ""
 
-#: PlayerPanel.cpp:225 PlayerPanel.cpp:2186 Preferences.cpp:1363
+#: PlayerPanel.cpp:225 PlayerPanel.cpp:2187 Preferences.cpp:1363
 #: Preferences.cpp:1398
 msgid "Enabled"
 msgstr ""
@@ -2520,7 +2520,7 @@ msgstr ""
 msgid "Repeat: "
 msgstr ""
 
-#: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1641
+#: PlayerPanel.cpp:241 PlayerPanel.cpp:2235 PlayList.cpp:1641
 #: Preferences.cpp:975
 msgid "Track"
 msgstr ""
@@ -2561,11 +2561,11 @@ msgstr ""
 msgid "Buffering..."
 msgstr ""
 
-#: PlayerPanel.cpp:2227
+#: PlayerPanel.cpp:2228
 msgid "Repeat Mode: "
 msgstr ""
 
-#: PlayerPanel.cpp:2230
+#: PlayerPanel.cpp:2231
 msgid "Off"
 msgstr ""
 
@@ -2794,7 +2794,7 @@ msgstr ""
 msgid "Delete the current selected tracks"
 msgstr ""
 
-#: PodcastsPanel.cpp:928 TrackEdit.cpp:466
+#: PodcastsPanel.cpp:928
 msgid " Details "
 msgstr ""
 
@@ -2802,7 +2802,7 @@ msgstr ""
 msgid "Link:"
 msgstr ""
 
-#: PodcastsPanel.cpp:994 TrackEdit.cpp:183 TrackEdit.cpp:423 TrackEdit.cpp:520
+#: PodcastsPanel.cpp:994 TrackEdit.cpp:180
 msgid "Title:"
 msgstr ""
 
@@ -2810,11 +2810,11 @@ msgstr ""
 msgid "Sumary:"
 msgstr ""
 
-#: PodcastsPanel.cpp:1014 TrackEdit.cpp:507
+#: PodcastsPanel.cpp:1014
 msgid "Date:"
 msgstr ""
 
-#: PodcastsPanel.cpp:1024 TrackEdit.cpp:531
+#: PodcastsPanel.cpp:1024
 msgid "Length:"
 msgstr ""
 
@@ -3392,23 +3392,23 @@ msgstr ""
 msgid "Format:"
 msgstr ""
 
-#: Preferences.cpp:1295 Transcode.cpp:343
+#: Preferences.cpp:1295 Transcode.cpp:314
 msgid "Very High"
 msgstr ""
 
-#: Preferences.cpp:1296 Transcode.cpp:344
+#: Preferences.cpp:1296 Transcode.cpp:315
 msgid "High"
 msgstr ""
 
-#: Preferences.cpp:1297 Transcode.cpp:347
+#: Preferences.cpp:1297 Transcode.cpp:318
 msgid "Normal"
 msgstr ""
 
-#: Preferences.cpp:1298 Transcode.cpp:348
+#: Preferences.cpp:1298 Transcode.cpp:319
 msgid "Low"
 msgstr ""
 
-#: Preferences.cpp:1299 Transcode.cpp:349
+#: Preferences.cpp:1299 Transcode.cpp:320
 msgid "Very Low"
 msgstr ""
 
@@ -4037,212 +4037,153 @@ msgstr ""
 msgid "Exit this program"
 msgstr ""
 
-#: TrackEdit.cpp:89
+#: TrackEdit.cpp:86
 msgid "Songs Editor"
 msgstr ""
 
-#: TrackEdit.cpp:102
+#: TrackEdit.cpp:99
 msgid " Songs "
 msgstr ""
 
-#: TrackEdit.cpp:110
+#: TrackEdit.cpp:107
 msgid "Move the track to the previous position"
 msgstr ""
 
-#: TrackEdit.cpp:116
+#: TrackEdit.cpp:113
 msgid "Move the track to the next position"
 msgstr ""
 
-#: TrackEdit.cpp:145
+#: TrackEdit.cpp:142
 msgid "Copy the artist name to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:157
+#: TrackEdit.cpp:154
 msgid "Copy the album artist name to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:160 TrackEdit.cpp:485
+#: TrackEdit.cpp:157
 msgid "A. Artist:"
 msgstr ""
 
-#: TrackEdit.cpp:161
+#: TrackEdit.cpp:158
 msgid "shows the album artist of the track"
 msgstr ""
 
-#: TrackEdit.cpp:169
+#: TrackEdit.cpp:166
 msgid "Copy the album name to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:180
+#: TrackEdit.cpp:177
 msgid "Copy the title to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:191
+#: TrackEdit.cpp:188
 msgid "Copy the composer to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:195
+#: TrackEdit.cpp:192
 msgid "Composer:"
 msgstr ""
 
-#: TrackEdit.cpp:203
+#: TrackEdit.cpp:200
 msgid "Copy the comment to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:207
+#: TrackEdit.cpp:204
 msgid "Comment:"
 msgstr ""
 
-#: TrackEdit.cpp:216
+#: TrackEdit.cpp:213
 msgid "Copy the number to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:219 TrackEdit.cpp:543
+#: TrackEdit.cpp:216
 msgid "Number:"
 msgstr ""
 
-#: TrackEdit.cpp:233
+#: TrackEdit.cpp:230
 msgid "Enumerate the tracks in the order they were added for editing"
 msgstr ""
 
-#: TrackEdit.cpp:239
+#: TrackEdit.cpp:236
 msgid "Copy the disk to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:243
+#: TrackEdit.cpp:240
 msgid "Disk:"
 msgstr ""
 
-#: TrackEdit.cpp:253
+#: TrackEdit.cpp:250
 msgid "Copy the genre name to all songs you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:256
+#: TrackEdit.cpp:253
 msgid "Genre:"
 msgstr ""
 
-#: TrackEdit.cpp:264
+#: TrackEdit.cpp:261
 msgid "Copy the year to all songs you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:267
+#: TrackEdit.cpp:264
 msgid "Year:"
 msgstr ""
 
-#: TrackEdit.cpp:283
+#: TrackEdit.cpp:280
 msgid "Rating:"
 msgstr ""
 
-#: TrackEdit.cpp:332
+#: TrackEdit.cpp:329
 msgid "Add a picture from file to the current track"
 msgstr ""
 
-#: TrackEdit.cpp:336
+#: TrackEdit.cpp:333
 msgid "Delete the picture from the current track"
 msgstr ""
 
-#: TrackEdit.cpp:340
+#: TrackEdit.cpp:337
 msgid "Save the current picture to file"
 msgstr ""
 
-#: TrackEdit.cpp:344
+#: TrackEdit.cpp:341
 msgid "Search the album cover"
 msgstr ""
 
-#: TrackEdit.cpp:353
+#: TrackEdit.cpp:350
 msgid "Copy the current picture to all the tracks you are editing"
 msgstr ""
 
-#: TrackEdit.cpp:361
+#: TrackEdit.cpp:358
 msgid "Pictures"
 msgstr ""
 
-#: TrackEdit.cpp:420
-msgid "Type the artist name to search in musicbrainz"
-msgstr ""
-
-#: TrackEdit.cpp:428
-msgid "Type the album name to search in musicbrainz"
-msgstr ""
-
-#: TrackEdit.cpp:432
-msgid "Clear the search fields so it search using the music fingerprint"
-msgstr ""
-
-#: TrackEdit.cpp:446
-msgid "Select the album found in musicbrainz"
-msgstr ""
-
-#: TrackEdit.cpp:452
-msgid "Search albums in musicbrainz"
-msgstr ""
-
-#: TrackEdit.cpp:458
-msgid "Copy the content of the album to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:482
-msgid "Copy the artist to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:493
-msgid "Copy the album artist to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:504
-msgid "Copy the album to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:517
-msgid "Copy the date to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:528
-msgid "Copy the song names to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:553
-msgid "Copy the number to the edited tracks"
-msgstr ""
-
-#: TrackEdit.cpp:919
+#: TrackEdit.cpp:694
 #, c-format
 msgid ""
 "File Type\t: %s\n"
 "Length\t: %s"
 msgstr ""
 
-#: TrackEdit.cpp:923
+#: TrackEdit.cpp:698
 #, c-format
 msgid ""
 "BitRate\t: %u Kbps\n"
 "File Size\t: %s"
 msgstr ""
 
-#: TrackEdit.cpp:1673
-#, c-format
-msgid "Error: The album have %u tracks and you are editing %u"
-msgstr ""
-
-#: TrackEdit.cpp:1678
-msgid ""
-"\n"
-"Warning: The length of some edited tracks don't match"
-msgstr ""
-
-#: Transcode.cpp:319
+#: Transcode.cpp:290
 msgid "Keep Format"
 msgstr ""
 
-#: Transcode.cpp:342
+#: Transcode.cpp:313
 msgid "Keep Quality"
 msgstr ""
 
-#: Transcode.cpp:345
+#: Transcode.cpp:316
 msgid "Very Good"
 msgstr ""
 
-#: Transcode.cpp:346
+#: Transcode.cpp:317
 msgid "Good"
 msgstr ""
 

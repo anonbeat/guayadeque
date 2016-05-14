@@ -23,7 +23,6 @@
 
 #include "DbLibrary.h"
 #include "LyricsPanel.h"
-#include "MusicBrainz.h"
 #include "RatingCtrl.h"
 #include "TagInfo.h"
 
@@ -35,7 +34,6 @@
 WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
 
 extern const wxEventType guTrackEditEvent;
-#define guTRACKEDIT_EVENT_MBRAINZ_TRACKS        1000
 
 class guTrackEditor;
 
@@ -43,20 +41,6 @@ class guTrackEditor;
 void guImagePtrArrayClean( guImagePtrArray * images );
 
 // -------------------------------------------------------------------------------- //
-class guMusicBrainzMetadataThread : public wxThread
-{
-  protected :
-    guTrackEditor * m_TrackEditor;
-    guTrack *       m_Track;
-
-  public :
-    guMusicBrainzMetadataThread( guTrackEditor * trackeditor, int trackindex );
-    ~guMusicBrainzMetadataThread();
-
-    virtual ExitCode Entry();
-
-};
-
 class guTrackEditorGetComboDataThread;
 
 // -------------------------------------------------------------------------------- //
@@ -72,10 +56,6 @@ class guTrackEditor : public wxDialog
     int                                 m_CurItem;
     int                                 m_NextItem;
     guDbLibrary *                       m_Db;
-    guMBTrackArray *                    m_MBrainzAlbums;
-    guMBReleaseArray *                  m_MBrainzReleases;
-    int                                 m_MBrainzCurTrack;
-    int                                 m_MBrainzCurAlbum;
 	wxColor                             m_NormalColor;
 	wxColor                             m_ErrorColor;
     wxTimer                             m_SelectedTimer;
@@ -142,39 +122,6 @@ class guTrackEditor : public wxDialog
     wxTextCtrl *                        m_LyricTrackTextCtrl;
     wxTextCtrl *                        m_LyricsTextCtrl;
 
-    guMusicBrainzMetadataThread *       m_MBrainzThread;
-    wxMutex                             m_MBrainzThreadMutex;
-    wxChoice *                          m_MBrainzAlbumChoice;
-    wxBitmapButton *                    m_MBrainzAddButton;
-    wxBitmapButton *                    m_MBrainzCopyButton;
-
-	wxTextCtrl *                        m_MBQueryArtistTextCtrl;
-    wxTextCtrl *                        m_MBQueryTitleTextCtrl;
-    wxBitmapButton *                    m_MBQueryClearButton;
-    bool                                m_MBQuerySetArtistEnabled;
-
-	wxStaticText *                      m_MBrainzArtistStaticText;
-    wxTextCtrl *                        m_MBrainzArtistTextCtrl;
-    wxBitmapButton *                    m_MBrainzArCopyButton;
-	wxStaticText *                      m_MBrainzAlbumArtistStaticText;
-    wxTextCtrl *                        m_MBrainzAlbumArtistTextCtrl;
-    wxBitmapButton *                    m_MBrainzAlArCopyButton;
-    wxStaticText *                      m_MBrainzAlbumStaticText;
-    wxTextCtrl *                        m_MBrainzAlbumTextCtrl;
-    wxBitmapButton *                    m_MBrainzAlCopyButton;
-    wxStaticText *                      m_MBrainzDateStaticText;
-    wxChoice *                          m_MBrainzDateChoice;
-    wxBitmapButton *                    m_MBrainzDaCopyButton;
-    wxStaticText *                      m_MBrainzTitleStaticText;
-    wxTextCtrl *                        m_MBrainzTitleTextCtrl;
-    wxBitmapButton *                    m_MBrainzTiCopyButton;
-    wxStaticText *                      m_MBrainzLengthStaticText;
-    wxTextCtrl *                        m_MBrainzLengthTextCtrl;
-    wxStaticText *                      m_MBrainzNumberStaticText;
-    wxTextCtrl *                        m_MBrainzNumberTextCtrl;
-    wxStaticText *                      m_MBrainzInfoStaticText;
-    wxBitmapButton *                    m_MBrainzNuCopyButton;
-
     guTrackEditorGetComboDataThread *   m_GetComboDataThread;
 
     guLyricSearchEngine *               m_LyricSearchEngine;
@@ -210,22 +157,6 @@ class guTrackEditor : public wxDialog
 
 	void                                OnCommentCopyButtonClicked( wxCommandEvent &event );
 
-
-	void                                OnMBrainzAddButtonClicked( wxCommandEvent &event );
-	void                                OnMBrainzAlbumsFound( wxCommandEvent &event );
-	void                                OnMBrainzAlbumChoiceSelected( wxCommandEvent &event );
-
-	void                                OnMBrainzCopyButtonClicked( wxCommandEvent &event );
-
-	void                                OnMBrainzArtistCopyButtonClicked( wxCommandEvent& event );
-	void                                OnMBrainzAlbumArtistCopyButtonClicked( wxCommandEvent& event );
-	void                                OnMBrainzAlbumCopyButtonClicked( wxCommandEvent& event );
-	void                                OnMBrainzDateCopyButtonClicked( wxCommandEvent& event );
-	void                                OnMBrainzTitleCopyButtonClicked( wxCommandEvent& event );
-	void                                OnMBrainzNumberCopyButtonClicked( wxCommandEvent& event );
-	void                                OnMBQueryClearButtonClicked( wxCommandEvent &event );
-	void                                OnMBQueryTextCtrlChanged( wxCommandEvent& event );
-
 	void                                OnOKButton( wxCommandEvent& event );
 	void                                ReadItemData( void );
 	void                                WriteItemData( void );
@@ -241,16 +172,9 @@ class guTrackEditor : public wxDialog
 
 	void                                OnRatingChanged( guRatingEvent &event );
 
-	void                                FinishedMusicBrainzSearch( void );
-    int                                 FindMBrainzReleaseId( const wxString releaseid );
-	void                                UpdateMBrainzTrackInfo( void );
-    int                                 CheckTracksLengths( guMBTrackArray * mbtracks, guTrackArray * tracks );
-
 	void                                OnTextUpdated( wxCommandEvent& event );
 	void                                OnSearchLyrics( wxCommandEvent &event );
 	void                                OnDownloadedLyric( wxCommandEvent &event );
-
-	void                                MBCheckCountAndLengths( void );
 
 	void                                OnPageChanged( wxNotebookEvent &event );
 
@@ -267,7 +191,6 @@ public:
             guTrackArray * songs, guImagePtrArray * images, wxArrayString * lyrics, wxArrayInt * changedflags );
     ~guTrackEditor();
 
-    friend class guMusicBrainzMetadataThread;
     friend class guTrackEditorGetComboDataThread;
 };
 
