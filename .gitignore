@@ -1,0 +1,11 @@
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Makefile
+cmake_install.cmake
+cmake_uninstall.cmake
+install_manifest.txt
+po/*/*.mo
+src/guayadeque
+src/Version.h
+
