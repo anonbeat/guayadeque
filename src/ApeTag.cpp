@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2013 J.Rios
+//	Copyright (C) 2008-2016 J.Rios
 //	anonbeat@gmail.com
 //
 //    This library is free software; you can redistribute it and/or
