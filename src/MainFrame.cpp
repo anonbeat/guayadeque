@@ -179,8 +179,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     MainWindowSize.x = Config->ReadNum( wxT( "Width" ), 800, wxT( "mainwindow/positions" ) );
     MainWindowSize.y = Config->ReadNum( wxT( "Height" ), 600, wxT( "mainwindow/positions" ) );
     Create( parent, wxID_ANY, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ),
-                MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
-
+            MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
     m_AuiManager.SetManagedWindow( this );
     m_AuiManager.SetArtProvider( new guAuiDockArt() );
     m_AuiManager.SetFlags( wxAUI_MGR_ALLOW_FLOATING |
@@ -1813,6 +1812,7 @@ void guMainFrame::OnUpdateTrack( wxCommandEvent &event )
         }
     }
 
+
     if( m_LastFMPanel )
     {
         m_LastFMPanel->OnUpdatedTrack( event );
@@ -2132,13 +2132,13 @@ void guMainFrame::OnAbout( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnHelp( wxCommandEvent &event )
 {
-    guWebExecute( wxT( "http://guayadeque.org/forums/index.php?p=/page/manual#TableOfContent" ) );
+    guWebExecute( wxT( "http://guayadeque.org/index.php?p=/page/manual#TableOfContents" ) );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCommunity( wxCommandEvent &event )
 {
-    guWebExecute( wxT( "http://guayadeque.org/forums/index.php?p=/discussions" ) );
+    guWebExecute( wxT( "http://guayadeque.org/index.php?p=/discussions" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2151,7 +2151,7 @@ void guMainFrame::OnPlayerPlayListUpdateTitle( wxCommandEvent &event )
         //guLogMessage( wxT( "Updating PlayListTitle..." ) );
         guPlayList * PlayList = m_PlayerPlayList->GetPlayListCtrl();
         PaneInfo.Caption( _( "Now Playing" ) +
-            wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+            wxString::Format( wxT( ":  %i / %li    ( %s )" ),
                 PlayList->GetCurItem() + 1,
                 PlayList->GetCount(),
                 PlayList->GetLengthStr().c_str() ) );
@@ -3497,7 +3497,11 @@ void guMainFrame::UpdatePodcasts( void )
         }
 
         wxDateTime LastUpdate;
-        LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastPodcastUpdate" ), wxEmptyString, wxT( "podcasts" ) ) );
+        LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastPodcastUpdate" ),
+                                  wxDateTime::Now().Format(),
+                                  wxT( "podcasts" ) ) );
+        if( !LastUpdate.IsValid() )
+            LastUpdate = wxDateTime::Now();
 
         wxDateTime UpdateTime = wxDateTime::Now();
 
@@ -3523,7 +3527,7 @@ void guMainFrame::UpdatePodcasts( void )
                 return;
         }
 
-        //guLogMessage( wxT( "%s -- %s" ), LastUpdate.Format().c_str(), UpdateTime.Format().c_str() );
+        guLogMessage( wxT( "%s -- %s" ), LastUpdate.Format().c_str(), UpdateTime.Format().c_str() );
 
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
@@ -3621,7 +3625,7 @@ wxString GetLayoutName( const wxString &filename )
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
         if( XmlNode && XmlNode->GetName() == wxT( "layout" ) )
         {
-            XmlNode->GetPropVal( wxT( "name" ), &LayoutName );
+            XmlNode->GetAttribute( wxT( "name" ), &LayoutName );
         }
     }
     return LayoutName;
@@ -3718,11 +3722,11 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
     //
     RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "layout" ) );
 
-    wxXmlProperty * Property = new wxXmlProperty( wxT( "name" ), layoutname,
-                               new wxXmlProperty( wxT( "version" ), wxT( "1.0" ),
+    wxXmlAttribute * Property = new wxXmlAttribute( wxT( "name" ), layoutname,
+                               new wxXmlAttribute( wxT( "version" ), wxT( "1.0" ),
                                NULL ) );
 
-    RootNode->SetProperties( Property );
+    RootNode->SetAttributes( Property );
 
 
     // MainWindow
@@ -3753,17 +3757,17 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
     wxString PLCaption = PaneInfo.caption;
     PaneInfo.Caption( wxT( "Now Playing" ) );
 
-    Property = new wxXmlProperty( wxT( "posx" ), wxString::Format( wxT( "%d" ), PosX ),
-               new wxXmlProperty( wxT( "posy" ), wxString::Format( wxT( "%d" ), PosY ),
-               new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), Width ),
-               new wxXmlProperty( wxT( "height" ), wxString::Format( wxT( "%d" ), Height ),
-               new wxXmlProperty( wxT( "state" ), wxString::Format( wxT( "%d" ), State ),
-               new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_VisiblePanels ),
-               new wxXmlProperty( wxT( "layout" ), m_AuiManager.SavePerspective(),
-               new wxXmlProperty( wxT( "tabslayout" ), m_MainNotebook->SavePerspective(),
+    Property = new wxXmlAttribute( wxT( "posx" ), wxString::Format( wxT( "%d" ), PosX ),
+               new wxXmlAttribute( wxT( "posy" ), wxString::Format( wxT( "%d" ), PosY ),
+               new wxXmlAttribute( wxT( "width" ), wxString::Format( wxT( "%d" ), Width ),
+               new wxXmlAttribute( wxT( "height" ), wxString::Format( wxT( "%d" ), Height ),
+               new wxXmlAttribute( wxT( "state" ), wxString::Format( wxT( "%d" ), State ),
+               new wxXmlAttribute( wxT( "panels" ), wxString::Format( wxT( "%d" ), m_VisiblePanels ),
+               new wxXmlAttribute( wxT( "layout" ), m_AuiManager.SavePerspective(),
+               new wxXmlAttribute( wxT( "tabslayout" ), m_MainNotebook->SavePerspective(),
                NULL ) ) ) ) ) ) ) );
 
-    XmlNode->SetProperties( Property );
+    XmlNode->SetAttributes( Property );
 
     RootNode->AddChild( XmlNode );
 
@@ -3804,7 +3808,8 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
 void guMainFrame::OnCreateNewLayout( wxCommandEvent &event )
 {
 //    wxTextEntryDialog EntryDialog( this, _( "Enter the layout name:"), _( "New Layout" ) );
-    guEditWithOptions * SaveLayoutDialog = new guEditWithOptions( this, _( "Save Layout" ), _( "Layout:" ), wxString::Format( _( "Layout %u" ), m_LayoutNames.GetCount() + 1 ), m_LayoutNames );
+    guEditWithOptions * SaveLayoutDialog = new guEditWithOptions( this, _( "Save Layout" ),
+            _( "Layout:" ), wxString::Format( _( "Layout %lu" ), m_LayoutNames.GetCount() + 1 ), m_LayoutNames );
 
     if( SaveLayoutDialog )
     {
@@ -3925,20 +3930,20 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                             wxString LayoutStr;
                             wxString TabsLayoutStr;
 
-                            XmlNode->GetPropVal( wxT( "posx" ), &Field );
+                            XmlNode->GetAttribute( wxT( "posx" ), &Field );
                             Field.ToLong( &PosX );
-                            XmlNode->GetPropVal( wxT( "posy" ), &Field );
+                            XmlNode->GetAttribute( wxT( "posy" ), &Field );
                             Field.ToLong( &PosY );
-                            XmlNode->GetPropVal( wxT( "width" ), &Field );
+                            XmlNode->GetAttribute( wxT( "width" ), &Field );
                             Field.ToLong( &Width );
-                            XmlNode->GetPropVal( wxT( "height" ), &Field );
+                            XmlNode->GetAttribute( wxT( "height" ), &Field );
                             Field.ToLong( &Height );
-                            XmlNode->GetPropVal( wxT( "state" ), &Field );
+                            XmlNode->GetAttribute( wxT( "state" ), &Field );
                             Field.ToLong( &State );
-                            XmlNode->GetPropVal( wxT( "panels" ), &Field );
+                            XmlNode->GetAttribute( wxT( "panels" ), &Field );
                             Field.ToLong( &VisiblePanels );
-                            XmlNode->GetPropVal( wxT( "layout" ), &LayoutStr );
-                            XmlNode->GetPropVal( wxT( "tabslayout" ), &TabsLayoutStr );
+                            XmlNode->GetAttribute( wxT( "layout" ), &LayoutStr );
+                            XmlNode->GetAttribute( wxT( "tabslayout" ), &TabsLayoutStr );
 
                             if( IsFullScreen() != bool( State & guWINDOW_STATE_FULLSCREEN ) )
                             {
@@ -4022,7 +4027,7 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                         else if( NodeName == wxT( "mediaviewer" ) )
                         {
                             wxString UniqueId;
-                            XmlNode->GetPropVal( wxT( "id" ), &UniqueId );
+                            XmlNode->GetAttribute( wxT( "id" ), &UniqueId );
 
                             int CollectionIndex = FindCollectionUniqueId( &m_Collections, UniqueId );
                             if( CollectionIndex != wxNOT_FOUND )

@@ -30,8 +30,8 @@ class guDiscogsImage
 {
   public :
     wxString    m_Url;
-    long        m_Width;
-    long        m_Height;
+    int         m_Width;
+    int         m_Height;
 
     guDiscogsImage() {};
     ~guDiscogsImage() {};

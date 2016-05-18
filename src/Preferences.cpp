@@ -1000,7 +1000,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 
     wxStaticBoxSizer * SmartPlayListSizer = new wxStaticBoxSizer( new wxStaticBox( m_PlayPanel, wxID_ANY, _( " Random / Smart play modes " ) ), wxVERTICAL );
 
-	wxFlexGridSizer * SmartPlayListFlexGridSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
+    wxFlexGridSizer * SmartPlayListFlexGridSizer = new wxFlexGridSizer( 2, 0, 0 );
 	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -1155,7 +1155,7 @@ void guPrefDialog::BuildCrossfaderPage( void )
 
 	wxStaticBoxSizer * XFadesbSizer = new wxStaticBoxSizer( new wxStaticBox( m_XFadePanel, wxID_ANY, _(" Crossfader ") ), wxVERTICAL );
 
-	wxFlexGridSizer * XFadeFlexSizer = new wxFlexGridSizer( 4, 3, 0, 0 );
+    wxFlexGridSizer * XFadeFlexSizer = new wxFlexGridSizer( 3, 0, 0 );
 	XFadeFlexSizer->AddGrowableCol( 2 );
 	XFadeFlexSizer->SetFlexibleDirection( wxBOTH );
 	XFadeFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1270,7 +1270,7 @@ void guPrefDialog::BuildRecordPage( void )
 
 	wxStaticBoxSizer * RecPropSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Properties ") ), wxVERTICAL );
 
-	wxFlexGridSizer * RecPropFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * RecPropFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
 	RecPropFlexSizer->AddGrowableCol( 1 );
 	RecPropFlexSizer->SetFlexibleDirection( wxBOTH );
 	RecPropFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1364,7 +1364,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
     m_LastFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) );
 	LastFMASSizer->Add( m_LastFMASEnableChkBox, 0, wxALL, 5 );
 
-	wxFlexGridSizer * ASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * ASLoginSizer = new wxFlexGridSizer( 2, 0, 0 );
 	ASLoginSizer->SetFlexibleDirection( wxBOTH );
 	ASLoginSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -1399,7 +1399,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
     m_LibreFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) ) );
 	LibreFMASSizer->Add( m_LibreFMASEnableChkBox, 0, wxALL, 5 );
 
-	wxFlexGridSizer * LibreFMASLoginSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * LibreFMASLoginSizer = new wxFlexGridSizer( 2, 0, 0 );
 	LibreFMASLoginSizer->SetFlexibleDirection( wxBOTH );
 	LibreFMASLoginSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
@@ -1803,14 +1803,14 @@ void guPrefDialog::BuildJamendoPage( void )
     } while( true );
 
     m_LastJamendoGenres = m_Config->ReadANum( wxT( "Genre" ), 0, wxT( "jamendo/genres" ) );
-    guLogMessage( wxT( "Read %i jamendo genres" ), m_LastJamendoGenres.Count() );
+    guLogMessage( wxT( "Read %li jamendo genres" ), m_LastJamendoGenres.Count() );
 
 	m_JamGenresListBox = new wxCheckListBox( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), JamendoGenres, 0 );
 	int Count = m_LastJamendoGenres.Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
         m_JamGenresListBox->Check( m_LastJamendoGenres[ Index ] );
-        guLogMessage( wxT( "Checking %i" ), m_LastJamendoGenres[ Index ] );
+        //guLogMessage( wxT( "Checking %i" ), m_LastJamendoGenres[ Index ] );
 	}
 	JamGenresSizer->Add( m_JamGenresListBox, 1, wxALL|wxEXPAND, 5 );
 
@@ -1831,7 +1831,7 @@ void guPrefDialog::BuildJamendoPage( void )
 
 	wxStaticBoxSizer * JamOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_JamendoPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	wxFlexGridSizer * JamFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * JamFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
 	JamFlexSizer->AddGrowableCol( 1 );
 	JamFlexSizer->SetFlexibleDirection( wxBOTH );
 	JamFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1928,7 +1928,7 @@ void guPrefDialog::BuildMagnatunePage( void )
 
 	wxStaticBoxSizer * MagOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	wxFlexGridSizer * MagFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * MagFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
 	MagFlexSizer->AddGrowableCol( 1 );
 	MagFlexSizer->SetFlexibleDirection( wxBOTH );
 	MagFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -2090,7 +2090,7 @@ void guPrefDialog::BuildLinksPage( void )
 
 	wxBoxSizer * LinksEditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxFlexGridSizer * LinksFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * LinksFieldsSizer = new wxFlexGridSizer( 2, 0, 0 );
 	LinksFieldsSizer->AddGrowableCol( 1 );
 	LinksFieldsSizer->SetFlexibleDirection( wxBOTH );
 	LinksFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -2211,7 +2211,7 @@ void guPrefDialog::BuildCommandsPage( void )
 
 	wxBoxSizer * CmdEditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxFlexGridSizer * CmdFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * CmdFieldsSizer = new wxFlexGridSizer( 2, 0, 0 );
 	CmdFieldsSizer->AddGrowableCol( 1 );
 	CmdFieldsSizer->SetFlexibleDirection( wxBOTH );
 	CmdFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -2343,7 +2343,7 @@ void guPrefDialog::BuildCopyToPage( void )
 
 	wxStaticBoxSizer * CopyToOptionsSizer = new wxStaticBoxSizer( new wxStaticBox( m_CopyPanel, wxID_ANY, _(" Options ") ), wxHORIZONTAL );
 
-	wxFlexGridSizer * CopyToFieldsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * CopyToFieldsSizer = new wxFlexGridSizer( 2, 0, 0 );
 	CopyToFieldsSizer->AddGrowableCol( 1 );
 	CopyToFieldsSizer->SetFlexibleDirection( wxBOTH );
 	CopyToFieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

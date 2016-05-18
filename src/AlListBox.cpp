@@ -473,7 +473,7 @@ wxString guAlListBox::GetSearchText( int item ) const
 void guAlListBox::ReloadItems( bool reset )
 {
     wxArrayInt Selection;
-    int FirstVisible = GetFirstVisibleLine();
+    int FirstVisible = GetVisibleRowsBegin();
 
     if( reset )
         SetSelection( -1 );
@@ -483,13 +483,13 @@ void guAlListBox::ReloadItems( bool reset )
     m_Items->Empty();
 
     GetItemsList();
-    m_Items->Insert( new guAlbumItem( 0, wxString::Format( wxT( "%s (%u)" ), _( "All" ), m_Items->Count() ) ), 0 );
+    m_Items->Insert( new guAlbumItem( 0, wxString::Format( wxT( "%s (%lu)" ), _( "All" ), m_Items->Count() ) ), 0 );
     SetItemCount( m_Items->Count() );
 
     if( !reset )
     {
       SetSelectedItems( Selection );
-      ScrollToLine( FirstVisible );
+      ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }

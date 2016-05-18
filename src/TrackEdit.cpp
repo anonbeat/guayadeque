@@ -133,7 +133,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 	wxPanel * DetailPanel = new wxPanel( m_MainNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxSizer * MainDetailSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxFlexGridSizer * DataFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
+    wxFlexGridSizer * DataFlexSizer = new wxFlexGridSizer( 3, 0, 0 );
 	DataFlexSizer->AddGrowableCol( 2 );
 	DataFlexSizer->SetFlexibleDirection( wxBOTH );
 	DataFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1186,6 +1186,7 @@ void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 {
+    //guLogMessage( wxT( "SplitterOnIdle..." ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_SongListSplitter->SetSashPosition( Config->ReadNum( wxT( "TrackEditSashPos" ), 200, wxT( "positions" ) ) );
     m_SongListSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
@@ -1249,11 +1250,14 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist, int curitem, wxString &lastvalue )
 {
+    //guLogMessage( wxT( "guUpdateComboBoxEntries: %li %i '%s'" ), itemlist.Count(), curitem, lastvalue.c_str() );
     wxArrayString SetItems;
     int Index;
     int Count;
 
-    combobox->Clear();
+    // Seems Clear is used for clear text what makes a call to this method and so on...
+    // So call to the wxItemContainer method
+    ( ( wxItemContainer * ) combobox )->Clear();
 
     if( curitem == wxNOT_FOUND )
         return;
@@ -1294,6 +1298,7 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 {
+    // TODO: Add timers to avoid repetitive calls while editing
     m_ArtistChanged = true;
     guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists, m_CurItem, m_LastArtist );
 }
@@ -1301,6 +1306,7 @@ void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 {
+    // TODO: Add timers to avoid repetitive calls while editing
     m_AlbumArtistChanged = true;
     guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists, m_CurItem, m_LastAlbumArtist );
 }
@@ -1308,6 +1314,7 @@ void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 {
+    // TODO: Add timers to avoid repetitive calls while editing
     m_AlbumChanged = true;
     guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums, m_CurItem, m_LastAlbum );
 }
@@ -1315,6 +1322,7 @@ void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 {
+    // TODO: Add timers to avoid repetitive calls while editing
     m_CompChanged = true;
     guUpdateComboBoxEntries( m_CompComboBox, m_Composers, m_CurItem, m_LastComposer );
 }
@@ -1322,6 +1330,7 @@ void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
 {
+    // TODO: Add timers to avoid repetitive calls while editing
     m_GenreChanged = true;
     guUpdateComboBoxEntries( m_GenreComboBox, m_Genres, m_CurItem, m_LastGenre );
 }

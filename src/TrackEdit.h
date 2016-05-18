@@ -56,8 +56,8 @@ class guTrackEditor : public wxDialog
     int                                 m_CurItem;
     int                                 m_NextItem;
     guDbLibrary *                       m_Db;
-	wxColor                             m_NormalColor;
-	wxColor                             m_ErrorColor;
+    wxColour                            m_NormalColor;
+    wxColour                            m_ErrorColor;
     wxTimer                             m_SelectedTimer;
 
     void                                SetTagField( wxString &field, const wxString &newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );

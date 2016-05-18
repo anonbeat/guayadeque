@@ -254,7 +254,7 @@ wxString guLastFM::AuthGetToken()
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -271,7 +271,7 @@ wxString guLastFM::AuthGetToken()
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -308,7 +308,7 @@ wxString guLastFM::AuthGetSession()
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -334,7 +334,7 @@ wxString guLastFM::AuthGetSession()
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -390,7 +390,7 @@ bool guLastFM::AlbumAddTags( const wxString &Artist, const wxString &Album, cons
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -401,7 +401,7 @@ bool guLastFM::AlbumAddTags( const wxString &Artist, const wxString &Album, cons
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -444,7 +444,7 @@ guAlbumInfo guLastFM::AlbumGetInfo( const wxString &Artist, const wxString &Albu
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -473,7 +473,7 @@ guAlbumInfo guLastFM::AlbumGetInfo( const wxString &Artist, const wxString &Albu
                             }
                             else if( ItemName == wxT( "image" ) )
                             {
-                                XmlNode->GetPropVal( wxT( "size" ), &ImageSize );
+                                XmlNode->GetAttribute( wxT( "size" ), &ImageSize );
                                 //printf( "IMAGESIZE: " ); printf( ImageSize.char_str() ); printf( "\n" );
                                 if( ImageSize == wxT( "large" ) && RetVal.m_ImageLink.IsEmpty() )
                                 {
@@ -510,7 +510,7 @@ guAlbumInfo guLastFM::AlbumGetInfo( const wxString &Artist, const wxString &Albu
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -546,7 +546,7 @@ wxArrayString guLastFM::AlbumGetTags( const wxString &Artist, const wxString &Al
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -578,7 +578,7 @@ wxArrayString guLastFM::AlbumGetTags( const wxString &Artist, const wxString &Al
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -614,7 +614,7 @@ bool guLastFM::AlbumRemoveTag( const wxString &Artist, const wxString &Album, co
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -625,7 +625,7 @@ bool guLastFM::AlbumRemoveTag( const wxString &Artist, const wxString &Album, co
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -660,7 +660,7 @@ bool guLastFM::ArtistAddTags( const wxString &Artist, const wxString &Tags )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -671,7 +671,7 @@ bool guLastFM::ArtistAddTags( const wxString &Artist, const wxString &Tags )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -713,7 +713,7 @@ guArtistInfo guLastFM::ArtistGetInfo( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -734,7 +734,7 @@ guArtistInfo guLastFM::ArtistGetInfo( const wxString &Artist )
                             }
                             else if( ItemName == wxT( "image" ) )
                             {
-                                XmlNode->GetPropVal( wxT( "size" ), &ImageSize );
+                                XmlNode->GetAttribute( wxT( "size" ), &ImageSize );
                                 if( ImageSize == wxT( "large" ) && RetVal.m_ImageLink.IsEmpty() )
                                 {
                                     RetVal.m_ImageLink = XmlNode->GetNodeContent();
@@ -780,7 +780,7 @@ guArtistInfo guLastFM::ArtistGetInfo( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -830,7 +830,7 @@ guSimilarArtistInfoArray guLastFM::ArtistGetSimilar( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -860,7 +860,7 @@ guSimilarArtistInfoArray guLastFM::ArtistGetSimilar( const wxString &Artist )
                                 }
                                 else if( ItemName == wxT( "image" ) )
                                 {
-                                    XmlSubNode->GetPropVal( wxT( "size" ), &ImageSize );
+                                    XmlSubNode->GetAttribute( wxT( "size" ), &ImageSize );
                                     if( ImageSize == wxT( "large" ) && CurItem->m_ImageLink.IsEmpty() )
                                     {
                                         CurItem->m_ImageLink = XmlSubNode->GetNodeContent();
@@ -882,7 +882,7 @@ guSimilarArtistInfoArray guLastFM::ArtistGetSimilar( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -917,7 +917,7 @@ wxArrayString guLastFM::ArtistGetTags( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -940,7 +940,7 @@ wxArrayString guLastFM::ArtistGetTags( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -977,7 +977,7 @@ guAlbumInfoArray guLastFM::ArtistGetTopAlbums( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -993,7 +993,7 @@ guAlbumInfoArray guLastFM::ArtistGetTopAlbums( const wxString &Artist )
                                 if( CurItem )
                                 {
                                     CurItem->m_Artist = Artist;
-                                    XmlSubNode->GetPropVal( wxT( "rank" ), &CurItem->m_Rank );
+                                    XmlSubNode->GetAttribute( wxT( "rank" ), &CurItem->m_Rank );
                                     XmlNode = XmlSubNode->GetChildren();
                                     while( XmlNode )
                                     {
@@ -1008,7 +1008,7 @@ guAlbumInfoArray guLastFM::ArtistGetTopAlbums( const wxString &Artist )
                                         }
                                         else if( ItemName == wxT( "image" ) )
                                         {
-                                            XmlNode->GetPropVal( wxT( "size" ), &ImageSize );
+                                            XmlNode->GetAttribute( wxT( "size" ), &ImageSize );
                                             //printf( "IMAGESIZE: " ); printf( ImageSize.char_str() ); printf( "\n" );
                                             if( ImageSize == wxT( "large" ) && CurItem->m_ImageLink.IsEmpty() )
                                             {
@@ -1033,7 +1033,7 @@ guAlbumInfoArray guLastFM::ArtistGetTopAlbums( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1067,7 +1067,7 @@ wxArrayString guLastFM::ArtistGetTopTags( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1096,7 +1096,7 @@ wxArrayString guLastFM::ArtistGetTopTags( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1148,11 +1148,15 @@ void GetArtistTopTrack( wxXmlNode * xmlnode, guTopTrackInfo * toptrack )
         }
         else if( xmlnode->GetName() == wxT( "playcount" ) )
         {
-            xmlnode->GetNodeContent().ToLong( &toptrack->m_PlayCount );
+            long PlayCount = 0;
+            xmlnode->GetNodeContent().ToLong( &PlayCount );
+            toptrack->m_PlayCount = PlayCount;
         }
         else if( xmlnode->GetName() == wxT( "listeners" ) )
         {
-            xmlnode->GetNodeContent().ToLong( &toptrack->m_Listeners );
+            long Listeners = 0;
+            xmlnode->GetNodeContent().ToLong( &Listeners );
+            toptrack->m_Listeners = Listeners;
         }
         else if( xmlnode->GetName() == wxT( "artist" ) )
         {
@@ -1165,7 +1169,7 @@ void GetArtistTopTrack( wxXmlNode * xmlnode, guTopTrackInfo * toptrack )
         else if( xmlnode->GetName() == wxT( "image" ) )
         {
             wxString ImgSize;
-            xmlnode->GetPropVal( wxT( "size" ), &ImgSize );
+            xmlnode->GetAttribute( wxT( "size" ), &ImgSize );
             if( ImgSize == wxT( "large" ) && toptrack->m_ImageLink.IsEmpty() )
             {
                 toptrack->m_ImageLink = xmlnode->GetNodeContent();
@@ -1239,7 +1243,7 @@ guTopTrackInfoArray guLastFM::ArtistGetTopTracks( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1254,7 +1258,7 @@ guTopTrackInfoArray guLastFM::ArtistGetTopTracks( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1437,7 +1441,7 @@ guEventInfoArray guLastFM::ArtistGetEvents( const wxString &Artist )
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1452,7 +1456,7 @@ guEventInfoArray guLastFM::ArtistGetEvents( const wxString &Artist )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1492,7 +1496,7 @@ guTrackInfo guLastFM::TrackGetInfo( const wxString &Artist, const wxString &Trac
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1554,7 +1558,7 @@ guTrackInfo guLastFM::TrackGetInfo( const wxString &Artist, const wxString &Trac
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1590,7 +1594,7 @@ guSimilarTrackInfoArray guLastFM::TrackGetSimilar( const wxString &Artist, const
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1636,7 +1640,7 @@ guSimilarTrackInfoArray guLastFM::TrackGetSimilar( const wxString &Artist, const
                                     }
                                     else if( ItemName == wxT( "image" ) )
                                     {
-                                        XmlNode->GetPropVal( wxT( "size" ), &ImageSize );
+                                        XmlNode->GetAttribute( wxT( "size" ), &ImageSize );
                                         if( ImageSize == wxT( "large" ) && CurItem->m_ImageLink.IsEmpty() )
                                         {
                                             CurItem->m_ImageLink = XmlNode->GetNodeContent();
@@ -1659,7 +1663,7 @@ guSimilarTrackInfoArray guLastFM::TrackGetSimilar( const wxString &Artist, const
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1695,7 +1699,7 @@ wxArrayString guLastFM::TrackGetTags( const wxString &Artist, const wxString &Al
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1724,7 +1728,7 @@ wxArrayString guLastFM::TrackGetTags( const wxString &Artist, const wxString &Al
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1759,7 +1763,7 @@ wxArrayString guLastFM::TrackGetTopTags( const wxString &Artist, const wxString 
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1788,7 +1792,7 @@ wxArrayString guLastFM::TrackGetTopTags( const wxString &Artist, const wxString 
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1824,7 +1828,7 @@ bool guLastFM::TrackRemoveTag( const wxString &Artist, const wxString &Track, co
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
                 //printf( XmlNode->GetName().char_str() ); printf( "\n" );
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 //printf( Status.char_str() ); printf( "\n" );
                 if( Status == wxT( "ok" ) )
                 {
@@ -1835,7 +1839,7 @@ bool guLastFM::TrackRemoveTag( const wxString &Artist, const wxString &Track, co
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1869,7 +1873,7 @@ bool guLastFM::TrackLove( const wxString &artist, const wxString &title )
         {
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 if( Status == wxT( "ok" ) )
                 {
                     return true;
@@ -1879,7 +1883,7 @@ bool guLastFM::TrackLove( const wxString &artist, const wxString &title )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }
@@ -1913,7 +1917,7 @@ bool guLastFM::TrackBan( const wxString &artist, const wxString &title )
         {
             if( XmlNode->GetName() == wxT( "lfm" ) )
             {
-                XmlNode->GetPropVal( wxT( "status" ), &Status );
+                XmlNode->GetAttribute( wxT( "status" ), &Status );
                 if( Status == wxT( "ok" ) )
                 {
                     return true;
@@ -1923,7 +1927,7 @@ bool guLastFM::TrackBan( const wxString &artist, const wxString &title )
                     XmlNode = XmlNode->GetChildren();
                     if( XmlNode && XmlNode->GetName() == wxT( "error" ) )
                     {
-                        XmlNode->GetPropVal( wxT( "code" ), &Status );
+                        XmlNode->GetAttribute( wxT( "code" ), &Status );
                         Status.ToLong( &m_ErrorCode );
                     }
                 }

@@ -510,7 +510,7 @@ void guDbPodcasts::SavePodcastItem( const int channelid, guPodcastItem * item, b
                 "podcastitem_addeddate, podcastitem_playcount, podcastitem_lastplay, "
                 "podcastitem_status ) "
                 "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, "
-                "'%s', %u, %u, %u, %u, %u, %u );" ),
+                "'%s', %u, %u, %lu, %u, %u, %u );" ),
                 channelid,
                 escape_query_str( item->m_Title ).c_str(),
                 escape_query_str( item->m_Summary ).c_str(),
@@ -578,7 +578,7 @@ void guDbPodcasts::SetPodcastItemPlayCount( const int itemid, const int playcoun
 {
   wxString query;
   query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_playcount = %u, podcastitem_lastplay = %u WHERE podcastitem_id = %u;" ),
+                "podcastitem_playcount = %u, podcastitem_lastplay = %lu WHERE podcastitem_id = %u;" ),
             playcount, wxDateTime::GetTimeNow(), itemid );
 
   ExecuteUpdate( query );
@@ -931,7 +931,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 	m_DetailScrolledWindow->SetScrollRate( 5, 5 );
 	m_DetailScrolledWindow->SetMinSize( wxSize( -1,100 ) );
 
-	m_DetailFlexGridSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    m_DetailFlexGridSizer = new wxFlexGridSizer( 2, 0, 0 );
 	m_DetailFlexGridSizer->AddGrowableCol( 1 );
 	m_DetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	m_DetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -982,7 +982,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	m_DetailFlexGridSizer->Add( DetailLinkLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DetailLinkText = new wxHyperlinkCtrl( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+    m_DetailLinkText = new wxHyperlinkCtrl( m_DetailScrolledWindow, wxID_ANY, " ", " ", wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
 	m_DetailFlexGridSizer->Add( m_DetailLinkText, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	DetailStaticLine1 = new wxStaticLine( m_DetailScrolledWindow, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
@@ -2010,7 +2010,7 @@ void guPodcastListBox::ReloadItems( bool reset )
     else
     {
         Selection = GetSelectedItems( false );
-        FirstVisible = GetFirstVisibleLine();
+        FirstVisible = GetVisibleRowsBegin();
     }
 
     m_PodItems.Empty();
@@ -2022,7 +2022,7 @@ void guPodcastListBox::ReloadItems( bool reset )
     if( !reset )
     {
       SetSelectedItems( Selection );
-      ScrollToLine( FirstVisible );
+      ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }

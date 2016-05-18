@@ -547,7 +547,7 @@ bool guDbLibrary::CheckDbVersion( void )
   bool NeedVacuum = false;
 
   dbVer = GetDbVersion();
-  guLogMessage( wxT( "Library Db Version %u" ), dbVer );
+  guLogMessage( wxT( "Library Db Version %lu" ), dbVer );
 
   switch( dbVer )
   {
@@ -1412,7 +1412,7 @@ wxString guDbLibrary::GetCoverPath( const int CoverId )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::SetAlbumCover( const int AlbumId, const wxImage &image )
 {
-  long CoverId = 0;
+  int CoverId = 0;
   wxSQLite3ResultSet dbRes;
   wxString query;
   wxString FileName;
@@ -1435,7 +1435,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxImage &image )
   else
   {
     query = wxString::Format( wxT( "UPDATE songs SET song_coverid = 0 WHERE song_albumid = %i;" ), AlbumId );
-    guLogMessage( query );
+    //guLogMessage( query );
     CoverId = 0;
   }
 
@@ -1445,7 +1445,7 @@ int guDbLibrary::SetAlbumCover( const int AlbumId, const wxImage &image )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::SetAlbumCover( const int AlbumId, const wxString &CoverPath, const wxString &coverhash )
 {
-  long CoverId = 0;
+  int CoverId = 0;
   wxSQLite3ResultSet dbRes;
   wxString query;
   wxString FileName;
@@ -3680,13 +3680,13 @@ const wxString DynPLDateOption( const int option, const int value, const int opt
   {
     case guDYNAMIC_FILTER_OPTION_DATE_IN_THE_LAST : // IN_THE_LAST
     {
-        FmtStr = wxT( ">= %u" );
+        FmtStr = wxT( ">= %lu" );
         break;
     }
 
     case guDYNAMIC_FILTER_OPTION_DATE_BEFORE_THE_LAST : // BEFORE_THE_LAST
     {
-        FmtStr = wxT( "< %u" );
+        FmtStr = wxT( "< %lu" );
         break;
     }
   }
@@ -5608,7 +5608,7 @@ bool guDbLibrary::FindDeletedFile( const wxString &file, const bool create )
   if( create )
   {
     query = wxT( "INSERT INTO deleted( delete_id, delete_path, delete_date ) " );
-    query += wxString::Format( wxT( "VALUES( NULL, '%s', %u )" ),
+    query += wxString::Format( wxT( "VALUES( NULL, '%s', %lu )" ),
               escape_query_str( file ).c_str(), wxDateTime::GetTimeNow() );
     ExecuteUpdate( query );
     return true;
@@ -6183,7 +6183,7 @@ void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating
 void guDbLibrary::SetTrackPlayCount( const int songid, const int playcount, const bool writetags )
 {
   wxString query;
-  query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = %u WHERE song_id = %u;" ),
+  query = wxString::Format( wxT( "UPDATE songs SET song_playcount = %u, song_lastplay = %lu WHERE song_id = %u;" ),
                             playcount, wxDateTime::GetTimeNow(), songid );
   ExecuteUpdate( query );
 
@@ -6298,7 +6298,7 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
           Artist.c_str(),
           Album.c_str(),
           Title.c_str(),
-          wxGetUTCTime() - ( PlayTime ),
+          wxGetUTCTime() - PlayTime,
           Source,
           Rating,
           TrackLength,

@@ -277,7 +277,7 @@ class guMediaViewer : public wxPanel
     virtual void            AlbumCoverChanged( const int album, const bool deleted = false );
 
     virtual wxString        GetCoverName( const int albumid );
-    virtual int             GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
+    virtual wxBitmapType    GetCoverType( void ) { return wxBITMAP_TYPE_JPEG; }
     virtual int             GetCoverMaxSize( void ) { return 0; }
 
     virtual wxImage *       GetAlbumCover( const int albumid, int &coverid, wxString &coverpath,

@@ -339,7 +339,7 @@ void guLastFMInfoCtrl::OnEnqueueClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLastFMInfoCtrl::OnBitmapClicked( wxMouseEvent &event )
 {
-    int ImageType;
+    wxBitmapType ImageType;
     wxString ImageUrl = GetBitmapImageUrl();
     if( !ImageUrl.IsEmpty() )
     {
@@ -2812,7 +2812,7 @@ void guLastFMPanel::OnTextCtrlKeyDown( wxKeyEvent &event )
     if( event.GetKeyCode() == WXK_RETURN )
     {
         wxCommandEvent CmdEvent( wxEVT_COMMAND_TEXT_ENTER );
-        m_ArtistTextCtrl->AddPendingEvent( CmdEvent );
+        m_ArtistTextCtrl->GetEventHandler()->AddPendingEvent( CmdEvent );
         return;
     }
     event.Skip();
@@ -3504,8 +3504,8 @@ guDownloadImageThread::~guDownloadImageThread()
 // -------------------------------------------------------------------------------- //
 guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
 {
-    int             ImageType;
-    wxImage *       Image = NULL;
+    wxBitmapType ImageType;
+    wxImage * Image = NULL;
 
     if( !TestDestroy() && !m_ImageUrl.IsEmpty() )
     {

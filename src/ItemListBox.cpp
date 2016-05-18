@@ -46,7 +46,7 @@ guListBox::~guListBox()
 void guListBox::ReloadItems( bool reset )
 {
     wxArrayInt Selection;
-    int FirstVisible = 0; // = GetFirstVisibleLine();
+    int FirstVisible = 0; // = GetVisibleRowsBegin();
 
     if( reset )
     {
@@ -54,20 +54,20 @@ void guListBox::ReloadItems( bool reset )
     }
     else
     {
-        FirstVisible = GetFirstVisibleLine();
+        FirstVisible = GetVisibleRowsBegin();
         Selection = GetSelectedItems( false );
     }
 
     m_Items->Empty();
 
     GetItemsList();
-    m_Items->Insert( new guListItem( 0, wxString::Format( wxT( "%s (%u)" ), _( "All" ), m_Items->Count() ) ), 0 );
+    m_Items->Insert( new guListItem( 0, wxString::Format( wxT( "%s (%lu)" ), _( "All" ), m_Items->Count() ) ), 0 );
     SetItemCount( m_Items->Count() );
 
     if( !reset )
     {
       SetSelectedItems( Selection );
-      ScrollToLine( FirstVisible );
+      ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }

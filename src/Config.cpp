@@ -60,10 +60,10 @@ guConfig::guConfig( const wxString &conffile )
 
     m_RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "config" ) );
 
-    wxXmlProperty * Version = new wxXmlProperty( wxT( "version" ), wxString::Format( wxT( "%i" ), m_Version ),
+    wxXmlAttribute * Version = new wxXmlAttribute( wxT( "version" ), wxString::Format( wxT( "%i" ), m_Version ),
                                NULL );
 
-    m_RootNode->SetProperties( Version );
+    m_RootNode->SetAttributes( Version );
 
     m_XmlDocument->SetRoot( m_RootNode );
 
@@ -99,7 +99,7 @@ bool guConfig::LoadFile( const wxString &filename )
                 if( m_RootNode && m_RootNode->GetName() == wxT( "config" ) )
                 {
                     wxString VersionStr;
-                    m_RootNode->GetPropVal( wxT( "version" ), &VersionStr );
+                    m_RootNode->GetAttribute( wxT( "version" ), &VersionStr );
                     long Version;
                     if( VersionStr.ToLong( &Version ) )
                     {
@@ -263,9 +263,9 @@ inline wxXmlNode * guConfig::FindNode( const wxString &category )
 }
 
 // -------------------------------------------------------------------------------- //
-inline wxXmlProperty * FindPropertyByName( wxXmlProperty * property, const wxString &category )
+inline wxXmlAttribute * FindPropertyByName( wxXmlAttribute * property, const wxString &category )
 {
-    wxXmlProperty * Property = property;
+    wxXmlAttribute * Property = property;
     while( Property )
     {
         if( Property->GetName() == category )
@@ -291,7 +291,7 @@ wxString guConfig::ReadStr( const wxString &keyname, const wxString &defval, con
         if( XmlNode )
         {
             wxString RetVal;
-            XmlNode->GetPropVal( wxT( "value" ), &RetVal );
+            XmlNode->GetAttribute( wxT( "value" ), &RetVal );
             //guLogMessage( wxT( "ReadStr( '%s/%s' (%s) => '%s'" ), category.c_str(), keyname.c_str(), defval.c_str(), RetVal.c_str() );
             return RetVal;
         }
@@ -343,20 +343,20 @@ bool guConfig::WriteStr( const wxString &keyname, const wxString &value, const w
     {
         XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, keyname );
 
-        wxXmlProperty * Properties = new wxXmlProperty( wxT( "value" ), value, NULL );
+        wxXmlAttribute * Properties = new wxXmlAttribute( wxT( "value" ), value, NULL );
 
-        XmlNode->SetProperties( Properties );
+        XmlNode->SetAttributes( Properties );
 
         CatNode->AddChild( XmlNode );
     }
     else
     {
-        wxXmlProperty * Property = FindPropertyByName( XmlNode->GetProperties(), wxT( "value" ) );
+        wxXmlAttribute * Property = FindPropertyByName( XmlNode->GetProperties(), wxT( "value" ) );
         if( !Property )
         {
-            Property = new wxXmlProperty( wxT( "value" ), value, NULL );
+            Property = new wxXmlAttribute( wxT( "value" ), value, NULL );
 
-            XmlNode->SetProperties( Property );
+            XmlNode->SetAttributes( Property );
         }
         else
         {
@@ -381,7 +381,7 @@ wxArrayString guConfig::ReadAStr( const wxString &keyname, const wxString &defva
             if( !EntryNode )
                 break;
             wxString Entry;
-            EntryNode->GetPropVal( wxT( "value" ), &Entry );
+            EntryNode->GetAttribute( wxT( "value" ), &Entry );
             RetVal.Add( Entry );
         } while( true );
     }
@@ -411,7 +411,7 @@ void LoadCollectionWordList( wxXmlNode * xmlnode, wxArrayString * wordlist )
     while( xmlnode )
     {
         wxString Value;
-        xmlnode->GetPropVal( wxT( "value" ), &Value );
+        xmlnode->GetAttribute( wxT( "value" ), &Value );
         if( !Value.IsEmpty() )
             wordlist->Add( Value );
         xmlnode = xmlnode->GetNext();
@@ -423,7 +423,7 @@ int LoadCollectionInt( wxXmlNode * xmlnode )
 {
     wxString ValueStr;
     long ValueNum;
-    xmlnode->GetPropVal( wxT( "value" ), &ValueStr );
+    xmlnode->GetAttribute( wxT( "value" ), &ValueStr );
     if( !ValueStr.IsEmpty() && ValueStr.ToLong( &ValueNum ) )
         return ValueNum;
     return 0;
@@ -445,7 +445,7 @@ void LoadCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
         }
         else if( Name == wxT( "UniqueId" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &collection->m_UniqueId );
+            xmlnode->GetAttribute( wxT( "value" ), &collection->m_UniqueId );
         }
         else if( Name == wxT( "Type" ) )
         {
@@ -453,7 +453,7 @@ void LoadCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
         }
         else if( Name == wxT( "Name" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &collection->m_Name );
+            xmlnode->GetAttribute( wxT( "value" ), &collection->m_Name );
         }
         else if( Name == wxT( "LastUpdate" ) )
         {
@@ -481,7 +481,7 @@ void LoadCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
         }
         else if( Name == wxT( "DefaultCopyAction" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &collection->m_DefaultCopyAction );
+            xmlnode->GetAttribute( wxT( "value" ), &collection->m_DefaultCopyAction );
         }
 
         xmlnode = xmlnode->GetNext();
@@ -519,8 +519,8 @@ int guConfig::LoadCollections( guMediaCollectionArray * collections, const int t
 void WriteStr( wxXmlNode * xmlnode, const wxString &name, const wxString &value )
 {
     wxXmlNode * XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, name );
-    wxXmlProperty * Properties = new wxXmlProperty( wxT( "value" ), value, NULL );
-    XmlNode->SetProperties( Properties );
+    wxXmlAttribute * Properties = new wxXmlAttribute( wxT( "value" ), value, NULL );
+    XmlNode->SetAttributes( Properties );
     xmlnode->AddChild( XmlNode );
 }
 
@@ -631,7 +631,7 @@ wxArrayInt guConfig::ReadANum( const wxString &keyname, const int defval, const 
                 break;
             wxString EntryStr;
             long Entry;
-            EntryNode->GetPropVal( wxT( "value" ), &EntryStr );
+            EntryNode->GetAttribute( wxT( "value" ), &EntryStr );
             EntryStr.ToLong( &Entry );
             RetVal.Add( Entry );
         } while( true );
@@ -1356,7 +1356,7 @@ void guConfig::LoadOldConfig( const wxString &conffile )
         wxArrayString GroupNames;
         GetGroupNames( FileConfig, GroupNames );
 
-        wxString UniqueId = wxString::Format( wxT( "%08X" ), wxGetLocalTime() );
+        wxString UniqueId = wxString::Format( wxT( "%08lX" ), wxGetLocalTime() );
 
         guMediaCollectionArray MediaCollections;
 
@@ -1465,8 +1465,8 @@ void WriteTrack( wxXmlNode * xmlnode, const guTrack &track )
     WriteStr( XmlNode, wxT( "FileName" ), track.m_FileName );
     WriteStr( XmlNode, wxT( "Number" ), wxString::Format( wxT( "%i" ), track.m_Number ) );
     WriteStr( XmlNode, wxT( "Rating" ), wxString::Format( wxT( "%i" ), track.m_Rating ) );
-    WriteStr( XmlNode, wxT( "Offset" ), wxString::Format( wxT( "%i" ), track.m_Offset ) );
-    WriteStr( XmlNode, wxT( "Length" ), wxString::Format( wxT( "%i" ), track.m_Length ) );
+    WriteStr( XmlNode, wxT( "Offset" ), wxString::Format( wxT( "%u" ), track.m_Offset ) );
+    WriteStr( XmlNode, wxT( "Length" ), wxString::Format( wxT( "%u" ), track.m_Length ) );
 
     xmlnode->AddChild( XmlNode );
 }
@@ -1488,7 +1488,7 @@ void ReadTrack( wxXmlNode * xmlnode, guTrack &track )
         wxString Value;
         if( Name == wxT( "Type" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            xmlnode->GetAttribute( wxT( "value" ), &Value );
             track.m_Type = ( guTrackType ) StrToInt( Value );
         }
         else if( Name == wxT( "MediaViewer" ) )
@@ -1496,50 +1496,50 @@ void ReadTrack( wxXmlNode * xmlnode, guTrack &track )
         }
         else if( Name == wxT( "Name" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_SongName );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_SongName );
         }
         else if( Name == wxT( "Artist" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_ArtistName );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_ArtistName );
         }
         else if( Name == wxT( "AlbumArtist" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_AlbumArtist );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_AlbumArtist );
         }
         else if( Name == wxT( "Composer" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_Composer );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_Composer );
         }
         else if( Name == wxT( "Album" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_AlbumName );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_AlbumName );
         }
         else if( Name == wxT( "Path" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_Path );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_Path );
         }
         else if( Name == wxT( "FileName" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &track.m_FileName );
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_FileName );
         }
         else if( Name == wxT( "Number" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            xmlnode->GetAttribute( wxT( "value" ), &Value );
             track.m_Number = StrToInt( Value );
         }
         else if( Name == wxT( "Rating" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            xmlnode->GetAttribute( wxT( "value" ), &Value );
             track.m_Rating = StrToInt( Value );
         }
         else if( Name == wxT( "Offset" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            xmlnode->GetAttribute( wxT( "value" ), &Value );
             track.m_Offset = StrToInt( Value );
         }
         else if( Name == wxT( "Length" ) )
         {
-            xmlnode->GetPropVal( wxT( "value" ), &Value );
+            xmlnode->GetAttribute( wxT( "value" ), &Value );
             track.m_Length = StrToInt( Value );
         }
 

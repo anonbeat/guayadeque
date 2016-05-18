@@ -289,15 +289,15 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
         wxString Type;
         wxString Name;
         wxString Url;
-        xmlnode->GetPropVal( wxT( "type" ), &Type );
+        xmlnode->GetAttribute( wxT( "type" ), &Type );
         if( Type == wxT( "" ) )
         {
             ReadStations( xmlnode->GetChildren(), parentitem, radiogenretree, stations, minbitrate );
         }
         else if( Type == wxT( "link" ) )
         {
-            xmlnode->GetPropVal( wxT( "text" ), &Name );
-            xmlnode->GetPropVal( wxT( "URL" ), &Url );
+            xmlnode->GetAttribute( wxT( "text" ), &Name );
+            xmlnode->GetAttribute( wxT( "URL" ), &Url );
 
             //guLogMessage( wxT( "ReadStations -> Type : '%s' Name : '%s' " ), Type.c_str(), Name.c_str() );
             if( Name == wxT( "Find by Name" ) )
@@ -336,17 +336,17 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
 
             long lBitRate;
             wxString BitRate;
-            xmlnode->GetPropVal( wxT( "bitrate" ), &BitRate );
+            xmlnode->GetAttribute( wxT( "bitrate" ), &BitRate );
             BitRate.ToLong( &lBitRate );
-            xmlnode->GetPropVal( wxT( "text" ), &RadioStation->m_Name );
+            xmlnode->GetAttribute( wxT( "text" ), &RadioStation->m_Name );
             if( ( BitRate.IsEmpty() || ( lBitRate >= minbitrate ) ) && SearchFilterTexts( m_TuneInProvider->GetSearchTexts(), RadioStation->m_Name.Lower() ) )
             {
                 RadioStation->m_BitRate = lBitRate;
                 RadioStation->m_Id = -1;
                 RadioStation->m_SCId = wxNOT_FOUND;
-                xmlnode->GetPropVal( wxT( "URL" ), &RadioStation->m_Link );
-                xmlnode->GetPropVal( wxT( "formats" ), &RadioStation->m_Type );
-                xmlnode->GetPropVal( wxT( "subtext" ), &RadioStation->m_NowPlaying );
+                xmlnode->GetAttribute( wxT( "URL" ), &RadioStation->m_Link );
+                xmlnode->GetAttribute( wxT( "formats" ), &RadioStation->m_Type );
+                xmlnode->GetAttribute( wxT( "subtext" ), &RadioStation->m_NowPlaying );
                 RadioStation->m_Source = guRADIO_SOURCE_TUNEIN;
                 RadioStation->m_Listeners = 0;
 
@@ -404,7 +404,7 @@ int guTuneInReadStationsThread::AddStations( const wxString &url, guRadioStation
                     if( XmlNode->GetName() == wxT( "outline" ) )
                     {
                         wxString Type;
-                        XmlNode->GetPropVal( wxT( "type" ), &Type );
+                        XmlNode->GetAttribute( wxT( "type" ), &Type );
                         if( Type == wxT( "" ) )
                         {
                             ReadStations( XmlNode->GetChildren(), SelectedItem, RadioTreeCtrl, stations, minbitrate );

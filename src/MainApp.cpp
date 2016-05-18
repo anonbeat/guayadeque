@@ -348,7 +348,7 @@ bool guMainApp::OnInit()
     wxCurlBase::Init();
 
     int LangId = m_Config->ReadNum( wxT( "Language" ), wxLANGUAGE_DEFAULT, wxT( "general" ) );
-    if( m_Locale.Init( LangId, wxLOCALE_CONV_ENCODING ) )
+    if( m_Locale.Init( LangId ) )
     {
         m_Locale.AddCatalogLookupPathPrefix( wxT( "/usr/share/locale" ) );
         m_Locale.AddCatalog( wxT( "guayadeque" ) );
@@ -360,8 +360,7 @@ bool guMainApp::OnInit()
         if( LangInfo )
         {
             guLogError( wxT( "Could not initialize the translations engine for ( %s )" ), LangInfo->CanonicalName.c_str() );
-            wxStandardPaths StdPaths;
-            guLogError( wxT( "Locale directory '%s'" ), StdPaths.GetLocalizedResourcesDir( LangInfo->CanonicalName, wxStandardPaths::ResourceCat_Messages).c_str() );
+            guLogError( wxT( "Locale directory '%s'" ), wxStandardPaths::Get().GetLocalizedResourcesDir( LangInfo->CanonicalName, wxStandardPaths::ResourceCat_Messages).c_str() );
         }
         else
         {

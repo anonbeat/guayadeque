@@ -181,8 +181,8 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannel( wxXmlNode * XmlNode, guN
         guNewPodcastItem * NewPodcastItem = new guNewPodcastItem();
         if( !NewPodcastItem )
             return 0;
-        XmlNode->GetPropVal( wxT( "text" ), &NewPodcastItem->m_Name );
-        XmlNode->GetPropVal( wxT( "url" ), &NewPodcastItem->m_Url );
+        XmlNode->GetAttribute( wxT( "text" ), &NewPodcastItem->m_Name );
+        XmlNode->GetAttribute( wxT( "url" ), &NewPodcastItem->m_Url );
         int Index;
         int Count;
         if( ( Count = m_Filters.Count() ) )
@@ -231,7 +231,7 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannels( wxXmlNode * XmlNode )
         else
         {
             NewPodcastChannel =  new guNewPodcastCategory();
-            XmlNode->GetPropVal( wxT( "text" ), &NewPodcastChannel->m_Name );
+            XmlNode->GetAttribute( wxT( "text" ), &NewPodcastChannel->m_Name );
         }
 
         if( !NewPodcastChannel )

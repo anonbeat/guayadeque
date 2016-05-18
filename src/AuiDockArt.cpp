@@ -23,7 +23,34 @@
 #include "Images.h"
 #include "Utils.h"
 
-extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
+wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
+{
+    wxCoord x,y;
+
+    // first check if the text fits with no problems
+    dc.GetTextExtent(text, &x, &y);
+    if (x <= max_size)
+        return text;
+
+    size_t i, len = text.Length();
+    size_t last_good_length = 0;
+    for (i = 0; i < len; ++i)
+    {
+        wxString s = text.Left(i);
+        s += wxT("...");
+
+        dc.GetTextExtent(s, &x, &y);
+        if (x > max_size)
+            break;
+
+        last_good_length = i;
+    }
+
+    wxString ret = text.Left(last_good_length);
+    ret += wxT("...");
+    return ret;
+}
+
 
 // -------------------------------------------------------------------------------- //
 guAuiDockArt::guAuiDockArt() : wxAuiDefaultDockArt()
@@ -42,12 +69,12 @@ void inline DrawGradientRectangle( wxDC &dc, const wxRect &rect, const wxColour 
 // -------------------------------------------------------------------------------- //
 void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool active )
 {
-    if( m_gradient_type == wxAUI_GRADIENT_NONE )
+    if( m_gradientType == wxAUI_GRADIENT_NONE )
     {
         if( active )
-            dc.SetBrush( wxBrush( m_active_caption_colour ) );
+            dc.SetBrush( wxBrush( m_activeCaptionColour ) );
         else
-            dc.SetBrush( wxBrush( m_inactive_caption_colour ) );
+            dc.SetBrush( wxBrush( m_inactiveCaptionColour ) );
 
         dc.DrawRectangle( rect.x, rect.y, rect.width, rect.height );
     }
@@ -58,15 +85,15 @@ void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool act
             // on mac the gradients are expected to become darker from the top
 #ifdef __WXMAC__
             DrawGradientRectangle( dc, rect,
-                                 m_active_caption_colour,
-                                 m_active_caption_gradient_colour,
-                                 m_gradient_type );
+                                 m_activeCaptionColour,
+                                 m_activeCaptionGradientColour,
+                                 m_gradientType );
 #else
             // on other platforms, active gradients become lighter at the top
             DrawGradientRectangle( dc, rect,
-                                 m_active_caption_colour,
-                                 m_active_caption_gradient_colour,
-                                 m_gradient_type );
+                                 m_activeCaptionColour,
+                                 m_activeCaptionGradientColour,
+                                 m_gradientType );
 #endif
         }
         else
@@ -74,20 +101,20 @@ void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool act
 #ifdef __WXMAC__
             // on mac the gradients are expected to become darker from the top
             DrawGradientRectangle( dc, rect,
-                                 m_inactive_caption_colour,
-                                 m_inactive_caption_gradient_colour,
-                                 m_gradient_type );
+                                 m_inactiveCaptionColour,
+                                 m_inactiveCaptionGradientColour,
+                                 m_gradientType );
 #else
             // on other platforms, inactive gradients become lighter at the bottom
             DrawGradientRectangle( dc, rect,
-                                 m_inactive_caption_colour,
-                                 m_inactive_caption_gradient_colour,
-                                 m_gradient_type );
+                                 m_inactiveCaptionColour,
+                                 m_inactiveCaptionGradientColour,
+                                 m_gradientType );
 #endif
         }
     }
 
-    dc.SetPen( m_border_pen );
+    dc.SetPen( m_borderPen );
     int y = rect.y + rect.height - 1;
     dc.DrawLine( rect.x, y, rect.x + rect.width, y );
 }
@@ -97,11 +124,11 @@ void guAuiDockArt::DrawCaptionBackground( wxDC &dc, const wxRect &rect, bool act
 void guAuiDockArt::DrawCaption( wxDC &dc, wxWindow * window, const wxString &text, const wxRect &rect, wxAuiPaneInfo &pane )
 {
     dc.SetPen( * wxTRANSPARENT_PEN );
-    dc.SetFont( m_caption_font );
+    dc.SetFont( m_captionFont );
 
     DrawCaptionBackground( dc, rect, bool( pane.state & wxAuiPaneInfo::optionActive ) );
 
-    dc.SetTextForeground( pane.state & wxAuiPaneInfo::optionActive ? m_active_caption_text_colour : m_inactive_caption_text_colour );
+    dc.SetTextForeground( pane.state & wxAuiPaneInfo::optionActive ? m_activeCaptionTextColour : m_inactiveCaptionTextColour );
 
     wxCoord w, h;
     dc.GetTextExtent( wxT( "ABCDEFHXfgkj" ), &w, &h );
@@ -110,11 +137,11 @@ void guAuiDockArt::DrawCaption( wxDC &dc, wxWindow * window, const wxString &tex
     clip_rect.width -= 3; // text offset
     clip_rect.width -= 2; // button padding
     if( pane.HasCloseButton() )
-        clip_rect.width -= m_button_size;
+        clip_rect.width -= m_buttonSize;
     if( pane.HasPinButton() )
-        clip_rect.width -= m_button_size;
+        clip_rect.width -= m_buttonSize;
     if( pane.HasMaximizeButton() )
-        clip_rect.width -= m_button_size;
+        clip_rect.width -= m_buttonSize;
 
     wxString draw_text = wxAuiChopText( dc, text, clip_rect.width );
 

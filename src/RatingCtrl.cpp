@@ -34,7 +34,8 @@ BEGIN_EVENT_TABLE( guRating, wxControl )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guRating::guRating( wxWindow * parent, const int style ) : wxControl( parent, wxID_ANY )
+guRating::guRating( wxWindow * parent, const int style ) :
+    wxControl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
 {
     m_Rating = wxNOT_FOUND;
     m_Style = style;

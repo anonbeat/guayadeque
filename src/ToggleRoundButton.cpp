@@ -35,7 +35,7 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guToggleRoundButton::guToggleRoundButton( wxWindow * parent, const wxImage &image,
         const wxImage &selimage, const wxImage &hoverimage ) :
-    wxControl( parent, wxID_ANY )
+    wxControl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
 {
     m_Bitmap = wxBitmap( selimage );
     m_DisBitmap = wxBitmap( image );

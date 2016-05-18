@@ -378,7 +378,7 @@ void guRadioStationListBox::ReloadItems( bool reset )
 {
     //
     wxArrayInt Selection;
-    int FirstVisible = GetFirstVisibleLine();
+    int FirstVisible = GetVisibleRowsBegin();
 
     if( reset )
         SetSelection( -1 );
@@ -394,7 +394,7 @@ void guRadioStationListBox::ReloadItems( bool reset )
     if( !reset )
     {
       SetSelectedItems( Selection );
-      ScrollToLine( FirstVisible );
+      ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }

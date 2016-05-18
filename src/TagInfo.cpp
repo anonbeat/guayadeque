@@ -2453,7 +2453,7 @@ wxString guTagGetLyrics( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagSetLyrics( const wxString &filename, wxString &lyrics )
+bool guTagSetLyrics( const wxString &filename, const wxString &lyrics )
 {
     guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 

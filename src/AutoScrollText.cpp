@@ -26,17 +26,15 @@
 #include <wx/region.h>
 
 #define guSCROLL_START_TIMEOUT  500
-#define guSCROLL_TIMEOUT        300
+#define guSCROLL_TIMEOUT        500
 
 BEGIN_EVENT_TABLE( guAutoScrollText, wxControl )
-    EVT_PAINT( guAutoScrollText::OnPaint)
     EVT_MOUSE_EVENTS( guAutoScrollText::OnMouseEvents )
-    EVT_SIZE( guAutoScrollText::OnSize )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label, const wxSize &size ) :
-    wxControl( parent, wxID_ANY )
+    wxControl( parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE )
 {
     m_ScrollPos = 0;
     m_ScrollQuantum = 1;
@@ -49,13 +47,17 @@ guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label, co
 
     SetLabel( label );
 
+    Connect( wxEVT_PAINT, wxPaintEventHandler( guAutoScrollText::OnPaint ), NULL, this );
     Connect( wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnTimer ), NULL, this );
+    Connect( wxEVT_SIZE, wxSizeEventHandler( guAutoScrollText::OnSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guAutoScrollText::~guAutoScrollText()
 {
+    Disconnect( wxEVT_PAINT, wxPaintEventHandler( guAutoScrollText::OnPaint ), NULL, this );
     Disconnect( wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnTimer ), NULL, this );
+    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAutoScrollText::OnSize ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -74,11 +76,13 @@ void guAutoScrollText::SetLabel( const wxString &label )
     GetTextExtent( label, &m_LabelExtent.x, &m_LabelExtent.y );
     m_ScrollPos = 0;
     m_ScrollQuantum = 1;
+    //guLogMessage( wxT( "LabelExtent: %u Width: %u  %i" ), m_LabelExtent.x, m_VisWidth, m_ScrollTimer.IsRunning() );
     if( m_ScrollTimer.IsRunning() && !( m_LabelExtent.x > m_VisWidth ) )
     {
         m_ScrollTimer.Stop();
     }
     Refresh();
+    Update();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -91,6 +95,8 @@ void guAutoScrollText::OnPaint( wxPaintEvent &event )
     dc.SetTextForeground( GetForegroundColour() );
     dc.SetFont( GetFont() );
     dc.DrawText( m_Label.Mid( m_ScrollPos ), 0, 0 );
+    // This should not be here but the timer is getting called only once even when Continous is asked...
+    m_ScrollTimer.Start( guSCROLL_TIMEOUT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -150,7 +156,8 @@ void guAutoScrollText::OnTimer( wxTimerEvent &event )
         else if( m_ScrollQuantum > 0 )
         {
             int ActualWidth;
-            GetTextExtent( m_Label.Mid( m_ScrollPos ), &ActualWidth, NULL );
+            int ActualHeight;
+            GetTextExtent( m_Label.Mid( m_ScrollPos ), &ActualWidth, &ActualHeight );
             if( ( ActualWidth + 16 ) < m_VisWidth )
             {
                 m_ScrollQuantum = -1;
@@ -166,6 +173,7 @@ void guAutoScrollText::OnTimer( wxTimerEvent &event )
         m_ScrollPos += m_ScrollQuantum;
         //guLogMessage( wxT( "Actual ScrollPos: %i  ScrollQ: %i" ), m_ScrollPos, m_ScrollQuantum );
         Refresh();
+        //Update();
     }
 }
 

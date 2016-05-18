@@ -509,7 +509,7 @@ void guStatusBar::SetSelInfo( const wxString &label )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::DrawField( wxDC &dc, int i )
+void guStatusBar::DrawField( wxDC &dc, int i, int textHeight )
 {
     wxRect rect;
     GetFieldRect( i, rect );
@@ -521,7 +521,7 @@ void guStatusBar::DrawField( wxDC &dc, int i )
         dc.DrawLine( rect.x + rect.width, rect.y + 1, rect.x + rect.width, rect.y + rect.height - 1 );
     }
 
-    DrawFieldText( dc, i );
+    DrawFieldText( dc, rect, i, textHeight );
 }
 
 // -------------------------------------------------------------------------------- //

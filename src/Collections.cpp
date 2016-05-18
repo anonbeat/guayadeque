@@ -31,7 +31,7 @@ WX_DEFINE_OBJARRAY( guManagedCollectionArray );
 // -------------------------------------------------------------------------------- //
 guMediaCollection::guMediaCollection( const int type )
 {
-    m_UniqueId = wxString::Format( wxT( "%08X" ), wxGetLocalTime() );
+    m_UniqueId = wxString::Format( wxT( "%08lX" ), wxGetLocalTime() );
     m_Type = type;
     m_UpdateOnStart = false;
     m_ScanPlaylists = true;

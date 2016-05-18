@@ -74,7 +74,7 @@ void guImportFiles::CreateControls( void )
 
 	wxStaticBoxSizer * MainStaticBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
-	wxFlexGridSizer * CopyToSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * CopyToSizer = new wxFlexGridSizer( 2, 0, 0 );
 	CopyToSizer->AddGrowableCol( 1 );
 	CopyToSizer->SetFlexibleDirection( wxBOTH );
 	CopyToSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

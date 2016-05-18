@@ -146,7 +146,7 @@ bool guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
                 }
                 else if( XmlNode->GetName() == wxT( "itunes:image" ) )
                 {
-                    XmlNode->GetPropVal( wxT( "href" ), &m_Image );
+                    XmlNode->GetAttribute( wxT( "href" ), &m_Image );
                 }
                 else if( XmlNode->GetName() == wxT( "image" ) )
                 {
@@ -154,7 +154,7 @@ bool guPodcastChannel::ReadXml( wxXmlNode * XmlNode )
                 }
                 else if( XmlNode->GetName() == wxT( "itunes:category" ) )
                 {
-                    XmlNode->GetPropVal( wxT( "text" ), &m_Category );
+                    XmlNode->GetAttribute( wxT( "text" ), &m_Category );
                 }
                 else if( XmlNode->GetName() == wxT( "itunes:summary" ) )
                 {
@@ -420,7 +420,7 @@ void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
                 return;
         }
 
-        Condition += wxString::Format( wxT( "AND podcastitem_time < %u " ), DeleteTime.GetTicks() );
+        Condition += wxString::Format( wxT( "AND podcastitem_time < %lu " ), DeleteTime.GetTicks() );
 
         //
         if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) )
@@ -525,10 +525,10 @@ void guPodcastItem::ReadXml( wxXmlNode * XmlNode )
         }
         else if( XmlNode->GetName() == wxT( "enclosure" ) )
         {
-            XmlNode->GetPropVal( wxT( "url" ), &m_Enclosure );
+            XmlNode->GetAttribute( wxT( "url" ), &m_Enclosure );
 
             wxString LenStr;
-            XmlNode->GetPropVal( wxT( "length" ), &LenStr );
+            XmlNode->GetAttribute( wxT( "length" ), &LenStr );
             unsigned long ULongVal;
             LenStr.ToULong( &ULongVal );
             m_FileSize = ULongVal;
@@ -599,18 +599,18 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
     if( Count )
     {
         Lock();
-        if( !TestDestroy() )
-        {
+        //if( !TestDestroy() )
+        //{
             for( Index = 0; Index < Count; Index++ )
             {
-                if( TestDestroy() )
-                    break;
+                //if( TestDestroy() )
+                //    break;
                 if( priority )
                     m_Items.Insert( new guPodcastItem( items->Item( Index ) ), m_CurPos );
                 else
                     m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
             }
-        }
+        //}
         Unlock();
     }
 
@@ -644,12 +644,12 @@ void guPodcastDownloadQueueThread::RemovePodcastItems( guPodcastItemArray * item
     if( Count && m_Items.Count() )
     {
         Lock();
-        if( !TestDestroy() )
-        {
+        //if( !TestDestroy() )
+        //{
             for( Index = 0; Index < Count; Index++ )
             {
-                if( TestDestroy() )
-                    break;
+                //if( TestDestroy() )
+                //    break;
                 if( ( ItemPos = FindPodcastItem( &items->Item( Index ) ) ) != wxNOT_FOUND )
                 {
                     m_Items.RemoveAt( ItemPos );
@@ -658,7 +658,7 @@ void guPodcastDownloadQueueThread::RemovePodcastItems( guPodcastItemArray * item
                         m_CurPos--;
                 }
             }
-        }
+        //}
         Unlock();
     }
 }

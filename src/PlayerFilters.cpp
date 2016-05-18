@@ -34,7 +34,7 @@ guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 	FiltersMainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxFlexGridSizer* FiltersFlexSizer;
-	FiltersFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    FiltersFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
 	FiltersFlexSizer->AddGrowableCol( 1 );
 	FiltersFlexSizer->SetFlexibleDirection( wxBOTH );
 	FiltersFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -143,6 +143,40 @@ void guPlayerFilters::SetAllowFilterId( const int id )
 void guPlayerFilters::SetDenyFilterId( const int id )
 {
     m_FilterDenyChoice->SetSelection( GetListItemsIdIndex( m_FilterPlayLists, id ) );
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerFilters::GetAllowSelection( void )
+{
+    return m_FilterAllowChoice->GetSelection();
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerFilters::GetDenySelection( void )
+{
+    return m_FilterDenyChoice->GetSelection();
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerFilters::GetAllowFilterId( void )
+{
+    int Index = m_FilterAllowChoice->GetSelection();
+    if( Index != wxNOT_FOUND )
+    {
+        return m_FilterPlayLists[ Index ].m_Id;
+    }
+    return wxNOT_FOUND;
+}
+
+// -------------------------------------------------------------------------------- //
+int guPlayerFilters::GetDenyFilterId( void )
+{
+    int Index = m_FilterDenyChoice->GetSelection();
+    if( Index != wxNOT_FOUND )
+    {
+        return m_FilterPlayLists[ Index ].m_Id;
+    }
+    return wxNOT_FOUND;
 }
 
 // -------------------------------------------------------------------------------- //

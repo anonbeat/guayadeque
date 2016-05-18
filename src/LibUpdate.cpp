@@ -234,7 +234,7 @@ void guLibUpdateThread::ProcessCovers( void )
         wxArrayInt    CoverIndexs;
         GetCoversFromSamePath( wxPathOnly( m_ImageFiles[ 0 ] ), m_ImageFiles, CoverPaths, CoverIndexs );
 
-        int FirstIndex = ( CoverPaths.Count() == 1 ) ? 0 : guMax( 0, GetFirstCoverPath( m_CoverSearchWords, CoverPaths ) );
+        int FirstIndex = ( CoverPaths.Count() == 1 ) ? 0 : wxMax( 0, GetFirstCoverPath( m_CoverSearchWords, CoverPaths ) );
 
         m_Db->UpdateImageFile( CoverPaths[ FirstIndex ].ToUTF8(), CoverName.ToUTF8(), wxBITMAP_TYPE_JPEG, CoverMaxSize );
 

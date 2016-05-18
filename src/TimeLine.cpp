@@ -36,7 +36,7 @@ static float inline guSinProgress( float value )
 // -------------------------------------------------------------------------------- //
 static float inline guSmoothBeginEndMixFactor( float value )
 {
-    return guMin( guMax( ( 1.0 - value * 2.0 + 0.3 ), 0.0 ), 1.0 );
+    return wxMin( wxMax( ( 1.0 - value * 2.0 + 0.3 ), 0.0 ), 1.0 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -133,7 +133,7 @@ void guTimeLine::SetCurrentTime( const int msec )
 // -------------------------------------------------------------------------------- //
 float guTimeLine::ValueForTime( int msec )
 {
-    msec = guMin( guMax( msec, 0 ), m_Duration );
+    msec = wxMin( wxMax( msec, 0 ), m_Duration );
 
     // Simple linear interpolation
     float Value = msec / float( m_Duration );

@@ -36,6 +36,7 @@
 #include <wx/sizer.h>
 #include <wx/string.h>
 #include <wx/tglbtn.h>
+#include <wx/gtk/tglbtn.h>
 
 
 #define     guPANEL_FILEBROWSER_DIRCTRL             ( 1 << 0 )
@@ -122,7 +123,7 @@ class guFileBrowserDirCtrl : public wxPanel
     guMediaViewer *     m_MediaViewer;
     guGenericDirCtrl *  m_DirCtrl;
     bool                m_AddingFolder;
-    wxToggleBitmapButton *  m_ShowLibPathsBtn;
+    wxBitmapToggleButton *  m_ShowLibPathsBtn;
 
     void                OnShowLibPathsClick( wxCommandEvent& event );
 

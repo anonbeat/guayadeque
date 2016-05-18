@@ -26,6 +26,56 @@
 #include <wx/dc.h>
 
 // -------------------------------------------------------------------------------- //
+unsigned char wxAuiBlendColour( unsigned char fg, unsigned char bg, double alpha )
+{
+    double result = bg + ( alpha * ( fg - bg ) );
+    if( result < 0.0 )
+        result = 0.0;
+    if( result > 255 )
+        result = 255;
+    return ( unsigned char ) result;
+}
+
+// -------------------------------------------------------------------------------- //
+wxColour wxAuiStepColour( const wxColour &c, int ialpha )
+{
+    if( c == wxNullColour )
+        return c;
+
+    unsigned char r = c.Red();
+    unsigned char g = c.Green();
+    unsigned char b = c.Blue();
+
+    unsigned char bg;
+
+    // ialpha is 0..200 where 0 is completely black
+    // and 200 is completely white and 100 is the same
+    // convert that to normal alpha 0.0 - 1.0
+    ialpha = wxMin( ialpha, 200 );
+    ialpha = wxMax( ialpha, 0 );
+    double alpha = ( ( double ) ( ialpha - 100.0 ) ) / 100.0;
+
+    if( ialpha > 100 )
+    {
+        // blend with white
+        bg = 255;
+        alpha = 1.0 - alpha;  // 0 = transparent fg; 1 = opaque fg
+    }
+    else
+    {
+        // blend with black
+        bg = 0;
+        alpha += 1.0;         // 0 = transparent fg; 1 = opaque fg
+    }
+
+    r = wxAuiBlendColour( r, bg, alpha );
+    g = wxAuiBlendColour( g, bg, alpha );
+    b = wxAuiBlendColour( b, bg, alpha );
+
+    return wxColour( r, g, b );
+}
+
+// -------------------------------------------------------------------------------- //
 static void inline IndentPressedBitmap( wxRect * rect, int button_state )
 {
     if( button_state == wxAUI_BUTTON_STATE_PRESSED )
@@ -47,8 +97,8 @@ guAuiTabArt::guAuiTabArt() : wxAuiDefaultTabArt()
     m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_SelTextFgColour = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
 
-    m_disabled_close_bmp = guImage( guIMAGE_INDEX_tiny_close_normal );
-    m_active_close_bmp = guImage( guIMAGE_INDEX_tiny_close_highlight );
+    m_disabledCloseBmp = guImage( guIMAGE_INDEX_tiny_close_normal );
+    m_activeCloseBmp = guImage( guIMAGE_INDEX_tiny_close_highlight );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -60,9 +110,9 @@ guAuiTabArt::~guAuiTabArt()
 wxAuiTabArt * guAuiTabArt::Clone()
 {
     guAuiTabArt * art = new guAuiTabArt;
-    art->SetNormalFont( m_normal_font );
-    art->SetSelectedFont( m_selected_font );
-    art->SetMeasuringFont( m_measuring_font );
+    art->SetNormalFont( m_normalFont );
+    art->SetSelectedFont( m_selectedFont );
+    art->SetMeasuringFont( m_measuringFont );
 //    art->m_BgColor = m_BgColor;
 //    art->m_SelBgColor = m_SelBgColor;
 //    art->m_TextFgColor = m_TextFgColor;
@@ -73,9 +123,9 @@ wxAuiTabArt * guAuiTabArt::Clone()
 void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
 {
     // draw background
-   //wxColor top_color      = m_base_colour;
-   wxColor top_color      = m_BgColor;
-   wxColor bottom_color   = wxAuiStepColour( m_base_colour, 120 );
+   //wxColour top_color      = m_base_colour;
+   wxColour top_color      = m_BgColor;
+   wxColour bottom_color   = wxAuiStepColour( m_baseColour, 120 );
    wxRect r;
 
    if( m_flags & wxAUI_NB_BOTTOM )
@@ -88,7 +138,7 @@ void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
    dc.GradientFillLinear( r, top_color, bottom_color, wxNORTH );
 
    // draw base lines
-   dc.SetPen( m_border_pen );
+   dc.SetPen( m_borderPen );
    int y = rect.GetHeight();
    int w = rect.GetWidth();
 
@@ -120,10 +170,10 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     if( caption.empty() )
         caption = wxT("Xj");
 
-    dc.SetFont(m_selected_font);
+    dc.SetFont(m_selectedFont);
     dc.GetTextExtent(caption, &selected_textx, &selected_texty);
 
-    dc.SetFont(m_normal_font);
+    dc.SetFont(m_normalFont);
     dc.GetTextExtent(caption, &normal_textx, &normal_texty);
 
     // figure out the size of the tab
@@ -135,7 +185,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
                                  close_button_state,
                                  x_extent);
 
-    wxCoord tab_height = m_tab_ctrl_height - 1;
+    wxCoord tab_height = m_tabCtrlHeight - 1;
     if( !page.active )
         tab_height -= 2;
     wxCoord tab_width = tab_size.x;
@@ -150,12 +200,12 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 
     if( page.active )
     {
-        dc.SetFont( m_selected_font );
+        dc.SetFont( m_selectedFont );
         texty = selected_texty;
     }
     else
     {
-        dc.SetFont(m_normal_font);
+        dc.SetFont(m_normalFont);
         texty = normal_texty;
     }
 
@@ -221,7 +271,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 //    }
 
     // draw tab outline
-    dc.SetPen( m_border_pen );
+    dc.SetPen( m_borderPen );
     dc.SetBrush( * wxTRANSPARENT_BRUSH );
     dc.DrawPolygon( WXSIZEOF( border_points ), border_points );
 
@@ -230,7 +280,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     if( page.active )
     {
         if( m_flags & wxAUI_NB_BOTTOM )
-            dc.SetPen( wxPen( wxColour( wxAuiStepColour( m_base_colour, 170 ) ) ) );
+            dc.SetPen( wxPen( wxColour( wxAuiStepColour( m_baseColour, 170 ) ) ) );
         // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
         // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
         else //for wxAUI_NB_TOP
@@ -246,7 +296,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     int close_button_width = 0;
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
     {
-        close_button_width = m_active_close_bmp.GetWidth();
+        close_button_width = m_activeCloseBmp.GetWidth();
     }
 
 
@@ -284,12 +334,12 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     // draw close button if necessary
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
     {
-        wxBitmap bmp = m_disabled_close_bmp;
+        wxBitmap bmp = m_disabledCloseBmp;
 
         if (close_button_state == wxAUI_BUTTON_STATE_HOVER ||
             close_button_state == wxAUI_BUTTON_STATE_PRESSED)
         {
-            bmp = m_active_close_bmp;
+            bmp = m_activeCloseBmp;
         }
 
         wxRect rect(tab_x + tab_width - close_button_width - 1,
@@ -367,14 +417,14 @@ guAuiNotebook::~guAuiNotebook()
 // UpdateTabCtrlHeight() does the actual tab resizing. It's meant
 // to be used interally
 // -------------------------------------------------------------------------------- //
-void guAuiNotebook::UpdateTabCtrlHeight()
+bool guAuiNotebook::UpdateTabCtrlHeight()
 {
     // get the tab ctrl height we will use
     int height = CalculateTabCtrlHeight();
 
     wxAuiTabArt* art = m_tabs.GetArtProvider();
 
-    m_tab_ctrl_height = height;
+    m_tabCtrlHeight = height;
 
     wxAuiPaneInfoArray& all_panes = m_mgr.GetAllPanes();
     size_t i, pane_count = all_panes.GetCount();
@@ -385,10 +435,12 @@ void guAuiNotebook::UpdateTabCtrlHeight()
             continue;
         wxTabFrame* tab_frame = (wxTabFrame*)pane.window;
         wxAuiTabCtrl* tabctrl = tab_frame->m_tabs;
-        tab_frame->SetTabCtrlHeight(m_tab_ctrl_height);
+        tab_frame->SetTabCtrlHeight(m_tabCtrlHeight);
         tabctrl->SetArtProvider(art->Clone());
         tab_frame->DoSizing();
     }
+
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -447,12 +499,12 @@ wxString guAuiNotebook::SavePerspective( void )
             if( p )
                 tabs += wxT( "," );
 
-            if( ( int ) page_idx == m_curpage )
+            if( ( int ) page_idx == m_curPage )
                 tabs += wxT( "*" );
             else if( ( int ) p == tabframe->m_tabs->GetActivePage() )
                 tabs += wxT( "+" );
-            //tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, page.caption.c_str() );
-            tabs += wxString::Format( wxT( "%02u[%s]" ), page_idx, GetPageId( page.window ).c_str() );
+            //tabs += wxString::Format( wxT( "%02lu[%s]" ), page_idx, page.caption.c_str() );
+            tabs += wxString::Format( wxT( "%02lu[%s]" ), page_idx, GetPageId( page.window ).c_str() );
         }
     }
     tabs += wxT( "@" );
@@ -501,12 +553,12 @@ bool guAuiNotebook::LoadPerspective( const wxString &layout )
         // create a new tab frame
         wxTabFrame * new_tabs = new wxTabFrame;
         new_tabs->m_tabs = new wxAuiTabCtrl( this,
-                                    m_tab_id_counter++,
+                                    m_tabIdCounter++,
                                     wxDefaultPosition,
                                     wxDefaultSize,
                                     wxNO_BORDER | wxWANTS_CHARS );
         new_tabs->m_tabs->SetArtProvider( m_tabs.GetArtProvider()->Clone() );
-        new_tabs->SetTabCtrlHeight( m_tab_ctrl_height );
+        new_tabs->SetTabCtrlHeight( m_tabCtrlHeight );
         new_tabs->m_tabs->SetFlags( m_flags );
         wxAuiTabCtrl * dest_tabs = new_tabs->m_tabs;
 
@@ -555,7 +607,7 @@ bool guAuiNotebook::LoadPerspective( const wxString &layout )
     m_mgr.LoadPerspective( frames );
 
     // Force refresh of selection
-    m_curpage = -1;
+    m_curPage = -1;
     SetSelection( sel_page );
 
     return true;

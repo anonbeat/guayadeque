@@ -36,7 +36,7 @@ guRadioEditor::guRadioEditor( wxWindow* parent, const wxString& title, const wxS
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	wxFlexGridSizer * FlexGridSizer;
-	FlexGridSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    FlexGridSizer = new wxFlexGridSizer( 2, 0, 0 );
 	FlexGridSizer->AddGrowableCol( 1 );
 	FlexGridSizer->SetFlexibleDirection( wxBOTH );
 	FlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

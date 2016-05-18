@@ -40,7 +40,7 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
 
 	MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
 
-	wxFlexGridSizer * FieldsSizer = new wxFlexGridSizer( 3, 2, 0, 0 );
+    wxFlexGridSizer * FieldsSizer = new wxFlexGridSizer( 2, 0, 0 );
 	FieldsSizer->AddGrowableCol( 1 );
 	FieldsSizer->AddGrowableRow( 2 );
 	FieldsSizer->SetFlexibleDirection( wxBOTH );
@@ -76,7 +76,7 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
 	TracksLabel->Wrap( -1 );
 	FieldsSizer->Add( TracksLabel, 0, wxALL|wxALIGN_RIGHT, 5 );
 
-	m_TracksStaticText = new wxStaticText( this, wxID_ANY, wxString::Format( wxT( "%u" ), tracks->Count() ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_TracksStaticText = new wxStaticText( this, wxID_ANY, wxString::Format( wxT( "%lu" ), tracks->Count() ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_TracksStaticText->Wrap( -1 );
 	FieldsSizer->Add( m_TracksStaticText, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -128,7 +128,7 @@ int FindPlayListItem( guListItems * items, const wxString &playlistname )
 int guPlayListAppend::GetSelectedPlayList( void )
 {
     int Selection = m_PlayListComboBox->GetSelection();
-    if( Selection == wxNOT_FOUND && !m_PlayListComboBox->IsEmpty() )
+    if( Selection == wxNOT_FOUND && m_PlayListComboBox->GetCount() != 0 )
     {
         Selection = FindPlayListItem( m_PlayListItems, m_PlayListComboBox->GetValue().Lower().Trim().Trim( false ) );
     }

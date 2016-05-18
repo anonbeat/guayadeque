@@ -1,3 +1,9 @@
 ./buildt
 rm CMakeCache.txt
-cmake . -DCMAKE_INSTALL_PREFIX=/usr -DDEBUG=YES && make
+cmake . \
+ -DCMAKE_BUILD_TYPE='Debug' \
+ -DDEBUG=YES \
+ -DCMAKE_INSTALL_PREFIX=/usr \
+ -DCMAKE_CXX_STANDARD="11" \
+ -DCMAKE_CXX_FLAGS="-Wno-deprecated-declarations" \
+ && make

@@ -89,8 +89,8 @@ class guTrackInfo {
 class guTopTrackInfo {
   public:
     wxString        m_TrackName;
-    long            m_PlayCount;
-    long            m_Listeners;
+    int             m_PlayCount;
+    int             m_Listeners;
     wxString        m_ArtistName;
     wxString        m_Url;
     wxString        m_ImageLink;

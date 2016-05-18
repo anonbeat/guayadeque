@@ -59,7 +59,7 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 	FilesSizer->Add( m_FilesListBox, 1, wxEXPAND|wxALL, 5 );
 
 	wxFlexGridSizer * EditSizer;
-	EditSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    EditSizer = new wxFlexGridSizer( 2, 0, 0 );
 	EditSizer->AddGrowableCol( 1 );
 	EditSizer->SetFlexibleDirection( wxBOTH );
 	EditSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );

@@ -375,8 +375,8 @@ class guLastFMInfoCtrl : public wxPanel
     guPlayerPanel *     m_PlayerPanel;
     wxStaticBitmap *    m_Bitmap;
 	wxStaticText *      m_Text;
-	wxColor             m_NormalColor;
-	wxColor             m_NotFoundColor;
+    wxColour             m_NormalColor;
+    wxColour             m_NotFoundColor;
 	guMediaViewer *     m_MediaViewer;
     guDbLibrary *       m_Db;
     wxMutex             m_DbMutex;

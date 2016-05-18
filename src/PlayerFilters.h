@@ -50,10 +50,10 @@ class guPlayerFilters : public wxPanel
 
     void            UpdateFilters( void );
     void            EnableFilters( const bool enable );
-    int             GetAllowSelection( void ) { return m_FilterAllowChoice->GetSelection(); }
-    int             GetDenySelection( void ) { return m_FilterDenyChoice->GetSelection(); }
-    int             GetAllowFilterId( void ) { return m_FilterPlayLists[ m_FilterAllowChoice->GetSelection() ].m_Id; };
-    int             GetDenyFilterId( void ) { return m_FilterPlayLists[ m_FilterDenyChoice->GetSelection() ].m_Id; };
+    int             GetAllowSelection( void );
+    int             GetDenySelection( void );
+    int             GetAllowFilterId( void );
+    int             GetDenyFilterId( void );
     void            SetAllowFilterId( const int id );
     void            SetDenyFilterId( const int id );
 

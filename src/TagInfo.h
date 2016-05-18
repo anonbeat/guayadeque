@@ -329,7 +329,7 @@ wxImage *   guTagGetPicture( const wxString &filename );
 bool        guTagSetPicture( const wxString &filename, wxImage * picture );
 bool        guTagSetPicture( const wxString &filename, const wxString &imagefile );
 wxString    guTagGetLyrics( const wxString &filename );
-bool        guTagSetLyrics( const wxString &filename, wxString &lyrics );
+bool        guTagSetLyrics( const wxString &filename, const wxString &lyrics );
 //void        guUpdateTrack( const guTrack &track, const wxImage * image, const wxString &lyrics, const int &changedflags );
 void        guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
                     const wxArrayString &lyrics, const wxArrayInt &changedflags );

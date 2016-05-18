@@ -72,7 +72,7 @@ wxString LenToString( wxUint64 len )
     {
         LenStr += LenStr.Format( wxT( "%02u:" ), h );
     }
-    LenStr += LenStr.Format( wxT( "%02u:%02u" ), m, len );
+    LenStr += LenStr.Format( wxT( "%02u:%02lu" ), m, len );
     //guLogMessage( wxT( "%lu -> %s" ), len, LenStr.c_str() );
     return LenStr;
 }
@@ -162,7 +162,7 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings )
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
+wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
 {
     wxImage *   Image = NULL;
     wxURI       Uri( url );
@@ -245,10 +245,10 @@ wxImage * guGetRemoteImage( const wxString &url, int &imgtype )
 }
 
 // -------------------------------------------------------------------------------- //
-bool DownloadImage( const wxString &source, const wxString &target, const int imagetype, int maxwidth, int maxheight )
+bool DownloadImage( const wxString &source, const wxString &target, const wxBitmapType imagetype, int maxwidth, int maxheight )
 {
-    bool        RetVal = false;
-    int         ImageType;
+    bool RetVal = false;
+    wxBitmapType ImageType;
     wxImage *   Image = guGetRemoteImage( source, ImageType );
 
     if( Image )
@@ -308,7 +308,7 @@ wxString guURLEncode( const wxString &url )
     static const wxChar marks[] = wxT( "-_.\"!~*()'" );
 
 	wxString RetVal;
-	unsigned char CurChar;
+	wxChar CurChar;
 
 	wxCharBuffer CharBuffer = url.ToUTF8();
 	int Index;
@@ -349,7 +349,7 @@ wxString guFileDnDEncode( const wxString &file )
 
   for( index = 0; index < StrLen; index++ )
   {
-    unsigned char C = CharBuffer[ index ];
+    wxChar C = CharBuffer[ index ];
     {
       static const wxChar marks[] = wxT( " -_.\"/+!~*()'[]%" ); //~!@#$&*()=:/,;?+'
 

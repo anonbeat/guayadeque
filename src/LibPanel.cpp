@@ -513,7 +513,7 @@ void guLibPanel::CreateControls( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::LoadLastLayout( void )
 {
-    guConfig *          Config = ( guConfig * ) guConfig::Get();
+    guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxString LibraryLayout = Config->ReadStr( wxT( "Layout" ), wxEmptyString, m_ConfigPath );
     if( Config->GetIgnoreLayouts() || LibraryLayout.IsEmpty() )

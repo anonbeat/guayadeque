@@ -30,7 +30,8 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 // guVumter
 // -------------------------------------------------------------------------------- //
-guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) : wxControl( parent, id )
+guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) :
+    wxControl( parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
 {
     m_Style         = style;
     m_PeakLevel     = -INFINITY;
@@ -331,7 +332,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     //
     // Create the Horizontal vumeter layout
     //
-	m_HVumFlexSizer = new wxFlexGridSizer( 3, 2, 0, 0 );
+    m_HVumFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
 	m_HVumFlexSizer->AddGrowableCol( 1 );
 	m_HVumFlexSizer->AddGrowableRow( 0 );
 	m_HVumFlexSizer->AddGrowableRow( 2 );
@@ -414,7 +415,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     //
     // Create the Vertical vumeter layout
     //
-	m_VVumFlexSizer = new wxFlexGridSizer( 2, 3, 0, 0 );
+    m_VVumFlexSizer = new wxFlexGridSizer( 3, 0, 0 );
 	m_VVumFlexSizer->AddGrowableCol( 0 );
 	m_VVumFlexSizer->AddGrowableCol( 2 );
 	m_VVumFlexSizer->AddGrowableRow( 0 );

@@ -274,7 +274,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_TitleLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_TitleLabel, 0, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 2 );
+    PlayerLabelsSizer->Add( m_TitleLabel, 1, wxEXPAND, 2 );
 
 	//m_AlbumLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
@@ -285,7 +285,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	CurrentFont.SetStyle( wxFONTSTYLE_ITALIC );
 	m_AlbumLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_AlbumLabel, 0, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 2 );
+    PlayerLabelsSizer->Add( m_AlbumLabel, 1, wxEXPAND, 2 );
 
 	//m_ArtistLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
@@ -295,13 +295,13 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	CurrentFont.SetStyle( wxFONTSTYLE_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
 
-	PlayerLabelsSizer->Add( m_ArtistLabel, 0, wxEXPAND|wxLEFT|wxRIGHT|wxBOTTOM, 2 );
+    PlayerLabelsSizer->Add( m_ArtistLabel, 1, wxEXPAND, 2 );
 
 	m_PosLabelSizer = new wxBoxSizer( wxHORIZONTAL );
 	//m_PosLabelSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 	m_YearLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_YearLabel->SetToolTip( _( "Show the year of the current track" ) );
-	m_PosLabelSizer->Add( m_YearLabel, 1, wxALIGN_CENTER_VERTICAL|wxLEFT|wxRIGHT, 2 );
+    m_PosLabelSizer->Add( m_YearLabel, 1, wxALIGN_CENTER_VERTICAL, 2 );
 
 	m_PositionLabel = new wxStaticText( this, wxID_ANY, _("00:00 of 00:00"), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PositionLabel->SetToolTip( _( "Show the current position and song length of the current track" ) );
@@ -1100,7 +1100,7 @@ void guPlayerPanel::TrackListChanged( void )
 //    m_PlayListLenStaticText->SetLabel( m_PlayListCtrl->GetLengthStr() );
 //   	m_PlayListLabelsSizer->Layout();
 //    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
-//        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+//        wxString::Format( wxT( ":  %i / %li    ( %s )" ),
 //            m_PlayListCtrl->GetCurItem() + 1,
 //            m_PlayListCtrl->GetCount(),
 //            m_PlayListCtrl->GetLengthStr().c_str() ) );
@@ -1900,7 +1900,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     //UpdatePositionLabel( 0 );
 
 //    m_PlayListCtrl->SetColumnLabel( 0, _( "Now Playing" ) +
-//        wxString::Format( wxT( ":  %i / %i    ( %s )" ),
+//        wxString::Format( wxT( ":  %i / %li    ( %s )" ),
 //            m_PlayListCtrl->GetCurItem() + 1,
 //            m_PlayListCtrl->GetCount(),
 //            m_PlayListCtrl->GetLengthStr().c_str() ) );

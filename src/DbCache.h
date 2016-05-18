@@ -42,14 +42,14 @@ class guDbCache : public guDb
     static guDbCache * m_DbCache;
 
   protected :
-    bool        DoSetImage( const wxString &url, wxImage * img, const int imgtype, int imagesize );
+    bool        DoSetImage( const wxString &url, wxImage * img, const wxBitmapType imgtype, int imagesize );
 
   public :
     guDbCache( const wxString &dbname );
     ~guDbCache();
 
-    wxImage *           GetImage( const wxString &url, int &imagetype, const int imagesize );
-    bool                SetImage( const wxString &url, wxImage * img, const int imgtype );
+    wxImage *           GetImage( const wxString &url, wxBitmapType &imagetype, const int imagesize );
+    bool                SetImage( const wxString &url, wxImage * img, const wxBitmapType imgtype );
     wxString            GetContent( const wxString &url );
     bool                SetContent( const wxString &url, const char * str, const int len );
     bool                SetContent( const wxString &url, const wxString &content, const int type = guDBCACHE_TYPE_TEXT );

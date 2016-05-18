@@ -403,7 +403,7 @@ guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * media
 
 	wxStaticBoxSizer * StaticBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, wxEmptyString ), wxHORIZONTAL );
 
-	wxFlexGridSizer * FlexGridSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * FlexGridSizer = new wxFlexGridSizer( 2, 0, 0 );
 	FlexGridSizer->AddGrowableCol( 1 );
 	FlexGridSizer->SetFlexibleDirection( wxBOTH );
 	FlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -500,7 +500,7 @@ guGenSmartPlaylist::~guGenSmartPlaylist()
 int guGenSmartPlaylist::GetPlayListId( void )
 {
     int Selection = m_SaveToComboBox->GetSelection();
-    if( Selection == wxNOT_FOUND && !m_SaveToComboBox->IsEmpty() )
+    if( Selection == wxNOT_FOUND && m_SaveToComboBox->GetCount() != 0 )
     {
         Selection = FindPlayListItem( &m_Playlists, m_SaveToComboBox->GetValue().Lower().Trim().Trim( false ) );
     }

@@ -33,7 +33,7 @@ END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guRoundButton::guRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage, const int flags ) :
-    wxControl( parent, wxID_ANY )
+    wxControl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
 {
     m_Bitmap = wxBitmap( image );
     m_HoverBitmap = wxBitmap( selimage );

@@ -350,8 +350,8 @@ void guCoverEditor::OnAddCoverImage( wxCommandEvent &event )
         UpdateCoverBitmap();
     if( ( m_CurrentImage < ( int ) ( m_AlbumCovers.Count() - 1 ) ) && !m_NextButton->IsEnabled() )
         m_NextButton->Enable();
-    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
-    //guLogMessage( wxT( "CurImg: %u  Total:%u" ), m_CurrentImage + 1, m_AlbumCovers.Count() );
+    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02lu" ), m_CurrentImage + 1, m_AlbumCovers.Count() ) );
+    //guLogMessage( wxT( "CurImg: %u  Total:%lu" ), m_CurrentImage + 1, m_AlbumCovers.Count() );
     EndDownloadCoverThread( ( guDownloadCoverThread * ) event.GetClientObject() );
     m_DownloadEventsMutex.Unlock();
 }
@@ -359,7 +359,7 @@ void guCoverEditor::OnAddCoverImage( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guCoverEditor::UpdateCoverBitmap( void )
 {
-    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02u" ),  m_AlbumCovers.Count() ? m_CurrentImage + 1 : 0, m_AlbumCovers.Count() ) );
+    m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02lu" ),  m_AlbumCovers.Count() ? m_CurrentImage + 1 : 0, m_AlbumCovers.Count() ) );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
@@ -673,7 +673,7 @@ guDownloadCoverThread::~guDownloadCoverThread()
 // -------------------------------------------------------------------------------- //
 guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
 {
-    int             ImageType;
+    wxBitmapType ImageType;
     guCoverImage *  CoverImage = NULL;
     wxImage *   Image = guGetRemoteImage( m_UrlStr, ImageType );
 

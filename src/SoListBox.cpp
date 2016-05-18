@@ -312,7 +312,7 @@ void guSoListBox::ItemsCheckRange( const int start, const int end )
 // -------------------------------------------------------------------------------- //
 void guSoListBox::GetItemsList( void )
 {
-    //m_Db->GetSongs( &m_Items, GetFirstVisibleLine(), GetLastVisibleLine() );
+    //m_Db->GetSongs( &m_Items, GetVisibleRowsBegin(), GetLastVisibleLine() );
     SetItemCount( m_Db->GetSongsCount() );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
@@ -325,7 +325,7 @@ void guSoListBox::ReloadItems( bool reset )
     //guLogMessage( wxT( "guSoListBox::ReloadItems( %i )"), reset );
     //
     wxArrayInt Selection;
-    int FirstVisible = GetFirstVisibleLine();
+    int FirstVisible = GetVisibleRowsBegin();
 
     if( reset )
         SetSelection( -1 );
@@ -347,7 +347,7 @@ void guSoListBox::ReloadItems( bool reset )
     if( !reset )
     {
       SetSelectedIndexs( Selection );
-      ScrollToLine( FirstVisible );
+      ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }
@@ -376,7 +376,7 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) co
 
     m_MediaViewer->NormalizeTracks( tracks, isdrag );
 
-    guLogMessage( wxT( "SOListBox::GetSelectedTracks <- %i" ), tracks->Count() );
+    guLogMessage( wxT( "SOListBox::GetSelectedTracks <- %li" ), tracks->Count() );
     return tracks->Count();
 }
 

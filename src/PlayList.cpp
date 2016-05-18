@@ -605,7 +605,7 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                ( m_Items[ Item ].m_Type != guTRACK_TYPE_PODCAST ) &&
                ( m_Items[ Item ].m_Type != guTRACK_TYPE_RADIOSTATION ) )
             {
-                if( ( size_t ) y > ( ( Item - GetFirstVisibleLine() ) * m_ItemHeight ) + m_SecondLineOffset )
+                if( ( size_t ) y > ( ( Item - GetVisibleRowsBegin() ) * m_ItemHeight ) + m_SecondLineOffset )
                 {
                     if( event.LeftDown() )
                     {

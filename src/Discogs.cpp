@@ -61,12 +61,16 @@ void GetImages( wxXmlNode * XmlNode, guDiscogsImageArray * images )
         if( XmlNode->GetName() == wxT( "image" ) )
         {
             guDiscogsImage * Image = new guDiscogsImage();
-            XmlNode->GetPropVal( wxT( "uri" ), &Image->m_Url );
+            XmlNode->GetAttribute( wxT( "uri" ), &Image->m_Url );
             wxString Value;
-            XmlNode->GetPropVal( wxT( "width" ), &Value );
-            Value.ToLong( &Image->m_Width );
-            XmlNode->GetPropVal( wxT( "height" ), &Value );
-            Value.ToLong( &Image->m_Height );
+            XmlNode->GetAttribute( wxT( "width" ), &Value );
+            long Width = 0;
+            Value.ToLong( &Width );
+            Image->m_Width = Width;
+            XmlNode->GetAttribute( wxT( "height" ), &Value );
+            long Height = 0;
+            Value.ToLong( &Height );
+            Image->m_Height = Height;
             images->Add( Image );
         }
         XmlNode = XmlNode->GetNext();
@@ -134,11 +138,11 @@ void GetReleases( wxXmlNode * XmlNode, guDiscogsReleaseArray * releases )
             wxString Value;
             long LongValue;
 
-            XmlNode->GetPropVal( wxT( "id" ), &Value );
+            XmlNode->GetAttribute( wxT( "id" ), &Value );
             Value.ToLong( &LongValue );
             Release->m_Id = LongValue;
 
-            XmlNode->GetPropVal( wxT( "type" ), &Release->m_Type );
+            XmlNode->GetAttribute( wxT( "type" ), &Release->m_Type );
             GetRelease( XmlNode->GetChildren(), Release );
             releases->Add( Release );
         }
@@ -221,7 +225,7 @@ bool guDiscogs::GetArtist( const wxString &name, guDiscogsArtist * artist )
         if( XmlNode && ( XmlNode->GetName() == wxT( "resp" ) ) )
         {
             wxString Status;
-            XmlNode->GetPropVal( wxT( "stat" ), &Status );
+            XmlNode->GetAttribute( wxT( "stat" ), &Status );
             if( Status == wxT( "ok" ) )
             {
                 XmlNode = XmlNode->GetChildren();
@@ -266,7 +270,7 @@ bool guDiscogs::GetArtist( const wxString &name, guDiscogsArtist * artist )
                 if( XmlNode->GetName() == wxT( "error" ) )
                 {
                     wxString ErrorMsg;
-                    XmlNode->GetPropVal( wxT( "msg" ), &ErrorMsg );
+                    XmlNode->GetAttribute( wxT( "msg" ), &ErrorMsg );
                     guLogError( wxT( "guDiscogs: %s" ), ErrorMsg.c_str() );
                 }
                 else
@@ -307,7 +311,7 @@ bool guDiscogs::GetRelease( const int id, guDiscogsRelease * release )
         if( XmlNode && ( XmlNode->GetName() == wxT( "resp" ) ) )
         {
             wxString Status;
-            XmlNode->GetPropVal( wxT( "stat" ), &Status );
+            XmlNode->GetAttribute( wxT( "stat" ), &Status );
             if( Status == wxT( "ok" ) )
             {
                 XmlNode = XmlNode->GetChildren();
@@ -335,7 +339,7 @@ bool guDiscogs::GetRelease( const int id, guDiscogsRelease * release )
                 if( XmlNode->GetName() == wxT( "error" ) )
                 {
                     wxString ErrorMsg;
-                    XmlNode->GetPropVal( wxT( "msg" ), &ErrorMsg );
+                    XmlNode->GetAttribute( wxT( "msg" ), &ErrorMsg );
                     guLogError( wxT( "guDiscogs: %s" ), ErrorMsg.c_str() );
                 }
                 else

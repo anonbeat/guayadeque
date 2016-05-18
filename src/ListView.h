@@ -28,6 +28,7 @@
 #include <wx/scrolwin.h>
 #include <wx/vlbox.h>
 #include <wx/settings.h>
+#include <wx/listbase.h>
 
 class guListViewClient;
 class guListViewHeader;
@@ -46,7 +47,7 @@ DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_CLICKED, wxID_ANY )
 DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxID_ANY )
 #define EVT_LISTBOX_ITEM_COL_RCLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_RCLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
 
-extern wxColor wxAuiStepColour( const wxColor & c, int percent );
+extern wxColour wxAuiStepColour( const wxColour & c, int percent );
 
 // -------------------------------------------------------------------------------- //
 class guDataObjectComposite : public wxDataObjectComposite
@@ -96,12 +97,12 @@ WX_DECLARE_OBJARRAY(guListViewColumn, guListViewColumnArray);
 class guListViewAttr
 {
   public:
-    wxColor     m_SelBgColor;
-    wxColor     m_SelFgColor;
-    wxColor     m_EveBgColor;
-    wxColor     m_OddBgColor;
-    wxColor     m_TextFgColor;
-    //wxColor     m_PlayFgColor;
+    wxColour     m_SelBgColor;
+    wxColour     m_SelFgColor;
+    wxColour     m_EveBgColor;
+    wxColour     m_OddBgColor;
+    wxColour     m_TextFgColor;
+    //wxColour     m_PlayFgColor;
     wxBrush     m_DragBgColor;
     wxFont *    m_Font;
 
@@ -113,9 +114,9 @@ class guListViewAttr
             delete m_Font;
     };
 
-    guListViewAttr( const wxColor &selbg, const wxColor &selfg,
-                    const wxColor &evebg, const wxColor &oddbg,
-                    const wxColor &textfg, wxFont * font )
+    guListViewAttr( const wxColour &selbg, const wxColour &selfg,
+                    const wxColour &evebg, const wxColour &oddbg,
+                    const wxColour &textfg, wxFont * font )
     {
         m_SelBgColor = selbg;
         m_SelFgColor = selfg;
@@ -328,11 +329,11 @@ class guListView : public wxScrolledWindow
 
     size_t                  GetVisibleBegin( void ) const { return m_ListBox->GetVisibleBegin(); }
     size_t                  GetVisibleEnd( void ) const { return m_ListBox->GetVisibleEnd(); }
-    size_t                  GetFirstVisibleLine() const { return m_ListBox->GetFirstVisibleLine(); }
+    size_t                  GetVisibleRowsBegin() const { return m_ListBox->GetVisibleRowsBegin(); }
     size_t                  GetLastVisibleLine() const { return m_ListBox->GetLastVisibleLine(); }
-    bool                    ScrollLines( int lines ) { return m_ListBox->ScrollLines( lines ); }
+    bool                    ScrollLines( int lines ) { return m_ListBox->wxWindow::ScrollLines( lines ); }
 
-    bool                    ScrollToLine( size_t line ) { return m_ListBox->ScrollToLine( line ); }
+    bool                    ScrollToRow( size_t line ) { return m_ListBox->ScrollToRow( line ); }
 
     void                    RefreshAll( int scroll = wxNOT_FOUND );
     void                    RefreshLines( const int from, const int to ) { m_ListBox->RefreshLines( from, to ); }

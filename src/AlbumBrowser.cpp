@@ -150,26 +150,27 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 	m_MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ) );
-	m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
+    m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
 
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
 	m_AlbumLabel->SetFont( CurrentFont );
-	m_MainSizer->Add( m_AlbumLabel, 0, wxRIGHT|wxEXPAND, 5 );
+    m_MainSizer->Add( m_AlbumLabel, 1, wxEXPAND, 5 );
 
 	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
-	m_MainSizer->Add( m_ArtistLabel, 0, wxRIGHT|wxEXPAND, 5 );
+    m_MainSizer->Add( m_ArtistLabel, 1, wxEXPAND, 5 );
 
 	m_TracksLabel = new guAutoScrollText( this, wxEmptyString );
 	m_TracksLabel->SetFont( CurrentFont );
-	m_MainSizer->Add( m_TracksLabel, 0, wxRIGHT|wxEXPAND, 5 );
+    m_MainSizer->Add( m_TracksLabel, 1, wxEXPAND, 5 );
 
 	SetSizer( m_MainSizer );
 	Layout();
 	m_MainSizer->Fit( this );
+    m_MainSizer->SetSizeHints( this );
 
     SetDropTarget( new guAlbumBrowserDropTarget( m_AlbumBrowser->m_MediaViewer, this ) );
 
@@ -266,7 +267,7 @@ void guAlbumBrowserItemPanel::UpdateDetails( void )
 
         m_TracksLabel->SetLabel( Label );
         m_TracksLabel->SetToolTip( Label );
-//        m_MainSizer->Layout();
+        //m_MainSizer->Layout();
     }
 }
 
@@ -788,7 +789,7 @@ void guAlbumBrowser::CreateControls( void )
 
 	m_BigCoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	wxFlexGridSizer * BigCoverCenterSizer = new wxFlexGridSizer( 1, 5, 0, 0 );
+    wxFlexGridSizer * BigCoverCenterSizer = new wxFlexGridSizer( 5, 0, 0 );
 	BigCoverCenterSizer->AddGrowableCol( 0 );
 	BigCoverCenterSizer->AddGrowableCol( 2 );
 	BigCoverCenterSizer->AddGrowableCol( 3 );
@@ -967,7 +968,7 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
         {
             size_t OldCount = m_ItemPanels.Count();
             m_ItemCount = ColItems * RowItems;
-            //guLogMessage( wxT( "We need to reassign the panels from %i to %i" ), OldCount, m_ItemCount );
+            //guLogMessage( wxT( "We need to reassign the panels from %li to %i" ), OldCount, m_ItemCount );
             if( OldCount != m_ItemCount )
             {
                 m_AlbumItemsMutex.Lock();
@@ -1080,7 +1081,7 @@ void guAlbumBrowser::RefreshAll( void )
     size_t Count = m_ItemCount;
     for( Index = 0; Index < Count; Index++ )
     {
-        //guLogMessage( wxT( "%i %s " ), Index, m_AlbumItems[ Index ].m_AlbumName.c_str() );
+        //guLogMessage( wxT( "%li %s " ), Index, m_AlbumItems[ Index ].m_AlbumName.c_str() );
         if( Index < m_AlbumItems.Count() )
             m_ItemPanels[ Index ]->SetAlbumItem( Index, &m_AlbumItems[ Index ], m_BlankCD );
         else
@@ -1414,7 +1415,7 @@ void guAlbumBrowser::OnAlbumEditTracksClicked( const int albumid )
 void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 {
     m_AlbumItemsMutex.Lock();
-    //guLogMessage( wxT( "OnUpdateDetails %i - %i" ), event.GetInt(), m_ItemPanels.GetCount() );
+    //guLogMessage( wxT( "OnUpdateDetails %i - %li" ), event.GetInt(), m_ItemPanels.GetCount() );
     int Index;
     int Count = m_ItemPanels.GetCount();
     for( Index = 0; Index < Count; Index++ )
@@ -1626,7 +1627,7 @@ void guAlbumBrowser::OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPo
         {
             Details += wxString::Format( wxT( "%04u" ), albumitem->m_Year );
         }
-        Details += wxString::Format( wxT( "   %02u " ), m_BigCoverTracks.Count() );
+        Details += wxString::Format( wxT( "   %02lu " ), m_BigCoverTracks.Count() );
         Details += _( "Tracks" );
         if( AlbumLength )
         {
@@ -2308,7 +2309,7 @@ void guAlbumBrowser::OnBigCoverTracksMouseMoved( wxMouseEvent &event )
                         // Its a LeftUp event
                         event.SetEventType( wxEVT_LEFT_DOWN );
                         event.m_leftDown = true;
-                        m_BigCoverTracksListBox->AddPendingEvent( event );
+                        m_BigCoverTracksListBox->GetEventHandler()->AddPendingEvent( event );
                     }
                     return;
                 }
@@ -2456,14 +2457,14 @@ wxString guAlbumBrowser::GetSelInfo( void )
 {
     if( m_BigCoverShowed )
     {
-        return wxString::Format( wxT( "%u " ), m_BigCoverTracks.Count() ) + _( "Tracks" );
+        return wxString::Format( wxT( "%lu " ), m_BigCoverTracks.Count() ) + _( "Tracks" );
     }
     else
     {
         if( m_AlbumsCount > 0 )
         {
             wxString SelInfo = _( "Albums" ) + wxString::Format( wxT( " %u " ), m_ItemStart + 1 );
-            SelInfo += _( "to" ) + wxString::Format( wxT( " %u " ), guMin( m_ItemStart + m_ItemCount, m_AlbumsCount ) );
+            SelInfo += _( "to" ) + wxString::Format( wxT( " %u " ), wxMin( m_ItemStart + m_ItemCount, m_AlbumsCount ) );
             SelInfo += _( "of" ) + wxString::Format( wxT( " %u " ), m_AlbumsCount );
             return SelInfo;
         }

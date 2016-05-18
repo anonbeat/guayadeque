@@ -117,7 +117,7 @@ wxArrayString guShoutCast::GetGenres( void ) const
             {
                 if( XmlNode->GetName() == wxT( "genre" ) )
                 {
-                    XmlNode->GetPropVal( wxT( "name" ), &GenreName );
+                    XmlNode->GetAttribute( wxT( "name" ), &GenreName );
                     RetVal.Add( GenreName );
                     //guLogMessage( wxT( "Genre : %s" ), GenreName.c_str() );
                 }
@@ -162,20 +162,20 @@ void guShoutCast::GetStations( const int source, const int flags, const wxString
             {
                 if( XmlNode->GetName() == wxT( "station" ) )
                 {
-                    XmlNode->GetPropVal( wxT( "br" ), &Value );
+                    XmlNode->GetAttribute( wxT( "br" ), &Value );
                     Value.ToLong( &BitRate );
                     if( ( MinBitRate == SHOUTCAST_STATION_ALLBITRATES ) ||
                         ( MinBitRate <= BitRate ) )
                     {
-                        XmlNode->GetPropVal( wxT( "name" ), &StationName );
+                        XmlNode->GetAttribute( wxT( "name" ), &StationName );
                         StationName.Replace( wxT( " - [SHOUTcast.com]" ), wxT( "" ) );
                         StationName.Replace( wxT( " - a SHOUTcast.com member station" ), wxT( "" ) );
-                        XmlNode->GetPropVal( wxT( "mt" ), &StationType );
-                        XmlNode->GetPropVal( wxT( "genre" ), &StationGenre );
-                        XmlNode->GetPropVal( wxT( "ct" ), &StationCurrent );
-                        XmlNode->GetPropVal( wxT( "id" ), &Value );
+                        XmlNode->GetAttribute( wxT( "mt" ), &StationType );
+                        XmlNode->GetAttribute( wxT( "genre" ), &StationGenre );
+                        XmlNode->GetAttribute( wxT( "ct" ), &StationCurrent );
+                        XmlNode->GetAttribute( wxT( "id" ), &Value );
                         Value.ToLong( &StationId );
-                        XmlNode->GetPropVal( wxT( "lc" ), &Value );
+                        XmlNode->GetAttribute( wxT( "lc" ), &Value );
                         Value.ToLong( &Listeners );
 
                         if( StationType.StartsWith( wxT( "audio" ) ) )

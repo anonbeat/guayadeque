@@ -51,35 +51,36 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 	m_Version->SetBackgroundColour( * wxWHITE );
 	MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT("J.Rios anonbeat@gmail.com"), wxT("mailto:anonbeat@gmail.com"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
-
+    m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT( "J.Rios anonbeat@gmail.com" ), wxT( "mailto:anonbeat@gmail.com" ), wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
 	m_Email->SetHoverColour( FontColor );
 	m_Email->SetNormalColour( FontColor );
 	m_Email->SetVisitedColour( FontColor );
 	m_Email->SetBackgroundColour( * wxWHITE );
-	MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxALL, 5 );
+    m_Email->SetCanFocus( false );
+    MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, _("guayadeque.org"), wxT("http://guayadeque.org"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+    m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, wxT( "guayadeque.org" ), wxT( "http://guayadeque.org" ), wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
 	m_HomePage->SetHoverColour( FontColor );
 	m_HomePage->SetNormalColour( FontColor );
 	m_HomePage->SetVisitedColour( FontColor );
 	m_HomePage->SetBackgroundColour( * wxWHITE );
-	MainSizer->Add( m_HomePage, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    m_HomePage->SetCanFocus( false );
+    MainSizer->Add( m_HomePage, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, _( "Please Donate!" ), wxT("http://sourceforge.net/donate/index.php?group_id=250783"), wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
+//	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, _( "Please Donate!" ), wxT( "http://sourceforge.net/donate/index.php?group_id=250783" ) );
 
-	m_Donate->SetHoverColour( FontColor );
-	m_Donate->SetNormalColour( FontColor );
-	m_Donate->SetVisitedColour( FontColor );
-	m_Donate->SetBackgroundColour( * wxWHITE );
-	MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+//	m_Donate->SetHoverColour( FontColor );
+//	m_Donate->SetNormalColour( FontColor );
+//	m_Donate->SetVisitedColour( FontColor );
+//	m_Donate->SetBackgroundColour( * wxWHITE );
+//	MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
 
     Show( true );
     SetThemeEnabled( false );
-    SetBackgroundStyle( wxBG_STYLE_CUSTOM );
+    SetBackgroundStyle( wxBG_STYLE_ERASE );
 
     m_Timer.SetOwner( this );
     m_Timer.Start( timeout, wxTIMER_ONE_SHOT );
@@ -138,7 +139,7 @@ void guSplashFrame::DoPaint( wxDC &dc )
 //    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
 //
 //    dc.SetBackgroundMode( wxTRANSPARENT );
-//    dc.SetTextForeground( wxColor( 60, 60, 60 ) );
+//    dc.SetTextForeground( wxColour( 60, 60, 60 ) );
 //    dc.SetFont( Font );
 //
 //    wxCoord width, height;

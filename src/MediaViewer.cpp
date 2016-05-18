@@ -57,7 +57,7 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
     m_IsDefault = false;
     m_CopyToPattern = NULL;
     m_UpdateCoversThread = NULL;
-    guLogMessage( wxT( "MediaViewer '%s' => '%s' ==>> %08X" ), collection.m_Name.c_str(), collection.m_UniqueId.c_str(), playerpanel );
+    guLogMessage( wxT( "MediaViewer '%s' => '%s'" ), collection.m_Name.c_str(), collection.m_UniqueId.c_str() );
 
     if( !wxDirExists( guPATH_COLLECTIONS + m_MediaCollection->m_UniqueId ) )
     {
@@ -1265,12 +1265,12 @@ void guMediaViewer::SaveLayout( wxXmlNode * xmlnode )
     //
     wxXmlNode * XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "mediaviewer" ) );
 
-    wxXmlProperty * Property = new wxXmlProperty( wxT( "name" ), m_MediaCollection->m_Name,
-                               new wxXmlProperty( wxT( "id" ), m_MediaCollection->m_UniqueId,
-                               new wxXmlProperty( wxT( "mode" ), wxString::Format( wxT( "%i" ), m_ViewMode ),
+    wxXmlAttribute * Property = new wxXmlAttribute( wxT( "name" ), m_MediaCollection->m_Name,
+                               new wxXmlAttribute( wxT( "id" ), m_MediaCollection->m_UniqueId,
+                               new wxXmlAttribute( wxT( "mode" ), wxString::Format( wxT( "%i" ), m_ViewMode ),
                                NULL ) ) );
 
-    XmlNode->SetProperties( Property );
+    XmlNode->SetAttributes( Property );
 
     if( m_LibPanel )
     {
@@ -1297,7 +1297,7 @@ void guMediaViewer::LoadLayout( wxXmlNode * xmlnode )
     {
         wxString Mode;
         long     ViewMode;
-        xmlnode->GetPropVal( wxT( "mode" ), &Mode );
+        xmlnode->GetAttribute( wxT( "mode" ), &Mode );
 
         wxXmlNode * XmlNode = xmlnode->GetChildren();
         while( XmlNode )

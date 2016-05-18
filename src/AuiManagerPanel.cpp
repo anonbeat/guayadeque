@@ -162,11 +162,11 @@ void guAuiManagerPanel::SaveLayout( wxXmlNode * xmlnode, const wxString &name )
 {
     wxXmlNode * XmlNode = new wxXmlNode( wxXML_ELEMENT_NODE, name );
 
-    wxXmlProperty * Property = new wxXmlProperty( wxT( "panels" ), wxString::Format( wxT( "%d" ), VisiblePanels() ),
-               new wxXmlProperty( wxT( "layout" ), SavePerspective(),
+    wxXmlAttribute * Property = new wxXmlAttribute( wxT( "panels" ), wxString::Format( wxT( "%d" ), VisiblePanels() ),
+               new wxXmlAttribute( wxT( "layout" ), SavePerspective(),
                NULL ) );
 
-    XmlNode->SetProperties( Property );
+    XmlNode->SetAttributes( Property );
 
     wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
     int Index;
@@ -181,12 +181,12 @@ void guAuiManagerPanel::SaveLayout( wxXmlNode * xmlnode, const wxString &name )
 
         GetListViewColumnData( Index, &ColumnPos, &ColumnWidth, &ColumnEnabled );
 
-        Property = new wxXmlProperty( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
-                   new wxXmlProperty( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
-                   new wxXmlProperty( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
-                   new wxXmlProperty( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
+        Property = new wxXmlAttribute( wxT( "id" ), wxString::Format( wxT( "%d" ), Index ),
+                   new wxXmlAttribute( wxT( "pos" ), wxString::Format( wxT( "%d" ), ColumnPos ),
+                   new wxXmlAttribute( wxT( "width" ), wxString::Format( wxT( "%d" ), ColumnWidth ),
+                   new wxXmlAttribute( wxT( "enabled" ), wxString::Format( wxT( "%d" ), ColumnEnabled ),
                    NULL ) ) ) );
-        Column->SetProperties( Property );
+        Column->SetAttributes( Property );
 
         Columns->AddChild( Column );
     }
@@ -203,9 +203,9 @@ void guAuiManagerPanel::LoadLayout( wxXmlNode * xmlnode )
     long VisiblePanels;
     wxString LayoutStr;
 
-    xmlnode->GetPropVal( wxT( "panels" ), &Field );
+    xmlnode->GetAttribute( wxT( "panels" ), &Field );
     Field.ToLong( &VisiblePanels );
-    xmlnode->GetPropVal( wxT( "layout" ), &LayoutStr );
+    xmlnode->GetAttribute( wxT( "layout" ), &LayoutStr );
 
     wxXmlNode * Columns = xmlnode->GetChildren();
     if( Columns && ( Columns->GetName() == wxT( "columns" ) ) )
@@ -218,13 +218,13 @@ void guAuiManagerPanel::LoadLayout( wxXmlNode * xmlnode )
             long ColumnWidth;
             long ColumnEnabled;
 
-            Column->GetPropVal( wxT( "id" ), &Field );
+            Column->GetAttribute( wxT( "id" ), &Field );
             Field.ToLong( &ColumnId );
-            Column->GetPropVal( wxT( "pos" ), &Field );
+            Column->GetAttribute( wxT( "pos" ), &Field );
             Field.ToLong( &ColumnPos );
-            Column->GetPropVal( wxT( "width" ), &Field );
+            Column->GetAttribute( wxT( "width" ), &Field );
             Field.ToLong( &ColumnWidth );
-            Column->GetPropVal( wxT( "enabled" ), &Field );
+            Column->GetAttribute( wxT( "enabled" ), &Field );
             Field.ToLong( &ColumnEnabled );
 
             SetListViewColumnData( ColumnId, ColumnPos, ColumnWidth, ColumnEnabled );

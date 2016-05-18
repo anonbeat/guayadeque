@@ -161,8 +161,6 @@ int guLocationTreeCtrl::GetIconIndex( const wxString &iconstring )
     return 1;
 }
 
-extern wxColor wxAuiStepColour( const wxColor & c, int percent );
-
 // -------------------------------------------------------------------------------- //
 void guLocationTreeCtrl::ReloadItems( const bool loadstate )
 {

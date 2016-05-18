@@ -30,15 +30,15 @@ class guRadioStation
 {
   public :
     int         m_Id;
-    long        m_SCId;
+    int         m_SCId;
     wxString    m_Name;
     wxString    m_Link;
-    long        m_GenreId;
+    int         m_GenreId;
     wxString    m_GenreName;
     int         m_Source;
     wxString    m_Type;
-    long        m_BitRate;
-    long        m_Listeners;
+    int         m_BitRate;
+    int         m_Listeners;
     wxString    m_NowPlaying;
 };
 WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);

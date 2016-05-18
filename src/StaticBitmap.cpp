@@ -70,7 +70,7 @@ void guStaticBitmapTimer::Notify()
     {
         wxCommandEvent event( guStaticBitmapMouseOverEvent, guEVT_STATICBITMAP_MOUSE_OVER );
         event.SetEventObject( this );
-        m_Bitmap->AddPendingEvent( event );
+        m_Bitmap->GetEventHandler()->AddPendingEvent( event );
     }
 }
 

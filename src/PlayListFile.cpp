@@ -431,7 +431,7 @@ void guPlaylistFile::ReadAsxEntry( wxXmlNode * XmlNode )
         }
         else if( XmlNode->GetName().Lower() == wxT( "ref" ) )
         {
-            XmlNode->GetPropVal( wxT( "href" ), &Location );
+            XmlNode->GetAttribute( wxT( "href" ), &Location );
         }
         XmlNode = XmlNode->GetNext();
     }
@@ -587,8 +587,8 @@ bool guPlaylistFile::WriteAsxFile( const wxString &filename, const bool relative
         wxXmlNode * EntryNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "entry" ) );
 
         wxXmlNode * RefNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "ref" ) );
-        wxXmlProperty * RefNodeVal = new wxXmlProperty( wxT( "href" ), m_Playlist[ Index ].GetLocation( relative, wxPathOnly( filename ) ), NULL );
-        RefNode->SetProperties( RefNodeVal );
+        wxXmlAttribute * RefNodeVal = new wxXmlAttribute( wxT( "href" ), m_Playlist[ Index ].GetLocation( relative, wxPathOnly( filename ) ), NULL );
+        RefNode->SetAttributes( RefNodeVal );
 
         wxXmlNode * TitleNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "title" ) );
         wxXmlNode * TitleNodeVal = new wxXmlNode( wxXML_TEXT_NODE, wxT( "title" ), m_Playlist[ Index ].m_Name );

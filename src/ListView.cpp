@@ -292,7 +292,7 @@ void guListView::RefreshAll( int scrollto )
     {
         if( !m_ListBox->IsVisible( scrollto ) )
         {
-            m_ListBox->ScrollToLine( scrollto );
+            m_ListBox->ScrollToRow( scrollto );
         }
     }
     m_ListBox->RefreshAll();
@@ -586,13 +586,13 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
         int ItemHeight = m_ListBox->OnMeasureItem( m_DragOverItem );
-        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetFirstVisibleLine() + 1 ) * ItemHeight   ) - ( ItemHeight / 2 ) ) );
+        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetVisibleRowsBegin() + 1 ) * ItemHeight   ) - ( ItemHeight / 2 ) ) );
     }
 
     if( ( m_DragOverItem != m_LastDragOverItem ) || ( m_DragOverAfter != m_LastDragOverAfter ) )
     {
         //guLogMessage( wxT( "%u -> %u" ), m_DragOverItem, m_LastDragOverItem );
-        if( ( m_LastDragOverAfter != wxNOT_FOUND ) && ( m_DragOverItem != wxNOT_FOUND ) )
+        if( m_LastDragOverAfter && ( m_DragOverItem != wxNOT_FOUND ) )
             RefreshLines( wxMax( ( int ) m_LastDragOverItem, 0 ), wxMin( ( ( int ) m_LastDragOverItem ), GetItemCount() ) );
         if( m_DragOverItem != wxNOT_FOUND )
             RefreshLines( m_DragOverItem, m_DragOverItem );
@@ -614,7 +614,7 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     }
     else
     {
-        if( ( wherey < 10 ) && GetFirstVisibleLine() > 0 )
+        if( ( wherey < 10 ) && GetVisibleRowsBegin() > 0 )
         {
             ScrollLines( -1 );
         }
@@ -713,7 +713,7 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guListViewClient::guListViewClient( wxWindow * parent, const int flags,
                             guListViewColumnArray * columns, guListViewAttr * attr ) :
-    wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, flags )
+    wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, flags|wxHSCROLL|wxVSCROLL )
 {
     m_Owner = ( guListView * ) parent;
     m_SearchStrTimer = new guListViewClientTimer( this );
@@ -909,12 +909,12 @@ void guListViewClient::OnPaint( wxPaintEvent &event )
 
     m_Owner->ItemsLock();
     const size_t lineMax = GetVisibleEnd();
-    size_t line = GetFirstVisibleLine();
+    size_t line = GetVisibleRowsBegin();
     m_Owner->ItemsCheckRange( line, lineMax );
     // iterate over all visible lines
     for( ; line < lineMax; line++ )
     {
-        const wxCoord hLine = OnGetLineHeight( line );
+        const wxCoord hLine = OnGetRowHeight( line );
 
         rectLine.height = hLine;
 

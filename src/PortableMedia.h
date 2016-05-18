@@ -403,7 +403,7 @@ class guMediaViewerPortableDeviceBase : public guMediaViewer
     guPortableMediaDevice * GetPortableMediaDevice( void ) { return m_PortableDevice; }
 
     virtual wxString        GetCoverName( const int albumid );
-    virtual int             GetCoverType( void ) { return m_PortableDevice->CoverFormats(); }
+    virtual wxBitmapType    GetCoverType( void );
     virtual int             GetCoverMaxSize( void ) { return m_PortableDevice->CoverSize(); }
 
     virtual bool            IsMount( GMount * mount ) { return m_PortableDevice->IsMount( mount ); }

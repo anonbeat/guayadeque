@@ -1006,7 +1006,7 @@ void guPlayListPanel::OnPLNamesActivated( wxTreeEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesPlay( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         guTrackArray Tracks;
@@ -1019,7 +1019,7 @@ void guPlayListPanel::OnPLNamesPlay( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesEnqueue( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         guTrackArray Tracks;
@@ -1048,7 +1048,7 @@ void guPlayListPanel::OnPLNamesNewPlaylist( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesEditPlaylist( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
@@ -1068,7 +1068,7 @@ void guPlayListPanel::OnPLNamesEditPlaylist( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesRenamePlaylist( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Playlist Name: " ),
@@ -1123,7 +1123,7 @@ void guPlayListPanel::OnPLNamesDeletePlaylist( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         int Index = event.GetId() - ID_COPYTO_BASE;
@@ -1266,7 +1266,7 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
     int Index;
     int Count;
 
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         wxString PlayListName = m_NamesTreeCtrl->GetItemText( ItemId );
@@ -1338,7 +1338,7 @@ void guPlayListPanel::OnPLTracksDeleteClicked( wxCommandEvent &event )
 
     if( DelTracks.Count() )
     {
-        wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+        wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
         if( ItemId.IsOk() )
         {
             guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
@@ -1844,7 +1844,7 @@ void guPlayListPanel::OnPLTracksSelectComposer( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 bool guPlayListPanel::GetPlayListCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );
@@ -1910,7 +1910,7 @@ void guPlayListPanel::OnGoToSearch( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnSetAllowDenyFilter( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_NamesTreeCtrl->GetSelection();
+    wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
         guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( ItemId );

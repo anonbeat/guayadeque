@@ -943,10 +943,10 @@ guLyricSourceOption::guLyricSourceOption( wxXmlNode * xmlnode, const wxString &t
 {
     if( xmlnode )
     {
-        xmlnode->GetPropVal( tag1, &m_Text1 );
+        xmlnode->GetAttribute( tag1, &m_Text1 );
         if( !tag2.IsEmpty() )
         {
-            xmlnode->GetPropVal( tag2, &m_Text2 );
+            xmlnode->GetAttribute( tag2, &m_Text2 );
         }
     }
 }
@@ -959,12 +959,12 @@ guLyricSourceExtract::guLyricSourceExtract( wxXmlNode * xmlnode )
     {
         if( xmlnode->HasProp( wxT( "tag" ) ) )
         {
-            xmlnode->GetPropVal( wxT( "tag" ), &m_Text1 );
+            xmlnode->GetAttribute( wxT( "tag" ), &m_Text1 );
         }
         else
         {
-            xmlnode->GetPropVal( wxT( "begin" ), &m_Text1 );
-            xmlnode->GetPropVal( wxT( "end" ), &m_Text2 );
+            xmlnode->GetAttribute( wxT( "begin" ), &m_Text1 );
+            xmlnode->GetAttribute( wxT( "end" ), &m_Text2 );
         }
     }
 }
@@ -977,7 +977,7 @@ guLyricSource::guLyricSource( wxXmlNode * xmlnode )
     if( xmlnode )
     {
         wxString TypeStr;
-        xmlnode->GetPropVal( wxT( "type" ), &TypeStr );
+        xmlnode->GetAttribute( wxT( "type" ), &TypeStr );
         if( TypeStr == wxT( "download" ) )
         {
             m_Type = guLYRIC_SOURCE_TYPE_DOWNLOAD;
@@ -995,10 +995,10 @@ guLyricSource::guLyricSource( wxXmlNode * xmlnode )
             m_Type = guLYRIC_SOURCE_TYPE_EMBEDDED;
         }
         wxString EnabledStr;
-        xmlnode->GetPropVal( wxT( "enabled" ), &EnabledStr );
+        xmlnode->GetAttribute( wxT( "enabled" ), &EnabledStr );
         m_Enabled = ( EnabledStr == wxT( "true" ) );
-        xmlnode->GetPropVal( wxT( "name" ), &m_Name );
-        xmlnode->GetPropVal( wxT( "source" ), &m_Source );
+        xmlnode->GetAttribute( wxT( "name" ), &m_Name );
+        xmlnode->GetAttribute( wxT( "source" ), &m_Source );
         xmlnode = xmlnode->GetChildren();
         while( xmlnode )
         {
@@ -1063,7 +1063,7 @@ void guLyricSource::ReadNotFoundItems( wxXmlNode * xmlnode )
     while( xmlnode )
     {
         wxString NotFoundMsg;
-        xmlnode->GetPropVal( wxT( "tag" ), &NotFoundMsg );
+        xmlnode->GetAttribute( wxT( "tag" ), &NotFoundMsg );
         m_NotFoundItems.Add( NotFoundMsg );
         xmlnode = xmlnode->GetNext();
     }
@@ -1279,8 +1279,8 @@ void SaveLyricNotFound( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 
         wxXmlNode * ItemNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "item" ) );
 
-        wxXmlProperty * TagProperty = new wxXmlProperty( wxT( "tag" ), NotFoundTag, NULL );
-        ItemNode->SetProperties( TagProperty );
+        wxXmlAttribute * TagProperty = new wxXmlAttribute( wxT( "tag" ), NotFoundTag, NULL );
+        ItemNode->SetAttributes( TagProperty );
 
         NotFoundNode->AddChild( ItemNode );
     }
@@ -1306,15 +1306,15 @@ void SaveLyricExclude( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 
         if( ExcludeItem->IsSingleOption() )
         {
-            wxXmlProperty * TagProperty = new wxXmlProperty( wxT( "tag" ), ExcludeItem->Tag(), NULL );
-            ItemNode->SetProperties( TagProperty );
+            wxXmlAttribute * TagProperty = new wxXmlAttribute( wxT( "tag" ), ExcludeItem->Tag(), NULL );
+            ItemNode->SetAttributes( TagProperty );
         }
         else
         {
-            wxXmlProperty * EndProperty = new wxXmlProperty( wxT( "end" ), ExcludeItem->End(), NULL );
-            wxXmlProperty * BeginProperty = new wxXmlProperty( wxT( "begin" ), ExcludeItem->Begin(), EndProperty );
+            wxXmlAttribute * EndProperty = new wxXmlAttribute( wxT( "end" ), ExcludeItem->End(), NULL );
+            wxXmlAttribute * BeginProperty = new wxXmlAttribute( wxT( "begin" ), ExcludeItem->Begin(), EndProperty );
 
-            ItemNode->SetProperties( BeginProperty );
+            ItemNode->SetAttributes( BeginProperty );
         }
 
         ExcludeNode->AddChild( ItemNode );
@@ -1341,15 +1341,15 @@ void SaveLyricExtract( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 
         if( ExtractItem->IsSingleOption() )
         {
-            wxXmlProperty * TagProperty = new wxXmlProperty( wxT( "tag" ), ExtractItem->Tag(), NULL );
-            ItemNode->SetProperties( TagProperty );
+            wxXmlAttribute * TagProperty = new wxXmlAttribute( wxT( "tag" ), ExtractItem->Tag(), NULL );
+            ItemNode->SetAttributes( TagProperty );
         }
         else
         {
-            wxXmlProperty * EndProperty = new wxXmlProperty( wxT( "end" ), ExtractItem->End(), NULL );
-            wxXmlProperty * BeginProperty = new wxXmlProperty( wxT( "begin" ), ExtractItem->Begin(), EndProperty );
+            wxXmlAttribute * EndProperty = new wxXmlAttribute( wxT( "end" ), ExtractItem->End(), NULL );
+            wxXmlAttribute * BeginProperty = new wxXmlAttribute( wxT( "begin" ), ExtractItem->Begin(), EndProperty );
 
-            ItemNode->SetProperties( BeginProperty );
+            ItemNode->SetAttributes( BeginProperty );
         }
 
         ExtractNode->AddChild( ItemNode );
@@ -1375,10 +1375,10 @@ void SaveLyricReplace( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 
         wxXmlNode * ItemNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "item" ) );
 
-        wxXmlProperty * WithProperty = new wxXmlProperty( wxT( "with" ), ReplaceItem->Replace(), NULL );
-        wxXmlProperty * ReplaceProperty = new wxXmlProperty( wxT( "replace" ), ReplaceItem->Search(), WithProperty );
+        wxXmlAttribute * WithProperty = new wxXmlAttribute( wxT( "with" ), ReplaceItem->Replace(), NULL );
+        wxXmlAttribute * ReplaceProperty = new wxXmlAttribute( wxT( "replace" ), ReplaceItem->Search(), WithProperty );
 
-        ItemNode->SetProperties( ReplaceProperty );
+        ItemNode->SetAttributes( ReplaceProperty );
 
         ReplaceNode->AddChild( ItemNode );
     }
@@ -1392,9 +1392,9 @@ void SaveLyricSource( wxXmlNode * xmlnode, guLyricSource * lyricsource, const wx
 {
     wxXmlNode * LyricSourceNode = new wxXmlNode( wxXML_ELEMENT_NODE, tagname );
 
-    wxXmlProperty * SourceProperty = new wxXmlProperty( wxT( "source" ), lyricsource->Source(), NULL );
-    wxXmlProperty * NameProperty = new wxXmlProperty( wxT( "name" ), lyricsource->Name(), SourceProperty );
-    wxXmlProperty * EnabledProperty = new wxXmlProperty( wxT( "enabled" ), lyricsource->Enabled() ? wxT( "true" ) : wxT( "false" ), NameProperty );
+    wxXmlAttribute * SourceProperty = new wxXmlAttribute( wxT( "source" ), lyricsource->Source(), NULL );
+    wxXmlAttribute * NameProperty = new wxXmlAttribute( wxT( "name" ), lyricsource->Name(), SourceProperty );
+    wxXmlAttribute * EnabledProperty = new wxXmlAttribute( wxT( "enabled" ), lyricsource->Enabled() ? wxT( "true" ) : wxT( "false" ), NameProperty );
 
     wxString SourceType;
     if( lyricsource->Type() == guLYRIC_SOURCE_TYPE_DOWNLOAD )
@@ -1407,9 +1407,9 @@ void SaveLyricSource( wxXmlNode * xmlnode, guLyricSource * lyricsource, const wx
         SourceType = wxT( "command" );
     else
         SourceType = wxT( "invalid" );
-    wxXmlProperty * TypeNode = new wxXmlProperty( wxT( "type" ), SourceType, EnabledProperty );
+    wxXmlAttribute * TypeNode = new wxXmlAttribute( wxT( "type" ), SourceType, EnabledProperty );
 
-    LyricSourceNode->SetProperties( TypeNode );
+    LyricSourceNode->SetAttributes( TypeNode );
 
     SaveLyricReplace( LyricSourceNode, lyricsource );
     SaveLyricExtract( LyricSourceNode, lyricsource );
@@ -2090,7 +2090,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
 	MainSizer->Add( 0, 10, 0, wxEXPAND, 5 );
 
-	wxFlexGridSizer * OptionsSizer = new wxFlexGridSizer( 4, 2, 0, 0 );
+    wxFlexGridSizer * OptionsSizer = new wxFlexGridSizer( 2, 0, 0 );
 	OptionsSizer->AddGrowableCol( 1 );
 //	OptionsSizer->AddGrowableRow( 2 );
 //	OptionsSizer->AddGrowableRow( 3 );
@@ -2559,7 +2559,7 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
         Label2 = _( "Tag:" );
     }
 
-    Create( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 360, 120 ), wxDEFAULT_DIALOG_STYLE );
+    Create( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 400, 150 ), wxDEFAULT_DIALOG_STYLE );
 
 	SetSizeHints( wxDefaultSize, wxDefaultSize );
 
@@ -2568,7 +2568,7 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 	//MainSizer->Add( 0, 10, 1, wxEXPAND, 5 );
 
 	wxFlexGridSizer * OptionsSizer;
-	OptionsSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    OptionsSizer = new wxFlexGridSizer( 2, 0, 0 );
 	OptionsSizer->AddGrowableCol( 1 );
 	OptionsSizer->SetFlexibleDirection( wxBOTH );
 	OptionsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -2590,7 +2590,7 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 	m_ReplaceTextCtrl->Enable( optiontype != guLYRIC_SOURCE_OPTION_TYPE_NOTFOUND );
 	OptionsSizer->Add( m_ReplaceTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	MainSizer->Add( OptionsSizer, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+    MainSizer->Add( OptionsSizer, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
 	wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
@@ -2600,7 +2600,7 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
 	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
 	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
+    MainSizer->Add( ButtonsSizer, 1, wxEXPAND|wxALL, 5 );
 
 	SetSizer( MainSizer );
 	Layout();

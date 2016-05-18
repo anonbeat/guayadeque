@@ -55,7 +55,7 @@ guDbCache::~guDbCache()
 }
 
 // -------------------------------------------------------------------------------- //
-wxImage * guDbCache::GetImage( const wxString &url, int &imgtype, const int imgsize )
+wxImage * guDbCache::GetImage( const wxString &url, wxBitmapType &imgtype, const int imgsize )
 {
   wxImage *             Img = NULL;
   wxString              query;
@@ -72,7 +72,7 @@ wxImage * guDbCache::GetImage( const wxString &url, int &imgtype, const int imgs
   if( dbRes.NextRow() )
   {
     Data = dbRes.GetBlob( 0, DataLen );
-    imgtype = dbRes.GetInt( 1 );
+    imgtype = wxBitmapType( dbRes.GetInt( 1 ) );
 
     if( DataLen )
     {
@@ -104,15 +104,15 @@ wxImage * guDbCache::GetImage( const wxString &url, int &imgtype, const int imgs
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtype, const int imagesize )
+bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const wxBitmapType imgtype, const int imagesize )
 {
   wxMemoryOutputStream Outs;
   if( img->SaveFile( Outs, imgtype ) )
   {
       wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT(
               "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
-              "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
-              escape_query_str( url ).c_str(), imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
+              "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
+              escape_query_str( url ).c_str(), ( int ) imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
       try {
         stmt.Bind( 1, ( const unsigned char * ) Outs.GetOutputStreamBuffer()->GetBufferStart(), Outs.GetSize() );
         //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
@@ -132,7 +132,7 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const int imgtyp
 }
 
 // -------------------------------------------------------------------------------- //
-bool guDbCache::SetImage( const wxString &url, wxImage * img, const int imgtype )
+bool guDbCache::SetImage( const wxString &url, wxImage * img, const wxBitmapType imgtype )
 {
   wxImage TmpImg( * img );
 //  int Width = 150;
@@ -196,7 +196,7 @@ bool guDbCache::SetContent( const wxString &url, const char * str, const int len
   try {
     wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT(
           "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
-          "VALUES( NULL, '%s', ?, %u, %u, %u );" ),
+          "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
           escape_query_str( url ).c_str(), guDBCACHE_TYPE_TEXT, wxDateTime::Now().GetTicks(), 0 ) );
 
     stmt.Bind( 1, ( const unsigned char * ) str, len );
@@ -215,7 +215,7 @@ bool guDbCache::SetContent( const wxString &url, const char * str, const int len
 bool guDbCache::SetContent( const wxString &url, const wxString &content, const int type )
 {
   wxString query = wxString::Format( wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, "
-                "cache_type, cache_time, cache_size ) VALUES( NULL, '%s', '%s', %u, %u, %u );" ),
+                "cache_type, cache_time, cache_size ) VALUES( NULL, '%s', '%s', %u, %lu, %u );" ),
           escape_query_str( url ).c_str(),
           escape_query_str( content ).c_str(),
           type,
@@ -239,19 +239,19 @@ void guDbCache::ClearExpired( void )
     // TODO : Clear different types with different periods
 
     // last.fm queries are kept only 7 days
-    wxString query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+    wxString query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %lu AND cache_type = %u" ),
         wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 7 ), guDBCACHE_TYPE_TEXT );
     ExecuteUpdate( query );
 
     // Images are kept 30 days
-//    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u" ), wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 30 ) );
+//    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %lu" ), wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 30 ) );
 //    ExecuteUpdate( query );
 
-    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %lu AND cache_type = %u" ),
         wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 30 ), guDBCACHE_TYPE_LASTFM );
     ExecuteUpdate( query );
 
-    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %u AND cache_type = %u" ),
+    query = wxString::Format( wxT( "DELETE FROM cache WHERE cache_time < %lu AND cache_type = %u" ),
         wxDateTime::Now().GetTicks() - ( guDAY_SECONDS * 3 ), guDBCACHE_TYPE_TUNEIN );
     ExecuteUpdate( query );
 

@@ -57,7 +57,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	ChannelSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Podcast Channel " ) ), wxVERTICAL );
 
 	wxFlexGridSizer* FlexGridSizer;
-	FlexGridSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    FlexGridSizer = new wxFlexGridSizer( 2, 0, 0 );
 	FlexGridSizer->AddGrowableCol( 1 );
 	FlexGridSizer->SetFlexibleDirection( wxBOTH );
 	FlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -243,12 +243,12 @@ guChannelUpdateImageThread::~guChannelUpdateImageThread()
 guChannelUpdateImageThread::ExitCode guChannelUpdateImageThread::Entry()
 {
     wxImage *       Image = NULL;
-    int             ImageType;
 
     if( !m_ImageUrl.IsEmpty() )
     {
         if( !TestDestroy() )
         {
+            wxBitmapType    ImageType;
             Image = guGetRemoteImage( m_ImageUrl, ImageType );
             if( Image )
             {

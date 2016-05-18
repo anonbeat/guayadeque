@@ -36,6 +36,7 @@
 #include <wx/arrimpl.cpp>
 #include <wx/artprov.h>
 #include <wx/clipbrd.h>
+#include <wx/gtk/tglbtn.h>
 
 WX_DEFINE_OBJARRAY(guFileItemArray);
 
@@ -221,7 +222,7 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guMainFrame * mai
 
 	DirBtnSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_ShowLibPathsBtn = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ShowLibPathsBtn = new wxBitmapToggleButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_ShowLibPathsBtn->SetToolTip( ShowPaths == guFILEBROWSER_SHOWPATH_SYSTEM ?
                           _( "See used locations" ) :
                           _( "See system files" ) );
@@ -1046,7 +1047,7 @@ void guFilesListBox::ReloadItems( bool reset )
     else
     {
         Selection = GetSelectedItems( false );
-        FirstVisible = GetFirstVisibleLine();
+        FirstVisible = GetVisibleRowsBegin();
     }
 
     m_Files.Empty();
@@ -1058,7 +1059,7 @@ void guFilesListBox::ReloadItems( bool reset )
     if( !reset )
     {
       SetSelectedItems( Selection );
-      ScrollToLine( FirstVisible );
+      ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }

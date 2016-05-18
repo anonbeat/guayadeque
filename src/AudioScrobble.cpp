@@ -102,7 +102,7 @@ bool guAudioScrobbleSender::GetSessionId( void )
                       wxT( "&c=" ) guAS_CLIENT_ID\
                       wxT( "&v=" ) guAS_CLIENT_VERSION\
                       wxT( "&u=" ) + m_UserName +
-                      wxT( "&t=" ) + wxString::Format( wxT( "%u" ), LocalTime ) +
+                      wxT( "&t=" ) + wxString::Format( wxT( "%lu" ), LocalTime ) +
                       wxT( "&a=" ) + GetAuthToken( LocalTime );
 
     //guLogMessage( wxT( "AudioScrobble:GetSesionId : " ) + AS_Url );
@@ -592,8 +592,8 @@ void guAudioScrobble::EndNowPlayingThread( void )
 {
     if( m_NowPlayingThread )
     {
-        m_NowPlayingThread->Pause();
-        m_NowPlayingThread->Delete();
+        //m_NowPlayingThread->Pause();
+        //m_NowPlayingThread->Delete();
         m_NowPlayingThread = NULL;
     }
 }

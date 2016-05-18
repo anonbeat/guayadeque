@@ -343,7 +343,7 @@ guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
     m_Type = guPORTABLE_MEDIA_TYPE_MSC;
 
     wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
-    m_Id = mount->GetId(); //Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08X" ), wxGetLocalTime() ) );
+    m_Id = mount->GetId(); //Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
     m_Pattern = Config->Read( wxT( "audio_file_pattern" ), wxT( "{a} - {b}/{n} - {a} - {t}" ) );
     m_AudioFormats = MimeStrToAudioFormat( Config->Read( wxT( "output_formats" ), wxT( "mp3" ) ) );
     m_TranscodeFormat = Config->Read( wxT( "transcode_format" ), guTRANSCODE_FORMAT_KEEP );
@@ -990,7 +990,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 	wxStaticBoxSizer * PMBoxSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Properties " ) ), wxVERTICAL );
 
-	wxFlexGridSizer * PMFlexSizer = new wxFlexGridSizer( 2, 2, 0, 0 );
+    wxFlexGridSizer * PMFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1036,7 +1036,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 	PMAudioPanel = new wxScrolledWindow( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
-	PMFlexSizer = new wxFlexGridSizer( 5, 3, 0, 0 );
+    PMFlexSizer = new wxFlexGridSizer( 3, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1136,7 +1136,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
     if( !m_IsIpod )
     {
         PMPlaylistPanel = new wxScrolledWindow( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-        PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
+        PMFlexSizer = new wxFlexGridSizer( 3, 0, 0 );
         PMFlexSizer->AddGrowableCol( 1 );
         PMFlexSizer->SetFlexibleDirection( wxBOTH );
         PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1170,7 +1170,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
     }
 
 	PMCoversPanel = new wxScrolledWindow( PMNotebook, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	PMFlexSizer = new wxFlexGridSizer( 6, 3, 0, 0 );
+    PMFlexSizer = new wxFlexGridSizer( 3, 0, 0 );
 	PMFlexSizer->AddGrowableCol( 1 );
 	PMFlexSizer->SetFlexibleDirection( wxBOTH );
 	PMFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
@@ -1820,6 +1820,23 @@ wxString guMediaViewerPortableDeviceBase::AudioPath( void )
         Path += AudioFolders[ 0 ].Trim( true ).Trim( false );;
     }
     return Path;
+}
+
+// -------------------------------------------------------------------------------- //
+wxBitmapType guMediaViewerPortableDeviceBase::GetCoverType( void )
+{
+    int CoverFormats = m_PortableDevice->CoverFormats();
+
+    if( CoverFormats & guPORTABLEMEDIA_COVER_FORMAT_JPEG )
+        return wxBITMAP_TYPE_JPEG;
+
+    if( CoverFormats & guPORTABLEMEDIA_COVER_FORMAT_PNG )
+        return wxBITMAP_TYPE_PNG;
+
+    if( CoverFormats & guPORTABLEMEDIA_COVER_FORMAT_BMP )
+        return wxBITMAP_TYPE_BMP;
+
+    return wxBITMAP_TYPE_JPEG;
 }
 
 // -------------------------------------------------------------------------------- //

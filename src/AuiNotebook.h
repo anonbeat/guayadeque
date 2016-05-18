@@ -29,12 +29,10 @@
 #include <wx/aui/dockart.h>
 
 // CODE FROM auibook.cpp
-
-extern wxColor wxAuiStepColour( const wxColor & c, int percent );
+extern wxColour wxAuiStepColour( const wxColour &c, int percent );
 
 //wxBitmap wxAuiBitmapFromBits(const unsigned char bits[], int w, int h,
 //                             const wxColour& color);
-
 extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
 
 // wxTabFrame is an interesting case.  It's important that all child pages
@@ -205,7 +203,7 @@ class guAuiNotebook : public wxAuiNotebook
 
     virtual ~guAuiNotebook();
 
-    virtual void UpdateTabCtrlHeight();
+    virtual bool UpdateTabCtrlHeight();
 
     wxString SavePerspective( void );
  	bool LoadPerspective( const wxString &layout );

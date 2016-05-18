@@ -179,7 +179,7 @@ void guPLSoListBox::OnKeyDown( wxKeyEvent &event )
     if( event.GetKeyCode() == WXK_DELETE )
     {
         wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_TRACKS_DELETE );
-        GetParent()->AddPendingEvent( evt );
+        GetParent()->GetEventHandler()->AddPendingEvent( evt );
         return;
     }
 

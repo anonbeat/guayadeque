@@ -129,7 +129,7 @@ void guShoutcastRadioProvider::RegisterImages( wxImageList * imagelist )
 {
     imagelist->Add( guImage( guIMAGE_INDEX_tiny_shoutcast ) );
     m_ImageIds.Add( imagelist->GetImageCount() - 1 );
-    imagelist->Add( guImage( guIMAGE_INDEX_tiny_search ) );
+    imagelist->Add( guImage( guIMAGE_INDEX_search ) );
     m_ImageIds.Add( imagelist->GetImageCount() - 1 );
 }
 
