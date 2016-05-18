@@ -135,20 +135,23 @@ void guVumeter::PaintHoriz( void )
     //guLogMessage( wxT( "%0.2f -> %0.2f" ), m_PeakLevel, IEC_Scale( m_PeakLevel ) );
     int PeakLevel = IEC_Scale( m_PeakLevel ) * 100;
     int DecayLevel = IEC_Scale( m_DecayLevel ) * 100;
-    //guLogMessage( wxT( "Peak: %i" ), PeakLevel );
+    //guLogMessage( wxT( "Peak: %i  %i" ), PeakLevel, DecayLevel );
 
     dc.SetPen( * wxTRANSPARENT_PEN );
 
     dc.DrawBitmap( * m_OffBitmap, 0, 0, false );
 
     wxRect ClipRect;
-    ClipRect.y = 0;
     ClipRect.height = Height;
-    ClipRect.x = 0;
-    ClipRect.width = ( PeakLevel * Width ) / 100;
-    dc.SetClippingRegion( ClipRect );
-    dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
-    dc.DestroyClippingRegion();
+    if( PeakLevel )
+    {
+        ClipRect.y = 0;
+        ClipRect.x = 0;
+        ClipRect.width = ( PeakLevel * Width ) / 100;
+        dc.SetClippingRegion( ClipRect );
+        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+        dc.DestroyClippingRegion();
+    }
 
     if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 100 ) )
     {
@@ -182,13 +185,16 @@ void guVumeter::PaintVert( void )
     dc.DrawBitmap( * m_OffBitmap, 0, 0, false );
 
     wxRect ClipRect;
-    ClipRect.x = 0;
     ClipRect.width = Width;
-    ClipRect.height = ( PeakLevel * Height ) / 100;
-    ClipRect.y = Height - ClipRect.height;
-    dc.SetClippingRegion( ClipRect );
-    dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
-    dc.DestroyClippingRegion();
+    if( PeakLevel )
+    {
+        ClipRect.x = 0;
+        ClipRect.height = ( PeakLevel * Height ) / 100;
+        ClipRect.y = Height - ClipRect.height;
+        dc.SetClippingRegion( ClipRect );
+        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+        dc.DestroyClippingRegion();
+    }
 
     if( DecayLevel && ( DecayLevel > PeakLevel ) && ( DecayLevel < 100 ) )
     {
