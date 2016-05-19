@@ -861,11 +861,12 @@ void guListViewClient::OnKeyDown( wxKeyEvent &event )
         }
         else if( ( event.GetKeyCode() == WXK_RETURN ) || ( event.GetKeyCode() == WXK_NUMPAD_ENTER ) )
         {
-            if( GetSelection() != wxNOT_FOUND )
+            if( GetSelectedCount() )
             {
-                wxCommandEvent DCEvent(wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, GetId());
+                unsigned long Cookie;
+                wxCommandEvent DCEvent( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, GetId() );
                 DCEvent.SetEventObject( this );
-                DCEvent.SetInt( GetSelection() );
+                DCEvent.SetInt( GetFirstSelected( Cookie ) );
                 ( void ) GetEventHandler()->ProcessEvent( DCEvent );
             }
         }
