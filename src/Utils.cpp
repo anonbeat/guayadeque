@@ -307,9 +307,9 @@ wxString guURLEncode( const wxString &url )
     static const wxChar marks[] = wxT( "-_.\"!~*()'" );
 
 	wxString RetVal;
-	wxChar CurChar;
+    wxChar CurChar;
 
-	wxCharBuffer CharBuffer = url.ToUTF8();
+    wxCharBuffer CharBuffer = url.ToUTF8();
 	int Index;
 	int Count = strlen( CharBuffer );
 
@@ -328,11 +328,11 @@ wxString guURLEncode( const wxString &url )
 		}
 		else
 		{
-		    RetVal += wxString::Format( wxT( "%%%02X" ), CurChar );
+            RetVal += wxString::Format( wxT( "%%%02X" ), CurChar & 0xFF );
 		}
 	}
 
-	//guLogMessage( wxT( "URLEncode: '%s' => '%s'" ), url.c_str(), RetVal.c_str() );
+    //guLogMessage( wxT( "URLEncode: '%s' => '%s'" ), url.c_str(), RetVal.c_str() );
 
 	return RetVal;
 }
@@ -361,7 +361,7 @@ wxString guFileDnDEncode( const wxString &file )
       }
       else
       {
-        HexCode.Printf( wxT( "%%%02X" ), C );
+        HexCode.Printf( wxT( "%%%02X" ), C & 0xFF );
         RetVal += HexCode;
       }
     }
