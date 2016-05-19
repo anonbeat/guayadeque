@@ -6288,12 +6288,12 @@ bool guDbLibrary::AddCachedPlayedSong( const guCurrentTrack &Song )
       TrackLength = 180;
   }
 
-  guLogMessage( wxT( "Adding track at %u played %u mseconds" ), wxGetUTCTime(), PlayTime );
+  guLogMessage( wxT( "Adding track at %lu played %u mseconds" ), wxGetUTCTime(), PlayTime );
 
   query = wxString::Format( wxT( "INSERT into audioscs( audiosc_id, audiosc_artist, "\
           "audiosc_album, audiosc_track, audiosc_playedtime, audiosc_source, "\
           "audiosc_ratting, audiosc_len, audiosc_tracknum, audiosc_mbtrackid) "\
-          "VALUES( NULL, '%s', '%s', '%s', %u, '%c', '%c', %u, %i, %u );" ),
+          "VALUES( NULL, '%s', '%s', '%s', %lu, '%c', '%c', %u, %i, %u );" ),
           Artist.c_str(),
           Album.c_str(),
           Title.c_str(),
