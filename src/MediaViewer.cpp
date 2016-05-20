@@ -96,16 +96,16 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
         }
     }
 
-	Connect( guMEDIAVIEWER_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guMediaViewer::OnTextChangedTimer ), NULL, this );
+    Connect( guMEDIAVIEWER_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guMediaViewer::OnTextChangedTimer ), NULL, this );
 
     Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnCleanFinished ), NULL, this );
     Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnLibraryUpdated ), NULL, this );
 
-	Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnGenreSetSelection ), NULL, this );
-	Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnArtistSetSelection ), NULL, this );
-	Connect( ID_ALBUMARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumArtistSetSelection ), NULL, this );
-	Connect( ID_COMPOSER_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnComposerSetSelection ), NULL, this );
-	Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumSetSelection ), NULL, this );
+    Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnGenreSetSelection ), NULL, this );
+    Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnArtistSetSelection ), NULL, this );
+    Connect( ID_ALBUMARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumArtistSetSelection ), NULL, this );
+    Connect( ID_COMPOSER_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnComposerSetSelection ), NULL, this );
+    Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumSetSelection ), NULL, this );
 
     Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnUpdateLabels ), NULL, this );
 
@@ -124,15 +124,15 @@ guMediaViewer::~guMediaViewer()
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMediaViewer::OnConfigUpdated ), NULL, this );
 
-	Disconnect( guMEDIAVIEWER_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guMediaViewer::OnTextChangedTimer ), NULL, this );
+    Disconnect( guMEDIAVIEWER_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guMediaViewer::OnTextChangedTimer ), NULL, this );
     m_SearchTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guMediaViewer::OnSearchSelected ), NULL, this );
     m_SearchTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guMediaViewer::OnSearchActivated ), NULL, this );
     m_SearchTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guMediaViewer::OnSearchCancelled ), NULL, this );
 
-	m_FilterChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guMediaViewer::OnFilterSelected ), NULL, this );
-	m_AddFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnAddFilterClicked ), NULL, this );
-	m_DelFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnDelFilterClicked ), NULL, this );
-	m_EditFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnEditFilterClicked ), NULL, this );
+    m_FilterChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guMediaViewer::OnFilterSelected ), NULL, this );
+    m_AddFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnAddFilterClicked ), NULL, this );
+    m_DelFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnDelFilterClicked ), NULL, this );
+    m_EditFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnEditFilterClicked ), NULL, this );
 
     Disconnect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnCleanFinished ), NULL, this );
     Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnLibraryUpdated ), NULL, this );
@@ -195,9 +195,9 @@ void guMediaViewer::InitMediaViewer( const int mode )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::CreateControls( void )
 {
-	wxBoxSizer *  MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer *  MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * TopSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * TopSizer = new wxBoxSizer( wxHORIZONTAL );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -208,57 +208,57 @@ void guMediaViewer::CreateControls( void )
     if( FilterSelected > ( int ) m_DynFilterArray.Count() )
         FilterSelected = 0;
 
-	wxArrayString FilterNames;
-	FilterNames.Add( _( "All Albums" ) );
+    wxArrayString FilterNames;
+    FilterNames.Add( _( "All Albums" ) );
 
-	int Index;
-	int Count = m_DynFilterArray.Count();
-	for( Index = 0; Index < Count; Index++ )
-	{
-	    FilterNames.Add( unescape_configlist_str( m_DynFilterArray[ Index ].BeforeFirst( wxT( ':' ) ) ) );
-	}
+    int Index;
+    int Count = m_DynFilterArray.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        FilterNames.Add( unescape_configlist_str( m_DynFilterArray[ Index ].BeforeFirst( wxT( ':' ) ) ) );
+    }
 
-	m_LibrarySelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_LibrarySelButton->SetToolTip( _( "Library view" ) );
-	TopSizer->Add( m_LibrarySelButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, 5 );
+    m_LibrarySelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_LibrarySelButton->SetToolTip( _( "Library view" ) );
+    TopSizer->Add( m_LibrarySelButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, 5 );
 
-	m_AlbumBrowserSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_albumbrowser ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_AlbumBrowserSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_albumbrowser ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_AlbumBrowserSelButton->SetToolTip( _( "Album Browser view" ) );
-	TopSizer->Add( m_AlbumBrowserSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+    TopSizer->Add( m_AlbumBrowserSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-	m_TreeViewSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_treeview ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_TreeViewSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_treeview ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_TreeViewSelButton->SetToolTip( _( "Tree view" ) );
-	TopSizer->Add( m_TreeViewSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+    TopSizer->Add( m_TreeViewSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-	m_PlaylistsSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_playlists ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_PlaylistsSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_playlists ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_PlaylistsSelButton->SetToolTip( _( "Playlists" ) );
-	TopSizer->Add( m_PlaylistsSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    TopSizer->Add( m_PlaylistsSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_SearchTextCtrl = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-	TopSizer->Add( m_SearchTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    m_SearchTextCtrl = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    TopSizer->Add( m_SearchTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 //////////////////////////
     m_FiltersSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_FilterChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, FilterNames, 0 );
-	m_FilterChoice->SetSelection( FilterSelected );
-	m_FilterChoice->SetToolTip( _( "View the current defined filters" ) );
-	//m_FilterChoice->SetMinSize( wxSize( 100, -1 ) );
-	m_FiltersSizer->Add( m_FilterChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_FilterChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, FilterNames, 0 );
+    m_FilterChoice->SetSelection( FilterSelected );
+    m_FilterChoice->SetToolTip( _( "View the current defined filters" ) );
+    //m_FilterChoice->SetMinSize( wxSize( 100, -1 ) );
+    m_FiltersSizer->Add( m_FilterChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_AddFilterButton->SetToolTip( _( "Add a new album browser filter" ) );
-	m_FiltersSizer->Add( m_AddFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+    m_FiltersSizer->Add( m_AddFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-	m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_DelFilterButton->SetToolTip( _( "Delete the current selected filter" ) );
-	m_DelFilterButton->Enable( FilterSelected > 0 );
-	m_FiltersSizer->Add( m_DelFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+    m_DelFilterButton->Enable( FilterSelected > 0 );
+    m_FiltersSizer->Add( m_DelFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-	m_EditFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_EditFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_EditFilterButton->SetToolTip( _( "Edit the current selected filter" ) );
-	m_EditFilterButton->Enable( FilterSelected > 0 );
-	m_FiltersSizer->Add( m_EditFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_EditFilterButton->Enable( FilterSelected > 0 );
+    m_FiltersSizer->Add( m_EditFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
     TopSizer->Add( m_FiltersSizer, 0, wxEXPAND, 5 );
 //////////////////////////////
@@ -267,15 +267,15 @@ void guMediaViewer::CreateControls( void )
     SetSizer( MainSizer );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMediaViewer::OnConfigUpdated ), NULL, this );
-	m_FilterChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guMediaViewer::OnFilterSelected ), NULL, this );
-	m_AddFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnAddFilterClicked ), NULL, this );
-	m_DelFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnDelFilterClicked ), NULL, this );
-	m_EditFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnEditFilterClicked ), NULL, this );
+    m_FilterChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guMediaViewer::OnFilterSelected ), NULL, this );
+    m_AddFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnAddFilterClicked ), NULL, this );
+    m_DelFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnDelFilterClicked ), NULL, this );
+    m_EditFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnEditFilterClicked ), NULL, this );
 
-	m_LibrarySelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
-	m_AlbumBrowserSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
-	m_TreeViewSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
-	m_PlaylistsSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
+    m_LibrarySelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
+    m_AlbumBrowserSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
+    m_TreeViewSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
+    m_PlaylistsSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
 
     m_SearchTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guMediaViewer::OnSearchSelected ), NULL, this );
     m_SearchTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guMediaViewer::OnSearchActivated ), NULL, this );

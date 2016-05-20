@@ -111,16 +111,16 @@ static wxUint32 ReadLittleEndianUint32( const char * cp )
 }
 
 // -------------------------------------------------------------------------------- //
-static void WriteLittleEndianUint32( char * cp, wxUint32 i )
-{
-    cp[ 0 ] = i & 0xff;
-    i >>= 8;
-    cp[ 1 ] = i & 0xff;
-    i >>= 8;
-    cp[ 2 ] = i & 0xff;
-    i >>= 8;
-    cp[ 3 ] = i & 0xff;
-}
+//static void WriteLittleEndianUint32( char * cp, wxUint32 i )
+//{
+//    cp[ 0 ] = i & 0xff;
+//    i >>= 8;
+//    cp[ 1 ] = i & 0xff;
+//    i >>= 8;
+//    cp[ 2 ] = i & 0xff;
+//    i >>= 8;
+//    cp[ 3 ] = i & 0xff;
+//}
 
 // -------------------------------------------------------------------------------- //
 int guCompareApeItems( guApeItem * item1, guApeItem * item2 )
