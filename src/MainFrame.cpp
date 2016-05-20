@@ -226,9 +226,14 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 	//m_MainNotebook = new wxNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DestroyLastWindow = false;
 	m_MainNotebook = new guAuiNotebook( this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                                        wxAUI_NB_DEFAULT_STYLE | wxAUI_NB_WINDOWLIST_BUTTON );
+                                        wxAUI_NB_DEFAULT_STYLE );
 
-    guMediaViewerLibrary * MediaViewer = new guMediaViewerLibrary( m_MainNotebook, m_Collections[ 0 ], ID_COLLECTIONS_BASE, this, guMEDIAVIEWER_MODE_NONE, NULL );
+    guMediaViewerLibrary * MediaViewer = new guMediaViewerLibrary( m_MainNotebook,
+                                                                   m_Collections[ 0 ],
+                                                                   ID_COLLECTIONS_BASE,
+                                                                   this,
+                                                                   guMEDIAVIEWER_MODE_NONE,
+                                                                   NULL );
     MediaViewer->SetDefault( true );
     m_MediaViewers.Add( MediaViewer );
 
