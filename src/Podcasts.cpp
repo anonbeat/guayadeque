@@ -237,14 +237,14 @@ int guPodcastChannel::GetUpdateItems( guDbPodcasts * db, guPodcastItemArray * it
   if( m_DownloadType == guPODCAST_DOWNLOAD_MANUALLY )
     return 0;
 
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id "
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id " \
             "AND podcastitem_chid = %u " ), m_Id );
 
   query += wxT( "AND podcastitem_status IN ( 0, 5 ) " );
@@ -263,7 +263,7 @@ int guPodcastChannel::GetUpdateItems( guDbPodcasts * db, guPodcastItemArray * it
         query += wxT( "AND ( " );
         for( Index = 0; Index < Count; Index++ )
         {
-            query += wxString::Format( wxT( "podcastitem_title LIKE '%%%s%%' OR "
+            query += wxString::Format( wxT( "podcastitem_title LIKE '%%%s%%' OR " \
                                             "podcastitem_summary LIKE '%%%s%%'" ),
                                         Words[ Index ].c_str(),
                                         Words[ Index ].c_str() );
@@ -308,14 +308,14 @@ int guPodcastChannel::GetPendingChannelItems( guDbPodcasts * db, int channelid, 
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id "
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id " \
             "AND podcastitem_chid = %u " ), channelid );
 
   query += wxT( "AND podcastitem_status IN ( 1 ) " );
@@ -445,7 +445,7 @@ void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
         }
         dbRes.Finalize();
 
-        query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( "
+        query = wxT( "DELETE FROM podcastitems WHERE podcastitem_id IN ( " \
             "SELECT podcastitem_id FROM podcastitems, podcastchs " );
         query += Condition;
         query += wxT( ");" );

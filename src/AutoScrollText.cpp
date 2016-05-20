@@ -94,8 +94,6 @@ void guAutoScrollText::OnPaint( wxPaintEvent &event )
     dc.SetTextForeground( GetForegroundColour() );
     dc.SetFont( GetFont() );
     dc.DrawText( m_Label.Mid( m_ScrollPos ), 0, 0 );
-    // This should not be here but the timer is getting called only once even when Continous is asked...
-    m_ScrollTimer.Start( guSCROLL_TIMEOUT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -174,6 +172,7 @@ void guAutoScrollText::OnTimer( wxTimerEvent &event )
         Refresh();
         //Update();
     }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //

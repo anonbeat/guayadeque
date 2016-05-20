@@ -749,20 +749,20 @@ void guIpodLibrary::iPodRemoveTrack( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 int guIpodLibrary::UpdateSong( const guTrack &track, const bool allowrating )
 {
-    wxString query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-            "song_genreid = %u, song_genre = '%s', "
-            "song_artistid = %u, song_artist = '%s', "
-            "song_albumartistid = %u, song_albumartist = '%s', "
-            "song_albumid = %u, song_album = '%s', "
-            "song_pathid = %u, song_path = '%s', "
-            "song_filename = '%s', song_format = '%s', "
-            "song_number = %u, song_year = %u, "
-            "song_composerid = %u, song_composer = '%s', "
-            "song_comment = '%s', song_coverid = %i, song_disk = '%s', "
-            "song_length = %u, song_offset = %u, song_bitrate = %u, "
-            "song_rating = %i, song_filesize = %u, "
-            "song_lastplay = %u, song_addedtime = %u, "
-            "song_playcount = %u "
+    wxString query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', " \
+            "song_genreid = %u, song_genre = '%s', " \
+            "song_artistid = %u, song_artist = '%s', " \
+            "song_albumartistid = %u, song_albumartist = '%s', " \
+            "song_albumid = %u, song_album = '%s', " \
+            "song_pathid = %u, song_path = '%s', " \
+            "song_filename = '%s', song_format = '%s', " \
+            "song_number = %u, song_year = %u, " \
+            "song_composerid = %u, song_composer = '%s', " \
+            "song_comment = '%s', song_coverid = %i, song_disk = '%s', " \
+            "song_length = %u, song_offset = %u, song_bitrate = %u, " \
+            "song_rating = %i, song_filesize = %u, " \
+            "song_lastplay = %u, song_addedtime = %u, " \
+            "song_playcount = %u " \
             "WHERE song_id = %u;" ),
             escape_query_str( track.m_SongName ).c_str(),
             track.m_GenreId,

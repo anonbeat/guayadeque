@@ -125,16 +125,16 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track, const wxString &albumsk
     track->m_SongId = FindTrack( track->m_ArtistName, track->m_SongName );
     if( track->m_SongId != wxNOT_FOUND )
     {
-      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', "
-                                 "song_genreid = %u, song_genre = '%s', "
-                                 "song_artistid = %u, song_artist = '%s', "
-                                 "song_albumid = %u, song_album = '%s', "
-                                 "song_pathid = %u, song_path = '%s', "
-                                 "song_filename = '%s', "
-                                 "song_number = %u, song_year = %u, "
-                                 "song_length = %u, "
-                                 "song_albumsku = '%s', "
-                                 "song_coverlink = '%s' "
+      query = wxString::Format( wxT( "UPDATE songs SET song_name = '%s', " \
+                                 "song_genreid = %u, song_genre = '%s', " \
+                                 "song_artistid = %u, song_artist = '%s', " \
+                                 "song_albumid = %u, song_album = '%s', " \
+                                 "song_pathid = %u, song_path = '%s', " \
+                                 "song_filename = '%s', " \
+                                 "song_number = %u, song_year = %u, " \
+                                 "song_length = %u, " \
+                                 "song_albumsku = '%s', " \
+                                 "song_coverlink = '%s' " \
                                  "WHERE song_id = %u;" ),
                     escape_query_str( track->m_SongName ).c_str(),
                     track->m_GenreId,
@@ -157,12 +157,12 @@ void guMagnatuneLibrary::CreateNewSong( guTrack * track, const wxString &albumsk
     }
     else
     {
-        wxString query = wxString::Format( wxT( "INSERT INTO songs( "
-                    "song_id, song_playcount, song_addedtime, "
-                    "song_name, song_genreid, song_genre, song_artistid, song_artist, "
-                    "song_albumid, song_album, song_pathid, song_path, song_filename, song_format, song_number, song_year, "
-                    "song_coverid, song_disk, song_length, song_offset, song_bitrate, song_rating, "
-                    "song_filesize, song_albumsku, song_coverlink ) VALUES( NULL, 0, %lu, '%s', %u, '%s', %u, '%s', %u, '%s', "
+        wxString query = wxString::Format( wxT( "INSERT INTO songs( " \
+                    "song_id, song_playcount, song_addedtime, " \
+                    "song_name, song_genreid, song_genre, song_artistid, song_artist, " \
+                    "song_albumid, song_album, song_pathid, song_path, song_filename, song_format, song_number, song_year, " \
+                    "song_coverid, song_disk, song_length, song_offset, song_bitrate, song_rating, " \
+                    "song_filesize, song_albumsku, song_coverlink ) VALUES( NULL, 0, %lu, '%s', %u, '%s', %u, '%s', %u, '%s', " \
                     "%u, '%s', '%s', 'mp3,ogg', %u, %u, %u, '%s', %u, 0, 0, -1, 0, '%s', '%s' )" ),
                     wxDateTime::GetTimeNow(),
                     escape_query_str( track->m_SongName ).c_str(),

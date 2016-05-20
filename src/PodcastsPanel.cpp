@@ -43,21 +43,21 @@ guDbPodcasts::guDbPodcasts( const wxString &dbname ) : guDb( dbname )
 {
     wxArrayString query;
 
-    query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastchs( podcastch_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                  "podcastch_url VARCHAR, podcastch_title VARCHAR COLLATE NOCASE, podcastch_description VARCHAR, "
-                  "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, "
-                  "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, "
-                  "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, "
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastchs( podcastch_id INTEGER PRIMARY KEY AUTOINCREMENT, " \
+                  "podcastch_url VARCHAR, podcastch_title VARCHAR COLLATE NOCASE, podcastch_description VARCHAR, " \
+                  "podcastch_language VARCHAR, podcastch_time INTEGER, podcastch_sumary VARCHAR, " \
+                  "podcastch_author VARCHAR, podcastch_ownername VARCHAR, podcastch_owneremail VARCHAR, " \
+                  "podcastch_category VARCHAR, podcastch_image VARCHAR, podcastch_downtype INTEGER, " \
                   "podcastch_downtext VARCHAR, podcastch_allowdel BOOLEAN );" ) );
     //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastch_id' on podcastchs(podcastch_id ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_title' on podcastchs(podcastch_title ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastch_url' on podcastchs(podcastch_url ASC);" ) );
 
-    query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                  "podcastitem_chid INTEGER, podcastitem_title VARCHAR COLLATE NOCASE, podcastitem_summary VARCHAR, "
-                  "podcastitem_author VARCHAR COLLATE NOCASE, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, "
-                  "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, "
-                  "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, "
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS podcastitems( podcastitem_id INTEGER PRIMARY KEY AUTOINCREMENT, " \
+                  "podcastitem_chid INTEGER, podcastitem_title VARCHAR COLLATE NOCASE, podcastitem_summary VARCHAR, " \
+                  "podcastitem_author VARCHAR COLLATE NOCASE, podcastitem_enclosure VARCHAR, podcastitem_time INTEGER, " \
+                  "podcastitem_file VARCHAR, podcastitem_filesize INTEGER, podcastitem_length INTEGER, " \
+                  "podcastitem_addeddate INTEGER, podcastitem_playcount INTEGER, " \
                   "podcastitem_lastplay INTEGER, podcastitem_status INTEGER );" ) );
     //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'podcastitem_id' on podcastitems(podcastitem_id ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_title' on podcastitems(podcastitem_title ASC);" ) );
@@ -88,12 +88,12 @@ int guDbPodcasts::GetPodcastChannels( guPodcastChannelArray * channels )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_sumary, "
-               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image, "
-               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs "
+  query = wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, " \
+               "podcastch_language, podcastch_sumary, " \
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, " \
+               "podcastch_category, podcastch_image, " \
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel " \
+               "FROM podcastchs " \
                "ORDER BY podcastch_title" );
 
   dbRes = ExecuteQuery( query );
@@ -128,14 +128,14 @@ void guDbPodcasts::SavePodcastChannel( guPodcastChannel * channel, bool onlynew 
   int ChannelId;
   if( ( ChannelId = GetPodcastChannelUrl( channel->m_Url ) ) == wxNOT_FOUND )
   {
-    query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, "
-        "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, "
-        "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-        "podcastch_category, podcastch_image, "
-        "podcastch_downtype, podcastch_downtext, podcastch_allowdel ) "
-        "VALUES( NULL, '%s', '%s', "
-        "'%s', '%s', 0, '%s', "
-        "'%s', '%s', '%s', "
+    query = wxString::Format( wxT( "INSERT INTO podcastchs( podcastch_id, podcastch_url, podcastch_title, " \
+        "podcastch_description, podcastch_language, podcastch_time, podcastch_sumary, " \
+        "podcastch_author, podcastch_ownername, podcastch_owneremail, " \
+        "podcastch_category, podcastch_image, " \
+        "podcastch_downtype, podcastch_downtext, podcastch_allowdel ) " \
+        "VALUES( NULL, '%s', '%s', " \
+        "'%s', '%s', 0, '%s', " \
+        "'%s', '%s', '%s', " \
         "'%s', '%s', %u, '%s', %u );" ),
         escape_query_str( channel->m_Url ).c_str(),
         escape_query_str( channel->m_Title ).c_str(),
@@ -157,12 +157,12 @@ void guDbPodcasts::SavePodcastChannel( guPodcastChannel * channel, bool onlynew 
   }
   else if( !onlynew )
   {
-    query = wxString::Format( wxT( "UPDATE podcastchs "
-        "SET podcastch_url = '%s', podcastch_title = '%s', "
-        "podcastch_description = '%s', podcastch_language = '%s', podcastch_sumary = '%s', "
-        "podcastch_author = '%s', podcastch_ownername = '%s', podcastch_owneremail = '%s', "
-        "podcastch_category = '%s', podcastch_image  = '%s', "
-        "podcastch_downtype = %u, podcastch_downtext = '%s', podcastch_allowdel = %u "
+    query = wxString::Format( wxT( "UPDATE podcastchs " \
+        "SET podcastch_url = '%s', podcastch_title = '%s', " \
+        "podcastch_description = '%s', podcastch_language = '%s', podcastch_sumary = '%s', " \
+        "podcastch_author = '%s', podcastch_ownername = '%s', podcastch_owneremail = '%s', " \
+        "podcastch_category = '%s', podcastch_image  = '%s', " \
+        "podcastch_downtype = %u, podcastch_downtext = '%s', podcastch_allowdel = %u " \
         "WHERE podcastch_id = %u" ),
         escape_query_str( channel->m_Url ).c_str(),
         escape_query_str( channel->m_Title ).c_str(),
@@ -207,12 +207,12 @@ int guDbPodcasts::GetPodcastChannelUrl( const wxString &url, guPodcastChannel * 
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_sumary, "
-               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image, "
-               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs "
+  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, " \
+               "podcastch_language, podcastch_sumary, " \
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, " \
+               "podcastch_category, podcastch_image, " \
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel " \
+               "FROM podcastchs " \
                "WHERE podcastch_url = '%s' LIMIT 1;" ),
                escape_query_str( url ).c_str() );
 
@@ -250,12 +250,12 @@ int guDbPodcasts::GetPodcastChannelId( const int id, guPodcastChannel * channel 
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, "
-               "podcastch_language, podcastch_sumary, "
-               "podcastch_author, podcastch_ownername, podcastch_owneremail, "
-               "podcastch_category, podcastch_image, "
-               "podcastch_downtype, podcastch_downtext, podcastch_allowdel "
-               "FROM podcastchs "
+  query = wxString::Format( wxT( "SELECT podcastch_id, podcastch_url, podcastch_title, podcastch_description, " \
+               "podcastch_language, podcastch_sumary, " \
+               "podcastch_author, podcastch_ownername, podcastch_owneremail, " \
+               "podcastch_category, podcastch_image, " \
+               "podcastch_downtype, podcastch_downtext, podcastch_allowdel " \
+               "FROM podcastchs " \
                "WHERE podcastch_id = %u LIMIT 1;" ),
                id );
 
@@ -304,13 +304,13 @@ int guDbPodcasts::GetPodcastItems( guPodcastItemArray * items, const wxArrayInt 
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
             "WHERE podcastitem_chid = podcastch_id AND podcastitem_status != 4" ); // dont get the deleted items
 
   if( filters.Count() )
@@ -417,14 +417,14 @@ int guDbPodcasts::GetPodcastItems( const wxArrayInt &ids, guPodcastItemArray * i
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id "
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id " \
             "AND " ) + ArrayToFilter( ids, wxT( "podcastitem_id" ) );
 
   query += wxT( " ORDER BY " );
@@ -502,13 +502,13 @@ void guDbPodcasts::SavePodcastItem( const int channelid, guPodcastItem * item, b
   if( ( ItemId = GetPodcastItemEnclosure( item->m_Enclosure ) ) == wxNOT_FOUND )
   {
     //guLogMessage( wxT( "Inserting podcastitem '%s'" ), item->m_Title.c_str() );
-    query = wxString::Format( wxT( "INSERT INTO podcastitems( "
-                "podcastitem_id, podcastitem_chid, podcastitem_title, "
-                "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-                "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-                "podcastitem_addeddate, podcastitem_playcount, podcastitem_lastplay, "
-                "podcastitem_status ) "
-                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, "
+    query = wxString::Format( wxT( "INSERT INTO podcastitems( " \
+                "podcastitem_id, podcastitem_chid, podcastitem_title, " \
+                "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+                "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+                "podcastitem_addeddate, podcastitem_playcount, podcastitem_lastplay, " \
+                "podcastitem_status ) " \
+                "VALUES( NULL, %u, '%s', '%s', '%s', '%s', %u, " \
                 "'%s', %u, %u, %lu, %u, %u, %u );" ),
                 channelid,
                 escape_query_str( item->m_Title ).c_str(),
@@ -527,12 +527,12 @@ void guDbPodcasts::SavePodcastItem( const int channelid, guPodcastItem * item, b
   }
   else if( !onlynew )
   {
-    query = wxString::Format( wxT( "UPDATE podcastitems SET "
-                "podcastitem_chid = %u, podcastitem_title = '%s', "
-                "podcastitem_summary = '%s', podcastitem_author = '%s', "
-                "podcastitem_enclosure = '%s', podcastitem_time = %u, "
-                "podcastitem_file = '%s', podcastitem_filesize = %u, podcastitem_length = %u, "
-                "podcastitem_status = %u "
+    query = wxString::Format( wxT( "UPDATE podcastitems SET " \
+                "podcastitem_chid = %u, podcastitem_title = '%s', " \
+                "podcastitem_summary = '%s', podcastitem_author = '%s', " \
+                "podcastitem_enclosure = '%s', podcastitem_time = %u, " \
+                "podcastitem_file = '%s', podcastitem_filesize = %u, podcastitem_length = %u, " \
+                "podcastitem_status = %u " \
                 "WHERE podcastitem_id = %u;" ),
                 channelid,
                 escape_query_str( item->m_Title ).c_str(),
@@ -565,7 +565,7 @@ void guDbPodcasts::SavePodcastItems( const int channelid, guPodcastItemArray * i
 void guDbPodcasts::SetPodcastItemStatus( const int itemid, const int status )
 {
   wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+  query = wxString::Format( wxT( "UPDATE podcastitems SET " \
                 "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
             status, itemid );
 
@@ -576,7 +576,7 @@ void guDbPodcasts::SetPodcastItemStatus( const int itemid, const int status )
 void guDbPodcasts::SetPodcastItemPlayCount( const int itemid, const int playcount )
 {
   wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+  query = wxString::Format( wxT( "UPDATE podcastitems SET " \
                 "podcastitem_playcount = %u, podcastitem_lastplay = %lu WHERE podcastitem_id = %u;" ),
             playcount, wxDateTime::GetTimeNow(), itemid );
 
@@ -587,7 +587,7 @@ void guDbPodcasts::SetPodcastItemPlayCount( const int itemid, const int playcoun
 void guDbPodcasts::UpdatePodcastItemLength( const int itemid, const int length )
 {
   wxString query;
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+  query = wxString::Format( wxT( "UPDATE podcastitems SET " \
                 "podcastitem_length = %u WHERE podcastitem_id = %u;" ),
             length, itemid );
 
@@ -601,14 +601,14 @@ int guDbPodcasts::GetPodcastItemEnclosure( const wxString &enclosure, guPodcastI
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND "
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id AND " \
             "podcastitem_enclosure = '%s';" ),
             escape_query_str( enclosure ).c_str() );
 
@@ -649,14 +649,14 @@ int guDbPodcasts::GetPodcastItemId( const int itemid, guPodcastItem * item )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND "
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id AND " \
             "podcastitem_id = %u LIMIT 1;" ),
             itemid );
 
@@ -697,14 +697,14 @@ int guDbPodcasts::GetPodcastItemFile( const wxString &filename, guPodcastItem * 
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id AND "
+  query = wxString::Format( wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id AND " \
             "podcastitem_file = '%s' LIMIT 1;" ),
             escape_query_str( filename ).c_str() );
 
@@ -743,7 +743,7 @@ void guDbPodcasts::DelPodcastItem( const int itemid )
 {
   wxString query;
 
-  query = wxString::Format( wxT( "UPDATE podcastitems SET "
+  query = wxString::Format( wxT( "UPDATE podcastitems SET " \
             "podcastitem_status = %u WHERE podcastitem_id = %u;" ),
             guPODCAST_STATUS_DELETED, itemid );
 
@@ -755,7 +755,7 @@ void guDbPodcasts::DelPodcastItems( const int channelid )
 {
   wxString query;
 
-  query = wxString::Format( wxT( "DELETE FROM podcastitems "
+  query = wxString::Format( wxT( "DELETE FROM podcastitems " \
             "WHERE podcastitem_chid = %u;" ), channelid );
 
   ExecuteUpdate( query );
@@ -767,16 +767,16 @@ int guDbPodcasts::GetPendingPodcasts( guPodcastItemArray * items )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, "
-            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, "
-            "podcastitem_file, podcastitem_filesize, podcastitem_length, "
-            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, "
-            "podcastitem_status, "
-            "podcastch_title, podcastch_category "
-            "FROM podcastitems, podcastchs "
-            "WHERE podcastitem_chid = podcastch_id "
-            "AND podcastitem_status IN ( 1, 2 ) "
-            "ORDER BY podcastitem_status DESC;" );
+  query = wxT( "SELECT podcastitem_id, podcastitem_chid, podcastitem_title, " \
+            "podcastitem_summary, podcastitem_author, podcastitem_enclosure, podcastitem_time, " \
+            "podcastitem_file, podcastitem_filesize, podcastitem_length, " \
+            "podcastitem_playcount, podcastitem_addeddate, podcastitem_lastplay, " \
+            "podcastitem_status, " \
+            "podcastch_title, podcastch_category " \
+            "FROM podcastitems, podcastchs " \
+            "WHERE podcastitem_chid = podcastch_id " \
+            "AND podcastitem_status IN ( 1, 2 ) " \
+            "ORDER BY podcastitem_status DESC;" ); 
 
   dbRes = ExecuteQuery( query );
 

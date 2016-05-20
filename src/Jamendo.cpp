@@ -148,12 +148,12 @@ void guJamendoLibrary::CreateNewSong( guTrack * track )
 
     if( !dbRes.NextRow() )
     {
-        wxString query = wxString::Format( wxT( "INSERT INTO songs( "
-                    "song_id, song_playcount, song_addedtime, "
-                    "song_name, song_genreid, song_genre, song_artistid, song_artist, "
-                    "song_albumid, song_album, song_pathid, song_path, song_filename, song_format, song_number, song_year, "
-                    "song_coverid, song_disk, song_length, song_offset, song_bitrate, song_rating, "
-                    "song_filesize ) VALUES( %u, 0, %lu, '%s', %u, '%s', %u, '%s', %u, '%s', "
+        wxString query = wxString::Format( wxT( "INSERT INTO songs( " \
+                    "song_id, song_playcount, song_addedtime, " \
+                    "song_name, song_genreid, song_genre, song_artistid, song_artist, " \
+                    "song_albumid, song_album, song_pathid, song_path, song_filename, song_format, song_number, song_year, " \
+                    "song_coverid, song_disk, song_length, song_offset, song_bitrate, song_rating, " \
+                    "song_filesize ) VALUES( %u, 0, %lu, '%s', %u, '%s', %u, '%s', %u, '%s', " \
                     "%u, '%s', '%s', 'mp3,ogg', %u, %u, %u, '%s', %u, 0, 0, -1, 0 )" ),
                     track->m_SongId,
                     wxDateTime::GetTimeNow(),

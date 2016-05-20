@@ -30,8 +30,8 @@ guDbCache::guDbCache( const wxString &dbname ) : guDb( dbname )
 {
   wxArrayString query;
 
-  query.Add( wxT( "CREATE TABLE IF NOT EXISTS cache( cache_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                  "cache_key varchar, cache_data BLOB, cache_time INTEGER, "
+  query.Add( wxT( "CREATE TABLE IF NOT EXISTS cache( cache_id INTEGER PRIMARY KEY AUTOINCREMENT, " \
+                  "cache_key varchar, cache_data BLOB, cache_time INTEGER, " \
                   "cache_type INTEGER, cache_size INTEGER  );" ) );
 
   query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'cache_id' on cache( cache_id ASC );" ) );
@@ -62,7 +62,7 @@ wxImage * guDbCache::GetImage( const wxString &url, wxBitmapType &imgtype, const
   const unsigned char * Data;
   int                   DataLen = 0;
 
-  query = wxString::Format( wxT( "SELECT cache_data, cache_type FROM cache WHERE cache_key = '%s' "
+  query = wxString::Format( wxT( "SELECT cache_data, cache_type FROM cache WHERE cache_key = '%s' " \
                                  "AND cache_size = %u LIMIT 1;" ),
       escape_query_str( url ).c_str(), imgsize );
 
@@ -108,10 +108,10 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const wxBitmapTy
   wxMemoryOutputStream Outs;
   if( img->SaveFile( Outs, imgtype ) )
   {
-      wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT(
-              "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
-              "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
-              escape_query_str( url ).c_str(), ( int ) imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
+      wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( 
+          wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) " \
+               "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
+               escape_query_str( url ).c_str(), ( int ) imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
       try {
         stmt.Bind( 1, ( const unsigned char * ) Outs.GetOutputStreamBuffer()->GetBufferStart(), Outs.GetSize() );
         //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
@@ -193,10 +193,10 @@ wxString guDbCache::GetContent( const wxString &url )
 bool guDbCache::SetContent( const wxString &url, const char * str, const int len )
 {
   try {
-    wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( wxT(
-          "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) "
-          "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
-          escape_query_str( url ).c_str(), guDBCACHE_TYPE_TEXT, wxDateTime::Now().GetTicks(), 0 ) );
+    wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( 
+      wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) " \
+           "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
+           escape_query_str( url ).c_str(), guDBCACHE_TYPE_TEXT, wxDateTime::Now().GetTicks(), 0 ) );
 
     stmt.Bind( 1, ( const unsigned char * ) str, len );
     //guLogMessage( wxT( "%s" ), stmt.GetSQL().c_str() );
@@ -213,7 +213,7 @@ bool guDbCache::SetContent( const wxString &url, const char * str, const int len
 // -------------------------------------------------------------------------------- //
 bool guDbCache::SetContent( const wxString &url, const wxString &content, const int type )
 {
-  wxString query = wxString::Format( wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, "
+  wxString query = wxString::Format( wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, " \
                 "cache_type, cache_time, cache_size ) VALUES( NULL, '%s', '%s', %u, %lu, %u );" ),
           escape_query_str( url ).c_str(),
           escape_query_str( content ).c_str(),

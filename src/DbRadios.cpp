@@ -31,7 +31,7 @@ guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )
 {
     wxArrayString query;
 
-    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiogenres( radiogenre_id INTEGER PRIMARY KEY AUTOINCREMENT, " \
                   "radiogenre_name VARCHAR COLLATE NOCASE, radiogenre_source INTEGER, radiogenre_flags INTEGER );" ) );
     //query.Add( wxT( "CREATE UNIQUE INDEX IF NOT EXISTS 'radiogenre_id' on radiogenres (radiogenre_id ASC);" ) );
     query.Add( wxT( "INSERT OR IGNORE INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( 1, '60s', 0, 0 );" ) );
@@ -62,9 +62,9 @@ guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )
     query.Add( wxT( "INSERT OR IGNORE INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( 26, 'Techno', 0, 0 );" ) );
     query.Add( wxT( "INSERT OR IGNORE INTO radiogenres( radiogenre_id, radiogenre_name, radiogenre_source, radiogenre_flags ) VALUES( 27, 'Top 40', 0, 0 );" ) );
 
-    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                  "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, "
-                  "radiostation_name VARCHAR COLLATE NOCASE, radiostation_link VARCHAR, radiostation_type VARCHAR, "
+    query.Add( wxT( "CREATE TABLE IF NOT EXISTS radiostations( radiostation_id INTEGER PRIMARY KEY AUTOINCREMENT, " \
+                  "radiostation_scid INTEGER, radiostation_source INTEGER, radiostation_genreid INTEGER, " \
+                  "radiostation_name VARCHAR COLLATE NOCASE, radiostation_link VARCHAR, radiostation_type VARCHAR, " \
                   "radiostation_br INTEGER, radiostation_lc INTEGER, radiostation_ct VARCHAR );" ) );
 
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiostation_scid' on radiostations (radiostation_scid ASC);" ) );
@@ -247,7 +247,7 @@ int guDbRadios::SetRadioGenre( const int genreid, const wxString &name, const in
 {
     wxString query;
 
-    query = wxString::Format( wxT( "UPDATE radiogenres SET radiogenre_name = '%s', radiogenre_source = %i, "
+    query = wxString::Format( wxT( "UPDATE radiogenres SET radiogenre_name = '%s', radiogenre_source = %i, " \
                                    "radiogenre_flags = %i WHERE radiogenre_id = %u;" ),
                 escape_query_str( name ).c_str(), source, flags, genreid );
 
@@ -354,7 +354,7 @@ int guDbRadios::GetUserRadioStations( guRadioStations * stations )
   wxSQLite3ResultSet dbRes;
   guRadioStation * Station;
 
-  query = wxT( "SELECT DISTINCT radiostation_name, radiostation_link "
+  query = wxT( "SELECT DISTINCT radiostation_name, radiostation_link " \
                "FROM radiostations WHERE radiostation_source = 1 " );
 
   dbRes = ExecuteQuery( query );
@@ -381,7 +381,9 @@ int guDbRadios::GetRadioStations( guRadioStations * Stations )
 
   if( !GetRadioFiltersCount() )
   {
-    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct "\
+    query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, " \
+                 "radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, " \
+                 "radiostation_br, radiostation_lc, radiostation_ct " \
                  "FROM radiostations WHERE " );
     query += wxString::Format( wxT( "radiostation_source = %u " ), m_RadioSource );
     query += wxT( "GROUP BY radiostation_name, radiostation_br " );
@@ -421,7 +423,8 @@ int guDbRadios::GetRadioStations( guRadioStations * Stations )
     else
     {
         //SELECT * FROM radiostations, radiosetlabels WHERE radiosetlabel_stationid = radiostation_id AND radiosetlabel_labelid IN ( 1 )
-        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct "\
+        query = wxT( "SELECT DISTINCT radiostation_name, radiostation_id, radiostation_scid, radiostation_source, " \
+                     "radiostation_genreid, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct " \
                      "FROM radiostations, radiogenres" );
 
         //else
@@ -524,9 +527,9 @@ void guDbRadios::SetRadioStation( const guRadioStation * radiostation )
 
   if( radiostation->m_Id != wxNOT_FOUND )
   {
-    query = wxString::Format( wxT( "UPDATE radiostations SET "
-                                   "radiostation_scid = %u, radiostation_source = %u, radiostation_genreid = %u, "
-                                   "radiostation_name = '%s', radiostation_link = '%s', radiostation_type = '%s', "
+    query = wxString::Format( wxT( "UPDATE radiostations SET " \
+                                   "radiostation_scid = %u, radiostation_source = %u, radiostation_genreid = %u, " \
+                                   "radiostation_name = '%s', radiostation_link = '%s', radiostation_type = '%s', " \
                                    "radiostation_br = %u, radiostation_lc = %u, radiostation_ct = '%s' WHERE radiostation_id = %u;" ),
                                    radiostation->m_SCId,
                                    radiostation->m_Source,
@@ -541,8 +544,8 @@ void guDbRadios::SetRadioStation( const guRadioStation * radiostation )
   }
   else
   {
-    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, "\
-                                   "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct ) "\
+    query = wxString::Format( wxT( "INSERT INTO radiostations( radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, " \
+                                   "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc, radiostation_ct ) " \
                                    "VALUES( NULL, %u, %u, %u, '%s', '%s', '%s', %u, %u, '%s' );" ),
                                    radiostation->m_SCId,
                                    radiostation->m_Source,
@@ -579,7 +582,8 @@ bool guDbRadios::GetRadioStation( const int id, guRadioStation * radiostation )
   wxString query;
   wxSQLite3ResultSet dbRes;
 
-  query = wxT( "SELECT radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc "\
+  query = wxT( "SELECT radiostation_id, radiostation_scid, radiostation_source, radiostation_genreid, " \
+               "radiostation_name, radiostation_link, radiostation_type, radiostation_br, radiostation_lc " \
                  "FROM radiostations WHERE " );
   query += wxString::Format( wxT( "radiostation_id = %u LIMIT 1;" ), id );
 
@@ -697,7 +701,7 @@ void guDbRadios::SetRadioStationsLabels( const guArrayListItems &labelsets )
     {
         Stations.Add( labelsets[ StaIndex ].GetId() );
     }
-    query = wxT( "DELETE FROM radiosetlabels "
+    query = wxT( "DELETE FROM radiosetlabels " \
                  "WHERE radiosetlabel_stationid IN " ) + ArrayIntToStrList( Stations );
 
     ExecuteUpdate( query );
@@ -708,7 +712,7 @@ void guDbRadios::SetRadioStationsLabels( const guArrayListItems &labelsets )
       LaCount = Labels.Count();
       for( LaIndex = 0; LaIndex < LaCount; LaIndex++ )
       {
-        query = wxString::Format( wxT( "INSERT INTO radiosetlabels( radiosetlabel_labelid, radiosetlabel_stationid ) "\
+        query = wxString::Format( wxT( "INSERT INTO radiosetlabels( radiosetlabel_labelid, radiosetlabel_stationid ) " \
                                        "VALUES( %u, %u );" ), Labels[ LaIndex ], Stations[ StaIndex ] );
         ExecuteUpdate( query );
       }

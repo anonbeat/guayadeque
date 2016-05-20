@@ -43,15 +43,15 @@
 #define AMAZON_ASSOCIATE_TAG    "guaymusiplay-20"
 
 #define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?" )
-#define AMAZON_SEARCH_PARAMS    wxT( "AWSAccessKeyId=" AMAZON_SEARCH_APIKEY\
-                                     "&Artist=%s"\
-                                     "&AssociateTag=guaymusiplay-20"\
-                                     "&ItemPage=%u"\
-                                     "&Keywords=%s"\
-                                     "&Operation=ItemSearch"\
-                                     "&ResponseGroup=Images,Small"\
-                                     "&SearchIndex=Music"\
-                                     "&Service=AWSECommerceService"\
+#define AMAZON_SEARCH_PARAMS    wxT( "AWSAccessKeyId=" AMAZON_SEARCH_APIKEY \
+                                     "&Artist=%s" \
+                                     "&AssociateTag=guaymusiplay-20" \
+                                     "&ItemPage=%u" \
+                                     "&Keywords=%s" \
+                                     "&Operation=ItemSearch" \
+                                     "&ResponseGroup=Images,Small" \
+                                     "&SearchIndex=Music" \
+                                     "&Service=AWSECommerceService" \
                                      "&Timestamp=%s" )
 
 
