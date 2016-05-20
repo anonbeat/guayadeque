@@ -1,3 +1,7 @@
+
+  * Updated to wx3.0
+  * Updated to gstreamer 1.0
+
   * Fixed some Config constructor calls
 
 2014-02-20 0.3.7
