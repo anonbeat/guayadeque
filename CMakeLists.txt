@@ -123,7 +123,7 @@ IF( LIBAPPINDICATOR_LIBRARIES )
 ENDIF( LIBAPPINDICATOR_LIBRARIES )
 
 SET( ADD_WXSQLITE_SUPPORT 0 )
-PKG_CHECK_MODULES( LIBWXSQLITE3 wxsqlite3-3.0 )
+PKG_CHECK_MODULES( LIBWXSQLITE3 wxsqlite3 )
 IF( NOT LIBWXSQLITE3_LIBRARIES )
 	ADD_DEFINITIONS(-DADD_WXSQLITE_SUPPORT=1)
 	SET( ADD_WXSQLITE_SUPPORT 1 )
@@ -144,32 +144,31 @@ ADD_DEFINITIONS( -Wall -O2 -Wno-deprecated-declarations )
 # and also the include dirs defined by wxWidgets
 INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
 			${Guayadeque_SOURCE_DIR}/src
-                        ${wxWidgets_INCLUDE_DIRS}
-                        ${GSTREAMER_INCLUDE_DIRS}
+            ${wxWidgets_INCLUDE_DIRS}
+            ${GSTREAMER_INCLUDE_DIRS}
 			${GSTREAMER_CTRL_INCLUDE_DIRS}
 			${SQLITE3_INCLUDE_DIRS}
 			${LIBCURL_INCLUDE_DIRS}
 			${LIBTAG_INCLUDE_DIRS}
-              		${LIBDBUS_INCLUDE_DIRS}
-              		${LIBGIO_INCLUDE_DIRS}
+            ${LIBDBUS_INCLUDE_DIRS}
+            ${LIBGIO_INCLUDE_DIRS}
 			${LIBGPOD_INCLUDE_DIRS}
 			${LIBINDICATE_INCLUDE_DIRS}
 			${LIBINDICATE06_INCLUDE_DIRS}
 			${LIBINDICATE07_INCLUDE_DIRS}
 			${LIBAPPINDICATOR_INCLUDE_DIRS}
 			${LIBWXSQLITE3_INCLUDE_DIRS}
-                         )
+)
  
 ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( po )
 
 # default configuration and desktop icon
-INSTALL( FILES guayadeque.desktop DESTINATION share/applications )
-INSTALL( FILES guayadeque.png DESTINATION share/pixmaps/ )
-#INSTALL( FILES guayadeque.png DESTINATION share/app-install/icons/ )
-INSTALL( FILES guayadeque.default.conf DESTINATION share/guayadeque )
-INSTALL( FILES equalizers.default.conf DESTINATION share/guayadeque )
-INSTALL( FILES lyrics_sources.xml DESTINATION share/guayadeque )
+INSTALL( FILES runtime/guayadeque.desktop DESTINATION share/applications )
+INSTALL( FILES runtime/guayadeque.png DESTINATION share/pixmaps/ )
+INSTALL( FILES runtime/guayadeque.default.conf DESTINATION share/guayadeque )
+INSTALL( FILES runtime/equalizers.default.conf DESTINATION share/guayadeque )
+INSTALL( FILES runtime/lyrics_sources.xml DESTINATION share/guayadeque )
 
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
