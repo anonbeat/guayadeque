@@ -1690,7 +1690,7 @@ int guDbLibrary::GetSongId( wxString &filename, const int pathid, const time_t f
   else
   {
     query = query.Format( wxT( "INSERT INTO songs( song_id, song_pathid, song_rating, song_playcount, song_addedtime ) "
-                               "VALUES( NULL, %u, -1, 0, %u )" ), pathid, filedate );
+                               "VALUES( NULL, %u, -1, 0, %lu )" ), pathid, filedate );
     //guLogMessage( wxT( "Query: '%s'" ), query.c_str() );
     if( ExecuteUpdate( query ) )
     {
