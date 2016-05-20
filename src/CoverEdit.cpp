@@ -59,134 +59,135 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+    this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* MainSizer;
+    MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer* EditsSizer;
-	EditsSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* EditsSizer;
+    EditsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	ArtistStaticText->Wrap( -1 );
-	EditsSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    ArtistStaticText->Wrap( -1 );
+    EditsSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-	EditsSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    EditsSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	AlbumStaticText = new wxStaticText( this, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	AlbumStaticText->Wrap( -1 );
-	EditsSizer->Add( AlbumStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    AlbumStaticText = new wxStaticText( this, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    AlbumStaticText->Wrap( -1 );
+    EditsSizer->Add( AlbumStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_AlbumTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-	EditsSizer->Add( m_AlbumTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_AlbumTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    EditsSizer->Add( m_AlbumTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	FromStaticText = new wxStaticText( this, wxID_ANY, _( "From:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	FromStaticText->Wrap( -1 );
-	EditsSizer->Add( FromStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    FromStaticText = new wxStaticText( this, wxID_ANY, _( "From:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    FromStaticText->Wrap( -1 );
+    EditsSizer->Add( FromStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	wxString m_EngineChoiceChoices[] = {
-	    wxT( "Google" ),
-	    wxT( "Amazon" ),
-	    wxT("Last.fm"),
-	    //wxT( "Discogs" )
-	    wxT( "Yahoo" )
-	    };
-	int m_EngineChoiceNChoices = sizeof( m_EngineChoiceChoices ) / sizeof( wxString );
-	m_EngineChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_EngineChoiceNChoices, m_EngineChoiceChoices, 0 );
-	EditsSizer->Add( m_EngineChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    wxString m_EngineChoiceChoices[] = {
+        wxT( "Google" ),
+        wxT( "Amazon" ),
+        wxT("Last.fm"),
+        //wxT( "Discogs" )
+        wxT( "Yahoo" )
+        };
+    int m_EngineChoiceNChoices = sizeof( m_EngineChoiceChoices ) / sizeof( wxString );
+    m_EngineChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_EngineChoiceNChoices, m_EngineChoiceChoices, 0 );
+    EditsSizer->Add( m_EngineChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	MainSizer->Add( EditsSizer, 0, wxEXPAND, 5 );
+    MainSizer->Add( EditsSizer, 0, wxEXPAND, 5 );
 
-	TopStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	MainSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
+    TopStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+    MainSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
 
-	wxBoxSizer* CoverSizer;
-	CoverSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* CoverSizer;
+    CoverSizer = new wxBoxSizer( wxHORIZONTAL );
 
 
-	CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
-	CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+    m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
+    CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
     int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
     wxImage DefaultCover( guImage( CoverFrame ? guIMAGE_INDEX_blank_cd_cover : guIMAGE_INDEX_no_cover ) );
-    if( !CoverFrame )
-        DefaultCover.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
-	m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, DefaultCover, wxDefaultPosition, wxSize( -1,-1 ), 0 );
-	CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
+    
+    if( !CoverFrame ) DefaultCover.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
 
-	m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
-	CoverSizer->Add( m_NextButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+    m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, DefaultCover, wxDefaultPosition, wxSize( -1,-1 ), 0 );
+    CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
+
+    m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
+    CoverSizer->Add( m_NextButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
-	CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	MainSizer->Add( CoverSizer, 1, wxEXPAND, 5 );
+    MainSizer->Add( CoverSizer, 1, wxEXPAND, 5 );
 
-	m_SizeSizer = new wxBoxSizer( wxVERTICAL );
+    m_SizeSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_SizeStaticText = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_SizeStaticText->Wrap( -1 );
-	m_SizeSizer->Add( m_SizeStaticText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+    m_SizeStaticText = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_SizeStaticText->Wrap( -1 );
+    m_SizeSizer->Add( m_SizeStaticText, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	MainSizer->Add( m_SizeSizer, 0, wxEXPAND, 5 );
+    MainSizer->Add( m_SizeSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer* GaugeSizer;
-	GaugeSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* GaugeSizer;
+    GaugeSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_Gauge = new guAutoPulseGauge( this, wxID_ANY, MAX_COVERLINKS_ITEMS, wxDefaultPosition, wxSize( -1,7 ), wxGA_HORIZONTAL );
-	m_Gauge->SetValue( 5 );
-	GaugeSizer->Add( m_Gauge, 1, wxEXPAND|wxALL, 5 );
+    m_Gauge = new guAutoPulseGauge( this, wxID_ANY, MAX_COVERLINKS_ITEMS, wxDefaultPosition, wxSize( -1,7 ), wxGA_HORIZONTAL );
+    m_Gauge->SetValue( 5 );
+    GaugeSizer->Add( m_Gauge, 1, wxEXPAND|wxALL, 5 );
 
-	m_InfoTextCtrl = new wxStaticText( this, wxID_ANY, wxT("00/00"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_InfoTextCtrl->Wrap( -1 );
-	GaugeSizer->Add( m_InfoTextCtrl, 0, wxRIGHT, 5 );
+    m_InfoTextCtrl = new wxStaticText( this, wxID_ANY, wxT("00/00"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_InfoTextCtrl->Wrap( -1 );
+    GaugeSizer->Add( m_InfoTextCtrl, 0, wxRIGHT, 5 );
 
-	MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
+    MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
-	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "general" ) ) );
-	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
+    MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
     wxStdDialogButtonSizer * ButtonsSizer;
     wxButton * ButtonsSizerOK;
     wxButton * ButtonsSizerCancel;
-	ButtonsSizer = new wxStdDialogButtonSizer();
-	ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( ButtonsSizerOK );
-	ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( ButtonsSizerCancel );
-	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
-	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
-	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALIGN_BOTTOM|wxALL, 5 );
+    ButtonsSizer = new wxStdDialogButtonSizer();
+    ButtonsSizerOK = new wxButton( this, wxID_OK );
+    ButtonsSizer->AddButton( ButtonsSizerOK );
+    ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+    ButtonsSizer->AddButton( ButtonsSizerCancel );
+    ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+    ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
+    ButtonsSizer->Realize();
+    MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALIGN_BOTTOM|wxALL, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    this->SetSizer( MainSizer );
+    this->Layout();
 
-	ButtonsSizerOK->SetDefault();
+    ButtonsSizerOK->SetDefault();
 
     m_ArtistTextCtrl->SetValue( Artist );
     m_AlbumTextCtrl->SetValue( Album );
     m_CurrentImage = 0;
 
     m_EngineIndex = Config->ReadNum( wxT( "CoverSearchEngine" ), 0, wxT( "general" ) );
-	m_EngineChoice->SetSelection( m_EngineIndex );
+    m_EngineChoice->SetSelection( m_EngineIndex );
 
-	// Connect Events
-	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
-	m_AlbumTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+    // Connect Events
+    m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+    m_AlbumTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
 
-	m_EngineChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
+    m_EngineChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
 
-	m_CoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
-	m_CoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
-	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guCoverEditor::OnMouseWheel ), NULL, this );
+    m_CoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
+    m_CoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
+    Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guCoverEditor::OnMouseWheel ), NULL, this );
 
-	m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
-	m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
+    m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
+    m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
 
     Connect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
     Connect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );

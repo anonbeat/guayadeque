@@ -88,8 +88,6 @@ class guListViewColEdit : public wxDialog
     void    UpdateColumns( void );
 };
 
-
-
 // -------------------------------------------------------------------------------- //
 // guListViewClientTimer
 // -------------------------------------------------------------------------------- //
@@ -108,8 +106,6 @@ class guListViewClientTimer : public wxTimer
 };
 
 
-
-
 // -------------------------------------------------------------------------------- //
 // guListView
 // -------------------------------------------------------------------------------- //
@@ -123,6 +119,7 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
         m_Header = new guListViewHeader( this, m_ListBox, m_Columns, wxPoint( 0, 0 ) );
     else
         m_Header = NULL;
+
     m_ColSelect = ( flags & guLISTVIEW_COLUMN_SELECT );
     m_AllowDrag = ( flags & guLISTVIEW_ALLOWDRAG );
     m_AllowDrop = ( flags & guLISTVIEW_ALLOWDROP );
@@ -140,14 +137,16 @@ guListView::guListView( wxWindow * parent, const int flags, wxWindowID id, const
     }
 
     parent->Connect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
-	m_ListBox->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
+    m_ListBox->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
     Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     if( m_AllowDrag )
+    {
         Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
+    }
 
-	m_ListBox->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+    m_ListBox->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+    m_ListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+    m_ListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -160,14 +159,14 @@ guListView::~guListView()
         delete m_ImageList;
 
     GetParent()->Disconnect( wxEVT_SIZE, wxSizeEventHandler( guListView::OnChangedSize ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
+    m_ListBox->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guListView::OnKeyDown ), NULL, this );
     Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guListView::OnContextMenu ), NULL, this );
     if( m_AllowDrag )
         Disconnect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guListView::OnBeginDrag ), NULL, this );
 
-	m_ListBox->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
-	m_ListBox->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+    m_ListBox->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+    m_ListBox->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
+    m_ListBox->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guListView::OnMouse ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //

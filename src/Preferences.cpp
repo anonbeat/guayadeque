@@ -1607,49 +1607,50 @@ void guPrefDialog::BuildOnlinePage( void )
     //
     // Online Services Filter
     //
-	wxBoxSizer * OnlineMainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * OnlineMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * OnlineFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Filters ") ), wxHORIZONTAL );
+    wxStaticBoxSizer * OnlineFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Filters ") ), wxHORIZONTAL );
 
-	m_OnlineFiltersListBox = new wxListBox( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	m_OnlineFiltersListBox->Append( m_Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "searchfilters" ) ) );
-	OnlineFiltersSizer->Add( m_OnlineFiltersListBox, 1, wxALL|wxEXPAND, 5 );
+    m_OnlineFiltersListBox = new wxListBox( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+    m_OnlineFiltersListBox->Append( m_Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "searchfilters" ) ) );
+    OnlineFiltersSizer->Add( m_OnlineFiltersListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer * OnlineBtnSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * OnlineBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_OnlineAddBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
-	OnlineBtnSizer->Add( m_OnlineAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+    m_OnlineAddBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, 0 );
+    OnlineBtnSizer->Add( m_OnlineAddBtn, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_OnlineDelBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_OnlineDelBtn->Disable();
-	OnlineBtnSizer->Add( m_OnlineDelBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
+    m_OnlineDelBtn = new wxBitmapButton( m_OnlinePanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_OnlineDelBtn->Disable();
+    OnlineBtnSizer->Add( m_OnlineDelBtn, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	OnlineFiltersSizer->Add( OnlineBtnSizer, 0, wxEXPAND, 5 );
+    OnlineFiltersSizer->Add( OnlineBtnSizer, 0, wxEXPAND, 5 );
 
-	OnlineMainSizer->Add( OnlineFiltersSizer, 1, wxEXPAND|wxALL, 5 );
+    OnlineMainSizer->Add( OnlineFiltersSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * OnlineLangSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Language " ) ), wxHORIZONTAL );
+    wxStaticBoxSizer * OnlineLangSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Language " ) ), wxHORIZONTAL );
 
-	m_LangStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_LangStaticText->Wrap( -1 );
-	OnlineLangSizer->Add( m_LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_LangStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_LangStaticText->Wrap( -1 );
+    OnlineLangSizer->Add( m_LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_LangChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LFMLangNames, 0 );
+    m_LangChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LFMLangNames, 0 );
+
     int LangIndex = m_LFMLangIds.Index( m_Config->ReadStr( wxT( "Language" ), wxEmptyString, wxT( "lastfm" ) ) );
-    if( LangIndex == wxNOT_FOUND )
-        LangIndex = 0;
+    if( LangIndex == wxNOT_FOUND ) LangIndex = 0;
+
     m_LangChoice->SetSelection( LangIndex );
-	m_LangChoice->SetMinSize( wxSize( 250,-1 ) );
-	OnlineLangSizer->Add( m_LangChoice, 0, wxALL, 5 );
+    m_LangChoice->SetMinSize( wxSize( 250,-1 ) );
+    OnlineLangSizer->Add( m_LangChoice, 0, wxALL, 5 );
 
-	OnlineMainSizer->Add( OnlineLangSizer, 0, wxEXPAND|wxALL, 5 );
+    OnlineMainSizer->Add( OnlineLangSizer, 0, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * BrowserCmdSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Browser command ") ), wxHORIZONTAL );
+    wxStaticBoxSizer * BrowserCmdSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Browser command ") ), wxHORIZONTAL );
 
-	m_BrowserCmdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, m_Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "general" ) ), wxDefaultPosition, wxDefaultSize, 0 );
-	BrowserCmdSizer->Add( m_BrowserCmdTextCtrl, 1, wxALL, 5 );
+    m_BrowserCmdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, m_Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "general" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    BrowserCmdSizer->Add( m_BrowserCmdTextCtrl, 1, wxALL, 5 );
 
-	OnlineMainSizer->Add( BrowserCmdSizer, 0, wxEXPAND|wxALL, 5 );
+    OnlineMainSizer->Add( BrowserCmdSizer, 0, wxEXPAND|wxALL, 5 );
 
 //	m_RadioMinBitRateRadBox = new wxRadioBox( m_OnlinePanel, wxID_ANY, _( "Radio min. allowed bit rate "), wxDefaultPosition, wxDefaultSize, m_RadioMinBitRateRadBoxChoices, 10, wxRA_SPECIFY_COLS );
 //	wxString MinBitRate = m_Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "radios" ) );
@@ -1665,32 +1666,31 @@ void guPrefDialog::BuildOnlinePage( void )
 //	OnlineMainSizer->Add( m_RadioMinBitRateRadBox, 0, wxALL|wxEXPAND, 5 );
 
     m_LastMinBitRate = m_Config->ReadNum( wxT( "RadioMinBitRate" ), 128, wxT( "radios" ) );
-	wxStaticBoxSizer * RadioBitRateSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Minimum radio allowed bit rate " ) ), wxHORIZONTAL );
+    wxStaticBoxSizer * RadioBitRateSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Minimum radio allowed bit rate " ) ), wxHORIZONTAL );
 
-	m_RadioMinBitRateSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_LastMinBitRate, 0, 320, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
-	RadioBitRateSizer->Add( m_RadioMinBitRateSlider, 1, wxEXPAND, 5 );
+    m_RadioMinBitRateSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_LastMinBitRate, 0, 320, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    RadioBitRateSizer->Add( m_RadioMinBitRateSlider, 1, wxEXPAND, 5 );
 
     OnlineMainSizer->Add( RadioBitRateSizer, 0, wxEXPAND|wxALL, 5 );
 
+    wxStaticBoxSizer * BufferSizeSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Player online buffer size ") ), wxHORIZONTAL );
 
-	wxStaticBoxSizer * BufferSizeSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Player online buffer size ") ), wxHORIZONTAL );
+    m_BufferSizeSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "general" ) ), 32, 1024, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    BufferSizeSizer->Add( m_BufferSizeSlider, 1, wxEXPAND, 5 );
 
-	m_BufferSizeSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "general" ) ), 32, 1024, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
-	BufferSizeSizer->Add( m_BufferSizeSlider, 1, wxEXPAND, 5 );
+    OnlineMainSizer->Add( BufferSizeSizer, 0, wxEXPAND|wxALL, 5 );
 
-	OnlineMainSizer->Add( BufferSizeSizer, 0, wxEXPAND|wxALL, 5 );
-
-	m_OnlinePanel->SetSizer( OnlineMainSizer );
-	m_OnlinePanel->Layout();
-	OnlineMainSizer->FitInside( m_OnlinePanel );
+    m_OnlinePanel->SetSizer( OnlineMainSizer );
+    m_OnlinePanel->Layout();
+    OnlineMainSizer->FitInside( m_OnlinePanel );
 
     //
     //
     //
-	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
-	m_OnlineAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
-	m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
-	m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
+    m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
+    m_OnlineAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
+    m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
+    m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
 
     m_RadioMinBitRateSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnOnlineMinBitRateChanged ), NULL, this );
     m_RadioMinBitRateSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnOnlineMinBitRateChanged ), NULL, this );
@@ -1707,71 +1707,70 @@ void guPrefDialog::BuildPodcastsPage( void )
     //
     // Podcasts
     //
-	wxBoxSizer * PodcastsMainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * PodcastsMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * PodcastsSizer = new wxStaticBoxSizer( new wxStaticBox( m_PodcastPanel, wxID_ANY, _(" Podcasts ") ), wxVERTICAL );
+    wxStaticBoxSizer * PodcastsSizer = new wxStaticBoxSizer( new wxStaticBox( m_PodcastPanel, wxID_ANY, _(" Podcasts ") ), wxVERTICAL );
 
-	wxBoxSizer * PathSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * PathSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxStaticText * PodcastPathStaticText = new wxStaticText( m_PodcastPanel, wxID_ANY, _("Destination directory:"), wxDefaultPosition, wxDefaultSize, 0 );
-	PodcastPathStaticText->Wrap( -1 );
-	PathSizer->Add( PodcastPathStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+    wxStaticText * PodcastPathStaticText = new wxStaticText( m_PodcastPanel, wxID_ANY, _("Destination directory:"), wxDefaultPosition, wxDefaultSize, 0 );
+    PodcastPathStaticText->Wrap( -1 );
+    PathSizer->Add( PodcastPathStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_PodcastPath = new wxDirPickerCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
+    m_PodcastPath = new wxDirPickerCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
     m_PodcastPath->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "podcasts" ) ) );
-	PathSizer->Add( m_PodcastPath, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
+    PathSizer->Add( m_PodcastPath, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 
-	PodcastsSizer->Add( PathSizer, 0, wxEXPAND, 5 );
+    PodcastsSizer->Add( PathSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer * UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PodcastUpdate = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Check every"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PodcastUpdate->SetValue( m_Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) );
+    m_PodcastUpdate = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Check every"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PodcastUpdate->SetValue( m_Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) );
 
-	UpdateSizer->Add( m_PodcastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    UpdateSizer->Add( m_PodcastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxString m_PodcastUpdatePeriodChoices[] = { _( "Hour" ), _("Day"), _("Week"), _("Month") };
-	int m_PodcastUpdatePeriodNChoices = sizeof( m_PodcastUpdatePeriodChoices ) / sizeof( wxString );
-	m_PodcastUpdatePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
-	m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "podcasts" ) ) );
-	m_PodcastUpdatePeriod->SetMinSize( wxSize( 150,-1 ) );
-	UpdateSizer->Add( m_PodcastUpdatePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+    wxString m_PodcastUpdatePeriodChoices[] = { _( "Hour" ), _("Day"), _("Week"), _("Month") };
+    int m_PodcastUpdatePeriodNChoices = sizeof( m_PodcastUpdatePeriodChoices ) / sizeof( wxString );
+    m_PodcastUpdatePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
+    m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "podcasts" ) ) );
+    m_PodcastUpdatePeriod->SetMinSize( wxSize( 150,-1 ) );
+    UpdateSizer->Add( m_PodcastUpdatePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	PodcastsSizer->Add( UpdateSizer, 0, wxEXPAND, 5 );
+    PodcastsSizer->Add( UpdateSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer * DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PodcastDelete = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Delete after"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PodcastDelete->SetValue( m_Config->ReadBool( wxT( "Delete" ), false, wxT( "podcasts" ) ) );
+    m_PodcastDelete = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Delete after"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PodcastDelete->SetValue( m_Config->ReadBool( wxT( "Delete" ), false, wxT( "podcasts" ) ) );
 
-	DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_PodcastDeleteTime = new wxSpinCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
-        m_Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "podcasts" ) ) );
-	DeleteSizer->Add( m_PodcastDeleteTime, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+    m_PodcastDeleteTime = new wxSpinCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
+    m_Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "podcasts" ) ) );
+    DeleteSizer->Add( m_PodcastDeleteTime, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	wxString m_PodcastDeletePeriodChoices[] = { _("Days"), _("Weeks"), _("Months") };
-	int m_PodcastDeletePeriodNChoices = sizeof( m_PodcastDeletePeriodChoices ) / sizeof( wxString );
-	m_PodcastDeletePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
-	m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( wxT( "DeletePeriod" ), 0, wxT( "podcasts" ) ) );
-	m_PodcastDeletePeriod->SetMinSize( wxSize( 150,-1 ) );
-	DeleteSizer->Add( m_PodcastDeletePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+    wxString m_PodcastDeletePeriodChoices[] = { _("Days"), _("Weeks"), _("Months") };
+    int m_PodcastDeletePeriodNChoices = sizeof( m_PodcastDeletePeriodChoices ) / sizeof( wxString );
+    m_PodcastDeletePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
+    m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( wxT( "DeletePeriod" ), 0, wxT( "podcasts" ) ) );
+    m_PodcastDeletePeriod->SetMinSize( wxSize( 150,-1 ) );
+    DeleteSizer->Add( m_PodcastDeletePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	DeleteSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    DeleteSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_PodcastDeletePlayed = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Only if played"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PodcastDeletePlayed->SetValue( m_Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) );
+    m_PodcastDeletePlayed = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Only if played"), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PodcastDeletePlayed->SetValue( m_Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) );
 
-	DeleteSizer->Add( m_PodcastDeletePlayed, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    DeleteSizer->Add( m_PodcastDeletePlayed, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	PodcastsSizer->Add( DeleteSizer, 0, wxEXPAND, 5 );
+    PodcastsSizer->Add( DeleteSizer, 0, wxEXPAND, 5 );
 
-	PodcastsMainSizer->Add( PodcastsSizer, 0, wxEXPAND|wxALL, 5 );
+    PodcastsMainSizer->Add( PodcastsSizer, 0, wxEXPAND|wxALL, 5 );
 
-	m_PodcastPanel->SetSizer( PodcastsMainSizer );
-	m_PodcastPanel->Layout();
-	PodcastsMainSizer->FitInside( m_PodcastPanel );
-
+    m_PodcastPanel->SetSizer( PodcastsMainSizer );
+    m_PodcastPanel->Layout();
+    PodcastsMainSizer->FitInside( m_PodcastPanel );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1785,12 +1784,12 @@ void guPrefDialog::BuildJamendoPage( void )
     //
     // Jamendo
     //
-	wxBoxSizer * JamMainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * JamMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * JamGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_JamendoPanel, wxID_ANY, _( " Genres " ) ), wxHORIZONTAL );
+    wxStaticBoxSizer * JamGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_JamendoPanel, wxID_ANY, _( " Genres " ) ), wxHORIZONTAL );
 
-	wxArrayString JamendoGenres;
-	int Index = 0;
+    wxArrayString JamendoGenres;
+    int Index = 0;
     do {
         wxString GenreName = TStringTowxString( TagLib::ID3v1::genre( Index++ ) );
 
@@ -1804,67 +1803,66 @@ void guPrefDialog::BuildJamendoPage( void )
     m_LastJamendoGenres = m_Config->ReadANum( wxT( "Genre" ), 0, wxT( "jamendo/genres" ) );
     guLogMessage( wxT( "Read %li jamendo genres" ), m_LastJamendoGenres.Count() );
 
-	m_JamGenresListBox = new wxCheckListBox( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), JamendoGenres, 0 );
-	int Count = m_LastJamendoGenres.Count();
-	for( Index = 0; Index < Count; Index++ )
-	{
+    m_JamGenresListBox = new wxCheckListBox( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), JamendoGenres, 0 );
+    int Count = m_LastJamendoGenres.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
         m_JamGenresListBox->Check( m_LastJamendoGenres[ Index ] );
         //guLogMessage( wxT( "Checking %i" ), m_LastJamendoGenres[ Index ] );
-	}
-	JamGenresSizer->Add( m_JamGenresListBox, 1, wxALL|wxEXPAND, 5 );
+    }
+    JamGenresSizer->Add( m_JamGenresListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer * JamGenresBtnSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * JamGenresBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_JamSelAllBtn = new wxButton( m_JamendoPanel, wxID_ANY, _( "All" ), wxDefaultPosition, wxDefaultSize, 0 );
-	JamGenresBtnSizer->Add( m_JamSelAllBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_JamSelAllBtn = new wxButton( m_JamendoPanel, wxID_ANY, _( "All" ), wxDefaultPosition, wxDefaultSize, 0 );
+    JamGenresBtnSizer->Add( m_JamSelAllBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_JamSelNoneBtn = new wxButton( m_JamendoPanel, wxID_ANY, _( "None" ), wxDefaultPosition, wxDefaultSize, 0 );
-	JamGenresBtnSizer->Add( m_JamSelNoneBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_JamSelNoneBtn = new wxButton( m_JamendoPanel, wxID_ANY, _( "None" ), wxDefaultPosition, wxDefaultSize, 0 );
+    JamGenresBtnSizer->Add( m_JamSelNoneBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_JamInvertBtn = new wxButton( m_JamendoPanel, wxID_ANY, _("Invert"), wxDefaultPosition, wxDefaultSize, 0 );
-	JamGenresBtnSizer->Add( m_JamInvertBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_JamInvertBtn = new wxButton( m_JamendoPanel, wxID_ANY, _("Invert"), wxDefaultPosition, wxDefaultSize, 0 );
+    JamGenresBtnSizer->Add( m_JamInvertBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	JamGenresSizer->Add( JamGenresBtnSizer, 0, wxEXPAND, 5 );
+    JamGenresSizer->Add( JamGenresBtnSizer, 0, wxEXPAND, 5 );
 
-	JamMainSizer->Add( JamGenresSizer, 1, wxEXPAND|wxALL, 5 );
+    JamMainSizer->Add( JamGenresSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * JamOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_JamendoPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
+    wxStaticBoxSizer * JamOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_JamendoPanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
     wxFlexGridSizer * JamFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
-	JamFlexSizer->AddGrowableCol( 1 );
-	JamFlexSizer->SetFlexibleDirection( wxBOTH );
-	JamFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    JamFlexSizer->AddGrowableCol( 1 );
+    JamFlexSizer->SetFlexibleDirection( wxBOTH );
+    JamFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	wxStaticText * JamFormatLabel = new wxStaticText( m_JamendoPanel, wxID_ANY, _( "Audio format:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	JamFormatLabel->Wrap( -1 );
-	JamFlexSizer->Add( JamFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT|wxALIGN_RIGHT, 5 );
+    wxStaticText * JamFormatLabel = new wxStaticText( m_JamendoPanel, wxID_ANY, _( "Audio format:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    JamFormatLabel->Wrap( -1 );
+    JamFlexSizer->Add( JamFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT|wxALIGN_RIGHT, 5 );
 
-	wxArrayString m_JamFormatChoices;
-	m_JamFormatChoices.Add( wxT( "mp3" ) );
-	m_JamFormatChoices.Add( wxT( "ogg" ) );
-	m_JamFormatChoice = new wxChoice( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_JamFormatChoices, 0 );
-	m_JamFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) ) );
-	JamFlexSizer->Add( m_JamFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    wxArrayString m_JamFormatChoices;
+    m_JamFormatChoices.Add( wxT( "mp3" ) );
+    m_JamFormatChoices.Add( wxT( "ogg" ) );
+    m_JamFormatChoice = new wxChoice( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_JamFormatChoices, 0 );
+    m_JamFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) ) );
+    JamFlexSizer->Add( m_JamFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * JamBTCmdLabel = new wxStaticText( m_JamendoPanel, wxID_ANY, _( "Torrent command:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	JamBTCmdLabel->Wrap( -1 );
-	JamFlexSizer->Add( JamBTCmdLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT|wxALIGN_RIGHT, 5 );
+    wxStaticText * JamBTCmdLabel = new wxStaticText( m_JamendoPanel, wxID_ANY, _( "Torrent command:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    JamBTCmdLabel->Wrap( -1 );
+    JamFlexSizer->Add( JamBTCmdLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT|wxALIGN_RIGHT, 5 );
 
-	m_JamBTCmd = new wxTextCtrl( m_JamendoPanel, wxID_ANY, m_Config->ReadStr( wxT( "TorrentCommand" ), wxT( "transmission" ), wxT( "jamendo" ) ), wxDefaultPosition, wxDefaultSize, 0 );
-	JamFlexSizer->Add( m_JamBTCmd, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+    m_JamBTCmd = new wxTextCtrl( m_JamendoPanel, wxID_ANY, m_Config->ReadStr( wxT( "TorrentCommand" ), wxT( "transmission" ), wxT( "jamendo" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    JamFlexSizer->Add( m_JamBTCmd, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
-	JamOtherSizer->Add( JamFlexSizer, 1, wxEXPAND, 5 );
+    JamOtherSizer->Add( JamFlexSizer, 1, wxEXPAND, 5 );
 
-	JamMainSizer->Add( JamOtherSizer, 0, wxEXPAND|wxALL, 5 );
+    JamMainSizer->Add( JamOtherSizer, 0, wxEXPAND|wxALL, 5 );
 
-	m_JamendoPanel->SetSizer( JamMainSizer );
-	m_JamendoPanel->Layout();
-	JamMainSizer->FitInside( m_JamendoPanel );
+    m_JamendoPanel->SetSizer( JamMainSizer );
+    m_JamendoPanel->Layout();
+    JamMainSizer->FitInside( m_JamendoPanel );
 
-	m_JamSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectAll ), NULL, this );
-	m_JamSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectNone ), NULL, this );
-	m_JamInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoInvertSelection ), NULL, this );
-
+    m_JamSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectAll ), NULL, this );
+    m_JamSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectNone ), NULL, this );
+    m_JamInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoInvertSelection ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1878,13 +1876,13 @@ void guPrefDialog::BuildMagnatunePage( void )
     //
     // Magnatune
     //
-	wxBoxSizer * MagMainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MagMainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticBoxSizer * MagGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, _(" Genres ") ), wxHORIZONTAL );
+    wxStaticBoxSizer * MagGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, _(" Genres ") ), wxHORIZONTAL );
 
-	wxArrayString MagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genrelist" ) );
-	if( !MagnatuneGenres.Count() )
-	{
+    wxArrayString MagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genrelist" ) );
+    if( !MagnatuneGenres.Count() )
+    {
         int Index = 0;
         do {
             wxString GenreName = TStringTowxString( TagLib::ID3v1::genre( Index++ ) );
@@ -1895,134 +1893,133 @@ void guPrefDialog::BuildMagnatunePage( void )
                 break;
 
         } while( true );
-	}
+    }
 
     m_LastMagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genres" ) );
 
-	m_MagGenresListBox = new wxCheckListBox( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), MagnatuneGenres, 0 );
-	int Index;
-	int Count = m_LastMagnatuneGenres.Count();
-	for( Index = 0; Index < Count; Index++ )
-	{
-        int Pos = MagnatuneGenres.Index( m_LastMagnatuneGenres[ Index ] );
-        if( Pos != wxNOT_FOUND )
-            m_MagGenresListBox->Check( Pos );
-	}
-	MagGenresSizer->Add( m_MagGenresListBox, 1, wxALL|wxEXPAND, 5 );
+    m_MagGenresListBox = new wxCheckListBox( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), MagnatuneGenres, 0 );
+    int Index;
+    int Count = m_LastMagnatuneGenres.Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+    int Pos = MagnatuneGenres.Index( m_LastMagnatuneGenres[ Index ] );
+    if( Pos != wxNOT_FOUND )
+        m_MagGenresListBox->Check( Pos );
+    }
+    MagGenresSizer->Add( m_MagGenresListBox, 1, wxALL|wxEXPAND, 5 );
 
-	wxBoxSizer * MagGenresBtnSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MagGenresBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_MagSelAllBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _( "All" ), wxDefaultPosition, wxDefaultSize, 0 );
-	MagGenresBtnSizer->Add( m_MagSelAllBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_MagSelAllBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _( "All" ), wxDefaultPosition, wxDefaultSize, 0 );
+    MagGenresBtnSizer->Add( m_MagSelAllBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_MagSelNoneBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _("None"), wxDefaultPosition, wxDefaultSize, 0 );
-	MagGenresBtnSizer->Add( m_MagSelNoneBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_MagSelNoneBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _("None"), wxDefaultPosition, wxDefaultSize, 0 );
+    MagGenresBtnSizer->Add( m_MagSelNoneBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_MagInvertBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _("Invert"), wxDefaultPosition, wxDefaultSize, 0 );
-	MagGenresBtnSizer->Add( m_MagInvertBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
+    m_MagInvertBtn = new wxButton( m_MagnatunePanel, wxID_ANY, _("Invert"), wxDefaultPosition, wxDefaultSize, 0 );
+    MagGenresBtnSizer->Add( m_MagInvertBtn, 0, wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	MagGenresSizer->Add( MagGenresBtnSizer, 0, wxEXPAND, 5 );
+    MagGenresSizer->Add( MagGenresBtnSizer, 0, wxEXPAND, 5 );
 
-	MagMainSizer->Add( MagGenresSizer, 1, wxEXPAND|wxALL, 5 );
+    MagMainSizer->Add( MagGenresSizer, 1, wxEXPAND|wxALL, 5 );
 
-	wxStaticBoxSizer * MagOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
+    wxStaticBoxSizer * MagOtherSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, wxEmptyString ), wxVERTICAL );
 
     wxFlexGridSizer * MagFlexSizer = new wxFlexGridSizer( 2, 0, 0 );
-	MagFlexSizer->AddGrowableCol( 1 );
-	MagFlexSizer->SetFlexibleDirection( wxBOTH );
-	MagFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    MagFlexSizer->AddGrowableCol( 1 );
+    MagFlexSizer->SetFlexibleDirection( wxBOTH );
+    MagFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	wxStaticText * MagMemberLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Membership :" ), wxDefaultPosition, wxDefaultSize, 0 );
-	MagMemberLabel->Wrap( -1 );
-	MagFlexSizer->Add( MagMemberLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    wxStaticText * MagMemberLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Membership :" ), wxDefaultPosition, wxDefaultSize, 0 );
+    MagMemberLabel->Wrap( -1 );
+    MagFlexSizer->Add( MagMemberLabel, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	wxBoxSizer * MagMembSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * MagMembSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_MagNoRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "None" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
-	m_MagStRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Streaming" ), wxDefaultPosition, wxDefaultSize );
-	m_MagDlRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Downloading" ), wxDefaultPosition, wxDefaultSize );
-	int Membership = m_Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
-	if( Membership == 1 )
-        m_MagStRadioItem->SetValue( true );
-    else if( Membership == 2 )
-        m_MagDlRadioItem->SetValue( true );
-    else
-        m_MagNoRadioItem->SetValue( true );
-	MagMembSizer->Add( m_MagNoRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
-	MagMembSizer->Add( m_MagStRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
-	MagMembSizer->Add( m_MagDlRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+    m_MagNoRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "None" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
+    m_MagStRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Streaming" ), wxDefaultPosition, wxDefaultSize );
+    m_MagDlRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Downloading" ), wxDefaultPosition, wxDefaultSize );
+    int Membership = m_Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
+    
+    if( Membership == 1 ) m_MagStRadioItem->SetValue( true );
+    else if( Membership == 2 ) m_MagDlRadioItem->SetValue( true );
+    else m_MagNoRadioItem->SetValue( true );
 
-	MagFlexSizer->Add( MagMembSizer, 1, wxEXPAND, 5 );
+    MagMembSizer->Add( m_MagNoRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+    MagMembSizer->Add( m_MagStRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
+    MagMembSizer->Add( m_MagDlRadioItem, 0, wxTOP|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxStaticText * MagUserLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Username :" ), wxDefaultPosition, wxDefaultSize, 0 );
-	MagUserLabel->Wrap( -1 );
-	MagFlexSizer->Add( MagUserLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+    MagFlexSizer->Add( MagMembSizer, 1, wxEXPAND, 5 );
 
-	m_MagUserTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    wxStaticText * MagUserLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Username :" ), wxDefaultPosition, wxDefaultSize, 0 );
+    MagUserLabel->Wrap( -1 );
+    MagFlexSizer->Add( MagUserLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+
+    m_MagUserTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) ), wxDefaultPosition, wxDefaultSize, 0 );
     m_MagUserTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
-	MagFlexSizer->Add( m_MagUserTextCtrl, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+    MagFlexSizer->Add( m_MagUserTextCtrl, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxStaticText * MagPassLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Password :" ), wxDefaultPosition, wxDefaultSize, 0 );
-	MagPassLabel->Wrap( -1 );
-	MagFlexSizer->Add( MagPassLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+    wxStaticText * MagPassLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Password :" ), wxDefaultPosition, wxDefaultSize, 0 );
+    MagPassLabel->Wrap( -1 );
+    MagFlexSizer->Add( MagPassLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
 
-	m_MagPassTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) ), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_MagPassTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) ), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_MagPassTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
-	MagFlexSizer->Add( m_MagPassTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+    MagFlexSizer->Add( m_MagPassTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-//	wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Format :" ), wxDefaultPosition, wxDefaultSize, 0 );
-//	MagFormatLabel->Wrap( -1 );
-//	MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+//    wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Format :" ), wxDefaultPosition, wxDefaultSize, 0 );
+//    MagFormatLabel->Wrap( -1 );
+//    MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 //
-//	wxArrayString MagFormatChoices;
-//	MagFormatChoices.Add( wxT( "mp3" ) );
-//	MagFormatChoices.Add( wxT( "ogg" ) );
-//	m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagFormatChoices, 0 );
-//	m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) ) );
-//	MagFlexSizer->Add( m_MagFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
-	wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Stream as :" ), wxDefaultPosition, wxDefaultSize, 0 );
-	MagFormatLabel->Wrap( -1 );
-	MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+//    wxArrayString MagFormatChoices;
+//    MagFormatChoices.Add( wxT( "mp3" ) );
+//    MagFormatChoices.Add( wxT( "ogg" ) );
+//    m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagFormatChoices, 0 );
+//    m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) ) );
+//    MagFlexSizer->Add( m_MagFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Stream as :" ), wxDefaultPosition, wxDefaultSize, 0 );
+    MagFormatLabel->Wrap( -1 );
+    MagFlexSizer->Add( MagFormatLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxBoxSizer * FormatSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * FormatSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxString m_MagFormatChoiceChoices[] = { wxT("mp3"), wxT("ogg") };
-	int m_MagFormatChoiceNChoices = sizeof( m_MagFormatChoiceChoices ) / sizeof( wxString );
-	m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagFormatChoiceNChoices, m_MagFormatChoiceChoices, 0 );
-	m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "magnatune" ) ) );
-	m_MagFormatChoice->SetMinSize( wxSize( 100,-1 ) );
+    wxString m_MagFormatChoiceChoices[] = { wxT("mp3"), wxT("ogg") };
+    int m_MagFormatChoiceNChoices = sizeof( m_MagFormatChoiceChoices ) / sizeof( wxString );
+    m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagFormatChoiceNChoices, m_MagFormatChoiceChoices, 0 );
+    m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "magnatune" ) ) );
+    m_MagFormatChoice->SetMinSize( wxSize( 100,-1 ) );
 
-	FormatSizer->Add( m_MagFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+    FormatSizer->Add( m_MagFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
-	wxStaticText * MagDownLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _("Download as :"), wxDefaultPosition, wxDefaultSize, 0 );
-	MagDownLabel->Wrap( -1 );
-	FormatSizer->Add( MagDownLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    wxStaticText * MagDownLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _("Download as :"), wxDefaultPosition, wxDefaultSize, 0 );
+    MagDownLabel->Wrap( -1 );
+    FormatSizer->Add( MagDownLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxString m_MagDownFormatChoiceChoices[] = { _( "Download Page" ), wxT("mp3 (VBR)"), wxT("mp3 (128Kbits)"), wxT("ogg"), wxT("flac"), wxT("wav") };
-	int m_MagDownFormatChoiceNChoices = sizeof( m_MagDownFormatChoiceChoices ) / sizeof( wxString );
-	m_MagDownFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagDownFormatChoiceNChoices, m_MagDownFormatChoiceChoices, 0 );
-	m_MagDownFormatChoice->SetSelection( m_Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "magnatune" ) ) );
-	m_MagDownFormatChoice->Enable( Membership == 2 );
-	m_MagDownFormatChoice->SetMinSize( wxSize( 100,-1 ) );
+    wxString m_MagDownFormatChoiceChoices[] = { _( "Download Page" ), wxT("mp3 (VBR)"), wxT("mp3 (128Kbits)"), wxT("ogg"), wxT("flac"), wxT("wav") };
+    int m_MagDownFormatChoiceNChoices = sizeof( m_MagDownFormatChoiceChoices ) / sizeof( wxString );
+    m_MagDownFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagDownFormatChoiceNChoices, m_MagDownFormatChoiceChoices, 0 );
+    m_MagDownFormatChoice->SetSelection( m_Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "magnatune" ) ) );
+    m_MagDownFormatChoice->Enable( Membership == 2 );
+    m_MagDownFormatChoice->SetMinSize( wxSize( 100,-1 ) );
 
-	FormatSizer->Add( m_MagDownFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+    FormatSizer->Add( m_MagDownFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
-	MagFlexSizer->Add( FormatSizer, 1, wxEXPAND, 5 );
+    MagFlexSizer->Add( FormatSizer, 1, wxEXPAND, 5 );
 
-	MagOtherSizer->Add( MagFlexSizer, 1, wxEXPAND, 5 );
+    MagOtherSizer->Add( MagFlexSizer, 1, wxEXPAND, 5 );
 
-	MagMainSizer->Add( MagOtherSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    MagMainSizer->Add( MagOtherSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_MagnatunePanel->SetSizer( MagMainSizer );
-	m_MagnatunePanel->Layout();
-	MagMainSizer->FitInside( m_MagnatunePanel );
+    m_MagnatunePanel->SetSizer( MagMainSizer );
+    m_MagnatunePanel->Layout();
+    MagMainSizer->FitInside( m_MagnatunePanel );
 
-	m_MagSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectAll ), NULL, this );
-	m_MagSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectNone ), NULL, this );
-	m_MagInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneInvertSelection ), NULL, this );
-	m_MagNoRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
-	m_MagStRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
-	m_MagDlRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+    m_MagSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectAll ), NULL, this );
+    m_MagSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectNone ), NULL, this );
+    m_MagInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneInvertSelection ), NULL, this );
+    m_MagNoRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+    m_MagStRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+    m_MagDlRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
 
 }
 

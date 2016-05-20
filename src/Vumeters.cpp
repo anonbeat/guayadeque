@@ -35,16 +35,16 @@ guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) :
     m_Style         = style;
     m_PeakLevel     = -INFINITY;
     m_DecayLevel    = -INFINITY;
-	m_GreenOff      = wxColour(   0, 128,   0 );
-	m_GreenOn       = wxColour(   0, 255,   0 );
-	m_OrangeOff     = wxColour( 191,  95,   0 );
-	m_OrangeOn      = wxColour( 255, 128,   0 );
-	m_RedOff        = wxColour( 128,   0,   0 );
-	m_RedOn         = wxColour( 255,   0,   0 );
-	m_OffBitmap     = NULL;
-	m_OnBitmap      = NULL;
-	m_LastHeight    = wxNOT_FOUND;
-	m_LastWidth     = wxNOT_FOUND;
+    m_GreenOff      = wxColour(   0, 128,   0 );
+    m_GreenOn       = wxColour(   0, 255,   0 );
+    m_OrangeOff     = wxColour( 191,  95,   0 );
+    m_OrangeOn      = wxColour( 255, 128,   0 );
+    m_RedOff        = wxColour( 128,   0,   0 );
+    m_RedOn         = wxColour( 255,   0,   0 );
+    m_OffBitmap     = NULL;
+    m_OnBitmap      = NULL;
+    m_LastHeight    = wxNOT_FOUND;
+    m_LastWidth     = wxNOT_FOUND;
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guVumeter::OnChangedSize ), NULL, this );
 }
@@ -269,11 +269,11 @@ void guVumeter::RefreshBitmaps( void )
     if( m_OffBitmap )
         delete m_OffBitmap;
 
-	wxCoord Width;
-	wxCoord Height;
-	GetClientSize( &Width, &Height );
+    wxCoord Width;
+    wxCoord Height;
+    GetClientSize( &Width, &Height );
 
-	//guLogMessage( wxT( "RefreshBitmaps %i  %i " ), Width, Height );
+    //guLogMessage( wxT( "RefreshBitmaps %i  %i " ), Width, Height );
 
     if( m_Style == guVU_HORIZONTAL )
     {
