@@ -680,7 +680,7 @@ wxString GetAlbumSearchText( guDbLibrary * db, const int id, const int type )
 // -------------------------------------------------------------------------------- //
 void guTreeViewTreeCtrl::OnSearchLinkClicked( wxCommandEvent &event )
 {
-    const wxTreeItemId &CurItemId = GetSelection();
+    const wxTreeItemId &CurItemId = GetFocusedItem();
     guTreeViewData * TreeViewData = ( guTreeViewData * ) GetItemData( CurItemId );
     int ItemType = TreeViewData->GetType();
 
@@ -697,7 +697,7 @@ void guTreeViewTreeCtrl::OnSearchLinkClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
 {
-    const wxTreeItemId &CurItemId = GetSelection();
+    const wxTreeItemId &CurItemId = GetFocusedItem();
     guTreeViewData * TreeViewData = ( guTreeViewData * ) GetItemData( CurItemId );
 //    int ItemType = TreeViewData->GetType();
 
@@ -999,7 +999,7 @@ void guTreeViewPanel::OnTreeViewActivated( wxTreeEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewPlay( wxCommandEvent &event )
 {
-    if( m_TreeViewCtrl->IsFilterItem( m_TreeViewCtrl->GetSelection() ) )
+    if( m_TreeViewCtrl->IsFilterItem( m_TreeViewCtrl->GetFocusedItem() ) )
     {
         guTrackArray Tracks;
         m_TVTracksListBox->GetAllSongs( &Tracks );
@@ -1014,7 +1014,7 @@ void guTreeViewPanel::OnTreeViewPlay( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewEnqueue( wxCommandEvent &event )
 {
-    if( m_TreeViewCtrl->IsFilterItem( m_TreeViewCtrl->GetSelection() ) )
+    if( m_TreeViewCtrl->IsFilterItem( m_TreeViewCtrl->GetFocusedItem() ) )
     {
         guTrackArray Tracks;
         m_TVTracksListBox->GetAllSongs( &Tracks );
@@ -1029,7 +1029,7 @@ void guTreeViewPanel::OnTreeViewEnqueue( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewEditLabels( wxCommandEvent &event )
 {
-    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetSelection();
+    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetFocusedItem();
     if( m_TreeViewCtrl->IsFilterItem( CurItemId ) )
     {
         guTreeViewData * ItemData = ( guTreeViewData * ) m_TreeViewCtrl->GetItemData( CurItemId );
@@ -1085,7 +1085,7 @@ void guTreeViewPanel::OnTreeViewEditLabels( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewEditTracks( wxCommandEvent &event )
 {
-    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetSelection();
+    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetFocusedItem();
     if( CurItemId.IsOk() && m_TreeViewCtrl->IsFilterItem( CurItemId ) )
     {
         guTrackArray Tracks;
@@ -1125,7 +1125,7 @@ void guTreeViewPanel::OnTreeViewEditTracks( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewSaveToPlayList( wxCommandEvent &event )
 {
-    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetSelection();
+    const wxTreeItemId &CurItemId = m_TreeViewCtrl->GetFocusedItem();
     if( m_TreeViewCtrl->IsFilterItem( CurItemId ) )
     {
         guTrackArray Tracks;
@@ -1199,7 +1199,7 @@ void guTreeViewPanel::OnTreeViewNewFilter( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewEditFilter( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_TreeViewCtrl->GetSelection();
+    wxTreeItemId ItemId = m_TreeViewCtrl->GetFocusedItem();
     if( ItemId.IsOk() && m_TreeViewCtrl->IsFilterEntry( ItemId ) )
     {
         guTreeViewData * ItemData = ( guTreeViewData * ) m_TreeViewCtrl->GetItemData( ItemId );
@@ -1221,7 +1221,7 @@ void guTreeViewPanel::OnTreeViewEditFilter( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewDeleteFilter( wxCommandEvent &event )
 {
-    wxTreeItemId ItemId = m_TreeViewCtrl->GetSelection();
+    wxTreeItemId ItemId = m_TreeViewCtrl->GetFocusedItem();
     if( ItemId.IsOk() && m_TreeViewCtrl->IsFilterEntry( ItemId ) )
     {
         guTreeViewData * ItemData = ( guTreeViewData * ) m_TreeViewCtrl->GetItemData( ItemId );
@@ -1241,7 +1241,7 @@ void guTreeViewPanel::OnTreeViewDeleteFilter( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTreeViewCopyTo( wxCommandEvent &event )
 {
-    const wxTreeItemId &ItemId = m_TreeViewCtrl->GetSelection();
+    const wxTreeItemId &ItemId = m_TreeViewCtrl->GetFocusedItem();
     if( ItemId.IsOk() && m_TreeViewCtrl->IsFilterItem( ItemId ) )
     {
         guTrackArray * Tracks = new guTrackArray();
