@@ -33,11 +33,11 @@
 #include <wx/dynarray.h>
 
 
-#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
-               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
-               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
-               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
-               "song_addedtime, song_lastplay, song_filesize "\
+#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, " \
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, " \
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, " \
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, " \
+               "song_addedtime, song_lastplay, song_filesize " \
                "FROM songs " )
 
 #define GUCOVER_THUMB_SIZE      38
@@ -596,11 +596,11 @@ wxString inline ArrayToFilter( const wxArrayInt &Filters, const wxString &VarNam
 void inline guDbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * dbRes )
 {
 /*
-#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, "\
-               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, "\
-               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, "\
-               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, "\
-               "song_addedtime, song_lastplay, song_filesize "\
+#define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, " \
+               "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, " \
+               "song_pathid, song_path, song_filename, song_format, song_disk, song_number, song_year, song_comment, " \
+               "song_coverid, song_offset, song_length, song_bitrate, song_rating, song_playcount, " \
+               "song_addedtime, song_lastplay, song_filesize " \
                "FROM songs " )
 */
   Song->m_SongId        = dbRes->GetInt( 0 );
