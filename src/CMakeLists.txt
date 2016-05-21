@@ -32,14 +32,6 @@ INCLUDE_DIRECTORIES(
 
 )
 
-IF( ADD_WXSQLITE_SUPPORT )
-        MESSAGE( "Including extra wxsqlite folder" )
-        INCLUDE_DIRECTORIES(
-                ${CMAKE_CURRENT_SOURCE_DIR}/wxsqlite3
-        )
-ENDIF( ADD_WXSQLITE_SUPPORT )
-
-
 SET( CURL_SOURCES
         curl/base.cpp
         curl/http.cpp 
@@ -66,12 +58,6 @@ SET( HMAC_SHA2_SOURCES
         hmac/sha2.c
         hmac/sha2.h
 )
-
-IF( ADD_WXSQLITE_SUPPORT )
-        SET( WXSQLITE_SOURCES
-                wxsqlite3/wxsqlite3.cpp
-        )
-ENDIF( ADD_WXSQLITE_SUPPORT )
 
 ADD_EXECUTABLE( guayadeque
         AlListBox.cpp
