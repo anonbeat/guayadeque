@@ -19,7 +19,6 @@
 // -------------------------------------------------------------------------------- //
 #include "LyricsPanel.h"
 
-#include "Base64.h"
 #include "Commands.h"
 #include "Config.h"
 #include "curl/http.h"

@@ -176,8 +176,6 @@ ADD_EXECUTABLE( guayadeque
         ListView.h
         PLSoListBox.cpp
         PLSoListBox.h
-        Base64.cpp
-        Base64.h
         ApeTag.cpp
         ApeTag.h
         Discogs.cpp

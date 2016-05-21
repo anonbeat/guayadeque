@@ -22,11 +22,11 @@
 #include "CoverEdit.h"
 #include "Utils.h"
 
-#include "Base64.h"
 #include "sha2.h"
 #include "hmac_sha2.h"
 
 #include <wx/arrimpl.cpp>
+#include <wx/base64.h>
 #include <wx/statline.h>
 #include <wx/sstream.h>
 
@@ -233,7 +233,7 @@ wxString GetAmazonSign( const wxString &text )
 
     HMACSha256( Key.char_str(), Key.Length(), Str.char_str(), Str.Length(), Output, SHA256_DIGEST_SIZE );
 
-    wxString Sign = guBase64Encode( Output, SHA256_DIGEST_SIZE );
+    wxString Sign = wxBase64Encode( Output, SHA256_DIGEST_SIZE );
     //guLogMessage( wxT( "Signature: '%s'" ), Sign.c_str() );
     Sign.Replace( wxT( "+" ), wxT( "%2B" ) );
     Sign.Replace( wxT( "=" ), wxT( "%3D" ) );

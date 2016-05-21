@@ -21,13 +21,13 @@
 #include "Utils.h"
 
 #include "ApeTag.h"
-#include "Base64.h"
 #include "MainFrame.h"
 #include "TrackEdit.h"
 
+#include <wx/base64.h>
 #include <wx/mstream.h>
-#include <wx/wfstream.h>
 #include <wx/tokenzr.h>
+#include <wx/wfstream.h>
 
 #include <asfattribute.h>
 #include <popularimeterframe.h>
@@ -330,7 +330,7 @@ wxImage * GetXiphCommentCoverArt( Ogg::XiphComment * xiphcomment )
 
         //guLogMessage( wxT( "Image:\n%s\n" ), CoverEncData.c_str() );
 
-        wxMemoryBuffer CoverDecData = guBase64Decode( CoverEncData );
+        wxMemoryBuffer CoverDecData = wxBase64Decode( CoverEncData );
 
         //guLogMessage( wxT( "Image Decoded Data : (%i) %i bytes" ), CoverDecData.GetBufSize(), CoverDecData.GetDataLen() );
 
@@ -378,7 +378,7 @@ bool SetXiphCommentCoverArt( Ogg::XiphComment * xiphcomment, const wxImage * ima
                 {
                     ImgOutputStream.CopyTo( ImgData, ImgOutputStream.GetSize() );
                     xiphcomment->addField( "COVERARTMIME", "image/jpeg" );
-                    xiphcomment->addField( "COVERART", wxStringToTString( guBase64Encode( ImgData, ImgOutputStream.GetSize() ) ) );
+                    xiphcomment->addField( "COVERART", wxStringToTString( wxBase64Encode( ImgData, ImgOutputStream.GetSize() ) ) );
                     free( ImgData );
                     return true;
                 }

@@ -39,15 +39,7 @@
 #define guRandomInit() (srand( time( NULL ) ))
 #define guRandom(x) (rand() % x)
 
-//template <typename T>
-//inline const T &guMin( const T &a, const T &b ) { if( a < b ) return a; return b; }
-//template <typename T>
-//inline const T &guMax( const T &a, const T &b ) { if( a < b ) return b; return a; }
-//template <typename T>
-//inline const T &guBound( const T &min, const T &val, const T &max ) { return guMax( min, guMin( max, val ) ); }
-
-
-#define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; U; Linux x86_64; es-AR; rv:1.9.2.13) Gecko/20101206 Ubuntu/10.10 (maverick) Firefox/3.6.13" )
+#define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/49.0.2623.108 Chrome/49.0.2623.108 Safari/537.36" )
 
 class guTrackArray;
 class guMediaViewer;
