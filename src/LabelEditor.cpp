@@ -114,19 +114,19 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 
 	ButtonsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_AddButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_AddButton->SetToolTip( _("Add a new label") );
 
 	ButtonsSizer->Add( m_AddButton, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DelButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelButton->Enable( false );
 	m_DelButton->SetToolTip( _("Delete the current selected label") );
 
 
 	ButtonsSizer->Add( m_DelButton, 0, wxBOTTOM|wxRIGHT, 5 );
 
-	m_CopyButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_CopyButton = new wxBitmapButton( m_LabelsPanel, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_copy ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_CopyButton->SetToolTip( _("Copy the label selection to all the items") );
 
 	ButtonsSizer->Add( m_CopyButton, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );

@@ -56,7 +56,7 @@ void AddOnlineLinksMenu( wxMenu * Menu )
                 }
                 else
                 {
-                    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_search ) );
+                    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_search ) );
                 }
                 SubMenu->Append( MenuItem );
             }

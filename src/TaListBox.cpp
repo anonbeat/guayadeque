@@ -101,18 +101,18 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     wxMenuItem * MenuItem;
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ADD, _( "Create" ), _( "Create a new label" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tags ) );
     Menu->Append( MenuItem );
 
 
     if( SelCount )
     {
         MenuItem = new wxMenuItem( Menu, ID_LABEL_EDIT, _( "Rename" ), _( "Change selected label" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_LABEL_DELETE, _( "Delete" ), _( "Delete selected labels" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
     }
 
@@ -121,14 +121,14 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_LABEL_PLAY,
                             wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                             _( "Play current selected labels" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( Menu, ID_LABEL_ENQUEUE_AFTER_ALL,
                             wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected labels to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
@@ -137,21 +137,21 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( EnqueueMenu, ID_LABEL_ENQUEUE_AFTER_TRACK,
                             wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                             _( "Add current selected tracks to playlist after the current track" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_LABEL_ENQUEUE_AFTER_ALBUM,
                             wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                             _( "Add current selected tracks to playlist after the current album" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_LABEL_ENQUEUE_AFTER_ARTIST,
                             wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                             _( "Add current selected tracks to playlist after the current artist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
@@ -164,7 +164,7 @@ void guTaListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_LABEL_SAVETOPLAYLIST,
                                 wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                                 _( "Save the selected tracks to playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         if( m_LibPanel->GetContextMenuFlags() & guCONTEXTMENU_COPY_TO )

@@ -36,8 +36,8 @@ guRaListBox::guRaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 {
     m_LibPanel = libpanel;
 
-    m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + GURATING_STYLE_MID ) ) );
-    m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + GURATING_STYLE_MID ) ) );
+    m_NormalStar = guNS_Image::GetBitmap( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + GURATING_STYLE_MID ) );
+    m_SelectStar = guNS_Image::GetBitmap( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + GURATING_STYLE_MID ) );
 
     CreateAcceleratorTable();
 
@@ -46,12 +46,7 @@ guRaListBox::guRaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 
 // -------------------------------------------------------------------------------- //
 guRaListBox::~guRaListBox()
-{
-    if( m_NormalStar )
-        delete m_NormalStar;
-    if( m_SelectStar )
-        delete m_SelectStar;
-}
+{}
 
 // -------------------------------------------------------------------------------- //
 void guRaListBox::CreateAcceleratorTable( void )
@@ -124,7 +119,7 @@ void guRaListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
         for( x = 0; x < 5; x++ )
         {
-           dc.DrawBitmap( ( x >= Rating ) ? * m_NormalStar : * m_SelectStar,
+           dc.DrawBitmap( ( x >= Rating ) ? m_NormalStar : m_SelectStar,
                           rect.x + 3 + ( w * x ), rect.y + 3, true );
         }
     }
@@ -141,14 +136,14 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_RATING_PLAY,
                             wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                             _( "Play the selected tracks" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( Menu, ID_RATING_ENQUEUE_AFTER_ALL,
                             wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected tracks to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
@@ -157,21 +152,21 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( EnqueueMenu, ID_RATING_ENQUEUE_AFTER_TRACK,
                             wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                             _( "Add current selected tracks to playlist after the current track" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_RATING_ENQUEUE_AFTER_ALBUM,
                             wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                             _( "Add current selected tracks to playlist after the current album" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_RATING_ENQUEUE_AFTER_ARTIST,
                             wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                             _( "Add current selected tracks to playlist after the current artist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
@@ -186,7 +181,7 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem = new wxMenuItem( Menu, ID_RATING_EDITTRACKS,
                                 wxString( _( "Edit Songs" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                                 _( "Edit the selected tracks" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
 
@@ -195,7 +190,7 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_RATING_SAVETOPLAYLIST,
                                 wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                                 _( "Save the selected tracks to playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )

@@ -67,17 +67,17 @@ bool guShoutcastRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId 
             menu->AppendSeparator();
         }
         MenuItem = new wxMenuItem( menu, ID_RADIO_GENRE_ADD, _( "Add Genre" ), _( "Create a new genre" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         menu->Append( MenuItem );
 
         if( ItemData )
         {
             MenuItem = new wxMenuItem( menu, ID_RADIO_GENRE_EDIT, _( "Edit genre" ), _( "Change the selected genre" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
             menu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( menu, ID_RADIO_GENRE_DELETE, _( "Delete genre" ), _( "Delete the selected search" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
             menu->Append( MenuItem );
         }
         if( !selcount )
@@ -92,17 +92,17 @@ bool guShoutcastRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId 
             menu->AppendSeparator();
         }
         MenuItem = new wxMenuItem( menu, ID_RADIO_SEARCH_ADD, _( "Add Search" ), _( "Create a new search" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         menu->Append( MenuItem );
 
         if( ItemData )
         {
             MenuItem = new wxMenuItem( menu, ID_RADIO_SEARCH_EDIT, _( "Edit search" ), _( "Change the selected search" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
             menu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( menu, ID_RADIO_SEARCH_DELETE, _( "Delete search" ), _( "Delete the selected search" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
             menu->Append( MenuItem );
         }
         if( !selcount )
@@ -117,7 +117,7 @@ bool guShoutcastRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId 
     }
 
     MenuItem = new wxMenuItem( menu, ID_RADIO_DOUPDATE, _( "Update Radio Stations" ), _( "Update the radio station lists" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_reload ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_reload ) );
     menu->Append( MenuItem );
 
     return true;
@@ -126,9 +126,9 @@ bool guShoutcastRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId 
 // -------------------------------------------------------------------------------- //
 void guShoutcastRadioProvider::RegisterImages( wxImageList * imagelist )
 {
-    imagelist->Add( guImage( guIMAGE_INDEX_tiny_shoutcast ) );
+    imagelist->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_shoutcast ) );
     m_ImageIds.Add( imagelist->GetImageCount() - 1 );
-    imagelist->Add( guImage( guIMAGE_INDEX_search ) );
+    imagelist->Add( guNS_Image::GetImage( guIMAGE_INDEX_search ) );
     m_ImageIds.Add( imagelist->GetImageCount() - 1 );
 }
 

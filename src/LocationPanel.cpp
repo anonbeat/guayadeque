@@ -74,15 +74,15 @@ guLocationTreeCtrl::guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainfra
     m_LockCount = 0;
 
     m_ImageList = new wxImageList();
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_library ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_portable_device ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_net_radio ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_podcast ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_magnatune ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_jamendo ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_lastfm ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_tiny_shoutcast ) );
-    m_ImageList->Add( guImage( guIMAGE_INDEX_loc_lyrics ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_library ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_portable_device ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_net_radio ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_podcast ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_magnatune ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_jamendo ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_lastfm ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_shoutcast ) );
+    m_ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_loc_lyrics ) );
 
     AssignImageList( m_ImageList );
 

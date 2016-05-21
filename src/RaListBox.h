@@ -32,8 +32,8 @@ class guRaListBox : public guAccelListBox
   protected :
     guLibPanel *    m_LibPanel;
 
-    wxBitmap *      m_NormalStar;
-    wxBitmap *      m_SelectStar;
+    wxBitmap        m_NormalStar;
+    wxBitmap        m_SelectStar;
 
     virtual void    GetItemsList( void );
     virtual void    CreateContextMenu( wxMenu * menu ) const;

@@ -82,26 +82,26 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
 
 	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_SetupButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SetupButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_SetupButton->SetToolTip( _( "Configure lyrics preferences" ) );
 	EditorSizer->Add( m_SetupButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_ReloadButton->SetToolTip( _( "Search for lyrics" ) );
     m_ReloadButton->Enable( false );
 	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_EditButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_EditButton->SetToolTip( _( "Edit the lyrics" ) );
 	m_EditButton->Enable( false );
 	EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_SaveButton->Enable( false );
 	m_SaveButton->SetToolTip( _( "Save the lyrics" ) );
 	EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_WebSearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_WebSearchButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_WebSearchButton->Enable( false );
 	m_WebSearchButton->SetToolTip( _( "Search the lyrics on the web" ) );
 	EditorSizer->Add( m_WebSearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
@@ -283,7 +283,7 @@ void guLyricsPanel::CreateContextMenu( wxMenu * menu )
 {
     wxMenuItem * MenuItem;
     MenuItem = new wxMenuItem( menu, ID_LYRICS_COPY, _( "Copy to Clipboard" ), _( "Copy the content of the lyric to clipboard" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit_copy ) );
     menu->Append( MenuItem );
 
     wxTheClipboard->UsePrimarySelection( false );
@@ -304,7 +304,7 @@ void guLyricsPanel::CreateContextMenu( wxMenu * menu )
     menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( menu, ID_LYRICS_PRINT, _( "Print" ), _( "Print the content of the lyrics" ) );
-    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_ ) );
+    //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_ ) );
     menu->Append( MenuItem );
 }
 
@@ -2151,11 +2151,11 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
 	wxBoxSizer * ReplaceBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_ReplaceAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ReplaceAdd = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ReplaceAdd->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
 	ReplaceBtnSizer->Add( m_ReplaceAdd, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_ReplaceDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_ReplaceDel = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_ReplaceDel->Enable( false );
 	ReplaceBtnSizer->Add( m_ReplaceDel, 0, wxBOTTOM|wxRIGHT, 5 );
 
@@ -2184,10 +2184,10 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
         wxBoxSizer * ExtractBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-        m_ExtractAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+        m_ExtractAdd = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
         ExtractBtnSizer->Add( m_ExtractAdd, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-        m_ExtractDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+        m_ExtractDel = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
         m_ExtractDel->Enable( false );
         ExtractBtnSizer->Add( m_ExtractDel, 0, wxBOTTOM|wxRIGHT, 5 );
 
@@ -2214,10 +2214,10 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
         wxBoxSizer * ExcludeBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-        m_ExcludeAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+        m_ExcludeAdd = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
         ExcludeBtnSizer->Add( m_ExcludeAdd, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-        m_ExcludeDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+        m_ExcludeDel = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
         m_ExcludeDel->Enable( false );
         ExcludeBtnSizer->Add( m_ExcludeDel, 0, wxBOTTOM|wxRIGHT, 5 );
 
@@ -2238,10 +2238,10 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
         wxBoxSizer* NotFoundBtnSizer;
         NotFoundBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-        m_NotFoundAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+        m_NotFoundAdd = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
         NotFoundBtnSizer->Add( m_NotFoundAdd, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-        m_NotFoundDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+        m_NotFoundDel = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
         m_NotFoundDel->Enable( false );
         NotFoundBtnSizer->Add( m_NotFoundDel, 0, wxBOTTOM|wxRIGHT, 5 );
 

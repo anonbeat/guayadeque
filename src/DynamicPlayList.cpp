@@ -525,15 +525,15 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
     m_LengthSeconds->Show( false );
 	m_FilterEditSizer->Add( m_LengthSeconds, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_FilterAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_FilterAdd = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_FilterAdd->Enable( false );
 	m_FilterEditSizer->Add( m_FilterAdd, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM, 5 );
 
-	m_FilterDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_FilterDel = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_FilterDel->Enable( false );
 	m_FilterEditSizer->Add( m_FilterDel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxLEFT, 5 );
 
-	m_FilterAccept = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_FilterAccept = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_accept ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_FilterAccept->Enable( false );
 	m_FilterEditSizer->Add( m_FilterAccept, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 

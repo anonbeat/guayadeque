@@ -885,7 +885,7 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
                         FileCounter,
                         SizeToString( m_SizeCounter ).c_str(),
                         LenToString( TimeCounter * 1000 ).c_str() );
-                    wxImage IconImg = guImage( guIMAGE_INDEX_guayadeque );
+                    wxImage IconImg = guNS_Image::GetImage( guIMAGE_INDEX_guayadeque );
                     NotifySrv->Notify( wxEmptyString, _( "Finished copying files" ), FinishMsg, &IconImg );
                 }
                 //

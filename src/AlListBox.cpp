@@ -261,13 +261,13 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_PLAY,
                                 wxString( _( "Play" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                                 _( "Play current selected albums" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_ENQUEUE_AFTER_ALL,
                                 wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                                 _( "Add current selected albums to the Playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
         wxMenu * EnqueueMenu = new wxMenu();
@@ -275,19 +275,19 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUM_ENQUEUE_AFTER_TRACK,
                                 wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                                 _( "Add current selected albums to the Playlist as Next Tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUM_ENQUEUE_AFTER_ALBUM,
                                 wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                                 _( "Add current selected albums to the Playlist as Next Tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_ALBUM_ENQUEUE_AFTER_ARTIST,
                                 wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                 _( "Add current selected albums to the Playlist as Next Tracks" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu, _( "Add the selected albums after" ) );
@@ -297,7 +297,7 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITLABELS,
                                 wxString( _( "Edit Labels" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
                                 _( "Edit the labels assigned to the selected albums" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
         if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
@@ -305,7 +305,7 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_EDITTRACKS,
                                 wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                                 _( "Edit the selected songs" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
 
@@ -333,7 +333,7 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_ALBUM_SAVETOPLAYLIST,
                                 wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                                 _( "Save the selected tracks to Playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         if( SelCount == 1 && ( ContextMenuFlags & guCONTEXTMENU_DOWNLOAD_COVERS ) )
@@ -341,22 +341,22 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
             Menu->AppendSeparator();
 
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_MANUALCOVER, _( "Download Cover" ), _( "Download cover for the current selected album" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_download_covers ) );
             Menu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECT_COVER, _( "Select Cover" ), _( "Select the cover image file from disk" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_download_covers ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_download_covers ) );
             Menu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_DELETE, _( "Delete Cover" ), _( "Delete the cover for the selected album" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
             Menu->Append( MenuItem );
         }
 
         if( ContextMenuFlags & guCONTEXTMENU_EMBED_COVERS )
         {
             MenuItem = new wxMenuItem( Menu, ID_ALBUM_COVER_EMBED, _( "Embed Cover" ), _( "Embed the current cover to the album files" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
             Menu->Append( MenuItem );
         }
 

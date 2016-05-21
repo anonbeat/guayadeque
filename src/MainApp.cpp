@@ -382,8 +382,7 @@ bool guMainApp::OnInit()
     guMainFrame * Frame = new guMainFrame( 0, m_DbCache );
     SetTopWindow( Frame );
     //Frame->SetMainFrame();
-    wxIcon MainIcon;
-    MainIcon.CopyFromBitmap( guImage( guIMAGE_INDEX_guayadeque ) );
+    wxIcon MainIcon( guNS_Image::GetIcon( guIMAGE_INDEX_guayadeque ) );
     Frame->SetIcon( MainIcon );
 
     // If Minimize is enabled minimized or hide it if Taskbar Icon is enabled

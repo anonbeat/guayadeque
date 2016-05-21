@@ -52,7 +52,7 @@ bool guUserRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId &item
         menu->AppendSeparator();
 
     wxMenuItem * MenuItem = new wxMenuItem( menu, ID_RADIO_USER_ADD, _( "Add Radio" ), _( "Create a new radio" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     menu->Append( MenuItem );
 
     if( forstations && selcount )
@@ -60,22 +60,22 @@ bool guUserRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId &item
         MenuItem = new wxMenuItem( menu, ID_RADIO_USER_EDIT,
                         wxString( _( "Edit Radio" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                         _( "Change the selected radio" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
         menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( menu, ID_RADIO_USER_DEL, _( "Delete Radio" ), _( "Delete the selected radio" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         menu->Append( MenuItem );
     }
 
     menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( menu, ID_RADIO_USER_IMPORT, _( "Import" ), _( "Import the radio stations" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( menu, ID_RADIO_USER_EXPORT, _( "Export" ), _( "Export all the radio stations" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
     menu->Append( MenuItem );
 
     return true;
@@ -94,7 +94,7 @@ void guUserRadioProvider::SetSearchText( const wxArrayString &texts )
 // -------------------------------------------------------------------------------- //
 void guUserRadioProvider::RegisterImages( wxImageList * imagelist )
 {
-    imagelist->Add( guImage( guIMAGE_INDEX_tiny_net_radio ) );
+    imagelist->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_net_radio ) );
     m_ImageIds.Add( imagelist->GetImageCount() - 1 );
 }
 

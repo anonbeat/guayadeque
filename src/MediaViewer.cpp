@@ -218,19 +218,19 @@ void guMediaViewer::CreateControls( void )
         FilterNames.Add( unescape_configlist_str( m_DynFilterArray[ Index ].BeforeFirst( wxT( ':' ) ) ) );
     }
 
-    m_LibrarySelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_LibrarySelButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_mv_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_LibrarySelButton->SetToolTip( _( "Library view" ) );
     TopSizer->Add( m_LibrarySelButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, 5 );
 
-    m_AlbumBrowserSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_albumbrowser ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_AlbumBrowserSelButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_mv_albumbrowser ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_AlbumBrowserSelButton->SetToolTip( _( "Album Browser view" ) );
     TopSizer->Add( m_AlbumBrowserSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-    m_TreeViewSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_treeview ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_TreeViewSelButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_mv_treeview ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_TreeViewSelButton->SetToolTip( _( "Tree view" ) );
     TopSizer->Add( m_TreeViewSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-    m_PlaylistsSelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_mv_playlists ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_PlaylistsSelButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_mv_playlists ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_PlaylistsSelButton->SetToolTip( _( "Playlists" ) );
     TopSizer->Add( m_PlaylistsSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -246,16 +246,16 @@ void guMediaViewer::CreateControls( void )
     //m_FilterChoice->SetMinSize( wxSize( 100, -1 ) );
     m_FiltersSizer->Add( m_FilterChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-    m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_AddFilterButton->SetToolTip( _( "Add a new album browser filter" ) );
     m_FiltersSizer->Add( m_AddFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-    m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_DelFilterButton->SetToolTip( _( "Delete the current selected filter" ) );
     m_DelFilterButton->Enable( FilterSelected > 0 );
     m_FiltersSizer->Add( m_DelFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
 
-    m_EditFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_EditFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_EditFilterButton->SetToolTip( _( "Edit the current selected filter" ) );
     m_EditFilterButton->Enable( FilterSelected > 0 );
     m_FiltersSizer->Add( m_EditFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );

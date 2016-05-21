@@ -109,29 +109,29 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
     {
         bool IsPaused = ( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING );
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PLAY, IsPaused ? _( "Pause" ) : _( "Play" ), _( "Play current playlist" ) );
-        //MenuItem->SetBitmap( guImage( IsPaused ? guIMAGE_INDEX_player_normal_pause : guIMAGE_INDEX_player_normal_play ) );
+        //MenuItem->SetBitmap( guNS_Image::GetBitmap( IsPaused ? guIMAGE_INDEX_player_normal_pause : guIMAGE_INDEX_player_normal_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_STOP, _( "Stop" ), _( "Play current playlist" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_stop ) );
+        //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_stop ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTTRACK, _( "Next Track" ), _( "Skip to next track in current playlist" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
+        //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_next ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_NEXTALBUM, _( "Next Album" ), _( "Skip to next album track in current playlist" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_next ) );
+        //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_next ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVTRACK, _( "Prev Track" ), _( "Skip to previous track in current playlist" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
+        //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_prev ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYERPANEL_PREVALBUM, _( "Prev Album" ), _( "Skip to previous album track in current playlist" ) );
-        //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_normal_prev ) );
+        //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_prev ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -190,7 +190,7 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_MENU_QUIT, _( "Exit" ), _( "Exit this program" ) );
-    //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_playback_stop ) );
+    //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_playback_stop ) );
     Menu->Append( MenuItem );
 
     return Menu;

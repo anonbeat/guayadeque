@@ -145,14 +145,14 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_PLAY,
                             wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                             _( "Play current selected artists" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( Menu, ID_ARTIST_ENQUEUE_AFTER_ALL,
                             wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected artists to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
@@ -161,21 +161,21 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( EnqueueMenu, ID_ARTIST_ENQUEUE_AFTER_TRACK,
                             wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                             _( "Add current selected tracks to playlist after the current track" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_ARTIST_ENQUEUE_AFTER_ALBUM,
                             wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                             _( "Add current selected tracks to playlist after the current album" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_ARTIST_ENQUEUE_AFTER_ARTIST,
                             wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                             _( "Add current selected tracks to playlist after the current artist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
     MenuItem->Enable( SelCount );
 
@@ -188,7 +188,7 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITLABELS,
                             wxString( _( "Edit Labels" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
                             _( "Edit the labels assigned to the selected artists" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tags ) );
         Menu->Append( MenuItem );
 
         if( ContextMenuFlags & guCONTEXTMENU_EDIT_TRACKS )
@@ -196,7 +196,7 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
             MenuItem = new wxMenuItem( Menu, ID_ARTIST_EDITTRACKS,
                             wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                             _( "Edit the songs from the selected artists" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
 
@@ -205,7 +205,7 @@ void guArListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_ARTIST_SAVETOPLAYLIST,
                             wxString( _( "Save to Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                             _( "Save the selected tracks to playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
