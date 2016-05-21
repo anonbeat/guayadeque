@@ -1869,6 +1869,8 @@ void guPlayListPanel::OnPLTracksDeleteLibrary( wxCommandEvent &event )
             m_PLTracksListBox->GetSelectedSongs( &Tracks );
             //
             m_Db->DeleteLibraryTracks( &Tracks, true );
+            //
+            m_PLTracksListBox->ClearSelectedItems();
 
             //m_PLTracksListBox->ReloadItems();
             m_MediaViewer->UpdatedTracks( guUPDATED_TRACKS_MEDIAVIEWER, &Tracks );
@@ -1888,6 +1890,8 @@ void guPlayListPanel::OnPLTracksDeleteDrive( wxCommandEvent &event )
             m_PLTracksListBox->GetSelectedSongs( &Tracks );
             //
             m_MediaViewer->DeleteTracks( &Tracks );
+            //
+            m_PLTracksListBox->ClearSelectedItems();
 
             SendPlayListUpdatedEvent();
         }

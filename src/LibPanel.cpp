@@ -2759,6 +2759,8 @@ void guLibPanel::OnSongDeleteLibrary( wxCommandEvent &event )
             m_SongListCtrl->GetSelectedSongs( &Tracks );
             //
             m_Db->DeleteLibraryTracks( &Tracks, true );
+            //
+            m_SongListCtrl->ClearSelectedItems();
 
             ReloadControls();
         }
@@ -2777,6 +2779,8 @@ void guLibPanel::OnSongDeleteDrive( wxCommandEvent &event )
             m_SongListCtrl->GetSelectedSongs( &Tracks );
             //
             m_MediaViewer->DeleteTracks( &Tracks );
+            //
+            m_SongListCtrl->ClearSelectedItems();
 
             ReloadControls();
         }
