@@ -704,7 +704,7 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
                 wxFileName PodcastFile( m_PodcastsPath + wxT( "/" ) +
                                             PodcastItem->m_Channel + wxT( "/" ) +
                                             //PodcastTime.Format( wxT( "%Y%m%d%H%M%S-" ) ) +
-                                            Uri.BuildUnescapedURI().AfterLast( wxT( '/' ) ) );
+                                            Uri.GetPath().AfterLast( wxT( '/' ) ) );
                 if( PodcastFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
                 {
                     PodcastItem->m_FileName = PodcastFile.GetFullPath();
