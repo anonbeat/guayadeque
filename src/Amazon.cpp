@@ -42,17 +42,17 @@
 #define AMAZON_SEARCH_APIKEY    "AKIAI3VJGDYXLU7N2HKQ"
 #define AMAZON_ASSOCIATE_TAG    "guaymusiplay-20"
 
-#define AMAZON_SEARCH_URL       wxT( "http://webservices.amazon.com/onca/xml?" )
+#define AMAZON_SEARCH_URL       wxT( "http://ecs.amazonaws.com/onca/xml?" )
 #define AMAZON_SEARCH_PARAMS    wxT( "AWSAccessKeyId=" AMAZON_SEARCH_APIKEY \
-                                     "&Artist=%s" \
                                      "&AssociateTag=guaymusiplay-20" \
                                      "&ItemPage=%u" \
                                      "&Keywords=%s" \
                                      "&Operation=ItemSearch" \
-                                     "&ResponseGroup=Images,Small" \
-                                     "&SearchIndex=Music" \
+                                     "&ResponseGroup=Images" \
+                                     "&SearchIndex=All" \
                                      "&Service=AWSECommerceService" \
-                                     "&Timestamp=%s" )
+                                     "&Timestamp=%s" \
+                                     "&Version=2009-11-01" )
 
 
 
@@ -224,11 +224,12 @@ wxString percentEncodeRfc3986( const wxString &text )
 // -------------------------------------------------------------------------------- //
 wxString GetAmazonSign( const wxString &text )
 {
-#define AMAZON_SEARCH_SECRET    wxT( "ICsfRx7YNpBBamJyJcolN0qGKH6bBG7NlA9kLqhq" )
-    wxString Str = wxT( "GET\nwebservices.amazon.com\n/onca/xml\n" ) + text;
+#define AMAZON_SEARCH_SECRETL    wxT( "ICsfRx7YNpBBamJyJcol" )
+#define AMAZON_SEARCH_SECRETR    wxT( "N0qGKH6bBG7NlA9kLqhq" )
+    wxString Str = wxT( "GET\necs.amazonaws.com\n/onca/xml\n" ) + text;
 
     //guLogMessage( wxT( "String : '%s'" ), Str.c_str() );
-    wxString Key = AMAZON_SEARCH_SECRET;
+    wxString Key = AMAZON_SEARCH_SECRETL AMAZON_SEARCH_SECRETR;
     char * Output = ( char * ) malloc( 1024 );
 
     HMACSha256( Key.char_str(), Key.Length(), Str.char_str(), Str.Length(), Output, SHA256_DIGEST_SIZE );
@@ -249,9 +250,8 @@ int guAmazonCoverFetcher::AddCoverLinks( int pagenum )
     wxDateTime CurTime = wxDateTime::Now();
 
     wxString SearchParams = wxString::Format( AMAZON_SEARCH_PARAMS,
-        percentEncodeRfc3986( guURLEncode( m_Artist ) ).c_str(),
         pagenum + 1,
-        percentEncodeRfc3986( guURLEncode( m_Album ) ).c_str(),
+        percentEncodeRfc3986( guURLEncode( m_Artist + wxT( " " ) + m_Album ) ).c_str(),
         guURLEncode( CurTime.ToUTC().Format( wxT( "%Y-%m-%dT%H:%M:%S.000Z" ) ) ).c_str() );
 
     SearchParams.Replace( wxT( "," ), wxT( "%2C" ) );
