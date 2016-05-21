@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <lyricengine>
   <lyricsources>
     <lyricsource type="embedded" enabled="true" name="Embedded" source=""/>
@@ -19,6 +19,7 @@
       <exclude>
         <item tag="&lt;div class='rtMatcher'&gt;"/>
         <item tag="&lt;span style=&quot;padding:1em&quot;&gt;"/>
+        <item tag="&lt;script&gt;"/>
       </exclude>
       <notfound>
         <item tag="Unfortunately, we are not licensed"/>
@@ -29,7 +30,7 @@
         <item replace=" ._@,;&amp;\/'&quot;-" with=""/>
       </replace>
       <extract>
-        <item begin="&lt;!-- start of lyrics --&gt;" end="&lt;!-- end of lyrics --&gt;"/>
+        <item begin="Sorry about that. --&gt;" end="&lt;/div&gt;"/>
       </extract>
       <exclude>
         <item tag="&lt;B&gt;"/>
@@ -81,7 +82,7 @@
         <item tag="Page not Found"/>
       </notfound>
     </lyricsource>
-    <lyricsource type="download" enabled="true" name="letras.mus.br" source="http://letras.terra.com.br/winamp.php?musica={tl}&amp;artista={al}">
+    <lyricsource type="download" enabled="false" name="letras.mus.br" source="http://letras.terra.com.br/winamp.php?musica={tl}&amp;artista={al}">
       <replace>
         <item replace="_@,;&amp;\/&quot;" with="_"/>
         <item replace=" " with="+"/>
@@ -178,9 +179,11 @@
         <item replace="'." with=""/>
       </replace>
       <extract>
-        <item begin="Ringtone to your Cell" end="Ringtone to your Cell"/>
-        <item begin="&lt;div style=&quot;text-align:center;&quot;&gt;" end="&lt;a"/>
+        <item begin="&lt;div class=&quot;lyrics_above_ad&quot;&gt;" end="&lt;div class=&quot;lyrics_below_ad2&quot;&gt;"/>
       </extract>
+      <exclude>
+        <item tag="&lt;script&gt;"/>
+      </exclude>
       <notfound>
         <item tag="Page not Found"/>
       </notfound>
