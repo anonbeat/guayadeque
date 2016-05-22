@@ -675,8 +675,6 @@ void guMediaViewer::SetMenuState( const bool enabled )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::OnSearchActivated( wxCommandEvent& event )
 {
-    guLogMessage( wxT( "OnSearchActivated..." ) );
-
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
 

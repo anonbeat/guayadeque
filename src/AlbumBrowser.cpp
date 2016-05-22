@@ -151,20 +151,20 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 	m_Bitmap = new wxStaticBitmap( this, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxSize( GUCOVER_IMAGE_SIZE, GUCOVER_IMAGE_SIZE ) );
     m_MainSizer->Add( m_Bitmap, 0, wxRIGHT, 2 );
 
-	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
+    m_AlbumLabel = new guAutoScrollText( this, wxEmptyString, wxSize( 100, 16 ) );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
-	CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
+    CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
 	m_AlbumLabel->SetFont( CurrentFont );
-    m_MainSizer->Add( m_AlbumLabel, 1, wxEXPAND, 5 );
+    m_MainSizer->Add( m_AlbumLabel, 0, wxEXPAND, 5 );
 
-	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
+    m_ArtistLabel = new guAutoScrollText( this, wxEmptyString, wxSize( 100, 16 ) );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
-	m_ArtistLabel->SetFont( CurrentFont );
-    m_MainSizer->Add( m_ArtistLabel, 1, wxEXPAND, 5 );
+    m_ArtistLabel->SetFont( CurrentFont );
+    m_MainSizer->Add( m_ArtistLabel, 0, wxEXPAND, 5 );
 
-	m_TracksLabel = new guAutoScrollText( this, wxEmptyString );
+    m_TracksLabel = new guAutoScrollText( this, wxEmptyString, wxSize( 100, 16 ) );
 	m_TracksLabel->SetFont( CurrentFont );
-    m_MainSizer->Add( m_TracksLabel, 1, wxEXPAND, 5 );
+    m_MainSizer->Add( m_TracksLabel, 0, wxEXPAND, 5 );
 
 	SetSizer( m_MainSizer );
 	Layout();
