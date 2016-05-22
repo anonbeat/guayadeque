@@ -26,6 +26,10 @@
 
 #define guSCROLL_START_TIMEOUT  500
 #define guSCROLL_TIMEOUT        500
+#define guSCROLL_STEP_WIDTH     16
+
+#define guSCROLL_TIMER_START    11
+#define guSCROLL_TIMER_SCROLL   12
 
 BEGIN_EVENT_TABLE( guAutoScrollText, wxControl )
     EVT_MOUSE_EVENTS( guAutoScrollText::OnMouseEvents )
@@ -33,21 +37,21 @@ END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label, const wxSize &size ) :
-    wxControl( parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE )
+    wxControl( parent, wxID_ANY, wxDefaultPosition, size, wxBORDER_NONE ),
+    m_StartTimer( this, guSCROLL_TIMER_START ),
+    m_ScrollTimer( this, guSCROLL_TIMER_SCROLL )
 {
     m_ScrollPos = 0;
     m_ScrollQuantum = 1;
     m_VisWidth = 0;
     m_AllowScroll = false;
-    m_StartTimer.SetOwner( this );
-    m_ScrollTimer.SetOwner( this );
-    //SetBackgroundColour( * wxCYAN );
     m_DefaultSize = size;
 
     SetLabel( label );
 
     Connect( wxEVT_PAINT, wxPaintEventHandler( guAutoScrollText::OnPaint ), NULL, this );
-    Connect( wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnTimer ), NULL, this );
+    Connect( guSCROLL_TIMER_START, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnStartTimer ), NULL, this );
+    Connect( guSCROLL_TIMER_SCROLL, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnScrollTimer ), NULL, this );
     Connect( wxEVT_SIZE, wxSizeEventHandler( guAutoScrollText::OnSize ), NULL, this );
 }
 
@@ -55,7 +59,8 @@ guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label, co
 guAutoScrollText::~guAutoScrollText()
 {
     Disconnect( wxEVT_PAINT, wxPaintEventHandler( guAutoScrollText::OnPaint ), NULL, this );
-    Disconnect( wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnTimer ), NULL, this );
+    Disconnect( guSCROLL_TIMER_START, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnStartTimer ), NULL, this );
+    Disconnect( guSCROLL_TIMER_SCROLL, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnScrollTimer ), NULL, this );
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAutoScrollText::OnSize ), NULL, this );
 }
 
@@ -111,8 +116,9 @@ void guAutoScrollText::OnMouseEvents( wxMouseEvent &event )
     {
         if( !m_ScrollTimer.IsRunning() )
         {
-            if( m_StartTimer.IsRunning() )
-                m_StartTimer.Stop();
+            // No need to stop the timer first anymore
+            //if( m_StartTimer.IsRunning() )
+            //    m_StartTimer.Stop();
             m_StartTimer.Start( guSCROLL_START_TIMEOUT, wxTIMER_ONE_SHOT );
         }
     }
@@ -128,51 +134,48 @@ bool inline MouseIsOver( const wxRect &rect )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAutoScrollText::OnTimer( wxTimerEvent &event )
+void guAutoScrollText::OnStartTimer( wxTimerEvent &event )
 {
-    if( ( wxTimer * ) event.GetEventObject() == &m_StartTimer )
+    if( MouseIsOver( GetScreenRect() ) )
     {
-        if( MouseIsOver( GetScreenRect() ) )
+        m_ScrollTimer.Start( guSCROLL_TIMEOUT, wxTIMER_CONTINUOUS );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guAutoScrollText::OnScrollTimer( wxTimerEvent &event )
+{
+    if( !MouseIsOver( GetScreenRect() ) )
+    {
+        if( m_ScrollQuantum > 0 )
+            m_ScrollQuantum = -1;
+        if( !m_ScrollPos )
         {
-            m_ScrollTimer.Start( guSCROLL_TIMEOUT, wxTIMER_CONTINUOUS );
+            m_ScrollTimer.Stop();
+            return;
+        }
+
+    }
+    else if( m_ScrollQuantum > 0 )
+    {
+        int ActualWidth;
+        int ActualHeight;
+        GetTextExtent( m_Label.Mid( m_ScrollPos ), &ActualWidth, &ActualHeight );
+        if( ( ActualWidth + guSCROLL_STEP_WIDTH ) < m_VisWidth )
+        {
+            m_ScrollQuantum = -1;
         }
     }
     else
     {
-        if( !MouseIsOver( GetScreenRect() ) )
+        if( !m_ScrollPos )
         {
-            if( m_ScrollQuantum > 0 )
-                m_ScrollQuantum = -1;
-            if( !m_ScrollPos )
-            {
-                m_ScrollTimer.Stop();
-                return;
-            }
-
+            m_ScrollQuantum = 1;
         }
-        else if( m_ScrollQuantum > 0 )
-        {
-            int ActualWidth;
-            int ActualHeight;
-            GetTextExtent( m_Label.Mid( m_ScrollPos ), &ActualWidth, &ActualHeight );
-            if( ( ActualWidth + 16 ) < m_VisWidth )
-            {
-                m_ScrollQuantum = -1;
-            }
-        }
-        else
-        {
-            if( !m_ScrollPos )
-            {
-                m_ScrollQuantum = 1;
-            }
-        }
-        m_ScrollPos += m_ScrollQuantum;
-        //guLogMessage( wxT( "Actual ScrollPos: %i  ScrollQ: %i" ), m_ScrollPos, m_ScrollQuantum );
-        Refresh();
-        //Update();
     }
-    event.Skip();
+    m_ScrollPos += m_ScrollQuantum;
+    //guLogMessage( wxT( "Actual ScrollPos: %i  ScrollQ: %i" ), m_ScrollPos, m_ScrollQuantum );
+    Refresh();
 }
 
 // -------------------------------------------------------------------------------- //

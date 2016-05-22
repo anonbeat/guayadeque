@@ -1,4 +1,6 @@
-
+  * Fixed podcast downloaded filename
+  * Use wxBase64 functions
+  * Dropped internal wxsqlite
   * Updated to wx3.0
   * Updated to gstreamer 1.0
 

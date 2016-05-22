@@ -1256,7 +1256,7 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
 
     // Seems Clear is used for clear text what makes a call to this method and so on...
     // So call to the wxItemContainer method
-    ( ( wxItemContainer * ) combobox )->Clear();
+    combobox->wxItemContainer::Clear();
 
     if( curitem == wxNOT_FOUND )
         return;

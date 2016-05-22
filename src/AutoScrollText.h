@@ -32,8 +32,8 @@ class guAutoScrollText : public wxControl
     wxSize          m_LabelExtent;
     int             m_VisWidth;
     bool            m_AllowScroll;
-    wxTimer         m_ScrollTimer;
     wxTimer         m_StartTimer;
+    wxTimer         m_ScrollTimer;
     int             m_ScrollPos;
     int             m_ScrollQuantum;
     wxSize          m_DefaultSize;
@@ -44,7 +44,8 @@ class guAutoScrollText : public wxControl
     void            OnMouseEvents( wxMouseEvent &event );
     void            CalcTextExtent( void );
     void            OnSize( wxSizeEvent &event );
-    void            OnTimer( wxTimerEvent &event );
+    void            OnScrollTimer( wxTimerEvent &event );
+    void            OnStartTimer( wxTimerEvent &event );
 
   public :
     guAutoScrollText( wxWindow * parent, const wxString &label, const wxSize &size = wxDefaultSize );
