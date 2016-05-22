@@ -280,7 +280,7 @@ void guCoverEditor::EndDownloadCoverThread( guDownloadCoverThread * DownloadCove
     }
     else
     {
-        m_Gauge->SetValue( m_Gauge->GetValue() + 1 );
+        m_Gauge->SetValue( wxMin( m_Gauge->GetValue() + 1, MAX_COVERLINKS_ITEMS ) );
     }
     m_DownloadThreadMutex.Lock();
     m_DownloadThreads.Remove( DownloadCoverThread );
