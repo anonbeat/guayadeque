@@ -96,8 +96,8 @@ guAuiTabArt::guAuiTabArt() : wxAuiDefaultTabArt()
     m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_SelTextFgColour = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
 
-    m_disabledCloseBmp = guImage( guIMAGE_INDEX_tiny_close_normal );
-    m_activeCloseBmp = guImage( guIMAGE_INDEX_tiny_close_highlight );
+    m_disabledCloseBmp = guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_close_normal );
+    m_activeCloseBmp = guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_close_highlight );
 }
 
 // -------------------------------------------------------------------------------- //

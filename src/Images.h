@@ -22,6 +22,7 @@
 
 #include <wx/bitmap.h>
 #include <wx/image.h>
+#include <wx/icon.h>
 
 enum guIMAGE_INDEX {
     guIMAGE_INDEX_add = 0,
@@ -189,8 +190,21 @@ enum guIMAGE_INDEX {
 
 
 // -------------------------------------------------------------------------------- //
-wxBitmap guBitmap( guIMAGE_INDEX imageindex );
-wxImage guImage( guIMAGE_INDEX imageindex );
+namespace guNS_Image
+{
+    const wxBitmapType GU_BM_TYPE = wxBITMAP_TYPE_PNG;
+
+    typedef struct guIMG_ITEM {
+        const unsigned char * IMGdata;
+        unsigned int          IMGsize;
+    } guIMG_ITEM;
+
+    #define GUIMAGE( IMAGENAME )    { IMAGENAME, sizeof( IMAGENAME ) }
+
+    wxBitmap GetBitmap( guIMAGE_INDEX imageindex );
+    wxIcon   GetIcon( guIMAGE_INDEX imageindex );
+    wxImage  GetImage( guIMAGE_INDEX imageindex );
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

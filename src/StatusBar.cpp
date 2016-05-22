@@ -163,10 +163,10 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
     int FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
     m_ForceGapless = ( !FadeOutTime || Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "crossfader" ) ) );
 
-    m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
+    m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Enable audioscrobbling" ) );
 
-    m_PlayMode = new wxStaticBitmap( this, wxID_ANY, guImage( m_ForceGapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
+    m_PlayMode = new wxStaticBitmap( this, wxID_ANY, guNS_Image::GetBitmap( m_ForceGapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
     m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
 
     m_SelInfo = new wxStaticText( this, wxID_ANY, wxEmptyString );
@@ -265,7 +265,7 @@ void guStatusBar::UpdateAudioScrobbleIcon( bool Enabled )
 {
     if( m_ASBitmap )
     {
-        m_ASBitmap->SetBitmap( guImage( Enabled ? guIMAGE_INDEX_lastfm_as_on : guIMAGE_INDEX_lastfm_as_off ) );
+        m_ASBitmap->SetBitmap( guNS_Image::GetBitmap( Enabled ? guIMAGE_INDEX_lastfm_as_on : guIMAGE_INDEX_lastfm_as_off ) );
         m_ASBitmap->SetToolTip( Enabled ? _( "Disable audioscrobbling" ) : _( "Enable audioscrobbling" ) );
         m_ASBitmap->Refresh();
     }
@@ -282,7 +282,7 @@ void guStatusBar::SetPlayMode( const bool forcegapless )
         Config->Flush();
         if( m_PlayMode )
         {
-            m_PlayMode->SetBitmap( guImage( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
+            m_PlayMode->SetBitmap( guNS_Image::GetBitmap( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
             m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
             m_PlayMode->Refresh();
         }

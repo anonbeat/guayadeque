@@ -935,7 +935,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 	m_DetailFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	m_DetailFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_DetailImage = new wxStaticBitmap( m_DetailScrolledWindow, wxID_ANY, guImage( guIMAGE_INDEX_mid_podcast ), wxDefaultPosition, wxSize( 60,60 ), 0 );
+	m_DetailImage = new wxStaticBitmap( m_DetailScrolledWindow, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_mid_podcast ), wxDefaultPosition, wxSize( 60,60 ), 0 );
 	m_DetailFlexGridSizer->Add( m_DetailImage, 0, wxALL, 5 );
 
 	m_DetailChannelTitle = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
@@ -1484,7 +1484,7 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
                 m_DetailImage->SetBitmap( PodcastImage );
             }
             else
-                m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_mid_podcast ) );
+                m_DetailImage->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_mid_podcast ) );
         }
 
         m_DetailChannelTitle->SetLabel( PodcastChannel.m_Title );
@@ -1497,7 +1497,7 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
     }
     else
     {
-        m_DetailImage->SetBitmap( guBitmap( guIMAGE_INDEX_mid_podcast ) );
+        m_DetailImage->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_mid_podcast ) );
         m_DetailChannelTitle->SetLabel( wxEmptyString );
         m_DetailDescText->SetLabel( wxEmptyString );
         m_DetailAuthorText->SetLabel( wxEmptyString );
@@ -1742,25 +1742,25 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
     int SelCount = GetSelectedCount();
 
     MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_ADD, _( "New Channel" ), _( "Add a new podcast channel" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
     {
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_DEL, _( "Delete" ), _( "delete this podcast channels and all its items" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_UPDATE, _( "Update" ), _( "Update the podcast items of the selected channels" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         if( SelCount == 1 )
         {
             MenuItem = new wxMenuItem( Menu, ID_PODCASTS_CHANNEL_PROPERTIES, _( "Properties" ), _( "Edit the podcast channel" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
             Menu->Append( MenuItem );
         }
 
@@ -1813,11 +1813,11 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbPodcasts * db ) :
 
     // Construct the images for the status
     m_Images[ guPODCAST_STATUS_NORMAL ] = NULL;
-    m_Images[ guPODCAST_STATUS_PENDING ] = new wxImage( guImage( guIMAGE_INDEX_tiny_status_pending ) );
-    m_Images[ guPODCAST_STATUS_DOWNLOADING ] = new wxImage( guImage( guIMAGE_INDEX_tiny_doc_save ) );
-    m_Images[ guPODCAST_STATUS_READY ] = new wxImage( guImage( guIMAGE_INDEX_tiny_accept ) );
-    m_Images[ guPODCAST_STATUS_DELETED ] = new wxImage( guImage( guIMAGE_INDEX_tiny_status_error ) );
-    m_Images[ guPODCAST_STATUS_ERROR ] = new wxImage( guImage( guIMAGE_INDEX_tiny_status_error ) );
+    m_Images[ guPODCAST_STATUS_PENDING ] = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_tiny_status_pending ) );
+    m_Images[ guPODCAST_STATUS_DOWNLOADING ] = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_tiny_doc_save ) );
+    m_Images[ guPODCAST_STATUS_READY ] = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_tiny_accept ) );
+    m_Images[ guPODCAST_STATUS_DELETED ] = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_tiny_status_error ) );
+    m_Images[ guPODCAST_STATUS_ERROR ] = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_tiny_status_error ) );
 
     int ColId;
     wxString ColName;
@@ -2048,13 +2048,13 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_PLAY,
                                 wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                                 _( "Play current selected songs" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL,
                                 wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                                 _( "Add current selected songs to playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
         wxMenu * EnqueueMenu = new wxMenu();
@@ -2062,19 +2062,19 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( EnqueueMenu, ID_PODCASTS_ITEM_ENQUEUE_AFTER_TRACK,
                                 wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                                 _( "Add current selected tracks to playlist after the current track" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALBUM,
                                 wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                                 _( "Add current selected tracks to playlist after the current album" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST,
                                 wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                 _( "Add current selected tracks to playlist after the current artist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
 
         Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
@@ -2082,13 +2082,13 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_DEL, _( "Delete" ), _( "Delete the current selected podcasts" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_PODCASTS_ITEM_DOWNLOAD, _( "Download" ), _( "Download the current selected podcasts" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -2100,7 +2100,7 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
     {
         wxMenuItem * MenuItem;
         MenuItem = new wxMenuItem( Menu, wxID_ANY, _( "No selected items..." ), _( "Copy the current selected podcasts to a directory or device" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_status_error ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_status_error ) );
         Menu->Append( MenuItem );
     }
 }

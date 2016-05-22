@@ -171,27 +171,27 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	wxBoxSizer * PlayerBtnSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	//m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_prev ), wxDefaultPosition, wxDefaultSize, 0 ); //wxBU_AUTODRAW );
-	m_PrevTrackButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_prev ), guImage( guIMAGE_INDEX_player_highlight_prev ), 0 );
+	//m_PrevTrackButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_prev ), wxDefaultPosition, wxDefaultSize, 0 ); //wxBU_AUTODRAW );
+	m_PrevTrackButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_prev ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_prev ), 0 );
 	m_PrevTrackButton->SetToolTip( _( "Go to the playlist previous track" ) );
 	PlayerBtnSizer->Add( m_PrevTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	//m_PlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_PlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_play ), guImage( guIMAGE_INDEX_player_highlight_play ), 0 );
+	//m_PlayButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_play ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_PlayButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_play ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_play ), 0 );
 	m_PlayButton->SetToolTip( _( "Play or pause the current track" ) );
 	PlayerBtnSizer->Add( m_PlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	//m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_next ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_NextTrackButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_next ), guImage( guIMAGE_INDEX_player_highlight_next ), 0 );
+	//m_NextTrackButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_next ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_NextTrackButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_next ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_next ), 0 );
 	m_NextTrackButton->SetToolTip( _( "Go to the playlist next track" ) );
 	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	//m_StopButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_stop ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_StopButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_stop ), guImage( guIMAGE_INDEX_player_highlight_stop ), 0 );
+	//m_StopButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_stop ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_StopButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_stop ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_stop ), 0 );
 	m_StopButton->SetToolTip( _( "Stop playing" ) );
 	PlayerBtnSizer->Add( m_StopButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
-    m_RecordButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_record ), guImage( guIMAGE_INDEX_player_normal_record ), guImage( guIMAGE_INDEX_player_highlight_record ) );
+    m_RecordButton = new guToggleRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_light_record ), guNS_Image::GetImage( guIMAGE_INDEX_player_normal_record ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_record ) );
     m_RecordButton->SetToolTip( _( "Record to file" ) );
     m_RecordButton->Enable( false );
     m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "record" ) ) );
@@ -199,20 +199,20 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
 
-	//m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ), 0 );
+	//m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_VolumeButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_vol_mid ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_vol_mid ), 0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
 	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	//m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_EqualizerButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_equalizer ), guImage( guIMAGE_INDEX_player_highlight_equalizer ), 0 );
+	//m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_EqualizerButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_equalizer ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_equalizer ), 0 );
 	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
 	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
 	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
 
-	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SmartPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_smart ), guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
+	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_SmartPlayButton = new guToggleRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_light_smart ), guNS_Image::GetImage( guIMAGE_INDEX_player_normal_smart ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_smart ) );
 	//m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
     wxString TipText = _( "Smart Play: " );
     if( !m_PlaySmart )
@@ -228,7 +228,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_SmartPlayButton->SetValue( m_PlaySmart );
 	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
+	m_RepeatPlayButton = new guToggleRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_light_repeat ), guNS_Image::GetImage( guIMAGE_INDEX_player_normal_repeat ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_repeat ) );
 	//m_RepeatPlayButton->SetToolTip( _( "Select the repeat mode" ) );
     TipText = _( "Repeat: " );
     if( !m_PlayLoop )
@@ -247,8 +247,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_RepeatPlayButton->SetValue( m_PlayLoop );
 	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	//m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_RandomPlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_random ), guImage( guIMAGE_INDEX_player_highlight_random ), 0 );
+	//m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
+	m_RandomPlayButton = new guRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_normal_random ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_random ), 0 );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
@@ -258,7 +258,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	wxBoxSizer* PlayerDetailsSizer;
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guNS_Image::GetImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
 	//m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
@@ -315,7 +315,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_Rating = new guRating( this, GURATING_STYLE_MID );
 	m_BitRateSizer->Add( m_Rating, 0, wxRIGHT|wxALIGN_CENTER_VERTICAL, 2 );
 
-//	m_LoveBanButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_love ), guImage( guIMAGE_INDEX_player_normal_love ), guImage( guIMAGE_INDEX_player_highlight_love ) );
+//	m_LoveBanButton = new guToggleRoundButton( this, guNS_Image::GetImage( guIMAGE_INDEX_player_light_love ), guNS_Image::GetImage( guIMAGE_INDEX_player_normal_love ), guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_love ) );
 //    m_LoveBanButton->SetToolTip( _( "Love or Ban a track in AudioScrobble service" ) );
 //    m_BitRateSizer->Add( m_LoveBanButton, 0, wxEXPAND|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
 
@@ -1485,13 +1485,13 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
     {
         if( State == GST_STATE_PLAYING ) //guMEDIASTATE_PLAYING )
         {
-            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_pause ) );
-            m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_pause ) );
+            m_PlayButton->SetBitmapLabel( guNS_Image::GetImage( guIMAGE_INDEX_player_normal_pause ) );
+            m_PlayButton->SetBitmapHover( guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_pause ) );
         }
         else
         {
-            m_PlayButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_play ) );
-            m_PlayButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_play ) );
+            m_PlayButton->SetBitmapLabel( guNS_Image::GetImage( guIMAGE_INDEX_player_normal_play ) );
+            m_PlayButton->SetBitmapHover( guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_play ) );
 
             if( State == GST_STATE_READY )
             {
@@ -1792,7 +1792,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                 event.SetClientData( new guTrack( m_MediaSong ) );
                 wxPostEvent( m_MainFrame, event );
 
-                wxImage Image( guImage( guIMAGE_INDEX_net_radio ) );
+                wxImage Image( guNS_Image::GetImage( guIMAGE_INDEX_net_radio ) );
                 SendNotifyInfo( &Image );
             }
             GetSizer()->Layout();
@@ -1960,7 +1960,7 @@ void guPlayerPanel::SetCurrentCoverImage( wxImage * coverimage, const guSongCove
     }
     else //if( covertype == GU_SONGCOVER_NONE )
     {
-        m_MediaSong.SetCoverImage( new wxImage( guImage( guIMAGE_INDEX_no_cover ) ) );
+        m_MediaSong.SetCoverImage( new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_no_cover ) ) );
         m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
         m_MediaSong.m_CoverPath = wxEmptyString;
     }
@@ -2204,16 +2204,16 @@ void guPlayerPanel::SetPlayLoop( int playloop )
     m_PlayLoop = playloop;
 
     m_RepeatPlayButton->SetBitmapLabel( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_player_normal_repeat ) :
-        guImage( guIMAGE_INDEX_player_normal_repeat_single ) );
+        guNS_Image::GetImage( guIMAGE_INDEX_player_normal_repeat ) :
+        guNS_Image::GetImage( guIMAGE_INDEX_player_normal_repeat_single ) );
 
     m_RepeatPlayButton->SetBitmapDisabled( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_player_light_repeat ) :
-        guImage( guIMAGE_INDEX_player_light_repeat_single ) );
+        guNS_Image::GetImage( guIMAGE_INDEX_player_light_repeat ) :
+        guNS_Image::GetImage( guIMAGE_INDEX_player_light_repeat_single ) );
 
     m_RepeatPlayButton->SetBitmapHover( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_player_highlight_repeat ) :
-        guImage( guIMAGE_INDEX_player_highlight_repeat_single ) );
+        guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_repeat ) :
+        guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_repeat_single ) );
 
     m_RepeatPlayButton->SetValue( m_PlayLoop );
     if( m_PlayLoop && GetPlaySmart() )
@@ -2314,7 +2314,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 
                 m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
                 m_MediaSong.m_CoverPath = wxEmptyString;
-                wxImage * CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+                wxImage * CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_no_cover ) );
                 // Cover
                 if( CoverImage )
                 {
@@ -2405,7 +2405,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 
                 m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
                 m_MediaSong.m_CoverPath = wxEmptyString;
-                wxImage * CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+                wxImage * CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_no_cover ) );
                 // Cover
                 if( CoverImage )
                 {
@@ -2721,16 +2721,16 @@ void guPlayerPanel::OnLoveBanButtonClick( wxCommandEvent &event )
             m_MediaSong.m_ASRating = guAS_RATING_NONE;
 
         m_LoveBanButton->SetBitmapLabel( m_MediaSong.m_ASRating < guAS_RATING_BAN ?
-            guImage( guIMAGE_INDEX_player_normal_love ) :
-            guImage( guIMAGE_INDEX_player_normal_ban ) );
+            guNS_Image::GetImage( guIMAGE_INDEX_player_normal_love ) :
+            guNS_Image::GetImage( guIMAGE_INDEX_player_normal_ban ) );
 
         m_LoveBanButton->SetBitmapDisabled( m_MediaSong.m_ASRating < guAS_RATING_BAN ?
-            guImage( guIMAGE_INDEX_player_light_love ) :
-            guImage( guIMAGE_INDEX_player_light_ban ) );
+            guNS_Image::GetImage( guIMAGE_INDEX_player_light_love ) :
+            guNS_Image::GetImage( guIMAGE_INDEX_player_light_ban ) );
 
         m_LoveBanButton->SetBitmapHover( m_MediaSong.m_ASRating < guAS_RATING_BAN ?
-            guImage( guIMAGE_INDEX_player_highlight_love ) :
-            guImage( guIMAGE_INDEX_player_highlight_ban ) );
+            guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_love ) :
+            guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_ban ) );
 
         m_LoveBanButton->SetValue( m_MediaSong.m_ASRating );
     }
@@ -2847,23 +2847,23 @@ void guPlayerPanel::SetVolume( double volume )
 
     if( m_CurVolume > 75 )
     {
-        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_hi ) );
-        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_hi ) );
+        m_VolumeButton->SetBitmapLabel( guNS_Image::GetImage( guIMAGE_INDEX_player_normal_vol_hi ) );
+        m_VolumeButton->SetBitmapHover( guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_vol_hi ) );
     }
     else if( m_CurVolume > 50 )
     {
-        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_mid ) );
-        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
+        m_VolumeButton->SetBitmapLabel( guNS_Image::GetImage( guIMAGE_INDEX_player_normal_vol_mid ) );
+        m_VolumeButton->SetBitmapHover( guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
     }
     else if( m_CurVolume == 0 )
     {
-        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_muted ) );
-        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_muted ) );
+        m_VolumeButton->SetBitmapLabel( guNS_Image::GetImage( guIMAGE_INDEX_player_normal_muted ) );
+        m_VolumeButton->SetBitmapHover( guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_muted ) );
     }
     else
     {
-        m_VolumeButton->SetBitmapLabel( guImage( guIMAGE_INDEX_player_normal_vol_low ) );
-        m_VolumeButton->SetBitmapHover( guImage( guIMAGE_INDEX_player_highlight_vol_low ) );
+        m_VolumeButton->SetBitmapLabel( guNS_Image::GetImage( guIMAGE_INDEX_player_normal_vol_low ) );
+        m_VolumeButton->SetBitmapHover( guNS_Image::GetImage( guIMAGE_INDEX_player_highlight_vol_low ) );
     }
     m_VolumeButton->Refresh();
     m_LastVolume = m_CurVolume;
@@ -3232,12 +3232,12 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
     }
     else if( m_CurrentTrack->m_Type == guTRACK_TYPE_RADIOSTATION )
     {
-        CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
+        CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_net_radio ) );
         m_CurrentTrack->m_CoverType = GU_SONGCOVER_RADIO;
     }
     else if( m_CurrentTrack->m_Type == guTRACK_TYPE_PODCAST )
     {
-        CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
+        CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_podcast ) );
         m_CurrentTrack->m_CoverType = GU_SONGCOVER_PODCAST;
     }
     else if( m_CurrentTrack->m_MediaViewer )
@@ -3276,7 +3276,7 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
         if( m_CurrentTrack->m_CoverPath.IsEmpty() || !wxFileExists( m_CurrentTrack->m_CoverPath ) )
         {
             //printf( "No coverpath set\n" );
-            CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+            CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_no_cover ) );
             m_CurrentTrack->m_CoverType = GU_SONGCOVER_NONE;
             m_CurrentTrack->m_CoverPath = wxEmptyString;
         }

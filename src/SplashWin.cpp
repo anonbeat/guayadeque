@@ -30,39 +30,40 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 {
     CentreOnScreen();
 
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+    this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-    m_Bitmap = new wxBitmap( guImage( guIMAGE_INDEX_splash ) );
+    m_Bitmap = new wxBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_splash ) );
 
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* MainSizer;
+    MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	wxColour FontColor = wxColour( 120, 120, 120 );
+    wxColour FontColor = wxColour( 120, 120, 120 );
     wxString Version = wxT( ID_GUAYADEQUE_VERSION );
 #ifdef ID_GUAYADEQUE_REVISION
     Version += wxT( "-" ID_GUAYADEQUE_REVISION );
 #endif
-	m_Version = new wxStaticText( this, wxID_ANY, Version, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Version->Wrap( -1 );
-	m_Version->SetForegroundColour( FontColor );
-	m_Version->SetBackgroundColour( * wxWHITE );
-	MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+    m_Version = new wxStaticText( this, wxID_ANY, Version, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Version->Wrap( -1 );
+    m_Version->SetForegroundColour( FontColor );
+    m_Version->SetBackgroundColour( * wxWHITE );
+    MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
     m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT( "J.Rios anonbeat@gmail.com" ), wxT( "mailto:anonbeat@gmail.com" ), wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
-	m_Email->SetHoverColour( FontColor );
-	m_Email->SetNormalColour( FontColor );
-	m_Email->SetVisitedColour( FontColor );
-	m_Email->SetBackgroundColour( * wxWHITE );
+    m_Email->SetHoverColour( FontColor );
+    m_Email->SetNormalColour( FontColor );
+    m_Email->SetVisitedColour( FontColor );
+    m_Email->SetBackgroundColour( * wxWHITE );
     m_Email->SetCanFocus( false );
     MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
     m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, wxT( "guayadeque.org" ), wxT( "http://guayadeque.org" ), wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
-	m_HomePage->SetHoverColour( FontColor );
-	m_HomePage->SetNormalColour( FontColor );
-	m_HomePage->SetVisitedColour( FontColor );
-	m_HomePage->SetBackgroundColour( * wxWHITE );
+    m_HomePage->SetHoverColour( FontColor );
+    m_HomePage->SetNormalColour( FontColor );
+    m_HomePage->SetVisitedColour( FontColor );
+    m_HomePage->SetBackgroundColour( * wxWHITE );
     m_HomePage->SetCanFocus( false );
     MainSizer->Add( m_HomePage, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -74,8 +75,8 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 //	m_Donate->SetBackgroundColour( * wxWHITE );
 //	MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    this->SetSizer( MainSizer );
+    this->Layout();
 
     Show( true );
     SetThemeEnabled( false );
@@ -87,8 +88,8 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 	// Connect Events
 //    Connect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
     Connect( wxEVT_ERASE_BACKGROUND,  wxEraseEventHandler( guSplashFrame::OnEraseBackground ), NULL, this );
-	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
-	Connect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
+    Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
+    Connect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -102,8 +103,8 @@ guSplashFrame::~guSplashFrame()
 	// Disconnect Events
 //    Disconnect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
     Disconnect( wxEVT_ERASE_BACKGROUND,  wxEraseEventHandler( guSplashFrame::OnEraseBackground ), NULL, this );
-	Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
-	Disconnect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
+    Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
+    Disconnect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //

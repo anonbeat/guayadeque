@@ -165,7 +165,7 @@ void guPLSoListBox::CreateContextMenu( wxMenu * Menu ) const
         if( ( m_PLTypes.Count() == 1 ) && ( m_PLTypes[ 0 ] == guPLAYLIST_TYPE_STATIC ) )
         {
             MenuItem = new wxMenuItem( Menu, ID_TRACKS_DELETE, _( "Remove from Playlist" ), _( "Delete the current selected tracks" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_del ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ) );
             Menu->Insert( InsertPosition, MenuItem );
         }
     }

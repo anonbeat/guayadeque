@@ -73,8 +73,8 @@ guPLNamesTreeCtrl::guPLNamesTreeCtrl( wxWindow * parent, guDbLibrary * db, guPla
 
     m_PlayListPanel = playlistpanel;
     m_ImageList = new wxImageList();
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_track ) ) );
-    m_ImageList->Add( wxBitmap( guImage( guIMAGE_INDEX_system_run ) ) );
+    m_ImageList->Add( wxBitmap( guNS_Image::GetImage( guIMAGE_INDEX_track ) ) );
+    m_ImageList->Add( wxBitmap( guNS_Image::GetImage( guIMAGE_INDEX_system_run ) ) );
 
     AssignImageList( m_ImageList );
 
@@ -221,13 +221,13 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
         if( ItemData )
         {
             MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_PLAY, _( "Play" ), _( "Play current selected songs" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
             Menu.Append( MenuItem );
 
             MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_ENQUEUE_AFTER_ALL,
                                 wxString( _( "Enqueue" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                                 _( "Add current selected songs to the playlist" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_add ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_add ) );
             Menu.Append( MenuItem );
 
             wxMenu * EnqueueMenu = new wxMenu();
@@ -235,19 +235,19 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
             MenuItem = new wxMenuItem( EnqueueMenu, ID_PLAYLIST_ENQUEUE_AFTER_TRACK,
                                     wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                                     _( "Add current selected tracks to playlist after the current track" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
             EnqueueMenu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( EnqueueMenu, ID_PLAYLIST_ENQUEUE_AFTER_ALBUM,
                                     wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                                     _( "Add current selected tracks to playlist after the current album" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
             EnqueueMenu->Append( MenuItem );
 
             MenuItem = new wxMenuItem( EnqueueMenu, ID_PLAYLIST_ENQUEUE_AFTER_ARTIST,
                                     wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                     _( "Add current selected tracks to playlist after the current artist" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
             EnqueueMenu->Append( MenuItem );
 
             Menu.Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
@@ -257,19 +257,19 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
     }
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_NEWPLAYLIST, _( "New Dynamic Playlist" ), _( "Create a new dynamic playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_doc_new ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_IMPORT, _( "Import" ), _( "Import a playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_new ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_doc_new ) );
     Menu.Append( MenuItem );
 
     if( ItemData )
     {
         MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EXPORT, _( "Export" ), _( "Export the playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_doc_save ) );
         Menu.Append( MenuItem );
 
         Menu.AppendSeparator();
@@ -279,31 +279,31 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
             if( ItemData->GetType() == guPLAYLIST_TYPE_DYNAMIC )
             {
                 MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_EDIT, _( "Edit" ), _( "Edit the selected playlist" ) );
-                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+                MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit ) );
                 Menu.Append( MenuItem );
 
                 MenuItem = new wxMenuItem( &Menu, ID_TRACKS_SAVETOPLAYLIST, _( "Save to Playlist" ), _( "Save the selected playlist as a Static Playlist" ) );
-                MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+                MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_doc_save ) );
                 Menu.Append( MenuItem );
             }
 
             MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_RENAME, _( "Rename" ), _( "Change the name of the selected playlist" ) );
-            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+            MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit ) );
             Menu.Append( MenuItem );
         }
 
         MenuItem = new wxMenuItem( &Menu, ID_PLAYLIST_DELETE, _( "Delete" ), _( "Delete the selected playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit_delete ) );
         Menu.Append( MenuItem );
 
         Menu.AppendSeparator();
 
         MenuItem = new wxMenuItem( &Menu, ID_MAINFRAME_SET_ALLOW_PLAYLIST, _( "Set as Allow Filter" ), _( "Set this playlist as the allow filter" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_accept ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_accept ) );
         Menu.Append( MenuItem );
 
         MenuItem = new wxMenuItem( &Menu, ID_MAINFRAME_SET_DENY_PLAYLIST, _( "Set as Deny Filter" ), _( "Delete the selected playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_filter ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_filter ) );
         Menu.Append( MenuItem );
 
         Menu.AppendSeparator();

@@ -1502,11 +1502,11 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	wxBoxSizer * BtnsSizer;
 	BtnsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_UpBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_UpBitmapBtn = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_UpBitmapBtn->Enable( false );
 	BtnsSizer->Add( m_UpBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
 
-	m_DownBitmapBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DownBitmapBtn = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DownBitmapBtn->Enable( false );
 	BtnsSizer->Add( m_DownBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
 

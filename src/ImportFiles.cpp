@@ -98,87 +98,87 @@ void guImportFiles::CreateControls( void )
     guMediaCollection * MediaCollection = m_MediaViewer->GetMediaCollection();
     int CopyToIndex = CopyToOptions.Index( MediaCollection->m_DefaultCopyAction );
 
-	m_CopyToChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, CopyToOptions, 0 );
-	m_CopyToChoice->SetSelection( CopyToIndex );
-	CopyToChoiceSIzer->Add( m_CopyToChoice, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxEXPAND, 5 );
+    m_CopyToChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, CopyToOptions, 0 );
+    m_CopyToChoice->SetSelection( CopyToIndex );
+    CopyToChoiceSIzer->Add( m_CopyToChoice, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxEXPAND, 5 );
 
-	m_CopyToSetupBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	CopyToChoiceSIzer->Add( m_CopyToSetupBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_CopyToSetupBtn = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    CopyToChoiceSIzer->Add( m_CopyToSetupBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	CopyToSizer->Add( CopyToChoiceSIzer, 1, wxEXPAND, 5 );
+    CopyToSizer->Add( CopyToChoiceSIzer, 1, wxEXPAND, 5 );
 
-	wxStaticText * DestPathStaticText = new wxStaticText( this, wxID_ANY, _( "Destination Folder:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	DestPathStaticText->Wrap( -1 );
-	CopyToSizer->Add( DestPathStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    wxStaticText * DestPathStaticText = new wxStaticText( this, wxID_ANY, _( "Destination Folder:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    DestPathStaticText->Wrap( -1 );
+    CopyToSizer->Add( DestPathStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DestPathDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString, _( "Select a folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
+    m_DestPathDirPicker = new wxDirPickerCtrl( this, wxID_ANY, wxEmptyString, _( "Select a folder" ), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
     m_DestPathDirPicker->SetPath( m_MediaViewer->AudioPath() );
-	CopyToSizer->Add( m_DestPathDirPicker, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+    CopyToSizer->Add( m_DestPathDirPicker, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
-	MainStaticBoxSizer->Add( CopyToSizer, 0, wxEXPAND, 5 );
+    MainStaticBoxSizer->Add( CopyToSizer, 0, wxEXPAND, 5 );
 
-	wxStaticBoxSizer * FilesSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Files " ) ), wxVERTICAL );
+    wxStaticBoxSizer * FilesSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _( " Files " ) ), wxVERTICAL );
 
-	m_FilesListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
-	Count = m_Tracks->Count();
-	for( Index = 0; Index < Count; Index++ )
-	{
-	    const guTrack & CurTrack = m_Tracks->Item( Index );
-	    wxString CurFile = CurTrack.m_FileName.AfterLast( wxT( '/' ) );
-	    if( CurTrack.m_Offset )
-	    {
-            CurFile += wxT( "@" ) + LenToString( CurTrack.m_Offset );
-            CurFile += wxT( " / " ) + LenToString( CurTrack.m_Length );
-	    }
+    m_FilesListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
+    Count = m_Tracks->Count();
+    for( Index = 0; Index < Count; Index++ )
+    {
+        const guTrack & CurTrack = m_Tracks->Item( Index );
+        wxString CurFile = CurTrack.m_FileName.AfterLast( wxT( '/' ) );
+        if( CurTrack.m_Offset )
+        {
+        CurFile += wxT( "@" ) + LenToString( CurTrack.m_Offset );
+        CurFile += wxT( " / " ) + LenToString( CurTrack.m_Length );
+        }
 
-	    m_FilesListBox->Append( CurFile );
-	}
-	FilesSizer->Add( m_FilesListBox, 1, wxEXPAND|wxALL, 5 );
+        m_FilesListBox->Append( CurFile );
+    }
+    FilesSizer->Add( m_FilesListBox, 1, wxEXPAND|wxALL, 5 );
 
-	wxBoxSizer * AddFilesSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * AddFilesSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_AddFilesBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	AddFilesSizer->Add( m_AddFilesBtn, 0, wxLEFT, 5 );
+    m_AddFilesBtn = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    AddFilesSizer->Add( m_AddFilesBtn, 0, wxLEFT, 5 );
 
-	m_DelFilesBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_DelFilesBtn->Enable( false );
-	AddFilesSizer->Add( m_DelFilesBtn, 0, wxRIGHT, 5 );
+    m_DelFilesBtn = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_DelFilesBtn->Enable( false );
+    AddFilesSizer->Add( m_DelFilesBtn, 0, wxRIGHT, 5 );
 
 
-	AddFilesSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    AddFilesSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_FilesLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_FilesLabel->Wrap( -1 );
-	AddFilesSizer->Add( m_FilesLabel, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+    m_FilesLabel = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_FilesLabel->Wrap( -1 );
+    AddFilesSizer->Add( m_FilesLabel, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	FilesSizer->Add( AddFilesSizer, 0, wxEXPAND, 5 );
+    FilesSizer->Add( AddFilesSizer, 0, wxEXPAND, 5 );
 
-	MainStaticBoxSizer->Add( FilesSizer, 1, wxEXPAND, 5 );
+    MainStaticBoxSizer->Add( FilesSizer, 1, wxEXPAND, 5 );
 
-	MainSizer->Add( MainStaticBoxSizer, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    MainSizer->Add( MainStaticBoxSizer, 1, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	wxStdDialogButtonSizer * DlgButtons = new wxStdDialogButtonSizer();
-	m_DlgButtonsOK = new wxButton( this, wxID_OK );
-	m_DlgButtonsOK->Enable( !m_CopyToChoice->GetStringSelection().IsEmpty() && !m_DestPathDirPicker->GetPath().IsEmpty() && !m_FilesListBox->IsEmpty() );
-	DlgButtons->AddButton( m_DlgButtonsOK );
-	wxButton * DlgButtonsCancel = new wxButton( this, wxID_CANCEL );
-	DlgButtons->AddButton( DlgButtonsCancel );
-	DlgButtons->SetAffirmativeButton( m_DlgButtonsOK );
-	DlgButtons->SetCancelButton( DlgButtonsCancel );
-	DlgButtons->Realize();
-	MainSizer->Add( DlgButtons, 0, wxEXPAND|wxALL, 5 );
+    wxStdDialogButtonSizer * DlgButtons = new wxStdDialogButtonSizer();
+    m_DlgButtonsOK = new wxButton( this, wxID_OK );
+    m_DlgButtonsOK->Enable( !m_CopyToChoice->GetStringSelection().IsEmpty() && !m_DestPathDirPicker->GetPath().IsEmpty() && !m_FilesListBox->IsEmpty() );
+    DlgButtons->AddButton( m_DlgButtonsOK );
+    wxButton * DlgButtonsCancel = new wxButton( this, wxID_CANCEL );
+    DlgButtons->AddButton( DlgButtonsCancel );
+    DlgButtons->SetAffirmativeButton( m_DlgButtonsOK );
+    DlgButtons->SetCancelButton( DlgButtonsCancel );
+    DlgButtons->Realize();
+    MainSizer->Add( DlgButtons, 0, wxEXPAND|wxALL, 5 );
 
-	SetSizer( MainSizer );
-	Layout();
+    SetSizer( MainSizer );
+    Layout();
 
-	m_DlgButtonsOK->SetDefault();
+    m_DlgButtonsOK->SetDefault();
 
-	UpdateCounters();
+    UpdateCounters();
 
-	m_CopyToSetupBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnCopyToSetupClicked ), NULL, this );
-	m_FilesListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guImportFiles::OnFileSelected ), NULL, this );
-	m_AddFilesBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnAddFilesClicked ), NULL, this );
-	m_DelFilesBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnDelFilesClicked ), NULL, this );
+    m_CopyToSetupBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnCopyToSetupClicked ), NULL, this );
+    m_FilesListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guImportFiles::OnFileSelected ), NULL, this );
+    m_AddFilesBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnAddFilesClicked ), NULL, this );
+    m_DelFilesBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnDelFilesClicked ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guImportFiles::OnConfigUpdated ), NULL, this );
 }

@@ -80,7 +80,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
         }
         else
         {
-            m_Image->SetBitmap( guBitmap( guIMAGE_INDEX_mid_podcast ) );
+            m_Image->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_mid_podcast ) );
             if( !channel->m_Image.IsEmpty() )
             {
                 guChannelUpdateImageThread * UpdateImageThread = new guChannelUpdateImageThread( this, channel->m_Image.c_str() );

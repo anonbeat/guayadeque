@@ -107,18 +107,18 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
     CoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-    m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
+    m_PrevButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
     CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
     int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
-    wxImage DefaultCover( guImage( CoverFrame ? guIMAGE_INDEX_blank_cd_cover : guIMAGE_INDEX_no_cover ) );
+    wxImage DefaultCover( guNS_Image::GetImage( CoverFrame ? guIMAGE_INDEX_blank_cd_cover : guIMAGE_INDEX_no_cover ) );
     
     if( !CoverFrame ) DefaultCover.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
 
     m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, DefaultCover, wxDefaultPosition, wxSize( -1,-1 ), 0 );
     CoverSizer->Add( m_CoverBitmap, 0, wxALL|wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL, 5 );
 
-    m_NextButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_right ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
+    m_NextButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_right ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
     CoverSizer->Add( m_NextButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 
@@ -365,7 +365,7 @@ void guCoverEditor::UpdateCoverBitmap( void )
     int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
     if( CoverFrame == guCOVERFRAME_DEFAULT )
     {
-        wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );
+        wxBitmap * BlankCD = new wxBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_blank_cd_cover ) );
         if( BlankCD )
         {
             if( BlankCD->IsOk() )
@@ -403,7 +403,7 @@ void guCoverEditor::UpdateCoverBitmap( void )
         }
         else
         {
-            CoverImage = guImage( guIMAGE_INDEX_no_cover );
+            CoverImage = guNS_Image::GetImage( guIMAGE_INDEX_no_cover );
             m_SizeStaticText->SetLabel( wxEmptyString );
         }
         CoverImage.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );

@@ -53,7 +53,7 @@ bool guTuneInRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId &it
 // -------------------------------------------------------------------------------- //
 void guTuneInRadioProvider::RegisterImages( wxImageList * imagelist )
 {
-    imagelist->Add( guImage( guIMAGE_INDEX_tiny_tunein ) );
+    imagelist->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_tunein ) );
     m_ImageIds.Add( imagelist->GetImageCount() - 1 );
 }
 

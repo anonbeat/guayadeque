@@ -115,10 +115,10 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
 //    if( ( size_t ) m_CurItem > m_Items.Count() )
 //        m_CurItem = wxNOT_FOUND;
 
-    m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
-    m_StopBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_red_stop ) );
-    m_NormalStar   = new wxBitmap( guImage( guIMAGE_INDEX_star_normal_tiny ) );
-    m_SelectStar = new wxBitmap( guImage( guIMAGE_INDEX_star_highlight_tiny ) );
+    m_PlayBitmap = new wxBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
+    m_StopBitmap = new wxBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_red_stop ) );
+    m_NormalStar   = new wxBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_star_normal_tiny ) );
+    m_SelectStar = new wxBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_star_highlight_tiny ) );
 
 //    Connect( wxEVT_COMMAND_LIST_BEGIN_DRAG, wxMouseEventHandler( guPlayList::OnBeginDrag ), NULL, this );
     Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayList::OnClearClicked ), NULL, this );
@@ -1530,13 +1530,13 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITLABELS,
                             wxString( _( "Edit Labels" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITLABELS ),
                             _( "Edit the current selected tracks labels" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tags ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tags ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_EDITTRACKS,
                             wxString( _( "Edit Songs" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                             _( "Edit the current selected songs" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit ) );
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
@@ -1571,7 +1571,7 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SEARCH,
                             wxString( _( "Search" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SEARCH ),
                             _( "Search a track in the playlist by name" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_search ) );
     Menu->Append( MenuItem );
 
     Menu->AppendSeparator();
@@ -1579,7 +1579,7 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
 //    MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_STOP_ATEND,
 //                            wxString( _( "Stop at end" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_STOP_ATEND),
 //                            _( "Stop after current playing or selected track" ) );
-//    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_stop ) );
+//    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_stop ) );
 //    Menu->Append( MenuItem );
 //
 //    Menu->AppendSeparator();
@@ -1587,7 +1587,7 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SAVE,
                         wxString( _( "Save to Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                         _( "Save the selected tracks to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_doc_save ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_doc_save ) );
     Menu->Append( MenuItem );
 
     if( SelCount == 1 )
@@ -1604,7 +1604,7 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_CLEAR,
                             wxString( _( "Clear Playlist" ) ) +  guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_CLEAR ),
                             _( "Remove all tracks from playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_clear ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit_clear ) );
     Menu->Append( MenuItem );
 
     if( SelCount )
@@ -1612,7 +1612,7 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REMOVE,
                             _( "Remove from Playlist" ),
                             _( "Remove the selected tracks from playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_delete ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit_delete ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -1620,13 +1620,13 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_DELETE_LIBRARY,
                             _( "Remove from Library" ),
                             _( "Remove the selected tracks from library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_DELETE_DRIVE,
                             _( "Delete from Drive" ),
                             _( "Remove the selected tracks from drive" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
     }
 

@@ -54,8 +54,8 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 // -------------------------------------------------------------------------------- //
 guAuiDockArt::guAuiDockArt() : wxAuiDefaultDockArt()
 {
-    m_CloseNormal = guImage( guIMAGE_INDEX_tiny_close_normal );
-    m_CloseHighLight = guImage( guIMAGE_INDEX_tiny_close_highlight );
+    m_CloseNormal = guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_close_normal );
+    m_CloseHighLight = guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_close_highlight );
 }
 
 // -------------------------------------------------------------------------------- //

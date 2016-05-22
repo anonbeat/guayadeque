@@ -103,11 +103,11 @@ void guCoverPanel::UpdateImage( void )
             break;
 
         case GU_SONGCOVER_RADIO :
-            CoverImage = new wxImage( guImage( guIMAGE_INDEX_net_radio ) );
+            CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_net_radio ) );
             break;
 
         case GU_SONGCOVER_PODCAST :
-            CoverImage = new wxImage( guImage( guIMAGE_INDEX_podcast ) );
+            CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_podcast ) );
             break;
 
         default :
@@ -116,7 +116,7 @@ void guCoverPanel::UpdateImage( void )
 
     if( !CoverImage )
     {
-        CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
+        CoverImage = new wxImage( guNS_Image::GetImage( guIMAGE_INDEX_no_cover ) );
     }
 
     if( CoverImage )

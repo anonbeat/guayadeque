@@ -92,17 +92,17 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 
 	wxBoxSizer * FilterButtonsSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_UpFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_UpFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_up ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_UpFilterButton->Enable( false );
 
 	FilterButtonsSizer->Add( m_UpFilterButton, 0, wxALIGN_CENTER_HORIZONTAL|wxALL, 5 );
 
-	m_DownFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DownFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_down ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DownFilterButton->Enable( false );
 
 	FilterButtonsSizer->Add( m_DownFilterButton, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_DelFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_DelFilterButton->Enable( false );
 
 	FilterButtonsSizer->Add( m_DelFilterButton, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -125,7 +125,7 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 	m_FiltersChoice->SetSelection( 0 );
 	NewFilterSizer->Add( m_FiltersChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_AddFilterButton = new wxBitmapButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	NewFilterSizer->Add( m_AddFilterButton, 0, wxTOP|wxRIGHT, 5 );
 
 	FiltersSizer->Add( NewFilterSizer, 0, wxEXPAND, 5 );

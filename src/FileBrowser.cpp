@@ -83,9 +83,9 @@ guGenericDirCtrl::guGenericDirCtrl( wxWindow * parent, guMainFrame * mainframe, 
     m_ShowPaths = showpaths;
     m_FileBrowserDirCtrl = ( guFileBrowserDirCtrl * ) parent;
     wxImageList * ImageList = GetTreeCtrl()->GetImageList();
-    ImageList->Add( guImage( guIMAGE_INDEX_tiny_library ) );
-    ImageList->Add( guImage( guIMAGE_INDEX_tiny_podcast ) );
-    ImageList->Add( guImage( guIMAGE_INDEX_tiny_record ) );
+    ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_library ) );
+    ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_podcast ) );
+    ImageList->Add( guNS_Image::GetImage( guIMAGE_INDEX_tiny_record ) );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -207,34 +207,34 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guMainFrame * mai
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-	wxBoxSizer * MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MainSizer;
+    MainSizer = new wxBoxSizer( wxVERTICAL );
 
     int ShowPaths = Config->ReadNum( wxT( "ShowLibPaths" ), guFILEBROWSER_SHOWPATH_LOCATIONS, wxT( "filebrowser" ) );
-	m_DirCtrl = new guGenericDirCtrl( this, m_MainFrame, ShowPaths );
-	m_DirCtrl->ShowHidden( false );
-	SetPath( dirpath, FindMediaViewerByPath( m_MainFrame, dirpath ) );
-	MainSizer->Add( m_DirCtrl, 1, wxEXPAND, 5 );
+    m_DirCtrl = new guGenericDirCtrl( this, m_MainFrame, ShowPaths );
+    m_DirCtrl->ShowHidden( false );
+    SetPath( dirpath, FindMediaViewerByPath( m_MainFrame, dirpath ) );
+    MainSizer->Add( m_DirCtrl, 1, wxEXPAND, 5 );
 
-	wxBoxSizer * DirBtnSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * DirBtnSizer = new wxBoxSizer( wxHORIZONTAL );
 
 
-	DirBtnSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    DirBtnSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	m_ShowLibPathsBtn = new wxBitmapToggleButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_ShowLibPathsBtn = new wxBitmapToggleButton( this, wxID_ANY, guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_library ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_ShowLibPathsBtn->SetToolTip( ShowPaths == guFILEBROWSER_SHOWPATH_SYSTEM ?
                           _( "See used locations" ) :
                           _( "See system files" ) );
-	m_ShowLibPathsBtn->SetValue( ShowPaths & guFILEBROWSER_SHOWPATH_LOCATIONS );
-	DirBtnSizer->Add( m_ShowLibPathsBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_ShowLibPathsBtn->SetValue( ShowPaths & guFILEBROWSER_SHOWPATH_LOCATIONS );
+    DirBtnSizer->Add( m_ShowLibPathsBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	MainSizer->Add( DirBtnSizer, 0, wxEXPAND, 5 );
+    MainSizer->Add( DirBtnSizer, 0, wxEXPAND, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    this->SetSizer( MainSizer );
+    this->Layout();
 
     m_DirCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
-	m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+    m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFileBrowserDirCtrl::OnConfigUpdated ), NULL, this );
 
@@ -249,7 +249,7 @@ guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
 
     Config->WriteNum( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "filebrowser" ) );
     m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
-	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+    m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 
     Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFileBrowserDirCtrl::OnConfigUpdated ), NULL, this );
 }
@@ -338,13 +338,13 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_PLAY,
                             wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                             _( "Play the selected folder" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL,
                             wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                             _( "Add the selected folder to playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     Menu.Append( MenuItem );
 
     wxMenu * EnqueueMenu = new wxMenu();
@@ -352,19 +352,19 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_TRACK,
                             wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                             _( "Add current selected tracks to playlist after the current track" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALBUM,
                             wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                             _( "Add current selected tracks to playlist after the current album" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST,
                             wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                             _( "Add current selected tracks to playlist after the current artist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
     EnqueueMenu->Append( MenuItem );
 
     Menu.Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
@@ -374,7 +374,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_EDITTRACKS,
                             wxString( _( "Edit Tracks" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                             _( "Edit the tracks in the selected folder" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
@@ -382,7 +382,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST,
                             wxString( _( "Save to Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                             _( "Add the tracks in the selected folder to a playlist" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
@@ -390,7 +390,7 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_COPY,
                             _( "Copy" ),
                             _( "Copy the selected folder to clipboard" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_copy ) );
     Menu.Append( MenuItem );
     //MenuItem->Enable( false );
 
@@ -415,11 +415,11 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_RENAME, _( "Rename" ), _( "Rename the selected folder" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
     Menu.Append( MenuItem );
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_DELETE, _( "Remove" ), _( "Remove the selected folder" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
     Menu.Append( MenuItem );
 
     Menu.AppendSeparator();
@@ -1111,13 +1111,13 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_PLAY,
                             wxString( _( "Play" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_PLAY ),
                             _( "Play current selected files" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_player_tiny_light_play ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL,
                             wxString( _( "Enqueue" ) ) + guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALL ),
                             _( "Add current selected files to playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         Menu->Append( MenuItem );
 
         wxMenu * EnqueueMenu = new wxMenu();
@@ -1125,21 +1125,21 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_TRACK,
                                 wxString( _( "Current Track" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_TRACK ),
                                 _( "Add current selected tracks to playlist after the current track" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
         MenuItem->Enable( SelCount );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALBUM,
                                 wxString( _( "Current Album" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ALBUM ),
                                 _( "Add current selected tracks to playlist after the current album" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
         MenuItem->Enable( SelCount );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST,
                                 wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                 _( "Add current selected tracks to playlist after the current artist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
         MenuItem->Enable( SelCount );
 
@@ -1153,7 +1153,7 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_EDITTRACKS,
                             wxString( _( "Edit Tracks" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_EDITTRACKS ),
                             _( "Edit the current selected files" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();
@@ -1161,14 +1161,14 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_SAVEPLAYLIST,
                             wxString( _( "Save to Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SAVE ),
                             _( "Add the current selected tracks to a playlist" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
     }
 
     Menu->AppendSeparator();
 
     MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_COPY, _( "Copy" ), _( "Copy the selected folder to clipboard" ) );
-    MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_copy ) );
+    MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_copy ) );
     Menu->Append( MenuItem );
 
     MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_PASTE, _( "Paste" ), _( "Paste to the selected dir" ) );
@@ -1189,11 +1189,11 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
         Menu->AppendSeparator();
 
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_RENAME, _( "Rename Files" ), _( "Rename the current selected file" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit ) );
         Menu->Append( MenuItem );
 
         MenuItem = new wxMenuItem( Menu, ID_FILESYSTEM_ITEMS_DELETE, _( "Remove" ), _( "Delete the selected files" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit_clear ) );
+        MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_tiny_edit_clear ) );
         Menu->Append( MenuItem );
 
         Menu->AppendSeparator();

@@ -159,9 +159,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     m_LyricSearchContext = NULL;
 
     //
-    wxImage TaskBarIcon( guImage( guIMAGE_INDEX_guayadeque_taskbar ) );
-    TaskBarIcon.ConvertAlphaToMask();
-    m_AppIcon.CopyFromBitmap( TaskBarIcon );
+    m_AppIcon = guNS_Image::GetIcon( guIMAGE_INDEX_guayadeque_taskbar );
 
     //
     m_VolumeMonitor = new guGIO_VolumeMonitor( this );
@@ -4515,7 +4513,7 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu )
             }
 
             MenuItem = new wxMenuItem( SubMenu, ID_COPYTO_BASE + guCOPYTO_DEVICE_BASE + Index, MediaViewer->GetName(), _( "Copy the current selected songs to a directory or device" ) );
-            //MenuItem->SetBitmap( guImage( guIMAGE_INDEX_edit_copy ) );
+            //MenuItem->SetBitmap( guNS_Image::GetBitmap( guIMAGE_INDEX_edit_copy ) );
             SubMenu->Append( MenuItem );
         }
     }

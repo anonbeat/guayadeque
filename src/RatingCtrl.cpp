@@ -39,8 +39,8 @@ guRating::guRating( wxWindow * parent, const int style ) :
     m_Rating = wxNOT_FOUND;
     m_Style = style;
 
-    m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + style ) ) );
-    m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + style ) ) );
+    m_NormalStar   = new wxBitmap( guNS_Image::GetBitmap( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + style ) ) );
+    m_SelectStar = new wxBitmap( guNS_Image::GetBitmap( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + style ) ) );
 }
 
 // -------------------------------------------------------------------------------- //
