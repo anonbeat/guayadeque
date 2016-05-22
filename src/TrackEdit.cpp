@@ -1343,7 +1343,6 @@ void guTrackEditor::OnGenreChangedTimeout( wxTimerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 {
-    // TODO: Add timers to avoid repetitive calls while editing
     m_ArtistChanged = true;
     m_ArtistChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
@@ -1351,7 +1350,6 @@ void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 {
-    // TODO: Add timers to avoid repetitive calls while editing
     m_AlbumArtistChanged = true;
     m_AlbumArtistChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
@@ -1359,7 +1357,6 @@ void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 {
-    // TODO: Add timers to avoid repetitive calls while editing
     m_AlbumChanged = true;
     m_AlbumChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
@@ -1367,7 +1364,6 @@ void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 {
-    // TODO: Add timers to avoid repetitive calls while editing
     m_CompChanged = true;
     m_ComposerChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
@@ -1375,7 +1371,6 @@ void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
 {
-    // TODO: Add timers to avoid repetitive calls while editing
     m_GenreChanged = true;
     m_GenreChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
