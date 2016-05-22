@@ -31,6 +31,15 @@
 #include <wx/notebook.h>
 #include <wx/regex.h>
 
+#define guTRACKEDIT_TIMER_SELECTION_ID        10
+#define guTRACKEDIT_TIMER_SELECTION_TIME      50
+#define guTRACKEDIT_TIMER_TEXTCHANGED_TIME    500
+#define guTRACKEDIT_TIMER_ARTIST_ID           11
+#define guTRACKEDIT_TIMER_ALBUMARTIST_ID      12
+#define guTRACKEDIT_TIMER_ALBUM_ID            13
+#define guTRACKEDIT_TIMER_COMPOSER_ID         14
+#define guTRACKEDIT_TIMER_GENRE_ID            15
+
 const wxEventType guTrackEditEvent = wxNewEventType();
 
 // -------------------------------------------------------------------------------- //
@@ -53,7 +62,13 @@ void guImagePtrArrayClean( guImagePtrArray * images )
 
 // -------------------------------------------------------------------------------- //
 guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray * songs,
-    guImagePtrArray * images, wxArrayString * lyrics, wxArrayInt * changedflags )
+    guImagePtrArray * images, wxArrayString * lyrics, wxArrayInt * changedflags ) :
+    m_SelectedTimer( this, guTRACKEDIT_TIMER_SELECTION_ID ),
+    m_ArtistChangedTimer( this, guTRACKEDIT_TIMER_ARTIST_ID ),
+    m_AlbumArtistChangedTimer( this, guTRACKEDIT_TIMER_ALBUMARTIST_ID ),
+    m_AlbumChangedTimer( this, guTRACKEDIT_TIMER_ALBUM_ID ),
+    m_ComposerChangedTimer( this, guTRACKEDIT_TIMER_COMPOSER_ID ),
+    m_GenreChangedTimer( this, guTRACKEDIT_TIMER_GENRE_ID )
 {
     int index;
     int count;
@@ -71,7 +86,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     m_LyricSearchEngine = NULL;
     m_LyricSearchContext = NULL;
     m_GetComboDataThread = NULL;
-    m_SelectedTimer.SetOwner( this );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
@@ -493,7 +507,12 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     // Idle Events
 	m_SongListSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guTrackEditor::SongListSplitterOnIdle ), NULL, this );
 
-	Connect( wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnSelectTimeout ), NULL, this );
+    Connect( guTRACKEDIT_TIMER_SELECTION_ID, wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnSelectTimeout ), NULL, this );
+    Connect( guTRACKEDIT_TIMER_ARTIST_ID, wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnArtistChangedTimeout ), NULL, this );
+    Connect( guTRACKEDIT_TIMER_ALBUMARTIST_ID, wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnAlbumArtistChangedTimeout ), NULL, this );
+    Connect( guTRACKEDIT_TIMER_ALBUM_ID, wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnAlbumChangedTimeout ), NULL, this );
+    Connect( guTRACKEDIT_TIMER_COMPOSER_ID, wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnComposerChangedTimeout ), NULL, this );
+    Connect( guTRACKEDIT_TIMER_GENRE_ID, wxEVT_TIMER, wxTimerEventHandler( guTrackEditor::OnGenreChangedTimeout ), NULL, this );
 
 	//
     // Force the 1st listbox item to be selected
@@ -595,10 +614,9 @@ void guTrackEditor::OnSongListBoxSelected( wxCommandEvent& event )
 {
     m_NextItem = event.GetInt();
 
-    if( m_SelectedTimer.IsRunning() )
-        m_SelectedTimer.Stop();
-
-    m_SelectedTimer.Start( 50, wxTIMER_ONE_SHOT );
+    //if( m_SelectedTimer.IsRunning() )
+    //    m_SelectedTimer.Stop();
+    m_SelectedTimer.Start( guTRACKEDIT_TIMER_SELECTION_TIME, wxTIMER_ONE_SHOT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1250,9 +1268,10 @@ void guTrackEditor::OnDownloadedLyric( wxCommandEvent &event )
 void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString &itemlist, int curitem, wxString &lastvalue )
 {
     //guLogMessage( wxT( "guUpdateComboBoxEntries: %li %i '%s'" ), itemlist.Count(), curitem, lastvalue.c_str() );
-    wxArrayString SetItems;
-    int Index;
-    int Count;
+    wxString FilterText = combobox->GetValue().Lower();
+
+    if( FilterText == lastvalue )
+        return;
 
     // Seems Clear is used for clear text what makes a call to this method and so on...
     // So call to the wxItemContainer method
@@ -1261,16 +1280,12 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
     if( curitem == wxNOT_FOUND )
         return;
 
-    wxString FilterText = combobox->GetValue().Lower();
-
-    if( FilterText == lastvalue )
-        return;
-
+    wxArrayString SetItems;
     if( FilterText.IsEmpty() )
     {
 #if wxUSE_STL
-        Count = itemlist.Count();
-        for( Index = 0; Index < Count; Index++ )
+        int Count = itemlist.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             SetItems.Add( itemlist[ Index ] );
         }
@@ -1281,8 +1296,8 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
     }
     else
     {
-        Count = itemlist.Count();
-        for( Index = 0; Index < Count; Index++ )
+        int Count = itemlist.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( itemlist[ Index ].Lower().Find( FilterText ) != wxNOT_FOUND )
             {
@@ -1295,11 +1310,42 @@ void inline guUpdateComboBoxEntries( wxComboBox * combobox, wxSortedArrayString 
 }
 
 // -------------------------------------------------------------------------------- //
+void guTrackEditor::OnArtistChangedTimeout( wxTimerEvent &event )
+{
+    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists, m_CurItem, m_LastArtist );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnAlbumArtistChangedTimeout( wxTimerEvent &event )
+{
+    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists, m_CurItem, m_LastAlbumArtist );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnAlbumChangedTimeout( wxTimerEvent &event )
+{
+    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums, m_CurItem, m_LastAlbum );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnComposerChangedTimeout( wxTimerEvent &event )
+{
+    guUpdateComboBoxEntries( m_CompComboBox, m_Composers, m_CurItem, m_LastComposer );
+}
+
+// -------------------------------------------------------------------------------- //
+void guTrackEditor::OnGenreChangedTimeout( wxTimerEvent &event )
+{
+    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres, m_CurItem, m_LastGenre );
+}
+
+
+// -------------------------------------------------------------------------------- //
 void guTrackEditor::OnArtistTextChanged( wxCommandEvent &event )
 {
     // TODO: Add timers to avoid repetitive calls while editing
     m_ArtistChanged = true;
-    guUpdateComboBoxEntries( m_ArtistComboBox, m_Artists, m_CurItem, m_LastArtist );
+    m_ArtistChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1307,7 +1353,7 @@ void guTrackEditor::OnAlbumArtistTextChanged( wxCommandEvent &event )
 {
     // TODO: Add timers to avoid repetitive calls while editing
     m_AlbumArtistChanged = true;
-    guUpdateComboBoxEntries( m_AlbumArtistComboBox, m_AlbumArtists, m_CurItem, m_LastAlbumArtist );
+    m_AlbumArtistChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1315,7 +1361,7 @@ void guTrackEditor::OnAlbumTextChanged( wxCommandEvent &event )
 {
     // TODO: Add timers to avoid repetitive calls while editing
     m_AlbumChanged = true;
-    guUpdateComboBoxEntries( m_AlbumComboBox, m_Albums, m_CurItem, m_LastAlbum );
+    m_AlbumChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1323,7 +1369,7 @@ void guTrackEditor::OnComposerTextChanged( wxCommandEvent &event )
 {
     // TODO: Add timers to avoid repetitive calls while editing
     m_CompChanged = true;
-    guUpdateComboBoxEntries( m_CompComboBox, m_Composers, m_CurItem, m_LastComposer );
+    m_ComposerChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1331,7 +1377,7 @@ void guTrackEditor::OnGenreTextChanged( wxCommandEvent &event )
 {
     // TODO: Add timers to avoid repetitive calls while editing
     m_GenreChanged = true;
-    guUpdateComboBoxEntries( m_GenreComboBox, m_Genres, m_CurItem, m_LastGenre );
+    m_GenreChangedTimer.Start( guTRACKEDIT_TIMER_TEXTCHANGED_TIME, wxTIMER_ONE_SHOT );
 }
 
 // -------------------------------------------------------------------------------- //

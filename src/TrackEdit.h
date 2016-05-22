@@ -58,6 +58,11 @@ class guTrackEditor : public wxDialog
     wxColour                            m_NormalColor;
     wxColour                            m_ErrorColor;
     wxTimer                             m_SelectedTimer;
+    wxTimer                             m_ArtistChangedTimer;
+    wxTimer                             m_AlbumArtistChangedTimer;
+    wxTimer                             m_AlbumChangedTimer;
+    wxTimer                             m_ComposerChangedTimer;
+    wxTimer                             m_GenreChangedTimer;
 
     void                                SetTagField( wxString &field, const wxString &newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
     void                                SetTagField( int &field, const int newval, int &changedflags, const int flagval = guTRACK_CHANGED_DATA_TAGS );
@@ -153,6 +158,11 @@ class guTrackEditor : public wxDialog
 	void                                OnAlbumTextChanged( wxCommandEvent& event );
 	void                                OnComposerTextChanged( wxCommandEvent& event );
 	void                                OnGenreTextChanged( wxCommandEvent& event );
+    void                                OnArtistChangedTimeout( wxTimerEvent &event );
+    void                                OnAlbumArtistChangedTimeout( wxTimerEvent &event );
+    void                                OnAlbumChangedTimeout( wxTimerEvent &event );
+    void                                OnComposerChangedTimeout( wxTimerEvent &event );
+    void                                OnGenreChangedTimeout( wxTimerEvent &event );
 
 	void                                OnCommentCopyButtonClicked( wxCommandEvent &event );
 

@@ -24,8 +24,8 @@
 #include <wx/dcclient.h>
 #include <wx/region.h>
 
-#define guSCROLL_START_TIMEOUT  500
-#define guSCROLL_TIMEOUT        500
+#define guSCROLL_START_TIMEOUT  300
+#define guSCROLL_TIMEOUT        300
 #define guSCROLL_STEP_WIDTH     16
 
 #define guSCROLL_TIMER_START    11
