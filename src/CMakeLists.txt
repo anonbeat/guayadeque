@@ -280,10 +280,14 @@ ADD_EXECUTABLE( guayadeque
         TuneInRadio.h
         ShoutcastRadio.cpp
         ShoutcastRadio.h
+        Settings.h
+        AcousticId.cpp
+        AcousticId.h
+        MusicBrainz.cpp
+        MusicBrainz.h
         ${CURL_SOURCES}
         ${DBUS_SOURCES}
         ${HMAC_SHA2_SOURCES}
-        ${WXSQLITE_SOURCES}
 )
 
 TARGET_LINK_LIBRARIES( guayadeque
@@ -307,4 +311,3 @@ TARGET_LINK_LIBRARIES( guayadeque
 
 INSTALL( TARGETS guayadeque
          RUNTIME DESTINATION bin )
-
