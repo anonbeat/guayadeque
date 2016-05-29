@@ -54,4 +54,6 @@ void guAutoPulseGauge::StartPulse( void )
 bool guAutoPulseGauge::IsPulsing( void )
 {
     return m_Timer->IsRunning();
-};
+}
+
+// -------------------------------------------------------------------------------- //
