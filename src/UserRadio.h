@@ -41,8 +41,6 @@ class guUserRadioProvider : public guRadioProvider
     ~guUserRadioProvider();
 
     virtual bool        OnContextMenu( wxMenu * menu, const wxTreeItemId &itemid, const bool forstations = false, const int selcount = 0 );
-    virtual void        Activated( const int id );
-    virtual void        SetSearchText( const wxArrayString &texts );
     virtual void        RegisterImages( wxImageList * imagelist );
     virtual void        RegisterItems( guRadioGenreTreeCtrl * genretreectrl, wxTreeItemId &rootitem );
     virtual bool        HasItemId( const wxTreeItemId &itemid ) { return itemid == m_ManualId; }

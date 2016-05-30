@@ -82,16 +82,6 @@ bool guUserRadioProvider::OnContextMenu( wxMenu * menu, const wxTreeItemId &item
 }
 
 // -------------------------------------------------------------------------------- //
-void guUserRadioProvider::Activated( const int id )
-{
-}
-
-// -------------------------------------------------------------------------------- //
-void guUserRadioProvider::SetSearchText( const wxArrayString &texts )
-{
-}
-
-// -------------------------------------------------------------------------------- //
 void guUserRadioProvider::RegisterImages( wxImageList * imagelist )
 {
     imagelist->Add( guImage( guIMAGE_INDEX_tiny_net_radio ) );
