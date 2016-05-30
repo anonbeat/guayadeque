@@ -21,6 +21,9 @@
 
 #include "Utils.h"
 
+#define guVUMETERS_LEVEL_TIMEOUT    300
+#define guVUMETERS_LEVEL_TIMERID    9
+
 // -------------------------------------------------------------------------------- //
 BEGIN_EVENT_TABLE( guVumeter, wxControl )
 	EVT_PAINT( guVumeter::OnPaint )
@@ -316,7 +319,17 @@ void guVumeter::OnChangedSize( wxSizeEvent &event )
     event.Skip();
 }
 
-
+// -------------------------------------------------------------------------------- //
+void guVumeter::SetLevel( const double peak, const double decay )
+{
+    if( ( m_PeakLevel != peak ) || ( m_DecayLevel != decay ) )
+    {
+        m_PeakLevel = peak;
+        m_DecayLevel = decay;
+        Refresh();
+        //Update();
+    }
+}
 
 
 
@@ -324,7 +337,8 @@ void guVumeter::OnChangedSize( wxSizeEvent &event )
 // guPlayerVumeters
 // -------------------------------------------------------------------------------- //
 guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
+    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL ),
+    m_LevelsTimer( this, guVUMETERS_LEVEL_TIMERID )
 {
     m_LastWidth = wxNOT_FOUND;
     m_LastHeight = wxNOT_FOUND;
@@ -505,6 +519,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 
     Connect( wxEVT_SIZE, wxSizeEventHandler( guPlayerVumeters::OnChangedSize ), NULL, this );
+    Connect( guVUMETERS_LEVEL_TIMERID, wxEVT_TIMER, wxTimerEventHandler( guPlayerVumeters::OnLevelsTimeout ), NULL, this );
 
     m_VumLeft = m_HVumLeft;
     m_VumRight = m_HVumRight;
@@ -514,6 +529,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 // -------------------------------------------------------------------------------- //
 guPlayerVumeters::~guPlayerVumeters()
 {
+    Disconnect( guVUMETERS_LEVEL_TIMERID, wxEVT_TIMER, wxTimerEventHandler( guPlayerVumeters::OnLevelsTimeout ), NULL, this );
     Disconnect( wxEVT_SIZE, wxSizeEventHandler( guPlayerVumeters::OnChangedSize ), NULL, this );
 }
 
@@ -561,11 +577,28 @@ void guPlayerVumeters::OnChangedSize( wxSizeEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerVumeters::SetLevels( const guLevelInfo &levels )
 {
+    m_LevelsTimer.Start( guVUMETERS_LEVEL_TIMEOUT, wxTIMER_ONE_SHOT );
+
     m_VumLeft->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
     if( levels.m_Channels > 1 )
         m_VumRight->SetLevel( levels.m_Peak_R, levels.m_Decay_R );
     else
         m_VumRight->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerVumeters::OnLevelsTimeout( wxTimerEvent &event )
+{
+    double DecayL = m_VumLeft->DecayLevel();
+    double DecayR = m_VumRight->DecayLevel();
+
+    m_VumLeft->SetLevel( -99.0, DecayL - 4.00 );
+    m_VumRight->SetLevel( -99.0, DecayR - 4.00 );
+
+    if( ( DecayL > -70.0 ) || ( DecayR > -70.0 ) )
+    {
+        m_LevelsTimer.Start( guVUMETERS_LEVEL_TIMEOUT, wxTIMER_ONE_SHOT );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

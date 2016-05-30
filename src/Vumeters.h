@@ -69,6 +69,8 @@ class guVumeter : public wxControl
 
 	void                OnChangedSize( wxSizeEvent &event );
 
+    void                OnLevelTimeout( wxTimerEvent &event );
+
   public:
 	guVumeter() {}
 	guVumeter( wxWindow * parent, wxWindowID id, const int style = guVU_HORIZONTAL );
@@ -77,15 +79,10 @@ class guVumeter : public wxControl
 	wxSize              DoGetBestSize() const;
 	void                OnPaint( wxPaintEvent& event );
 
-    void                SetLevel( const double peak, const double decay )
-    {
-        if( ( m_PeakLevel != peak ) || ( m_DecayLevel != decay ) )
-        {
-            m_PeakLevel = peak;
-            m_DecayLevel = decay;
-            Refresh(); Update();
-        }
-    }
+    void                SetLevel( const double peak, const double decay );
+
+    double              DecayLevel( void ) { return m_DecayLevel; }
+    double              PeakLevel( void ) { return m_PeakLevel; }
 
 	DECLARE_EVENT_TABLE();
 
@@ -108,10 +105,13 @@ class guPlayerVumeters : public wxPanel
 	guVumeter *         m_VVumLeft;
 	guVumeter *         m_VVumRight;
 
+    wxTimer             m_LevelsTimer;
+
 	int                 m_LastWidth;
 	int                 m_LastHeight;
 
 	void                OnChangedSize( wxSizeEvent &event );
+    void                OnLevelsTimeout( wxTimerEvent &event );
 
   public:
 	guPlayerVumeters( wxWindow * parent );
