@@ -1,1 +1,2 @@
+cat header.inc
 xxd -i $1
