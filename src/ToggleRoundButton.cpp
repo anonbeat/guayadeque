@@ -43,14 +43,30 @@ guToggleRoundButton::guToggleRoundButton( wxWindow * parent, const wxImage &imag
     m_IsClicked = false;
     m_Value = false;
 
-    wxImage Image( image );
-    Image.ConvertAlphaToMask();
-    m_Region = wxRegion( Image );
+    CreateRegion();
 }
 
 // -------------------------------------------------------------------------------- //
 guToggleRoundButton::~guToggleRoundButton()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+void guToggleRoundButton::CreateRegion( void )
+{
+    int Width = m_Bitmap.GetWidth();
+    int Height = m_Bitmap.GetHeight();
+    wxBitmap RegBmp( Width, Height );
+    wxMemoryDC dc;
+    dc.SelectObject( RegBmp );
+    dc.SetBackground( *wxWHITE_BRUSH );
+    dc.Clear();
+    dc.SetBrush( *wxBLACK_BRUSH );
+    dc.SetPen( *wxBLACK_PEN );
+    dc.DrawCircle( Width / 2, Height / 2, wxMin( ( int ) ( Width / 2 ), ( int ) ( Height / 2 ) ) );
+    dc.SelectObject( wxNullBitmap );
+
+    m_Region = wxRegion( RegBmp, *wxWHITE );
 }
 
 // -------------------------------------------------------------------------------- //

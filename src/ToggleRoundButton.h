@@ -42,6 +42,8 @@ class guToggleRoundButton : public wxControl
     virtual wxSize  DoGetBestSize() const;
     void            OnPaint( wxPaintEvent &event );
     void            OnMouseEvents( wxMouseEvent &event );
+    void            CreateRegion( void );
+
 
   public :
     guToggleRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage, const wxImage &hoverimage );

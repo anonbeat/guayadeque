@@ -39,14 +39,30 @@ guRoundButton::guRoundButton( wxWindow * parent, const wxImage &image, const wxI
     m_MouseIsOver = false;
     m_IsClicked = false;
 
-    wxImage Image( image );
-    Image.ConvertAlphaToMask();
-    m_Region = wxRegion( Image );
+    CreateRegion();
 }
 
 // -------------------------------------------------------------------------------- //
 guRoundButton::~guRoundButton()
 {
+}
+
+// -------------------------------------------------------------------------------- //
+void guRoundButton::CreateRegion( void )
+{
+    int Width = m_Bitmap.GetWidth();
+    int Height = m_Bitmap.GetHeight();
+    wxBitmap RegBmp( Width, Height );
+    wxMemoryDC dc;
+    dc.SelectObject( RegBmp );
+    dc.SetBackground( *wxWHITE_BRUSH );
+    dc.Clear();
+    dc.SetBrush( *wxBLACK_BRUSH );
+    dc.SetPen( *wxBLACK_PEN );
+    dc.DrawCircle( Width / 2, Height / 2, wxMin( ( int ) ( Width / 2 ), ( int ) ( Height / 2 ) ) );
+    dc.SelectObject( wxNullBitmap );
+
+    m_Region = wxRegion( RegBmp, *wxWHITE );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -65,7 +81,9 @@ void guRoundButton::OnPaint( wxPaintEvent &event )
     PrepareDC( dc );
 
     dc.SetBackgroundMode( wxTRANSPARENT );
-    dc.DrawBitmap( IsEnabled() || !m_DisBitmap.IsOk() ? ( m_MouseIsOver ? m_HoverBitmap : m_Bitmap ) : m_DisBitmap, 0 + m_IsClicked, 0 + m_IsClicked, true );
+    dc.DrawBitmap( IsEnabled() || !m_DisBitmap.IsOk() ?
+                       ( m_MouseIsOver ? m_HoverBitmap : m_Bitmap ) : m_DisBitmap,
+                       0 + m_IsClicked, 0 + m_IsClicked, true );
 }
 
 // -------------------------------------------------------------------------------- //

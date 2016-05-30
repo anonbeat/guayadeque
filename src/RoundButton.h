@@ -41,7 +41,9 @@ class guRoundButton : public wxControl
     void            OnPaint( wxPaintEvent &event );
     void            OnMouseEvents( wxMouseEvent &event );
 
-  public :
+    void            CreateRegion( void );
+
+public :
     guRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage, const int style );
     ~guRoundButton();
 
