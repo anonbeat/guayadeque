@@ -2,7 +2,7 @@
 host = https://www.transifex.net
 
 [guayadeque.guayadeque]
-source_file = http://guayadeque.svn.sourceforge.net/svnroot/guayadeque/Trunk/po/guayadeque.pot
+source_file = https://raw.githubusercontent.com/anonbeat/guayadeque/master/po/guayadeque.pot
 source_lang = en
 trans.cs_CZ = po/cs/guayadeque.po
 trans.de_DE = po/de/guayadeque.po
