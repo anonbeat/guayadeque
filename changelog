@@ -1,3 +1,5 @@
+  * Fixed magnatune cover download
+  * Updated Player Control icons
   * Fixed podcast downloaded filename
   * Use wxBase64 functions
   * Dropped internal wxsqlite
