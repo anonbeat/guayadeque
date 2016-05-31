@@ -436,8 +436,8 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
     if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
     {
         wxString CoverUrl = wxString::Format( wxT( "http://he3.magnatune.com/music/%s/%s/cover_600.jpg" ),
-                m_ArtistName.c_str(),
-                m_AlbumName.c_str() );
+                guURLEncode( m_ArtistName, false ).c_str(),
+                guURLEncode( m_AlbumName, false ).c_str() );
 
         if( !wxDirExists( wxPathOnly( CoverFile.GetFullPath() ) + wxT( "/" ) ) )
         {

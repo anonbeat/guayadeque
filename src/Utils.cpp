@@ -168,7 +168,7 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
 
     wxString FileName = Uri.GetPath().Lower();
 
-    //guLogMessage( wxT( "Downloading '%s' from '%s'" ), FileName.c_str(), url.c_str() );
+    guLogMessage( wxT( "Downloading '%s' from '%s'" ), FileName.c_str(), url.c_str() );
 
     wxMemoryOutputStream Buffer;
     wxCurlHTTP http;
@@ -302,7 +302,7 @@ int DownloadFile( const wxString &Source, const wxString &Target )
 }
 
 // -------------------------------------------------------------------------------- //
-wxString guURLEncode( const wxString &url )
+wxString guURLEncode( const wxString &url, bool encodespace )
 {
     static const wxChar marks[] = wxT( "-_.\"!~*()'" );
 
@@ -322,7 +322,7 @@ wxString guURLEncode( const wxString &url )
 		{
 	        RetVal += CurChar;
 	    }
-	    else if( CurChar == wxT( ' ' ) )
+        else if( encodespace && ( CurChar == wxT( ' ' ) ) )
 	    {
 		    RetVal += wxT( "+" );
 		}

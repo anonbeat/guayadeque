@@ -89,7 +89,7 @@ bool                DownloadImage( const wxString &source, const wxString &taget
 int                 DownloadFile( const wxString &Source, const wxString &Target );
 wxString            RemoveSearchFilters( const wxString &Album );
 bool                SearchCoverWords( const wxString &filename, const wxArrayString &Strings );
-wxString            guURLEncode( const wxString &url );
+wxString            guURLEncode( const wxString &url, bool encodespace = true );
 wxString            guFileDnDEncode( const wxString &file );
 int                 guWebExecute( const wxString &Url );
 int                 guExecute( const wxString &Command );
