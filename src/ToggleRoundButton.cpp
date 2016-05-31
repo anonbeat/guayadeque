@@ -25,57 +25,18 @@
 #include <wx/dcclient.h>
 #include <wx/tglbtn.h>
 
-BEGIN_EVENT_TABLE( guToggleRoundButton, wxControl )
-    EVT_PAINT( guToggleRoundButton::OnPaint)
-    //EVT_ERASE_BACKGROUND( guToggleRoundButton::OnEraseBack
-    EVT_MOUSE_EVENTS( guToggleRoundButton::OnMouseEvents )
-END_EVENT_TABLE()
-
 // -------------------------------------------------------------------------------- //
 guToggleRoundButton::guToggleRoundButton( wxWindow * parent, const wxImage &image,
-        const wxImage &selimage, const wxImage &hoverimage ) :
-    wxControl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
+                                          const wxImage &selimage, const wxImage &hoverimage ) :
+    guRoundButton( parent, selimage, hoverimage )
 {
-    m_Bitmap = wxBitmap( selimage );
     m_DisBitmap = wxBitmap( image );
-    m_HoverBitmap = wxBitmap( hoverimage );
-    m_MouseIsOver = false;
-    m_IsClicked = false;
     m_Value = false;
-
-    CreateRegion();
 }
 
 // -------------------------------------------------------------------------------- //
 guToggleRoundButton::~guToggleRoundButton()
 {
-}
-
-// -------------------------------------------------------------------------------- //
-void guToggleRoundButton::CreateRegion( void )
-{
-    int Width = m_Bitmap.GetWidth();
-    int Height = m_Bitmap.GetHeight();
-    wxBitmap RegBmp( Width, Height );
-    wxMemoryDC dc;
-    dc.SelectObject( RegBmp );
-    dc.SetBackground( *wxWHITE_BRUSH );
-    dc.Clear();
-    dc.SetBrush( *wxBLACK_BRUSH );
-    dc.SetPen( *wxBLACK_PEN );
-    dc.DrawCircle( Width / 2, Height / 2, wxMin( ( int ) ( Width / 2 ), ( int ) ( Height / 2 ) ) );
-    dc.SelectObject( wxNullBitmap );
-
-    m_Region = wxRegion( RegBmp, *wxWHITE );
-}
-
-// -------------------------------------------------------------------------------- //
-wxSize guToggleRoundButton::DoGetBestSize( void ) const
-{
-    wxSize RetVal;
-    RetVal.x = m_Bitmap.GetWidth();
-    RetVal.y = m_Bitmap.GetHeight();
-    return RetVal;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -141,24 +102,13 @@ void guToggleRoundButton::OnMouseEvents( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guToggleRoundButton::SetBitmapLabel( const wxImage &image )
+void guToggleRoundButton::SetValue( bool value )
 {
-    m_Bitmap = wxBitmap( image );
-    Refresh();
-}
-
-// -------------------------------------------------------------------------------- //
-void guToggleRoundButton::SetBitmapHover( const wxImage &image )
-{
-    m_HoverBitmap = wxBitmap( image );
-    Refresh();
-}
-
-// -------------------------------------------------------------------------------- //
-void guToggleRoundButton::SetBitmapDisabled( const wxImage &image )
-{
-    m_DisBitmap = wxBitmap( image );
-    Refresh();
+    if( value != m_Value )
+    {
+        m_Value = value;
+        Refresh();
+    }
 }
 
 // -------------------------------------------------------------------------------- //

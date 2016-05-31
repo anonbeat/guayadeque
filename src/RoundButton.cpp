@@ -25,13 +25,12 @@
 #include <wx/dcclient.h>
 
 BEGIN_EVENT_TABLE( guRoundButton, wxControl )
-    EVT_PAINT( guRoundButton::OnPaint)
-    //EVT_ERASE_BACKGROUND( guRoundButton::OnEraseBack
+    EVT_PAINT( guRoundButton::OnPaint )
     EVT_MOUSE_EVENTS( guRoundButton::OnMouseEvents )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
-guRoundButton::guRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage, const int flags ) :
+guRoundButton::guRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage ) :
     wxControl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE )
 {
     m_Bitmap = wxBitmap( image );

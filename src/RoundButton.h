@@ -26,30 +26,30 @@
 // -------------------------------------------------------------------------------- //
 class guRoundButton : public wxControl
 {
-  private :
-    wxBitmap    m_Bitmap;
-    wxBitmap    m_HoverBitmap;
-    wxBitmap    m_DisBitmap;
-    wxRegion    m_Region;
-    bool        m_MouseIsOver;
-    bool        m_IsClicked;
+  protected :
+    wxBitmap            m_Bitmap;
+    wxBitmap            m_HoverBitmap;
+    wxBitmap            m_DisBitmap;
+    wxRegion            m_Region;
+    bool                m_MouseIsOver;
+    bool                m_IsClicked;
 
     DECLARE_EVENT_TABLE()
 
   protected :
-    virtual wxSize  DoGetBestSize() const;
-    void            OnPaint( wxPaintEvent &event );
-    void            OnMouseEvents( wxMouseEvent &event );
+    virtual wxSize      DoGetBestSize() const;
+    virtual void        OnPaint( wxPaintEvent &event );
+    virtual void        OnMouseEvents( wxMouseEvent &event );
 
-    void            CreateRegion( void );
+    void                CreateRegion( void );
 
 public :
-    guRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage, const int style );
-    ~guRoundButton();
+    guRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage );
+    virtual ~guRoundButton();
 
-    void            SetBitmapLabel( const wxImage &image );
-    void            SetBitmapHover( const wxImage &image );
-    void            SetBitmapDisabled( const wxImage &image );
+    virtual void        SetBitmapLabel( const wxImage &image );
+    virtual void        SetBitmapHover( const wxImage &image );
+    virtual void        SetBitmapDisabled( const wxImage &image );
 
 };
 

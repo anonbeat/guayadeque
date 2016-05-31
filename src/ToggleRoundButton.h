@@ -20,48 +20,25 @@
 #ifndef TOGGLEROUNDBUTTON_H
 #define TOGGLEROUNDBUTTON_H
 
-#include <wx/control.h>
-#include <wx/bitmap.h>
-#include <wx/tglbtn.h>
+#include "RoundButton.h"
 
 // -------------------------------------------------------------------------------- //
-class guToggleRoundButton : public wxControl
+class guToggleRoundButton : public guRoundButton
 {
-  private :
-    wxBitmap    m_Bitmap;
-    wxBitmap    m_HoverBitmap;
-    wxBitmap    m_DisBitmap;
-    wxRegion    m_Region;
-    bool        m_MouseIsOver;
-    bool        m_IsClicked;
+  protected :
     bool        m_Value;
 
-    DECLARE_EVENT_TABLE()
-
   protected :
-    virtual wxSize  DoGetBestSize() const;
-    void            OnPaint( wxPaintEvent &event );
-    void            OnMouseEvents( wxMouseEvent &event );
-    void            CreateRegion( void );
+    virtual void    OnPaint( wxPaintEvent &event );
+    virtual void    OnMouseEvents( wxMouseEvent &event );
 
 
   public :
     guToggleRoundButton( wxWindow * parent, const wxImage &image, const wxImage &selimage, const wxImage &hoverimage );
-    ~guToggleRoundButton();
+    virtual ~guToggleRoundButton();
 
-    void            SetBitmapLabel( const wxImage &image );
-    void            SetBitmapHover( const wxImage &image );
-    void            SetBitmapDisabled( const wxImage &image );
-
-    bool            GetValue( void ) { return m_Value; };
-    void            SetValue( bool value )
-    {
-        if( value != m_Value )
-        {
-            m_Value = value;
-            Refresh();
-        }
-    }
+    bool            GetValue( void ) { return m_Value; }
+    void            SetValue( bool value );
 
 };
 
