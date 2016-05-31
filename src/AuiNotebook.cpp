@@ -108,14 +108,7 @@ guAuiTabArt::~guAuiTabArt()
 // -------------------------------------------------------------------------------- //
 wxAuiTabArt * guAuiTabArt::Clone()
 {
-    guAuiTabArt * art = new guAuiTabArt;
-    art->SetNormalFont( m_normalFont );
-    art->SetSelectedFont( m_selectedFont );
-    art->SetMeasuringFont( m_measuringFont );
-//    art->m_BgColor = m_BgColor;
-//    art->m_SelBgColor = m_SelBgColor;
-//    art->m_TextFgColor = m_TextFgColor;
-    return art;
+    return new guAuiTabArt( *this );
 }
 
 // -------------------------------------------------------------------------------- //
