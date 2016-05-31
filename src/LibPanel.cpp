@@ -20,7 +20,7 @@
 #include "LibPanel.h"
 
 #include "AuiDockArt.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "CoverEdit.h"
 #include "EditWithOptions.h"

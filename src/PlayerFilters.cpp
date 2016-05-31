@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "PlayerFilters.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "Utils.h"
 

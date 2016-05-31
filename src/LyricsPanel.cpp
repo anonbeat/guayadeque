@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "LyricsPanel.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "curl/http.h"
 #include "Preferences.h"

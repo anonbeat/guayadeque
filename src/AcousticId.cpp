@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "AcousticId.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "curl/http.h"
 #include "MusicBrainz.h"
 #include "Utils.h"

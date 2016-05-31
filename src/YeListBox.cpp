@@ -20,7 +20,7 @@
 #include "YeListBox.h"
 
 #include "Accelerators.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "Images.h"
 #include "OnlineLinks.h"

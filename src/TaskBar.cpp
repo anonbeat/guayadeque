@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "TaskBar.h"
 #include "Images.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Utils.h"
 
 #include <wx/menu.h>

@@ -21,7 +21,7 @@
 
 #include "AuiDockArt.h"
 #include "AuiNotebook.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "MainFrame.h"
 #include "Utils.h"
 

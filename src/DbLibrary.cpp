@@ -20,7 +20,7 @@
 #include "DbLibrary.h"
 
 #include "AlbumBrowser.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "DynamicPlayList.h"
 #include "LibUpdate.h"

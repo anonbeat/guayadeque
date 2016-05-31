@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "OnlineLinks.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "Images.h"
 #include "MainApp.h"
@@ -90,8 +90,8 @@ void ExecuteOnlineLink( const int linkid, const wxString &text )
             Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );
             //guLogMessage( wxT( "Locale: %s" ), ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().c_str() );
         }
-        SearchLink.Replace( wxT( "{lang}" ), Lang );
-        SearchLink.Replace( wxT( "{text}" ), guURLEncode( text ) );
+        SearchLink.Replace( guLINKS_LANGUAGE, Lang );
+        SearchLink.Replace( guLINKS_TEXT, guURLEncode( text ) );
         guWebExecute( SearchLink );
     }
     else

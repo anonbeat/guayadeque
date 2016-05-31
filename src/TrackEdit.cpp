@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "TrackEdit.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "CoverEdit.h"
 #include "Images.h"

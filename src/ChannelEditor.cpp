@@ -20,7 +20,7 @@
 #include "ChannelEditor.h"
 
 #include "Config.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Images.h"
 #include "Utils.h"
 

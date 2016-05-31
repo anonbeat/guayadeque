@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "SmartMode.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "MainFrame.h"
 #include "MediaViewer.h"
 #include "PlayListAppend.h"

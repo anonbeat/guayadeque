@@ -21,7 +21,7 @@
 
 #include "Accelerators.h"
 #include "Config.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "dbus/mpris.h"
 #include "Images.h"
 #include "LabelEditor.h"
@@ -1491,8 +1491,8 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
         {
             for( index = 0; index < count; index++ )
             {
-                if( ( ( Commands[ index ].Find( wxT( "{bp}" ) ) != wxNOT_FOUND ) ||
-                      ( Commands[ index ].Find( wxT( "{bc}" ) ) != wxNOT_FOUND ) )
+                if( ( ( Commands[ index ].Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND ) ||
+                      ( Commands[ index ].Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND ) )
                     && ( SelCount != 1 ) )
                 {
                     continue;
@@ -2355,15 +2355,15 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 
             const guTrack &Track = m_Items[ Selection[ 0 ] ];
 
-            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 //wxString Path = wxT( "\"" ) + wxPathOnly( m_Items[ Selection[ 0 ] ].m_FileName ) + wxT( "\"" );
                 wxString Path = wxPathOnly( Track.m_FileName );
                 Path.Replace( wxT( " " ), wxT( "\\ " ) );
-                CurCmd.Replace( wxT( "{bp}" ), Path );
+                CurCmd.Replace( guCOMMAND_ALBUMPATH, Path );
             }
 
-            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND )
             {
                 int CoverId = Track.m_CoverId;
                 wxString CoverPath = wxEmptyString;
@@ -2378,11 +2378,11 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
 
                 if( !CoverPath.IsEmpty() )
                 {
-                    CurCmd.Replace( wxT( "{bc}" ), wxT( "\"" ) + CoverPath + wxT( "\"" ) );
+                    CurCmd.Replace( guCOMMAND_COVERPATH, wxT( "\"" ) + CoverPath + wxT( "\"" ) );
                 }
             }
 
-            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
             {
                 wxString SongList = wxEmptyString;
                 count = Selection.Count();
@@ -2392,7 +2392,7 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
                     {
                         SongList += wxT( " \"" ) + m_Items[ Selection[ index ] ].m_FileName + wxT( "\"" );
                     }
-                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                    CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
                 }
             }
 

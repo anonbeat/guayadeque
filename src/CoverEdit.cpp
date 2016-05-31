@@ -20,7 +20,7 @@
 #include "CoverEdit.h"
 
 #include "Amazon.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "CoverFetcher.h"
 #include "CoverFrame.h"

@@ -20,7 +20,7 @@
 #include "AlbumBrowser.h"
 
 #include "Accelerators.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "CoverEdit.h"
 #include "Images.h"
@@ -1184,7 +1184,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
 
             index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ index ];
-            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( Selection );
                 wxString Paths = wxEmptyString;
@@ -1195,10 +1195,10 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
                     //Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
                     Paths += wxT( " " ) + AlbumPaths[ index ];
                 }
-                CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+                CurCmd.Replace( guCOMMAND_ALBUMPATH, Paths.Trim( false ) );
             }
 
-            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND )
             {
                 int CoverId = m_Db->GetAlbumCoverId( Selection[ 0 ] );
                 wxString CoverPath = wxEmptyString;
@@ -1206,10 +1206,10 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
                 {
                     CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
                 }
-                CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+                CurCmd.Replace( guCOMMAND_COVERPATH, CoverPath );
             }
 
-            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
             {
                 guTrackArray Songs;
                 wxString SongList = wxEmptyString;
@@ -1221,7 +1221,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
                     {
                         SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
                     }
-                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                    CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
                 }
             }
 
@@ -1248,7 +1248,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
             Index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ Index ];
 
-            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths;
                 Count = tracks.Count();
@@ -1265,10 +1265,10 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
                     AlbumPaths[ Index ].Replace( wxT( " " ), wxT( "\\ " ) );
                     Paths += wxT( " " ) + AlbumPaths[ Index ];
                 }
-                CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+                CurCmd.Replace( guCOMMAND_ALBUMPATH, Paths.Trim( false ) );
             }
 
-            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND )
             {
                 wxArrayInt AlbumList;
                 AlbumList.Add( tracks[ 0 ].m_AlbumId );
@@ -1278,10 +1278,10 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
                 {
                     CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
                 }
-                CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+                CurCmd.Replace( guCOMMAND_COVERPATH, CoverPath );
             }
 
-            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
             {
                 wxString SongList = wxEmptyString;
                 Count = tracks.Count();
@@ -1291,7 +1291,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
                     {
                         SongList += wxT( " \"" ) + tracks[ Index ].m_FileName + wxT( "\"" );
                     }
-                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                    CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
                 }
             }
 

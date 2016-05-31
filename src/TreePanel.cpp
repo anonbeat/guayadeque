@@ -22,7 +22,7 @@
 #include "Accelerators.h"
 #include "AuiNotebook.h"
 #include "AuiDockArt.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "DbLibrary.h"
 #include "DynamicPlayList.h"
@@ -717,7 +717,7 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
         Index -= ID_COMMANDS_BASE;
         wxString CurCmd = Commands[ Index ];
 
-        if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
         {
             wxArrayString AlbumPaths = GetSelectedAlbumPaths( m_Db, TreeViewData->GetData(), TreeViewData->GetType() );
             Count = AlbumPaths.Count();
@@ -727,10 +727,10 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
                 AlbumPaths[ Index ].Replace( wxT( " " ), wxT( "\\ " ) );
                 Paths += wxT( " " ) + AlbumPaths[ Index ];
             }
-            CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+            CurCmd.Replace( guCOMMAND_ALBUMPATH, Paths.Trim( false ) );
         }
 
-        if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND )
         {
             int CoverId = GetSelectedCoverId( m_Db, TreeViewData->GetData(), TreeViewData->GetType() );
             wxString CoverPath = wxEmptyString;
@@ -738,10 +738,10 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
             {
                 CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
             }
-            CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+            CurCmd.Replace( guCOMMAND_COVERPATH, CoverPath );
         }
 
-        if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
         {
             guTrackArray Songs;
             wxString SongList = wxEmptyString;
@@ -752,7 +752,7 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
                 {
                     SongList += wxT( " \"" ) + Songs[ Index ].m_FileName + wxT( "\"" );
                 }
-                CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
             }
         }
 

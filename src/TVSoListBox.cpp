@@ -21,7 +21,7 @@
 
 #include "Accelerators.h"
 #include "Config.h" // Configuration
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Images.h"
 #include "MainApp.h"
 #include "MediaViewer.h"

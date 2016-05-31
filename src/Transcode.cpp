@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "Transcode.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "TagInfo.h"
 #include "Utils.h"
 #include "Version.h"

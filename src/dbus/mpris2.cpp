@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "mpris2.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "mpris.h"
 #include "Utils.h"
 #include "MainFrame.h"

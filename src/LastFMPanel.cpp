@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "LastFMPanel.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "curl/http.h"
 #include "Images.h"
 #include "MainApp.h"

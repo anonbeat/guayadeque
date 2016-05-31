@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "LibUpdate.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "MainApp.h"
 #include "MediaViewer.h"

@@ -22,7 +22,7 @@
 #include "Accelerators.h"
 #include "AuiNotebook.h"
 #include "AuiDockArt.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "DbLibrary.h"
 #include "DynamicPlayList.h"

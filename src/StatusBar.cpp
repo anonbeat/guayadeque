@@ -22,7 +22,7 @@
 #include "AuiNotebook.h"
 #include "Images.h"
 #include "Utils.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Preferences.h"
 
 #define guTRACKCOUNT_PANEL_SIZE         300

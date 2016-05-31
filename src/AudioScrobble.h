@@ -21,7 +21,7 @@
 #define AUDIOSCROBBLE_H
 
 #include <wx/wx.h>
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "DbLibrary.h"
 #include "Version.h"
 

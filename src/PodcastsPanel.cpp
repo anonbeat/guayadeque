@@ -22,7 +22,7 @@
 #include "Accelerators.h"
 #include "AuiDockArt.h"
 #include "ChannelEditor.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "Images.h"
 #include "MainFrame.h"

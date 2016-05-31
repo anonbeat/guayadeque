@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "SplashWin.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Images.h"
 #include "Utils.h"
 #include "Version.h"

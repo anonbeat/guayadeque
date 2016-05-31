@@ -20,7 +20,7 @@
 #include "AlListBox.h"
 
 #include "Accelerators.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Config.h"
 #include "Images.h"
 #include "MainApp.h"
@@ -231,7 +231,7 @@ void AddAlbumCommands( wxMenu * Menu, int SelCount )
         {
             for( index = 0; index < count; index++ )
             {
-                if( ( Commands[ index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
+                if( ( Commands[ index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
                 {
                     MenuItem = new wxMenuItem( Menu, ID_COMMANDS_BASE + index, Names[ index ], Commands[ index ] );
                     SubMenu->Append( MenuItem );
@@ -414,7 +414,7 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
             index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ index ];
 
-            if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( Selection );
                 wxString Paths = wxEmptyString;
@@ -425,10 +425,10 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
                     AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " )  );
                     Paths += wxT( " " ) + AlbumPaths[ index ];
                 }
-                CurCmd.Replace( wxT( "{bp}" ), Paths.Trim( false ) );
+                CurCmd.Replace( guCOMMAND_ALBUMPATH, Paths.Trim( false ) );
             }
 
-            if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND )
             {
                 int CoverId = m_Db->GetAlbumCoverId( Selection[ 0 ] );
                 wxString CoverPath = wxEmptyString;
@@ -436,10 +436,10 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
                 {
                     CoverPath = wxT( "\"" ) + m_Db->GetCoverPath( CoverId ) + wxT( "\"" );
                 }
-                CurCmd.Replace( wxT( "{bc}" ), CoverPath );
+                CurCmd.Replace( guCOMMAND_COVERPATH, CoverPath );
             }
 
-            if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+            if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
             {
                 guTrackArray Songs;
                 wxString SongList = wxEmptyString;
@@ -450,7 +450,7 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
                     {
                         SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
                     }
-                    CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+                    CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
                 }
             }
 

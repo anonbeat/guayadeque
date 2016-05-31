@@ -310,7 +310,7 @@ void AppendFolderCommands( wxMenu * menu )
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            if( ( Commands[ Index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) )
+            if( ( Commands[ Index ].Find( guCOMMAND_ALBUMPATH ) == wxNOT_FOUND ) )
             {
                 MenuItem = new wxMenuItem( menu, ID_COMMANDS_BASE + Index, Names[ Index ], Commands[ Index ] );
                 SubMenu->Append( MenuItem );
@@ -1082,7 +1082,7 @@ void AppendItemsCommands( wxMenu * menu, int selcount, int seltype )
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            if( ( Commands[ Index ].Find( wxT( "{bc}" ) ) == wxNOT_FOUND ) ||
+            if( ( Commands[ Index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) ||
                 ( ( selcount == 1 ) && ( seltype == guFILEITEM_TYPE_IMAGE ) ) )
             {
                 MenuItem = new wxMenuItem( menu, ID_COMMANDS_BASE + Index, Names[ Index ], Commands[ Index ] );
@@ -2255,14 +2255,14 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
 
         Index -= ID_COMMANDS_BASE;
         wxString CurCmd = Commands[ Index ];
-        if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
         {
             wxString DirPath = m_DirCtrl->GetPath();
             DirPath.Replace( wxT( " " ), wxT( "\\ " ) );
-            CurCmd.Replace( wxT( "{bp}" ), DirPath );
+            CurCmd.Replace( guCOMMAND_ALBUMPATH, DirPath );
         }
 
-        if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
         {
             wxString SongList;
             wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
@@ -2271,7 +2271,7 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
             {
                 SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
             }
-            CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+            CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
         }
 
         //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );
@@ -2293,14 +2293,14 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
 
         Index -= ID_COMMANDS_BASE;
         wxString CurCmd = Commands[ Index ];
-        if( CurCmd.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
         {
             wxString DirPath = m_DirCtrl->GetPath();
             DirPath.Replace( wxT( " " ), wxT( "\\ " ) );
-            CurCmd.Replace( wxT( "{bp}" ), DirPath );
+            CurCmd.Replace( guCOMMAND_ALBUMPATH, DirPath );
         }
 
-        if( CurCmd.Find( wxT( "{bc}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND )
         {
             wxString SongList;
             wxArrayString Files = m_FilesCtrl->GetSelectedFiles( false );
@@ -2309,10 +2309,10 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
             {
                 SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
             }
-            CurCmd.Replace( wxT( "{bc}" ), SongList.Trim( false ) );
+            CurCmd.Replace( guCOMMAND_COVERPATH, SongList.Trim( false ) );
         }
 
-        if( CurCmd.Find( wxT( "{tp}" ) ) != wxNOT_FOUND )
+        if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
         {
             wxString SongList;
             wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
@@ -2321,7 +2321,7 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
             {
                 SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
             }
-            CurCmd.Replace( wxT( "{tp}" ), SongList.Trim( false ) );
+            CurCmd.Replace( guCOMMAND_TRACKPATH, SongList.Trim( false ) );
         }
 
         //guLogMessage( wxT( "Execute Command '%s'" ), CurCmd.c_str() );

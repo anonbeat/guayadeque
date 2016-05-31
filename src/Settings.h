@@ -68,6 +68,18 @@
 #define guCOLLECTIONS_ID_FILENAME           wxT( ".guayadeque" )
 #define guCOLLECTIONS_MAXCOUNT              40
 
+// -------------------------------------------------------------------------------- //
+// Patterns
+// -------------------------------------------------------------------------------- //
+#define guLINKS_LANGUAGE                    wxT( "{lang}" )
+#define guLINKS_TEXT                        wxT( "{text}" )
+
+#define guCOMMAND_ALBUMPATH                 wxT( "{bp}" )
+#define guCOMMAND_COVERPATH                 wxT( "{bc}" )
+#define guCOMMAND_TRACKPATH                 wxT( "{tp}" )
+
+
+
 #endif
 
 // -------------------------------------------------------------------------------- //

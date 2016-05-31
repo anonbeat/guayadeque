@@ -21,7 +21,7 @@
 
 #include "Accelerators.h"
 #include "AuiDockArt.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "CopyTo.h"
 #include "ConfirmExit.h"
 #include "EditWithOptions.h"

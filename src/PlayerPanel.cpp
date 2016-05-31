@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "PlayerPanel.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "CoverFrame.h"
 #include "CoverPanel.h"
 #include "Config.h"

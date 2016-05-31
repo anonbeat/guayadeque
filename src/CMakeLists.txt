@@ -68,7 +68,7 @@ ADD_EXECUTABLE( guayadeque
         ArrayStringArray.h
         AudioScrobble.cpp
         AudioScrobble.h
-        Commands.h
+        EventCommandIds.h
         Config.cpp
         Config.h
         ConfirmExit.cpp

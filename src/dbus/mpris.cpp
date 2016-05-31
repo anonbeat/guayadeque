@@ -19,7 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "mpris.h"
 
-#include "Commands.h"
+#include "EventCommandIds.h"
 #include "Utils.h"
 
 const char * Introspection_XML_Data_Root =

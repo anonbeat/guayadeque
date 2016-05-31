@@ -20,7 +20,7 @@
 #include "SelCoverFile.h"
 
 #include "Config.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 
 #include <wx/filedlg.h>
 

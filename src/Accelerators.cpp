@@ -21,7 +21,7 @@
 
 #include "Utils.h"
 #include "Config.h"
-#include "Commands.h"
+#include "EventCommandIds.h"
 
     // Build the Accelerators
 static wxArrayInt guAccelCmdIds;
