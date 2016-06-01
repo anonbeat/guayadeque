@@ -3690,28 +3690,53 @@ void guPrefDialog::OnOnlineListBoxDClicked( wxCommandEvent &event )
 void guPrefDialog::OnOnlineMinBitRateChanged( wxScrollEvent &event )
 {
     int CurPosition = event.GetPosition();
+    //guLogMessage( wxT( "RadioMinBitrate: %i => %i" ), CurPosition, m_LastMinBitRate );
     if( m_LastMinBitRate != CurPosition )
     {
-        if( CurPosition > 256 )
-            CurPosition = 320;
-        else if( CurPosition > 192 )
-            CurPosition = 256;
-        else if( CurPosition > 160 )
-            CurPosition = 192;
-        else if( CurPosition > 128 )
-            CurPosition = 160;
-        else if( CurPosition > 96 )
-            CurPosition = 128;
-        else if( CurPosition > 64 )
-            CurPosition = 96;
-        else if( CurPosition > 32 )
-            CurPosition = 64;
-        else if( CurPosition > 16 )
-            CurPosition = 32;
-        else if( CurPosition > 0 )
-            CurPosition = 16;
+        if( CurPosition > m_LastMinBitRate )
+        {
+            if( CurPosition > 256 )
+                CurPosition = 320;
+            else if( CurPosition > 192 )
+                CurPosition = 256;
+            else if( CurPosition > 160 )
+                CurPosition = 192;
+            else if( CurPosition > 128 )
+                CurPosition = 160;
+            else if( CurPosition > 96 )
+                CurPosition = 128;
+            else if( CurPosition > 64 )
+                CurPosition = 96;
+            else if( CurPosition > 32 )
+                CurPosition = 64;
+            else if( CurPosition > 16 )
+                CurPosition = 32;
+            else if( CurPosition > 0 )
+                CurPosition = 16;
+            else
+                CurPosition = 0;
+        }
         else
-            CurPosition = 0;
+        {
+            if( CurPosition < 16 )
+                CurPosition = 0;
+            else if( CurPosition < 32 )
+                CurPosition = 16;
+            else if( CurPosition < 64 )
+                CurPosition = 32;
+            else if( CurPosition < 96 )
+                CurPosition = 64;
+            else if( CurPosition < 128 )
+                CurPosition = 96;
+            else if( CurPosition < 192 )
+                CurPosition = 128;
+            else if( CurPosition < 256 )
+                CurPosition = 192;
+            else if( CurPosition < 320 )
+                CurPosition = 256;
+            else
+                CurPosition = 320;
+        }
 
         m_LastMinBitRate = CurPosition;
 
