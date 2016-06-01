@@ -1721,59 +1721,55 @@ void guLyricSearchThread::ProcessTags( wxString * text, guLyricSource &lyricsour
 {
     guTrack * Track = &m_LyricSearchContext->m_Track;
 
-    if( text->Find( wxT( "{a}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{a}" ), DoReplace( Track->m_ArtistName, lyricsource ) );
-    if( text->Find( wxT( "{al}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{al}" ), DoReplace( Track->m_ArtistName.Lower(), lyricsource ) );
-    if( text->Find( wxT( "{au}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{au}" ), DoReplace( Track->m_ArtistName.Upper(), lyricsource ) );
-    if( text->Find( wxT( "{a1}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{a1}" ), DoReplace( Track->m_ArtistName.Trim( false )[ 0 ], lyricsource ) );
-    if( text->Find( wxT( "{al1}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{al1}" ), DoReplace( Track->m_ArtistName.Lower().Trim( false )[ 0 ], lyricsource ) );
-    if( text->Find( wxT( "{au1}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{au1}" ), DoReplace( Track->m_ArtistName.Upper().Trim( false )[ 0 ], lyricsource ) );
-    if( text->Find( wxT( "{as}" ) ) )
-    {
-        text->Replace( wxT( "{as}" ), DoReplace( SpecialCase( Track->m_ArtistName.Lower() ), lyricsource ) );
-    }
+    if( text->Find( guLYRICS_ARTIST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ARTIST, DoReplace( Track->m_ArtistName, lyricsource ) );
+    if( text->Find( guLYRICS_ARTIST_LOWER ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ARTIST_LOWER, DoReplace( Track->m_ArtistName.Lower(), lyricsource ) );
+    if( text->Find( guLYRICS_ARTIST_UPPER ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ARTIST_UPPER, DoReplace( Track->m_ArtistName.Upper(), lyricsource ) );
+    if( text->Find( guLYRICS_ARTIST_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ARTIST_FIRST, DoReplace( Track->m_ArtistName.Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_ARTIST_LOWER_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ARTIST_LOWER_FIRST, DoReplace( Track->m_ArtistName.Lower().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_ARTIST_UPPER_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ARTIST_UPPER_FIRST, DoReplace( Track->m_ArtistName.Upper().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_ARTIST_CAPITALIZE ) )
+        text->Replace( guLYRICS_ARTIST_CAPITALIZE, DoReplace( SpecialCase( Track->m_ArtistName.Lower() ), lyricsource ) );
 
-    if( text->Find( wxT( "{b}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{b}" ), DoReplace( Track->m_AlbumName, lyricsource ) );
-    if( text->Find( wxT( "{bl}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{bl}" ), DoReplace( Track->m_AlbumName.Lower(), lyricsource ) );
-    if( text->Find( wxT( "{bu}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{bu}" ), DoReplace( Track->m_AlbumName.Upper(), lyricsource ) );
-    if( text->Find( wxT( "{b1}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{b1}" ), DoReplace( Track->m_AlbumName.Trim( false )[ 0 ], lyricsource ) );
-    if( text->Find( wxT( "{bl1}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{bl1}" ), DoReplace( Track->m_AlbumName.Lower().Trim( false )[ 0 ], lyricsource ) );
-    if( text->Find( wxT( "{bu1}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{bu1}" ), DoReplace( Track->m_AlbumName.Upper().Trim( false )[ 0 ], lyricsource ) );
-    if( text->Find( wxT( "{bs}" ) ) )
-    {
-        text->Replace( wxT( "{bs}" ), DoReplace( SpecialCase( Track->m_AlbumName.Lower() ), lyricsource ) );
-    }
+    if( text->Find( guLYRICS_ALBUM ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM, DoReplace( Track->m_AlbumName, lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_LOWER ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM_LOWER, DoReplace( Track->m_AlbumName.Lower(), lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_UPPER ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM_UPPER, DoReplace( Track->m_AlbumName.Upper(), lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM_FIRST, DoReplace( Track->m_AlbumName.Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_LOWER_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM_LOWER_FIRST, DoReplace( Track->m_AlbumName.Lower().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_UPPER_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM_UPPER_FIRST, DoReplace( Track->m_AlbumName.Upper().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_CAPITALIZE ) )
+        text->Replace( guLYRICS_ALBUM_CAPITALIZE, DoReplace( SpecialCase( Track->m_AlbumName.Lower() ), lyricsource ) );
+    if( text->Find( guLYRICS_ALBUM_PATH ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_ALBUM_PATH, Track->m_FileName.BeforeLast( wxT( '/' ) ) );
 
-    if( text->Find( wxT( "{t}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{t}" ), DoReplace( Track->m_SongName, lyricsource ) );
-    if( text->Find( wxT( "{tl}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{tl}" ), DoReplace( Track->m_SongName.Lower(), lyricsource ) );
-    if( text->Find( wxT( "{tu}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{tu}" ), DoReplace( Track->m_SongName.Upper(), lyricsource ) );
-    if( text->Find( wxT( "{ts}" ) ) )
-    {
-        text->Replace( wxT( "{ts}" ), DoReplace( SpecialCase( Track->m_SongName.Lower() ), lyricsource ) );
-    }
+    if( text->Find( guLYRICS_TITLE ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_TITLE, DoReplace( Track->m_SongName, lyricsource ) );
+    if( text->Find( guLYRICS_TITLE_LOWER ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_TITLE_LOWER, DoReplace( Track->m_SongName.Lower(), lyricsource ) );
+    if( text->Find( guLYRICS_TITLE_UPPER ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_TITLE_UPPER, DoReplace( Track->m_SongName.Upper(), lyricsource ) );
+    if( text->Find( guLYRICS_TITLE_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_TITLE_FIRST, DoReplace( Track->m_SongName.Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_TITLE_LOWER_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_TITLE_LOWER_FIRST, DoReplace( Track->m_SongName.Lower().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_TITLE_UPPER_FIRST ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_TITLE_UPPER_FIRST, DoReplace( Track->m_SongName.Upper().Trim( false )[ 0 ], lyricsource ) );
+    if( text->Find( guLYRICS_TITLE_CAPITALIZE ) )
+        text->Replace( guLYRICS_TITLE_CAPITALIZE, DoReplace( SpecialCase( Track->m_SongName.Lower() ), lyricsource ) );
 
-    if( text->Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{bp}" ), Track->m_FileName.BeforeLast( wxT( '/' ) ) );
-
-    if( text->Find( wxT( "{f}" ) ) != wxNOT_FOUND )
-        text->Replace( wxT( "{f}" ), Track->m_FileName.BeforeLast( wxT( '.' ) ) );
-
-//    if( text->Find( wxT( "{L}" ) ) != wxNOT_FOUND )
-//        text->Replace( wxT( "{L}" ), m_LyricText );
+    if( text->Find( guLYRICS_FILENAME ) != wxNOT_FOUND )
+        text->Replace( guLYRICS_FILENAME, Track->m_FileName.BeforeLast( wxT( '.' ) ) );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -23,6 +23,7 @@
 #include "DbLibrary.h"
 #include "FileRenamer.h"    // NormalizeField
 #include "MediaViewer.h"
+#include "Settings.h"
 
 #include <wx/curl/http.h>
 #include <wx/process.h>
@@ -677,72 +678,72 @@ wxString guExpandTrackMacros( const wxString &pattern, guTrack * track, const in
 {
     wxString RetVal = pattern;
 
-    if( RetVal.Find( wxT( "{a}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{a}" ), NormalizeField( track->m_ArtistName ) );
-    if( RetVal.Find( wxT( "{al}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{al}" ), NormalizeField( track->m_ArtistName.Lower() ) );
-    if( RetVal.Find( wxT( "{au}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{au}" ), NormalizeField( track->m_ArtistName.Upper() ) );
-    if( RetVal.Find( wxT( "{a1}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{a1}" ), NormalizeField( track->m_ArtistName.Trim( false )[ 0 ] ) );
-    if( RetVal.Find( wxT( "{aa}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{aa}" ), NormalizeField( track->m_AlbumArtist ) );
-    if( RetVal.Find( wxT( "{aal}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{aal}" ), NormalizeField( track->m_AlbumArtist.Lower() ) );
-    if( RetVal.Find( wxT( "{aau}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{aau}" ), NormalizeField( track->m_AlbumArtist.Upper() ) );
-    if( RetVal.Find( wxT( "{aa1}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{aa1}" ), NormalizeField( track->m_AlbumArtist.Trim( false )[ 0 ] ) );
-    if( RetVal.Find( wxT( "{A}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{A}" ), NormalizeField( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ) );
-    if( RetVal.Find( wxT( "{Al}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{Al}" ), NormalizeField( ( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ).Lower() ) );
-    if( RetVal.Find( wxT( "{Au}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{Au}" ), NormalizeField( ( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ).Upper() ) );
-    if( RetVal.Find( wxT( "{A1}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{A1}" ), NormalizeField( ( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ).Trim( false )[ 0 ] ) );
-    if( RetVal.Find( wxT( "{b}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{b}" ), NormalizeField( track->m_AlbumName ) );
-    if( RetVal.Find( wxT( "{bl}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{bl}" ), NormalizeField( track->m_AlbumName.Lower() ) );
-    if( RetVal.Find( wxT( "{bu}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{bu}" ), NormalizeField( track->m_AlbumName.Upper() ) );
-    if( RetVal.Find( wxT( "{b1}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{b1}" ), NormalizeField( track->m_AlbumName.Trim( false )[ 0 ] ) );
-    if( RetVal.Find( wxT( "{bp}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{bp}" ), NormalizeField( track->m_FileName.BeforeLast( wxT( '/' ) ) ) );
-    if( RetVal.Find( wxT( "{c}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{c}" ), NormalizeField( track->m_Composer ) );
-    if( RetVal.Find( wxT( "{cl}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{cl}" ), NormalizeField( track->m_Composer.Lower() ) );
-    if( RetVal.Find( wxT( "{cu}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{cu}" ), NormalizeField( track->m_Composer.Upper() ) );
-    if( RetVal.Find( wxT( "{c1}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{c1}" ), NormalizeField( track->m_Composer.Trim( false )[ 0 ] ) );
-    if( RetVal.Find( wxT( "{f}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{f}" ), wxFileNameFromPath( track->m_FileName.BeforeLast( wxT( '.' ) ) ) );
-    if( RetVal.Find( wxT( "{g}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{g}" ), NormalizeField( track->m_GenreName ) );
-    if( RetVal.Find( wxT( "{gl}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{gl}" ), NormalizeField( track->m_GenreName.Lower() ) );
-    if( RetVal.Find( wxT( "{gu}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{gu}" ), NormalizeField( track->m_GenreName.Upper() ) );
-    if( RetVal.Find( wxT( "{g1}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{g1}" ), NormalizeField( track->m_GenreName.Trim( false )[ 0 ] ) );
-    if( RetVal.Find( wxT( "{n}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{n}" ), wxString::Format( wxT( "%02u" ), track->m_Number ) );
-    if( RetVal.Find( wxT( "{t}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{t}" ), NormalizeField( track->m_SongName ) );
-    if( RetVal.Find( wxT( "{tl}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{tl}" ), NormalizeField( track->m_SongName.Lower() ) );
-    if( RetVal.Find( wxT( "{tu}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{tu}" ), NormalizeField( track->m_SongName.Upper() ) );
-    if( RetVal.Find( wxT( "{y}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{y}" ), wxString::Format( wxT( "%u" ), track->m_Year ) );
-    if( RetVal.Find( wxT( "{d}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{d}" ), NormalizeField( track->m_Disk ) );
-    if( RetVal.Find( wxT( "{i}" ) ) != wxNOT_FOUND )
-        RetVal.Replace( wxT( "{i}" ), wxString::Format( wxT( "%04u" ), indexpos ) );
+    if( RetVal.Find( guCOPYTO_ARTIST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ARTIST, NormalizeField( track->m_ArtistName ) );
+    if( RetVal.Find( guCOPYTO_ARTIST_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ARTIST_LOWER, NormalizeField( track->m_ArtistName.Lower() ) );
+    if( RetVal.Find( guCOPYTO_ARTIST_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ARTIST_UPPER, NormalizeField( track->m_ArtistName.Upper() ) );
+    if( RetVal.Find( guCOPYTO_ARTIST_FIRST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ARTIST_FIRST, NormalizeField( track->m_ArtistName.Trim( false )[ 0 ] ) );
+    if( RetVal.Find( guCOPYTO_ALBUMARTIST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUMARTIST, NormalizeField( track->m_AlbumArtist ) );
+    if( RetVal.Find( guCOPYTO_ALBUMARTIST_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUMARTIST_LOWER, NormalizeField( track->m_AlbumArtist.Lower() ) );
+    if( RetVal.Find( guCOPYTO_ALBUMARTIST_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUMARTIST_UPPER, NormalizeField( track->m_AlbumArtist.Upper() ) );
+    if( RetVal.Find( guCOPYTO_ALBUMARTIST_FIRST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUMARTIST_FIRST, NormalizeField( track->m_AlbumArtist.Trim( false )[ 0 ] ) );
+    if( RetVal.Find( guCOPYTO_ANYARTIST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ANYARTIST, NormalizeField( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ) );
+    if( RetVal.Find( guCOPYTO_ANYARTIST_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ANYARTIST_LOWER, NormalizeField( ( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ).Lower() ) );
+    if( RetVal.Find( guCOPYTO_ANYARTIST_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ANYARTIST_UPPER, NormalizeField( ( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ).Upper() ) );
+    if( RetVal.Find( guCOPYTO_ANYARTIST_FIRST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ANYARTIST_FIRST, NormalizeField( ( track->m_AlbumArtist.IsEmpty() ? track->m_ArtistName : track->m_AlbumArtist ).Trim( false )[ 0 ] ) );
+    if( RetVal.Find( guCOPYTO_ALBUM ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUM, NormalizeField( track->m_AlbumName ) );
+    if( RetVal.Find( guCOPYTO_ALBUM_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUM_LOWER, NormalizeField( track->m_AlbumName.Lower() ) );
+    if( RetVal.Find( guCOPYTO_ALBUM_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUM_UPPER, NormalizeField( track->m_AlbumName.Upper() ) );
+    if( RetVal.Find( guCOPYTO_ALBUM_FIRST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUM_FIRST, NormalizeField( track->m_AlbumName.Trim( false )[ 0 ] ) );
+    if( RetVal.Find( guCOPYTO_ALBUM_PATH ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_ALBUM_PATH, NormalizeField( track->m_FileName.BeforeLast( wxT( '/' ) ) ) );
+    if( RetVal.Find( guCOPYTO_COMPOSER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_COMPOSER, NormalizeField( track->m_Composer ) );
+    if( RetVal.Find( guCOPYTO_COMPOSER_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_COMPOSER_LOWER, NormalizeField( track->m_Composer.Lower() ) );
+    if( RetVal.Find( guCOPYTO_COMPOSER_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_COMPOSER_UPPER, NormalizeField( track->m_Composer.Upper() ) );
+    if( RetVal.Find( guCOPYTO_COMPOSER_FIRST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_COMPOSER_FIRST, NormalizeField( track->m_Composer.Trim( false )[ 0 ] ) );
+    if( RetVal.Find( guCOPYTO_FILENAME ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_FILENAME, wxFileNameFromPath( track->m_FileName.BeforeLast( wxT( '.' ) ) ) );
+    if( RetVal.Find( guCOPYTO_GENRE ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_GENRE, NormalizeField( track->m_GenreName ) );
+    if( RetVal.Find( guCOPYTO_GENRE_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_GENRE_LOWER, NormalizeField( track->m_GenreName.Lower() ) );
+    if( RetVal.Find( guCOPYTO_GENRE_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_GENRE_UPPER, NormalizeField( track->m_GenreName.Upper() ) );
+    if( RetVal.Find( guCOPYTO_GENRE_FIRST ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_GENRE_FIRST, NormalizeField( track->m_GenreName.Trim( false )[ 0 ] ) );
+    if( RetVal.Find( guCOPYTO_NUMBER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_NUMBER, wxString::Format( wxT( "%02u" ), track->m_Number ) );
+    if( RetVal.Find( guCOPYTO_TITLE ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_TITLE, NormalizeField( track->m_SongName ) );
+    if( RetVal.Find( guCOPYTO_TITLE_LOWER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_TITLE_LOWER, NormalizeField( track->m_SongName.Lower() ) );
+    if( RetVal.Find( guCOPYTO_TITLE_UPPER ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_TITLE_UPPER, NormalizeField( track->m_SongName.Upper() ) );
+    if( RetVal.Find( guCOPYTO_YEAR ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_YEAR, wxString::Format( wxT( "%u" ), track->m_Year ) );
+    if( RetVal.Find( guCOPYTO_DISC ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_DISC, NormalizeField( track->m_Disk ) );
+    if( RetVal.Find( guCOPYTO_INDEX ) != wxNOT_FOUND )
+        RetVal.Replace( guCOPYTO_INDEX, wxString::Format( wxT( "%04u" ), indexpos ) );
 
     return RetVal;
 }
