@@ -177,8 +177,7 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
     //http.AddHeader( wxT( "Accept: */*" ) );
     //http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     try {
-        http.Get( Buffer, url );
-        if( Buffer.IsOk() )
+        if( http.Get( Buffer, url ) && Buffer.IsOk() && Buffer.GetSize() )
         {
             long ResCode = http.GetResponseCode();
             //guLogMessage( wxT( "ResCode: %lu" ), ResCode );
@@ -198,13 +197,13 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
                 }
             }
 
-//            if( ResCode != 200 )
-//            {
-//                guLogMessage( wxT( "Error %u getting remote image '%s'\n%s" ),
-//                    http.GetResponseCode(),
-//                    url.c_str(),
-//                    http.GetResponseHeader().c_str() );
-//            }
+            if( ResCode != 200 )
+            {
+                guLogMessage( wxT( "Error %lu getting remote image '%s'\n%s" ),
+                    http.GetResponseCode(),
+                    url.c_str(),
+                    http.GetResponseHeader().c_str() );
+            }
 
             wxMemoryInputStream Ins( Buffer );
             if( Ins.IsOk() )
@@ -234,6 +233,10 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
                     }
                 }
             }
+        }
+        else
+        {
+            guLogError( wxT( "Could not get the image from '%s'" ), url.c_str() );
         }
     }
     catch( ... )
