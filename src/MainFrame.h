@@ -226,7 +226,7 @@ class guMainFrame : public wxFrame
     wxLongLong                      m_SelSize;
 
     // Layouts
-    wxSortedArrayString             m_LayoutNames;
+    wxArrayString                   m_LayoutNames;
 
     guCopyToThread *                m_CopyToThread;
     wxMutex                         m_CopyToThreadMutex;

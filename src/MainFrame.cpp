@@ -3674,6 +3674,7 @@ void guMainFrame::LoadLayoutNames( void )
                     }
                 }
             } while( Dir.GetNext( &FileName ) );
+            m_LayoutNames.Sort();
         }
     }
     else

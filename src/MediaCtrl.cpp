@@ -1360,7 +1360,7 @@ bool guMediaCtrl::Init()
     char * * argvGST = new char * [ wxTheApp->argc + 1 ];
     for( i = 0; i < wxTheApp->argc; i++ )
     {
-        argvGST[ i ] = wxStrdupA( wxConvUTF8.cWX2MB( wxTheApp->argv[ i ] ) );
+        argvGST[ i ] = wxStrdup( wxTheApp->argv[ i ].char_str() );
     }
 
     argvGST[ wxTheApp->argc ] = NULL;
