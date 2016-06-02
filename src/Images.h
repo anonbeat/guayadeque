@@ -23,7 +23,7 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 
-enum guIMAGE_INDEX {
+typedef enum {
     guIMAGE_INDEX_add = 0,
     guIMAGE_INDEX_blank_cd_cover,
     guIMAGE_INDEX_bookmark,
@@ -184,8 +184,10 @@ enum guIMAGE_INDEX {
     guIMAGE_INDEX_tiny_mv_library,
     guIMAGE_INDEX_tiny_mv_albumbrowser,
     guIMAGE_INDEX_tiny_mv_treeview,
-    guIMAGE_INDEX_tiny_mv_playlists
-};
+    guIMAGE_INDEX_tiny_mv_playlists,
+    guIMAGE_INDEX_COUNT
+
+} guIMAGE_INDEX;
 
 
 // -------------------------------------------------------------------------------- //
