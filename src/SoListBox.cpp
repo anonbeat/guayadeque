@@ -311,7 +311,7 @@ void guSoListBox::ItemsCheckRange( const int start, const int end )
 // -------------------------------------------------------------------------------- //
 void guSoListBox::GetItemsList( void )
 {
-    //m_Db->GetSongs( &m_Items, GetVisibleRowsBegin(), GetLastVisibleLine() );
+    //m_Db->GetSongs( &m_Items, GetVisibleRowsBegin(), GetVisibleRowsEnd() );
     SetItemCount( m_Db->GetSongsCount() );
 
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
@@ -911,7 +911,7 @@ void guSoListBox::UpdatedTracks( const guTrackArray * tracks )
                 ( CurTrack.m_FileName == m_Items[ ItemIndex ].m_FileName ) )
             {
                 m_Items[ ItemIndex ] = CurTrack;
-                RefreshLine( ItemIndex + m_ItemsFirst );
+                RefreshRow( ItemIndex + m_ItemsFirst );
                 if( !ClearSelection )
                     ClearSelection = true;
             }
@@ -935,7 +935,7 @@ void guSoListBox::UpdatedTrack( const guTrack * track )
         if( track->m_FileName == m_Items[ ItemIndex ].m_FileName )
         {
             m_Items[ ItemIndex ] = * track;
-            RefreshLine( ItemIndex );
+            RefreshRow( ItemIndex );
         }
     }
 }

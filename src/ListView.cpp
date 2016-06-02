@@ -591,9 +591,9 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     {
         //guLogMessage( wxT( "%u -> %u" ), m_DragOverItem, m_LastDragOverItem );
         if( m_LastDragOverAfter && ( m_DragOverItem != wxNOT_FOUND ) )
-            RefreshLines( wxMax( ( int ) m_LastDragOverItem, 0 ), wxMin( ( ( int ) m_LastDragOverItem ), GetItemCount() ) );
+            RefreshRows( wxMax( ( int ) m_LastDragOverItem, 0 ), wxMin( ( ( int ) m_LastDragOverItem ), GetItemCount() ) );
         if( m_DragOverItem != wxNOT_FOUND )
-            RefreshLines( m_DragOverItem, m_DragOverItem );
+            RefreshRows( m_DragOverItem, m_DragOverItem );
         m_LastDragOverItem = m_DragOverItem;
         m_LastDragOverAfter = m_DragOverAfter;
     }
@@ -606,7 +606,7 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     if( m_Header )
         Height -= h;
 
-    if( ( wherey > ( Height - 10 ) ) && ( int ) GetLastVisibleLine() != GetItemCount() )
+    if( ( wherey > ( Height - 10 ) ) && ( int ) GetVisibleRowsEnd() != GetItemCount() )
     {
         ScrollLines( 1 );
     }

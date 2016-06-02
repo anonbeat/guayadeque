@@ -350,7 +350,7 @@ bool guConfig::WriteStr( const wxString &keyname, const wxString &value, const w
     }
     else
     {
-        wxXmlAttribute * Property = FindPropertyByName( XmlNode->GetProperties(), wxT( "value" ) );
+        wxXmlAttribute * Property = FindPropertyByName( XmlNode->GetAttributes(), wxT( "value" ) );
         if( !Property )
         {
             Property = new wxXmlAttribute( wxT( "value" ), value, NULL );

@@ -433,7 +433,7 @@ wxImage * GetMp4Image( TagLib::MP4::Tag * mp4tag )
 
         for( TagLib::MP4::CoverArtList::Iterator it = Covers.begin(); it != Covers.end(); it++ )
         {
-            int ImgType = wxBITMAP_TYPE_INVALID;
+            wxBitmapType ImgType = wxBITMAP_TYPE_INVALID;
             if( it->format() == TagLib::MP4::CoverArt::PNG )
             {
                 ImgType = wxBITMAP_TYPE_PNG;
@@ -1718,7 +1718,7 @@ wxImage * GetFlacImage( List<FLAC::Picture *> Pictures, TagLib::FLAC::Picture::T
 
         if( Pic->type() == imagetype )
         {
-            int ImgType = wxBITMAP_TYPE_INVALID;
+            wxBitmapType ImgType = wxBITMAP_TYPE_INVALID;
             if( Pic->mimeType() == "image/png" )
             {
                 ImgType = wxBITMAP_TYPE_PNG;

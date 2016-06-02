@@ -955,7 +955,7 @@ guLyricSourceExtract::guLyricSourceExtract( wxXmlNode * xmlnode )
 {
     if( xmlnode )
     {
-        if( xmlnode->HasProp( wxT( "tag" ) ) )
+        if( xmlnode->HasAttribute( wxT( "tag" ) ) )
         {
             xmlnode->GetAttribute( wxT( "tag" ), &m_Text1 );
         }

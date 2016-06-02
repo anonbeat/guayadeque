@@ -3575,16 +3575,16 @@ void guPrefDialog::OnCrossFadeChanged( wxScrollEvent& event )
             FadeInPoints[ 3 ] = wxPoint( 400, 0 );
             FadeInPoints[ 4 ] = wxPoint( 400, 200 );
             wxRegion InRegion( WXSIZEOF( FadeInPoints ), FadeInPoints );
-            MemDC.SetClippingRegion( InRegion );
+            MemDC.SetDeviceClippingRegion( InRegion );
             MemDC.GradientFillLinear( Rect, * wxLIGHT_GREY, * wxGREEN, wxRIGHT );
             MemDC.DestroyClippingRegion();
 
-            MemDC.SetClippingRegion( OutRegion );
+            MemDC.SetDeviceClippingRegion( OutRegion );
             MemDC.GradientFillLinear( Rect, wxColour( 0, 200, 200 ), wxColour( 0, 128, 128 ), wxRIGHT );
             MemDC.DestroyClippingRegion();
 
             OutRegion.Subtract( InRegion );
-            MemDC.SetClippingRegion( OutRegion );
+            MemDC.SetDeviceClippingRegion( OutRegion );
             MemDC.GradientFillLinear( Rect, * wxBLUE, * wxLIGHT_GREY, wxRIGHT );
             MemDC.DestroyClippingRegion();
 

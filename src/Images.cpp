@@ -189,7 +189,7 @@
 typedef struct {
     const unsigned char * imgdata;
     unsigned int          imgsize;
-    long                  imgtype;
+    wxBitmapType          imgtype;
 } guImage_Item;
 
 #define GUIMAGE( IMAGENAME, IMAGETYPE )    { IMAGENAME, sizeof( IMAGENAME ), IMAGETYPE }

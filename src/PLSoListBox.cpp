@@ -428,8 +428,8 @@ void guPLSoListBox::RandomizeTracks( void )
             m_Items[ Pos ] = m_Items[ NewPos ];
             m_Items[ NewPos ] = SavedItem;
 
-            RefreshLine( Pos );
-            RefreshLine( NewPos );
+            RefreshRow( Pos );
+            RefreshRow( NewPos );
         }
         ClearSelectedItems();
     }

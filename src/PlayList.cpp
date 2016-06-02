@@ -621,7 +621,7 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                             Rating = 0;
                         }
                         m_Items[ Item ].m_Rating = Rating;
-                        RefreshLine( Item );
+                        RefreshRow( Item );
 
                         SetTrackRating( m_Items[ Item ], Rating );
                     }
@@ -2538,7 +2538,7 @@ void guPlayList::OnSetRating( wxCommandEvent &event )
         {
             int ItemNum = Selected[ Index ];
             m_Items[ ItemNum ].m_Rating = Rating;
-            RefreshLine( ItemNum );
+            RefreshRow( ItemNum );
 
             UpdatedTracks.Add( m_Items[ ItemNum ] );
         }

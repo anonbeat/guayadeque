@@ -329,14 +329,14 @@ class guListView : public wxScrolledWindow
     size_t                  GetVisibleBegin( void ) const { return m_ListBox->GetVisibleBegin(); }
     size_t                  GetVisibleEnd( void ) const { return m_ListBox->GetVisibleEnd(); }
     size_t                  GetVisibleRowsBegin() const { return m_ListBox->GetVisibleRowsBegin(); }
-    size_t                  GetLastVisibleLine() const { return m_ListBox->GetLastVisibleLine(); }
+    size_t                  GetVisibleRowsEnd() const { return m_ListBox->GetVisibleRowsEnd(); }
     bool                    ScrollLines( int lines ) { return m_ListBox->wxWindow::ScrollLines( lines ); }
 
     bool                    ScrollToRow( size_t line ) { return m_ListBox->ScrollToRow( line ); }
 
     void                    RefreshAll( int scroll = wxNOT_FOUND );
-    void                    RefreshLines( const int from, const int to ) { m_ListBox->RefreshLines( from, to ); }
-    void                    RefreshLine( const int line ) { m_ListBox->RefreshLine( line ); }
+    void                    RefreshRows( const int from, const int to ) { m_ListBox->RefreshRows( from, to ); }
+    void                    RefreshRow( const int line ) { m_ListBox->RefreshRow( line ); }
     bool                    IsSelected( size_t row ) const { return m_ListBox->IsSelected( row ); }
     virtual int             GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const { return 0; }
 

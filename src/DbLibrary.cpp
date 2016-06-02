@@ -2131,7 +2131,7 @@ int guDbLibrary::UpdateSong( const guTrack &track, const bool allowrating )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, const int type, const int maxsize )
+void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, const wxBitmapType type, const int maxsize )
 {
   wxString              query;
   wxSQLite3ResultSet    dbRes;
@@ -2163,7 +2163,7 @@ void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, c
             Image->Rescale( maxsize, maxsize, wxIMAGE_QUALITY_HIGH );
         }
 
-        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + SaveTo;
+        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + SaveTo;        
         if( !Image->SaveFile( CoverFile, type ) )
         {
             delete Image;
