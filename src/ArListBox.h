@@ -24,6 +24,8 @@
 
 #include "AccelListBox.h"
 
+namespace Guayadeque {
+
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -48,6 +50,8 @@ class guArListBox : public guAccelListBox
     int             FindArtist( const int artistid );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -28,6 +28,7 @@
 
 #include <gst/gst.h>
 
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 // Any class that want to use the guAcousticId must be of this class
@@ -101,6 +102,8 @@ class guAcousticId
 
     friend class guAcousticIdThread;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

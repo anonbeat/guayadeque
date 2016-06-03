@@ -31,6 +31,8 @@
 #define guSCROLL_TIMER_START    11
 #define guSCROLL_TIMER_SCROLL   12
 
+namespace Guayadeque {
+
 BEGIN_EVENT_TABLE( guAutoScrollText, wxControl )
     EVT_MOUSE_EVENTS( guAutoScrollText::OnMouseEvents )
 END_EVENT_TABLE()
@@ -176,6 +178,8 @@ void guAutoScrollText::OnScrollTimer( wxTimerEvent &event )
     m_ScrollPos += m_ScrollQuantum;
     //guLogMessage( wxT( "Actual ScrollPos: %i  ScrollQ: %i" ), m_ScrollPos, m_ScrollQuantum );
     Refresh();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

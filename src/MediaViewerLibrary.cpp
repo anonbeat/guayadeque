@@ -21,6 +21,8 @@
 
 #include "MainFrame.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guMediaViewerLibrary::guMediaViewerLibrary( wxWindow * parent, guMediaCollection &collection, const int basecommand,
         guMainFrame * mainframe, const int mode, guPlayerPanel * playerpanel ) :
@@ -33,6 +35,8 @@ guMediaViewerLibrary::guMediaViewerLibrary( wxWindow * parent, guMediaCollection
 // -------------------------------------------------------------------------------- //
 guMediaViewerLibrary::~guMediaViewerLibrary()
 {
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -27,6 +27,8 @@
 
 #include <gst/gst.h>
 
+namespace Guayadeque {
+
 enum guTranscodeFormat {
     guTRANSCODE_FORMAT_KEEP,
     guTRANSCODE_FORMAT_MP3,
@@ -85,6 +87,8 @@ class guTranscodeThread : public wxThread
     bool                DoStartSeek( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

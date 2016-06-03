@@ -20,6 +20,8 @@
 #ifndef guSETTINGS_H
 #define guSETTINGS_H
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 #define guPATH_CONFIG                       wxGetHomeDir() + wxT( "/.guayadeque/" )
 #define guPATH_CONFIG_FILENAME              guPATH_CONFIG wxT( "guayadeque.conf" )
@@ -56,7 +58,7 @@
 #define guPATH_EQUALIZERS                   guPATH_CONFIG
 #define guPATH_EQUALIZERS_FILENAME          guPATH_CONFIG wxT( "equalizers.conf" )
 
-#define guPATH_DEFAULT_RECORDINGS           wxGetHomeDir() + wxT( "/Music/Recordings" )
+#define guPATH_DEFAULT_RECORDINGS           wxGetHomeDir() + wxT( "/Recordings" )
 
 #define guCOPYTO_MAXCOUNT                   199
 #define guCOPYTO_DEVICE_BASE                100
@@ -137,6 +139,7 @@
 #define guLYRICS_ALBUM_PATH                 wxT( "{bp}" )
 #define guLYRICS_FILENAME                   wxT( "{f}" )
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

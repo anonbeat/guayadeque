@@ -32,6 +32,8 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guPlayerFilters : public wxPanel
 {
@@ -57,6 +59,8 @@ class guPlayerFilters : public wxPanel
     void            SetDenyFilterId( const int id );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

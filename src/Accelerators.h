@@ -22,6 +22,8 @@
 
 #include <wx/wx.h>
 
+namespace Guayadeque {
+
 void        guAccelInit( void );
 void        guAccelOnConfigUpdated( void );
 int         guAccelGetActionNames( wxArrayString &actionnames );
@@ -31,6 +33,8 @@ wxString    guAccelGetKeyCodeMenuString( const int keycode );
 wxString    guAccelGetCommandKeyCodeString( const int cmd );
 int         guAccelGetCommandKeyCode( const int cmd );
 int         guAccelDoAcceleratorTable( const wxArrayInt &aliascmds, const wxArrayInt &realcmds, wxAcceleratorTable &acceltable );
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

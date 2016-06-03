@@ -27,6 +27,8 @@
 #include <wx/curl/http.h>
 #include <wx/tokenzr.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guAudioScrobbleSender::guAudioScrobbleSender( guDbLibrary * db, const wxString &serverurl )
 {
@@ -769,6 +771,8 @@ guASPlayedThread::ExitCode guASPlayedThread::Entry()
         Sleep( guAS_SUBMIT_TIMEOUT ); // Wait 30 Secs between submit attempts
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

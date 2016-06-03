@@ -41,6 +41,8 @@
 //#include <wx/mediactrl.h>
 #include <wx/tglbtn.h>
 
+namespace Guayadeque {
+
 #define guTEMPORARY_COVER_FILENAME      wxT( "guayadeque-tmp-cover" )
 
 enum guInsertAfterCurrent {
@@ -481,6 +483,7 @@ class guUpdatePlayerCoverThread : public wxThread
     virtual ExitCode Entry();
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

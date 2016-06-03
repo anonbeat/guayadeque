@@ -30,6 +30,8 @@
 #include "Utils.h"
 #include "LibPanel.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guRaListBox::guRaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guAccelListBox( parent, db, label )
@@ -211,6 +213,8 @@ void guRaListBox::CreateContextMenu( wxMenu * Menu ) const
 wxString guRaListBox::GetSearchText( int item ) const
 {
     return GetItemName( item );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

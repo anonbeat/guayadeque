@@ -21,6 +21,8 @@
 
 #include "Shoutcast.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
     wxDialog( parent, wxID_ANY, _("Radio Genre Editor"), wxDefaultPosition, wxSize( 280,360 ), wxDEFAULT_DIALOG_STYLE )
@@ -149,5 +151,6 @@ guRadioGenreEditor::~guRadioGenreEditor()
 {
 }
 
-// -------------------------------------------------------------------------------- //
+}
 
+// -------------------------------------------------------------------------------- //

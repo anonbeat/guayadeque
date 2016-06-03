@@ -21,6 +21,8 @@
 
 #include <wx/mstream.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 #include "./images/add.h"
 #include "./images/blank_cd_cover.h"
@@ -373,6 +375,8 @@ wxImage guImage( guIMAGE_INDEX imageindex )
     wxMemoryInputStream image_stream( guImage_Items[ imageindex ].imgdata,
                                       guImage_Items[ imageindex ].imgsize );
     return wxImage( image_stream, guImage_Items[ imageindex ].imgtype );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

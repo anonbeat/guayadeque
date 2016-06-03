@@ -24,6 +24,8 @@
 
 #include <wx/dc.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 unsigned char wxAuiBlendColour( unsigned char fg, unsigned char bg, double alpha )
 {
@@ -621,6 +623,8 @@ wxAuiPaneInfo & guAuiNotebook::GetPane( const wxString &name )
 wxAuiPaneInfoArray & guAuiNotebook::GetAllPanes( void )
 {
     return m_mgr.GetAllPanes();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

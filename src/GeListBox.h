@@ -22,6 +22,8 @@
 
 #include "AccelListBox.h"
 
+namespace Guayadeque {
+
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -42,6 +44,7 @@ class guGeListBox : public guAccelListBox
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

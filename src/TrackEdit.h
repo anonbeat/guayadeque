@@ -32,6 +32,8 @@
 #include <wx/statline.h>
 #include <wx/splitter.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_ARRAY_PTR( wxImage *, guImagePtrArray );
 
 extern const wxEventType guTrackEditEvent;
@@ -290,6 +292,8 @@ class guTrackEditorGetComboDataThread : public wxThread
     virtual ExitCode Entry();
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

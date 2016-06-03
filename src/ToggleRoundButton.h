@@ -22,6 +22,8 @@
 
 #include "RoundButton.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guToggleRoundButton : public guRoundButton
 {
@@ -42,6 +44,7 @@ class guToggleRoundButton : public guRoundButton
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

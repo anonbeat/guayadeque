@@ -24,6 +24,8 @@
 #include "Utils.h"
 #include "MainFrame.h"
 
+namespace Guayadeque {
+
 // See http://www.mpris.org/2.0/spec/index.html
 #define GUAYADEQUE_MPRIS2_SERVICE_NAME          "org.mpris.MediaPlayer2.guayadeque"
 #define GUAYADEQUE_MPRIS2_OBJECT_PATH           "/org/mpris/MediaPlayer2"
@@ -1864,6 +1866,8 @@ bool guMPRIS2::Indicators_Sound_Available( void )
     bool RetVal = HasOwner( "com.canonical.indicators.sound" );
     guLogMessage( wxT( "Indicators_Sound_Available() => %i" ), RetVal );
     return RetVal;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

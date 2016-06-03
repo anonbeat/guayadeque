@@ -27,6 +27,8 @@
 #include <wx/app.h>
 #include <wx/snglinst.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guMainApp : public wxApp
 {
@@ -45,6 +47,8 @@ class guMainApp : public wxApp
     wxLocale * GetLocale() { return &m_Locale; };
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

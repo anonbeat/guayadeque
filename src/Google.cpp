@@ -27,6 +27,8 @@
 #include <wx/statline.h>
 #include <wx/html/htmlpars.h>
 
+namespace Guayadeque {
+
 //#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?imgsz=large|xlarge&q=%s&start=%u" )
 //#define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://images.google.com/images?&q=%s&sout=1&start=%u" )
 #define GOOGLE_IMAGES_SEARCH_URL    wxT( "http://ajax.googleapis.com/ajax/services/search/images?v=1.0&q=%s&rsz=8&start=%d" )
@@ -108,6 +110,8 @@ int guGoogleCoverFetcher::AddCoverLinks( int pagenum )
         }
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

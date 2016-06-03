@@ -34,6 +34,8 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
+namespace Guayadeque {
+
 #define guVU_HORIZONTAL     0
 #define guVU_VERTICAL       1
 
@@ -120,6 +122,8 @@ class guPlayerVumeters : public wxPanel
 	void                SetLevels( const guLevelInfo &level );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

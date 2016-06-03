@@ -29,6 +29,8 @@
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY(guAlbumInfoArray);
 WX_DEFINE_OBJARRAY(guTopTrackInfoArray);
 WX_DEFINE_OBJARRAY(guSimilarArtistInfoArray);
@@ -1934,6 +1936,8 @@ bool guLastFM::TrackBan( const wxString &artist, const wxString &title )
         }
     }
     return false;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

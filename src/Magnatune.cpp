@@ -34,6 +34,8 @@
 
 #include <id3v1genres.h>
 
+namespace Guayadeque {
+
 
 // -------------------------------------------------------------------------------- //
 // guMagnatuneLibrary
@@ -1235,6 +1237,8 @@ void guMediaViewerMagnatune::EditProperties( void )
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
     wxPostEvent( m_MainFrame, CmdEvent );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

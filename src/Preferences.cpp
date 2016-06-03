@@ -36,6 +36,8 @@
 
 #include <id3v1genres.h>
 
+namespace Guayadeque {
+
 #define guPREFERENCES_LISTBOX_HEIGHT    110
 
 WX_DEFINE_OBJARRAY( guCopyToPatternArray );
@@ -4425,6 +4427,8 @@ void guPrefDialog::OnAccelDefaultClicked( wxCommandEvent &event )
     {
         m_AccelListCtrl->SetItem( Index, 1, guAccelGetKeyCodeString( m_AccelKeys[ Index ] ) );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -24,6 +24,8 @@
 #include "Utils.h"
 #include "Config.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & title, const wxPoint & pos, const wxSize & size, long style ) :
      wxFrame( parent, id, title, pos, size, style | wxFRAME_NO_TASKBAR )
@@ -193,6 +195,8 @@ void guCoverFrame::OnMouse( wxMouseEvent &event )
         m_AutoCloseTimer->Stop();
 
     event.Skip();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -32,6 +32,8 @@
 #include <wx/dir.h>
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 
 #define GU_TRACKS_QUERYSTR   wxT( "SELECT song_id, song_name, song_genreid, song_genre, song_artistid, song_artist, " \
                "song_albumartistid, song_albumartist, song_composerid, song_composer, song_albumid, song_album, " \
@@ -633,6 +635,8 @@ void inline guDbLibrary::FillTrackFromDb( guTrack * Song, wxSQLite3ResultSet * d
   Song->m_LastPlay      = dbRes->GetInt( 27 );
   Song->m_FileSize      = dbRes->GetInt( 28 );
   Song->m_MediaViewer   = m_MediaViewer;
+}
+
 }
 
 #endif

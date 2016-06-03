@@ -31,6 +31,8 @@
 #include <wx/notebook.h>
 #include <wx/regex.h>
 
+namespace Guayadeque {
+
 #define guTRACKEDIT_TIMER_SELECTION_ID        10
 #define guTRACKEDIT_TIMER_SELECTION_TIME      50
 #define guTRACKEDIT_TIMER_TEXTCHANGED_TIME    500
@@ -2136,6 +2138,8 @@ guTrackEditorGetComboDataThread::ExitCode guTrackEditorGetComboDataThread::Entry
     m_TrackEditor->UpdateGenres();
 
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -37,6 +37,8 @@
 #include <wx/regex.h>
 #include <wx/utils.h>
 
+namespace Guayadeque {
+
 //#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
 #define guLogDebug(...)
 
@@ -3349,6 +3351,8 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
     wxPostEvent( m_PlayerPanel, Event );
 
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

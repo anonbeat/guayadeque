@@ -21,6 +21,8 @@
 
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guGSession::guGSession( guDBusServer * server ) : guDBusClient( server )
 {
@@ -191,6 +193,8 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
     }
 
     return RetVal;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -47,11 +47,12 @@
 #include <wx/tokenzr.h>
 #include <wx/txtstrm.h>
 
+namespace Guayadeque {
+
 // The default update podcasts timeout is 15 minutes
 #define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
 
 guMainFrame * guMainFrame::m_MainFrame = NULL;
-
 
 // -------------------------------------------------------------------------------- //
 guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
@@ -4984,6 +4985,8 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
         }
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

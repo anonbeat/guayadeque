@@ -42,6 +42,8 @@
 
 #include <wx/tokenzr.h>
 
+namespace Guayadeque {
+
 //#define guTREEVIEW_TIMER_TEXTSEARCH        5
 //#define guTREEVIEW_TIMER_TEXTSEARCH_VALUE  500
 #define guTREEVIEW_TIMER_TREEITEMSELECTED  6
@@ -1887,6 +1889,8 @@ void guTreeViewPanel::UpdatedTrack( const guTrack * track )
     m_TreeViewCtrl->ReloadItems();
 
     m_TVTracksListBox->UpdatedTrack( track );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

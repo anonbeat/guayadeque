@@ -24,6 +24,8 @@
 #include "MainFrame.h"
 //#include "PlayerPanel.h"
 
+namespace Guayadeque {
+
 // ---------------------------------------------------------------------- //
 class guTaskBarIcon : public wxTaskBarIcon
 {
@@ -42,6 +44,8 @@ class guTaskBarIcon : public wxTaskBarIcon
     ~guTaskBarIcon();
 
 };
+
+}
 
 #endif
 // ---------------------------------------------------------------------- //

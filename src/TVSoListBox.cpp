@@ -30,6 +30,8 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guTVSoListBox::guTVSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style ) :
              guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG )
@@ -159,6 +161,8 @@ wxString guTVSoListBox::GetSearchText( int item ) const
     return wxString::Format( wxT( "\"%s\" \"%s\"" ),
             m_Items[ item ].m_ArtistName.c_str(),
             m_Items[ item ].m_SongName.c_str() );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

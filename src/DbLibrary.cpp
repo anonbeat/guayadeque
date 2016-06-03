@@ -35,6 +35,8 @@
 #include <wx/mstream.h>
 #include <wx/wfstream.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY( guTrackArray );
 WX_DEFINE_OBJARRAY( guListItems );
 WX_DEFINE_OBJARRAY( guArrayListItems );
@@ -6400,6 +6402,8 @@ void guDbLibrary::UpdatePaths( const wxString &oldpath, const wxString &newpath 
 
   //guLogMessage( wxT( "Updating path: %s" ), query.c_str() );
   ExecuteUpdate( query );
+
+}
 
 }
 

@@ -35,6 +35,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guRadioGenreEditor : public wxDialog
 {
@@ -55,6 +57,7 @@ class guRadioGenreEditor : public wxDialog
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

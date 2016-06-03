@@ -27,6 +27,8 @@
 #include <wx/tokenzr.h>
 #include <wx/fileconf.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY(guEQPresetArray);
 
 // -------------------------------------------------------------------------------- //
@@ -598,6 +600,8 @@ void guEq10Band::OnResetPreset( wxCommandEvent &event )
     m_PresetComboBox->SetValue( wxEmptyString );
     m_SaveButton->Enable( false );
     m_DelButton->Enable( false );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

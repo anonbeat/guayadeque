@@ -45,6 +45,7 @@
 #include <wx/html/htmlwin.h>
 #include <wx/panel.h>
 
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 wxString DoExtractTags( const wxString &content, const wxString &begin, const wxString &end );
@@ -510,6 +511,8 @@ class guLyricSourceOptionEditor : public wxDialog
     void                    UpdateSourceOption( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

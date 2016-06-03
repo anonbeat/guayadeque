@@ -59,6 +59,8 @@
 #define guAS_ERROR_UNKNOWN          5
 #define guAS_ERROR_NOSESSION        6
 
+namespace Guayadeque {
+
 enum guAS_RATING {
     guAS_RATING_NONE = 0,
     guAS_RATING_LOVE,
@@ -194,6 +196,8 @@ class guASPlayedThread : public wxThread
 
     virtual ExitCode Entry();
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

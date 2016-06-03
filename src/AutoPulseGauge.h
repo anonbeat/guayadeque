@@ -23,6 +23,8 @@
 #include <wx/gauge.h>
 #include <wx/timer.h>
 
+namespace Guayadeque {
+
 class guGaugeTimer;
 
 // -------------------------------------------------------------------------------- //
@@ -55,6 +57,7 @@ class guGaugeTimer : public wxTimer
     void Notify() { m_Gauge->Pulse(); };
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

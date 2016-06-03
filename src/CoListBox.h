@@ -24,6 +24,8 @@
 
 #include "AccelListBox.h"
 
+namespace Guayadeque {
+
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -46,6 +48,8 @@ class guCoListBox : public guAccelListBox
     int             FindComposer( const wxString &composer );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

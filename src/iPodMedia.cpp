@@ -31,6 +31,8 @@
 
 #include <wx/tokenzr.h>
 
+namespace Guayadeque {
+
 #ifdef WITH_LIBGPOD_SUPPORT
 
 // -------------------------------------------------------------------------------- //
@@ -2163,6 +2165,8 @@ wxImage * guMediaVieweriPodDevice::GetAlbumCover( const int albumid, int &coveri
         }
     }
     return NULL;
+}
+
 }
 
 #endif

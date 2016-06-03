@@ -36,7 +36,9 @@
 
 #include <wx/debugrpt.h>
 
-IMPLEMENT_APP( guMainApp );
+IMPLEMENT_APP( Guayadeque::guMainApp );
+
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 guMainApp::guMainApp() : wxApp()
@@ -428,6 +430,8 @@ void guMainApp::OnFatalException()
 
     if( Preview.Show( Report ) )
         Report.Process();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

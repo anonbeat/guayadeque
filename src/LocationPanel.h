@@ -42,6 +42,7 @@
 #include <wx/frame.h>
 #include <wx/srchctrl.h>
 
+namespace Guayadeque {
 
 #define     guLOCATION_ID_LIBRARY               ( 1 << 0 )
 #define     guLOCATION_ID_LIBRARY_TREE          ( 1 << 1 )
@@ -135,6 +136,7 @@ class guLocationPanel : public wxPanel
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

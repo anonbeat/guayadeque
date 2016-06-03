@@ -25,6 +25,8 @@
 #include <wx/arrimpl.cpp>
 #include <wx/sstream.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY( guMBRecordingArray );
 WX_DEFINE_OBJARRAY( guMBReleaseArray );
 
@@ -579,6 +581,8 @@ int FindMBReleaseId( guMBReleaseArray * mbreleases, const wxString &releaseid )
             return Index;
     }
     return wxNOT_FOUND;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

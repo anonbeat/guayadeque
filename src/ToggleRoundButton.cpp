@@ -25,6 +25,8 @@
 #include <wx/dcclient.h>
 #include <wx/tglbtn.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guToggleRoundButton::guToggleRoundButton( wxWindow * parent, const wxImage &image,
                                           const wxImage &selimage, const wxImage &hoverimage ) :
@@ -109,6 +111,8 @@ void guToggleRoundButton::SetValue( bool value )
         m_Value = value;
         Refresh();
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -21,6 +21,8 @@
 
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent, wxAuiManager * manager ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( -1, -1 ), wxTAB_TRAVERSAL|wxNO_BORDER )
@@ -52,6 +54,8 @@ void guAuiManagedPanel::OnChangedSize( wxSizeEvent &event )
     }
 
     event.Skip();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

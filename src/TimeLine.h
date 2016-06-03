@@ -24,6 +24,8 @@
 #include <wx/event.h>
 #include <gst/gst.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guTimeLine
 {
@@ -117,6 +119,8 @@ class guTimeLine
     virtual void    TimerDestroy( void ) { g_source_remove( m_TimerId ); }
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -23,6 +23,8 @@
 #include <wx/wx.h>
 #include <wx/aui/aui.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAuiManagedPanel : public wxPanel
 {
@@ -38,6 +40,8 @@ class guAuiManagedPanel : public wxPanel
     virtual void    CreateShowHideMenu( wxMenu * menu ) {};
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

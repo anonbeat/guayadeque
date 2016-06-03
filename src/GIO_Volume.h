@@ -28,6 +28,8 @@
 #include <wx/string.h>
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 class guGIO_Mount;
 class guMainFrame;
 
@@ -131,6 +133,8 @@ class guGIO_VolumeMonitor
 
 //    int                 PanelActive( const int index ) { return m_MountedVolumes->Item( index )->PanelActive(); }
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

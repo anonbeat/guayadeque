@@ -29,6 +29,8 @@
 #include <wx/settings.h>
 #include <wx/listbase.h>
 
+namespace Guayadeque {
+
 class guListViewClient;
 class guListViewHeader;
 
@@ -428,6 +430,8 @@ class guListViewDropTarget : public wxDropTarget
 
     friend class guListViewDropFilesThread;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

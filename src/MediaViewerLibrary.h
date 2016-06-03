@@ -22,6 +22,8 @@
 
 #include "MediaViewer.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guMediaViewerLibrary : public guMediaViewer
 {
@@ -34,6 +36,8 @@ class guMediaViewerLibrary : public guMediaViewer
     //virtual void CreateCollectionMenu( wxMenu * menu, const int basecommand ) {};
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

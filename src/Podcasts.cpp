@@ -29,6 +29,8 @@
 #include <wx/arrimpl.cpp>
 #include <wx/uri.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY(guPodcastChannelArray);
 WX_DEFINE_OBJARRAY(guPodcastItemArray);
 
@@ -786,6 +788,8 @@ guPodcastDownloadQueueThread::ExitCode guPodcastDownloadQueueThread::Entry()
         Sleep( 200 );
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

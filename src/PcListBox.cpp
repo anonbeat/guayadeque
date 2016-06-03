@@ -29,6 +29,8 @@
 #include "LibPanel.h"
 #include "MediaViewer.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guPcListBox::guPcListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guAccelListBox( parent, db, label )
@@ -180,6 +182,8 @@ void guPcListBox::CreateContextMenu( wxMenu * Menu ) const
 wxString guPcListBox::GetSearchText( int item ) const
 {
     return GetItemName( item );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

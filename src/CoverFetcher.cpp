@@ -19,6 +19,8 @@
 // -------------------------------------------------------------------------------- //
 #include "CoverFetcher.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 wxString ExtractString( const wxString &source, const wxString &start, const wxString &end )
 {
@@ -51,6 +53,8 @@ guCoverFetcher::guCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStr
 // -------------------------------------------------------------------------------- //
 guCoverFetcher::~guCoverFetcher()
 {
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

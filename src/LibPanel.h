@@ -41,6 +41,8 @@
 #include <wx/splitter.h>
 #include <wx/srchctrl.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 enum guLibraryElement {
     //guLIBRARY_ELEMENT_TEXTSEARCH = 1,
@@ -320,6 +322,7 @@ class guLibPanel : public guAuiManagerPanel
     friend class guMediaViewer;
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

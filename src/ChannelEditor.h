@@ -40,6 +40,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 extern const wxEventType guChannelEditorEvent;
 #define guCHANNELEDITOR_EVENT_UPDATE_IMAGE          1000
 
@@ -81,6 +83,8 @@ class guChannelUpdateImageThread  : public wxThread
     ExitCode Entry();
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

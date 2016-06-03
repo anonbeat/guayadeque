@@ -42,6 +42,8 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 #define guRADIO_TIMER_TEXTSEARCH        1
 #define guRADIO_TIMER_GENRESELECTED     2
 #define guRADIO_TIMER_TEXTSEARCH_VALUE  500
@@ -1326,6 +1328,8 @@ guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
     }
 
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

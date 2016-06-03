@@ -25,6 +25,8 @@
 //#define DBLIBRARY_SHOW_TIMES        1
 //#define DBLIBRARY_MIN_TIME          50
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guDb::guDb()
 {
@@ -154,6 +156,8 @@ void guDb::SetInitParams( void )
   //query = wxT( "PRAGMA legacy_file_format=false; PRAGMA page_size=102400; PRAGMA cache_size=204800; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
   //query = wxT( "PRAGMA page_size=10240; PRAGMA cache_size=65536; PRAGMA count_changes=1; PRAGMA synchronous='OFF'; PRAGMA short_column_names=0; PRAGMA full_column_names=0;" );
   ExecuteUpdate( query );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

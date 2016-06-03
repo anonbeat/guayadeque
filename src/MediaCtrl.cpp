@@ -28,6 +28,8 @@
 
 #include <wx/uri.h>
 
+namespace Guayadeque {
+
 DEFINE_EVENT_TYPE( guEVT_MEDIA_LOADED )
 //DEFINE_EVENT_TYPE( guEVT_MEDIA_SET_NEXT_MEDIA )
 DEFINE_EVENT_TYPE( guEVT_MEDIA_FINISHED )
@@ -2861,6 +2863,8 @@ void guMediaRecordCtrl::SetStation( const wxString &station )
         m_TrackInfo.m_AlbumName = station;
         SplitTrack();
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

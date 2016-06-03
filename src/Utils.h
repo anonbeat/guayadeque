@@ -26,6 +26,8 @@
 #include <wx/mstream.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 #if 0
 #define guLogMessage    //wxLogMessage
 #define guLogWarning    //wxLogWarning
@@ -110,6 +112,8 @@ void                GetMediaViewerTracks( const guTrackArray &sourcetracks, cons
                                  const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags );
 void                GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks );
 void                GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs );
+
+}
 
 // -------------------------------------------------------------------------------- //
 #endif

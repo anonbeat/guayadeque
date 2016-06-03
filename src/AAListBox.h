@@ -26,6 +26,8 @@
 
 class guLibPanel;
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAAListBox : public guAccelListBox
 {
@@ -49,6 +51,8 @@ class guAAListBox : public guAccelListBox
     int             FindAlbumArtist( const wxString &albumartist );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

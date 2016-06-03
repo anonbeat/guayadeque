@@ -27,6 +27,8 @@
 
 #include <wx/settings.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guAuiManagerPanel::guAuiManagerPanel( wxWindow * parent ) :
     wxPanel( parent, wxID_ANY,  wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL | wxNO_BORDER )
@@ -233,6 +235,8 @@ void guAuiManagerPanel::LoadLayout( wxXmlNode * xmlnode )
     }
 
     LoadPerspective( LayoutStr, VisiblePanels );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

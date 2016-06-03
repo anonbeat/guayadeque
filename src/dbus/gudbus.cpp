@@ -20,6 +20,8 @@
 #include "gudbus.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 DBusHandlerResult Handle_Messages( DBusConnection * conn, DBusMessage * msg, void * udata )
 {
@@ -585,6 +587,8 @@ guDBusThread::ExitCode guDBusThread::Entry()
         Sleep( guDBUS_THREAD_IDLE_TIMEOUT );
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

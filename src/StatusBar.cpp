@@ -25,6 +25,8 @@
 #include "EventCommandIds.h"
 #include "Preferences.h"
 
+namespace Guayadeque {
+
 #define guTRACKCOUNT_PANEL_SIZE         300
 #define guAUDIOSCROBBLE_PANEL_SIZE      40
 #define guFORCEGAPLESS_PANEL_SIZE       24
@@ -521,6 +523,8 @@ void guStatusBar::DrawField( wxDC &dc, int i, int textHeight )
     }
 
     DrawFieldText( dc, rect, i, textHeight );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

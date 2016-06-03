@@ -38,6 +38,8 @@
 
 #define MAX_COVERLINKS_ITEMS            30
 
+namespace Guayadeque {
+
 enum guCOVER_SEARCH_ENGINE {
 //    guCOVER_SEARCH_ENGINE_GOOGLE = 0,
     guCOVER_SEARCH_ENGINE_AMAZON,
@@ -707,6 +709,8 @@ guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
             delete CoverImage;
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

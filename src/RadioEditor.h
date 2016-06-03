@@ -31,6 +31,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guRadioEditor : public wxDialog
 {
@@ -47,5 +49,7 @@ class guRadioEditor : public wxDialog
     wxString GetLink( void ) { return m_LinkTextCtrl->GetValue(); };
 
 };
+
+}
 
 #endif

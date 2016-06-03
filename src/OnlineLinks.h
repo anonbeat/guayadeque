@@ -22,8 +22,12 @@
 
 #include <wx/menu.h>
 
+namespace Guayadeque {
+
 void AddOnlineLinksMenu( wxMenu * Menu );
 void ExecuteOnlineLink( const int linkid, const wxString &text );
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

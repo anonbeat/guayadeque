@@ -32,6 +32,8 @@
 
 #include <wx/imaglist.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, long style ) :
     guListView( parent, style|wxLB_MULTIPLE|guLISTVIEW_ALLOWDRAG|guLISTVIEW_COLUMN_CLICK_EVENTS,
@@ -995,6 +997,8 @@ void guSoListBox::OnCreateSmartPlaylist( wxCommandEvent &event )
     {
         m_MediaViewer->CreateSmartPlaylist( Tracks[ 0 ].m_ArtistName, Tracks[ 0 ].m_SongName );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

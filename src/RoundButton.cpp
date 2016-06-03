@@ -24,6 +24,8 @@
 
 #include <wx/dcclient.h>
 
+namespace Guayadeque {
+
 BEGIN_EVENT_TABLE( guRoundButton, wxControl )
     EVT_PAINT( guRoundButton::OnPaint )
     EVT_MOUSE_EVENTS( guRoundButton::OnMouseEvents )
@@ -160,6 +162,8 @@ void guRoundButton::SetBitmapDisabled( const wxImage &image )
 {
     m_DisBitmap = wxBitmap( image );
     Refresh();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

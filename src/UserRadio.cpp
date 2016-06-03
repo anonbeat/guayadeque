@@ -29,6 +29,8 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guUserRadioProvider::guUserRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios ) :
     guRadioProvider( radiopanel, dbradios )
@@ -292,6 +294,8 @@ void guUserRadioProvider::OnRadioExport( wxCommandEvent &event )
             FileDialog->Destroy();
         }
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

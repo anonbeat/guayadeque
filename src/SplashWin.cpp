@@ -24,6 +24,8 @@
 #include "Utils.h"
 #include "Version.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
     wxFrame( parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 500,275 ), wxSTAY_ON_TOP | wxNO_BORDER | wxFRAME_TOOL_WINDOW )
@@ -168,6 +170,8 @@ void guSplashFrame::OnEraseBackground( wxEraseEvent &event )
     {
         dc->DrawBitmap( * m_Bitmap, 0, 0, false );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

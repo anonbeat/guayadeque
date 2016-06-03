@@ -21,7 +21,11 @@
 
 #include <wx/arrimpl.cpp>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY(guTreeViewFilterEntry);
 WX_DEFINE_OBJARRAY(guTreeViewFilterArray);
+
+}
 
 // -------------------------------------------------------------------------------- //

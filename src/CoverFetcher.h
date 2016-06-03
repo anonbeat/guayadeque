@@ -22,6 +22,8 @@
 
 #include "CoverEdit.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 wxString ExtractString( const wxString &source, const wxString &start, const wxString &end );
 
@@ -42,5 +44,6 @@ class guCoverFetcher
     virtual int   AddCoverLinks( int pagenum ) = 0;
 };
 
+}
 
 #endif

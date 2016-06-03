@@ -40,6 +40,8 @@
 #include <wx/dialog.h>
 #include <wx/regex.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 wxString inline NormalizeField( const wxString &name )
 {
@@ -82,6 +84,8 @@ class guFileRenamer : public wxDialog
     wxArrayString GetRenamedNames( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

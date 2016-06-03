@@ -32,6 +32,8 @@
 #include <wx/html/htmlwin.h>
 #include <wx/hyperlink.h>
 
+namespace Guayadeque {
+
 #define GULASTFMINFO_MAXITEMS  12
 
 // -------------------------------------------------------------------------------- //
@@ -828,6 +830,8 @@ class guLastFMPanelDropTarget : public wxDropTarget
 
     virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

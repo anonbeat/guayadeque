@@ -22,6 +22,8 @@
 #include "Config.h"
 #include "Images.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxString &title,
         const bool isradiolabel, const guListItems * items, guArrayListItems * labelsets ) //wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 500,300 ), wxDEFAULT_DIALOG_STYLE )
@@ -376,3 +378,6 @@ void  guLabelEditor::DelToAllItems( const int labelid )
     }
 }
 
+}
+
+// -------------------------------------------------------------------------------- //

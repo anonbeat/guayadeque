@@ -33,6 +33,8 @@
 #include <popularimeterframe.h>
 #include <id3v1tag.h>
 
+namespace Guayadeque {
+
 wxArrayString guSupportedFormats;
 wxMutex       guSupportedFormatsMutex;
 
@@ -2591,6 +2593,8 @@ void guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, con
         if( !songs[ Index ].m_Offset && ( changedflags[ Index ] & guTRACK_CHANGED_DATA_LYRICS ) )
             guTagSetLyrics( songs[ Index ].m_FileName, lyrics[ Index ] );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

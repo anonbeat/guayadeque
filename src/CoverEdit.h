@@ -39,6 +39,7 @@
 #define GUCOVERINFO_LINK    0
 #define GUCOVERINFO_SIZE    1
 
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 class guCoverImage
@@ -167,6 +168,8 @@ class guCoverEditor : public wxDialog
   friend class guFetchCoverLinksThread;
   friend class guDownloadCoverThread;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

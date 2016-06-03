@@ -30,6 +30,8 @@
 #include "Settings.h"
 #include "Utils.h"
 
+using namespace Guayadeque;
+
 // -------------------------------------------------------------------------------- //
 guAAListBox::guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guAccelListBox( parent, db, label )

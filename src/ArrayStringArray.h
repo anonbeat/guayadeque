@@ -23,7 +23,11 @@
 #include <wx/arrstr.h>
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 WX_DECLARE_OBJARRAY(wxArrayString, guArrayStringArray);
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

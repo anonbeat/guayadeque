@@ -26,6 +26,8 @@
 #include <wx/tokenzr.h>
 #include <wx/artprov.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 // guLocationItemData
 // -------------------------------------------------------------------------------- //
@@ -671,6 +673,8 @@ void guLocationPanel::OnLocationItemChanged( wxTreeEvent &event )
         }
     }
     event.Skip();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

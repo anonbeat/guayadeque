@@ -19,6 +19,8 @@
 // -------------------------------------------------------------------------------- //
 #include "RadioEditor.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guRadioEditor::guRadioEditor( wxWindow* parent, const wxString& title, const wxString &name, const wxString &link ) :
     wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 391,135 ), wxDEFAULT_DIALOG_STYLE )
@@ -78,6 +80,8 @@ guRadioEditor::guRadioEditor( wxWindow* parent, const wxString& title, const wxS
 // -------------------------------------------------------------------------------- //
 guRadioEditor::~guRadioEditor()
 {
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

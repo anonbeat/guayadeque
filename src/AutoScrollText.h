@@ -24,6 +24,8 @@
 #include <wx/string.h>
 #include <wx/timer.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAutoScrollText : public wxControl
 {
@@ -58,5 +60,7 @@ class guAutoScrollText : public wxControl
   DECLARE_EVENT_TABLE()
 
 };
+
+}
 
 #endif

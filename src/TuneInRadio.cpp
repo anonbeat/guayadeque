@@ -32,6 +32,8 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guTuneInRadioProvider::guTuneInRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios ) :
     guRadioProvider( radiopanel, dbradios )
@@ -459,6 +461,8 @@ guTuneInReadStationsThread::ExitCode guTuneInReadStationsThread::Entry()
     }
 
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

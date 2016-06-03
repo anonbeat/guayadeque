@@ -26,6 +26,8 @@
 #include <wx/window.h>
 #include <wx/gdicmn.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAuiDockArt : public wxAuiDefaultDockArt
 {
@@ -43,6 +45,8 @@ class guAuiDockArt : public wxAuiDefaultDockArt
                         const wxRect &rect, wxAuiPaneInfo &pane );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -25,6 +25,8 @@
 #include <wx/dynarray.h>
 #include <wx/menu.h>
 
+namespace Guayadeque {
+
 enum guMediaCollectionType {
     guMEDIA_COLLECTION_TYPE_NORMAL,
     guMEDIA_COLLECTION_TYPE_JAMENDO,
@@ -70,6 +72,8 @@ class guManagedCollection : public guMediaCollection
 
 };
 WX_DECLARE_OBJARRAY( guManagedCollection, guManagedCollectionArray );
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

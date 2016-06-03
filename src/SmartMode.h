@@ -26,6 +26,8 @@
 #include <wx/wx.h>
 #include <wx/thread.h>
 
+namespace Guayadeque {
+
 enum guSmartModeTrackLimitType {
     guSMARTMODE_TRACK_LIMIT_TRACKS,
     guSMARTMODE_TRACK_LIMIT_TIME_MINUTES,
@@ -113,6 +115,7 @@ class guGenSmartPlaylist : public wxDialog
     int             GetLimitType( void ) { return m_LimitChoice->GetSelection(); }
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

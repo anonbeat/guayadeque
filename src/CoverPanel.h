@@ -34,6 +34,8 @@
 #include <wx/sizer.h>
 #include <wx/panel.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guCoverPanel : public wxPanel
 {
@@ -59,6 +61,8 @@ class guCoverPanel : public wxPanel
     void                OnUpdatedTrack( wxCommandEvent &event );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

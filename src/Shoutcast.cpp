@@ -81,6 +81,8 @@
 #include <wx/xml/xml.h>
 #include <wx/fileconf.h>
 
+namespace Guayadeque {
+
 
 //#define SHOUTCAST_GET_GENRE_URL         wxT( "http://yp.shoutcast.com/sbin/newxml.phtml" )
 //s o 1 N 1 5 v h C B 7 8 Z 6 k 4 __ s h 1 i q r P H n h j F m X i T __ f a 1 _ B m i c Y Q P D b b K m
@@ -318,6 +320,8 @@ wxArrayString guShoutCast::GetStationStatus( const wxString ServerUrl )
         m_LastServerUrl = ServerUrl;
     }
     return m_LastServerData;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

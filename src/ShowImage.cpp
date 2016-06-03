@@ -21,6 +21,8 @@
 
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guShowImage::guShowImage( wxWindow * parent, wxImage * image, const wxPoint &pos ) :
     wxFrame( parent, wxID_ANY, wxEmptyString, pos, wxSize( image->GetWidth(), image->GetHeight() ), wxFRAME_NO_TASKBAR | wxTAB_TRAVERSAL )
@@ -103,6 +105,8 @@ void guShowImage::OnMouse( wxMouseEvent &event )
         }
     }
     event.Skip();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

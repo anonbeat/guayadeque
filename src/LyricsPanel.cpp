@@ -40,6 +40,8 @@
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 
+namespace Guayadeque {
+
 int LyricAligns[] = { wxTE_LEFT, wxTE_CENTER, wxTE_RIGHT };
 
 WX_DEFINE_OBJARRAY(guLyricSourceReplaceArray);
@@ -2614,6 +2616,8 @@ void guLyricSourceOptionEditor::UpdateSourceOption( void )
 {
     m_SourceOption->Text1( m_SearchTextCtrl->GetValue() );
     m_SourceOption->Text2( m_ReplaceTextCtrl->GetValue() );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

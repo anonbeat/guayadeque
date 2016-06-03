@@ -35,6 +35,8 @@
 #include "Transcode.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 #define     guMEDIAVIEWER_TIMER_TEXTSEARCH        2
 #define     guMEDIAVIEWER_TIMER_TEXTCHANGED       500
 
@@ -2306,6 +2308,8 @@ wxDragResult guMediaViewerDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult
     }
 
     return def;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

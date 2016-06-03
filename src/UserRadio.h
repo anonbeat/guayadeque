@@ -22,6 +22,8 @@
 
 #include "RadioProvider.h"
 
+namespace Guayadeque {
+
 class guDbRadios;
 
 // -------------------------------------------------------------------------------- //
@@ -49,6 +51,7 @@ class guUserRadioProvider : public guRadioProvider
 
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

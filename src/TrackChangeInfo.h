@@ -24,6 +24,10 @@
 #include <wx/dynarray.h>
 #include <wx/string.h>
 
+namespace Guayadeque {
+
+#define guTRACKCHANGEINFO_MAXCOUNT  15
+
 class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
@@ -46,8 +50,7 @@ class guTrackChangeInfo
 };
 WX_DECLARE_OBJARRAY(guTrackChangeInfo, guTrackChangeInfoArray);
 
-
-#define guTRACKCHANGEINFO_MAXCOUNT  15
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

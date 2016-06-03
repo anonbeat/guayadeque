@@ -45,11 +45,14 @@
 #include <wx/dnd.h>
 #include <wx/menu.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray );
 
 #define guALBUMBROWSER_REFRESH_DELAY            60
 #define guALBUMBROWSER_GRID_SIZE_WIDTH          140
 //#define guALBUMBROWSER_GRID_SIZE_HEIGHT         180
+
 static int guALBUMBROWSER_GRID_SIZE_HEIGHT = -1;
 
 #define guALBUMBROWSER_TIMER_ID_REFRESH         3
@@ -2544,6 +2547,8 @@ wxDragResult guAlbumBrowserDropTarget::OnData( wxCoord x, wxCoord y, wxDragResul
     }
 
     return def;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

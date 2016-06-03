@@ -23,6 +23,7 @@
 
 #include <wx/arrimpl.cpp>
 
+namespace Guayadeque {
 
 WX_DEFINE_OBJARRAY(guRadioStations);
 
@@ -804,6 +805,8 @@ int guDbRadios::DelRadioLabel( const int labelid )
     }
   }
   return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -37,6 +37,8 @@
 #include <wx/statline.h>
 #include <wx/uri.h>
 
+namespace Guayadeque {
+
 #define GULASTFM_TITLE_FONT_SIZE 12
 
 #define GULASTFM_DOWNLOAD_IMAGE_DELAY    10
@@ -4239,6 +4241,8 @@ wxDragResult guLastFMPanelDropTarget::OnData( wxCoord x, wxCoord y, wxDragResult
     }
 
     return def;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

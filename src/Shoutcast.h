@@ -23,6 +23,8 @@
 #include "DbRadios.h"
 #include "PlayListFile.h"
 
+namespace Guayadeque {
+
 #define SHOUTCAST_STATION_STATUS_NAME       0
 #define SHOUTCAST_STATION_STATUS_GENRE      1
 #define SHOUTCAST_STATION_STATUS_URL        2
@@ -48,6 +50,8 @@ class guShoutCast
     guPlaylistItemArray   GetStationPlayList( const wxString &stationurl ) const;
     wxArrayString       GetStationStatus( const wxString ServerUrl );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

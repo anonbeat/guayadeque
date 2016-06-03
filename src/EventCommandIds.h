@@ -20,6 +20,8 @@
 #ifndef EVENTCOMMANDIDS_H
 #define EVENTCOMMANDIDS_H
 
+namespace Guayadeque {
+
 #define guEVT_USER_FIRST    10000
 
 // -------------------------------------------------------------------------------- //
@@ -542,6 +544,8 @@ enum guCollectionActionId {
     guCOLLECTION_ACTION_UNMOUNT,
     guCOLLECTION_ACTION_COUNT        // Leave this always the end
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

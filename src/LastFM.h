@@ -23,6 +23,8 @@
 #include "DbLibrary.h"
 #include "MD5.h"
 
+namespace Guayadeque {
+
 #define LASTFM_API_KEY          wxT( "96a881180c49ba8ec586675172c3ef36" )
 #define LASTFM_SHARED_SECRET    wxT( "cecb145e943f307c7e7488e0ff6ebbbe" )
 #define LASTFM_API_ROOT         wxT( "http://ws.audioscrobbler.com/2.0/" )
@@ -219,6 +221,7 @@ class guLastFM
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

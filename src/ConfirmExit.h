@@ -35,6 +35,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guExitConfirmDlg : public wxDialog
 {
@@ -50,6 +52,7 @@ class guExitConfirmDlg : public wxDialog
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

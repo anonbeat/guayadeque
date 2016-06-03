@@ -23,6 +23,8 @@
 #include "Config.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY(guFilterItemArray);
 WX_DEFINE_OBJARRAY(guDynPlayListArray);
 
@@ -1114,6 +1116,8 @@ void guDynPlayListEditor::OnMinutesChanged( wxSpinEvent &event )
 void guDynPlayListEditor::OnSecondsChanged( wxSpinEvent &event )
 {
     m_FilterAccept->Enable( m_CurFilter != wxNOT_FOUND );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -23,6 +23,8 @@
 #include "ListView.h"
 #include "DbLibrary.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guListBox : public guListView
 {
@@ -55,6 +57,8 @@ class guListBox : public guListView
     virtual int             FindItemId( const int id );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

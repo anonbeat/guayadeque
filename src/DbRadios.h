@@ -24,6 +24,8 @@
 
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guRadioStation
 {
@@ -109,6 +111,8 @@ class guDbRadios : public guDb
     int                     DelRadioGenre( const int GenreId );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -22,6 +22,8 @@
 
 #include <wx/dnd.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guListBox::guListBox( wxWindow * parent, guDbLibrary * db, const wxString &label, int flags ) :
              guListView( parent, flags )
@@ -84,6 +86,8 @@ int guListBox::FindItemId( const int id )
         }
     }
     return wxNOT_FOUND;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

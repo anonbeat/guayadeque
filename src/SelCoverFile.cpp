@@ -24,6 +24,8 @@
 
 #include <wx/filedlg.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int albumid ) :
     wxDialog( parent, wxID_ANY, _( "Select Cover File" ), wxDefaultPosition, wxSize( 400, 132 ), wxDEFAULT_DIALOG_STYLE )
@@ -143,6 +145,8 @@ wxString guSelCoverFile::GetSelFile( void )
 void guSelCoverFile::OnPathChanged( wxCommandEvent &event )
 {
 	m_StdBtnOk->Enable( !m_FileLink->IsEmpty() );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

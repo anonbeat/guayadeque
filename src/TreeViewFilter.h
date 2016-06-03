@@ -22,6 +22,8 @@
 
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guTreeViewFilterItem
 {
@@ -39,6 +41,8 @@ class guTreeViewFilterItem
 
 WX_DECLARE_OBJARRAY(guTreeViewFilterItem, guTreeViewFilterEntry);
 WX_DECLARE_OBJARRAY(guTreeViewFilterEntry, guTreeViewFilterArray);
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

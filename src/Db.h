@@ -29,6 +29,8 @@
 // wxSqlite3
 #include <wx/wxsqlite3.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 void inline escape_query_str( wxString * Str )
 {
@@ -71,6 +73,8 @@ class guDb
     virtual void        SetInitParams( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

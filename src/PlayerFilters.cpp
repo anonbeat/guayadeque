@@ -23,6 +23,8 @@
 #include "Config.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 	wxPanel( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL )
@@ -176,6 +178,8 @@ int guPlayerFilters::GetDenyFilterId( void )
         return m_FilterPlayLists[ Index ].m_Id;
     }
     return wxNOT_FOUND;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

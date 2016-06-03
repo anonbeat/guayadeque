@@ -64,6 +64,8 @@
 #include <wx/xml/xml.h>
 #include <wx/zstream.h>
 
+namespace Guayadeque {
+
 #ifdef WITH_LIBINDICATE_SUPPORT
 
 #define GUAYADEQUE_INDICATOR_NAME               "music.guayadeque"
@@ -509,6 +511,8 @@ class guUpdatePodcastsThread : public wxThread
     virtual ExitCode Entry();
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

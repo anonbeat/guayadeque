@@ -23,6 +23,8 @@
 #include "ArrayStringArray.h"
 #include "CoverFetcher.h"
 
+namespace Guayadeque {
+
 class guFetchCoverLinksThread;
 
 // -------------------------------------------------------------------------------- //
@@ -37,6 +39,8 @@ class guGoogleCoverFetcher : public guCoverFetcher
                                     const wxChar * artist, const wxChar * album );
     virtual int     AddCoverLinks( int pagenum );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

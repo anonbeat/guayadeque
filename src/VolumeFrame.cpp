@@ -20,6 +20,8 @@
 #include "VolumeFrame.h"
 //#include "Utils.h"
 
+namespace Guayadeque {
+
 #define guVOLUMEN_AUTOCLOSE_TIMEOUT 3000
 
 // -------------------------------------------------------------------------------- //
@@ -145,6 +147,8 @@ void guVolumeFrame::OnMouse( wxMouseEvent &event )
 void guVolumeFrame::OnTimer( wxTimerEvent &event )
 {
     Close();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

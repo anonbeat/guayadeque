@@ -32,6 +32,7 @@
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
 #include <gst/gst.h>
 
+namespace Guayadeque {
 
 #define guEQUALIZER_BAND_COUNT  10
 
@@ -495,6 +496,8 @@ class guMediaRecordCtrl
     wxString        GetRecordFileName( void ) { return m_FileName; }
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

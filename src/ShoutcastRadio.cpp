@@ -36,6 +36,8 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guShoutcastRadioProvider::guShoutcastRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios ) :
     guRadioProvider( radiopanel, dbradios )
@@ -621,6 +623,8 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
     wxPostEvent( wxTheApp->GetTopWindow(), event );
     //
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

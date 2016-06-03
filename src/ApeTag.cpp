@@ -31,6 +31,8 @@
 
 #define COMPRESSION_LEVEL_EXTRA_HIGH    4000
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 struct APE_COMMON_HEADER
 {
@@ -683,6 +685,8 @@ void guApeFile::ReadAndProcessApeHeader( void )
     }
 
     delete ItemsBuf;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

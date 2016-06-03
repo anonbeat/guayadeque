@@ -29,6 +29,8 @@
 
 #include <wx/wfstream.h>
 
+namespace Guayadeque {
+
 static guConfig * m_Config = NULL;
 
 const wxEventType guConfigUpdatedEvent = wxNewEventType();
@@ -1586,6 +1588,8 @@ int guConfig::LoadPlaylistTracks( guTrackArray &tracks )
     }
 
     return CurItem;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

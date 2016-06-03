@@ -27,6 +27,8 @@
 
 #include <wx/uri.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArrayString &files )
 {
@@ -291,5 +293,6 @@ wxArrayString guFileRenamer::GetRenamedNames( void )
     return RetVal;
 }
 
-// -------------------------------------------------------------------------------- //
+}
 
+// -------------------------------------------------------------------------------- //

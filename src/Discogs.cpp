@@ -34,6 +34,8 @@
 
 #define guDISCOGS_REQUEST_ITEMS     10
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 WX_DEFINE_OBJARRAY( guDiscogsImageArray );
 WX_DEFINE_OBJARRAY( guDiscogsTrackArray );
@@ -422,6 +424,8 @@ int guDiscogsCoverFetcher::AddCoverLinks( int pagenum )
         CheckCount++;
     }
     return CheckCount;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

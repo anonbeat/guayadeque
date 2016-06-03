@@ -34,6 +34,8 @@
 
 #include "DbLibrary.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guPlayListAppend : public wxDialog
 {
@@ -57,6 +59,8 @@ class guPlayListAppend : public wxDialog
 };
 
 int FindPlayListItem( guListItems * items, const wxString &playlistname );
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

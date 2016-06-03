@@ -24,6 +24,8 @@
 
 #include <wx/dcclient.h>
 
+namespace Guayadeque {
+
 DEFINE_EVENT_TYPE( guEVT_RATING_CHANGED )
 
 BEGIN_EVENT_TABLE( guRating, wxControl )
@@ -124,6 +126,8 @@ void guRating::OnMouseEvents( wxMouseEvent &event )
             wxPostEvent( this, evt );
         }
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

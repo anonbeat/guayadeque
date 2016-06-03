@@ -23,6 +23,8 @@
 #include <wx/wx.h>
 #include "PlayerPanel.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guVolumeFrame : public wxFrame
 {
@@ -51,6 +53,7 @@ class guVolumeFrame : public wxFrame
 
 };
 
+}
+
 #endif
 // -------------------------------------------------------------------------------- //
-

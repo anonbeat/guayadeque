@@ -22,6 +22,8 @@
 
 #include <wx/wx.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guGauge : public wxControl
 {
@@ -104,6 +106,7 @@ class guStatusBar : public wxStatusBar
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

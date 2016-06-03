@@ -24,6 +24,8 @@
 
 #include <wx/wx.h>
 
+namespace Guayadeque {
+
 typedef enum {
     guGSESSION_STATUS_ERROR = -1,
     guGSESSION_STATUS_REGISTER_CLIENT = 0,
@@ -49,5 +51,7 @@ class guGSession : public guDBusClient
 
 };
 
-#endif
+}
 
+#endif
+// -------------------------------------------------------------------------------- //

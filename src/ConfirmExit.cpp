@@ -20,6 +20,8 @@
 #include "ConfirmExit.h"
 #include "Images.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guExitConfirmDlg::guExitConfirmDlg( wxWindow * parent ) :
     wxDialog( parent, wxID_ANY, _( "Please confirm" ), wxDefaultPosition, wxSize( -1, 160 ), wxDEFAULT_DIALOG_STYLE )
@@ -76,6 +78,8 @@ guExitConfirmDlg::~guExitConfirmDlg()
 bool guExitConfirmDlg::GetConfirmChecked( void )
 {
     return m_AskAgainCheckBox->IsChecked();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

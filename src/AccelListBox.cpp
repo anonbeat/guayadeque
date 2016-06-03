@@ -24,6 +24,8 @@
 #include "LibPanel.h"
 #include "Preferences.h"
 
+using namespace Guayadeque;
+
 // -------------------------------------------------------------------------------- //
 guAccelListBox::guAccelListBox( wxWindow * parent, guDbLibrary * db, const wxString &label ) :
     guListBox( parent, db, label, wxLB_MULTIPLE | guLISTVIEW_ALLOWDRAG | guLISTVIEW_HIDE_HEADER )

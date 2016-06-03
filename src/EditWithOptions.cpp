@@ -19,6 +19,8 @@
 // -------------------------------------------------------------------------------- //
 #include "EditWithOptions.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guEditWithOptions::guEditWithOptions( wxWindow * parent, const wxString &title, const wxString &label, const wxString &defval, const wxArrayString &items ) :
     wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 370, 175 ), wxDEFAULT_DIALOG_STYLE )
@@ -76,5 +78,6 @@ wxString guEditWithOptions::GetData( void )
     return m_EditComboBox->GetValue();
 }
 
-// -------------------------------------------------------------------------------- //
+}
 
+// -------------------------------------------------------------------------------- //

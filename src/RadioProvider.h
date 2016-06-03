@@ -28,6 +28,7 @@
 #include <wx/imaglist.h>
 #include <wx/treebase.h>
 
+namespace Guayadeque {
 
 class guRadioPanel;
 class guRadioGenreTreeCtrl;
@@ -62,6 +63,8 @@ class guRadioProvider : public wxEvtHandler
 
 };
 WX_DEFINE_ARRAY_PTR( guRadioProvider *, guRadioProviderArray );
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

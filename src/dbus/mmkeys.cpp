@@ -22,6 +22,8 @@
 #include "EventCommandIds.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guMMKeys::guMMKeys( guDBusServer * server, guPlayerPanel * playerpanel ) : guDBusClient( server )
 {
@@ -163,6 +165,8 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
     }
 
     return RetVal;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

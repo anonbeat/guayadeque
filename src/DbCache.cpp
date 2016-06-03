@@ -23,6 +23,8 @@
 
 #include <wx/mstream.h>
 
+namespace Guayadeque {
+
 guDbCache * guDbCache::m_DbCache = NULL;
 
 // -------------------------------------------------------------------------------- //
@@ -255,6 +257,8 @@ void guDbCache::ClearExpired( void )
     ExecuteUpdate( query );
 
     guLogMessage( wxT( "Delete expired Cache elements done" ) );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

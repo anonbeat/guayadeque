@@ -24,11 +24,13 @@
 #include "Images.h"
 #include "Settings.h"
 
-#define guDIGITALPODCAST_OPML       wxT( "http://www.digitalpodcast.com/opml/digitalpodcast.opml" )
-
 #include <wx/wfstream.h>
 #include <wx/tokenzr.h>
 #include <wx/arrimpl.cpp>
+
+namespace Guayadeque {
+
+#define guDIGITALPODCAST_OPML       wxT( "http://www.digitalpodcast.com/opml/digitalpodcast.opml" )
 
 WX_DEFINE_OBJARRAY(guNewPodcastItemArray);
 WX_DEFINE_OBJARRAY(guNewPodcastChannelArray);
@@ -390,6 +392,8 @@ void guNewPodcastChannelSelector::OnReloadDirectoryClicked( wxCommandEvent &even
     wxRemoveFile( PodcastsPath + wxT( "/Podcast.Directory.xml" ) );
 
     LoadPodcastDirectory();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

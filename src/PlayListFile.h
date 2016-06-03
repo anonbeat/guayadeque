@@ -26,6 +26,9 @@
 #include <wx/string.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
+// -------------------------------------------------------------------------------- //
 class guPlaylistItem
 {
   public:
@@ -178,6 +181,8 @@ class guCuePlaylistFile
     }
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

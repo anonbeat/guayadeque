@@ -23,6 +23,8 @@
 #include "DbLibrary.h"
 #include "ItemListBox.h"
 
+namespace Guayadeque {
+
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -64,6 +66,8 @@ class guAlListBox : public  guListView
 
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

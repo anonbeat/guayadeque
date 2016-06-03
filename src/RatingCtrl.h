@@ -22,6 +22,8 @@
 
 #include <wx/control.h>
 
+namespace Guayadeque {
+
 #define GURATING_STYLE_TINY     0
 #define GURATING_STYLE_MID      1
 #define GURATING_STYLE_BIG      2
@@ -83,6 +85,7 @@ class guRating : public wxControl
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

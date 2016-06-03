@@ -57,6 +57,8 @@
 
 #include <gpod/itdb.h>
 
+namespace Guayadeque {
+
 class guMediaVieweriPodDevice;
 
 // -------------------------------------------------------------------------------- //
@@ -278,6 +280,8 @@ class guMediaVieweriPodDevice : public guMediaViewerPortableDeviceBase
 };
 
 #endif
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

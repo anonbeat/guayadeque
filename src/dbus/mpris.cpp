@@ -22,6 +22,8 @@
 #include "EventCommandIds.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 const char * Introspection_XML_Data_Root =
 "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
 "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
@@ -958,6 +960,8 @@ void guMPRIS::OnTrackListChange()
     {
         guLogError( wxT( "Could not create TrackListChange signal object" ) );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

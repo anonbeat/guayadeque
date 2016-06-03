@@ -23,6 +23,8 @@
 #include "gudbus.h"
 #include "PlayerPanel.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guMPRIS2 : public guDBusClient
 {
@@ -58,7 +60,7 @@ class guMPRIS2 : public guDBusClient
 
 };
 
+}
 
 #endif
-
 // -------------------------------------------------------------------------------- //

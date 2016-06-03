@@ -31,6 +31,8 @@
 
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 enum guMediaViewerMode {
     guMEDIAVIEWER_MODE_NONE = -1,
     guMEDIAVIEWER_MODE_LIBRARY,
@@ -345,6 +347,7 @@ class guMediaViewerDropTarget : public wxDropTarget
     virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

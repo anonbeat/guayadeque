@@ -37,6 +37,8 @@
 #include <wx/clipbrd.h>
 #include <wx/gtk/tglbtn.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY(guFileItemArray);
 
 // -------------------------------------------------------------------------------- //
@@ -2440,6 +2442,8 @@ void guFileBrowser::OnItemsPaste( wxCommandEvent &event )
     {
         guLogError( wxT( "Could not open the clipboard object" ) );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -27,6 +27,8 @@
 #include "LibPanel.h"
 #include "MediaViewer.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guTaListBox::guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
      guAccelListBox( parent, db, label )
@@ -233,6 +235,8 @@ void guTaListBox::EditLabel( wxCommandEvent &event )
             EntryDialog->Destroy();
         }
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

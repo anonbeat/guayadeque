@@ -21,6 +21,8 @@
 
 #include "Utils.h"
 
+namespace Guayadeque {
+
 const wxEventType guStaticBitmapMouseOverEvent = wxNewEventType();
 
 #define guSTATICBITMAP_MOUSE_OVER_TIMEOUT   500
@@ -71,6 +73,8 @@ void guStaticBitmapTimer::Notify()
         event.SetEventObject( this );
         m_Bitmap->GetEventHandler()->AddPendingEvent( event );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -29,6 +29,8 @@
 #include "Utils.h"
 #include "LibPanel.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guCoListBox::guCoListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guAccelListBox( parent, db, label )
@@ -187,6 +189,8 @@ int guCoListBox::FindComposer( const wxString &composer )
         }
     }
     return wxNOT_FOUND;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

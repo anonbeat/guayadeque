@@ -23,6 +23,8 @@
 #include <wx/control.h>
 #include <wx/bitmap.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guRoundButton : public wxControl
 {
@@ -53,7 +55,7 @@ public :
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //
-

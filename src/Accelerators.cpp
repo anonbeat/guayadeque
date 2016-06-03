@@ -23,7 +23,9 @@
 #include "Config.h"
 #include "EventCommandIds.h"
 
-    // Build the Accelerators
+namespace Guayadeque {
+
+// Build the Accelerators
 static wxArrayInt guAccelCmdIds;
 static wxArrayInt guAccelKeys;
 
@@ -648,6 +650,8 @@ int guAccelDoAcceleratorTable( const wxArrayInt &aliascmds, const wxArrayInt &re
         acceltable = wxAcceleratorTable( EntryCount, AccelEntries );
     }
     return EntryCount;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

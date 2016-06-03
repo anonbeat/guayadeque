@@ -40,6 +40,8 @@
 
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guNewPodcastItem : public wxTreeItemData
 {
@@ -111,6 +113,7 @@ class guNewPodcastChannelSelector : public wxDialog
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

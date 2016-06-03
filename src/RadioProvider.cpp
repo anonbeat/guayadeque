@@ -21,6 +21,8 @@
 
 #include "RadioPanel.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guRadioProvider::guRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios )
 {
@@ -31,6 +33,8 @@ guRadioProvider::guRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradi
 // -------------------------------------------------------------------------------- //
 guRadioProvider::~guRadioProvider()
 {
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

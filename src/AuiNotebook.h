@@ -27,6 +27,8 @@
 #include <wx/aui/tabmdi.h>
 #include <wx/aui/dockart.h>
 
+namespace Guayadeque {
+
 // CODE FROM auibook.cpp
 extern wxColour wxAuiStepColour( const wxColour &c, int percent );
 
@@ -45,7 +47,7 @@ extern wxString wxAuiChopText( wxDC &dc, const wxString &text, int max_size );
 // -------------------------------------------------------------------------------- //
 class wxTabFrame : public wxWindow
 {
-public:
+  public:
 
     wxTabFrame()
     {
@@ -213,6 +215,8 @@ class guAuiNotebook : public wxAuiNotebook
 
     void        AddId( wxWindow * ptr, const wxString &id );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

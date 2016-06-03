@@ -26,6 +26,8 @@
 
 #include <wx/filename.h>
 
+namespace Guayadeque {
+
 const wxEventType guChannelEditorEvent = wxNewEventType();
 
 #define guPODCASTS_IMAGE_SIZE   60
@@ -276,6 +278,8 @@ guChannelUpdateImageThread::ExitCode guChannelUpdateImageThread::Entry()
         delete Image;
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

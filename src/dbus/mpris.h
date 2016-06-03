@@ -23,6 +23,8 @@
 #include "gudbus.h"
 #include "PlayerPanel.h"
 
+namespace Guayadeque {
+
 #define GUAYADEQUE_MPRIS_SERVICENAME        "org.mpris.guayadeque"
 #define GUAYADEQUE_MPRIS_INTERFACE          "org.freedesktop.MediaPlayer"
 #define GUAYADEQUE_MPRIS_ROOT_PATH          "/"
@@ -60,6 +62,7 @@ class guMPRIS : public guDBusClient
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

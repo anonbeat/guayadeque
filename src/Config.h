@@ -28,6 +28,8 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_ARRAY_PTR( wxEvtHandler *, guEvtHandlerArray );
 extern const wxEventType guConfigUpdatedEvent;
 
@@ -150,6 +152,8 @@ wxString inline unescape_configlist_str( const wxString &val )
     RetVal.Replace( wxT( "_&$" ), wxT( ";" ) );
     RetVal.Replace( wxT( "$_&" ), wxT( "," ) );
     return RetVal;
+}
+
 }
 
 #endif

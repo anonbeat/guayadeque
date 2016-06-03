@@ -28,6 +28,8 @@
 #define guCOVERFRAME_DEFAULT    1
 #define guCOVERFRAME_CUSTOM     2
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guCoverFrame : public wxFrame
 {
@@ -48,6 +50,8 @@ class guCoverFrame : public wxFrame
     void SetBitmap( const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

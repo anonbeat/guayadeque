@@ -27,6 +27,8 @@
 #include "LibPanel.h"
 #include "MediaViewer.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guGeListBox::guGeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
      guAccelListBox( parent, db, label )
@@ -144,6 +146,8 @@ void guGeListBox::CreateContextMenu( wxMenu * Menu ) const
     }
 
     m_LibPanel->CreateContextMenu( Menu );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

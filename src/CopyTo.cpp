@@ -25,8 +25,9 @@
 #include "Transcode.h"
 
 #include <wx/tokenzr.h>
-
 #include <wx/arrimpl.cpp>
+
+namespace Guayadeque {
 
 WX_DEFINE_OBJARRAY( guCopyToActionArray );
 
@@ -912,6 +913,8 @@ guCopyToThread::ExitCode guCopyToThread::Entry()
     }
 
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

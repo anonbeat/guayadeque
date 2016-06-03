@@ -31,6 +31,8 @@
 #include <wx/uri.h>
 #include <wx/zstream.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 wxString LenToString( wxUint64 len )
 {
@@ -874,6 +876,8 @@ void GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewe
             }
         }
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

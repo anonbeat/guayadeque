@@ -24,6 +24,8 @@
 
 #include <wx/image.h>
 
+namespace Guayadeque {
+
 enum guDBCacheTypes {
     guDBCACHE_TYPE_TEXT = 0x45545458,
     guDBCACHE_TYPE_IMAGE_SIZE_TINY      = 0,
@@ -58,6 +60,8 @@ class guDbCache : public guDb
     void                ClearExpired( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

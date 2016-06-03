@@ -39,6 +39,8 @@
 #include <wx/srchctrl.h>
 #include <wx/panel.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAlbumBrowserItem
 {
@@ -360,6 +362,8 @@ class guAlbumBrowserDropTarget : public wxDropTarget
 
     virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

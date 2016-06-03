@@ -23,6 +23,8 @@
 #include <wx/bitmap.h>
 #include <wx/image.h>
 
+namespace Guayadeque {
+
 typedef enum {
     guIMAGE_INDEX_add = 0,
     guIMAGE_INDEX_blank_cd_cover,
@@ -193,6 +195,8 @@ typedef enum {
 // -------------------------------------------------------------------------------- //
 wxBitmap guBitmap( guIMAGE_INDEX imageindex );
 wxImage guImage( guIMAGE_INDEX imageindex );
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -25,6 +25,8 @@
 #include <wx/dynarray.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 class guDbPodcasts;
 
 // -------------------------------------------------------------------------------- //
@@ -171,6 +173,8 @@ class guPodcastDownloadQueueThread : public wxThread
     int GetCount( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

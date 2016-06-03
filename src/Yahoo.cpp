@@ -27,6 +27,8 @@
 #include <wx/statline.h>
 #include <wx/html/htmlpars.h>
 
+namespace Guayadeque {
+
 #define YAHOO_IMAGES_SEARCH_URL    wxT( "http://images.search.yahoo.com/search/images?&p=%s" )
 
 // -------------------------------------------------------------------------------- //
@@ -105,6 +107,8 @@ int guYahooCoverFetcher::AddCoverLinks( int pagenum )
         }
     }
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

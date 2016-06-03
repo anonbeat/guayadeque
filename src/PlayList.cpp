@@ -40,6 +40,8 @@
 #include <wx/uri.h>
 #include <wx/busyinfo.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 //
 // -------------------------------------------------------------------------------- //
@@ -2781,6 +2783,8 @@ void guPlayList::LoadPlaylistTracks( void )
     wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATELIST );
     event.SetInt( 1 );
     wxPostEvent( this, event );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

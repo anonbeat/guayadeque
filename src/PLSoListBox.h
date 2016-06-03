@@ -22,6 +22,8 @@
 
 #include "SoListBox.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guPLSoListBox : public guSoListBox
 {
@@ -76,6 +78,8 @@ class guPLSoListBox : public guSoListBox
     virtual void        RandomizeTracks( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

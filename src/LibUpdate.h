@@ -24,6 +24,8 @@
 #include "MainFrame.h"
 #include "LibPanel.h"
 
+namespace Guayadeque {
+
 class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
@@ -77,6 +79,8 @@ class guLibCleanThread : public wxThread
 
     ExitCode            Entry();
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

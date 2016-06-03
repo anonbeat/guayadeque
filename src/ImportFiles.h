@@ -40,6 +40,8 @@
 #include <wx/statbox.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 class guMediaViewer;
 
 // -------------------------------------------------------------------------------- //
@@ -78,6 +80,7 @@ class guImportFiles : public wxDialog
     wxString GetCopyToPath( void ) { return m_DestPathDirPicker->GetPath(); }
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

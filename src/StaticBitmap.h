@@ -22,6 +22,8 @@
 
 #include <wx/wx.h>
 
+namespace Guayadeque {
+
 extern const wxEventType guStaticBitmapMouseOverEvent;
 #define guEVT_STATICBITMAP_MOUSE_OVER           1000
 
@@ -54,6 +56,8 @@ class guStaticBitmap : public wxStaticBitmap
     void StopTimer( void ) { if( m_MouseOverTimer->IsRunning() ) m_MouseOverTimer->Stop(); }
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

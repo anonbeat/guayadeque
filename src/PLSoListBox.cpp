@@ -30,6 +30,8 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, int style ) :
              guSoListBox( parent, mediaviewer, confname, style | guLISTVIEW_ALLOWDRAG | guLISTVIEW_ALLOWDROP | guLISTVIEW_DRAGSELFITEMS | guLISTVIEW_COLUMN_SORTING )
@@ -433,6 +435,8 @@ void guPLSoListBox::RandomizeTracks( void )
         }
         ClearSelectedItems();
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

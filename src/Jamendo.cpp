@@ -51,6 +51,8 @@
 // << Jamendo_HttpDownloadCallback('ready','fb267e3f92');
 // >> http://download25.jamendo.com/download/album/61518/mp32/"+data+"/"+encodeURIComponent("noblemo - PIANO -- Jamendo - MP3 VBR 192k - 2010.02.16 [www.jamendo.com].zip")
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 // guJamendoLibrary
 // -------------------------------------------------------------------------------- //
@@ -1277,6 +1279,8 @@ void guMediaViewerJamendo::EditProperties( void )
     wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
     wxPostEvent( m_MainFrame, CmdEvent );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

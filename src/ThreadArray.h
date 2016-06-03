@@ -23,8 +23,12 @@
 #include <wx/dynarray.h>
 #include <wx/thread.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 WX_DEFINE_ARRAY_PTR(wxThread *, guThreadArray);
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

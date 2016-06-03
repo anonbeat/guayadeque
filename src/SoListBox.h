@@ -24,6 +24,8 @@
 #include "ListView.h"
 #include "StatusBar.h"
 
+namespace Guayadeque {
+
 enum guSongs_Columns {
     guSONGS_COLUMN_NUMBER,
     guSONGS_COLUMN_TITLE,
@@ -121,6 +123,8 @@ class guSoListBox : public guListView
     virtual int                 GetTrackCount( void ) { return m_Items.Count(); }
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

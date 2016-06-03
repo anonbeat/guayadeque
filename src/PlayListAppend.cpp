@@ -19,6 +19,8 @@
 // -------------------------------------------------------------------------------- //
 #include "PlayListAppend.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const wxArrayInt * tracks, guListItems * plitems ) :
     wxDialog( parent, wxID_ANY, _( "Save to Playlist" ), wxDefaultPosition, wxSize( 387,198 ), wxDEFAULT_DIALOG_STYLE )
@@ -138,6 +140,8 @@ int guPlayListAppend::GetSelectedPlayList( void )
 wxString guPlayListAppend::GetPlaylistName( void )
 {
     return m_PlayListComboBox->GetValue();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

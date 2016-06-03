@@ -27,6 +27,8 @@
 
 #include <wx/uri.h>
 
+namespace Guayadeque {
+
 #define guACOUSTICID_URL      wxT( "http://api.acoustid.org/v2/lookup?client=0ND2BN8mP3&duration=%i&format=xml&meta=recordings+compress&fingerprint=%s" )
 #define guACOUSTICID_CLIENT_ID    "0ND2BN8mP3"
 
@@ -154,6 +156,7 @@ static void on_pad_added( GstElement * comp, GstPad * pad, GstElement * conv )
 
 
 }
+
 
 // -------------------------------------------------------------------------------- //
 // guAcousticIdThread
@@ -597,6 +600,8 @@ int guAcousticId::GetStatus( void )
 bool guAcousticId::IsOk( void )
 {
     return m_Status == guAID_STATUS_OK;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

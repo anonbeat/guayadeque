@@ -33,6 +33,8 @@
 
 #include "ItemListBox.h"
 
+namespace Guayadeque {
+
 #define     guPANEL_PODCASTS_CHANNELS           ( 1 << 0 )
 #define     guPANEL_PODCASTS_DETAILS            ( 1 << 1 )
 
@@ -246,6 +248,8 @@ public:
 
     friend class guPodcastDownloadQueueThread;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

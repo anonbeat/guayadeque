@@ -37,6 +37,7 @@
 #include <wx/tglbtn.h>
 #include <wx/gtk/tglbtn.h>
 
+namespace Guayadeque {
 
 #define     guPANEL_FILEBROWSER_DIRCTRL             ( 1 << 0 )
 #define     guPANEL_FILEBROWSER_FILECTRL            ( 1 << 1 )
@@ -311,6 +312,8 @@ class guFileBrowser : public guAuiManagerPanel
 
     virtual void            CollectionsUpdated( void ) { m_DirCtrl->CollectionsUpdated(); }
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

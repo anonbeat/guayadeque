@@ -35,6 +35,8 @@
 #include <wx/string.h>
 #include <wx/timer.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guSplashFrame : public wxFrame
 {
@@ -64,6 +66,7 @@ class guSplashFrame : public wxFrame
 
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

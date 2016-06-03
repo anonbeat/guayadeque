@@ -22,6 +22,8 @@
 #include "Images.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
 {
     wxCoord x,y;
@@ -165,5 +167,6 @@ void guAuiDockArt::DrawPaneButton( wxDC &dc, wxWindow * window, int button, int 
     wxAuiDefaultDockArt::DrawPaneButton( dc, window, button, button_state, rect, pane );
 }
 
+}
 
 // -------------------------------------------------------------------------------- //

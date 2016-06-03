@@ -24,6 +24,8 @@
 
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guDiscogsImage
 {
@@ -117,6 +119,8 @@ class guDiscogsCoverFetcher : public guCoverFetcher
 
     virtual int   AddCoverLinks( int pagenum );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

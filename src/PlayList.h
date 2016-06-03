@@ -32,6 +32,8 @@
 #include <wx/thread.h>
 #include <wx/string.h>
 
+namespace Guayadeque {
+
 class guPlayerPanel;
 class guPlayList;
 class guMainFrame;
@@ -198,7 +200,7 @@ class guPlayerPlayList : public guAuiManagedPanel
 
 };
 
-//class guPlayListDropTarget;
+}
 
-#endif // PLAYLIST_H
+#endif
 // -------------------------------------------------------------------------------- //

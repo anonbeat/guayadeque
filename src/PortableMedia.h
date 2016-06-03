@@ -57,6 +57,8 @@
 
 #endif
 
+namespace Guayadeque {
+
 #define guPORTABLEMEDIA_AUDIO_FORMAT_MP3        ( 1 << 0 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_OGG        ( 1 << 1 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_FLAC       ( 1 << 2 )
@@ -443,6 +445,8 @@ class guMediaViewerPortableDevice : public guMediaViewerPortableDeviceBase
     virtual void            EditProperties( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

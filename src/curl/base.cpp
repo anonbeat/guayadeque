@@ -948,3 +948,4 @@ wxString wxCurlBase::GetCURLVersion()
 {
     return wxString(curl_version(), wxConvUTF8);
 }
+

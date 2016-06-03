@@ -46,6 +46,7 @@
 #include <wx/statbox.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
 
 #define guLISTVIEW_ITEM_MARGIN      2
 
@@ -1916,6 +1917,8 @@ void guDataObjectComposite::SetTracks( const guTrackArray &tracks )
     }
     TracksObject->SetData( sizeof( m_Tracks ), &m_Tracks );
     Add( TracksObject );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -24,6 +24,8 @@
 #include <wx/string.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAuiManagerPanel : public wxPanel
 {
@@ -58,6 +60,8 @@ class guAuiManagerPanel : public wxPanel
     virtual void        LoadLayout( wxXmlNode * xmlnode );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

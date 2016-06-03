@@ -25,6 +25,8 @@
 
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 class guFetchCoverLinksThread;
 
 // -------------------------------------------------------------------------------- //
@@ -39,6 +41,8 @@ class guAmazonCoverFetcher : public guCoverFetcher
                                     const wxChar * artist, const wxChar * album );
     virtual int   AddCoverLinks( int pagenum );
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -20,12 +20,14 @@
 #ifndef GUDBUS_H
 #define GUDBUS_H
 
-#define guDBUS_THREAD_IDLE_TIMEOUT      50
-#define guDBUS_DEFAULT_SEND_TIMEOUT     1000
-
 #include <dbus/dbus.h>
 #include <wx/dynarray.h>
 #include <wx/thread.h>
+
+namespace Guayadeque {
+
+#define guDBUS_THREAD_IDLE_TIMEOUT      50
+#define guDBUS_DEFAULT_SEND_TIMEOUT     1000
 
 
 class guDBusThread;
@@ -186,6 +188,8 @@ class guDBusThread : public wxThread
 
     friend class guDBusServer;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

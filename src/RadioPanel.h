@@ -49,6 +49,8 @@
 #include <wx/srchctrl.h>
 #include <wx/treectrl.h>
 
+namespace Guayadeque {
+
 #define     guPANEL_RADIO_TEXTSEARCH        ( 1 << 0 )
 #define     guPANEL_RADIO_GENRES            ( 1 << 1 )
 //#define     guPANEL_RADIO_LABELS            ( 1 << 2 )
@@ -293,6 +295,8 @@ class guRadioPanel : public guAuiManagerPanel
     void EndLoadingStations( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

@@ -28,6 +28,7 @@
 
 #include <wx/uri.h>
 
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 void AddOnlineLinksMenu( wxMenu * Menu )
@@ -98,6 +99,8 @@ void ExecuteOnlineLink( const int linkid, const wxString &text )
     {
         guLogMessage( wxT( "Online Link out of rante %i" ), index );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

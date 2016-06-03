@@ -22,6 +22,8 @@
 
 #include "RadioProvider.h"
 
+namespace Guayadeque {
+
 #define guTUNEIN_BASE_URL   "http://opml.radiotime.com/Browse.ashx?partnerId=xwhZkVKiformats=mp3,aac,wma,ogg"
 //http://opml.radiotime.com/Browse.ashx?partnerId=xwhZkVKi&serial=9ffb74a78ce7a5629d80053d4e5cf943&username=&render=json&formats=mp3,aac,wma,wmpro,wmvoice,ogg,qt&locale=en&
 
@@ -81,6 +83,7 @@ class guTuneInRadioProvider : public guRadioProvider
 
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

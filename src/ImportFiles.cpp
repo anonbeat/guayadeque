@@ -26,6 +26,8 @@
 
 #include <wx/filedlg.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guImportFiles::guImportFiles( wxWindow * parent, guMediaViewer * mediaviewer, guTrackArray * tracks )
 //    wxDialog( parent, wxID_ANY, _( "Import Files" ), wxDefaultPosition, wxSize( 480,340 ), wxDEFAULT_DIALOG_STYLE )
@@ -326,6 +328,8 @@ void guImportFiles::UpdateCounters( void )
         m_FilesLabel->SetLabel( _( "No files added" ) );
         Layout();
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

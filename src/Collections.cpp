@@ -24,6 +24,8 @@
 #include <wx/arrimpl.cpp>
 #include <wx/timer.h>
 
+namespace Guayadeque {
+
 WX_DEFINE_OBJARRAY( guMediaCollectionArray );
 WX_DEFINE_OBJARRAY( guManagedCollectionArray );
 
@@ -77,6 +79,8 @@ guManagedCollection::guManagedCollection( void )
 // -------------------------------------------------------------------------------- //
 guManagedCollection::~guManagedCollection()
 {
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -24,6 +24,8 @@
 
 #include "AccelListBox.h"
 
+namespace Guayadeque {
+
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -49,6 +51,8 @@ class guRaListBox : public guAccelListBox
     virtual int     GetSelectedSongs( guTrackArray * songs, const bool isdrag = false ) const;
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

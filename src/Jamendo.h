@@ -30,6 +30,8 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
+namespace Guayadeque {
+
 #define guJAMENDO_DATABASE_DUMP_URL         wxT( "http://img.jamendo.com/data/dbdump_artistalbumtrack.xml.gz" )
 #define guJAMENDO_STREAM_FORMAT_MP3         wxT( "mp31" )
 #define guJAMENDO_STREAM_FORMAT_OGG         wxT( "ogg2" )
@@ -218,6 +220,7 @@ class guMediaViewerJamendo : public guMediaViewer
     friend class guJamendoUpdateThread;
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

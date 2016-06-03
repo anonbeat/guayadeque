@@ -23,6 +23,8 @@
 #include "SoListBox.h"
 #include "TreeViewFilter.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guTVSoListBox : public guSoListBox
 {
@@ -67,6 +69,8 @@ class guTVSoListBox : public guSoListBox
     void                SetTextFilters( const wxArrayString &textfilters ) { m_TextFilters = textfilters; }
     void                ClearTextFilters( void ) { m_TextFilters.Clear(); }
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

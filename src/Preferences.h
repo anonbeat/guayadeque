@@ -25,7 +25,6 @@
 #include "DbLibrary.h"
 #include "LyricsPanel.h"
 
-
 #include <wx/string.h>
 #include <wx/checkbox.h>
 #include <wx/gdicmn.h>
@@ -55,6 +54,8 @@
 #include <wx/dialog.h>
 #include <wx/dynarray.h>
 #include <wx/splitter.h>
+
+namespace Guayadeque {
 
 #define  guPREFERENCE_PAGE_FLAG_GENERAL          ( 1 << 0 )
 #define  guPREFERENCE_PAGE_FLAG_LIBRARY          ( 1 << 1 )
@@ -490,6 +491,8 @@ class guPrefDialog : public wxDialog
     int  GetVisiblePanels( void ) { return m_VisiblePanels; }
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

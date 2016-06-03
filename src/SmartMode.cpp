@@ -24,6 +24,8 @@
 #include "MediaViewer.h"
 #include "PlayListAppend.h"
 
+namespace Guayadeque {
+
 #define guSMARTMODE_MIN_TRACK_MATCH         0.1
 #define guSMARTMODE_MIN_ARTIST_MATCH        0.2
 
@@ -504,6 +506,8 @@ int guGenSmartPlaylist::GetPlayListId( void )
         Selection = FindPlayListItem( &m_Playlists, m_SaveToComboBox->GetValue().Lower().Trim().Trim( false ) );
     }
     return Selection;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

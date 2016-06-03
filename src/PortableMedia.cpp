@@ -31,6 +31,8 @@
 
 #include <wx/tokenzr.h>
 
+namespace Guayadeque {
+
 //// -------------------------------------------------------------------------------- //
 //wxString guPortableMediaAudioFormatString[] = {
 //    wxT( "Keep format" ),
@@ -1955,6 +1957,8 @@ void guMediaViewerPortableDevice::EditProperties( void )
         }
         PortableMediaProperties->Destroy();
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

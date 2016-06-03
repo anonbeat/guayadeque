@@ -29,6 +29,8 @@
 #include "LibPanel.h"
 #include "MediaViewer.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guYeListBox::guYeListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guAccelListBox( parent, db, label )
@@ -186,6 +188,8 @@ int guYeListBox::FindYear( const int year )
         }
     }
     return wxNOT_FOUND;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -36,6 +36,8 @@
 #include <wx/event.h>
 #include <wx/uri.h>
 
+namespace Guayadeque {
+
 #define     LISTCTRL_BORDER                 5
 
 #define     guPANEL_TIMER_SELECTION         1
@@ -2843,6 +2845,8 @@ void guLibPanel::UpdatedTrack( const guTrack * track )
 //        m_SongListCtrl->UpdatedTrack( track );
 
     ReloadControls();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

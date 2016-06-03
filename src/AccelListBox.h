@@ -26,6 +26,8 @@
 
 class guLibPanel;
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guAccelListBox : public guListBox
 {
@@ -38,6 +40,8 @@ class guAccelListBox : public guListBox
     ~guAccelListBox();
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

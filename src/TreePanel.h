@@ -50,6 +50,8 @@
 #include <wx/imaglist.h>
 #include <wx/srchctrl.h>
 
+namespace Guayadeque {
+
 #define     guPANEL_TREEVIEW_TEXTSEARCH        ( 1 << 0 )
 
 #define     guPANEL_TREEVIEW_VISIBLE_DEFAULT   ( 0 )
@@ -230,6 +232,8 @@ class guTreeViewPanel : public guAuiManagerPanel
     friend class guTreeViewTreeCtrl;
     friend class guMediaViewer;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

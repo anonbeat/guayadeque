@@ -30,6 +30,8 @@
 #include <wx/string.h>
 #include <wx/window.h>
 
+namespace Guayadeque {
+
 #define guMAGNATUNE_DATABASE_DUMP_URL       wxT( "http://he3.magnatune.com/info/album_info_xml.gz" )
 //#define guMAGNATUNE_FILE_STREAM_URL
 #define guMAGNATUNE_STREAM_FORMAT_MP3       wxT( ".mp3" )
@@ -220,7 +222,7 @@ class guMediaViewerMagnatune : public guMediaViewer
     friend class guMagnatuneUpdateThread;
 };
 
+}
 
 #endif
-
 // -------------------------------------------------------------------------------- //

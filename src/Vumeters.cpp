@@ -21,6 +21,8 @@
 
 #include "Utils.h"
 
+namespace Guayadeque {
+
 #define guVUMETERS_LEVEL_TIMEOUT    300
 #define guVUMETERS_LEVEL_TIMERID    9
 
@@ -599,6 +601,8 @@ void guPlayerVumeters::OnLevelsTimeout( wxTimerEvent &event )
     {
         m_LevelsTimer.Start( guVUMETERS_LEVEL_TIMEOUT, wxTIMER_ONE_SHOT );
     }
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

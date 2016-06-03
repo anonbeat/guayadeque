@@ -28,6 +28,8 @@
 #include <wx/thread.h>
 #include <wx/xml/xml.h>
 
+namespace Guayadeque {
+
 #define GetTrackLengthDiff( time1, time2 )      abs( ( int ) time1 - time2 )
 #define guMBRAINZ_MAX_TIME_DIFF                 3000
 
@@ -82,6 +84,7 @@ class guMusicBrainz
     void            GetRecordingInfo( const wxString &recordingid, guMBRecording * mbrecording );
 };
 
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

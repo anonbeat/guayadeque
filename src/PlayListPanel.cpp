@@ -38,6 +38,8 @@
 #include "TrackEdit.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 //#define guPLAYLIST_TIMER_TEXTSEARCH        5
 //#define guPLAYLIST_TIMER_TEXTSEARCH_VALUE  500
 
@@ -1971,6 +1973,8 @@ void guPlayListPanel::OnPLTracksColClicked( wxListEvent &event )
 {
     int ColId = m_PLTracksListBox->GetColumnId( event.m_col );
     m_PLTracksListBox->SetTracksOrder( ColId );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

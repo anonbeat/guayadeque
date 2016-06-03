@@ -23,6 +23,7 @@
 #include "MainFrame.h"
 #include "Utils.h"
 
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 extern "C" {
@@ -397,6 +398,8 @@ guGIO_Mount * guGIO_VolumeMonitor::GetMountByName( const wxString &name )
             return Mount;
     }
     return NULL;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

@@ -24,6 +24,8 @@
 
 #include "AccelListBox.h"
 
+namespace Guayadeque {
+
 class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
@@ -46,6 +48,8 @@ class guYeListBox : public guAccelListBox
     int             FindYear( const int year );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

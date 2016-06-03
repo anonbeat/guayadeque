@@ -31,6 +31,8 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 // Class guEditWithOptions
 // -------------------------------------------------------------------------------- //
@@ -47,6 +49,8 @@ class guEditWithOptions : public wxDialog
 	wxString        GetData( void );
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

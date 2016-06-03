@@ -49,6 +49,8 @@
 #include <wx/imaglist.h>
 #include <wx/srchctrl.h>
 
+namespace Guayadeque {
+
 #define     guPANEL_PLAYLIST_TEXTSEARCH        ( 1 << 0 )
 
 #define     guPANEL_PLAYLIST_VISIBLE_DEFAULT   ( 0 )
@@ -235,6 +237,8 @@ class guPlayListPanel : public guAuiManagerPanel
     friend class guPLNamesTreeCtrl;
     friend class guMediaViewer;
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

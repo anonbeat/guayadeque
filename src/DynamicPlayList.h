@@ -44,6 +44,8 @@
 #include <wx/spinctrl.h>
 #include <wx/dialog.h>
 
+namespace Guayadeque {
+
 enum guDYNAMIC_FILTER_TYPE {
     guDYNAMIC_FILTER_TYPE_TITLE = 0,
     guDYNAMIC_FILTER_TYPE_ARTIST,
@@ -252,6 +254,7 @@ class guDynPlayListEditor : public wxDialog
 
 };
 
-#endif
+}
 
+#endif
 // -------------------------------------------------------------------------------- //

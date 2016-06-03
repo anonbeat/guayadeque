@@ -30,6 +30,8 @@
 #include "Settings.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guArListBox::guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary * db, const wxString &label ) :
              guAccelListBox( parent, db, label )
@@ -348,6 +350,8 @@ int guArListBox::FindArtist( const int artistid )
         }
     }
     return wxNOT_FOUND;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

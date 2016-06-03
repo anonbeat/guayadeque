@@ -21,6 +21,8 @@
 
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guDBusNotify::guDBusNotify( guDBusServer * server ) : guDBusClient( server )
 {
@@ -213,5 +215,6 @@ DBusHandlerResult guDBusNotify::HandleMessages( guDBusMessage * msg, guDBusMessa
     return RetVal;
 }
 
-// -------------------------------------------------------------------------------- //
+}
 
+// -------------------------------------------------------------------------------- //

@@ -34,6 +34,8 @@
 #include <wx/dialog.h>
 
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 // Class guSelCoverFile
 // -------------------------------------------------------------------------------- //
@@ -63,6 +65,8 @@ class guSelCoverFile : public wxDialog
 
     bool     EmbedToFiles( void ) { return m_EmbedToFilesChkBox->IsChecked(); }
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

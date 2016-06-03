@@ -29,6 +29,8 @@
 #include <unistd.h>
 #include <wx/event.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guLibUpdateThread::guLibUpdateThread( guMediaViewer * mediaviewer, int gaugeid, const wxString &scanpath )
 {
@@ -541,6 +543,8 @@ guLibCleanThread::ExitCode guLibCleanThread::Entry()
     }
 
     return 0;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

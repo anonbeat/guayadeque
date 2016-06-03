@@ -24,6 +24,8 @@
 
 #include <wx/string.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guLastFMCoverFetcher::guLastFMCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
                                     const wxChar * artist, const wxChar * album ) :
@@ -71,6 +73,8 @@ int guLastFMCoverFetcher::AddCoverLinks( int pagenum )
     }
 
     return 1;
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

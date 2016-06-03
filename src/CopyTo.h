@@ -29,6 +29,8 @@
 #include <wx/string.h>
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 enum guCopyToActionType {
     guCOPYTO_ACTION_NONE,
     guCOPYTO_ACTION_COPYTO,
@@ -123,6 +125,8 @@ class guCopyToThread : public wxThread
     virtual ExitCode Entry();
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //

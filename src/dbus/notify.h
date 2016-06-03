@@ -24,6 +24,8 @@
 
 #include <wx/wx.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guDBusNotify : public guDBusClient
 {
@@ -41,6 +43,7 @@ class guDBusNotify : public guDBusClient
 
 };
 
+}
+
 #endif
-
-
+// -------------------------------------------------------------------------------- //

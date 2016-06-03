@@ -25,6 +25,8 @@
 #define guCOVERPANEL_RESIZE_TIMER_TIME  250
 #define guCOVERPANEL_RESIZE_TIMER_ID    10
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guCoverPanel::guCoverPanel( wxWindow * parent, guPlayerPanel * playerpanel ) :
     wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 100, 100 ), wxTAB_TRAVERSAL ),
@@ -148,6 +150,8 @@ void guCoverPanel::OnUpdatedTrack( wxCommandEvent &event )
         m_CoverPath = wxEmptyString;
     }
     UpdateImage();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

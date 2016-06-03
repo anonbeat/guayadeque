@@ -20,6 +20,8 @@
 #include "AutoPulseGauge.h"
 #include "Utils.h"
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 guAutoPulseGauge::guAutoPulseGauge( wxWindow * parent, wxWindowID id, int range, const wxPoint &pos,
              const wxSize &size, long style, const wxValidator& validator, const wxString &name ) :
@@ -54,6 +56,8 @@ void guAutoPulseGauge::StartPulse( void )
 bool guAutoPulseGauge::IsPulsing( void )
 {
     return m_Timer->IsRunning();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

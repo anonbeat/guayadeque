@@ -54,6 +54,8 @@
 #include <wx/arrstr.h>
 #include <wx/image.h>
 
+namespace Guayadeque {
+
 using namespace TagLib;
 
 #define wxStringToTString(s) TagLib::String(s.ToUTF8(), TagLib::String::UTF8)
@@ -335,5 +337,8 @@ void        guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &i
 void        guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags );
 void        guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, const wxArrayInt &changedflags );
 bool        guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal );
+
+}
+
 #endif
 // -------------------------------------------------------------------------------- //

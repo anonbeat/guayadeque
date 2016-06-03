@@ -39,6 +39,8 @@
 #include <wx/dialog.h>
 #include <wx/dynarray.h>
 
+namespace Guayadeque {
+
 // -------------------------------------------------------------------------------- //
 class guEQPreset
 {
@@ -87,6 +89,8 @@ class guEq10Band : public wxDialog
     ~guEq10Band();
 
 };
+
+}
 
 #endif
 // -------------------------------------------------------------------------------- //
