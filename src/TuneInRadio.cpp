@@ -347,10 +347,13 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, guRadioStati
             //        preset_id="s111270"/>
             guRadioStation * RadioStation = new guRadioStation();
 
-            long lBitRate;
+            long lBitRate = 0;
             wxString BitRate;
             xmlnode->GetAttribute( wxT( "bitrate" ), &BitRate );
-            BitRate.ToLong( &lBitRate );
+            if( !BitRate.IsEmpty() )
+            {
+                BitRate.ToLong( &lBitRate );
+            }
             xmlnode->GetAttribute( wxT( "text" ), &RadioStation->m_Name );
             if( ( BitRate.IsEmpty() || ( lBitRate >= minbitrate ) ) && SearchFilterTexts( m_TuneInProvider->GetSearchTexts(), RadioStation->m_Name.Lower() ) )
             {
