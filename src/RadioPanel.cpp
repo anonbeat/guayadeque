@@ -944,7 +944,7 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::RefreshStations( void )
 {
-    m_StationsListBox->ReloadItems( false );
+    m_StationsListBox->RefreshStations();
 }
 
 // -------------------------------------------------------------------------------- //
