@@ -310,8 +310,6 @@ void guNewPodcastChannelSelector::LoadPodcastDirectory( void )
             }
             //guLogMessage( wxT( "%s" ), m_DirectoryInfoStaticText->GetLabel().c_str() );
         }
-
-        wxSetCursor( wxNullCursor );
     }
     else
     {
@@ -326,7 +324,7 @@ void guNewPodcastChannelSelector::LoadPodcastDirectory( void )
     {
         m_DirectoryTreeCtrl->ExpandRoot();
     }
-    wxSetCursor( wxNullCursor );
+    wxSetCursor( * wxSTANDARD_CURSOR );
 }
 
 // -------------------------------------------------------------------------------- //

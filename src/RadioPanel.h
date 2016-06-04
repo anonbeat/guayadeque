@@ -229,6 +229,7 @@ class guRadioPanel : public guAuiManagerPanel
 	void OnRadioStationsPlay( wxCommandEvent &event );
 	void OnRadioStationsEnqueue( wxCommandEvent &event );
 	void OnSelectStations( bool enqueue = false, const int aftercurrent = 0 );
+    void OnLoadStationsFinished( wxCommandEvent &event );
 
     void OnTextChangedTimer( wxTimerEvent &event );
 
@@ -240,7 +241,7 @@ class guRadioPanel : public guAuiManagerPanel
 
     void OnRadioCreateItems( wxCommandEvent &event );
 
-    void OnGenreSelectTimer( wxTimerEvent &event );
+    void OnGenreSelectTimeout( wxTimerEvent &event );
 
   protected:
     wxSearchCtrl *          m_InputTextCtrl;
@@ -278,9 +279,7 @@ class guRadioPanel : public guAuiManagerPanel
 
     bool                        OnContextMenu( wxMenu * menu, const bool forstations = false, const int selcount = 0 );
 
-    void                        EndStationPlayListLoaded( void ) { m_RadioPlayListLoadThreadMutex.Lock();
-                                            m_RadioPlayListLoadThread = NULL;
-                                            m_RadioPlayListLoadThreadMutex.Unlock(); }
+    void                        EndStationPlayListLoaded( void );
 
     virtual int                 GetListViewColumnCount( void ) { return guRADIOSTATIONS_COLUMN_COUNT; }
     virtual bool                GetListViewColumnData( const int id, int * index, int * width, bool * enabled );

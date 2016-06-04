@@ -635,6 +635,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ), NULL, this );
     Connect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ), NULL, this );
     Connect( ID_RADIO_CREATE_TREE_ITEM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioCreateItems ), NULL, this );
+    Connect( ID_RADIO_LOADING_STATIONS_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnLoadStationsFinished ), NULL, this );
 
     m_StationsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
 	m_StationsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
@@ -650,7 +651,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioPanel::OnConfigUpdated ), NULL, this );
 
-	Connect( guRADIO_TIMER_GENRESELECTED, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnGenreSelectTimer ), NULL, this );
+    Connect( guRADIO_TIMER_GENRESELECTED, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnGenreSelectTimeout ), NULL, this );
 
 
     // Create shoutcast radio provider
@@ -978,11 +979,17 @@ void guRadioPanel::StartLoadingStations( void )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::EndLoadingStations( void )
 {
-    wxSetCursor( wxNullCursor );
+    wxSetCursor( * wxSTANDARD_CURSOR );
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnGenreSelectTimer( wxTimerEvent &event )
+void guRadioPanel::OnLoadStationsFinished( wxCommandEvent &event )
+{
+    EndLoadingStations();
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnGenreSelectTimeout( wxTimerEvent &event )
 {
     ReloadStations();
 }
@@ -994,9 +1001,9 @@ void guRadioPanel::ReloadStations( void )
 
     guRadioProvider * SelectedProvider = GetProvider( GetSelectedGenre() );
 
-    int Index;
+    // If there was a previos search in progress from other provider cancell it...
     int Count = m_RadioProviders->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guRadioProvider * RadioProvider = m_RadioProviders->Item( Index );
         if( RadioProvider != SelectedProvider )
@@ -1009,9 +1016,6 @@ void guRadioPanel::ReloadStations( void )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioGenreListSelected( wxTreeEvent &event )
 {
-    if( m_GenreSelectTimer.IsRunning() )
-        m_GenreSelectTimer.Stop();
-
     m_GenreSelectTimer.Start( 50, wxTIMER_ONE_SHOT );
 }
 
@@ -1035,7 +1039,7 @@ void guRadioPanel::OnRadioUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::OnRadioUpdateEnd( wxCommandEvent &event )
 {
-    //wxSetCursor( wxNullCursor );
+    //wxSetCursor( * wxSTANDARD_CURSOR );
     //GenresListBox->Enable();
     ReloadStations();
 }
@@ -1079,9 +1083,17 @@ void guRadioPanel::OnSelectStations( bool enqueue, const int aftercurrent )
 }
 
 // -------------------------------------------------------------------------------- //
+void guRadioPanel::EndStationPlayListLoaded( void )
+{
+    wxMutexLocker MutexLocker( m_RadioPlayListLoadThreadMutex );
+    m_RadioPlayListLoadThread = NULL;
+}
+
+// -------------------------------------------------------------------------------- //
 void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueue, const int aftercurrent )
 {
-    m_RadioPlayListLoadThreadMutex.Lock();
+    wxMutexLocker MutexLocker( m_RadioPlayListLoadThreadMutex );
+
     if( m_RadioPlayListLoadThread )
     {
         m_RadioPlayListLoadThread->Pause();
@@ -1094,7 +1106,6 @@ void guRadioPanel::LoadStationUrl( const wxString &stationurl, const bool enqueu
     {
         guLogError( wxT( "Could not create the download radio playlist thread" ) );
     }
-    m_RadioPlayListLoadThreadMutex.Unlock();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1149,7 +1160,6 @@ bool guRadioPanel::SetListViewColumnData( const int id, const int index, const i
 {
     return m_StationsListBox->SetColumnData( id, index, width, enabled, refresh );
 }
-
 
 
 
@@ -1290,10 +1300,8 @@ guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
     guLogMessage( wxT( "StationUrl: '%s'" ), m_StationUrl.c_str() );
     PlayListFile.Load( m_StationUrl );
 
-    int Index;
-    int Count;
-    Count = PlayListFile.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = PlayListFile.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( TestDestroy() )
             break;

@@ -82,9 +82,12 @@ bool guTuneInRadioProvider::HasItemId( const wxTreeItemId &itemid )
 // -------------------------------------------------------------------------------- //
 void guTuneInRadioProvider::EndReadStationsThread( void )
 {
+    wxMutexLocker MutexLocker( m_ReadStationsThreadMutex );
     m_ReadStationsThread = NULL;
 
-    m_RadioPanel->EndLoadingStations();
+//    m_RadioPanel->EndLoadingStations();
+    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_LOADING_STATIONS_FINISHED );
+    wxPostEvent( m_RadioPanel, Event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -94,10 +97,16 @@ int guTuneInRadioProvider::GetStations( guRadioStations * stations, const long m
     guRadioItemData * ItemData = m_RadioPanel->GetSelectedData();
     if( ItemData )
     {
+        guRadioGenreTreeCtrl * RadioTreeCtrl = m_RadioPanel->GetTreeCtrl();
+        wxTreeItemId SelectedItem = m_RadioPanel->GetSelectedGenre();
+        RadioTreeCtrl->DeleteChildren( SelectedItem );
+
         //AddStations( ItemData->GetUrl(), stations, minbitrate );
         CancellSearchStations();
 
+        m_ReadStationsThreadMutex.Lock();
         m_ReadStationsThread = new guTuneInReadStationsThread( this, m_RadioPanel, ItemData->GetUrl(), stations, minbitrate );
+        m_ReadStationsThreadMutex.Unlock();
     }
     return stations->Count();
 }
@@ -105,10 +114,12 @@ int guTuneInRadioProvider::GetStations( guRadioStations * stations, const long m
 // -------------------------------------------------------------------------------- //
 void guTuneInRadioProvider::CancellSearchStations( void )
 {
+    wxMutexLocker MutexLocker( m_ReadStationsThreadMutex );
     if( m_ReadStationsThread )
     {
         m_ReadStationsThread->Pause();
         m_ReadStationsThread->Delete();
+        m_ReadStationsThread = NULL;
     }
 }
 
@@ -127,12 +138,12 @@ guTuneInReadStationsThread::guTuneInReadStationsThread( guTuneInRadioProvider * 
     m_TuneInProvider = tuneinprovider;
     m_RadioPanel = radiopanel;
     m_RadioStations = stations;
-    m_Url = url;
+    m_Url = wxString::FromUTF8( url.char_str() );
     m_MinBitRate = minbitrate;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
-        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 10 );
+        SetPriority( WXTHREAD_DEFAULT_PRIORITY - 30 );
         Run();
     }
 }
@@ -282,7 +293,7 @@ bool SearchFilterTexts( wxArrayString &texts, const wxString &name )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId parentitem, guRadioGenreTreeCtrl * radiogenretree, guRadioStations * stations, const long minbitrate )
+void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, guRadioStations * stations, const long minbitrate )
 {
 //    wxString MoreStationsUrl;
     while( xmlnode && !TestDestroy() )
@@ -293,7 +304,7 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
         xmlnode->GetAttribute( wxT( "type" ), &Type );
         if( Type == wxT( "" ) )
         {
-            ReadStations( xmlnode->GetChildren(), parentitem, radiogenretree, stations, minbitrate );
+            ReadStations( xmlnode->GetChildren(), stations, minbitrate );
         }
         else if( Type == wxT( "link" ) )
         {
@@ -313,6 +324,7 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
             {
                 //guLogMessage( wxT( "AddPendingItem '%s' '%s'" ), Name.c_str(), Url.c_str() );
                 m_TuneInProvider->AddPendingItem( Name + wxT( "|" ) + Url );
+
                 wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_CREATE_TREE_ITEM );
                 wxPostEvent( m_RadioPanel, Event );
                 Sleep( 20 );
@@ -363,21 +375,13 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, wxTreeItemId
         xmlnode = xmlnode->GetNext();
     }
 
-    SortStations();
+    if( !TestDestroy() )
+    {
+        SortStations();
 
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
-    wxPostEvent( m_RadioPanel, Event );
-
-//    if( m_TuneInProvider->GetPendingItemsCount() )
-//    {
-//        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_CREATE_TREE_ITEM );
-//        wxPostEvent( m_RadioPanel, Event );
-//    }
-
-//    if( !MoreStationsUrl.IsEmpty() )
-//    {
-//        AddStations( MoreStationsUrl, stations, minbitrate );
-//    }
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
+        wxPostEvent( m_RadioPanel, Event );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -388,9 +392,6 @@ int guTuneInReadStationsThread::AddStations( const wxString &url, guRadioStation
 
     if( !Content.IsEmpty() )
     {
-        guRadioGenreTreeCtrl * RadioTreeCtrl = m_RadioPanel->GetTreeCtrl();
-        wxTreeItemId SelectedItem = m_RadioPanel->GetSelectedGenre();
-
         wxStringInputStream Ins( Content );
         wxXmlDocument XmlDoc( Ins );
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
@@ -408,11 +409,11 @@ int guTuneInReadStationsThread::AddStations( const wxString &url, guRadioStation
                         XmlNode->GetAttribute( wxT( "type" ), &Type );
                         if( Type == wxT( "" ) )
                         {
-                            ReadStations( XmlNode->GetChildren(), SelectedItem, RadioTreeCtrl, stations, minbitrate );
+                            ReadStations( XmlNode->GetChildren(), stations, minbitrate );
                         }
                         else
                         {
-                            ReadStations( XmlNode, SelectedItem, RadioTreeCtrl, stations, minbitrate );
+                            ReadStations( XmlNode, stations, minbitrate );
                             break;
                         }
                     }
@@ -426,16 +427,19 @@ int guTuneInReadStationsThread::AddStations( const wxString &url, guRadioStation
                 }
             }
         }
-
-        //RadioTreeCtrl->Expand( SelectedItem );
     }
 
-    SortStations();
+    if( !TestDestroy() )
+    {
+        SortStations();
 
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
-    wxPostEvent( m_RadioPanel, Event );
+        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
+        wxPostEvent( m_RadioPanel, Event );
 
-    return stations->Count();
+        return stations->Count();
+    }
+
+    return 0;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -444,18 +448,14 @@ guTuneInReadStationsThread::ExitCode guTuneInReadStationsThread::Entry()
     if( TestDestroy() )
         return 0;
 
-
     if( !TestDestroy() )
     {
-        guRadioGenreTreeCtrl * RadioTreeCtrl = m_RadioPanel->GetTreeCtrl();
-        wxTreeItemId SelectedItem = m_RadioPanel->GetSelectedGenre();
-        RadioTreeCtrl->DeleteChildren( SelectedItem );
-
         AddStations( m_Url, m_RadioStations, m_MinBitRate );
 
         while( !TestDestroy() && m_MoreStations.Count() )
         {
             AddStations( m_MoreStations[ 0 ], m_RadioStations, m_MinBitRate );
+
             m_MoreStations.RemoveAt( 0 );
         }
     }

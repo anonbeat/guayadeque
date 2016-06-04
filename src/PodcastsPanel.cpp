@@ -1192,7 +1192,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
 
             guPodcastChannel PodcastChannel( PodcastUrl );
 
-            wxSetCursor( wxNullCursor );
+            wxSetCursor( * wxSTANDARD_CURSOR );
                     //
             guChannelEditor * ChannelEditor = new guChannelEditor( this, &PodcastChannel );
             if( ChannelEditor->ShowModal() == wxID_OK )
@@ -1226,7 +1226,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
             }
             ChannelEditor->Destroy();
         }
-        wxSetCursor( wxNullCursor );
+        wxSetCursor( * wxSTANDARD_CURSOR );
     }
     NewPodcastChannel->Destroy();
 }
@@ -1249,7 +1249,7 @@ void guPodcastPanel::DeleteChannels( wxCommandEvent &event )
                 m_Db->DelPodcastChannel( SelectedItems[ Index ] );
             }
             m_ChannelsListBox->ReloadItems();
-            wxSetCursor( wxNullCursor );
+            wxSetCursor( * wxSTANDARD_CURSOR );
         }
     }
 }
@@ -1292,7 +1292,7 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
 
         m_ChannelsListBox->ReloadItems();
 
-        wxSetCursor( wxNullCursor );
+        wxSetCursor( * wxSTANDARD_CURSOR );
     }
     ChannelEditor->Destroy();
 }
@@ -1362,7 +1362,7 @@ void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
                 ProcessChannel( &PodcastChannel );
             }
         }
-        wxSetCursor( wxNullCursor );
+        wxSetCursor( * wxSTANDARD_CURSOR );
     }
 }
 
@@ -1390,7 +1390,7 @@ void guPodcastPanel::ProcessChannel( guPodcastChannel * channel )
     m_ChannelsListBox->ReloadItems( false );
     m_PodcastsListBox->ReloadItems( false );
 
-    wxSetCursor( wxNullCursor );
+    wxSetCursor( * wxSTANDARD_CURSOR );
 }
 
 // -------------------------------------------------------------------------------- //
