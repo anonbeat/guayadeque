@@ -139,6 +139,14 @@ namespace Guayadeque {
 #define guLYRICS_ALBUM_PATH                 wxT( "{bp}" )
 #define guLYRICS_FILENAME                   wxT( "{f}" )
 
+// -------------------------------------------------------------------------------- //
+// Splash
+// -------------------------------------------------------------------------------- //
+#define guSPLASH_NAME                       wxT( "J.Rios" )
+#define guSPLASH_EMAIL                      wxT( "anonbeat@gmail.com" )
+#define guSPLASH_HOMEPAGE                   wxT( "http://guayadeque.org" )
+#define guSPLASH_DONATION_LINK              wxT( "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RRUNTVSQ5C3D2&lc=ES&item_name=Guayadeque%20Music%20Player&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" )
+
 }
 
 #endif

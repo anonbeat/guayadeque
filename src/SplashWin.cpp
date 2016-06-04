@@ -21,6 +21,7 @@
 
 #include "EventCommandIds.h"
 #include "Images.h"
+#include "Settings.h"
 #include "Utils.h"
 #include "Version.h"
 
@@ -39,8 +40,6 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 	wxBoxSizer* MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
     wxColour FontColor = wxColour( 100, 100, 100 );
     wxString Version = wxT( ID_GUAYADEQUE_VERSION );
 #ifdef ID_GUAYADEQUE_REVISION
@@ -48,36 +47,39 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
 #endif
 	m_Version = new wxStaticText( this, wxID_ANY, Version, wxDefaultPosition, wxDefaultSize, 0 );
     wxFont CurFont = m_Version->GetFont();
-    CurFont.SetPointSize( CurFont.GetPointSize() + 4 );
+    CurFont.SetPointSize( CurFont.GetPointSize() + 2 );
     m_Version->SetFont( CurFont );
 	m_Version->Wrap( -1 );
 	m_Version->SetForegroundColour( FontColor );
 	m_Version->SetBackgroundColour( * wxWHITE );
-	MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    MainSizer->Add( m_Version, 0, wxALIGN_RIGHT|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-    m_Email = new wxHyperlinkCtrl( this, wxID_ANY, wxT( "J.Rios anonbeat@gmail.com" ), wxT( "mailto:anonbeat@gmail.com" ), wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
+    MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+
+    m_Email = new wxHyperlinkCtrl( this, wxID_ANY, guSPLASH_NAME wxT( " " ) guSPLASH_EMAIL, wxT( "mailto:" ) guSPLASH_EMAIL, wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
 	m_Email->SetHoverColour( FontColor );
 	m_Email->SetNormalColour( FontColor );
 	m_Email->SetVisitedColour( FontColor );
 	m_Email->SetBackgroundColour( * wxWHITE );
     m_Email->SetCanFocus( false );
-    MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    MainSizer->Add( m_Email, 0, wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
 
-    m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, wxT( "guayadeque.org" ), wxT( "http://guayadeque.org" ), wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
+    m_HomePage = new wxHyperlinkCtrl( this, wxID_ANY, guSPLASH_HOMEPAGE, guSPLASH_HOMEPAGE, wxDefaultPosition, wxDefaultSize, wxHL_ALIGN_RIGHT );
 	m_HomePage->SetHoverColour( FontColor );
 	m_HomePage->SetNormalColour( FontColor );
 	m_HomePage->SetVisitedColour( FontColor );
 	m_HomePage->SetBackgroundColour( * wxWHITE );
     m_HomePage->SetCanFocus( false );
-    MainSizer->Add( m_HomePage, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    MainSizer->Add( m_HomePage, 0, wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
 
-//	m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, _( "Please Donate!" ), wxT( "http://sourceforge.net/donate/index.php?group_id=250783" ) );
+    m_Donate = new wxHyperlinkCtrl( this, wxID_ANY, _( "Please Donate!" ), guSPLASH_DONATION_LINK );
 
-//	m_Donate->SetHoverColour( FontColor );
-//	m_Donate->SetNormalColour( FontColor );
-//	m_Donate->SetVisitedColour( FontColor );
-//	m_Donate->SetBackgroundColour( * wxWHITE );
-//	MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+    m_Donate->SetHoverColour( FontColor );
+    m_Donate->SetNormalColour( FontColor );
+    m_Donate->SetVisitedColour( FontColor );
+    m_Donate->SetBackgroundColour( * wxWHITE );
+    m_Donate->SetCanFocus( false );
+    MainSizer->Add( m_Donate, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	this->SetSizer( MainSizer );
 	this->Layout();
