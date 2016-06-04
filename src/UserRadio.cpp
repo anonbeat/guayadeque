@@ -137,7 +137,7 @@ void guUserRadioProvider::OnRadioAdd( wxCommandEvent &event )
             //
             m_Db->SetRadioStation( &RadioStation );
             //
-            m_RadioPanel->RefreshStations();
+            m_RadioPanel->ReloadStations();
         }
         RadioEditor->Destroy();
     }
@@ -158,7 +158,7 @@ void guUserRadioProvider::OnRadioEdit( wxCommandEvent &event )
             RadioStation.m_Link = RadioEditor->GetLink();
             m_Db->SetRadioStation( &RadioStation );
             //
-            m_RadioPanel->RefreshStations();
+            m_RadioPanel->ReloadStations();
         }
         RadioEditor->Destroy();
     }
@@ -170,7 +170,7 @@ void guUserRadioProvider::OnRadioDelete( wxCommandEvent &event )
     guRadioStation RadioStation;
     m_RadioPanel->GetSelectedStation( &RadioStation );
     m_Db->DelRadioStation( RadioStation.m_Id );
-    m_RadioPanel->RefreshStations();
+    m_RadioPanel->ReloadStations();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -247,7 +247,7 @@ void guUserRadioProvider::OnRadioImport( wxCommandEvent &event )
                         m_Db->SetRadioStation( &UserStations[ Index ] );
                     }
                     //
-                    m_RadioPanel->RefreshStations();
+                    m_RadioPanel->ReloadStations();
                 }
             }
         }
