@@ -110,7 +110,16 @@ int guUserRadioProvider::GetStations( guRadioStations * stations, const long min
 // -------------------------------------------------------------------------------- //
 void guUserRadioProvider::OnRadioAdd( wxCommandEvent &event )
 {
-    guRadioEditor * RadioEditor = new guRadioEditor( m_RadioPanel, _( "Edit Radio" ) );
+    wxArrayString * Params = ( wxArrayString * ) event.GetClientData();
+    wxString Name;
+    wxString Link;
+    if( Params && ( Params->GetCount() == 2 ) )
+    {
+        Name = Params->Item( 0 );
+        Link = Params->Item( 1 );
+    }
+
+    guRadioEditor * RadioEditor = new guRadioEditor( m_RadioPanel, _( "Edit Radio" ), Name, Link );
     if( RadioEditor )
     {
         if( RadioEditor->ShowModal() == wxID_OK )

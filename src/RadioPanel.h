@@ -230,6 +230,7 @@ class guRadioPanel : public guAuiManagerPanel
 	void OnRadioStationsEnqueue( wxCommandEvent &event );
 	void OnSelectStations( bool enqueue = false, const int aftercurrent = 0 );
     void OnLoadStationsFinished( wxCommandEvent &event );
+    void OnRadioStationsAddToUser( wxCommandEvent &event );
 
     void OnTextChangedTimer( wxTimerEvent &event );
 

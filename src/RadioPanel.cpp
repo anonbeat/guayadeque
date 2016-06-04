@@ -449,7 +449,7 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->Enable( SelCount );
 
         MenuItem = new wxMenuItem( EnqueueMenu, ID_RADIO_ENQUEUE_AFTER_ARTIST,
-                                wxString( _( "Current Artist" ) ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
+                                _( "Current Artist" ) +  guAccelGetCommandKeyCodeString( ID_TRACKS_ENQUEUE_AFTER_ARTIST ),
                                 _( "Add current selected tracks to playlist after the current artist" ) );
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_add ) );
         EnqueueMenu->Append( MenuItem );
@@ -457,6 +457,14 @@ void guRadioStationListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
+        Menu->AppendSeparator();
+
+        MenuItem = new wxMenuItem( Menu, ID_RADIO_ADD_TO_USER,
+                            _( "Add to User Radio" ),
+                            _( "Add selected radios as user radios" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
+
+        Menu->Append( MenuItem );
     }
 
     m_RadioPanel->OnContextMenu( Menu, true, SelCount );
@@ -652,6 +660,8 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioPanel::OnConfigUpdated ), NULL, this );
 
     Connect( guRADIO_TIMER_GENRESELECTED, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnGenreSelectTimeout ), NULL, this );
+
+    Connect( ID_RADIO_ADD_TO_USER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsAddToUser ), NULL, this );
 
 
     // Create shoutcast radio provider
@@ -934,7 +944,7 @@ void guRadioPanel::OnStationListActivated( wxListEvent &event )
 // -------------------------------------------------------------------------------- //
 void guRadioPanel::RefreshStations( void )
 {
-    m_StationsListBox->RefreshStations();
+    m_StationsListBox->ReloadItems( false );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1079,6 +1089,31 @@ void guRadioPanel::OnSelectStations( bool enqueue, const int aftercurrent )
         {
             LoadStationUrl( StationUrl, enqueue, aftercurrent );
         }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guRadioPanel::OnRadioStationsAddToUser( wxCommandEvent &event )
+{
+    guRadioStation RadioStation;
+
+    if( GetSelectedStation( &RadioStation ) )
+    {
+
+        RadioStation.m_Id = wxNOT_FOUND;
+        if( RadioStation.m_SCId != wxNOT_FOUND )
+        {
+            guShoutCast ShoutCast;
+            RadioStation.m_Link = ShoutCast.GetStationUrl( RadioStation.m_SCId );
+        }
+        RadioStation.m_SCId = wxNOT_FOUND;
+        RadioStation.m_BitRate = 0;
+        RadioStation.m_GenreId = wxNOT_FOUND;
+        RadioStation.m_Source = 1;
+        RadioStation.m_Listeners = 0;
+        RadioStation.m_Type = wxEmptyString;
+
+        m_Db->SetRadioStation( &RadioStation );
     }
 }
 
