@@ -160,8 +160,8 @@ void guAuiDockArt::DrawPaneButton( wxDC &dc, wxWindow * window, int button, int 
         int Offset = 0;
         if( ( button_state & wxAUI_BUTTON_STATE_PRESSED ) )
             Offset++;
-        dc.DrawBitmap( ( ( button_state & wxAUI_BUTTON_STATE_HOVER ) ? m_CloseHighLight : m_CloseNormal ),
-            rect.x + Offset, rect.y + 1 + Offset, true );
+        dc.DrawBitmap( ( ( button_state & ( wxAUI_BUTTON_STATE_HOVER | wxAUI_BUTTON_STATE_PRESSED ) ) ? m_CloseHighLight : m_CloseNormal ),
+            rect.x + Offset, rect.y + 2 + Offset, true );
         return;
     }
     wxAuiDefaultDockArt::DrawPaneButton( dc, window, button, button_state, rect, pane );
