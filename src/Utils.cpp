@@ -22,12 +22,13 @@
 #include "Config.h"
 #include "DbLibrary.h"
 #include "FileRenamer.h"    // NormalizeField
+#include "Http.h"
 #include "MediaViewer.h"
 #include "Settings.h"
 
-#include <wx/curl/http.h>
 #include <wx/process.h>
 #include <wx/regex.h>
+#include <wx/sstream.h>
 #include <wx/uri.h>
 #include <wx/zstream.h>
 
@@ -171,24 +172,23 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
 
     wxString FileName = Uri.GetPath().Lower();
 
-    guLogMessage( wxT( "Downloading '%s' from '%s'" ), FileName.c_str(), url.c_str() );
-
+    //guLogMessage( wxT( "Downloading '%s' from '%s'" ), FileName.c_str(), url.c_str() );
     wxMemoryOutputStream Buffer;
-    wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    //http.AddHeader( wxT( "Accept: */*" ) );
+    guHttp Http;
+    Http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
+    //http.AddHeader( wxT( "Accept: * / *" ) );
     //http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
     try {
-        if( http.Get( Buffer, url ) && Buffer.IsOk() && Buffer.GetSize() )
+        if( Http.Get( Buffer, url ) && Buffer.IsOk() && Buffer.GetSize() )
         {
-            long ResCode = http.GetResponseCode();
+            long ResCode = Http.GetResCode();
             //guLogMessage( wxT( "ResCode: %lu" ), ResCode );
             if( ( ResCode < 200 ) || ( ResCode > 299 ) )
             {
                 //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
                 if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
                 {
-                    wxString Location = http.GetResponseHeader();
+                    wxString Location = Http.GetResHeader();
                     int Pos = Location.Lower().Find( wxT( "location: " ) );
                     if( Pos != wxNOT_FOUND )
                     {
@@ -202,9 +202,9 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
             if( ResCode != 200 )
             {
                 guLogMessage( wxT( "Error %lu getting remote image '%s'\n%s" ),
-                    http.GetResponseCode(),
+                    Http.GetResCode(),
                     url.c_str(),
-                    http.GetResponseHeader().c_str() );
+                    Http.GetResHeader().c_str() );
             }
 
             wxMemoryInputStream Ins( Buffer );
@@ -279,19 +279,18 @@ bool DownloadImage( const wxString &source, const wxString &target, int maxwidth
 int DownloadFile( const wxString &Source, const wxString &Target )
 {
     //guLogMessage( wxT( "Downloading %s" ), Source.c_str() );
-    wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    //http.SetVerbose( true );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
+    guHttp http;
+    http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
+    http.SetOption( CURLOPT_FOLLOWLOCATION, 1L );
     http.Get( Target, Source );
 
-    long ResCode = http.GetResponseCode();
+    long ResCode = http.GetResCode();
     if( ( ResCode < 200 ) || ( ResCode > 299 ) )
     {
         //guLogMessage( wxT( "Code   : %u\n%s" ), ResCode, http.GetResponseHeader().c_str() );
         if( ( ResCode == 301 ) || ( ResCode == 302 ) || ( ResCode == 307 ) )
         {
-            wxString Location = http.GetResponseHeader();
+            wxString Location = http.GetResHeader();
             int Pos = Location.Lower().Find( wxT( "location: " ) );
             if( Pos != wxNOT_FOUND )
             {
@@ -410,36 +409,36 @@ wxFileOffset guGetFileSize( const wxString &FileName )
 // -------------------------------------------------------------------------------- //
 wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipped )
 {
-    wxCurlHTTP  http;
+    guHttp  Http;
     //char *      Buffer;
     wxString RetVal = wxEmptyString;
 
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" ) );
+    Http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
+    Http.AddHeader( wxT( "Accept" ), wxT( "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" ) );
     if( gzipped )
     {
-        http.AddHeader( wxT( "Accept Encoding: gzip,deflate" ) );
+        Http.AddHeader( wxT( "Accept Encoding" ), wxT( "gzip,deflate" ) );
     }
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+    Http.AddHeader( wxT( "Accept-Charset" ), wxT( "utf-8" ) );
     if( !referer.IsEmpty() )
     {
-        http.AddHeader( wxT( "Referer: " ) + referer );
+        Http.AddHeader( wxT( "Referer" ), referer );
     }
 
     //guLogMessage( wxT( "Getting content for %s" ), url.c_str() );
 
     wxMemoryOutputStream Buffer;
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, url );
+    Http.SetOption( CURLOPT_FOLLOWLOCATION, 1L );
+    Http.Get( Buffer, url );
 
     if( Buffer.IsOk() )
     {
-        int ResponseCode = http.GetResponseCode();
+        int ResponseCode = Http.GetResCode();
         //guLogMessage( wxT( "ResponseCode: %i" ), ResponseCode );
         if( ResponseCode >= 300  && ResponseCode < 400 )
         {
             //guLogMessage( wxT( "Response %u:\n%s\n%s" ), http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
-            wxString Location = http.GetResponseHeader();
+            wxString Location = Http.GetResHeader();
             int Pos = Location.Lower().Find( wxT( "location: " ) );
             if( Pos != wxNOT_FOUND )
             {
@@ -461,7 +460,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
         else if( ResponseCode >= 400 )
             return wxEmptyString;
 
-        wxString ResponseHeaders = http.GetResponseHeader();
+        wxString ResponseHeaders = Http.GetResHeader();
         //guLogMessage( wxT( "Response %u:\n%s\n%s" ), http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
 
         if( ResponseHeaders.Lower().Find( wxT( "content-encoding: gzip" ) ) != wxNOT_FOUND )

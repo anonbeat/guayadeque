@@ -23,7 +23,6 @@
 #include "Utils.h"
 
 #include <wx/arrimpl.cpp>
-#include <wx/curl/http.h>
 #include <wx/statline.h>
 #include <wx/html/htmlpars.h>
 

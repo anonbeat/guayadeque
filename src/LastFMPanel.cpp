@@ -20,7 +20,7 @@
 #include "LastFMPanel.h"
 
 #include "EventCommandIds.h"
-#include "curl/http.h"
+#include "Http.h"
 #include "Images.h"
 #include "MainApp.h"
 #include "Settings.h"

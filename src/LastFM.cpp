@@ -23,7 +23,7 @@
 #include "DbCache.h"
 #include "Utils.h"
 
-#include "curl/http.h"
+#include "Http.h"
 
 #include <wx/arrimpl.cpp>
 #include <wx/sstream.h>
@@ -98,7 +98,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
     int         Index;
     int         Count;
     wxString    RetVal = wxEmptyString;
-    wxCurlHTTP  http;
+    guHttp      Http;
     char *      Buffer = NULL;
     wxString    UrlStr = wxEmptyString; // = LASTFM_API_ROOT;
 
@@ -131,12 +131,11 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
         if( RetVal.IsEmpty() )
         {
             // Only with a UserAgent is accepted the Charset requested
-            http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-            http.AddHeader( wxT( "Accept: text/html" ) );
-            http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
+            Http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
+            Http.AddHeader( wxT( "Accept" ), wxT( "text/html" ) );
+            Http.AddHeader( wxT( "Accept-Charset" ), wxT( "utf-8" ) );
             //guLogMessage( wxT( "LastFM.DoRequest %s\n" ), UrlStr.c_str() );
-            http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-            http.Get( Buffer, UrlStr );
+            Http.Get( Buffer, UrlStr );
 
             if( Buffer )
             {
@@ -160,7 +159,7 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
     else
     {
         //guLogMessage( wxT( "LastFM.DoRequest POST %s\n" ), UrlStr.c_str() );
-        http.Post( UrlStr.Mid( 1 ).char_str(), UrlStr.Length() - 1, LASTFM_API_ROOT );
+        Http.Post( UrlStr.Mid( 1 ).char_str(), UrlStr.Length() - 1, LASTFM_API_ROOT );
     }
 
 //    else

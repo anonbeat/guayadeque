@@ -24,9 +24,9 @@
 
 #include "ItemListBox.h"
 
-class guLibPanel;
-
 namespace Guayadeque {
+
+class guLibPanel;
 
 // -------------------------------------------------------------------------------- //
 class guAccelListBox : public guListBox

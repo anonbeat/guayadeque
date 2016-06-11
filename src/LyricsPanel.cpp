@@ -21,7 +21,6 @@
 
 #include "EventCommandIds.h"
 #include "Config.h"
-#include "curl/http.h"
 #include "Preferences.h"
 #include "Images.h"
 #include "ListView.h"
@@ -38,6 +37,7 @@
 #include <wx/txtstrm.h>
 #include <wx/xml/xml.h>
 #include <wx/regex.h>
+#include <wx/sstream.h>
 #include <wx/tokenzr.h>
 
 namespace Guayadeque {

@@ -25,7 +25,7 @@
 #include "Config.h"
 #include "CoverPanel.h"
 #include "Collections.h"
-#include "curl/http.h"
+#include "Http.h"
 #include "dbus/gudbus.h"
 #include "dbus/mpris.h"
 #include "dbus/mpris2.h"

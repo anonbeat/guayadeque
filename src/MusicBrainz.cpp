@@ -19,8 +19,8 @@
 // -------------------------------------------------------------------------------- //
 #include "MusicBrainz.h"
 
+//#include "Http.h"
 #include "Utils.h"
-#include "curl/http.h"
 
 #include <wx/arrimpl.cpp>
 #include <wx/sstream.h>

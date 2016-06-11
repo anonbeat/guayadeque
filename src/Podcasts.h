@@ -20,10 +20,9 @@
 #ifndef PODCASTS_H
 #define PODCASTS_H
 
-#include "curl/http.h"
-
 #include <wx/dynarray.h>
 #include <wx/xml/xml.h>
+#include <wx/event.h>
 
 namespace Guayadeque {
 

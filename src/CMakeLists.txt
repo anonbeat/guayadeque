@@ -11,10 +11,9 @@ ENDIF( PROFILE )
 
 INCLUDE_DIRECTORIES(
         ${CMAKE_CURRENT_SOURCE_DIR}
-        ${CMAKE_CURRENT_SOURCE_DIR}/wx
-        ${CMAKE_CURRENT_SOURCE_DIR}/wx/curl
         ${CMAKE_CURRENT_SOURCE_DIR}/dbus
         ${CMAKE_CURRENT_SOURCE_DIR}/hmac
+        ${CMAKE_CURRENT_SOURCE_DIR}/network
         ${GSTREAMER_INCLUDE_DIRS}
         ${GSTREAMER_CTRL_INCLUDE_DIRS}
         ${SQLITE3_INCLUDE_DIRS}
@@ -29,12 +28,6 @@ INCLUDE_DIRECTORIES(
         ${LIBAPPINDICATOR_INCLUDE_DIRS}
         ${LIBWXSQLITE3_INCLUDE_DIRS}
         ${LIBWXSQLITE330_INCLUDE_DIRS}
-
-)
-
-SET( CURL_SOURCES
-        curl/base.cpp
-        curl/http.cpp 
 )
 
 SET( DBUS_SOURCES
@@ -57,6 +50,13 @@ SET( HMAC_SHA2_SOURCES
         hmac/hmac_sha2.h
         hmac/sha2.c
         hmac/sha2.h
+)
+
+SET( NETWORK_SOURCES
+        network/Curl.cpp
+        network/Curl.h
+        network/Http.cpp
+        network/Http.h
 )
 
 ADD_EXECUTABLE( guayadeque
@@ -285,9 +285,9 @@ ADD_EXECUTABLE( guayadeque
         AcousticId.h
         MusicBrainz.cpp
         MusicBrainz.h
-        ${CURL_SOURCES}
         ${DBUS_SOURCES}
         ${HMAC_SHA2_SOURCES}
+        ${NETWORK_SOURCES}
 )
 
 TARGET_LINK_LIBRARIES( guayadeque

@@ -80,6 +80,7 @@
 
 #include <wx/xml/xml.h>
 #include <wx/fileconf.h>
+#include <wx/sstream.h>
 
 namespace Guayadeque {
 

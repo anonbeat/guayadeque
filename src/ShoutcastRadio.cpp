@@ -23,14 +23,13 @@
 #include "Config.h"
 #include "DbCache.h"
 #include "DbRadios.h"
+#include "Http.h"
 #include "Images.h"
 #include "MainFrame.h"
 #include "RadioPanel.h"
 #include "RadioEditor.h"
 #include "RadioGenreEditor.h"
 #include "StatusBar.h"
-
-#include "curl/http.h"
 
 #include <wx/wfstream.h>
 #include <wx/tokenzr.h>

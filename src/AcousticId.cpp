@@ -20,11 +20,11 @@
 #include "AcousticId.h"
 
 #include "EventCommandIds.h"
-#include "curl/http.h"
 #include "MusicBrainz.h"
 #include "Utils.h"
 #include "Version.h"
 
+#include <wx/sstream.h>
 #include <wx/uri.h>
 
 namespace Guayadeque {

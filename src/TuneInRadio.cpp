@@ -22,14 +22,14 @@
 #include "Accelerators.h"
 #include "DbCache.h"
 #include "DbRadios.h"
+#include "Http.h"
 #include "Images.h"
 #include "RadioPanel.h"
 #include "RadioEditor.h"
 
-#include "curl/http.h"
-
-#include <wx/wfstream.h>
+#include <wx/sstream.h>
 #include <wx/tokenzr.h>
+#include <wx/wfstream.h>
 #include <wx/xml/xml.h>
 
 namespace Guayadeque {
@@ -166,16 +166,14 @@ wxString GetTuneInUrl( const wxString &url )
     if( Content.IsEmpty() )
     {
         char *      Buffer = NULL;
-        wxCurlHTTP  http;
+        guHttp      Http;
 
         // Only with a UserAgent is accepted the Charset requested
         //http.AddHeader( wxT( "User-Agent: " "Dalvik/1.6.0.(Linux;.U;.Android.4.1.1;.Galaxy.Nexus.Build/JRO03L)" ) );
-        http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-        http.AddHeader( wxT( "Accept: text/html" ) );
-        http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-        http.Get( Buffer, url );
-
+        Http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
+        Http.AddHeader( wxT( "Accept" ), wxT( "text/html" ) );
+        Http.AddHeader( wxT( "Accept-Charset" ), wxT( "utf-8" ) );
+        Http.Get( Buffer, url );
         if( Buffer )
         {
             Content = wxString( Buffer, wxConvUTF8 );

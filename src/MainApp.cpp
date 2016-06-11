@@ -20,6 +20,7 @@
 #include "MainApp.h"
 
 #include "Config.h"
+#include "Curl.h"
 #include "Images.h"
 #include "MainFrame.h"
 #include "mpris.h"
@@ -28,7 +29,6 @@
 #include "Utils.h"
 
 #include "wx/clipbrd.h"
-#include <wx/curl/base.h>
 #include <wx/image.h>
 #include <wx/tooltip.h>
 #include <wx/stdpaths.h>
@@ -345,8 +345,8 @@ bool guMainApp::OnInit()
     // Use the primary clipboard which is shared with other applications
     wxTheClipboard->UsePrimarySelection( false );
 
-    // Init the wxCurl Lib
-    wxCurlBase::Init();
+    // Init the Curl Library
+    guCurl::CurlInit();
 
     int LangId = m_Config->ReadNum( wxT( "Language" ), wxLANGUAGE_DEFAULT, wxT( "general" ) );
     if( m_Locale.Init( LangId ) )
@@ -414,8 +414,8 @@ bool guMainApp::OnInit()
 // -------------------------------------------------------------------------------- //
 int guMainApp::OnExit()
 {
-    // Shutdown the wxCurl Lib
-    wxCurlBase::Shutdown();
+    // Free any resources used by Curl Library
+    guCurl::CurlDone();
 
     return 0;
 }

@@ -24,7 +24,6 @@
 #include "PlayerPanel.h"
 #include "Utils.h"
 
-#include <wx/curl/http.h>
 #include <wx/tokenzr.h>
 
 namespace Guayadeque {
@@ -108,12 +107,11 @@ bool guAudioScrobbleSender::GetSessionId( void )
 
     //guLogMessage( wxT( "AudioScrobble:GetSesionId : " ) + AS_Url );
     char * Buffer = NULL;
-    wxCurlHTTP http;
-    http.AddHeader( wxT( "User-Agent: " ) guDEFAULT_BROWSER_USER_AGENT );
-    http.AddHeader( wxT( "Accept: text/html" ) );
-    http.AddHeader( wxT( "Accept-Charset: utf-8" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    http.Get( Buffer, AS_Url );
+    guHttp Http;
+    Http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
+    Http.AddHeader( wxT( "Accept" ), wxT( "text/html" ) );
+    Http.AddHeader( wxT( "Accept-Charset" ), wxT( "utf-8" ) );
+    Http.Get( Buffer, AS_Url );
     if( Buffer )
     {
         Content = wxString( Buffer, wxConvUTF8 );
@@ -168,7 +166,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
     wxString    Artist;
     wxString    Album;
     wxString    Track;
-    wxCurlHTTP  http;
+    guHttp      Http;
 
     /*
         s=<sessionID>
@@ -243,11 +241,10 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
         PostData.RemoveLast( 1 ); // we remove the last & added
 
         //guLogMessage( wxT( "AudioScrobble::Played : %s" ), PostData.c_str() );
-        http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
-        http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-        if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_SubmitUrl ) )
+        Http.AddHeader( wxT( "Content-Type" ), wxT( "application/x-www-form-urlencoded" ) );
+        if( Http.Post( PostData.ToAscii(), PostData.Length(), m_SubmitUrl ) )
         {
-            Content = http.GetResponseBody();
+            Content = Http.GetResData();
             if( !Content.IsEmpty() )
             {
                 //guLogMessage( wxT( "AudioScrobble::Response :\n%s" ), Content.c_str() );
@@ -272,7 +269,7 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
 // -------------------------------------------------------------------------------- //
 bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
 {
-    wxCurlHTTP  http;
+    guHttp      Http;
     wxString    PostData;
     wxString    Content;
     wxString    Artist;
@@ -302,11 +299,10 @@ bool guAudioScrobbleSender::SubmitNowPlaying( const guAS_SubmitInfo * cursong )
 
     //guLogMessage( wxT( "AudioScrobble::NowPlaying : " ) + m_NowPlayUrl + PostData );
 
-    http.AddHeader( wxT( "Content-Type: application/x-www-form-urlencoded" ) );
-    http.SetOpt( CURLOPT_FOLLOWLOCATION, 1 );
-    if( http.Post( wxCURL_STRING2BUF( PostData ), PostData.Length(), m_NowPlayUrl ) )
+    Http.AddHeader( wxT( "Content-Type" ), wxT( "application/x-www-form-urlencoded" ) );
+    if( Http.Post( PostData.ToAscii(), PostData.Length(), m_NowPlayUrl ) )
     {
-        Content = http.GetResponseBody();
+        Content = Http.GetResData();
         //guLogMessage( wxT( "%i : %s" ), http.GetResponseCode(), Content.c_str() );
         if( !Content.IsEmpty() )
         {
