@@ -642,12 +642,16 @@ void guArtistInfoCtrl::UpdateArtistInfoText( void )
     }
     Content.Replace( wxT( "\n" ), wxT( "<br>" ) );
 
-    m_ArtistDetails->SetPage( wxString::Format( wxT( "<html><body bgcolor=%s text=%s link=%s>%s</body></html>" ),
-          //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(), //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          m_Text->GetBackgroundColour().GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ).GetAsString( wxC2S_HTML_SYNTAX ).c_str(),
-          Content.c_str() ) );
+    wxString DetailsContent = wxT( "<html><body style=\"background-color: " ) +
+        m_Text->GetBackgroundColour().GetAsString( wxC2S_CSS_SYNTAX ) +
+        wxT( "; color: " ) +
+        wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ).GetAsString( wxC2S_CSS_SYNTAX ) +
+        wxT( "; a:link " ) +
+        wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ).GetAsString( wxC2S_CSS_SYNTAX ) +
+        wxT( ";\">" ) +
+        Content +
+        wxT( "</body></html>" );
+    m_ArtistDetails->SetPage( DetailsContent );
 
     wxSize Size; // = wxDefaultSize; //ArtistDetails->GetSize();
     wxHtmlContainerCell * Cell = m_ArtistDetails->GetInternalRepresentation();
