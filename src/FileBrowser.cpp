@@ -312,7 +312,7 @@ void AppendFolderCommands( wxMenu * menu )
     {
         for( Index = 0; Index < Count; Index++ )
         {
-            if( ( Commands[ Index ].Find( guCOMMAND_ALBUMPATH ) == wxNOT_FOUND ) )
+            if( ( Commands[ Index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) )
             {
                 MenuItem = new wxMenuItem( menu, ID_COMMANDS_BASE + Index, Names[ Index ], Commands[ Index ] );
                 SubMenu->Append( MenuItem );
