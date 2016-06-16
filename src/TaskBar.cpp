@@ -34,42 +34,43 @@ guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPla
     m_MainFrame = NewMainFrame;
     m_PlayerPanel = NewPlayerPanel;
     //
-    Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Connect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PLAY );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_STOP );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_NEXTTRACK );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_NEXTALBUM );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVTRACK );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVALBUM );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MENU_QUIT );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MAINFRAME_SETFORCEGAPLESS );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MAINFRAME_SETAUDIOSCROBBLE );
 
-    Connect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
+    Bind( wxEVT_TASKBAR_LEFT_DOWN, &guTaskBarIcon::OnClick, this );
 }
 
 // ---------------------------------------------------------------------- //
 guTaskBarIcon::~guTaskBarIcon()
 {
-    Disconnect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
-    Disconnect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaskBarIcon::SendEventToMainFrame ) );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PLAY );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_STOP );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_NEXTTRACK );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_NEXTALBUM );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVTRACK );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVALBUM );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MENU_QUIT );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MAINFRAME_SETFORCEGAPLESS );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MAINFRAME_SETAUDIOSCROBBLE );
 
-    Disconnect( wxEVT_TASKBAR_LEFT_DOWN, wxTaskBarIconEventHandler( guTaskBarIcon::OnClick ), NULL, this );
+    Unbind( wxEVT_TASKBAR_LEFT_DOWN, &guTaskBarIcon::OnClick, this );
 }
 
 // ---------------------------------------------------------------------- //

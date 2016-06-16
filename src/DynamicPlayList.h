@@ -233,7 +233,7 @@ class guDynPlayListEditor : public wxDialog
 		void                OnFilterAddClicked( wxCommandEvent& event );
 		void                OnFilterDelClicked( wxCommandEvent& event );
 		void                OnFilterUpdateClicked( wxCommandEvent& event );
-		void                OnLImitChecked( wxCommandEvent& event );
+		void                OnLimitChecked( wxCommandEvent& event );
 		void                OnSortChecked( wxCommandEvent& event );
 		void                OnRatingChanged( guRatingEvent &event );
 		void                OnNameChanged( wxCommandEvent &event );

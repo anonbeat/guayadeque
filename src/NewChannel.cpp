@@ -150,11 +150,11 @@ guNewPodcastChannelSelector::guNewPodcastChannelSelector( wxWindow * parent ) :
 
 	m_StandardButtonsOK->SetDefault();
 
-	// Connect Events
-	m_FilterDirectory->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guNewPodcastChannelSelector::OnFilterDirectoryClicked ), NULL, this );
-	m_DirectoryReload->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guNewPodcastChannelSelector::OnReloadDirectoryClicked ), NULL, this );
-	m_DirectoryTreeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guNewPodcastChannelSelector::OnDirectoryItemSelected ), NULL, this );
-	m_DirectoryTreeCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guNewPodcastChannelSelector::OnDirectoryItemChanged ), NULL, this );
+	// Bind Events
+    m_FilterDirectory->Bind( wxEVT_BUTTON, &guNewPodcastChannelSelector::OnFilterDirectoryClicked, this );
+    m_DirectoryReload->Bind( wxEVT_BUTTON, &guNewPodcastChannelSelector::OnReloadDirectoryClicked, this );
+    m_DirectoryTreeCtrl->Bind( wxEVT_TREE_ITEM_ACTIVATED, &guNewPodcastChannelSelector::OnDirectoryItemSelected, this );
+    m_DirectoryTreeCtrl->Bind( wxEVT_TREE_SEL_CHANGED, &guNewPodcastChannelSelector::OnDirectoryItemChanged, this );
 
 
 	//
@@ -166,6 +166,11 @@ guNewPodcastChannelSelector::guNewPodcastChannelSelector( wxWindow * parent ) :
 // -------------------------------------------------------------------------------- //
 guNewPodcastChannelSelector::~guNewPodcastChannelSelector()
 {
+    // Unbind events
+    m_FilterDirectory->Unbind( wxEVT_BUTTON, &guNewPodcastChannelSelector::OnFilterDirectoryClicked, this );
+    m_DirectoryReload->Unbind( wxEVT_BUTTON, &guNewPodcastChannelSelector::OnReloadDirectoryClicked, this );
+    m_DirectoryTreeCtrl->Unbind( wxEVT_TREE_ITEM_ACTIVATED, &guNewPodcastChannelSelector::OnDirectoryItemSelected, this );
+    m_DirectoryTreeCtrl->Unbind( wxEVT_TREE_SEL_CHANGED, &guNewPodcastChannelSelector::OnDirectoryItemChanged, this );
 }
 
 // -------------------------------------------------------------------------------- //

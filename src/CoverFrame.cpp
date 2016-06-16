@@ -46,16 +46,16 @@ guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & t
 
     m_AutoCloseTimer->Start( 1000, wxTIMER_ONE_SHOT );
 
-	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guCoverFrame::CoverFrameActivate ) );
-	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
-	Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
-	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guCoverFrame::OnClick ), NULL, this );
+    Bind( wxEVT_ACTIVATE, &guCoverFrame::CoverFrameActivate, this );
+    Bind( wxEVT_LEFT_DOWN, &guCoverFrame::OnClick, this );
+    Bind( wxEVT_RIGHT_DOWN, &guCoverFrame::OnClick, this );
+    Bind( wxEVT_MOUSEWHEEL, &guCoverFrame::OnClick, this );
 
-	m_CoverBitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
-	Connect( wxEVT_MOTION, wxMouseEventHandler( guCoverFrame::OnMouse ), NULL, this );
-	Connect( wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler( guCoverFrame::OnCaptureLost ), NULL, this );
+    m_CoverBitmap->Bind( wxEVT_MOTION, &guCoverFrame::OnMouse, this );
+    Bind( wxEVT_MOTION, &guCoverFrame::OnMouse, this );
+    Bind( wxEVT_MOUSE_CAPTURE_LOST, &guCoverFrame::OnCaptureLost, this );
 
-	Connect( wxEVT_TIMER, wxTimerEventHandler( guCoverFrame::OnTimer ), NULL, this );
+    Bind( wxEVT_TIMER, &guCoverFrame::OnTimer, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -66,6 +66,17 @@ guCoverFrame::~guCoverFrame()
 
     if( m_AutoCloseTimer )
         delete m_AutoCloseTimer;
+
+    Unbind( wxEVT_ACTIVATE, &guCoverFrame::CoverFrameActivate, this );
+    Unbind( wxEVT_LEFT_DOWN, &guCoverFrame::OnClick, this );
+    Unbind( wxEVT_RIGHT_DOWN, &guCoverFrame::OnClick, this );
+    Unbind( wxEVT_MOUSEWHEEL, &guCoverFrame::OnClick, this );
+
+    m_CoverBitmap->Unbind( wxEVT_MOTION, &guCoverFrame::OnMouse, this );
+    Unbind( wxEVT_MOTION, &guCoverFrame::OnMouse, this );
+    Unbind( wxEVT_MOUSE_CAPTURE_LOST, &guCoverFrame::OnCaptureLost, this );
+
+    Unbind( wxEVT_TIMER, &guCoverFrame::OnTimer, this );
 }
 
 // -------------------------------------------------------------------------------- //

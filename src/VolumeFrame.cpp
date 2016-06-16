@@ -54,34 +54,44 @@ guVolumeFrame::guVolumeFrame( guPlayerPanel * Player, wxWindow* parent, wxWindow
 	this->SetSizer( SetVolSizer );
 	this->Layout();
 
-	// Connect Events
-	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ), NULL, this );
-	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ), NULL, this );
-	m_VolSlider->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ), NULL, this );
-	m_IncVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
-	m_VolSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
-	m_VolSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
+	// Bind Events
+	Bind( wxEVT_ACTIVATE, &guVolumeFrame::VolFrameActivate, this );
+	Bind( wxEVT_MOUSEWHEEL, &guVolumeFrame::OnMouseWheel, this );
+	m_VolSlider->Bind( wxEVT_MOUSEWHEEL, &guVolumeFrame::OnMouseWheel, this );
+    m_IncVolButton->Bind( wxEVT_BUTTON, &guVolumeFrame::IncVolButtonClick, this );
+	m_VolSlider->Bind( wxEVT_SCROLL_CHANGED, &guVolumeFrame::VolSliderChanged, this );
+	m_VolSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guVolumeFrame::VolSliderChanged, this );
 
-	m_DecVolButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::DecVolButtonClick ), NULL, this );
+    m_DecVolButton->Bind( wxEVT_BUTTON, &guVolumeFrame::DecVolButtonClick, this );
 
-    Connect( wxEVT_MOTION, wxMouseEventHandler( guVolumeFrame::OnMouse ), NULL, this );
-    m_IncVolButton->Connect( wxEVT_MOTION, wxMouseEventHandler( guVolumeFrame::OnMouse ), NULL, this );
-    m_VolSlider->Connect( wxEVT_MOTION, wxMouseEventHandler( guVolumeFrame::OnMouse ), NULL, this );
-    m_DecVolButton->Connect( wxEVT_MOTION, wxMouseEventHandler( guVolumeFrame::OnMouse ), NULL, this );
+    Bind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+    m_IncVolButton->Bind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+    m_VolSlider->Bind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+    m_DecVolButton->Bind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
 
-    Connect( wxEVT_TIMER, wxTimerEventHandler( guVolumeFrame::OnTimer ), NULL, this );
+    Bind( wxEVT_TIMER, &guVolumeFrame::OnTimer, this );
 
 }
 
 // -------------------------------------------------------------------------------- //
 guVolumeFrame::~guVolumeFrame()
 {
-	// Disconnect Events
-	Disconnect( wxEVT_ACTIVATE, wxActivateEventHandler( guVolumeFrame::VolFrameActivate ) );
-	Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guVolumeFrame::OnMouseWheel ) );
-	m_IncVolButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::IncVolButtonClick ), NULL, this );
-	m_VolSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guVolumeFrame::VolSliderChanged ), NULL, this );
-	m_DecVolButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guVolumeFrame::DecVolButtonClick ), NULL, this );
+    // Unbind Events
+    Unbind( wxEVT_ACTIVATE, &guVolumeFrame::VolFrameActivate, this );
+    Unbind( wxEVT_MOUSEWHEEL, &guVolumeFrame::OnMouseWheel, this );
+    m_VolSlider->Unbind( wxEVT_MOUSEWHEEL, &guVolumeFrame::OnMouseWheel, this );
+    m_IncVolButton->Unbind( wxEVT_BUTTON, &guVolumeFrame::IncVolButtonClick, this );
+    m_VolSlider->Unbind( wxEVT_SCROLL_CHANGED, &guVolumeFrame::VolSliderChanged, this );
+    m_VolSlider->Unbind( wxEVT_SCROLL_THUMBTRACK, &guVolumeFrame::VolSliderChanged, this );
+
+    m_DecVolButton->Unbind( wxEVT_BUTTON, &guVolumeFrame::DecVolButtonClick, this );
+
+    Unbind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+    m_IncVolButton->Unbind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+    m_VolSlider->Unbind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+    m_DecVolButton->Unbind( wxEVT_MOTION, &guVolumeFrame::OnMouse, this );
+
+    Unbind( wxEVT_TIMER, &guVolumeFrame::OnTimer, this );
 
     if( m_MouseTimer )
         delete m_MouseTimer;

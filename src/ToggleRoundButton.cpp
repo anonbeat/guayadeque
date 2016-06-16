@@ -78,7 +78,7 @@ void guToggleRoundButton::OnMouseEvents( wxMouseEvent &event )
             m_Value = !m_Value;
             NeedPaint = true;
             // Send Clicked event
-            wxCommandEvent ClickEvent( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, GetId() );
+            wxCommandEvent ClickEvent( wxEVT_TOGGLEBUTTON, GetId() );
             ClickEvent.SetEventObject( this );
             ClickEvent.SetInt( m_Value );
             AddPendingEvent( ClickEvent );

@@ -29,13 +29,13 @@ guAuiManagedPanel::guAuiManagedPanel( wxWindow * parent, wxAuiManager * manager 
 {
     m_Manager = manager;
 
-    Connect( wxEVT_SIZE, wxSizeEventHandler( guAuiManagedPanel::OnChangedSize ), NULL, this );
+    Bind( wxEVT_SIZE, &guAuiManagedPanel::OnChangedSize, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guAuiManagedPanel::~guAuiManagedPanel()
 {
-    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAuiManagedPanel::OnChangedSize ), NULL, this );
+    Unbind( wxEVT_SIZE, &guAuiManagedPanel::OnChangedSize, this );
 }
 
 // -------------------------------------------------------------------------------- //

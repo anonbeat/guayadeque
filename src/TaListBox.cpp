@@ -35,9 +35,9 @@ guTaListBox::guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 {
     m_LibPanel = libpanel;
 
-    Connect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
-    Connect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );
-    Connect( ID_LABEL_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::EditLabel ) );
+    Bind( wxEVT_MENU, &guTaListBox::AddLabel, this, ID_LABEL_ADD );
+    Bind( wxEVT_MENU, &guTaListBox::DelLabel, this, ID_LABEL_DELETE );
+    Bind( wxEVT_MENU, &guTaListBox::EditLabel, this, ID_LABEL_EDIT );
 
     CreateAcceleratorTable();
 
@@ -47,9 +47,9 @@ guTaListBox::guTaListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 // -------------------------------------------------------------------------------- //
 guTaListBox::~guTaListBox()
 {
-    Disconnect( ID_LABEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::AddLabel ) );
-    Disconnect( ID_LABEL_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::DelLabel ) );
-    Disconnect( ID_LABEL_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTaListBox::EditLabel ) );
+    Unbind( wxEVT_MENU, &guTaListBox::AddLabel, this, ID_LABEL_ADD );
+    Unbind( wxEVT_MENU, &guTaListBox::DelLabel, this, ID_LABEL_DELETE );
+    Unbind( wxEVT_MENU, &guTaListBox::EditLabel, this, ID_LABEL_EDIT );
 }
 
 // -------------------------------------------------------------------------------- //

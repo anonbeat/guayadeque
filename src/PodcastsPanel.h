@@ -175,14 +175,14 @@ class guPodcastPanel : public guAuiManagerPanel
 {
   private:
     void                MainSplitterOnIdle( wxIdleEvent& );
-    void                OnChannelsSelected( wxListEvent &event );
-    void                OnChannelsActivated( wxListEvent &event );
+    void                OnChannelsSelected( wxCommandEvent &event );
+    void                OnChannelsActivated( wxCommandEvent &event );
     void                UpdatePodcastInfo( int itemid );
     void                UpdateChannelInfo( int itemid );
     void                OnPodcastsColClick( wxListEvent &event );
-    void                OnPodcastItemSelected( wxListEvent &event );
+    void                OnPodcastItemSelected( wxCommandEvent &event );
     void                OnPodcastItemUpdated( wxCommandEvent &event );
-    void                OnPodcastItemActivated( wxListEvent &event );
+    void                OnPodcastItemActivated( wxCommandEvent &event );
 
     void                OnPodcastItemPlay( wxCommandEvent &event );
     void                OnPodcastItemEnqueue( wxCommandEvent &event );

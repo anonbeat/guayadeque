@@ -2068,7 +2068,7 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
 
   // We added in PanelPtr all panels we are updating tracks
   // And send the clean db event to all of them
-  wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_DOCLEANDB );
+  wxCommandEvent event( wxEVT_MENU, ID_LIBRARY_DOCLEANDB );
   count = MediaViewerPtrs.Count();
   for( index = 0; index < count; index++ )
   {

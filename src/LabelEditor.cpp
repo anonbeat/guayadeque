@@ -156,16 +156,16 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 
 	OkButton->SetDefault();
 
-	// Connect Events
-	m_Splitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guLabelEditor::OnIdle ), NULL, this );
+    // Bind Events
+    m_Splitter->Bind( wxEVT_IDLE, &guLabelEditor::OnIdle, this );
 
-	m_ItemsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnItemSelected ), NULL, this );
-	m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnLabelSelected ), NULL, this );
-	m_LabelsListBox->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guLabelEditor::OnLabelChecked ), NULL, this );
-	m_LabelsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLabelEditor::OnLabelDoubleClicked ), NULL, this );
-	m_AddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelClicked ), NULL, this );
-	m_DelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelClicked ), NULL, this );
-	m_CopyButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnCopyLabelsClicked ), NULL, this );
+    m_ItemsListBox->Bind( wxEVT_LISTBOX, &guLabelEditor::OnItemSelected, this );
+    m_LabelsListBox->Bind( wxEVT_LISTBOX, &guLabelEditor::OnLabelSelected, this );
+    m_LabelsListBox->Bind( wxEVT_CHECKLISTBOX, &guLabelEditor::OnLabelChecked, this );
+    m_LabelsListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLabelEditor::OnLabelDoubleClicked, this );
+    m_AddButton->Bind( wxEVT_BUTTON, &guLabelEditor::OnAddLabelClicked, this );
+    m_DelButton->Bind( wxEVT_BUTTON, &guLabelEditor::OnDelLabelClicked, this );
+    m_CopyButton->Bind( wxEVT_BUTTON, &guLabelEditor::OnCopyLabelsClicked, this );
 
     m_ItemsListBox->SetSelection( 0 );
     wxCommandEvent event;
@@ -188,13 +188,14 @@ guLabelEditor::~guLabelEditor()
     Config->WriteNum( wxT( "LabelEditSizeWidth" ), WindowSize.x, wxT( "positions" ) );
     Config->WriteNum( wxT( "LabelEditSizeHeight" ), WindowSize.y, wxT( "positions" ) );
 
-	m_ItemsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnItemSelected ), NULL, this );
-	m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLabelEditor::OnLabelSelected ), NULL, this );
-	m_LabelsListBox->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guLabelEditor::OnLabelChecked ), NULL, this );
-	m_LabelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLabelEditor::OnLabelDoubleClicked ), NULL, this );
-	m_AddButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnAddLabelClicked ), NULL, this );
-	m_DelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnDelLabelClicked ), NULL, this );
-	m_CopyButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLabelEditor::OnCopyLabelsClicked ), NULL, this );
+    // Unbind Events
+    m_ItemsListBox->Unbind( wxEVT_LISTBOX, &guLabelEditor::OnItemSelected, this );
+    m_LabelsListBox->Unbind( wxEVT_LISTBOX, &guLabelEditor::OnLabelSelected, this );
+    m_LabelsListBox->Unbind( wxEVT_CHECKLISTBOX, &guLabelEditor::OnLabelChecked, this );
+    m_LabelsListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guLabelEditor::OnLabelDoubleClicked, this );
+    m_AddButton->Unbind( wxEVT_BUTTON, &guLabelEditor::OnAddLabelClicked, this );
+    m_DelButton->Unbind( wxEVT_BUTTON, &guLabelEditor::OnDelLabelClicked, this );
+    m_CopyButton->Unbind( wxEVT_BUTTON, &guLabelEditor::OnCopyLabelsClicked, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -352,7 +353,7 @@ void guLabelEditor::OnIdle( wxIdleEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     m_Splitter->SetSashPosition( Config->ReadNum( wxT( "LabelEditSashPos" ), 177, wxT( "positions" ) ) );
-    m_Splitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guLabelEditor::OnIdle ), NULL, this );
+    m_Splitter->Unbind( wxEVT_IDLE, &guLabelEditor::OnIdle, this );
 }
 
 // -------------------------------------------------------------------------------- //

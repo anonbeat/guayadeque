@@ -198,15 +198,19 @@ void guJamendoLibrary::CreateNewSong( guTrack * track )
 guJamendoPanel::guJamendoPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guLibPanel( parent, mediaviewer )
 {
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPanel::OnDownloadTrackAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guJamendoPanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoPanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
 guJamendoPanel::~guJamendoPanel()
 {
+    Unbind( wxEVT_MENU, &guJamendoPanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoPanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -350,7 +354,7 @@ guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
                 m_Db->ExecuteUpdate( query );
 
                 // Notify the panel that the cover is downloaded
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_JAMENDO_COVER_DOWNLAODED );
+                wxCommandEvent event( wxEVT_MENU, ID_JAMENDO_COVER_DOWNLAODED );
                 event.SetInt( m_Covers[ 0 ] );
                 wxPostEvent( m_MediaViewer, event );
             }
@@ -461,7 +465,7 @@ guJamendoUpdateThread::guJamendoUpdateThread( guMediaViewerJamendo * mediaviewer
 guJamendoUpdateThread::~guJamendoUpdateThread()
 {
     //
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
 
@@ -705,10 +709,10 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
 {
     wxString query;
 
-    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+    wxCommandEvent evtup( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
-    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent evtmax( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
     if( m_Action == guJAMENDO_ACTION_UPDATE &&
@@ -812,13 +816,15 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
 guJamendoAlbumBrowser::guJamendoAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guAlbumBrowser( parent, mediaviewer )
 {
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoAlbumBrowser::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoAlbumBrowser::OnDownloadAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guJamendoAlbumBrowser::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoAlbumBrowser::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
 guJamendoAlbumBrowser::~guJamendoAlbumBrowser()
 {
+    Unbind( wxEVT_MENU, &guJamendoAlbumBrowser::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoAlbumBrowser::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -842,15 +848,19 @@ void guJamendoAlbumBrowser::OnDownloadAlbum( wxCommandEvent &event )
 guJamendoTreePanel::guJamendoTreePanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guTreeViewPanel( parent, mediaviewer )
 {
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadTrackAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoTreePanel::OnDownloadTrackAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
 guJamendoTreePanel::~guJamendoTreePanel()
 {
+    Unbind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoTreePanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -898,13 +908,15 @@ void guJamendoTreePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 guJamendoPlayListPanel::guJamendoPlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guPlayListPanel( parent, mediaviewer )
 {
-    Connect( ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPlayListPanel::OnDownloadTrackAlbum ), NULL, this );
-    Connect( ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guJamendoPlayListPanel::OnDownloadTrackAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guJamendoPlayListPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM );
+    Bind( wxEVT_MENU, &guJamendoPlayListPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
 guJamendoPlayListPanel::~guJamendoPlayListPanel()
 {
+    Unbind( wxEVT_MENU, &guJamendoPlayListPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_DIRECT_TRACK_ALBUM );
+    Unbind( wxEVT_MENU, &guJamendoPlayListPanel::OnDownloadTrackAlbum, this, ID_JAMENDO_DOWNLOAD_TORRENT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -940,8 +952,8 @@ guMediaViewerJamendo::guMediaViewerJamendo( wxWindow * parent, guMediaCollection
     m_DownloadThread = NULL;
     m_ContextMenuFlags = ( guCONTEXTMENU_DOWNLOAD_COVERS | guCONTEXTMENU_LINKS );
 
-    Connect( ID_JAMENDO_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerJamendo::OnCoverDownloaded ), NULL, this );
-    Connect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerJamendo::OnUpdateFinished ), NULL, this );
+    Bind( wxEVT_MENU, &guMediaViewerJamendo::OnCoverDownloaded, this, ID_JAMENDO_COVER_DOWNLAODED );
+    Bind( wxEVT_MENU, &guMediaViewerJamendo::OnUpdateFinished, this, ID_JAMENDO_UPDATE_FINISHED );
 
     InitMediaViewer( mode );
 }
@@ -949,6 +961,8 @@ guMediaViewerJamendo::guMediaViewerJamendo( wxWindow * parent, guMediaCollection
 // -------------------------------------------------------------------------------- //
 guMediaViewerJamendo::~guMediaViewerJamendo()
 {
+    Unbind( wxEVT_MENU, &guMediaViewerJamendo::OnCoverDownloaded, this, ID_JAMENDO_COVER_DOWNLAODED );
+    Unbind( wxEVT_MENU, &guMediaViewerJamendo::OnUpdateFinished, this, ID_JAMENDO_UPDATE_FINISHED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1276,7 +1290,7 @@ bool guMediaViewerJamendo::FindMissingCover( const int albumid, const wxString &
 // -------------------------------------------------------------------------------- //
 void guMediaViewerJamendo::EditProperties( void )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
     wxPostEvent( m_MainFrame, CmdEvent );
 }

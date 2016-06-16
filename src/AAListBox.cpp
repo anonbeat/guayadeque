@@ -38,8 +38,8 @@ guAAListBox::guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 {
     m_LibPanel = libpanel;
 
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
+    Bind( wxEVT_MENU, &guAAListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAAListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
     CreateAcceleratorTable();
 
@@ -49,8 +49,8 @@ guAAListBox::guAAListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 // -------------------------------------------------------------------------------- //
 guAAListBox::~guAAListBox()
 {
-    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAAListBox::OnCommandClicked ) );
+    Unbind( wxEVT_MENU, &guAAListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAAListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //

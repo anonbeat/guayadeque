@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -37,8 +37,8 @@ namespace Guayadeque {
 class guRadioEditor : public wxDialog
 {
   protected:
-	wxTextCtrl * m_NameTextCtrl;
-	wxTextCtrl * m_LinkTextCtrl;
+    wxTextCtrl * m_NameTextCtrl;
+    wxTextCtrl * m_LinkTextCtrl;
 
   public:
     guRadioEditor( wxWindow * parent, const wxString& title = _( "Radio Editor" ),

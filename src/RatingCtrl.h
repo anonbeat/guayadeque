@@ -38,28 +38,29 @@ public:
     guRatingEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 )
         : wxNotifyEvent( commandType, winid )
     {
-    };
+    }
 
     guRatingEvent( const guRatingEvent &clone )
             : wxNotifyEvent( clone )
     {
-    };
+    }
 
-    virtual wxEvent *Clone() const
+    virtual wxEvent * Clone() const
     {
-        return new guRatingEvent(*this);
-    };
+        return new guRatingEvent( * this );
+    }
+
+    wxDECLARE_DYNAMIC_CLASS( guRatingEvent );
 };
 
 typedef void (wxEvtHandler::*guRatingEventFunction)(guRatingEvent&);
 
-#define guRatingEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(guRatingEventFunction, &func)
-
+#define guRatingEventHandler( func ) wxEVENT_HANDLER_CAST( guRatingEventFunction, func )
 
 #define guRATING_CHANGED_ID     1170
-DECLARE_EVENT_TYPE( guEVT_RATING_CHANGED, guRATING_CHANGED_ID )
-#define EVT_RATING_CHANGED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_RATING_CHANGED, winid, wxID_ANY, wxRatingEventHandler(fn), (wxObject *) NULL ),
+
+wxDECLARE_EVENT( guEVT_RATING_CHANGED, guRatingEvent );
+#define EVT_RATING_CHANGED( winid, fn ) wxDECLARE_EVENT_TABLE_ENTRY( guEVT_RATING_CHANGED, winid, wxID_ANY, guRatingEventHandler( fn ), NULL ),
 
 // -------------------------------------------------------------------------------- //
 class guRating : public wxControl

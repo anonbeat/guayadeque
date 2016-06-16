@@ -221,7 +221,7 @@ class guRadioPanel : public guAuiManagerPanel
 	void OnRadioUpdate( wxCommandEvent &Event );
 	void OnRadioUpdated( wxCommandEvent &Event );
 	void OnRadioGenreListSelected( wxTreeEvent &Event );
-    void OnStationListActivated( wxListEvent &event );
+    void OnStationListActivated( wxCommandEvent &event );
     void OnStationListBoxColClick( wxListEvent &event );
     void OnSearchActivated( wxCommandEvent &event );
     void OnSearchSelected( wxCommandEvent &event );

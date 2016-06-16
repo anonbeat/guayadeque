@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -39,14 +39,14 @@ namespace Guayadeque {
 class guEditWithOptions : public wxDialog
 {
   protected:
-	wxComboBox *    m_EditComboBox;
+    wxComboBox *    m_EditComboBox;
 
   public:
     guEditWithOptions( wxWindow * parent, const wxString &title, const wxString &label, const wxString &defval, const wxArrayString &items );
-	~guEditWithOptions();
+    ~guEditWithOptions();
 
     void            SetItems( const wxArrayString &items ) { m_EditComboBox->Append( items ); }
-	wxString        GetData( void );
+    wxString        GetData( void );
 
 };
 

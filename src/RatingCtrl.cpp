@@ -26,12 +26,12 @@
 
 namespace Guayadeque {
 
-DEFINE_EVENT_TYPE( guEVT_RATING_CHANGED )
+wxIMPLEMENT_DYNAMIC_CLASS( guRatingEvent, wxEvent );
+wxDEFINE_EVENT( guEVT_RATING_CHANGED, guRatingEvent );
 
 BEGIN_EVENT_TABLE( guRating, wxControl )
     EVT_PAINT( guRating::OnPaint)
     EVT_MOUSE_EVENTS( guRating::OnMouseEvents )
-//    EVT_MOUSEWHEEL( guPlayerPanel::OnRatingMouseEvents )
 END_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //

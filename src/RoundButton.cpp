@@ -110,7 +110,7 @@ void guRoundButton::OnMouseEvents( wxMouseEvent &event )
         if( event.LeftUp() )
         {
             // Send Clicked event
-            wxCommandEvent ClickEvent( wxEVT_COMMAND_BUTTON_CLICKED, GetId() );
+            wxCommandEvent ClickEvent( wxEVT_BUTTON, GetId() );
             ClickEvent.SetEventObject( this );
             AddPendingEvent( ClickEvent );
             m_IsClicked = false;

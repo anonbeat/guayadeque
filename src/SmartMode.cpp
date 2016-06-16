@@ -82,7 +82,7 @@ guSmartModeThread::guSmartModeThread( guDbLibrary * db, wxEvtHandler * owner,
 
     if( gaugeid != wxNOT_FOUND )
     {
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+        wxCommandEvent Event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
         Event.SetInt( m_GaugeId );
         Event.SetExtraLong( m_TrackLimit.GetLo() );
         wxPostEvent( guMainFrame::GetMainFrame(), Event );
@@ -103,13 +103,13 @@ guSmartModeThread::~guSmartModeThread()
 {
     if( !TestDestroy() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_SMARTMODE_THREAD_END );
+        wxCommandEvent event( wxEVT_MENU, ID_SMARTMODE_THREAD_END );
         wxPostEvent( m_Owner, event );
     }
 
     if( m_GaugeId != wxNOT_FOUND )
     {
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+        wxCommandEvent Event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
         Event.SetInt( m_GaugeId );
         wxPostEvent( guMainFrame::GetMainFrame(), Event );
     }
@@ -123,7 +123,7 @@ void guSmartModeThread::SendTracks( guTrackArray * tracks )
 {
     if( !TestDestroy() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_SMARTMODE_ADD_TRACKS );
+        wxCommandEvent event( wxEVT_MENU, ID_SMARTMODE_ADD_TRACKS );
         event.SetClientData( ( void * ) tracks );
         wxPostEvent( m_Owner, event );
     }
@@ -181,7 +181,7 @@ bool guSmartModeThread::CheckLimit( const guTrack * track )
 
     if( m_GaugeId != wxNOT_FOUND )
     {
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+        wxCommandEvent Event( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
         Event.SetInt( m_GaugeId );
         Event.SetExtraLong( m_LimitCounter.GetLo() );
         wxPostEvent( guMainFrame::GetMainFrame(), Event );

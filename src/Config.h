@@ -31,7 +31,8 @@
 namespace Guayadeque {
 
 WX_DEFINE_ARRAY_PTR( wxEvtHandler *, guEvtHandlerArray );
-extern const wxEventType guConfigUpdatedEvent;
+
+wxDECLARE_EVENT( guConfigUpdatedEvent, wxCommandEvent );
 
 class guMediaCollectionArray;
 class guTrack;

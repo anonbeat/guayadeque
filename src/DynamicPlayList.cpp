@@ -636,27 +636,27 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 
 	m_BtnOk->SetDefault();
 
-	// Connect Events
-	m_FiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFiltersSelected ), NULL, this );
+    // Bind Events
+    m_FiltersListBox->Bind( wxEVT_LISTBOX, &guDynPlayListEditor::OnFiltersSelected, this );
 
-	m_FilterFieldChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterFieldSelected ), NULL, this );
-	m_FilterTextOptionChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterOptionSelected ), NULL, this );
-	m_FilterLabelOptionChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterOptionSelected ), NULL, this );
-	m_FilterText->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guDynPlayListEditor::OnFilterTextChanged ), NULL, this );
-	m_FilterRating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guDynPlayListEditor::OnRatingChanged ), NULL, this );
-	m_FilterDateOption2Choice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterDateOption2Selected ), NULL, this );
-	m_FilterAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterAddClicked ), NULL, this );
-	m_FilterDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterDelClicked ), NULL, this );
-	m_FilterAccept->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterUpdateClicked ), NULL, this );
-	if( !albumfilter )
+    m_FilterFieldChoice->Bind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterFieldSelected, this );
+    m_FilterTextOptionChoice->Bind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterOptionSelected, this );
+    m_FilterLabelOptionChoice->Bind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterOptionSelected, this );
+    m_FilterText->Bind( wxEVT_TEXT, &guDynPlayListEditor::OnFilterTextChanged, this );
+    m_FilterRating->Bind( guEVT_RATING_CHANGED, &guDynPlayListEditor::OnRatingChanged, this );
+    m_FilterDateOption2Choice->Bind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterDateOption2Selected, this );
+    m_FilterAdd->Bind( wxEVT_BUTTON, &guDynPlayListEditor::OnFilterAddClicked, this );
+    m_FilterDel->Bind( wxEVT_BUTTON, &guDynPlayListEditor::OnFilterDelClicked, this );
+    m_FilterAccept->Bind( wxEVT_BUTTON, &guDynPlayListEditor::OnFilterUpdateClicked, this );
+    if( !m_AlbumFilter )
 	{
-        m_LimitCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
-        m_SortCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
+        m_LimitCheckBox->Bind( wxEVT_CHECKBOX, &guDynPlayListEditor::OnLimitChecked, this );
+        m_SortCheckBox->Bind( wxEVT_CHECKBOX, &guDynPlayListEditor::OnSortChecked, this );
 	}
-	m_NameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guDynPlayListEditor::OnNameChanged ), NULL, this );
-	m_LengthHours->Connect( wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler( guDynPlayListEditor::OnHoursChanged ), NULL, this );
-	m_LengthMinutes->Connect( wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler( guDynPlayListEditor::OnMinutesChanged ), NULL, this );
-	m_LengthSeconds->Connect( wxEVT_COMMAND_SPINCTRL_UPDATED, wxSpinEventHandler( guDynPlayListEditor::OnSecondsChanged ), NULL, this );
+    m_NameTextCtrl->Bind( wxEVT_TEXT, &guDynPlayListEditor::OnNameChanged, this );
+    m_LengthHours->Bind( wxEVT_SPINCTRL, &guDynPlayListEditor::OnHoursChanged, this );
+    m_LengthMinutes->Bind( wxEVT_SPINCTRL, &guDynPlayListEditor::OnMinutesChanged, this );
+    m_LengthSeconds->Bind( wxEVT_SPINCTRL, &guDynPlayListEditor::OnSecondsChanged, this );
 
 	m_FiltersListBox->SetFocus();
 }
@@ -664,22 +664,26 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 // -------------------------------------------------------------------------------- //
 guDynPlayListEditor::~guDynPlayListEditor()
 {
-	m_FiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFiltersSelected ), NULL, this );
+    m_FiltersListBox->Unbind( wxEVT_LISTBOX, &guDynPlayListEditor::OnFiltersSelected, this );
 
-	m_FilterFieldChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterFieldSelected ), NULL, this );
-	m_FilterTextOptionChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterOptionSelected ), NULL, this );
-	m_FilterLabelOptionChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterOptionSelected ), NULL, this );
-	m_FilterText->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guDynPlayListEditor::OnFilterTextChanged ), NULL, this );
-	m_FilterRating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guDynPlayListEditor::OnRatingChanged ), NULL, this );
-	m_FilterDateOption2Choice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guDynPlayListEditor::OnFilterDateOption2Selected ), NULL, this );
-	m_FilterAdd->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterAddClicked ), NULL, this );
-	m_FilterDel->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterDelClicked ), NULL, this );
-	m_FilterAccept->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnFilterUpdateClicked ), NULL, this );
-	if( !m_AlbumFilter )
-	{
-        m_LimitCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnLImitChecked ), NULL, this );
-        m_SortCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guDynPlayListEditor::OnSortChecked ), NULL, this );
-	}
+    m_FilterFieldChoice->Unbind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterFieldSelected, this );
+    m_FilterTextOptionChoice->Unbind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterOptionSelected, this );
+    m_FilterLabelOptionChoice->Unbind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterOptionSelected, this );
+    m_FilterText->Unbind( wxEVT_TEXT, &guDynPlayListEditor::OnFilterTextChanged, this );
+    m_FilterRating->Unbind( guEVT_RATING_CHANGED, &guDynPlayListEditor::OnRatingChanged, this );
+    m_FilterDateOption2Choice->Unbind( wxEVT_CHOICE, &guDynPlayListEditor::OnFilterDateOption2Selected, this );
+    m_FilterAdd->Unbind( wxEVT_BUTTON, &guDynPlayListEditor::OnFilterAddClicked, this );
+    m_FilterDel->Unbind( wxEVT_BUTTON, &guDynPlayListEditor::OnFilterDelClicked, this );
+    m_FilterAccept->Unbind( wxEVT_BUTTON, &guDynPlayListEditor::OnFilterUpdateClicked, this );
+    if( !m_AlbumFilter )
+    {
+        m_LimitCheckBox->Unbind( wxEVT_CHECKBOX, &guDynPlayListEditor::OnLimitChecked, this );
+        m_SortCheckBox->Unbind( wxEVT_CHECKBOX, &guDynPlayListEditor::OnSortChecked, this );
+    }
+    m_NameTextCtrl->Unbind( wxEVT_TEXT, &guDynPlayListEditor::OnNameChanged, this );
+    m_LengthHours->Unbind( wxEVT_SPINCTRL, &guDynPlayListEditor::OnHoursChanged, this );
+    m_LengthMinutes->Unbind( wxEVT_SPINCTRL, &guDynPlayListEditor::OnMinutesChanged, this );
+    m_LengthSeconds->Unbind( wxEVT_SPINCTRL, &guDynPlayListEditor::OnSecondsChanged, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1081,7 +1085,7 @@ void guDynPlayListEditor::OnFilterUpdateClicked( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guDynPlayListEditor::OnLImitChecked( wxCommandEvent &event )
+void guDynPlayListEditor::OnLimitChecked( wxCommandEvent &event )
 {
 	m_LimitChoice->Enable( m_LimitCheckBox->IsChecked() );
 	m_LimitSpinCtrl->Enable( m_LimitCheckBox->IsChecked() );

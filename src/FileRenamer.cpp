@@ -79,7 +79,7 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 	wxBoxSizer* PatternSizer;
 	PatternSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PatTextCtrl = new wxTextCtrl( this, wxID_ANY, Config->ReadStr( wxT( "Pattern" ), wxT( "{n} - {a} -  {t}" ), wxT( "filebrowser/filerenamer" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PatTextCtrl = new wxTextCtrl( this, wxID_ANY, Config->ReadStr( wxT( "Pattern" ), wxT( "{n} - {a} - {t}" ), wxT( "filebrowser/filerenamer" ) ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PatTextCtrl->SetToolTip( _( "Pattern flags:\n{g} : Genre\n{a} : Artist\n{aa}: Album Artist\n{A} : {aa} or {a}\n{b} : Album\n{t} : Title\n{n} : Number\n{y} : Year\n{d} : Disk" ) );
 
 	PatternSizer->Add( m_PatTextCtrl, 1, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
@@ -111,12 +111,12 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 
 	ButtonsSizerOK->SetDefault();
 
-	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnOKButton ) );
+    Bind( wxEVT_BUTTON, &guFileRenamer::OnOKButton, this, wxID_OK );
 
-	m_FilesListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guFileRenamer::OnFileSelected ), NULL, this );
-	m_PatTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guFileRenamer::OnPatternChanged ), NULL, this );
-	m_PatApplyBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPatternApply ), NULL, this );
-	m_PatRevertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPattternRevert ), NULL, this );
+    m_FilesListBox->Bind( wxEVT_LISTBOX, &guFileRenamer::OnFileSelected, this );
+    m_PatTextCtrl->Bind( wxEVT_TEXT, &guFileRenamer::OnPatternChanged, this );
+    m_PatApplyBtn->Bind( wxEVT_BUTTON, &guFileRenamer::OnPatternApply, this );
+    m_PatRevertBtn->Bind( wxEVT_BUTTON, &guFileRenamer::OnPattternRevert, this );
 
 	m_NameTextCtrl->SetFocus();
 }
@@ -135,10 +135,12 @@ guFileRenamer::~guFileRenamer()
 
 	Config->WriteStr( wxT( "Pattern" ), m_PatTextCtrl->GetLineText( 0 ), wxT( "filebrowser/filerenamer" ) );
 
-	m_FilesListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guFileRenamer::OnFileSelected ), NULL, this );
-	m_PatTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guFileRenamer::OnPatternChanged ), NULL, this );
-	m_PatApplyBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPatternApply ), NULL, this );
-	m_PatRevertBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guFileRenamer::OnPattternRevert ), NULL, this );
+    Unbind( wxEVT_BUTTON, &guFileRenamer::OnOKButton, this, wxID_OK );
+
+    m_FilesListBox->Unbind( wxEVT_LISTBOX, &guFileRenamer::OnFileSelected, this );
+    m_PatTextCtrl->Unbind( wxEVT_TEXT, &guFileRenamer::OnPatternChanged, this );
+    m_PatApplyBtn->Unbind( wxEVT_BUTTON, &guFileRenamer::OnPatternApply, this );
+    m_PatRevertBtn->Unbind( wxEVT_BUTTON, &guFileRenamer::OnPattternRevert, this );
 }
 
 // -------------------------------------------------------------------------------- //

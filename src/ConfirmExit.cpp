@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -26,45 +26,45 @@ namespace Guayadeque {
 guExitConfirmDlg::guExitConfirmDlg( wxWindow * parent ) :
     wxDialog( parent, wxID_ANY, _( "Please confirm" ), wxDefaultPosition, wxSize( -1, 160 ), wxDEFAULT_DIALOG_STYLE )
 {
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+    this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
+    MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
 
-	wxBoxSizer * TopSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * TopSizer = new wxBoxSizer( wxHORIZONTAL );
 
     wxStaticBitmap * ExitBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_exit ), wxDefaultPosition, wxDefaultSize, 0 );
-	TopSizer->Add( ExitBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+    TopSizer->Add( ExitBitmap, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
     wxStaticText * MessageString = new wxStaticText( this, wxID_ANY, _("Are you sure you want to exit the application?"), wxDefaultPosition, wxDefaultSize, 0 );
-	MessageString->Wrap( -1 );
-	TopSizer->Add( MessageString, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+    MessageString->Wrap( -1 );
+    TopSizer->Add( MessageString, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	MainSizer->Add( TopSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    MainSizer->Add( TopSizer, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	m_AskAgainCheckBox = new wxCheckBox( this, wxID_ANY, _("Don't ask again"), wxDefaultPosition, wxDefaultSize, 0 );
-	MainSizer->Add( m_AskAgainCheckBox, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
+    m_AskAgainCheckBox = new wxCheckBox( this, wxID_ANY, _("Don't ask again"), wxDefaultPosition, wxDefaultSize, 0 );
+    MainSizer->Add( m_AskAgainCheckBox, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    MainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
     wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
 
     wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( ButtonsSizerOK );
+    ButtonsSizer->AddButton( ButtonsSizerOK );
 
     wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( ButtonsSizerCancel );
+    ButtonsSizer->AddButton( ButtonsSizerCancel );
 
-	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
-	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
-	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxALL|wxEXPAND, 5 );
+    ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+    ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
+    ButtonsSizer->Realize();
+    MainSizer->Add( ButtonsSizer, 0, wxALL|wxEXPAND, 5 );
 
-	SetSizer( MainSizer );
-	Layout();
+    SetSizer( MainSizer );
+    Layout();
 
-	ButtonsSizerCancel->SetDefault();
+    ButtonsSizerCancel->SetDefault();
 
     m_AskAgainCheckBox->SetFocus();
 }

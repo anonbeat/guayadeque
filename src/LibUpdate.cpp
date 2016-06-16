@@ -72,7 +72,7 @@ guLibUpdateThread::~guLibUpdateThread()
             m_MediaViewer->UpdateFinished();
         }
     }
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
 }
@@ -109,7 +109,7 @@ int guLibUpdateThread::ScanDirectory( wxString dirname, bool includedir )
           //guLogMessage( wxT( "Scanning dir '%s' : FileDate: %u  -> %u\n%u Tracks found" ), ( dirname + FileName ).c_str(), m_LastUpdate, FileDate, m_TrackFiles.Count() );
           ScanDirectory( dirname + FileName, includedir || ( FileDate > m_LastUpdate ) );
 
-          wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+          wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
           event.SetInt( m_GaugeId );
           event.SetExtraLong( m_TrackFiles.Count() );
           wxPostEvent( m_MainFrame, event );
@@ -209,10 +209,10 @@ int GetFirstCoverPath( const wxArrayString &words, const wxArrayString &paths )
 // -------------------------------------------------------------------------------- //
 void guLibUpdateThread::ProcessCovers( void )
 {
-    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+    wxCommandEvent evtup( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
-    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent evtmax( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
     wxString CoverName = m_MediaViewer->GetCoverName( wxNOT_FOUND ) + wxT( ".jpg" );
@@ -256,10 +256,10 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
     int Index;
     int Count;
     int LastIndex;
-    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+    wxCommandEvent evtup( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
-    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent evtmax( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
     if( m_ScanPath.IsEmpty() )
@@ -401,7 +401,7 @@ guLibUpdateThread::ExitCode guLibUpdateThread::Entry()
                     {
                         m_Db->CreateStaticPlayList( m_PlayListFiles[ Index ], PlayListIds );
 
-                        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                        wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
                         evt.SetClientData( ( void * ) m_MediaViewer );
                         wxPostEvent( m_MainFrame, evt );
                     }
@@ -452,7 +452,7 @@ guLibCleanThread::~guLibCleanThread()
 {
     if( !TestDestroy() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_CLEANFINISHED );
+        wxCommandEvent event( wxEVT_MENU, ID_LIBRARY_CLEANFINISHED );
         //event.SetEventObject( ( wxObject * ) this );
         //event.SetClientData( ( void * ) m_LibPanel );
         wxPostEvent( m_MediaViewer, event );

@@ -476,11 +476,7 @@ class guPrefDialog : public wxDialog
     void OnAccelKeyDown( wxKeyEvent &event );
     void OnAccelDefaultClicked( wxCommandEvent &event );
 
-    void LibSplitterOnIdle( wxIdleEvent &event )
-    {
-        m_LibSplitter->SetSashPosition( 170 );
-        m_LibSplitter->Disconnect( wxEVT_IDLE, wxIdleEventHandler( guPrefDialog::LibSplitterOnIdle ), NULL, this );
-    }
+    void LibSplitterOnIdle( wxIdleEvent &event );
 
 
   public:

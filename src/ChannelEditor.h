@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -42,7 +42,7 @@
 
 namespace Guayadeque {
 
-extern const wxEventType guChannelEditorEvent;
+wxDEFINE_EVENT( guChannelEditorEvent, wxCommandEvent );
 #define guCHANNELEDITOR_EVENT_UPDATE_IMAGE          1000
 
 // -------------------------------------------------------------------------------- //
@@ -50,23 +50,23 @@ class guChannelEditor : public wxDialog
 {
   protected:
     guPodcastChannel *  m_PodcastChannel;
-	wxStaticBitmap  *   m_Image;
-	wxStaticText    *   m_Title;
-	//wxTextCtrl      *   m_Title;
-	wxStaticText    *   m_DescText;
-	wxStaticText    *   m_AuthorText;
-	wxStaticText    *   m_OwnerText;
-	wxChoice        *   m_DownloadChoice;
-	wxTextCtrl      *   m_DownloadText;
-	wxCheckBox      *   m_DeleteCheckBox;
+    wxStaticBitmap  *   m_Image;
+    wxStaticText    *   m_Title;
+    //wxTextCtrl      *   m_Title;
+    wxStaticText    *   m_DescText;
+    wxStaticText    *   m_AuthorText;
+    wxStaticText    *   m_OwnerText;
+    wxChoice        *   m_DownloadChoice;
+    wxTextCtrl      *   m_DownloadText;
+    wxCheckBox      *   m_DeleteCheckBox;
 
-	void OnDownloadChoice( wxCommandEvent& event );
-	void OnChannelImageUpdated( wxCommandEvent &event );
+    void OnDownloadChoice( wxCommandEvent& event );
+    void OnChannelImageUpdated( wxCommandEvent &event );
 
   public:
-	guChannelEditor( wxWindow * parent, guPodcastChannel * channel );
-	~guChannelEditor();
-	void GetEditData( void );
+    guChannelEditor( wxWindow * parent, guPodcastChannel * channel );
+    ~guChannelEditor();
+    void GetEditData( void );
 
 };
 

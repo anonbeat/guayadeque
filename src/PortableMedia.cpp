@@ -627,321 +627,18 @@ void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
 guPortableMediaLibPanel::guPortableMediaLibPanel( wxWindow * parent, guMediaViewerPortableDevice * mediaviewer ) :
     guLibPanel( parent, mediaviewer )
 {
-    //SetBaseCommand( ID_MENU_VIEW_PORTABLE_DEVICES );
-
-    //m_ContextMenuFlags = guCONTEXTMENU_DEFAULT ^ guCONTEXTMENU_DELETEFROMLIBRARY;
-
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    Config->RegisterObject( this ); // Get notified when configuration changes
-
-//    Connect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
-//    Connect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
-//    Connect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
-
 }
 
 // -------------------------------------------------------------------------------- //
 guPortableMediaLibPanel::~guPortableMediaLibPanel()
 {
-//    guConfig * Config = ( guConfig * ) guConfig::Get();
-//    Config->UnRegisterObject( this );
-
-//    Disconnect( ID_PORTABLEDEVICE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableLibraryUpdate ), NULL, this );
-//    Disconnect( ID_PORTABLEDEVICE_UNMOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableUnmount ), NULL, this );
-//    Disconnect( ID_PORTABLEDEVICE_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPortableMediaLibPanel::OnPortableProperties ), NULL, this );
 }
-
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaLibPanel::CreateContextMenu( wxMenu * menu, const int windowid )
-//{
-//    wxMenu *     SubMenu = new wxMenu();
-//
-//    wxMenuItem * MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UPDATE, _( "Update" ), _( "Update the device library" ) );
-//    SubMenu->Append( MenuItem );
-//
-//    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_PROPERTIES, _( "Properties" ), _( "Set the device properties" ) );
-//    SubMenu->Append( MenuItem );
-//
-//    MenuItem = new wxMenuItem( menu, ID_PORTABLEDEVICE_UNMOUNT, _( "Unmount" ), _( "Unmount the device" ) );
-//    SubMenu->Append( MenuItem );
-//
-//    menu->AppendSeparator();
-//    menu->AppendSubMenu( SubMenu, _( "Portable Device" ), _( "Global Jamendo options" ) );
-//}
 
 // -------------------------------------------------------------------------------- //
 wxString guPortableMediaLibPanel::GetName( void )
 {
     return m_PortableDevice->DeviceName();
 }
-
-//// -------------------------------------------------------------------------------- //
-//wxArrayString guPortableMediaLibPanel::GetLibraryPaths( void )
-//{
-//    wxArrayString Paths = wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) );
-//    int Index;
-//    int Count = Paths.Count();
-//    for( Index = 0; Index < Count; Index++ )
-//    {
-//        Paths[ Index ] = m_PortableDevice->MountPath() + Paths[ Index ];
-//        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
-//        {
-//            Paths[ Index ].RemoveLast();
-//        }
-//    }
-//    return Paths;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxString guPortableMediaLibPanel::GetPlaylistPath( void )
-//{
-//    return m_PortableDevice->MountPath() + m_PortableDevice->PlaylistFolder();
-//}
-
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaLibPanel::OnPortableLibraryUpdate( wxCommandEvent &event )
-//{
-//    DoUpdate();
-//}
-
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaLibPanel::OnPortableProperties( wxCommandEvent &event )
-//{
-//    guPortableMediaProperties * PortableMediaProperties = new guPortableMediaProperties( this, m_PortableDevice );
-//    if( PortableMediaProperties )
-//    {
-//        if( PortableMediaProperties->ShowModal() == wxID_OK )
-//        {
-//            PortableMediaProperties->WriteConfig();
-//        }
-//        PortableMediaProperties->Destroy();
-//    }
-//}
-
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaLibPanel::OnPortableUnmount( wxCommandEvent &event )
-//{
-//    if( m_PortableDevice->CanUnmount() )
-//    {
-//        m_PortableDevice->Unmount();
-//    }
-//}
-
-//// -------------------------------------------------------------------------------- //
-//int guPortableMediaLibPanel::LastUpdate( void )
-//{
-//    return 0;
-//}
-
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaLibPanel::SetLastUpdate( int lastupdate )
-//{
-//    // The portable media devices cant set lastupdate
-//}
-
-//// -------------------------------------------------------------------------------- //
-//wxArrayString guPortableMediaLibPanel::GetCoverSearchWords( void )
-//{
-//    wxArrayString CoverWords = guLibPanel::GetCoverSearchWords();
-//    if( CoverWords.Index( m_PortableDevice->CoverName() ) == wxNOT_FOUND )
-//    {
-//        CoverWords.Add( m_PortableDevice->CoverName() );
-//    }
-//    return CoverWords;
-//}
-
-//// -------------------------------------------------------------------------------- //
-//bool guPortableMediaLibPanel::OnDropFiles( const wxArrayString &filenames )
-//{
-//    guTrackArray * CopyTracks = new guTrackArray();
-//    int Index;
-//    int Count = filenames.Count();
-//    for( Index = 0; Index < Count; Index++ )
-//    {
-//        wxString CurFile = filenames[ Index ];
-//
-//        if( guPlaylistFile::IsValidPlayList( CurFile ) )
-//        {
-////            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
-////            Event.SetClientData( new wxString( CurFile ) );
-////            Event.SetInt( PanelActive() );
-////            wxPostEvent( wxTheApp->GetTopWindow(), Event );
-//        }
-//        else if( guIsValidAudioFile( CurFile ) )
-//        {
-//            guTrack * CurTrack = new guTrack();
-//            if( CurTrack->ReadFromFile( CurFile ) )
-//            {
-//                CurTrack->m_Type = guTRACK_TYPE_NOTDB;
-//
-//                CopyTracks->Add( CurTrack );
-//            }
-//            else
-//            {
-//                delete CurTrack;
-//                guLogError( wxT( "Could not read tags from file '%s'" ), CurFile.c_str() );
-//            }
-//        }
-//    }
-//
-//    if( CopyTracks->Count() )
-//    {
-////        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTODEVICE_TRACKS );
-////        Event.SetClientData( CopyTracks );
-////        Event.SetInt( PanelActive() );
-////        wxPostEvent( wxTheApp->GetTopWindow(), Event );
-//    }
-//    else
-//    {
-//        delete CopyTracks;
-//    }
-//
-//    return true;
-//}
-
-
-
-
-
-
-//// -------------------------------------------------------------------------------- //
-//// guPortableMediaAlbumBrowser
-//// -------------------------------------------------------------------------------- //
-//guPortableMediaAlbumBrowser::guPortableMediaAlbumBrowser( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
-//    guAlbumBrowser( parent, db, playerpanel )
-//{
-//    m_LibPanel = libpanel;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//guPortableMediaAlbumBrowser::~guPortableMediaAlbumBrowser()
-//{
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaAlbumBrowser::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-//{
-////    int Index;
-////    int Count = tracks->Count();
-////    for( Index = 0; Index < Count; Index++ )
-////    {
-////        tracks->Item( Index ).m_LibPanel = m_LibPanel;
-////    }
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaAlbumBrowser::OnAlbumDownloadCoverClicked( const int albumid )
-//{
-//    wxString AlbumName;
-//    wxString ArtistName;
-//    wxString AlbumPath;
-//    if( !m_Db->GetAlbumInfo( albumid, &AlbumName, &ArtistName, &AlbumPath ) )
-//    {
-//        wxMessageBox( _( "Could not find the Album in the songs library.\n"
-//                         "You should update the library." ), _( "Error" ), wxICON_ERROR | wxOK );
-//        return;
-//    }
-//
-//    AlbumName = RemoveSearchFilters( AlbumName );
-//
-//    guCoverEditor * CoverEditor = new guCoverEditor( this, ArtistName, AlbumName );
-//    if( CoverEditor )
-//    {
-//        if( CoverEditor->ShowModal() == wxID_OK )
-//        {
-//            //guLogMessage( wxT( "About to download cover from selected url" ) );
-//            wxImage * CoverImage = CoverEditor->GetSelectedCoverImage();
-//            if( CoverImage )
-//            {
-//                m_LibPanel->SetAlbumCover( albumid, AlbumPath, CoverImage );
-//
-//                ReloadItems();
-//                RefreshAll();
-//            }
-//        }
-//        CoverEditor->Destroy();
-//    }
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaAlbumBrowser::OnAlbumSelectCoverClicked( const int albumid )
-//{
-//    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
-//    if( SelCoverFile )
-//    {
-//        if( SelCoverFile->ShowModal() == wxID_OK )
-//        {
-//            wxString CoverFile = SelCoverFile->GetSelFile();
-//            if( !CoverFile.IsEmpty() )
-//            {
-//                if( m_LibPanel->SetAlbumCover( albumid, SelCoverFile->GetAlbumPath(), CoverFile ) )
-//                {
-//                    ReloadItems();
-//                    RefreshAll();
-//                }
-//            }
-//        }
-//        delete SelCoverFile;
-//    }
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaAlbumBrowser::OnAlbumSelectName( const int albumid )
-//{
-//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
-//    evt.SetInt( albumid );
-//    evt.SetExtraLong( guTRACK_TYPE_DB );
-//    evt.SetClientData( m_LibPanel );
-//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaAlbumBrowser::OnArtistSelectName( const int artistid )
-//{
-//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
-//    evt.SetInt( artistid );
-//    evt.SetExtraLong( guTRACK_TYPE_DB );
-//    evt.SetClientData( m_LibPanel );
-//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-//}
-
-
-
-
-//// -------------------------------------------------------------------------------- //
-//// guPortableMediaPlayListPanel
-//// -------------------------------------------------------------------------------- //
-//guPortableMediaPlayListPanel::guPortableMediaPlayListPanel( wxWindow * parent, guPortableMediaLibrary * db, guPlayerPanel * playerpanel, guPortableMediaLibPanel * libpanel ) :
-//    //guPlayListPanel( parent, db, playerpanel )
-//    guPlayListPanel( parent, NULL )
-//{
-//    m_LibPanel = libpanel;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//guPortableMediaPlayListPanel::~guPortableMediaPlayListPanel()
-//{
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-//{
-////    int Index;
-////    int Count = tracks->Count();
-////    for( Index = 0; Index < Count; Index++ )
-////    {
-////        tracks->Item( Index ).m_LibPanel = m_LibPanel;
-////    }
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//void guPortableMediaPlayListPanel::SendPlayListUpdatedEvent( void )
-//{
-//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
-//    evt.SetClientData( m_LibPanel );
-//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
-//}
-
 
 
 // -------------------------------------------------------------------------------- //
@@ -1234,18 +931,18 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 	BtnSizerOK->SetDefault();
 
 	if( !m_IsIpod )
-        m_AudioFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnAudioFolderBtnClick ), NULL, this );
-	m_AudioFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnAudioFormatBtnClick ), NULL, this );
+        m_AudioFolderBtn->Bind( wxEVT_BUTTON, &guPortableMediaProperties::OnAudioFolderBtnClick, this );
+    m_AudioFormatBtn->Bind( wxEVT_BUTTON, &guPortableMediaProperties::OnAudioFormatBtnClick, this );
 
-	m_TransFormatChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPortableMediaProperties::OnTransFormatChanged ), NULL, this );
+    m_TransFormatChoice->Bind( wxEVT_CHOICE, &guPortableMediaProperties::OnTransFormatChanged, this );
 
     if( !m_IsIpod )
     {
-        m_PlaylistFolderBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFolderBtnClick ), NULL, this );
-        m_PlaylistFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnPlaylistFormatBtnClick ), NULL, this );
+        m_PlaylistFolderBtn->Bind( wxEVT_BUTTON, &guPortableMediaProperties::OnPlaylistFolderBtnClick, this );
+        m_PlaylistFormatBtn->Bind( wxEVT_BUTTON, &guPortableMediaProperties::OnPlaylistFormatBtnClick, this );
     }
 
-	m_CoverFormatBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPortableMediaProperties::OnCoverFormatBtnClick ), NULL, this );
+    m_CoverFormatBtn->Bind( wxEVT_BUTTON, &guPortableMediaProperties::OnCoverFormatBtnClick, this );
 
     m_NameText->SetFocus();
 }
@@ -1262,6 +959,19 @@ guPortableMediaProperties::~guPortableMediaProperties()
     Config->WriteNum( wxT( "PMPropertiesHeight" ), WindowSize.y, wxT( "positions" ) );
     Config->Flush();
 
+    if( !m_IsIpod )
+        m_AudioFolderBtn->Unbind( wxEVT_BUTTON, &guPortableMediaProperties::OnAudioFolderBtnClick, this );
+    m_AudioFormatBtn->Unbind( wxEVT_BUTTON, &guPortableMediaProperties::OnAudioFormatBtnClick, this );
+
+    m_TransFormatChoice->Unbind( wxEVT_CHOICE, &guPortableMediaProperties::OnTransFormatChanged, this );
+
+    if( !m_IsIpod )
+    {
+        m_PlaylistFolderBtn->Unbind( wxEVT_BUTTON, &guPortableMediaProperties::OnPlaylistFolderBtnClick, this );
+        m_PlaylistFormatBtn->Unbind( wxEVT_BUTTON, &guPortableMediaProperties::OnPlaylistFormatBtnClick, this );
+    }
+
+    m_CoverFormatBtn->Unbind( wxEVT_BUTTON, &guPortableMediaProperties::OnCoverFormatBtnClick, this );
 }
 
 // -------------------------------------------------------------------------------- //

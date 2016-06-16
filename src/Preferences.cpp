@@ -384,7 +384,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
 
     ButtonsSizerOK->SetDefault();
 
-	m_MainNotebook->Connect( wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED, wxCommandEventHandler( guPrefDialog::OnPageChanged ), NULL, this );
+    m_MainNotebook->Bind( wxEVT_LISTBOOK_PAGE_CHANGED, &guPrefDialog::OnPageChanged, this );
 
     //
     //
@@ -407,146 +407,13 @@ guPrefDialog::~guPrefDialog()
     Config->WriteNum( wxT( "Height" ), WindowSize.y, wxT( "preferences" ) );
     m_Config->WriteNum( wxT( "LastPage" ), m_MainNotebook->GetSelection(), wxT( "preferences" ) );
 
-    //
-	m_MainNotebook->Disconnect( wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED, wxCommandEventHandler( guPrefDialog::OnPageChanged ), NULL, this );
+}
 
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
-    {
-        m_TaskIconChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
-        if( m_SoundMenuChkBox )
-            m_SoundMenuChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
-        m_InstantSearchChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateInstantSearch ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
-    {
-//    	m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxSelected ), NULL, this );
-//        m_AddPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddPathBtnClick ), NULL, this );
-//        m_DelPathButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPathBtnClick ), NULL, this );
-//        m_PathsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnPathsListBoxDClicked ), NULL, this );
-//
-//        m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCoversListBoxSelected ), NULL, this );
-//        m_AddCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAddCoverBtnClick ), NULL, this );
-//        m_UpCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnUpCoverBtnClick ), NULL, this );
-//        m_DownCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDownCoverBtnClick ), NULL, this );
-//        m_DelCoverButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelCoverBtnClick ), NULL, this );
-//        m_CoversListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnCoverListBoxDClicked ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )
-    {
-        m_RndPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
-        m_DelPlayChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
-        m_PlayLevelEnabled->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
-        m_PlayLevelSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
-        m_PlayEndTimeCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
-        m_PlayOutDevChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnPlayOutDevChanged ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
-    {
-        m_RecordChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
-        m_RecDelTracks->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
-    {
-        if( m_LyricSearchEngine )
-        {
-            delete m_LyricSearchEngine;
-        }
-
-        m_LyricsSrcListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSourceSelected ), NULL, this );
-        m_LyricsSrcListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSourceDClicked ), NULL, this );
-        m_LyricsSrcListBox->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSourceToggled ), NULL, this );
-        m_LyricsAddButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricAddBtnClick ), NULL, this );
-        m_LyricsUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricUpBtnClick ), NULL, this );
-        m_LyricsDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDownBtnClick ), NULL, this );
-        m_LyricsDelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDelBtnClick ), NULL, this );
-        m_LyricsSaveListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSaveSelected ), NULL, this );
-        m_LyricsSaveListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDClicked ), NULL, this );
-        m_LyricsSaveListBox->Disconnect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSaveToggled ), NULL, this );
-        m_LyricsSaveAddButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveAddBtnClick ), NULL, this );
-        m_LyricsSaveUpButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveUpBtnClick ), NULL, this );
-        m_LyricsSaveDownButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDownBtnClick ), NULL, this );
-        m_LyricsSaveDelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDelBtnClick ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
-    {
-        m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
-        m_OnlineAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
-        m_OnlineDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
-        m_OnlineFiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
-    {
-        m_LastFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-        m_LastFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-
-        m_LibreFMUserNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-        m_LibreFMPasswdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_JAMENDO )
-    {
-        m_JamSelAllBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectAll ), NULL, this );
-        m_JamSelNoneBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectNone ), NULL, this );
-        m_JamInvertBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoInvertSelection ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
-    {
-        m_LinksListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-        m_LinksAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
-        m_LinksDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
-        m_LinksMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
-        m_LinksMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
-        m_LinksUrlTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-        m_LinksNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-        m_LinksAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COMMANDS )
-    {
-        m_CmdListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
-        m_CmdAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
-        m_CmdDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
-        m_CmdMoveUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
-        m_CmdMoveDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
-        m_CmdTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-        m_CmdNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-        m_CmdAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
-    {
-        m_CopyToListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToListBoxSelected ), NULL, this );
-        m_CopyToAddBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToAddBtnClick ), NULL, this );
-        m_CopyToDelBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToDelBtnClick ), NULL, this );
-        m_CopyToUpBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveUpBtnClick ), NULL, this );
-        m_CopyToDownBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveDownBtnClick ), NULL, this );
-        m_CopyToPatternTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
-        m_CopyToNameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
-        m_CopyToFormatChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToFormatChanged ), NULL, this );
-        m_CopyToQualityChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToQualityChanged ), NULL, this );
-        m_CopyToMoveFilesChkBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveFilesChanged ), NULL, this );
-        m_CopyToAcceptBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
-
-        if( m_CopyToOptions )
-        {
-            delete m_CopyToOptions;
-        }
-    }
-
-    if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
-    {
-        m_AccelListCtrl->Disconnect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( guPrefDialog::OnAccelSelected ), NULL, this );
-        m_AccelListCtrl->Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPrefDialog::OnAccelKeyDown ), NULL, this );
-    }
-
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::LibSplitterOnIdle( wxIdleEvent &event )
+{
+    m_LibSplitter->SetSashPosition( 170 );
+    m_LibSplitter->Unbind( wxEVT_IDLE, &guPrefDialog::LibSplitterOnIdle, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -706,10 +573,10 @@ void guPrefDialog::BuildGeneralPage( void )
 	m_GenPanel->Layout();
 	GenMainSizer->FitInside( m_GenPanel );
 
-	m_TaskIconChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateTaskBarIcon ), NULL, this );
+    m_TaskIconChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnActivateTaskBarIcon, this );
 	if( m_SoundMenuChkBox )
-        m_SoundMenuChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateSoundMenuIntegration ), NULL, this );
-	m_InstantSearchChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnActivateInstantSearch ), NULL, this );
+        m_SoundMenuChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnActivateSoundMenuIntegration, this );
+    m_InstantSearchChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnActivateInstantSearch, this );
 
     m_ShowSplashChkBox->SetFocus();
 }
@@ -897,29 +764,29 @@ void guPrefDialog::BuildLibraryPage( void )
 	LibMainFrame->FitInside( m_LibPanel );
 
     //
-	m_LibSplitter->Connect( wxEVT_IDLE, wxIdleEventHandler( guPrefDialog::LibSplitterOnIdle ), NULL, this );
-	m_LibCollectListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLibCollectSelected ), NULL, this );
-	m_LibCollectListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLibCollectDClicked ), NULL, this );
-	m_LibCollectAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibAddCollectClick ), NULL, this );
-	m_LibCollectUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibUpCollectClick ), NULL, this );
-	m_LibCollectDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibDownCollectClick ), NULL, this );
-	m_LibCollectDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibDelCollectClick ), NULL, this );
-	m_LibPathListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLibPathSelected ), NULL, this );
-	m_LibPathListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLibPathDClicked ), NULL, this );
-	m_LibOptAddPathBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibAddPathBtnClick ), NULL, this );
-	m_LibOptDelPathBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibDelPathBtnClick ), NULL, this );
-	m_LibCoverListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLibCoverSelected ), NULL, this );
-	m_LibCoverListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLibCoverDClicked ), NULL, this );
-	m_LibOptAddCoverBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibAddCoverBtnClick ), NULL, this );
-	m_LibOptUpCoverBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibUpCoverBtnClick ), NULL, this );
-	m_LibOptDownCoverBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibDownCoverBtnClick ), NULL, this );
-	m_LibOptDelCoverBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibDelCoverBtnClick ), NULL, this );
-	m_LibOptAutoUpdateChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibAutoUpdateChanged ), NULL, this );
-	m_LibOptCreatePlayListChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibCreatePlayListsChanged ), NULL, this );
-	m_LibOptFollowLinksChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibFollowSymLinksChanged ), NULL, this );
-	m_LibOptCheckEmbeddedChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibCheckEmbeddedChanged ), NULL, this );
-	m_LibOptEmbedTagsChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnLibEmbeddMetadataChanged ), NULL, this );
-	m_LibOptCopyToChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnLibDefaultCopyToChanged ), NULL, this );
+	m_LibSplitter->Bind( wxEVT_IDLE, &guPrefDialog::LibSplitterOnIdle, this );
+    m_LibCollectListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLibCollectSelected, this );
+    m_LibCollectListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPrefDialog::OnLibCollectDClicked, this );
+    m_LibCollectAddBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibAddCollectClick, this );
+    m_LibCollectUpBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibUpCollectClick, this );
+    m_LibCollectDownBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibDownCollectClick, this );
+    m_LibCollectDelBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibDelCollectClick, this );
+    m_LibPathListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLibPathSelected, this );
+    m_LibPathListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPrefDialog::OnLibPathDClicked, this );
+    m_LibOptAddPathBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibAddPathBtnClick, this );
+    m_LibOptDelPathBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibDelPathBtnClick, this );
+    m_LibCoverListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLibCoverSelected, this );
+    m_LibCoverListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPrefDialog::OnLibCoverDClicked, this );
+    m_LibOptAddCoverBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibAddCoverBtnClick, this );
+    m_LibOptUpCoverBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibUpCoverBtnClick, this );
+    m_LibOptDownCoverBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibDownCoverBtnClick, this );
+    m_LibOptDelCoverBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLibDelCoverBtnClick, this );
+    m_LibOptAutoUpdateChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnLibAutoUpdateChanged, this );
+    m_LibOptCreatePlayListChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnLibCreatePlayListsChanged, this );
+    m_LibOptFollowLinksChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnLibFollowSymLinksChanged, this );
+    m_LibOptCheckEmbeddedChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnLibCheckEmbeddedChanged, this );
+    m_LibOptEmbedTagsChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnLibEmbeddMetadataChanged, this );
+    m_LibOptCopyToChoice->Bind( wxEVT_CHOICE, &guPrefDialog::OnLibDefaultCopyToChanged, this );
 
 	m_LibCollectListBox->SetFocus();
 }
@@ -1129,16 +996,16 @@ void guPrefDialog::BuildPlaybackPage( void )
     //
     //
     //
-	m_RndPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRndPlayClicked ), NULL, this );
-	m_DelPlayChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnDelPlayedTracksChecked ), NULL, this );
-	m_PlayReplayModeChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnReplayGainModeChanged ), NULL, this );
-    m_PlayPreAmpLevelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayPreAmpLevelValueChanged ), NULL, this );
-    m_PlayPreAmpLevelSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnPlayPreAmpLevelValueChanged ), NULL, this );
-	m_PlayLevelEnabled->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayLevelEnabled ), NULL, this );
-    m_PlayLevelSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
-    m_PlayLevelSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnPlayLevelValueChanged ), NULL, this );
-	m_PlayEndTimeCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnPlayEndTimeEnabled ), NULL, this );
-	m_PlayOutDevChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnPlayOutDevChanged ), NULL, this );
+    m_RndPlayChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnRndPlayClicked, this );
+    m_DelPlayChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnDelPlayedTracksChecked, this );
+    m_PlayReplayModeChoice->Bind( wxEVT_CHOICE, &guPrefDialog::OnReplayGainModeChanged, this );
+    m_PlayPreAmpLevelSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnPlayPreAmpLevelValueChanged, this );
+    m_PlayPreAmpLevelSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnPlayPreAmpLevelValueChanged, this );
+    m_PlayLevelEnabled->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnPlayLevelEnabled, this );
+    m_PlayLevelSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnPlayLevelValueChanged, this );
+    m_PlayLevelSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnPlayLevelValueChanged, this );
+    m_PlayEndTimeCheckBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnPlayEndTimeEnabled, this );
+    m_PlayOutDevChoice->Bind( wxEVT_CHOICE, &guPrefDialog::OnPlayOutDevChanged, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1223,14 +1090,14 @@ void guPrefDialog::BuildCrossfaderPage( void )
     //
     //
     //
-    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeOutLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInLenSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInStartSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
-    m_XFadeInTrigerSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnCrossFadeChanged ), NULL, this );
+    m_XFadeOutLenSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeOutLenSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeInLenSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeInLenSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeInStartSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeInStartSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeInTrigerSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnCrossFadeChanged, this );
+    m_XFadeInTrigerSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnCrossFadeChanged, this );
 
     //
     wxScrollEvent ScrollEvent;
@@ -1341,8 +1208,8 @@ void guPrefDialog::BuildRecordPage( void )
     //
     //
     //
-	m_RecordChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecEnableClicked ), NULL, this );
-	m_RecDelTracks->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnRecDelTracksClicked ), NULL, this );
+    m_RecordChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnRecEnableClicked, this );
+    m_RecDelTracks->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnRecDelTracksClicked, this );
 
 }
 
@@ -1444,11 +1311,11 @@ void guPrefDialog::BuildAudioScrobblePage( void )
     //
     //
     //
-    m_LastFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
-    m_LastFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLastFMASUserNameChanged ), NULL, this );
+    m_LastFMUserNameTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnLastFMASUserNameChanged, this );
+    m_LastFMPasswdTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnLastFMASUserNameChanged, this );
 
-    m_LibreFMUserNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
-    m_LibreFMPasswdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLibreFMASUserNameChanged ), NULL, this );
+    m_LibreFMUserNameTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnLibreFMASUserNameChanged, this );
+    m_LibreFMPasswdTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnLibreFMASUserNameChanged, this );
 
 }
 
@@ -1581,20 +1448,20 @@ void guPrefDialog::BuildLyricsPage( void )
 	m_LyricsPanel->Layout();
 	LyricsMainSizer->FitInside( m_LyricsPanel );
 
-	m_LyricsSrcListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSourceSelected ), NULL, this );
-	m_LyricsSrcListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSourceDClicked ), NULL, this );
-	m_LyricsSrcListBox->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSourceToggled ), NULL, this );
-	m_LyricsAddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricAddBtnClick ), NULL, this );
-	m_LyricsUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricUpBtnClick ), NULL, this );
-	m_LyricsDownButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDownBtnClick ), NULL, this );
-	m_LyricsDelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricDelBtnClick ), NULL, this );
-	m_LyricsSaveListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLyricSaveSelected ), NULL, this );
-	m_LyricsSaveListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDClicked ), NULL, this );
-	m_LyricsSaveListBox->Connect( wxEVT_COMMAND_CHECKLISTBOX_TOGGLED, wxCommandEventHandler( guPrefDialog::OnLyricSaveToggled ), NULL, this );
-	m_LyricsSaveAddButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveAddBtnClick ), NULL, this );
-	m_LyricsSaveUpButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveUpBtnClick ), NULL, this );
-	m_LyricsSaveDownButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDownBtnClick ), NULL, this );
-	m_LyricsSaveDelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLyricSaveDelBtnClick ), NULL, this );
+    m_LyricsSrcListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLyricSourceSelected, this );
+    m_LyricsSrcListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPrefDialog::OnLyricSourceDClicked, this );
+    m_LyricsSrcListBox->Bind( wxEVT_CHECKLISTBOX, &guPrefDialog::OnLyricSourceToggled, this );
+    m_LyricsAddButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricAddBtnClick, this );
+    m_LyricsUpButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricUpBtnClick, this );
+    m_LyricsDownButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricDownBtnClick, this );
+    m_LyricsDelButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricDelBtnClick, this );
+    m_LyricsSaveListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLyricSaveSelected, this );
+    m_LyricsSaveListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPrefDialog::OnLyricSaveDClicked, this );
+    m_LyricsSaveListBox->Bind( wxEVT_CHECKLISTBOX, &guPrefDialog::OnLyricSaveToggled, this );
+    m_LyricsSaveAddButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveAddBtnClick, this );
+    m_LyricsSaveUpButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveUpBtnClick, this );
+    m_LyricsSaveDownButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveDownBtnClick, this );
+    m_LyricsSaveDelButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveDelBtnClick, this );
 
 }
 
@@ -1689,13 +1556,13 @@ void guPrefDialog::BuildOnlinePage( void )
     //
     //
     //
-    m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnFiltersListBoxSelected ), NULL, this );
-    m_OnlineAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineAddBtnClick ), NULL, this );
-    m_OnlineDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineDelBtnClick ), NULL, this );
-    m_OnlineFiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPrefDialog::OnOnlineListBoxDClicked ), NULL, this );
+    m_OnlineFiltersListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnFiltersListBoxSelected, this );
+    m_OnlineAddBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnOnlineAddBtnClick, this );
+    m_OnlineDelBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnOnlineDelBtnClick, this );
+    m_OnlineFiltersListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPrefDialog::OnOnlineListBoxDClicked, this );
 
-    m_RadioMinBitRateSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guPrefDialog::OnOnlineMinBitRateChanged ), NULL, this );
-    m_RadioMinBitRateSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPrefDialog::OnOnlineMinBitRateChanged ), NULL, this );
+    m_RadioMinBitRateSlider->Bind( wxEVT_SCROLL_CHANGED, &guPrefDialog::OnOnlineMinBitRateChanged, this );
+    m_RadioMinBitRateSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPrefDialog::OnOnlineMinBitRateChanged, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1862,9 +1729,9 @@ void guPrefDialog::BuildJamendoPage( void )
     m_JamendoPanel->Layout();
     JamMainSizer->FitInside( m_JamendoPanel );
 
-    m_JamSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectAll ), NULL, this );
-    m_JamSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoSelectNone ), NULL, this );
-    m_JamInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnJamendoInvertSelection ), NULL, this );
+    m_JamSelAllBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnJamendoSelectAll, this );
+    m_JamSelNoneBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnJamendoSelectNone, this );
+    m_JamInvertBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnJamendoInvertSelection, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2016,12 +1883,12 @@ void guPrefDialog::BuildMagnatunePage( void )
     m_MagnatunePanel->Layout();
     MagMainSizer->FitInside( m_MagnatunePanel );
 
-    m_MagSelAllBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectAll ), NULL, this );
-    m_MagSelNoneBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneSelectNone ), NULL, this );
-    m_MagInvertBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnMagnatuneInvertSelection ), NULL, this );
-    m_MagNoRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
-    m_MagStRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
-    m_MagDlRadioItem->Connect( wxEVT_COMMAND_RADIOBUTTON_SELECTED, wxCommandEventHandler( guPrefDialog::OnMagNoRadioItemChanged ), NULL, this );
+    m_MagSelAllBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnMagnatuneSelectAll, this );
+    m_MagSelNoneBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnMagnatuneSelectNone, this );
+    m_MagInvertBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnMagnatuneInvertSelection, this );
+    m_MagNoRadioItem->Bind( wxEVT_RADIOBUTTON, &guPrefDialog::OnMagNoRadioItemChanged, this );
+    m_MagStRadioItem->Bind( wxEVT_RADIOBUTTON, &guPrefDialog::OnMagNoRadioItemChanged, this );
+    m_MagDlRadioItem->Bind( wxEVT_RADIOBUTTON, &guPrefDialog::OnMagNoRadioItemChanged, this );
 
 }
 
@@ -2137,14 +2004,14 @@ void guPrefDialog::BuildLinksPage( void )
     //
     //
     //
-	m_LinksListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnLinksListBoxSelected ), NULL, this );
-	m_LinksAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksAddBtnClick ), NULL, this );
-	m_LinksDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksDelBtnClick ), NULL, this );
-	m_LinksMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveUpBtnClick ), NULL, this );
-	m_LinksMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinkMoveDownBtnClick ), NULL, this );
-	m_LinksUrlTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-	m_LinksNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnLinksTextChanged ), NULL, this );
-	m_LinksAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnLinksSaveBtnClick ), NULL, this );
+    m_LinksListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLinksListBoxSelected, this );
+    m_LinksAddBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLinksAddBtnClick, this );
+    m_LinksDelBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLinksDelBtnClick, this );
+    m_LinksMoveUpBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLinkMoveUpBtnClick, this );
+    m_LinksMoveDownBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLinkMoveDownBtnClick, this );
+    m_LinksUrlTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnLinksTextChanged, this );
+    m_LinksNameTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnLinksTextChanged, this );
+    m_LinksAcceptBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnLinksSaveBtnClick, this );
 
 }
 
@@ -2258,14 +2125,14 @@ void guPrefDialog::BuildCommandsPage( void )
     //
     //
     //
-	m_CmdListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCmdListBoxSelected ), NULL, this );
-	m_CmdAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdAddBtnClick ), NULL, this );
-	m_CmdDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdDelBtnClick ), NULL, this );
-	m_CmdMoveUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveUpBtnClick ), NULL, this );
-	m_CmdMoveDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdMoveDownBtnClick ), NULL, this );
-	m_CmdTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-	m_CmdNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCmdTextChanged ), NULL, this );
-	m_CmdAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCmdSaveBtnClick ), NULL, this );
+    m_CmdListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnCmdListBoxSelected, this );
+    m_CmdAddBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCmdAddBtnClick, this );
+    m_CmdDelBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCmdDelBtnClick, this );
+    m_CmdMoveUpBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCmdMoveUpBtnClick, this );
+    m_CmdMoveDownBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCmdMoveDownBtnClick, this );
+    m_CmdTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnCmdTextChanged, this );
+    m_CmdNameTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnCmdTextChanged, this );
+    m_CmdAcceptBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCmdSaveBtnClick, this );
 
 }
 
@@ -2443,19 +2310,19 @@ void guPrefDialog::BuildCopyToPage( void )
 	m_CopyPanel->Layout();
 	CopyToMainSizer->FitInside( m_CopyPanel );
 
-	m_CopyToListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToListBoxSelected ), NULL, this );
-	m_CopyToAddBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToAddBtnClick ), NULL, this );
-	m_CopyToDelBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToDelBtnClick ), NULL, this );
-	m_CopyToUpBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveUpBtnClick ), NULL, this );
-	m_CopyToDownBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveDownBtnClick ), NULL, this );
-	m_CopyToPatternTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
-	m_CopyToPathTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
-    m_CopyToPathBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToPathBtnClick ), NULL, this );
-	m_CopyToNameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guPrefDialog::OnCopyToTextChanged ), NULL, this );
-	m_CopyToFormatChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToFormatChanged ), NULL, this );
-	m_CopyToQualityChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guPrefDialog::OnCopyToQualityChanged ), NULL, this );
-	m_CopyToMoveFilesChkBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToMoveFilesChanged ), NULL, this );
-	m_CopyToAcceptBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnCopyToSaveBtnClick ), NULL, this );
+    m_CopyToListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnCopyToListBoxSelected, this );
+    m_CopyToAddBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCopyToAddBtnClick, this );
+    m_CopyToDelBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCopyToDelBtnClick, this );
+    m_CopyToUpBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCopyToMoveUpBtnClick, this );
+    m_CopyToDownBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCopyToMoveDownBtnClick, this );
+    m_CopyToPatternTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnCopyToTextChanged, this );
+    m_CopyToPathTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnCopyToTextChanged, this );
+    m_CopyToPathBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCopyToPathBtnClick, this );
+    m_CopyToNameTextCtrl->Bind( wxEVT_TEXT, &guPrefDialog::OnCopyToTextChanged, this );
+    m_CopyToFormatChoice->Bind( wxEVT_CHOICE, &guPrefDialog::OnCopyToFormatChanged, this );
+    m_CopyToQualityChoice->Bind( wxEVT_CHOICE, &guPrefDialog::OnCopyToQualityChanged, this );
+    m_CopyToMoveFilesChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnCopyToMoveFilesChanged, this );
+    m_CopyToAcceptBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnCopyToSaveBtnClick, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2544,9 +2411,9 @@ void guPrefDialog::BuildAcceleratorsPage( void )
 	m_AccelCurIndex = wxNOT_FOUND;
 	m_AccelItemNeedClear = false;
 
-	m_AccelListCtrl->Connect( wxEVT_COMMAND_LIST_ITEM_SELECTED, wxListEventHandler( guPrefDialog::OnAccelSelected ), NULL, this );
-	m_AccelListCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guPrefDialog::OnAccelKeyDown ), NULL, this );
-	m_AccelDefBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPrefDialog::OnAccelDefaultClicked ), NULL, this );
+    m_AccelListCtrl->Bind( wxEVT_LIST_ITEM_SELECTED, &guPrefDialog::OnAccelSelected, this );
+	m_AccelListCtrl->Bind( wxEVT_KEY_DOWN, &guPrefDialog::OnAccelKeyDown, this );
+    m_AccelDefBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnAccelDefaultClicked, this );
 }
 
 // -------------------------------------------------------------------------------- //

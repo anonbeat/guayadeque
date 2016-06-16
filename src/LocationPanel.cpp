@@ -105,8 +105,7 @@ guLocationTreeCtrl::guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainfra
 
     SetIndent( 5 );
 
-    Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guLocationTreeCtrl::OnContextMenu ), NULL, this );
-//    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLocationTreeCtrl::OnKeyDown ), NULL, this );
+    Bind( wxEVT_TREE_ITEM_MENU, &guLocationTreeCtrl::OnContextMenu, this );
 
     ReloadItems( true );
 }
@@ -120,8 +119,7 @@ guLocationTreeCtrl::~guLocationTreeCtrl()
     Config->WriteBool( wxT( "PortableDevices" ), IsExpanded( m_PortableDeviceId ), wxT( "mainsources") );
     Config->WriteBool( wxT( "ContextExpanded" ), IsExpanded( m_ContextId ), wxT( "mainsources") );
 
-    Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guLocationTreeCtrl::OnContextMenu ), NULL, this );
-//    Disconnect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLocationTreeCtrl::OnKeyDown ), NULL, this );
+    Unbind( wxEVT_TREE_ITEM_MENU, &guLocationTreeCtrl::OnContextMenu, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -622,13 +620,15 @@ guLocationPanel::guLocationPanel( wxWindow * parent ) :
 	Layout();
 	MainSizer->Fit( this );
 
-    m_LocationTreeCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guLocationPanel::OnLocationItemActivated ), NULL, this );
-	m_LocationTreeCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guLocationPanel::OnLocationItemChanged ), NULL, this );
+    m_LocationTreeCtrl->Bind( wxEVT_TREE_ITEM_ACTIVATED, &guLocationPanel::OnLocationItemActivated, this );
+    m_LocationTreeCtrl->Bind( wxEVT_TREE_SEL_CHANGED, &guLocationPanel::OnLocationItemChanged, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guLocationPanel::~guLocationPanel()
 {
+    m_LocationTreeCtrl->Unbind( wxEVT_TREE_ITEM_ACTIVATED, &guLocationPanel::OnLocationItemActivated, this );
+    m_LocationTreeCtrl->Unbind( wxEVT_TREE_SEL_CHANGED, &guLocationPanel::OnLocationItemChanged, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -650,7 +650,7 @@ void guLocationPanel::OnLocationItemActivated( wxTreeEvent &event )
     guLocationItemData * ItemData = ( guLocationItemData * ) m_LocationTreeCtrl->GetItemData( ItemId );
     if( ItemData && ItemData->GetIsEnabled() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ItemData->GetId() );
+        wxCommandEvent event( wxEVT_MENU, ItemData->GetId() );
         event.SetInt( !ItemData->GetOpen() );
         wxPostEvent( m_MainFrame, event );
     }
@@ -667,7 +667,7 @@ void guLocationPanel::OnLocationItemChanged( wxTreeEvent &event )
     {
         if( ItemData->GetOpen() && ItemData->GetId() )
         {
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_LOCATION );
+            wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_SELECT_LOCATION );
             event.SetInt( ItemData->GetId() );
             wxPostEvent( m_MainFrame, event );
         }

@@ -98,20 +98,20 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
         }
     }
 
-    Connect( guMEDIAVIEWER_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guMediaViewer::OnTextChangedTimer ), NULL, this );
+    Bind( wxEVT_TIMER, &guMediaViewer::OnTextChangedTimer, this, guMEDIAVIEWER_TIMER_TEXTSEARCH );
 
-    Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnCleanFinished ), NULL, this );
-    Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnLibraryUpdated ), NULL, this );
+    Bind( wxEVT_MENU, &guMediaViewer::OnCleanFinished, this, ID_LIBRARY_CLEANFINISHED );
+    Bind( wxEVT_MENU, &guMediaViewer::OnLibraryUpdated, this, ID_LIBRARY_UPDATED );
 
-    Connect( ID_GENRE_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnGenreSetSelection ), NULL, this );
-    Connect( ID_ARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnArtistSetSelection ), NULL, this );
-    Connect( ID_ALBUMARTIST_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumArtistSetSelection ), NULL, this );
-    Connect( ID_COMPOSER_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnComposerSetSelection ), NULL, this );
-    Connect( ID_ALBUM_SETSELECTION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnAlbumSetSelection ), NULL, this );
+    Bind( wxEVT_MENU, &guMediaViewer::OnGenreSetSelection, this, ID_GENRE_SETSELECTION );
+    Bind( wxEVT_MENU, &guMediaViewer::OnArtistSetSelection, this, ID_ARTIST_SETSELECTION );
+    Bind( wxEVT_MENU, &guMediaViewer::OnAlbumArtistSetSelection, this, ID_ALBUMARTIST_SETSELECTION );
+    Bind( wxEVT_MENU, &guMediaViewer::OnComposerSetSelection, this, ID_COMPOSER_SETSELECTION );
+    Bind( wxEVT_MENU, &guMediaViewer::OnAlbumSetSelection, this, ID_ALBUM_SETSELECTION );
 
-    Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnUpdateLabels ), NULL, this );
+    Bind( wxEVT_MENU, &guMediaViewer::OnUpdateLabels, this, ID_LABEL_UPDATELABELS );
 
-    Connect( ID_SMARTMODE_ADD_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnSmartAddTracks ), NULL, this );
+    Bind( wxEVT_MENU, &guMediaViewer::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -124,23 +124,38 @@ guMediaViewer::~guMediaViewer()
     Config->WriteNum( wxT( "Filter" ), m_FilterChoice->GetSelection(), m_ConfigPath + wxT( "/albumbrowser" ) );
     Config->WriteAStr( wxT( "Filter"), m_DynFilterArray, m_ConfigPath + wxT( "/albumbrowser/filters") );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMediaViewer::OnConfigUpdated ), NULL, this );
+    Unbind( wxEVT_TIMER, &guMediaViewer::OnTextChangedTimer, this, guMEDIAVIEWER_TIMER_TEXTSEARCH );
 
-    Disconnect( guMEDIAVIEWER_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guMediaViewer::OnTextChangedTimer ), NULL, this );
-    m_SearchTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guMediaViewer::OnSearchSelected ), NULL, this );
-    m_SearchTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guMediaViewer::OnSearchActivated ), NULL, this );
-    m_SearchTextCtrl->Disconnect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guMediaViewer::OnSearchCancelled ), NULL, this );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnCleanFinished, this, ID_LIBRARY_CLEANFINISHED );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnLibraryUpdated, this, ID_LIBRARY_UPDATED );
 
-    m_FilterChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guMediaViewer::OnFilterSelected ), NULL, this );
-    m_AddFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnAddFilterClicked ), NULL, this );
-    m_DelFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnDelFilterClicked ), NULL, this );
-    m_EditFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnEditFilterClicked ), NULL, this );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnGenreSetSelection, this, ID_GENRE_SETSELECTION );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnArtistSetSelection, this, ID_ARTIST_SETSELECTION );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnAlbumArtistSetSelection, this, ID_ALBUMARTIST_SETSELECTION );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnComposerSetSelection, this, ID_COMPOSER_SETSELECTION );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnAlbumSetSelection, this, ID_ALBUM_SETSELECTION );
 
-    Disconnect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnCleanFinished ), NULL, this );
-    Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewer::OnLibraryUpdated ), NULL, this );
+    Unbind( wxEVT_MENU, &guMediaViewer::OnUpdateLabels, this, ID_LABEL_UPDATELABELS );
+
+    Unbind( wxEVT_MENU, &guMediaViewer::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
+
+    Unbind( guConfigUpdatedEvent, &guMediaViewer::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+    m_FilterChoice->Unbind( wxEVT_CHOICE, &guMediaViewer::OnFilterSelected, this );
+    m_AddFilterButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnAddFilterClicked, this );
+    m_DelFilterButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnDelFilterClicked, this );
+    m_EditFilterButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnEditFilterClicked, this );
+
+    m_LibrarySelButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+    m_AlbumBrowserSelButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+    m_TreeViewSelButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+    m_PlaylistsSelButton->Unbind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+
+    m_SearchTextCtrl->Unbind( wxEVT_TEXT_ENTER, &guMediaViewer::OnSearchSelected, this );
+    m_SearchTextCtrl->Unbind( wxEVT_TEXT, &guMediaViewer::OnSearchActivated, this );
+    m_SearchTextCtrl->Unbind( wxEVT_SEARCHCTRL_CANCEL_BTN, &guMediaViewer::OnSearchCancelled, this );
 
     //m_MainFrame->MediaViewerClosed( m_MediaCollection->m_UniqueId, this );
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_MEDIAVIEWER_CLOSED );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_MEDIAVIEWER_CLOSED );
     CmdEvent.SetClientData( this );
     wxPostEvent( m_MainFrame, CmdEvent );
 
@@ -185,7 +200,7 @@ void guMediaViewer::InitMediaViewer( const int mode )
     if( m_MediaCollection->m_UpdateOnStart )
     {
         //UpdateLibrary();
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, m_BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY );
+        wxCommandEvent Event( wxEVT_MENU, m_BaseCommand + guCOLLECTION_ACTION_UPDATE_LIBRARY );
         wxPostEvent( this, Event );
     }
 
@@ -268,20 +283,20 @@ void guMediaViewer::CreateControls( void )
     MainSizer->Add( TopSizer, 0, wxEXPAND, 5 );
     SetSizer( MainSizer );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMediaViewer::OnConfigUpdated ), NULL, this );
-    m_FilterChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guMediaViewer::OnFilterSelected ), NULL, this );
-    m_AddFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnAddFilterClicked ), NULL, this );
-    m_DelFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnDelFilterClicked ), NULL, this );
-    m_EditFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnEditFilterClicked ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guMediaViewer::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+    m_FilterChoice->Bind( wxEVT_CHOICE, &guMediaViewer::OnFilterSelected, this );
+    m_AddFilterButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnAddFilterClicked, this );
+    m_DelFilterButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnDelFilterClicked, this );
+    m_EditFilterButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnEditFilterClicked, this );
 
-    m_LibrarySelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
-    m_AlbumBrowserSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
-    m_TreeViewSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
-    m_PlaylistsSelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guMediaViewer::OnViewChanged ), NULL, this );
+    m_LibrarySelButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+    m_AlbumBrowserSelButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+    m_TreeViewSelButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
+    m_PlaylistsSelButton->Bind( wxEVT_BUTTON, &guMediaViewer::OnViewChanged, this );
 
-    m_SearchTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guMediaViewer::OnSearchSelected ), NULL, this );
-    m_SearchTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guMediaViewer::OnSearchActivated ), NULL, this );
-    m_SearchTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guMediaViewer::OnSearchCancelled ), NULL, this );
+    m_SearchTextCtrl->Bind( wxEVT_TEXT_ENTER, &guMediaViewer::OnSearchSelected, this );
+    m_SearchTextCtrl->Bind( wxEVT_TEXT, &guMediaViewer::OnSearchActivated, this );
+    m_SearchTextCtrl->Bind( wxEVT_SEARCHCTRL_CANCEL_BTN, &guMediaViewer::OnSearchCancelled, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -521,7 +536,7 @@ void guMediaViewer::SetViewMode( const int mode )
         Thaw();
     }
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 
     SetMenuState( m_ViewMode != guMEDIAVIEWER_MODE_NONE );
@@ -1021,7 +1036,7 @@ void guMediaViewer::HandleCommand( const int command )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::EditProperties( void )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_LIBRARY );
     wxPostEvent( m_MainFrame, CmdEvent );
 }
@@ -1681,7 +1696,7 @@ void guMediaViewer::AlbumCoverChanged( const int albumid, const bool deleted )
         m_AlbumBrowser->AlbumCoverChanged( albumid );
     }
 
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
+    wxCommandEvent evt( wxEVT_MENU, ID_ALBUM_COVER_CHANGED );
     evt.SetInt( albumid );
     evt.SetExtraLong( deleted );
     evt.SetClientData( this );
@@ -1781,7 +1796,7 @@ void guMediaViewer::PlayListUpdated( void )
 {
     if( IsDefault() )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+        wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
         wxPostEvent( m_MainFrame, evt );
     }
 }
@@ -2002,7 +2017,7 @@ void guMediaViewer::OnUpdateLabels( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::UpdatePlaylists( void )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+    wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
     wxPostEvent( m_MainFrame, evt );
 
     if( m_PlayListPanel )
@@ -2205,7 +2220,7 @@ guUpdateCoversThread::guUpdateCoversThread( guMediaViewer * mediaviewer, int gau
 // -------------------------------------------------------------------------------- //
 guUpdateCoversThread::~guUpdateCoversThread()
 {
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MediaViewer->GetMainFrame(), event );
 
@@ -2222,7 +2237,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
     int Index;
     int Count;
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     event.SetInt( m_GaugeId );
 
     if( ( Count = m_MediaViewer->GetDb()->GetEmptyCovers( MissingCovers ) ) )

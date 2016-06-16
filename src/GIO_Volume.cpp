@@ -266,7 +266,7 @@ void guGIO_VolumeMonitor::OnMountAdded( GMount * mount )
                 {
                     m_MountedVolumes->Add( Mount );
 
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+                    wxCommandEvent event( wxEVT_MENU, ID_VOLUMEMANAGER_MOUNT_CHANGED );
                     event.SetInt( 1 );
                     wxPostEvent( m_MainFrame, event );
                 }
@@ -299,7 +299,7 @@ void guGIO_VolumeMonitor::OnMountRemoved( GMount * mount )
         //guGIO_Mount * Mount = m_MountedVolumes->Item( MountIndex );
         m_MountedVolumes->RemoveAt( MountIndex );
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+        wxCommandEvent event( wxEVT_MENU, ID_VOLUMEMANAGER_MOUNT_CHANGED );
         event.SetClientData( ( void * ) mount );
         event.SetInt( 0 );
         wxPostEvent( m_MainFrame, event );

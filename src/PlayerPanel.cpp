@@ -393,76 +393,65 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     CheckFiltersEnable();
 
-//	Connect( wxEVT_IDLE, wxIdleEventHandler( guPlayerPanel::OnIdle ), NULL, this );
-	// Connect Events
-	m_PrevTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
-	m_NextTrackButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
-	m_PlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
- 	m_StopButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
-    m_RecordButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRecordButtonClick ), NULL, this );
-	m_VolumeButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
-	m_VolumeButton->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
-	m_SmartPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
-	m_RandomPlayButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
-	m_RepeatPlayButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
-	m_EqualizerButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnEqualizerButtonClicked ), NULL, this );
+    // Bind Events
+    m_PrevTrackButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnPrevTrackButtonClick, this );
+    m_NextTrackButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnNextTrackButtonClick, this );
+    m_PlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnPlayButtonClick, this );
+    m_StopButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
+    m_RecordButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRecordButtonClick, this );
+    m_VolumeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnVolumenButtonClick, this );
+	m_VolumeButton->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumenMouseWheel, this );
+    m_SmartPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
+    m_RandomPlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
+    m_RepeatPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
+    m_EqualizerButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnEqualizerButtonClicked, this );
 
-    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnRandomPlayButtonClick, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
 
-    m_TitleLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
-	m_AlbumLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
-	m_ArtistLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
-	m_YearLabel->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
+    m_TitleLabel->Bind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnTitleNameDClicked, this );
+	m_AlbumLabel->Bind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnAlbumNameDClicked, this );
+	m_ArtistLabel->Bind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnArtistNameDClicked, this );
+	m_YearLabel->Bind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnYearDClicked, this );
 
-	m_PositionLabel->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
-	m_Rating->Connect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
-//	m_LoveBanButton->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
+	m_PositionLabel->Bind( wxEVT_LEFT_UP, &guPlayerPanel::OnTimeDClicked, this );
+	m_Rating->Bind( guEVT_RATING_CHANGED, &guPlayerPanel::OnRatingChanged, this );
 
-    //
-	m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guPlayerPanel::OnLeftClickPlayerCoverBitmap ), NULL, this );
-	//m_PlayerCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
-    //Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
+	m_PlayerCoverBitmap->Bind( wxEVT_LEFT_DOWN, &guPlayerPanel::OnLeftClickPlayerCoverBitmap, this );
 
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_CHANGED	, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderChanged ), NULL, this );
-//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Connect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-    m_PlayerPositionSlider->Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnPlayerPositionSliderMouseWheel ), NULL, this );
+	m_PlayerPositionSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guPlayerPanel::OnPlayerPositionSliderBeginSeek, this );
+	m_PlayerPositionSlider->Bind( wxEVT_SCROLL_THUMBRELEASE, &guPlayerPanel::OnPlayerPositionSliderEndSeek, this );
+	m_PlayerPositionSlider->Bind( wxEVT_SCROLL_CHANGED	, &guPlayerPanel::OnPlayerPositionSliderChanged, this );
+    m_PlayerPositionSlider->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnPlayerPositionSliderMouseWheel, this );
 
-    m_PlayListCtrl->Connect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
-    m_PlayListCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
+    m_PlayListCtrl->Bind( wxEVT_MENU, &guPlayerPanel::OnPlayListUpdated, this, ID_PLAYER_PLAYLIST_UPDATELIST );
+    m_PlayListCtrl->Bind( wxEVT_LISTBOX_DCLICK, &guPlayerPanel::OnPlayListDClick, this );
 
-    Connect( guEVT_MEDIA_LOADED, guMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
-    Connect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
-    Connect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
-    Connect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
-    Connect( guEVT_MEDIA_TAGINFO, guMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
-    Connect( guEVT_MEDIA_CHANGED_BITRATE, guMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
-    Connect( guEVT_MEDIA_BUFFERING, guMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
-    Connect( guEVT_MEDIA_LEVELINFO, guMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
-    Connect( guEVT_MEDIA_ERROR, guMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
-    Connect( guEVT_MEDIA_CHANGED_STATE, guMediaEventHandler( guPlayerPanel::OnMediaState ), NULL, this );
-    Connect( guEVT_MEDIA_CHANGED_POSITION, guMediaEventHandler( guPlayerPanel::OnMediaPosition ), NULL, this );
-    Connect( guEVT_MEDIA_CHANGED_LENGTH, guMediaEventHandler( guPlayerPanel::OnMediaLength ), NULL, this );
+    Bind( guEVT_MEDIA_LOADED, &guPlayerPanel::OnMediaLoaded, this );
+    Bind( guEVT_MEDIA_FINISHED, &guPlayerPanel::OnMediaFinished, this );
+    Bind( guEVT_MEDIA_FADEOUT_FINISHED, &guPlayerPanel::OnMediaFadeOutFinished, this );
+    Bind( guEVT_MEDIA_FADEIN_STARTED, &guPlayerPanel::OnMediaFadeInStarted, this );
+    Bind( guEVT_MEDIA_TAGINFO, &guPlayerPanel::OnMediaTags, this );
+    Bind( guEVT_MEDIA_CHANGED_BITRATE, &guPlayerPanel::OnMediaBitrate, this );
+    Bind( guEVT_MEDIA_BUFFERING, &guPlayerPanel::OnMediaBuffering, this );
+    Bind( guEVT_MEDIA_LEVELINFO, &guPlayerPanel::OnMediaLevel, this );
+    Bind( guEVT_MEDIA_ERROR, &guPlayerPanel::OnMediaError, this );
+    Bind( guEVT_MEDIA_CHANGED_STATE, &guPlayerPanel::OnMediaState, this );
+    Bind( guEVT_MEDIA_CHANGED_POSITION, &guPlayerPanel::OnMediaPosition, this );
+    Bind( guEVT_MEDIA_CHANGED_LENGTH, &guPlayerPanel::OnMediaLength, this );
 
-    Connect( ID_SMARTMODE_ADD_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
-    Connect( ID_SMARTMODE_THREAD_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartEndThread ), NULL, this );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnSmartEndThread, this, ID_SMARTMODE_THREAD_END );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guPlayerPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
-    Connect( ID_PLAYERPANEL_COVERUPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnCoverUpdated ), NULL, this );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnCoverUpdated, this, ID_PLAYERPANEL_COVERUPDATED );
 
-    Connect( ID_PLAYERPANEL_ADDTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnAddTracks ), NULL, this );
-    Connect( ID_PLAYERPANEL_REMOVETRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRemoveTrack ), NULL, this );
-    Connect( ID_PLAYERPANEL_SETREPEAT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRepeat ), NULL, this );
-    Connect( ID_PLAYERPANEL_SETLOOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnLoop ), NULL, this );
-    Connect( ID_PLAYERPANEL_SETRANDOM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandom ), NULL, this );
-    Connect( ID_PLAYERPANEL_SETVOLUME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSetVolume ), NULL, this );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnAddTracks, this, ID_PLAYERPANEL_ADDTRACKS );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnRemoveTrack, this, ID_PLAYERPANEL_REMOVETRACK );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnRepeat, this, ID_PLAYERPANEL_SETREPEAT );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnLoop, this, ID_PLAYERPANEL_SETLOOP );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnRandom, this, ID_PLAYERPANEL_SETRANDOM );
+    Bind( wxEVT_MENU, &guPlayerPanel::OnSetVolume, this, ID_PLAYERPANEL_SETVOLUME );
 
     //
     m_AudioScrobble = NULL;
@@ -529,68 +518,65 @@ guPlayerPanel::~guPlayerPanel()
         Config->WriteBool( wxT( "ShowRevTime" ), m_ShowRevTime, wxT( "general" ) );
     }
 
-	// Disconnect Events
-	m_PrevTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPrevTrackButtonClick ), NULL, this );
-	m_NextTrackButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnNextTrackButtonClick ), NULL, this );
-	m_PlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayButtonClick ), NULL, this );
- 	m_StopButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnStopButtonClick ), NULL, this );
-    m_RecordButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRecordButtonClick ), NULL, this );
-	m_VolumeButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnVolumenButtonClick ), NULL, this );
-	m_VolumeButton->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnVolumenMouseWheel ), NULL, this );
-	m_SmartPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnSmartPlayButtonClick ), NULL, this );
-	m_RandomPlayButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ), NULL, this );
-	m_RepeatPlayButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnRepeatPlayButtonClick ), NULL, this );
-	m_EqualizerButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnEqualizerButtonClicked ), NULL, this );
+    // Unbind Events
+    m_PrevTrackButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnPrevTrackButtonClick, this );
+    m_NextTrackButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnNextTrackButtonClick, this );
+    m_PlayButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnPlayButtonClick, this );
+    m_StopButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
+    m_RecordButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRecordButtonClick, this );
+    m_VolumeButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnVolumenButtonClick, this );
+    m_VolumeButton->Unbind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumenMouseWheel, this );
+    m_SmartPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
+    m_RandomPlayButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
+    m_RepeatPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
+    m_EqualizerButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnEqualizerButtonClicked, this );
 
-    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnRandomPlayButtonClick ) );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnRandomPlayButtonClick, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
 
-    m_TitleLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnTitleNameDClicked ), NULL, this );
-	m_AlbumLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnAlbumNameDClicked ), NULL, this );
-	m_ArtistLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnArtistNameDClicked ), NULL, this );
-	m_YearLabel->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnYearDClicked ), NULL, this );
+    m_TitleLabel->Unbind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnTitleNameDClicked, this );
+    m_AlbumLabel->Unbind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnAlbumNameDClicked, this );
+    m_ArtistLabel->Unbind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnArtistNameDClicked, this );
+    m_YearLabel->Unbind( wxEVT_LEFT_DCLICK, &guPlayerPanel::OnYearDClicked, this );
 
-	m_PositionLabel->Disconnect( wxEVT_LEFT_UP, wxMouseEventHandler( guPlayerPanel::OnTimeDClicked ), NULL, this );
-	m_Rating->Disconnect( guEVT_RATING_CHANGED, guRatingEventHandler( guPlayerPanel::OnRatingChanged ), NULL, this );
-//	m_LoveBanButton->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guPlayerPanel::OnLoveBanButtonClick ), NULL, this );
+    m_PositionLabel->Unbind( wxEVT_LEFT_UP, &guPlayerPanel::OnTimeDClicked, this );
+    m_Rating->Unbind( guEVT_RATING_CHANGED, &guPlayerPanel::OnRatingChanged, this );
 
-    //
-	//m_PlayerCoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guPlayerPanel::OnLeftDClickPlayerCoverBitmap ), NULL, this );
-    //Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guPlayerPanel::OnPlayerCoverBitmapMouseOver ), NULL, this );
+    m_PlayerCoverBitmap->Unbind( wxEVT_LEFT_DOWN, &guPlayerPanel::OnLeftClickPlayerCoverBitmap, this );
 
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderBeginSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_THUMBRELEASE, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_CHANGED	, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderChanged ), NULL, this );
-//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_TOP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_BOTTOM, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_LINEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEUP, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-//	m_PlayerPositionSlider->Disconnect( wxEVT_SCROLL_PAGEDOWN, wxScrollEventHandler( guPlayerPanel::OnPlayerPositionSliderEndSeek ), NULL, this );
-    m_PlayerPositionSlider->Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guPlayerPanel::OnPlayerPositionSliderMouseWheel ), NULL, this );
+    m_PlayerPositionSlider->Unbind( wxEVT_SCROLL_THUMBTRACK, &guPlayerPanel::OnPlayerPositionSliderBeginSeek, this );
+    m_PlayerPositionSlider->Unbind( wxEVT_SCROLL_THUMBRELEASE, &guPlayerPanel::OnPlayerPositionSliderEndSeek, this );
+    m_PlayerPositionSlider->Unbind( wxEVT_SCROLL_CHANGED	, &guPlayerPanel::OnPlayerPositionSliderChanged, this );
+    m_PlayerPositionSlider->Unbind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnPlayerPositionSliderMouseWheel, this );
 
-//    m_PlayListCtrl->Disconnect( ID_PLAYER_PLAYLIST_UPDATELIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnPlayListUpdated ), NULL, this );
-//    m_PlayListCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guPlayerPanel::OnPlayListDClick ), NULL, this );
+    m_PlayListCtrl->Unbind( wxEVT_MENU, &guPlayerPanel::OnPlayListUpdated, this, ID_PLAYER_PLAYLIST_UPDATELIST );
+    m_PlayListCtrl->Unbind( wxEVT_LISTBOX_DCLICK, &guPlayerPanel::OnPlayListDClick, this );
 
-    Disconnect( guEVT_MEDIA_LOADED, guMediaEventHandler( guPlayerPanel::OnMediaLoaded ), NULL, this );
-    Disconnect( guEVT_MEDIA_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFinished ), NULL, this );
-    Disconnect( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEventHandler( guPlayerPanel::OnMediaFadeOutFinished ), NULL, this );
-    Disconnect( guEVT_MEDIA_FADEIN_STARTED, guMediaEventHandler( guPlayerPanel::OnMediaFadeInStarted ), NULL, this );
-    Disconnect( guEVT_MEDIA_TAGINFO, guMediaEventHandler( guPlayerPanel::OnMediaTags ), NULL, this );
-    Disconnect( guEVT_MEDIA_CHANGED_BITRATE, guMediaEventHandler( guPlayerPanel::OnMediaBitrate ), NULL, this );
-    Disconnect( guEVT_MEDIA_BUFFERING, guMediaEventHandler( guPlayerPanel::OnMediaBuffering ), NULL, this );
-    Disconnect( guEVT_MEDIA_LEVELINFO, guMediaEventHandler( guPlayerPanel::OnMediaLevel ), NULL, this );
-    Disconnect( guEVT_MEDIA_ERROR, guMediaEventHandler( guPlayerPanel::OnMediaError ), NULL, this );
-    Disconnect( guEVT_MEDIA_CHANGED_STATE, guMediaEventHandler( guPlayerPanel::OnMediaState ), NULL, this );
-    Disconnect( guEVT_MEDIA_CHANGED_POSITION, guMediaEventHandler( guPlayerPanel::OnMediaPosition ), NULL, this );
-    Disconnect( guEVT_MEDIA_CHANGED_LENGTH, guMediaEventHandler( guPlayerPanel::OnMediaLength ), NULL, this );
+    Unbind( guEVT_MEDIA_LOADED, &guPlayerPanel::OnMediaLoaded, this );
+    Unbind( guEVT_MEDIA_FINISHED, &guPlayerPanel::OnMediaFinished, this );
+    Unbind( guEVT_MEDIA_FADEOUT_FINISHED, &guPlayerPanel::OnMediaFadeOutFinished, this );
+    Unbind( guEVT_MEDIA_FADEIN_STARTED, &guPlayerPanel::OnMediaFadeInStarted, this );
+    Unbind( guEVT_MEDIA_TAGINFO, &guPlayerPanel::OnMediaTags, this );
+    Unbind( guEVT_MEDIA_CHANGED_BITRATE, &guPlayerPanel::OnMediaBitrate, this );
+    Unbind( guEVT_MEDIA_BUFFERING, &guPlayerPanel::OnMediaBuffering, this );
+    Unbind( guEVT_MEDIA_LEVELINFO, &guPlayerPanel::OnMediaLevel, this );
+    Unbind( guEVT_MEDIA_ERROR, &guPlayerPanel::OnMediaError, this );
+    Unbind( guEVT_MEDIA_CHANGED_STATE, &guPlayerPanel::OnMediaState, this );
+    Unbind( guEVT_MEDIA_CHANGED_POSITION, &guPlayerPanel::OnMediaPosition, this );
+    Unbind( guEVT_MEDIA_CHANGED_LENGTH, &guPlayerPanel::OnMediaLength, this );
 
-    Disconnect( ID_SMARTMODE_ADD_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartAddTracks ), NULL, this );
-    Disconnect( ID_SMARTMODE_THREAD_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnSmartEndThread ), NULL, this );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnSmartEndThread, this, ID_SMARTMODE_THREAD_END );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPlayerPanel::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guPlayerPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
-    Disconnect( ID_PLAYERPANEL_COVERUPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPlayerPanel::OnCoverUpdated ), NULL, this );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnCoverUpdated, this, ID_PLAYERPANEL_COVERUPDATED );
 
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnAddTracks, this, ID_PLAYERPANEL_ADDTRACKS );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnRemoveTrack, this, ID_PLAYERPANEL_REMOVETRACK );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnRepeat, this, ID_PLAYERPANEL_SETREPEAT );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnLoop, this, ID_PLAYERPANEL_SETLOOP );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnRandom, this, ID_PLAYERPANEL_SETRANDOM );
+    Unbind( wxEVT_MENU, &guPlayerPanel::OnSetVolume, this, ID_PLAYERPANEL_SETVOLUME );
 
     if( m_MediaCtrl )
         delete m_MediaCtrl;
@@ -678,7 +664,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         }
         else
         {
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+            wxCommandEvent event( wxEVT_MENU, ID_AUDIOSCROBBLE_UPDATED );
             event.SetInt( 1 );
             wxPostEvent( m_MainFrame, event );
         }
@@ -1105,10 +1091,10 @@ void guPlayerPanel::TrackListChanged( void )
 //            m_PlayListCtrl->GetCurItem() + 1,
 //            m_PlayListCtrl->GetCount(),
 //            m_PlayListCtrl->GetLengthStr().c_str() ) );
-    wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
+    wxCommandEvent TitleEvent( wxEVT_MENU, ID_PLAYER_PLAYLIST_UPDATETITLE );
     wxPostEvent( m_MainFrame, TitleEvent );
 
-    wxCommandEvent TracksChangedEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
+    wxCommandEvent TracksChangedEvent( wxEVT_MENU, ID_PLAYERPANEL_TRACKLISTCHANGED );
     wxPostEvent( this, TracksChangedEvent );
 }
 
@@ -1346,7 +1332,7 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forc
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaBuffering( guMediaEvent &event )
 {
-    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent GaugeEvent( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     int Percent = event.GetInt();
 //    printf( "Buffering: %d%%\n", Percent );
     if( Percent == 100 )
@@ -1504,7 +1490,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
         m_PlayButton->Refresh();
         m_LastPlayState = State;
         //
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STATUSCHANGED );
         wxPostEvent( m_MainFrame, event );
     }
 
@@ -1790,7 +1776,7 @@ void guPlayerPanel::OnMediaTags( guMediaEvent &event )
                 }
 
                 //guLogDebug( wxT( "Sending LastFMPanel::UpdateTrack event" ) );
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+                wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_TRACKCHANGED );
                 event.SetClientData( new guTrack( m_MediaSong ) );
                 wxPostEvent( m_MainFrame, event );
 
@@ -1905,11 +1891,11 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 //            m_PlayListCtrl->GetCurItem() + 1,
 //            m_PlayListCtrl->GetCount(),
 //            m_PlayListCtrl->GetLengthStr().c_str() ) );
-    wxCommandEvent TitleEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYER_PLAYLIST_UPDATETITLE );
+    wxCommandEvent TitleEvent( wxEVT_MENU, ID_PLAYER_PLAYLIST_UPDATETITLE );
     wxPostEvent( m_MainFrame, TitleEvent );
 
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_TRACKCHANGED );
     event.SetClientData( new guTrack( m_MediaSong ) );
     wxPostEvent( m_MainFrame, event );
 
@@ -1936,7 +1922,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     }
 
     // Send the CapsChanged Event
-    //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_CAPSCHANGED );
+    //wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_CAPSCHANGED );
     event.SetId( ID_PLAYERPANEL_CAPSCHANGED );
     wxPostEvent( m_MainFrame, event );
 
@@ -1978,7 +1964,7 @@ void guPlayerPanel::UpdateCoverImage( const bool shownotify )
     if( shownotify )
         SendNotifyInfo( m_MediaSong.m_CoverImage );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_COVERUPDATED );
+    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_COVERUPDATED );
     wxPostEvent( m_MainFrame, event );
 }
 
@@ -2190,7 +2176,7 @@ void guPlayerPanel::SetPlaySmart( bool playsmart )
     m_SmartPlayButton->SetToolTip( TipText );
 
     // Send Notification for the mpris interface
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STATUSCHANGED );
     wxPostEvent( m_MainFrame, event );
 }
 
@@ -2242,7 +2228,7 @@ void guPlayerPanel::SetPlayLoop( int playloop )
     m_RepeatPlayButton->SetToolTip( TipText );
 
     // Send Notification for the mpris interface
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STATUSCHANGED );
+    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STATUSCHANGED );
     wxPostEvent( m_MainFrame, event );
 }
 
@@ -2697,7 +2683,7 @@ void guPlayerPanel::OnSmartPlayButtonClick( wxCommandEvent &event )
 void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 {
     m_PlayListCtrl->Randomize( ( GetState() == guMEDIASTATE_PLAYING ) );
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKLISTCHANGED );
+    wxCommandEvent evt( wxEVT_MENU, ID_PLAYERPANEL_TRACKLISTCHANGED );
     wxPostEvent( this, evt );
 }
 
@@ -2873,7 +2859,7 @@ void guPlayerPanel::SetVolume( double volume )
     m_MediaCtrl->SetVolume(  volume / ( double ) 100.0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
 
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_VOLUMECHANGED );
+    wxCommandEvent evt( wxEVT_MENU, ID_PLAYERPANEL_VOLUMECHANGED );
     wxPostEvent( m_MainFrame, evt );
 }
 
@@ -2883,7 +2869,7 @@ bool guPlayerPanel::SetPosition( int pos )
     bool Result = m_MediaCtrl->Seek( pos );
     if( Result )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SEEKED );
+        wxCommandEvent evt( wxEVT_MENU, ID_PLAYERPANEL_SEEKED );
         evt.SetInt( pos );
         wxPostEvent( m_MainFrame, evt );
     }
@@ -2902,7 +2888,7 @@ void guPlayerPanel::OnTitleNameDClicked( wxMouseEvent &event )
     if( ( m_MediaSong.m_MediaViewer && m_MediaSong.m_SongId ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
         evt.SetInt( m_MediaSong.m_SongId );
         evt.SetExtraLong( m_MediaSong.m_Type );
         evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
@@ -2916,7 +2902,7 @@ void guPlayerPanel::OnAlbumNameDClicked( wxMouseEvent &event )
     if( ( m_MediaSong.m_MediaViewer && m_MediaSong.m_SongId ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ALBUM );
         evt.SetInt( m_MediaSong.m_AlbumId );
         evt.SetExtraLong( m_MediaSong.m_Type );
         evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
@@ -2930,7 +2916,7 @@ void guPlayerPanel::OnArtistNameDClicked( wxMouseEvent &event )
     if( ( m_MediaSong.m_MediaViewer && m_MediaSong.m_SongId ) ||
         ( m_MediaSong.m_Type == guTRACK_TYPE_PODCAST ) )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
         evt.SetInt( m_MediaSong.m_ArtistId );
         evt.SetExtraLong( m_MediaSong.m_Type );
         evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
@@ -2943,7 +2929,7 @@ void guPlayerPanel::OnYearDClicked( wxMouseEvent &event )
 {
     if( m_MediaSong.m_MediaViewer && m_MediaSong.m_Year )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_YEAR );
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_YEAR );
         evt.SetInt( m_MediaSong.m_Year );
         evt.SetClientData( ( void * ) m_MediaSong.m_MediaViewer );
         wxPostEvent( m_MainFrame, evt );
@@ -3166,7 +3152,7 @@ void guPlayerPanel::CheckStartPlaying( void )
     // There was a track passed as argument that we will play
     if( m_PlayListCtrl->StartPlaying() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
         OnPlayButtonClick( event );
     }
     else
@@ -3346,7 +3332,7 @@ guUpdatePlayerCoverThread::ExitCode guUpdatePlayerCoverThread::Entry()
         delete m_CurrentTrack->m_CoverImage;
     m_CurrentTrack->m_CoverImage = CoverImage;
 
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_COVERUPDATED );
+    wxCommandEvent Event( wxEVT_MENU, ID_PLAYERPANEL_COVERUPDATED );
     Event.SetInt( m_ShowNotify );
     wxPostEvent( m_PlayerPanel, Event );
 

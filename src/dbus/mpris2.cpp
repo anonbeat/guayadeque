@@ -1419,7 +1419,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                     {
                                         guMainFrame * MainFrame = guMainFrame::GetMainFrame();
 
-                                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_VIEW_FULLSCREEN );
+                                        wxCommandEvent event( wxEVT_MENU, ID_MENU_VIEW_FULLSCREEN );
                                         event.SetInt( FullScreen );
                                         wxPostEvent( MainFrame, event );
 
@@ -1450,7 +1450,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                             PlayLoop = guPLAYER_PLAYLOOP_PLAYLIST;
                                         }
 
-                                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETLOOP );
+                                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_SETLOOP );
                                         event.SetInt( PlayLoop );
                                         wxPostEvent( m_PlayerPanel, event );
 
@@ -1468,7 +1468,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "Shuffle" ) )
                                 {
-                                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETRANDOM );
+                                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_SETRANDOM );
                                     wxPostEvent( m_PlayerPanel, event );
                                     Send( reply );
                                     Flush();
@@ -1479,7 +1479,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                     double Volume;
                                     if( GetVariant( msg->GetMessage(), DBUS_TYPE_DOUBLE, &Volume ) )
                                     {
-                                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_SETVOLUME );
+                                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_SETVOLUME );
                                         event.SetInt( ( int ) ( Volume * 100 ) );
                                         wxPostEvent( m_PlayerPanel, event );
                                         Send( reply );
@@ -1500,7 +1500,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
             {
                 if( !strcmp( Member, "Raise" ) )
                 {
-                    wxCommandEvent RaiseCmd( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_WINDOW_RAISE );
+                    wxCommandEvent RaiseCmd( wxEVT_MENU, ID_MAINFRAME_WINDOW_RAISE );
                     wxPostEvent( wxTheApp->GetTopWindow(), RaiseCmd );
 
                     Send( reply );
@@ -1509,7 +1509,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 }
                 else if( !strcmp( Member, "Quit" ) )
                 {
-                    wxCommandEvent QuitCmd( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_QUIT );
+                    wxCommandEvent QuitCmd( wxEVT_MENU, ID_MENU_QUIT );
                     wxPostEvent( wxTheApp->GetTopWindow(), QuitCmd );
                     Send( reply );
                     Flush();
@@ -1524,7 +1524,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
             {
                 if( !strcmp( Member, "Next" ) )
                 {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_NEXTTRACK );
                     wxPostEvent( m_PlayerPanel, event );
                     Send( reply );
                     Flush();
@@ -1532,7 +1532,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 }
                 else if( !strcmp( Member, "Previous" ) )
                 {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PREVTRACK );
                     wxPostEvent( m_PlayerPanel, event );
                     Send( reply );
                     Flush();
@@ -1542,7 +1542,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 {
                     if( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING )
                     {
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
                     }
                     Send( reply );
@@ -1553,7 +1553,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 {
                     //if( m_PlayerPanel->GetState() == guMediaState_PLAYING )
                     //{
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
                     //}
                     Send( reply );
@@ -1562,7 +1562,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 }
                 else if( !strcmp( Member, "Stop" ) )
                 {
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STOP );
                     wxPostEvent( m_PlayerPanel, event );
                     Send( reply );
                     Flush();
@@ -1572,7 +1572,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 {
                     if( m_PlayerPanel->GetState() != guMEDIASTATE_PLAYING )
                     {
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
                     }
                     Send( reply );
@@ -1699,7 +1699,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                         if( PlaylistName.ToLong( &PlaylistId ) )
                         {
                             // Send Event to the PlayerPanel to load the playlist
-                            wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LOAD_PLAYLIST );
+                            wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_LOAD_PLAYLIST );
                             CmdEvent.SetInt( PlaylistId );
                             wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 

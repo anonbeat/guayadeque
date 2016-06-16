@@ -35,11 +35,11 @@ namespace Guayadeque {
 guUserRadioProvider::guUserRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios ) :
     guRadioProvider( radiopanel, dbradios )
 {
-    radiopanel->Connect( ID_RADIO_USER_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guUserRadioProvider::OnRadioAdd ), NULL, this );
-    radiopanel->Connect( ID_RADIO_USER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guUserRadioProvider::OnRadioEdit ), NULL, this );
-    radiopanel->Connect( ID_RADIO_USER_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guUserRadioProvider::OnRadioDelete ), NULL, this );
-    radiopanel->Connect( ID_RADIO_USER_IMPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guUserRadioProvider::OnRadioImport ), NULL, this );
-    radiopanel->Connect( ID_RADIO_USER_EXPORT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guUserRadioProvider::OnRadioExport ), NULL, this );
+    radiopanel->Bind( wxEVT_MENU, &guUserRadioProvider::OnRadioAdd, this, ID_RADIO_USER_ADD );
+    radiopanel->Bind( wxEVT_MENU, &guUserRadioProvider::OnRadioEdit, this, ID_RADIO_USER_EDIT );
+    radiopanel->Bind( wxEVT_MENU, &guUserRadioProvider::OnRadioDelete, this, ID_RADIO_USER_DEL );
+    radiopanel->Bind( wxEVT_MENU, &guUserRadioProvider::OnRadioImport, this, ID_RADIO_USER_IMPORT );
+    radiopanel->Bind( wxEVT_MENU, &guUserRadioProvider::OnRadioExport, this, ID_RADIO_USER_EXPORT );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -91,11 +91,10 @@ guSplashFrame::guSplashFrame( wxWindow * parent, int timeout ) :
     m_Timer.SetOwner( this );
     m_Timer.Start( timeout, wxTIMER_ONE_SHOT );
 
-	// Connect Events
-//    Connect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
-    Connect( wxEVT_ERASE_BACKGROUND,  wxEraseEventHandler( guSplashFrame::OnEraseBackground ), NULL, this );
-	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
-	Connect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
+	// Bind Events
+    Bind( wxEVT_ERASE_BACKGROUND,  &guSplashFrame::OnEraseBackground, this );
+	Bind( wxEVT_LEFT_DOWN, &guSplashFrame::OnSplashClick, this );
+	Bind( wxEVT_TIMER, &guSplashFrame::OnTimeout, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -106,11 +105,10 @@ guSplashFrame::~guSplashFrame()
         delete m_Bitmap;
     }
 
-	// Disconnect Events
-//    Disconnect( wxEVT_PAINT, wxPaintEventHandler( guSplashFrame::OnPaint ), NULL, this );
-    Disconnect( wxEVT_ERASE_BACKGROUND,  wxEraseEventHandler( guSplashFrame::OnEraseBackground ), NULL, this );
-	Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guSplashFrame::OnSplashClick ), NULL, this );
-	Disconnect( wxEVT_TIMER, wxTimerEventHandler( guSplashFrame::OnTimeout ), NULL, this );
+    // Unbind Events
+    Unbind( wxEVT_ERASE_BACKGROUND,  &guSplashFrame::OnEraseBackground, this );
+    Unbind( wxEVT_LEFT_DOWN, &guSplashFrame::OnSplashClick, this );
+    Unbind( wxEVT_TIMER, &guSplashFrame::OnTimeout, this );
 }
 
 // -------------------------------------------------------------------------------- //

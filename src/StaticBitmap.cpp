@@ -33,13 +33,13 @@ guStaticBitmap::guStaticBitmap( wxWindow * parent, wxWindowID id, const wxBitmap
 {
     m_MouseOverTimer = new guStaticBitmapTimer( this );
 
-    Connect( wxEVT_MOTION, wxMouseEventHandler( guStaticBitmap::OnMouse ), NULL, this );
+    Bind( wxEVT_MOTION, &guStaticBitmap::OnMouse, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guStaticBitmap::~guStaticBitmap()
 {
-    Disconnect( wxEVT_MOTION, wxMouseEventHandler( guStaticBitmap::OnMouse ), NULL, this );
+    Unbind( wxEVT_MOTION, &guStaticBitmap::OnMouse, this );
 
     if( m_MouseOverTimer )
     {

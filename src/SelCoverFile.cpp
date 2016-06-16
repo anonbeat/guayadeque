@@ -85,10 +85,10 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 
 	m_StdBtnOk->SetDefault();
 
-	m_SelFileBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
-	m_FileLink->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
+    m_SelFileBtn->Bind( wxEVT_BUTTON, &guSelCoverFile::OnSelFileClicked, this );
+    m_FileLink->Bind( wxEVT_TEXT, &guSelCoverFile::OnPathChanged, this );
 
-	Connect( ID_SELCOVERDIALOG_FINISH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSelCoverFile::OnCoverFinish ), NULL, this );
+    Bind( wxEVT_MENU, &guSelCoverFile::OnCoverFinish, this, ID_SELCOVERDIALOG_FINISH );
 
 	m_FileLink->SetFocus();
 }
@@ -99,10 +99,10 @@ guSelCoverFile::~guSelCoverFile()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "general" ) );
 
-	m_SelFileBtn->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guSelCoverFile::OnSelFileClicked ), NULL, this );
-	m_FileLink->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guSelCoverFile::OnPathChanged ), NULL, this );
+    m_SelFileBtn->Unbind( wxEVT_BUTTON, &guSelCoverFile::OnSelFileClicked, this );
+    m_FileLink->Unbind( wxEVT_TEXT, &guSelCoverFile::OnPathChanged, this );
 
-	Disconnect( ID_SELCOVERDIALOG_FINISH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSelCoverFile::OnCoverFinish ), NULL, this );
+    Unbind( wxEVT_MENU, &guSelCoverFile::OnCoverFinish, this, ID_SELCOVERDIALOG_FINISH );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -122,7 +122,7 @@ void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
         {
             m_FileLink->SetValue( FileDialog->GetPath() );
 
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_SELCOVERDIALOG_FINISH );
+            wxCommandEvent event( wxEVT_MENU, ID_SELCOVERDIALOG_FINISH );
             AddPendingEvent( event );
         }
         FileDialog->Destroy();

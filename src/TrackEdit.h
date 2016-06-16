@@ -248,11 +248,11 @@ class guTrackEditor : public wxDialog, guAcousticIdClient
 
     void                                OnPageChanged( wxNotebookEvent &event );
 
-	void                                UpdateArtists( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_ArtistComboBox, Event ); }
-	void                                UpdateAlbumArtists( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_AlbumArtistComboBox, Event ); }
-	void                                UpdateAlbums( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_AlbumComboBox, Event ); }
-	void                                UpdateComposers( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_CompComboBox, Event ); }
-	void                                UpdateGenres( void ) { wxCommandEvent Event( wxEVT_COMMAND_TEXT_UPDATED ); wxPostEvent( m_GenreComboBox, Event ); }
+    void                                UpdateArtists( void ) { wxCommandEvent Event( wxEVT_TEXT ); wxPostEvent( m_ArtistComboBox, Event ); }
+    void                                UpdateAlbumArtists( void ) { wxCommandEvent Event( wxEVT_TEXT ); wxPostEvent( m_AlbumArtistComboBox, Event ); }
+    void                                UpdateAlbums( void ) { wxCommandEvent Event( wxEVT_TEXT ); wxPostEvent( m_AlbumComboBox, Event ); }
+    void                                UpdateComposers( void ) { wxCommandEvent Event( wxEVT_TEXT ); wxPostEvent( m_CompComboBox, Event ); }
+    void                                UpdateGenres( void ) { wxCommandEvent Event( wxEVT_TEXT ); wxPostEvent( m_GenreComboBox, Event ); }
 
 	void                                OnSelectTimeout( wxTimerEvent &event );
 

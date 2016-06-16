@@ -70,10 +70,10 @@ guMediaViewer * FindMediaViewerByPath( guMainFrame * mainframe, const wxString c
 // -------------------------------------------------------------------------------- //
 // guGenericDirCtrl
 // -------------------------------------------------------------------------------- //
-BEGIN_EVENT_TABLE(guGenericDirCtrl, wxGenericDirCtrl)
+wxBEGIN_EVENT_TABLE( guGenericDirCtrl, wxGenericDirCtrl )
     EVT_TREE_BEGIN_LABEL_EDIT( wxID_ANY, guGenericDirCtrl::OnBeginRenameDir )
     EVT_TREE_END_LABEL_EDIT( wxID_ANY, guGenericDirCtrl::OnEndRenameDir )
-END_EVENT_TABLE()
+wxEND_EVENT_TABLE()
 
 // -------------------------------------------------------------------------------- //
 guGenericDirCtrl::guGenericDirCtrl( wxWindow * parent, guMainFrame * mainframe, const int showpaths  ) :
@@ -92,7 +92,7 @@ guGenericDirCtrl::guGenericDirCtrl( wxWindow * parent, guMainFrame * mainframe, 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guGenericDirCtrl::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guGenericDirCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -101,7 +101,7 @@ guGenericDirCtrl::~guGenericDirCtrl()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guGenericDirCtrl::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guGenericDirCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -235,10 +235,10 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guMainFrame * mai
 	this->SetSizer( MainSizer );
 	this->Layout();
 
-    m_DirCtrl->Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
-	m_ShowLibPathsBtn->Connect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
+    m_DirCtrl->Bind( wxEVT_TREE_ITEM_MENU, &guFileBrowserDirCtrl::OnContextMenu, this );
+    m_ShowLibPathsBtn->Bind( wxEVT_TOGGLEBUTTON, &guFileBrowserDirCtrl::OnShowLibPathsClick, this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFileBrowserDirCtrl::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guFileBrowserDirCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 }
@@ -250,10 +250,11 @@ guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
     Config->UnRegisterObject( this );
 
     Config->WriteNum( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "filebrowser" ) );
-    m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guFileBrowserDirCtrl::OnContextMenu ), NULL, this );
-	m_ShowLibPathsBtn->Disconnect( wxEVT_COMMAND_TOGGLEBUTTON_CLICKED, wxCommandEventHandler( guFileBrowserDirCtrl::OnShowLibPathsClick ), NULL, this );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFileBrowserDirCtrl::OnConfigUpdated ), NULL, this );
+    m_DirCtrl->Unbind( wxEVT_TREE_ITEM_MENU, &guFileBrowserDirCtrl::OnContextMenu, this );
+    m_ShowLibPathsBtn->Unbind( wxEVT_TOGGLEBUTTON, &guFileBrowserDirCtrl::OnShowLibPathsClick, this );
+
+    Unbind( guConfigUpdatedEvent, &guFileBrowserDirCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -686,7 +687,7 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
         InsertColumn( Column );
     }
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFilesListBox::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guFilesListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 
@@ -716,7 +717,7 @@ guFilesListBox::~guFilesListBox()
     Config->WriteNum( wxT( "Order" ), m_Order, wxT( "filebrowser" ) );
     Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "filebrowser" ) );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guFilesListBox::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guFilesListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1030,7 +1031,7 @@ void guFilesListBox::GetItemsList( void )
 {
     GetPathSordedItems( m_CurDir, &m_Files, m_Order, m_OrderDesc );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -1568,34 +1569,34 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
 
     m_AuiManager.LoadPerspective( FileBrowserLayout, true );
 
-	m_DirCtrl->Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guFileBrowser::OnDirItemChanged ), NULL, this );
-    m_FilesCtrl->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,  wxListEventHandler( guFileBrowser::OnFileItemActivated ), NULL, this );
-	m_FilesCtrl->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guFileBrowser::OnFilesColClick ), NULL, this );
+    m_DirCtrl->Bind( wxEVT_TREE_SEL_CHANGED, &guFileBrowser::OnDirItemChanged, this );
+    m_FilesCtrl->Bind( wxEVT_LISTBOX_DCLICK, &guFileBrowser::OnFileItemActivated, this );
+    m_FilesCtrl->Bind( wxEVT_LIST_COL_CLICK, &guFileBrowser::OnFilesColClick, this );
 
-    Connect( ID_FILESYSTEM_FOLDER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPlay ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueue ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopy ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPaste ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEditTracks ), NULL, this );
-    Connect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
-    m_DirCtrl->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderPlay, this, ID_FILESYSTEM_FOLDER_PLAY );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderEnqueue, this, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderNew, this, ID_FILESYSTEM_FOLDER_NEW );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderRename, this, ID_FILESYSTEM_FOLDER_RENAME );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderDelete, this, ID_FILESYSTEM_FOLDER_DELETE );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderCopy, this, ID_FILESYSTEM_FOLDER_COPY );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderPaste, this, ID_FILESYSTEM_FOLDER_PASTE );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderEditTracks, this, ID_FILESYSTEM_FOLDER_EDITTRACKS );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderSaveToPlayList, this, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST );
+    m_DirCtrl->Bind( wxEVT_MENU, &guFileBrowser::OnFolderCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    m_DirCtrl->Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ), NULL, this );
+    m_DirCtrl->Bind( wxEVT_MENU, &guFileBrowser::OnFolderCommand, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
-    Connect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsSaveToPlayList ), NULL, this );
-    m_FilesCtrl->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsRename ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsDelete ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopy ), NULL, this );
-    Connect( ID_FILESYSTEM_ITEMS_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPaste ), NULL, this );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsPlay, this, ID_FILESYSTEM_ITEMS_PLAY );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsEnqueue, this, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsEditTracks, this, ID_FILESYSTEM_ITEMS_EDITTRACKS );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsSaveToPlayList, this, ID_FILESYSTEM_ITEMS_SAVEPLAYLIST );
+    m_FilesCtrl->Bind( wxEVT_MENU, &guFileBrowser::OnItemsCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsRename, this, ID_FILESYSTEM_ITEMS_RENAME );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsDelete, this, ID_FILESYSTEM_ITEMS_DELETE );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsCopy, this, ID_FILESYSTEM_ITEMS_COPY );
+    Bind( wxEVT_MENU, &guFileBrowser::OnItemsPaste, this, ID_FILESYSTEM_ITEMS_PASTE );
 
-    m_FilesCtrl->Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCommand ), NULL, this );
+    m_FilesCtrl->Bind( wxEVT_MENU, &guFileBrowser::OnItemsCommand, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1606,33 +1607,34 @@ guFileBrowser::~guFileBrowser()
     Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "filebrowser" ) );
     Config->WriteStr( wxT( "Path" ), m_DirCtrl->GetPath(), wxT( "filebrowser" ) );
 
-	m_DirCtrl->Disconnect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guFileBrowser::OnDirItemChanged ), NULL, this );
-    m_FilesCtrl->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED,  wxListEventHandler( guFileBrowser::OnFileItemActivated ), NULL, this );
-	m_FilesCtrl->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guFileBrowser::OnFilesColClick ), NULL, this );
+    m_DirCtrl->Unbind( wxEVT_TREE_SEL_CHANGED, &guFileBrowser::OnDirItemChanged, this );
+    m_FilesCtrl->Unbind( wxEVT_LISTBOX_DCLICK, &guFileBrowser::OnFileItemActivated, this );
+    m_FilesCtrl->Unbind( wxEVT_LIST_COL_CLICK, &guFileBrowser::OnFilesColClick, this );
 
-    Disconnect( ID_FILESYSTEM_FOLDER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPlay ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEnqueue ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderNew ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderRename ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderDelete ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopy ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderPaste ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderEditTracks ), NULL, this );
-    Disconnect( ID_FILESYSTEM_FOLDER_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderSaveToPlayList ), NULL, this );
-    m_DirCtrl->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCopyTo ), NULL, this );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderPlay, this, ID_FILESYSTEM_FOLDER_PLAY );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderEnqueue, this, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_FOLDER_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderNew, this, ID_FILESYSTEM_FOLDER_NEW );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderRename, this, ID_FILESYSTEM_FOLDER_RENAME );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderDelete, this, ID_FILESYSTEM_FOLDER_DELETE );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderCopy, this, ID_FILESYSTEM_FOLDER_COPY );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderPaste, this, ID_FILESYSTEM_FOLDER_PASTE );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderEditTracks, this, ID_FILESYSTEM_FOLDER_EDITTRACKS );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderSaveToPlayList, this, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST );
+    m_DirCtrl->Unbind( wxEVT_MENU, &guFileBrowser::OnFolderCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    m_DirCtrl->Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnFolderCommand ), NULL, this );
+    m_DirCtrl->Unbind( wxEVT_MENU, &guFileBrowser::OnFolderCommand, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
-    Disconnect( ID_FILESYSTEM_ITEMS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsPlay ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEnqueue ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsEditTracks ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_SAVEPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsSaveToPlayList ), NULL, this );
-    m_FilesCtrl->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCopyTo ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_RENAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsRename ), NULL, this );
-    Disconnect( ID_FILESYSTEM_ITEMS_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsDelete ), NULL, this );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsPlay, this, ID_FILESYSTEM_ITEMS_PLAY );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsEnqueue, this, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ALL, ID_FILESYSTEM_ITEMS_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsEditTracks, this, ID_FILESYSTEM_ITEMS_EDITTRACKS );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsSaveToPlayList, this, ID_FILESYSTEM_ITEMS_SAVEPLAYLIST );
+    m_FilesCtrl->Unbind( wxEVT_MENU, &guFileBrowser::OnItemsCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsRename, this, ID_FILESYSTEM_ITEMS_RENAME );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsDelete, this, ID_FILESYSTEM_ITEMS_DELETE );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsCopy, this, ID_FILESYSTEM_ITEMS_COPY );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnItemsPaste, this, ID_FILESYSTEM_ITEMS_PASTE );
 
-    m_FilesCtrl->Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guFileBrowser::OnItemsCommand ), NULL, this );
-
+    m_FilesCtrl->Unbind( wxEVT_MENU, &guFileBrowser::OnItemsCommand, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1663,7 +1665,7 @@ void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guFileBrowser::OnFileItemActivated( wxListEvent &Event )
+void guFileBrowser::OnFileItemActivated( wxCommandEvent &Event )
 {
     wxArrayInt Selection = m_FilesCtrl->GetSelectedItems( false );
     if( Selection.Count() )

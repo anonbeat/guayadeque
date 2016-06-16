@@ -34,7 +34,7 @@ namespace Guayadeque {
 WX_DEFINE_OBJARRAY(guPodcastChannelArray);
 WX_DEFINE_OBJARRAY(guPodcastItemArray);
 
-const wxEventType guPodcastEvent = wxNewEventType();
+wxDEFINE_EVENT( guPodcastEvent, wxCommandEvent );
 
 // -------------------------------------------------------------------------------- //
 unsigned int StrLengthToInt( const wxString &length )

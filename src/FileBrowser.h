@@ -267,7 +267,7 @@ class guFileBrowser : public guAuiManagerPanel
 	guFileBrowserFileCtrl * m_FilesCtrl;
 
     void                    OnDirItemChanged( wxTreeEvent &event );
-    void                    OnFileItemActivated( wxListEvent &Event );
+    void                    OnFileItemActivated( wxCommandEvent &Event );
     void                    OnFilesColClick( wxListEvent &event );
     void                    OnDirBeginDrag( wxTreeEvent &event );
 

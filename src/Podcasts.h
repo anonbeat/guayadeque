@@ -144,7 +144,7 @@ class guPodcastChannel
 WX_DECLARE_OBJARRAY(guPodcastChannel, guPodcastChannelArray);
 
 
-extern const wxEventType guPodcastEvent;
+wxDECLARE_EVENT( guPodcastEvent, wxCommandEvent );
 
 // -------------------------------------------------------------------------------- //
 class guPodcastDownloadQueueThread : public wxThread

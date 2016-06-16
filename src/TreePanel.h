@@ -169,7 +169,7 @@ class guTreeViewPanel : public guAuiManagerPanel
     void                    OnTreeViewCopyTo( wxCommandEvent &event );
 
 
-    virtual void            OnTVTracksActivated( wxListEvent &event );
+    virtual void            OnTVTracksActivated( wxCommandEvent &event );
     void                    OnTVTracksPlayClicked( wxCommandEvent &event );
     void                    OnTVTracksQueueClicked( wxCommandEvent &event );
     void                    OnTVTracksEditLabelsClicked( wxCommandEvent &event );

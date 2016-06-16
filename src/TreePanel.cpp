@@ -91,11 +91,11 @@ guTreeViewTreeCtrl::guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guT
 
     SetIndent( 10 );
 
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnSearchLinkClicked ) );
-    Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guTreeViewTreeCtrl::OnContextMenu ), NULL, this );
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewTreeCtrl::OnCommandClicked ) );
+    Bind( wxEVT_MENU, &guTreeViewTreeCtrl::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_TREE_ITEM_MENU, &guTreeViewTreeCtrl::OnContextMenu, this );
+    Bind( wxEVT_MENU, &guTreeViewTreeCtrl::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guTreeViewTreeCtrl::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guTreeViewTreeCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 
@@ -117,9 +117,11 @@ guTreeViewTreeCtrl::~guTreeViewTreeCtrl()
     Config->WriteAStr( wxT( "Filter" ), m_FilterEntries, m_ConfigPath + wxT( "/sortings" ) );
     Config->WriteNum( wxT( "TreeViewFilter" ), m_CurrentFilter, m_ConfigPath );
 
-    Disconnect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guTreeViewTreeCtrl::OnContextMenu ), NULL, this );
+    Unbind( wxEVT_MENU, &guTreeViewTreeCtrl::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_TREE_ITEM_MENU, &guTreeViewTreeCtrl::OnContextMenu, this );
+    Unbind( wxEVT_MENU, &guTreeViewTreeCtrl::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guTreeViewTreeCtrl::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guTreeViewTreeCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -860,52 +862,47 @@ void guTreeViewPanel::CreateControls( void )
     m_AuiManager.LoadPerspective( TreeViewLayout, true );
 
 
-	Connect( wxEVT_COMMAND_TREE_SEL_CHANGED, wxTreeEventHandler( guTreeViewPanel::OnTreeViewSelected ), NULL, this );
-	Connect( wxEVT_COMMAND_TREE_ITEM_ACTIVATED, wxTreeEventHandler( guTreeViewPanel::OnTreeViewActivated ), NULL, this );
+    Bind( wxEVT_TREE_SEL_CHANGED, &guTreeViewPanel::OnTreeViewSelected, this );
+    Bind( wxEVT_TREE_ITEM_ACTIVATED, &guTreeViewPanel::OnTreeViewActivated, this );
 
-    Connect( ID_TREEVIEW_FILTER_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewNewFilter ), NULL, this );
-    Connect( ID_TREEVIEW_FILTER_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewEditFilter ), NULL, this );
-    Connect( ID_TREEVIEW_FILTER_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewDeleteFilter ), NULL, this );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewNewFilter, this, ID_TREEVIEW_FILTER_NEW );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewEditFilter, this, ID_TREEVIEW_FILTER_EDIT );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewDeleteFilter, this, ID_TREEVIEW_FILTER_DELETE );
 
-    Connect( ID_TREEVIEW_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewPlay ), NULL, this );
-    Connect( ID_TREEVIEW_ENQUEUE_AFTER_ALL, ID_TREEVIEW_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewEnqueue ), NULL, this );
-    Connect( ID_TREEVIEW_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewEditLabels ), NULL, this );
-    Connect( ID_TREEVIEW_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewEditTracks ), NULL, this );
-    Connect( ID_TREEVIEW_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewSaveToPlayList ), NULL, this );
-    m_TreeViewCtrl->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTreeViewCopyTo ), NULL, this );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewPlay, this, ID_TREEVIEW_PLAY );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewEnqueue, this, ID_TREEVIEW_ENQUEUE_AFTER_ALL, ID_TREEVIEW_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewEditLabels, this, ID_TREEVIEW_EDITLABELS );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewEditTracks, this, ID_TREEVIEW_EDITTRACKS );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewSaveToPlayList, this, ID_TREEVIEW_SAVETOPLAYLIST );
+    m_TreeViewCtrl->Bind( wxEVT_MENU, &guTreeViewPanel::OnTreeViewCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    m_TVTracksListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guTreeViewPanel::OnTrackListColClicked ), NULL, this );
+    m_TVTracksListBox->Bind( wxEVT_LIST_COL_CLICK, &guTreeViewPanel::OnTrackListColClicked, this );
 
-    m_TVTracksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guTreeViewPanel::OnTVTracksActivated ), NULL, this );
-    Connect( ID_TRACKS_DELETE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksDeleteLibrary ), NULL, this );
-    Connect( ID_TRACKS_DELETE_DRIVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksDeleteDrive ), NULL, this );
-    Connect( ID_TRACKS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksPlayClicked ), NULL, this );
-    Connect( ID_TRACKS_ENQUEUE_AFTER_ALL, ID_TRACKS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksQueueClicked ), NULL, this );
-    Connect( ID_TRACKS_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditLabelsClicked ), NULL, this );
-    Connect( ID_TRACKS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditTracksClicked ), NULL, this );
-    m_TVTracksListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksCopyToClicked ), NULL, this );
-    Connect( ID_TRACKS_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSavePlayListClicked ), NULL, this );
-    Connect( ID_TRACKS_SET_RATING_0, ID_TRACKS_SET_RATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetRating ), NULL, this );
-    Connect( ID_TRACKS_SET_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSetField ), NULL, this );
-    Connect( ID_TRACKS_EDIT_COLUMN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksEditField ), NULL, this );
+    m_TVTracksListBox->Bind( wxEVT_LISTBOX_DCLICK, &guTreeViewPanel::OnTVTracksActivated, this );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksDeleteLibrary, this, ID_TRACKS_DELETE_LIBRARY );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksDeleteDrive, this, ID_TRACKS_DELETE_DRIVE );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksPlayClicked, this, ID_TRACKS_PLAY );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSetRating, this, ID_TRACKS_ENQUEUE_AFTER_ALL, ID_TRACKS_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksEditLabelsClicked, this, ID_TRACKS_EDITLABELS );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksEditTracksClicked, this, ID_TRACKS_EDITTRACKS );
+    m_TVTracksListBox->Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSavePlayListClicked, this, ID_TRACKS_SAVETOPLAYLIST );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSetRating, this, ID_TRACKS_SET_RATING_0, ID_TRACKS_SET_RATING_5 );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSetField, this, ID_TRACKS_SET_COLUMN );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksEditField, this, ID_TRACKS_EDIT_COLUMN );
 
-    Connect( ID_TRACKS_BROWSE_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectGenre ), NULL, this );
-    Connect( ID_TRACKS_BROWSE_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectArtist ), NULL, this );
-    Connect( ID_TRACKS_BROWSE_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbumArtist ), NULL, this );
-    Connect( ID_TRACKS_BROWSE_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectComposer ), NULL, this );
-    Connect( ID_TRACKS_BROWSE_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTreeViewPanel::OnTVTracksSelectAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSelectGenre, this, ID_TRACKS_BROWSE_GENRE );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSelectArtist, this, ID_TRACKS_BROWSE_ARTIST );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSelectAlbumArtist, this, ID_TRACKS_BROWSE_ALBUMARTIST );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSelectComposer, this, ID_TRACKS_BROWSE_COMPOSER );
+    Bind( wxEVT_MENU, &guTreeViewPanel::OnTVTracksSelectAlbum, this, ID_TRACKS_BROWSE_ALBUM );
 
-	Connect( guTREEVIEW_TIMER_TREEITEMSELECTED, wxEVT_TIMER, wxTimerEventHandler( guTreeViewPanel::OnTreeItemSelectedTimer ), NULL, this );
+    Bind( wxEVT_TIMER, &guTreeViewPanel::OnTreeItemSelectedTimer , this, guTREEVIEW_TIMER_TREEITEMSELECTED );
 }
 
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::InitPanelData()
 {
-//    m_PanelNames.Add( wxT( "TreeViewTextSearch" ) );
-//
-//    m_PanelIds.Add( guPANEL_TREEVIEW_TEXTSEARCH );
-//
-//    m_PanelCmdIds.Add( ID_MENU_VIEW_TV_TEXTSEARCH );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1076,7 +1073,7 @@ void guTreeViewPanel::OnTreeViewEditLabels( wxCommandEvent &event )
 
                     LabelEditor->Destroy();
 
-                    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LABEL_UPDATELABELS );
+                    wxCommandEvent event( wxEVT_MENU, ID_LABEL_UPDATELABELS );
                     wxPostEvent( m_MediaViewer, event );
                 }
             }
@@ -1267,7 +1264,7 @@ void guTreeViewPanel::OnTreeViewCopyTo( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guTreeViewPanel::OnTVTracksActivated( wxListEvent &event )
+void guTreeViewPanel::OnTVTracksActivated( wxCommandEvent &event )
 {
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
@@ -1814,7 +1811,7 @@ void guTreeViewPanel::OnTVTracksDeleteDrive( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::SendPlayListUpdatedEvent( void )
 {
-//    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+//    wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
 //    wxPostEvent( wxTheApp->GetTopWindow(), evt );
     m_MediaViewer->UpdatePlaylists();
 }

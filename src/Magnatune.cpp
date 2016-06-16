@@ -252,13 +252,15 @@ wxString guMagnatuneLibrary::GetAlbumSku( const int albumid )
 guMagnatunePanel::guMagnatunePanel( wxWindow * parent, guMediaViewerMagnatune * mediaviewer ) :
     guLibPanel( parent, mediaviewer )
 {
-    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePanel::OnDownloadTrackAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guMagnatunePanel::OnDownloadAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM );
+    Bind( wxEVT_MENU, &guMagnatunePanel::OnDownloadTrackAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
 guMagnatunePanel::~guMagnatunePanel()
 {
+    Unbind( wxEVT_MENU, &guMagnatunePanel::OnDownloadAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM );
+    Unbind( wxEVT_MENU, &guMagnatunePanel::OnDownloadTrackAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -295,12 +297,13 @@ void guMagnatunePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 guMagnatuneAlbumBrowser::guMagnatuneAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guAlbumBrowser( parent, mediaviewer )
 {
-    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatuneAlbumBrowser::OnDownloadAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guMagnatuneAlbumBrowser::OnDownloadAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM  );
 }
 
 // -------------------------------------------------------------------------------- //
 guMagnatuneAlbumBrowser::~guMagnatuneAlbumBrowser()
 {
+    Unbind( wxEVT_MENU, &guMagnatuneAlbumBrowser::OnDownloadAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM  );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -321,13 +324,15 @@ void guMagnatuneAlbumBrowser::OnDownloadAlbum( wxCommandEvent &event )
 guMagnatuneTreePanel::guMagnatuneTreePanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guTreeViewPanel( parent, mediaviewer )
 {
-    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatuneTreePanel::OnDownloadAlbum ), NULL, this );
-    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatuneTreePanel::OnDownloadTrackAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guMagnatuneTreePanel::OnDownloadAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM  );
+    Bind( wxEVT_MENU, &guMagnatuneTreePanel::OnDownloadTrackAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM  );
 }
 
 // -------------------------------------------------------------------------------- //
 guMagnatuneTreePanel::~guMagnatuneTreePanel()
 {
+    Unbind( wxEVT_MENU, &guMagnatuneTreePanel::OnDownloadAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_ALBUM  );
+    Unbind( wxEVT_MENU, &guMagnatuneTreePanel::OnDownloadTrackAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM  );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -375,12 +380,13 @@ void guMagnatuneTreePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
 guMagnatunePlayListPanel::guMagnatunePlayListPanel( wxWindow * parent, guMediaViewer * mediaviewer ) :
     guPlayListPanel( parent, mediaviewer )
 {
-    Connect( ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMagnatunePlayListPanel::OnDownloadTrackAlbum ), NULL, this );
+    Bind( wxEVT_MENU, &guMagnatunePlayListPanel::OnDownloadTrackAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
 guMagnatunePlayListPanel::~guMagnatunePlayListPanel()
 {
+    Unbind( wxEVT_MENU, &guMagnatunePlayListPanel::OnDownloadTrackAlbum, this, ID_MAGNATUNE_DOWNLOAD_DIRECT_TRACK_ALBUM );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -462,7 +468,7 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
             m_Db->ExecuteUpdate( query );
 
             // Notify the panel that the cover is downloaded
-            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAGNATUNE_COVER_DOWNLAODED );
+            wxCommandEvent event( wxEVT_MENU, ID_MAGNATUNE_COVER_DOWNLAODED );
             event.SetInt( m_AlbumId );
             wxPostEvent( m_MediaViewer, event );
         }
@@ -499,7 +505,7 @@ guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMediaViewer * mediaviewer, i
 // -------------------------------------------------------------------------------- //
 guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
 {
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
 
@@ -728,10 +734,10 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
 {
     wxString query;
 
-    wxCommandEvent evtup( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+    wxCommandEvent evtup( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
     evtup.SetInt( m_GaugeId );
 
-    wxCommandEvent evtmax( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent evtmax( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     evtmax.SetInt( m_GaugeId );
 
     if( m_Action == guMAGNATUNE_ACTION_UPDATE &&
@@ -845,8 +851,8 @@ guMediaViewerMagnatune::guMediaViewerMagnatune( wxWindow * parent, guMediaCollec
     m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) );
     m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) );
 
-    Connect( ID_MAGNATUNE_COVER_DOWNLAODED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerMagnatune::OnCoverDownloaded ), NULL, this );
-    Connect( ID_MAGNATUNE_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMediaViewerMagnatune::OnUpdateFinished ), NULL, this );
+    Bind( wxEVT_MENU, &guMediaViewerMagnatune::OnCoverDownloaded, this, ID_MAGNATUNE_COVER_DOWNLAODED  );
+    Bind( wxEVT_MENU, &guMediaViewerMagnatune::OnUpdateFinished, this, ID_MAGNATUNE_UPDATE_FINISHED  );
 
     InitMediaViewer( mode );
 }
@@ -854,7 +860,8 @@ guMediaViewerMagnatune::guMediaViewerMagnatune( wxWindow * parent, guMediaCollec
 // -------------------------------------------------------------------------------- //
 guMediaViewerMagnatune::~guMediaViewerMagnatune()
 {
-    guLogMessage( wxT( "Destroying MediaViewerMagnatune Object..." ) );
+    Unbind( wxEVT_MENU, &guMediaViewerMagnatune::OnCoverDownloaded, this, ID_MAGNATUNE_COVER_DOWNLAODED  );
+    Unbind( wxEVT_MENU, &guMediaViewerMagnatune::OnUpdateFinished, this, ID_MAGNATUNE_UPDATE_FINISHED  );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1234,7 +1241,7 @@ bool guMediaViewerMagnatune::FindMissingCover( const int albumid, const wxString
 // -------------------------------------------------------------------------------- //
 void guMediaViewerMagnatune::EditProperties( void )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
     wxPostEvent( m_MainFrame, CmdEvent );
 }

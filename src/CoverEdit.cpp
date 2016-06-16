@@ -177,21 +177,21 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     m_EngineIndex = Config->ReadNum( wxT( "CoverSearchEngine" ), 0, wxT( "general" ) );
     m_EngineChoice->SetSelection( m_EngineIndex );
 
-    // Connect Events
-    m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
-    m_AlbumTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+    // Bind Events
+    m_ArtistTextCtrl->Bind( wxEVT_TEXT_ENTER, &guCoverEditor::OnTextCtrlEnter, this );
+    m_AlbumTextCtrl->Bind( wxEVT_TEXT_ENTER, &guCoverEditor::OnTextCtrlEnter, this );
 
-    m_EngineChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
+    m_EngineChoice->Bind( wxEVT_CHOICE, &guCoverEditor::OnEngineChanged, this );
 
-    m_CoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
-    m_CoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
-    Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guCoverEditor::OnMouseWheel ), NULL, this );
+    m_CoverBitmap->Bind( wxEVT_LEFT_DCLICK, &guCoverEditor::OnCoverLeftDClick, this );
+    m_CoverBitmap->Bind( wxEVT_LEFT_DOWN, &guCoverEditor::OnCoverLeftClick, this );
+    Bind( wxEVT_MOUSEWHEEL, &guCoverEditor::OnMouseWheel, this );
 
-    m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
-    m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
+    m_PrevButton->Bind( wxEVT_BUTTON, &guCoverEditor::OnPrevButtonClick, this );
+    m_NextButton->Bind( wxEVT_BUTTON, &guCoverEditor::OnNextButtonClick, this );
 
-    Connect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
-    Connect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );
+    Bind( wxEVT_MENU, &guCoverEditor::OnAddCoverImage, this, ID_COVEREDITOR_ADDCOVERIMAGE  );
+    Bind( wxEVT_MENU, &guCoverEditor::OnDownloadedLinks, this, ID_COVEREDITOR_DOWNLOADEDLINKS );
 
     m_DownloadCoversThread = new guFetchCoverLinksThread( this, Artist.c_str(), Album.c_str(), m_EngineIndex );
 
@@ -229,20 +229,22 @@ guCoverEditor::~guCoverEditor()
         m_DownloadCoversThread->Delete();
     }
 
-	// Connect Events
-	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
-	m_AlbumTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guCoverEditor::OnTextCtrlEnter ), NULL, this );
+    // Unbind Events
+    m_ArtistTextCtrl->Unbind( wxEVT_TEXT_ENTER, &guCoverEditor::OnTextCtrlEnter, this );
+    m_AlbumTextCtrl->Unbind( wxEVT_TEXT_ENTER, &guCoverEditor::OnTextCtrlEnter, this );
 
-	m_EngineChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guCoverEditor::OnEngineChanged ), NULL, this );
+    m_EngineChoice->Unbind( wxEVT_CHOICE, &guCoverEditor::OnEngineChanged, this );
 
-	m_CoverBitmap->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guCoverEditor::OnCoverLeftDClick ), NULL, this );
-	m_CoverBitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guCoverEditor::OnCoverLeftClick ), NULL, this );
+    m_CoverBitmap->Unbind( wxEVT_LEFT_DCLICK, &guCoverEditor::OnCoverLeftDClick, this );
+    m_CoverBitmap->Unbind( wxEVT_LEFT_DOWN, &guCoverEditor::OnCoverLeftClick, this );
+    Unbind( wxEVT_MOUSEWHEEL, &guCoverEditor::OnMouseWheel, this );
 
-	m_PrevButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnPrevButtonClick ), NULL, this );
-	m_NextButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guCoverEditor::OnNextButtonClick ), NULL, this );
+    m_PrevButton->Unbind( wxEVT_BUTTON, &guCoverEditor::OnPrevButtonClick, this );
+    m_NextButton->Unbind( wxEVT_BUTTON, &guCoverEditor::OnNextButtonClick, this );
 
-    Disconnect( ID_COVEREDITOR_ADDCOVERIMAGE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnAddCoverImage ) );
-    Disconnect( ID_COVEREDITOR_DOWNLOADEDLINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guCoverEditor::OnDownloadedLinks ) );
+    Unbind( wxEVT_MENU, &guCoverEditor::OnAddCoverImage, this, ID_COVEREDITOR_ADDCOVERIMAGE  );
+    Unbind( wxEVT_MENU, &guCoverEditor::OnDownloadedLinks, this, ID_COVEREDITOR_DOWNLOADEDLINKS );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -594,7 +596,7 @@ guFetchCoverLinksThread::~guFetchCoverLinksThread()
 {
     if( !TestDestroy() )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_DOWNLOADEDLINKS );
+        wxCommandEvent event( wxEVT_MENU, ID_COVEREDITOR_DOWNLOADEDLINKS );
         event.SetClientObject( ( wxClientData * ) this );
         wxPostEvent( m_CoverEditor, event );
     }
@@ -696,7 +698,7 @@ guDownloadCoverThread::ExitCode guDownloadCoverThread::Entry()
     {
         //guLogMessage( wxT( "Done: '%s'" ), m_UrlStr.c_str() );
         //m_CoverEditor->m_DownloadEventsMutex.Lock();
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_COVEREDITOR_ADDCOVERIMAGE );
+        wxCommandEvent event( wxEVT_MENU, ID_COVEREDITOR_ADDCOVERIMAGE );
         event.SetClientObject( ( wxClientData * ) this );
         event.SetClientData( CoverImage );
         wxPostEvent( m_CoverEditor, event );

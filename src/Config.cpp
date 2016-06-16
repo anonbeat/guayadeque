@@ -33,7 +33,7 @@ namespace Guayadeque {
 
 static guConfig * m_Config = NULL;
 
-const wxEventType guConfigUpdatedEvent = wxNewEventType();
+wxDEFINE_EVENT( guConfigUpdatedEvent, wxCommandEvent );
 
 #define guCONFIG_DEFAULT_VERSION    1
 

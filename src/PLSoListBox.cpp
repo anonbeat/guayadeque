@@ -39,7 +39,7 @@ guPLSoListBox::guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wx
     m_TracksOrder = wxNOT_FOUND;
     m_DisableSorting = false;
 
-    Connect( ID_TRACKS_RANDOMIZE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPLSoListBox::OnRandomizeTracks ), NULL, this );
+    Bind( wxEVT_MENU, &guPLSoListBox::OnRandomizeTracks, this, ID_TRACKS_RANDOMIZE );
 
     CreateAcceleratorTable();
 
@@ -49,6 +49,7 @@ guPLSoListBox::guPLSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wx
 // -------------------------------------------------------------------------------- //
 guPLSoListBox::~guPLSoListBox()
 {
+    Unbind( wxEVT_MENU, &guPLSoListBox::OnRandomizeTracks, this, ID_TRACKS_RANDOMIZE );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -99,7 +100,7 @@ void guPLSoListBox::GetItemsList( void )
     }
     SetItemCount( m_Items.Count() );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -179,7 +180,7 @@ void guPLSoListBox::OnKeyDown( wxKeyEvent &event )
 {
     if( event.GetKeyCode() == WXK_DELETE )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_TRACKS_DELETE );
+        wxCommandEvent evt( wxEVT_MENU, ID_TRACKS_DELETE );
         GetParent()->GetEventHandler()->AddPendingEvent( evt );
         return;
     }

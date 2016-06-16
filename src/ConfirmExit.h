@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -46,9 +46,9 @@ class guExitConfirmDlg : public wxDialog
     wxCheckBox * m_AskAgainCheckBox;
 
   public:
-	guExitConfirmDlg( wxWindow * parent ); //
-	~guExitConfirmDlg();
-	bool GetConfirmChecked( void );
+    guExitConfirmDlg( wxWindow * parent ); //
+    ~guExitConfirmDlg();
+    bool GetConfirmChecked( void );
 
 };
 

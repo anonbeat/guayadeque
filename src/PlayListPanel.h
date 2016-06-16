@@ -174,7 +174,7 @@ class guPlayListPanel : public guAuiManagerPanel
     void                OnPLNamesImport( wxCommandEvent &event );
     void                OnPLNamesExport( wxCommandEvent &event );
 
-    virtual void        OnPLTracksActivated( wxListEvent &event );
+    virtual void        OnPLTracksActivated( wxCommandEvent &event );
     void                OnPLTracksPlayClicked( wxCommandEvent &event );
     void                OnPLTracksQueueClicked( wxCommandEvent &event );
     void                OnPLTracksDeleteClicked( wxCommandEvent &event );

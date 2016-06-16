@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -99,306 +99,306 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     }
 
     //
-	SetSizeHints( wxSize( 450,260 ), wxDefaultSize );
+    SetSizeHints( wxSize( 450,260 ), wxDefaultSize );
 
-	wxBoxSizer* MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* MainSizer;
+    MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer* TopSizer;
-	TopSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* TopSizer;
+    TopSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	TopSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    TopSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	wxStaticText * PresetLabel;
-	PresetLabel = new wxStaticText( this, wxID_ANY, _( "Preset:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	PresetLabel->Wrap( -1 );
-	TopSizer->Add( PresetLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    wxStaticText * PresetLabel;
+    PresetLabel = new wxStaticText( this, wxID_ANY, _( "Preset:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    PresetLabel->Wrap( -1 );
+    TopSizer->Add( PresetLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_PresetComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
-	wxString LastPreset = Config->ReadStr( wxT( "LastEqPreset" ), wxEmptyString, wxT( "equalizer" ) );
-	int LastPresetIndex = wxNOT_FOUND;
-	int index;
-	int count = m_EQPresets.Count();
-	for( index = 0; index < count; index++ )
-	{
+    m_PresetComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
+    wxString LastPreset = Config->ReadStr( wxT( "LastEqPreset" ), wxEmptyString, wxT( "equalizer" ) );
+    int LastPresetIndex = wxNOT_FOUND;
+    int index;
+    int count = m_EQPresets.Count();
+    for( index = 0; index < count; index++ )
+    {
         m_PresetComboBox->Append( m_EQPresets[ index ].m_Name );
         if( m_EQPresets[ index ].m_Name == LastPreset )
             LastPresetIndex = index;
-	}
-	TopSizer->Add( m_PresetComboBox, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    }
+    TopSizer->Add( m_PresetComboBox, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_SaveButton->Enable( false );
+    m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_SaveButton->Enable( false );
 
-	TopSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    TopSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_DelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_clear ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_DelButton->Enable( false );
+    m_DelButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit_clear ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_DelButton->Enable( false );
 
-	TopSizer->Add( m_DelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    TopSizer->Add( m_DelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_ResetButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	TopSizer->Add( m_ResetButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    m_ResetButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_reload ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    TopSizer->Add( m_ResetButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	MainSizer->Add( TopSizer, 0, wxEXPAND, 5 );
+    MainSizer->Add( TopSizer, 0, wxEXPAND, 5 );
 
-	wxBoxSizer* BandsSizer;
-	BandsSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer* BandsSizer;
+    BandsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	wxBoxSizer * LabelsSizer;
-	LabelsSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * LabelsSizer;
+    LabelsSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxStaticText * Label = new wxStaticText( this, wxID_ANY, wxT("dBs"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxTOP|wxALIGN_RIGHT, 5 );
+    wxStaticText * Label = new wxStaticText( this, wxID_ANY, wxT("dBs"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxTOP|wxALIGN_RIGHT, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("12"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("12"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("6"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("6"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("3"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
+    LabelsSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxT("-12"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxT("-12"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxALIGN_RIGHT, 5 );
 
-	Label = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	Label->Wrap( -1 );
-	LabelsSizer->Add( Label, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
+    Label = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    Label->Wrap( -1 );
+    LabelsSizer->Add( Label, 0, wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
 
-	BandsSizer->Add( LabelsSizer, 1, wxEXPAND, 5 );
+    BandsSizer->Add( LabelsSizer, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer00;
-	BandSizer00 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer00;
+    BandSizer00 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 0 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 0 ]->Wrap( -1 );
-	BandSizer00->Add( m_Values[ 0 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 0 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 0 ]->Wrap( -1 );
+    BandSizer00->Add( m_Values[ 0 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 0 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 0 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 0 ]->SetLabel( wxT( "0" ) );
-	BandSizer00->Add( m_Bands[ 0 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 0 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 0 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 0 ]->SetLabel( wxT( "0" ) );
+    BandSizer00->Add( m_Bands[ 0 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label0 = new wxStaticText( this, wxID_ANY, wxT("30"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label0->Wrap( -1 );
-	BandSizer00->Add( Label0, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label0 = new wxStaticText( this, wxID_ANY, wxT("30"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label0->Wrap( -1 );
+    BandSizer00->Add( Label0, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer00, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer00, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer01;
-	BandSizer01 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer01;
+    BandSizer01 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 1 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 1 ]->Wrap( -1 );
-	BandSizer01->Add( m_Values[ 1 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 1 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 1 ]->Wrap( -1 );
+    BandSizer01->Add( m_Values[ 1 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 1 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 1 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 1 ]->SetLabel( wxT( "1" ) );
-	BandSizer01->Add( m_Bands[ 1 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 1 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 1 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 1 ]->SetLabel( wxT( "1" ) );
+    BandSizer01->Add( m_Bands[ 1 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label1 = new wxStaticText( this, wxID_ANY, wxT("60"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label1->Wrap( -1 );
-	BandSizer01->Add( Label1, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label1 = new wxStaticText( this, wxID_ANY, wxT("60"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label1->Wrap( -1 );
+    BandSizer01->Add( Label1, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer01, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer01, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer02;
-	BandSizer02 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer02;
+    BandSizer02 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 2 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 2 ]->Wrap( -1 );
-	BandSizer02->Add( m_Values[ 2 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 2 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 2 ]->Wrap( -1 );
+    BandSizer02->Add( m_Values[ 2 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 2 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 2 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 2 ]->SetLabel( wxT( "2" ) );
-	BandSizer02->Add( m_Bands[ 2 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 2 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 2 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 2 ]->SetLabel( wxT( "2" ) );
+    BandSizer02->Add( m_Bands[ 2 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label2 = new wxStaticText( this, wxID_ANY, wxT("120"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label2->Wrap( -1 );
-	BandSizer02->Add( Label2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label2 = new wxStaticText( this, wxID_ANY, wxT("120"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label2->Wrap( -1 );
+    BandSizer02->Add( Label2, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer02, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer02, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer03;
-	BandSizer03 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer03;
+    BandSizer03 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 3 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 3 ]->Wrap( -1 );
-	BandSizer03->Add( m_Values[ 3 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 3 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 3 ]->Wrap( -1 );
+    BandSizer03->Add( m_Values[ 3 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 3 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 3 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 3 ]->SetLabel( wxT( "3" ) );
-	BandSizer03->Add( m_Bands[ 3 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 3 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 3 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 3 ]->SetLabel( wxT( "3" ) );
+    BandSizer03->Add( m_Bands[ 3 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label3 = new wxStaticText( this, wxID_ANY, wxT("250"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label3->Wrap( -1 );
-	BandSizer03->Add( Label3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label3 = new wxStaticText( this, wxID_ANY, wxT("250"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label3->Wrap( -1 );
+    BandSizer03->Add( Label3, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer03, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer03, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer04;
-	BandSizer04 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer04;
+    BandSizer04 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 4 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 4 ]->Wrap( -1 );
-	BandSizer04->Add( m_Values[ 4 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 4 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 4 ]->Wrap( -1 );
+    BandSizer04->Add( m_Values[ 4 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 4 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 4 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 4 ]->SetLabel( wxT( "4" ) );
-	BandSizer04->Add( m_Bands[ 4 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 4 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 4 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 4 ]->SetLabel( wxT( "4" ) );
+    BandSizer04->Add( m_Bands[ 4 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label4 = new wxStaticText( this, wxID_ANY, wxT("500"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label4->Wrap( -1 );
-	BandSizer04->Add( Label4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label4 = new wxStaticText( this, wxID_ANY, wxT("500"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label4->Wrap( -1 );
+    BandSizer04->Add( Label4, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer04, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer04, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer05;
-	BandSizer05 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer05;
+    BandSizer05 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 5 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 5 ]->Wrap( -1 );
-	BandSizer05->Add( m_Values[ 5 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 5 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 5 ]->Wrap( -1 );
+    BandSizer05->Add( m_Values[ 5 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 5 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 5 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 5 ]->SetLabel( wxT( "5" ) );
-	BandSizer05->Add( m_Bands[ 5 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 5 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 5 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 5 ]->SetLabel( wxT( "5" ) );
+    BandSizer05->Add( m_Bands[ 5 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label5 = new wxStaticText( this, wxID_ANY, wxT("1K"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label5->Wrap( -1 );
-	BandSizer05->Add( Label5, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label5 = new wxStaticText( this, wxID_ANY, wxT("1K"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label5->Wrap( -1 );
+    BandSizer05->Add( Label5, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer05, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer05, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer06;
-	BandSizer06 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer06;
+    BandSizer06 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 6 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 6 ]->Wrap( -1 );
-	BandSizer06->Add( m_Values[ 6 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 6 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 6 ]->Wrap( -1 );
+    BandSizer06->Add( m_Values[ 6 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 6 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 6 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 6 ]->SetLabel( wxT( "6" ) );
-	BandSizer06->Add( m_Bands[ 6 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 6 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 6 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 6 ]->SetLabel( wxT( "6" ) );
+    BandSizer06->Add( m_Bands[ 6 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label6 = new wxStaticText( this, wxID_ANY, wxT("2K"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label6->Wrap( -1 );
-	BandSizer06->Add( Label6, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label6 = new wxStaticText( this, wxID_ANY, wxT("2K"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label6->Wrap( -1 );
+    BandSizer06->Add( Label6, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer06, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer06, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer07;
-	BandSizer07 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer07;
+    BandSizer07 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 7 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 7 ]->Wrap( -1 );
-	BandSizer07->Add( m_Values[ 7 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 7 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 7 ]->Wrap( -1 );
+    BandSizer07->Add( m_Values[ 7 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 7 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 7 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 7 ]->SetLabel( wxT( "7" ) );
-	BandSizer07->Add( m_Bands[ 7 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 7 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 7 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 7 ]->SetLabel( wxT( "7" ) );
+    BandSizer07->Add( m_Bands[ 7 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label7 = new wxStaticText( this, wxID_ANY, wxT("4K"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label7->Wrap( -1 );
-	BandSizer07->Add( Label7, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label7 = new wxStaticText( this, wxID_ANY, wxT("4K"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label7->Wrap( -1 );
+    BandSizer07->Add( Label7, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer07, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer07, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer08;
-	BandSizer08 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer08;
+    BandSizer08 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 8 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 8 ]->Wrap( -1 );
-	BandSizer08->Add( m_Values[ 8 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 8 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 8 ]->Wrap( -1 );
+    BandSizer08->Add( m_Values[ 8 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 8 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 8 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 8 ]->SetLabel( wxT( "8" ) );
-	BandSizer08->Add( m_Bands[ 8 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 8 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 8 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 8 ]->SetLabel( wxT( "8" ) );
+    BandSizer08->Add( m_Bands[ 8 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label8 = new wxStaticText( this, wxID_ANY, wxT("8K"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label8->Wrap( -1 );
-	BandSizer08->Add( Label8, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label8 = new wxStaticText( this, wxID_ANY, wxT("8K"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label8->Wrap( -1 );
+    BandSizer08->Add( Label8, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer08, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer08, 1, wxEXPAND, 5 );
 
-	wxBoxSizer* BandSizer09;
-	BandSizer09 = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer* BandSizer09;
+    BandSizer09 = new wxBoxSizer( wxVERTICAL );
 
-	m_Values[ 9 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_Values[ 9 ]->Wrap( -1 );
-	BandSizer09->Add( m_Values[ 9 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+    m_Values[ 9 ] = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_Values[ 9 ]->Wrap( -1 );
+    BandSizer09->Add( m_Values[ 9 ], 0, wxALIGN_CENTER_HORIZONTAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_Bands[ 9 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 9 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
-	m_Bands[ 9 ]->SetLabel( wxT( "9" ) );
-	BandSizer09->Add( m_Bands[ 9 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    m_Bands[ 9 ] = new wxSlider( this, wxID_ANY, m_MediaCtrl->GetEqualizerBand( 9 ), -120, 120, wxDefaultPosition, wxDefaultSize, wxSL_INVERSE|wxSL_VERTICAL );
+    m_Bands[ 9 ]->SetLabel( wxT( "9" ) );
+    BandSizer09->Add( m_Bands[ 9 ], 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
-	wxStaticText * Label9 = new wxStaticText( this, wxID_ANY, wxT("16K"), wxDefaultPosition, wxDefaultSize, 0 );
-	Label9->Wrap( -1 );
-	BandSizer09->Add( Label9, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
+    wxStaticText * Label9 = new wxStaticText( this, wxID_ANY, wxT("16K"), wxDefaultPosition, wxDefaultSize, 0 );
+    Label9->Wrap( -1 );
+    BandSizer09->Add( Label9, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	BandsSizer->Add( BandSizer09, 1, wxEXPAND, 5 );
+    BandsSizer->Add( BandSizer09, 1, wxEXPAND, 5 );
 
-	MainSizer->Add( BandsSizer, 1, wxEXPAND|wxBOTTOM, 5 );
+    MainSizer->Add( BandsSizer, 1, wxEXPAND|wxBOTTOM, 5 );
 
-	wxStdDialogButtonSizer * EQBtnSizer;
-	EQBtnSizer = new wxStdDialogButtonSizer();
+    wxStdDialogButtonSizer * EQBtnSizer;
+    EQBtnSizer = new wxStdDialogButtonSizer();
     wxButton * EQBtnOK;
-	EQBtnOK = new wxButton( this, wxID_OK );
-	EQBtnSizer->AddButton( EQBtnOK );
-	EQBtnSizer->SetAffirmativeButton( EQBtnOK );
-	EQBtnSizer->Realize();
-	MainSizer->Add( EQBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+    EQBtnOK = new wxButton( this, wxID_OK );
+    EQBtnSizer->AddButton( EQBtnOK );
+    EQBtnSizer->SetAffirmativeButton( EQBtnOK );
+    EQBtnSizer->Realize();
+    MainSizer->Add( EQBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
     int Index;
     for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
     {
         m_Values[ Index ]->SetLabel( wxString::Format( wxT( "%.1f" ), double( m_Bands[ Index ]->GetValue() ) / 10.0 ) );
 
-        m_Bands[ Index ]->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
-        m_Bands[ Index ]->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guEq10Band::OnUpdateLabel ), NULL, this );
+        m_Bands[ Index ]->Bind( wxEVT_SCROLL_CHANGED, &guEq10Band::OnBandChanged, this );
+        m_Bands[ Index ]->Bind( wxEVT_SCROLL_THUMBTRACK, &guEq10Band::OnUpdateLabel, this );
     }
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    this->SetSizer( MainSizer );
+    this->Layout();
 
-	EQBtnOK->SetDefault();
+    EQBtnOK->SetDefault();
 
-	// Connect Events
-	m_PresetComboBox->Connect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( guEq10Band::OnPresetSelected ), NULL, this );
-	m_PresetComboBox->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guEq10Band::OnPresetText ), NULL, this );
-	m_ResetButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnResetPreset ), NULL, this );
-	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnAddPreset ), NULL, this );
-	m_DelButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnDelPreset ), NULL, this );
+    // Bind Events
+    m_PresetComboBox->Bind( wxEVT_COMBOBOX, &guEq10Band::OnPresetSelected, this );
+    m_PresetComboBox->Bind( wxEVT_TEXT, &guEq10Band::OnPresetText, this );
+    m_ResetButton->Bind( wxEVT_BUTTON, &guEq10Band::OnResetPreset, this );
+    m_SaveButton->Bind( wxEVT_BUTTON, &guEq10Band::OnAddPreset, this );
+    m_DelButton->Bind( wxEVT_BUTTON, &guEq10Band::OnDelPreset, this );
 
     if( LastPresetIndex != wxNOT_FOUND )
     {
@@ -446,18 +446,18 @@ guEq10Band::~guEq10Band()
         delete EqConfig;
     }
 
-    //
-	m_PresetComboBox->Disconnect( wxEVT_COMMAND_COMBOBOX_SELECTED, wxCommandEventHandler( guEq10Band::OnPresetSelected ), NULL, this );
-	m_PresetComboBox->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guEq10Band::OnPresetText ), NULL, this );
-	m_ResetButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnResetPreset ), NULL, this );
-	m_SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnAddPreset ), NULL, this );
-	m_DelButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guEq10Band::OnDelPreset ), NULL, this );
+    // Unbind Events
+    m_PresetComboBox->Unbind( wxEVT_COMBOBOX, &guEq10Band::OnPresetSelected, this );
+    m_PresetComboBox->Unbind( wxEVT_TEXT, &guEq10Band::OnPresetText, this );
+    m_ResetButton->Unbind( wxEVT_BUTTON, &guEq10Band::OnResetPreset, this );
+    m_SaveButton->Unbind( wxEVT_BUTTON, &guEq10Band::OnAddPreset, this );
+    m_DelButton->Unbind( wxEVT_BUTTON, &guEq10Band::OnDelPreset, this );
 
     int Index;
     for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
     {
-        m_Bands[ Index ]->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guEq10Band::OnBandChanged ), NULL, this );
-        m_Bands[ Index ]->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guEq10Band::OnUpdateLabel ), NULL, this );
+        m_Bands[ Index ]->Unbind( wxEVT_SCROLL_CHANGED, &guEq10Band::OnBandChanged, this );
+        m_Bands[ Index ]->Unbind( wxEVT_SCROLL_THUMBTRACK, &guEq10Band::OnUpdateLabel, this );
     }
 }
 

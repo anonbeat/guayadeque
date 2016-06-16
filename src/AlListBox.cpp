@@ -57,11 +57,11 @@ guAlListBox::guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     guListViewColumn * Column = new guListViewColumn( label, 0 );
     InsertColumn( Column );
 
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
-    Connect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
+    Bind( wxEVT_MENU, &guAlListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlListBox::OnOrderSelected, this, ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlListBox::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guAlListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 
@@ -79,11 +79,11 @@ guAlListBox::~guAlListBox()
     if( m_Items )
         delete m_Items;
 
-    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnCommandClicked ) );
-    Disconnect( ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlListBox::OnOrderSelected ) );
+    Unbind( wxEVT_MENU, &guAlListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlListBox::OnOrderSelected, this, ID_ALBUM_ORDER_NAME, ID_ALBUM_ORDER_ARTIST_YEAR_REVERSE );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlListBox::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guAlListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -138,7 +138,7 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
         wxArrayInt * Albums = new wxArrayInt();
         Albums->Add( ( * m_Items )[ item ].m_Id );
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_SETSELECTION );
+        wxCommandEvent event( wxEVT_MENU, ID_ALBUM_SETSELECTION );
         event.SetClientData( ( void * ) Albums );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
         return true;
@@ -500,7 +500,7 @@ void guAlListBox::ReloadItems( bool reset )
 //{
 //    guListView::SetSelectedItems( selection );
 //
-////    wxCommandEvent event( wxEVT_COMMAND_LISTBOX_SELECTED, GetId() );
+////    wxCommandEvent event( wxEVT_LISTBOX, GetId() );
 ////    event.SetEventObject( this );
 ////    event.SetInt( -1 );
 ////    (void) GetEventHandler()->ProcessEvent( event );

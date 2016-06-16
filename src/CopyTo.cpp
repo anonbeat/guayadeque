@@ -182,7 +182,7 @@ guCopyToThread::guCopyToThread( guMainFrame * mainframe, int gaugeid )
 // -------------------------------------------------------------------------------- //
 guCopyToThread::~guCopyToThread()
 {
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent Event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     Event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, Event );
 
@@ -357,7 +357,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         //
         m_CurrentFile++;
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+        wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( m_FileCount );
         wxPostEvent( m_MainFrame, event );
@@ -790,7 +790,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                 int PLId = PortableMediaDb->CreateStaticPlayList( PlayListFile->GetName(), TrackIds );
                 PortableMediaDb->UpdateStaticPlayListFile( PLId );
 
-                wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+                wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
                 wxPostEvent( m_MainFrame, evt );
             }
         }
@@ -826,9 +826,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         }
 
         //copytoaction.GetMediaViewer()->LibraryUpdated();
-        //wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_UPDATED );
+        //wxCommandEvent evt( wxEVT_MENU, ID_LIBRARY_UPDATED );
         //wxPostEvent( MediaViewer, evt );
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, MediaViewer->GetBaseCommand() + guCOLLECTION_ACTION_UPDATE_LIBRARY );
+        wxCommandEvent Event( wxEVT_MENU, MediaViewer->GetBaseCommand() + guCOLLECTION_ACTION_UPDATE_LIBRARY );
         wxPostEvent( MediaViewer, Event );
     }
     else

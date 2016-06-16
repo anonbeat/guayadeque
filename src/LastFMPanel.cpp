@@ -53,13 +53,15 @@ WX_DEFINE_OBJARRAY(guLastFMTopTrackInfoArray);
 guHtmlWindow::guHtmlWindow( wxWindow * parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style ) :
                 wxHtmlWindow( parent, id, pos, size, style )
 {
-    Connect( wxEVT_SIZE, wxSizeEventHandler( guHtmlWindow::OnChangedSize ), NULL, this );
-    Connect( guEVT_USER_FIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guHtmlWindow::OnScrollTo ), NULL, this );
+    Bind( wxEVT_SIZE, &guHtmlWindow::OnChangedSize, this );
+    Bind( wxEVT_MENU, &guHtmlWindow::OnScrollTo, this, guEVT_USER_FIRST );
 }
 
 // -------------------------------------------------------------------------------- //
 guHtmlWindow::~guHtmlWindow()
 {
+    Unbind( wxEVT_SIZE, &guHtmlWindow::OnChangedSize, this );
+    Unbind( wxEVT_MENU, &guHtmlWindow::OnScrollTo, this, guEVT_USER_FIRST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -85,7 +87,7 @@ void guHtmlWindow::OnChangedSize( wxSizeEvent &event )
     if( ScrollX || ScrollY )
     {
         //guLogMessage( wxT( "Setting position to %i, %i" ), ScrollX, ScrollY );
-        wxCommandEvent SizeEvent( wxEVT_COMMAND_MENU_SELECTED, guEVT_USER_FIRST );
+        wxCommandEvent SizeEvent( wxEVT_MENU, guEVT_USER_FIRST );
         SizeEvent.SetInt( ScrollX / wxHTML_SCROLL_STEP );
         SizeEvent.SetExtraLong( ScrollY / wxHTML_SCROLL_STEP );
         AddPendingEvent( SizeEvent );
@@ -113,50 +115,49 @@ guLastFMInfoCtrl::guLastFMInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
         this->CreateControls( parent );
 
 
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
-    Connect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnSearchLinkClicked, this, ID_LASTFM_VISIT_URL );
 
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
-    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
-    Connect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
-    Connect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
-    Connect( ID_TRACKS_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
-    Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
-    Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
+    Bind( wxEVT_CONTEXT_MENU, &guLastFMInfoCtrl::OnContextMenu, this );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnPlayClicked, this, ID_LASTFM_PLAY );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnEnqueueClicked, this, ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnCopyToClipboard, this, ID_LASTFM_COPYTOCLIPBOARD );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnSongSelectName, this, ID_TRACKS_SELECTNAME );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnArtistSelectName, this, ID_ARTIST_SELECTNAME );
+    Bind( wxEVT_MENU, &guLastFMInfoCtrl::OnAlbumSelectName, this, ID_ALBUM_SELECTNAME );
 
-    Connect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-
-    //Connect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
+    Bind( wxEVT_MOTION, &guLastFMInfoCtrl::OnMouse, this );
+    Bind( wxEVT_ENTER_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    Bind( wxEVT_LEAVE_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    Bind( wxEVT_RIGHT_DOWN, &guLastFMInfoCtrl::OnMouse, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guLastFMInfoCtrl::~guLastFMInfoCtrl()
 {
-    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
-    Disconnect( ID_LASTFM_VISIT_URL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSearchLinkClicked ) );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnSearchLinkClicked, this, ID_LASTFM_VISIT_URL );
 
-    Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMInfoCtrl::OnContextMenu ), NULL, this );
-    Disconnect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnPlayClicked ), NULL, this );
-    Disconnect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnEnqueueClicked ), NULL, this );
-    Disconnect( ID_LASTFM_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnCopyToClipboard ), NULL, this );
-    Disconnect( ID_TRACKS_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnSongSelectName ), NULL, this );
-    Disconnect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnArtistSelectName ), NULL, this );
-    Disconnect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMInfoCtrl::OnAlbumSelectName ), NULL, this );
+    Unbind( wxEVT_CONTEXT_MENU, &guLastFMInfoCtrl::OnContextMenu, this );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnPlayClicked, this, ID_LASTFM_PLAY );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnEnqueueClicked, this, ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnCopyToClipboard, this, ID_LASTFM_COPYTOCLIPBOARD );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnSongSelectName, this, ID_TRACKS_SELECTNAME );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnArtistSelectName, this, ID_ARTIST_SELECTNAME );
+    Unbind( wxEVT_MENU, &guLastFMInfoCtrl::OnAlbumSelectName, this, ID_ALBUM_SELECTNAME );
 
-    Disconnect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Disconnect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Disconnect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Disconnect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Disconnect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    Unbind( wxEVT_MOTION, &guLastFMInfoCtrl::OnMouse, this );
+    Unbind( wxEVT_ENTER_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    Unbind( wxEVT_LEAVE_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    Unbind( wxEVT_RIGHT_DOWN, &guLastFMInfoCtrl::OnMouse, this );
 
-    //Disconnect( guEVT_STATICBITMAP_MOUSE_OVER, guStaticBitmapMouseOverEvent, wxCommandEventHandler( guLastFMInfoCtrl::OnBitmapMouseOver ), NULL, this );
-	m_Bitmap->Disconnect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnBitmapClicked ), NULL, this );
+    m_Text->Unbind( wxEVT_LEFT_DCLICK, &guLastFMInfoCtrl::OnDoubleClicked, this );
+    m_Text->Unbind( wxEVT_MOTION, &guLastFMInfoCtrl::OnMouse, this );
+    m_Text->Unbind( wxEVT_ENTER_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    m_Text->Unbind( wxEVT_LEAVE_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    m_Text->Unbind( wxEVT_RIGHT_DOWN, &guLastFMInfoCtrl::OnMouse, this );
+
+    m_Bitmap->Unbind( wxEVT_LEFT_DOWN, &guLastFMInfoCtrl::OnBitmapClicked, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -181,15 +182,13 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	Layout();
 	MainSizer->Fit( this );
 
-//    Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
-//    m_Bitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
-    m_Text->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMInfoCtrl::OnDoubleClicked ), NULL, this );
-    m_Text->Connect( wxEVT_MOTION, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Connect( wxEVT_ENTER_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Connect( wxEVT_LEAVE_WINDOW, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
-    m_Text->Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnMouse ), NULL, this );
+    m_Text->Bind( wxEVT_LEFT_DCLICK, &guLastFMInfoCtrl::OnDoubleClicked, this );
+    m_Text->Bind( wxEVT_MOTION, &guLastFMInfoCtrl::OnMouse, this );
+    m_Text->Bind( wxEVT_ENTER_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    m_Text->Bind( wxEVT_LEAVE_WINDOW, &guLastFMInfoCtrl::OnMouse, this );
+    m_Text->Bind( wxEVT_RIGHT_DOWN, &guLastFMInfoCtrl::OnMouse, this );
 
-	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guLastFMInfoCtrl::OnBitmapClicked ), NULL, this );
+    m_Bitmap->Bind( wxEVT_LEFT_DOWN, &guLastFMInfoCtrl::OnBitmapClicked, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -397,8 +396,8 @@ guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
 
     CreateControls( parent );
 
-	m_ShowMoreHyperLink->Connect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guArtistInfoCtrl::OnShowMoreLinkClicked ), NULL, this );
-	m_ArtistDetails->Connect( wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler( guArtistInfoCtrl::OnHtmlLinkClicked ), NULL, this );
+    m_ShowMoreHyperLink->Bind( wxEVT_HYPERLINK, &guArtistInfoCtrl::OnShowMoreLinkClicked, this );
+    m_ArtistDetails->Bind( wxEVT_HTML_LINK_CLICKED, &guArtistInfoCtrl::OnHtmlLinkClicked, this );
 };
 
 // -------------------------------------------------------------------------------- //
@@ -410,8 +409,11 @@ guArtistInfoCtrl::~guArtistInfoCtrl()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteBool( wxT( "ShowLongBioText" ), m_ShowLongBioText, wxT( "lastfm" )  );
 
-	m_ShowMoreHyperLink->Disconnect( wxEVT_COMMAND_HYPERLINK, wxHyperlinkEventHandler( guArtistInfoCtrl::OnShowMoreLinkClicked ), NULL, this );
-	m_ArtistDetails->Disconnect( wxEVT_COMMAND_HTML_LINK_CLICKED, wxHtmlLinkEventHandler( guArtistInfoCtrl::OnHtmlLinkClicked ), NULL, this );
+    m_ShowMoreHyperLink->Unbind( wxEVT_HYPERLINK, &guArtistInfoCtrl::OnShowMoreLinkClicked, this );
+    m_ArtistDetails->Unbind( wxEVT_HTML_LINK_CLICKED, &guArtistInfoCtrl::OnHtmlLinkClicked, this );
+
+    m_Text->Unbind( wxEVT_LEFT_DCLICK, &guArtistInfoCtrl::OnDoubleClicked, this );
+    m_Bitmap->Unbind( wxEVT_LEFT_DOWN, &guArtistInfoCtrl::OnBitmapClicked, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -466,9 +468,9 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	Layout();
 	//MainSizer->Fit( this );
 
-    m_Text->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guArtistInfoCtrl::OnDoubleClicked ), NULL, this );
+    m_Text->Bind( wxEVT_LEFT_DCLICK, &guArtistInfoCtrl::OnDoubleClicked, this );
 
-	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guArtistInfoCtrl::OnBitmapClicked ), NULL, this );
+    m_Bitmap->Bind( wxEVT_LEFT_DOWN, &guArtistInfoCtrl::OnBitmapClicked, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -708,7 +710,7 @@ int guArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
     evt.SetInt( m_Info->m_ArtistId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -905,7 +907,7 @@ int guAlbumInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guAlbumInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ALBUM );
     evt.SetInt( m_Info->m_AlbumId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -921,7 +923,7 @@ guSimilarArtistInfoCtrl::guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary
 {
     m_Info = NULL;
 
-    Connect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSelectArtist ), NULL, this );
+    Bind( wxEVT_MENU, &guSimilarArtistInfoCtrl::OnSelectArtist, this, ID_LASTFM_SELECT_ARTIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -930,7 +932,7 @@ guSimilarArtistInfoCtrl::~guSimilarArtistInfoCtrl()
     if( m_Info )
         delete m_Info;
 
-    Disconnect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSimilarArtistInfoCtrl::OnSelectArtist ), NULL, this );
+    Unbind( wxEVT_MENU, &guSimilarArtistInfoCtrl::OnSelectArtist, this, ID_LASTFM_SELECT_ARTIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1100,7 +1102,7 @@ int guSimilarArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guSimilarArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
     evt.SetInt( m_Info->m_ArtistId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -1115,7 +1117,7 @@ guTrackInfoCtrl::guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache
 {
     m_Info = NULL;
 
-    Connect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSelectArtist ), NULL, this );
+    Bind( wxEVT_MENU, &guTrackInfoCtrl::OnSelectArtist, this, ID_LASTFM_SELECT_ARTIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1124,7 +1126,7 @@ guTrackInfoCtrl::~guTrackInfoCtrl()
     if( m_Info )
         delete m_Info;
 
-    Disconnect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTrackInfoCtrl::OnSelectArtist ), NULL, this );
+    Unbind( wxEVT_MENU, &guTrackInfoCtrl::OnSelectArtist, this, ID_LASTFM_SELECT_ARTIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1306,7 +1308,7 @@ int guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guTrackInfoCtrl::OnSongSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
     evt.SetInt( m_Info->m_TrackId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -1316,7 +1318,7 @@ void guTrackInfoCtrl::OnSongSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
     evt.SetInt( m_Info->m_ArtistId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -1331,7 +1333,7 @@ guTopTrackInfoCtrl::guTopTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guD
 {
     m_Info = NULL;
 
-    Connect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTopTrackInfoCtrl::OnSelectArtist ), NULL, this );
+    Bind( wxEVT_MENU, &guTopTrackInfoCtrl::OnSelectArtist, this, ID_LASTFM_SELECT_ARTIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1340,7 +1342,7 @@ guTopTrackInfoCtrl::~guTopTrackInfoCtrl()
     if( m_Info )
         delete m_Info;
 
-    Disconnect( ID_LASTFM_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guTopTrackInfoCtrl::OnSelectArtist ), NULL, this );
+    Unbind( wxEVT_MENU, &guTopTrackInfoCtrl::OnSelectArtist, this, ID_LASTFM_SELECT_ARTIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1511,7 +1513,7 @@ int guTopTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guTopTrackInfoCtrl::OnSongSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_TRACK );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
     evt.SetInt( m_Info->m_TrackId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -1521,7 +1523,7 @@ void guTopTrackInfoCtrl::OnSongSelectName( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTopTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
     evt.SetInt( m_Info->m_ArtistId );
     evt.SetExtraLong( guTRACK_TYPE_DB );
     evt.SetClientData( m_MediaViewer );
@@ -1973,59 +1975,59 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
     SetDropTarget( new guLastFMPanelDropTarget( this ) );
 
-    Connect( ID_LASTFM_UPDATE_ARTISTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistInfo ) );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnUpdateArtistInfo, this, ID_LASTFM_UPDATE_ARTISTINFO );
 
-    Connect( ID_LASTFM_UPDATE_ALBUMINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateAlbumItem ) );
-    Connect( ID_LASTFM_UPDATE_ALBUM_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnAlbumsCountUpdated ) );
-	m_AlbumsPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnAlbumsPrevClicked ), NULL, this );
-	m_AlbumsNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnAlbumsNextClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnUpdateAlbumItem, this, ID_LASTFM_UPDATE_ALBUMINFO );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnAlbumsCountUpdated, this, ID_LASTFM_UPDATE_ALBUM_COUNT );
+    m_AlbumsPrevBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnAlbumsPrevClicked, this );
+    m_AlbumsNextBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnAlbumsNextClicked, this );
 
-    Connect( ID_LASTFM_UPDATE_SIMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistItem ) );
-    Connect( ID_LASTFM_UPDATE_SIMARTIST_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnSimArtistsCountUpdated ) );
-	m_SimArtistsPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimArtistsPrevClicked ), NULL, this );
-	m_SimArtistsNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimArtistsNextClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnUpdateArtistItem, this, ID_LASTFM_UPDATE_SIMARTIST );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnSimArtistsCountUpdated, this, ID_LASTFM_UPDATE_SIMARTIST_COUNT );
+    m_SimArtistsPrevBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnSimArtistsPrevClicked, this );
+    m_SimArtistsNextBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnSimArtistsNextClicked, this );
 
-    Connect( ID_LASTFM_UPDATE_SIMTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTrackItem ) );
-    Connect( ID_LASTFM_UPDATE_SIMTRACK_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnSimTracksCountUpdated ) );
-	m_SimTracksPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimTracksPrevClicked ), NULL, this );
-	m_SimTracksNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSimTracksNextClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnUpdateTrackItem, this, ID_LASTFM_UPDATE_SIMTRACK );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnSimTracksCountUpdated, this, ID_LASTFM_UPDATE_SIMTRACK_COUNT );
+    m_SimTracksPrevBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnSimTracksPrevClicked, this );
+    m_SimTracksNextBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnSimTracksNextClicked, this );
 
-    Connect( ID_LASTFM_UPDATE_TOPTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTopTrackItem ) );
-    Connect( ID_LASTFM_UPDATE_TOPTRACKS_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnTopTracksCountUpdated ), NULL, this );
-	m_TopTracksPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnTopTracksPrevClicked ), NULL, this );
-	m_TopTracksNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnTopTracksNextClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnUpdateTopTrackItem, this, ID_LASTFM_UPDATE_TOPTRACKS );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnTopTracksCountUpdated, this, ID_LASTFM_UPDATE_TOPTRACKS_COUNT );
+    m_TopTracksPrevBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnTopTracksPrevClicked, this );
+    m_TopTracksNextBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnTopTracksNextClicked, this );
 
-    Connect( ID_LASTFM_UPDATE_EVENTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateEventItem ) );
-    Connect( ID_LASTFM_UPDATE_EVENTS_COUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnEventsCountUpdated ) );
-	m_EventsPrevBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnEventsPrevClicked ), NULL, this );
-	m_EventsNextBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnEventsNextClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnUpdateEventItem, this, ID_LASTFM_UPDATE_EVENTINFO );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnEventsCountUpdated, this, ID_LASTFM_UPDATE_EVENTS_COUNT );
+    m_EventsPrevBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnEventsPrevClicked, this );
+    m_EventsNextBtn->Bind( wxEVT_BUTTON, &guLastFMPanel::OnEventsNextClicked, this );
 
-	m_ArtistDetailsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnArInfoTitleDClicked ), NULL, this );
-	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLastFMPanel::OnUpdateChkBoxClick ), NULL, this );
-	m_PrevButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnPrevBtnClick ), NULL, this );
-	m_NextButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnNextBtnClick ), NULL, this );
-	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnReloadBtnClick ), NULL, this );
-	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-    m_ArtistTextCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLastFMPanel::OnTextCtrlKeyDown ), NULL, this );
-    m_TrackTextCtrl->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guLastFMPanel::OnTextCtrlKeyDown ), NULL, this );
-    m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLastFMPanel::OnSearchSelected ), NULL, this );
-    m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guLastFMPanel::OnSearchSelected ), NULL, this );
-	m_AlbumsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
-	m_TopTracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopTracksTitleDClick ), NULL, this );
-	m_SimArtistsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
-	m_SimTracksStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
-	m_EventsStaticText->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnEventsTitleDClick ), NULL, this );
+    m_ArtistDetailsStaticText->Bind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnArInfoTitleDClicked, this );
+    m_UpdateCheckBox->Bind( wxEVT_CHECKBOX, &guLastFMPanel::OnUpdateChkBoxClick, this );
+    m_PrevButton->Bind( wxEVT_BUTTON, &guLastFMPanel::OnPrevBtnClick, this );
+    m_NextButton->Bind( wxEVT_BUTTON, &guLastFMPanel::OnNextBtnClick, this );
+    m_ReloadButton->Bind( wxEVT_BUTTON, &guLastFMPanel::OnReloadBtnClick, this );
+    m_ArtistTextCtrl->Bind( wxEVT_TEXT, &guLastFMPanel::OnTextUpdated, this );
+    m_TrackTextCtrl->Bind( wxEVT_TEXT, &guLastFMPanel::OnTextUpdated, this );
+    m_ArtistTextCtrl->Bind( wxEVT_KEY_DOWN, &guLastFMPanel::OnTextCtrlKeyDown, this );
+    m_TrackTextCtrl->Bind( wxEVT_KEY_DOWN, &guLastFMPanel::OnTextCtrlKeyDown, this );
+    m_ArtistTextCtrl->Bind( wxEVT_TEXT_ENTER, &guLastFMPanel::OnSearchSelected, this );
+    m_TrackTextCtrl->Bind( wxEVT_TEXT_ENTER, &guLastFMPanel::OnSearchSelected, this );
+    m_AlbumsStaticText->Bind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnTopAlbumsTitleDClick, this );
+    m_TopTracksStaticText->Bind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnTopTracksTitleDClick, this );
+    m_SimArtistsStaticText->Bind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnSimArTitleDClick, this );
+    m_SimTracksStaticText->Bind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnSimTrTitleDClick, this );
+    m_EventsStaticText->Bind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnEventsTitleDClick, this );
 
-    m_AlbumsStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
-    m_TopTracksStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
-    m_SimArtistsStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
-    m_SimTracksStaticText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLastFMPanel::OnContextMenu ), NULL, this );
+    m_AlbumsStaticText->Bind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+    m_TopTracksStaticText->Bind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+    m_SimArtistsStaticText->Bind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+    m_SimTracksStaticText->Bind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
 
-    Connect( ID_LASTFM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnPlayClicked ), NULL, this );
-    Connect( ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnEnqueueClicked ), NULL, this );
-    Connect( ID_LASTFM_SAVETOPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnSaveClicked ), NULL, this );
-    Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnCopyToClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnPlayClicked, this, ID_LASTFM_PLAY );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnEnqueueClicked, this, ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnSaveClicked, this, ID_LASTFM_SAVETOPLAYLIST );
+    Bind( wxEVT_MENU, &guLastFMPanel::OnCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2085,25 +2087,6 @@ guLastFMPanel::~guLastFMPanel()
     }
     m_EventsUpdateThreadMutex.Unlock();
 
-    //
-    Disconnect( ID_LASTFM_UPDATE_ALBUMINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateAlbumItem ) );
-    Disconnect( ID_LASTFM_UPDATE_ARTISTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistInfo ) );
-    Disconnect( ID_LASTFM_UPDATE_SIMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateArtistItem ) );
-    Disconnect( ID_LASTFM_UPDATE_SIMTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTrackItem ) );
-    Disconnect( ID_LASTFM_UPDATE_TOPTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateTopTrackItem ) );
-    Disconnect( ID_LASTFM_UPDATE_EVENTINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLastFMPanel::OnUpdateEventItem ) );
-
-	m_ArtistDetailsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnArInfoTitleDClicked ), NULL, this );
-	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLastFMPanel::OnUpdateChkBoxClick ), NULL, this );
-//	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-//	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLastFMPanel::OnTextUpdated ), NULL, this );
-//	m_SearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLastFMPanel::OnSearchBtnClick ), NULL, this );
-	m_AlbumsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopAlbumsTitleDClick ), NULL, this );
-	m_TopTracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnTopTracksTitleDClick ), NULL, this );
-	m_SimArtistsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimArTitleDClick ), NULL, this );
-	m_SimTracksStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnSimTrTitleDClick ), NULL, this );
-	m_EventsStaticText->Disconnect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guLastFMPanel::OnEventsTitleDClick ), NULL, this );
-
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
@@ -2115,6 +2098,60 @@ guLastFMPanel::~guLastFMPanel()
         Config->WriteBool( wxT( "ShowEvents" ), m_ShowEvents, wxT( "lastfm" ) );
         Config->WriteBool( wxT( "FollowPlayer" ), m_UpdateCheckBox->GetValue(), wxT( "lastfm" ) );
     }
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateArtistInfo, this, ID_LASTFM_UPDATE_ARTISTINFO );
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateAlbumItem, this, ID_LASTFM_UPDATE_ALBUMINFO );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnAlbumsCountUpdated, this, ID_LASTFM_UPDATE_ALBUM_COUNT );
+    m_AlbumsPrevBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnAlbumsPrevClicked, this );
+    m_AlbumsNextBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnAlbumsNextClicked, this );
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateArtistItem, this, ID_LASTFM_UPDATE_SIMARTIST );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnSimArtistsCountUpdated, this, ID_LASTFM_UPDATE_SIMARTIST_COUNT );
+    m_SimArtistsPrevBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnSimArtistsPrevClicked, this );
+    m_SimArtistsNextBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnSimArtistsNextClicked, this );
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateTrackItem, this, ID_LASTFM_UPDATE_SIMTRACK );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnSimTracksCountUpdated, this, ID_LASTFM_UPDATE_SIMTRACK_COUNT );
+    m_SimTracksPrevBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnSimTracksPrevClicked, this );
+    m_SimTracksNextBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnSimTracksNextClicked, this );
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateTopTrackItem, this, ID_LASTFM_UPDATE_TOPTRACKS );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnTopTracksCountUpdated, this, ID_LASTFM_UPDATE_TOPTRACKS_COUNT );
+    m_TopTracksPrevBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnTopTracksPrevClicked, this );
+    m_TopTracksNextBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnTopTracksNextClicked, this );
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateEventItem, this, ID_LASTFM_UPDATE_EVENTINFO );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnEventsCountUpdated, this, ID_LASTFM_UPDATE_EVENTS_COUNT );
+    m_EventsPrevBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnEventsPrevClicked, this );
+    m_EventsNextBtn->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnEventsNextClicked, this );
+
+    m_ArtistDetailsStaticText->Unbind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnArInfoTitleDClicked, this );
+    m_UpdateCheckBox->Unbind( wxEVT_CHECKBOX, &guLastFMPanel::OnUpdateChkBoxClick, this );
+    m_PrevButton->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnPrevBtnClick, this );
+    m_NextButton->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnNextBtnClick, this );
+    m_ReloadButton->Unbind( wxEVT_BUTTON, &guLastFMPanel::OnReloadBtnClick, this );
+    m_ArtistTextCtrl->Unbind( wxEVT_TEXT, &guLastFMPanel::OnTextUpdated, this );
+    m_TrackTextCtrl->Unbind( wxEVT_TEXT, &guLastFMPanel::OnTextUpdated, this );
+    m_ArtistTextCtrl->Unbind( wxEVT_KEY_DOWN, &guLastFMPanel::OnTextCtrlKeyDown, this );
+    m_TrackTextCtrl->Unbind( wxEVT_KEY_DOWN, &guLastFMPanel::OnTextCtrlKeyDown, this );
+    m_ArtistTextCtrl->Unbind( wxEVT_TEXT_ENTER, &guLastFMPanel::OnSearchSelected, this );
+    m_TrackTextCtrl->Unbind( wxEVT_TEXT_ENTER, &guLastFMPanel::OnSearchSelected, this );
+    m_AlbumsStaticText->Unbind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnTopAlbumsTitleDClick, this );
+    m_TopTracksStaticText->Unbind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnTopTracksTitleDClick, this );
+    m_SimArtistsStaticText->Unbind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnSimArTitleDClick, this );
+    m_SimTracksStaticText->Unbind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnSimTrTitleDClick, this );
+    m_EventsStaticText->Unbind( wxEVT_LEFT_DCLICK, &guLastFMPanel::OnEventsTitleDClick, this );
+
+    m_AlbumsStaticText->Unbind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+    m_TopTracksStaticText->Unbind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+    m_SimArtistsStaticText->Unbind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+    m_SimTracksStaticText->Unbind( wxEVT_CONTEXT_MENU, &guLastFMPanel::OnContextMenu, this );
+
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnPlayClicked, this, ID_LASTFM_PLAY );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnEnqueueClicked, this, ID_LASTFM_ENQUEUE_AFTER_ALL, ID_LASTFM_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnSaveClicked, this, ID_LASTFM_SAVETOPLAYLIST );
+    Unbind( wxEVT_MENU, &guLastFMPanel::OnCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2692,7 +2729,7 @@ void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
     m_UpdateEnabled = m_UpdateCheckBox->IsChecked();
     if( m_UpdateEnabled )
     {
-        wxCommandEvent UpdateEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_REQUEST_CURRENTTRACK );
+        wxCommandEvent UpdateEvent( wxEVT_MENU, ID_MAINFRAME_REQUEST_CURRENTTRACK );
         UpdateEvent.SetClientData( this );
         wxPostEvent( wxTheApp->GetTopWindow(), UpdateEvent );
     }
@@ -2816,7 +2853,7 @@ void guLastFMPanel::OnTextCtrlKeyDown( wxKeyEvent &event )
 {
     if( event.GetKeyCode() == WXK_RETURN )
     {
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_TEXT_ENTER );
+        wxCommandEvent CmdEvent( wxEVT_TEXT_ENTER );
         m_ArtistTextCtrl->GetEventHandler()->AddPendingEvent( CmdEvent );
         return;
     }
@@ -3362,7 +3399,7 @@ void guLastFMPanel::OnSaveClicked( wxCommandEvent &event )
                 }
             }
 
-            wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+            wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
             wxPostEvent( wxTheApp->GetTopWindow(), evt );
         }
         PlayListAppendDlg->Destroy();
@@ -3376,7 +3413,7 @@ void guLastFMPanel::OnCopyToClicked( wxCommandEvent &event )
 
     GetContextMenuTracks( Tracks );
 
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_COPYTO );
     int Index = event.GetId() - ID_COPYTO_BASE;
     if( Index >= guCOPYTO_DEVICE_BASE )
     {
@@ -3571,7 +3608,7 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
         }
         //
         m_LastFMPanel->m_UpdateEventsMutex.Lock();
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, m_CommandId );
+        wxCommandEvent event( wxEVT_MENU, m_CommandId );
         event.SetInt( m_Index );
         event.SetClientData( m_CommandData );
         wxPostEvent( m_LastFMPanel, event );
@@ -3674,7 +3711,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
             guAlbumInfoArray TopAlbums = LastFM->ArtistGetTopAlbums( m_ArtistName );
             count = TopAlbums.Count();
 
-            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_ALBUM_COUNT );
+            wxCommandEvent CountEvent( wxEVT_MENU, ID_LASTFM_UPDATE_ALBUM_COUNT );
             CountEvent.SetInt( count );
             wxPostEvent( m_LastFMPanel, CountEvent );
 
@@ -3768,7 +3805,7 @@ guFetchTopTracksInfoThread::ExitCode guFetchTopTracksInfoThread::Entry()
             guTopTrackInfoArray TopTracks = LastFM->ArtistGetTopTracks( m_ArtistName );
             count = TopTracks.Count();
 
-            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_TOPTRACKS_COUNT );
+            wxCommandEvent CountEvent( wxEVT_MENU, ID_LASTFM_UPDATE_TOPTRACKS_COUNT );
             CountEvent.SetInt( count );
             wxPostEvent( m_LastFMPanel, CountEvent );
 
@@ -3941,7 +3978,7 @@ guFetchSimilarArtistInfoThread::ExitCode guFetchSimilarArtistInfoThread::Entry()
             guSimilarArtistInfoArray SimilarArtists = LastFM->ArtistGetSimilar( m_ArtistName );
             count = SimilarArtists.Count();
 
-            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_SIMARTIST_COUNT );
+            wxCommandEvent CountEvent( wxEVT_MENU, ID_LASTFM_UPDATE_SIMARTIST_COUNT );
             CountEvent.SetInt( count );
             wxPostEvent( m_LastFMPanel, CountEvent );
 
@@ -4037,7 +4074,7 @@ guFetchEventsInfoThread::ExitCode guFetchEventsInfoThread::Entry()
             guEventInfoArray ArtistEvents = LastFM->ArtistGetEvents( m_ArtistName );
             count = ArtistEvents.Count();
 
-            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_EVENTS_COUNT );
+            wxCommandEvent CountEvent( wxEVT_MENU, ID_LASTFM_UPDATE_EVENTS_COUNT );
             CountEvent.SetInt( count );
             wxPostEvent( m_LastFMPanel, CountEvent );
 
@@ -4136,7 +4173,7 @@ guFetchSimTracksInfoThread::ExitCode guFetchSimTracksInfoThread::Entry()
             guSimilarTrackInfoArray SimilarTracks = LastFM->TrackGetSimilar( m_ArtistName, m_TrackName );
             count = SimilarTracks.Count();
 
-            wxCommandEvent CountEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LASTFM_UPDATE_SIMTRACK_COUNT );
+            wxCommandEvent CountEvent( wxEVT_MENU, ID_LASTFM_UPDATE_SIMTRACK_COUNT );
             CountEvent.SetInt( count );
             wxPostEvent( m_LastFMPanel, CountEvent );
 

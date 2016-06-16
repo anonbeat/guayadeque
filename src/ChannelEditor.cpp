@@ -28,7 +28,7 @@
 
 namespace Guayadeque {
 
-const wxEventType guChannelEditorEvent = wxNewEventType();
+wxDECLARE_EVENT( guChannelEditorEvent, wxCommandEvent );
 
 #define guPODCASTS_IMAGE_SIZE   60
 
@@ -178,9 +178,9 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	ButtonsSizerOK->SetDefault();
 
-	// Connect Events
-	m_DownloadChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guChannelEditor::OnDownloadChoice ), NULL, this );
-    Connect( guCHANNELEDITOR_EVENT_UPDATE_IMAGE, guChannelEditorEvent, wxCommandEventHandler( guChannelEditor::OnChannelImageUpdated ), NULL, this );
+    // Bind Events
+    m_DownloadChoice->Bind( wxEVT_CHOICE, &guChannelEditor::OnDownloadChoice, this );
+    Bind( guChannelEditorEvent, &guChannelEditor::OnChannelImageUpdated, this, guCHANNELEDITOR_EVENT_UPDATE_IMAGE );
 
     m_DescText->SetFocus();
 }
@@ -188,8 +188,9 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 // -------------------------------------------------------------------------------- //
 guChannelEditor::~guChannelEditor()
 {
-	// Disconnect Events
-	m_DownloadChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guChannelEditor::OnDownloadChoice ), NULL, this );
+    // Unbind Events
+    m_DownloadChoice->Unbind( wxEVT_CHOICE, &guChannelEditor::OnDownloadChoice, this );
+    Unbind( guChannelEditorEvent, &guChannelEditor::OnChannelImageUpdated, this, guCHANNELEDITOR_EVENT_UPDATE_IMAGE );
 }
 
 // -------------------------------------------------------------------------------- //

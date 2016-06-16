@@ -34,7 +34,7 @@ guAccelListBox::guAccelListBox( wxWindow * parent, guDbLibrary * db, const wxStr
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAccelListBox::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guAccelListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 }
@@ -45,7 +45,7 @@ guAccelListBox::~guAccelListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAccelListBox::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guAccelListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //

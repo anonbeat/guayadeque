@@ -82,14 +82,14 @@ guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxStri
     m_NormalStar   = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_normal_tiny + GURATING_STYLE_MID ) ) );
     m_SelectStar = new wxBitmap( guImage( ( guIMAGE_INDEX ) ( guIMAGE_INDEX_star_highlight_tiny + GURATING_STYLE_MID ) ) );
 
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ), NULL, this );
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ), NULL, this );
-    Connect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
-    Connect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guSoListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guSoListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Bind( guEVT_LISTBOX_ITEM_COL_CLICKED, &guSoListBox::OnItemColumnClicked, this );
+    Bind( guEVT_LISTBOX_ITEM_COL_RCLICKED, &guSoListBox::OnItemColumnRClicked, this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guSoListBox::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guSoListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
-    Connect( ID_PLAYLIST_SMART_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCreateSmartPlaylist ), NULL, this );
+    Bind( wxEVT_MENU, &guSoListBox::OnCreateSmartPlaylist, this, ID_PLAYLIST_SMART_PLAYLIST );
 
     CreateAcceleratorTable();
 
@@ -127,12 +127,14 @@ guSoListBox::~guSoListBox()
     if( m_SelectStar )
         delete m_SelectStar;
 
-    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guSoListBox::OnCommandClicked ) );
-    Disconnect( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEventHandler( guSoListBox::OnItemColumnClicked ), NULL, this );
-    Disconnect( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEventHandler( guSoListBox::OnItemColumnRClicked ), NULL, this );
+    Unbind( wxEVT_MENU, &guSoListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guSoListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Unbind( guEVT_LISTBOX_ITEM_COL_CLICKED, &guSoListBox::OnItemColumnClicked, this );
+    Unbind( guEVT_LISTBOX_ITEM_COL_RCLICKED, &guSoListBox::OnItemColumnRClicked, this );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guSoListBox::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guSoListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+
+    Unbind( wxEVT_MENU, &guSoListBox::OnCreateSmartPlaylist, this, ID_PLAYLIST_SMART_PLAYLIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -316,7 +318,7 @@ void guSoListBox::GetItemsList( void )
     //m_Db->GetSongs( &m_Items, GetVisibleRowsBegin(), GetVisibleRowsEnd() );
     SetItemCount( m_Db->GetSongsCount() );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -838,7 +840,7 @@ void guSoListBox::OnItemColumnClicked( wxListEvent &event )
         if( m_Items[ Row ].m_Rating == Rating )
             Rating = 0;
 
-        wxCommandEvent RatingEvent( wxEVT_COMMAND_MENU_SELECTED, ID_TRACKS_SET_RATING_0 + Rating );
+        wxCommandEvent RatingEvent( wxEVT_MENU, ID_TRACKS_SET_RATING_0 + Rating );
         AddPendingEvent( RatingEvent );
     }
 }

@@ -406,7 +406,7 @@ guAudioScrobble::guAudioScrobble( guDbLibrary * db )
     }
 
 //    // Update the MainFrame AudioScrobble Status
-//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+//    wxCommandEvent event( wxEVT_MENU, ID_AUDIOSCROBBLE_UPDATED );
 //    event.SetInt( 0 );
 //    //wxPostEvent( m_MainFrame, event );
 //    m_MainFrame->AddPendingEvent( event );
@@ -459,7 +459,7 @@ bool guAudioScrobble::SubmitNowPlaying( const guAS_SubmitInfo * curtrack )
     int HasError = ( m_LastFMAudioScrobble && m_LastFMAudioScrobble->GetErrorCode() ) ||
                    ( m_LibreFMAudioScrobble && m_LibreFMAudioScrobble->GetErrorCode() );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    wxCommandEvent event( wxEVT_MENU, ID_AUDIOSCROBBLE_UPDATED );
     event.SetInt( HasError );
     wxPostEvent( m_MainFrame, event );
 
@@ -486,7 +486,7 @@ bool guAudioScrobble::SubmitPlayedSongs( const guAS_SubmitInfoArray &playedtrack
 
     //guLogMessage( wxT( "ErrorCodes: %i  %i" ), LastFMErrorCode, LibreFMErrorCode );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    wxCommandEvent event( wxEVT_MENU, ID_AUDIOSCROBBLE_UPDATED );
     event.SetInt( ( LastFMErrorCode || LibreFMErrorCode ) );
     wxPostEvent( m_MainFrame, event );
 
@@ -638,7 +638,7 @@ void guAudioScrobble::OnConfigUpdated( void )
         m_LibreFMAudioScrobble->OnConfigUpdated();
     }
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_AUDIOSCROBBLE_UPDATED );
+    wxCommandEvent event( wxEVT_MENU, ID_AUDIOSCROBBLE_UPDATED );
     event.SetInt( !IsOk() );
     wxPostEvent( m_MainFrame, event );
 }

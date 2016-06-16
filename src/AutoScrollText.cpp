@@ -51,19 +51,19 @@ guAutoScrollText::guAutoScrollText( wxWindow * parent, const wxString &label, co
 
     SetLabel( label );
 
-    Connect( wxEVT_PAINT, wxPaintEventHandler( guAutoScrollText::OnPaint ), NULL, this );
-    Connect( guSCROLL_TIMER_START, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnStartTimer ), NULL, this );
-    Connect( guSCROLL_TIMER_SCROLL, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnScrollTimer ), NULL, this );
-    Connect( wxEVT_SIZE, wxSizeEventHandler( guAutoScrollText::OnSize ), NULL, this );
+    Bind( wxEVT_PAINT, &guAutoScrollText::OnPaint, this );
+    Bind( wxEVT_TIMER, &guAutoScrollText::OnStartTimer, this, guSCROLL_TIMER_START );
+    Bind( wxEVT_TIMER, &guAutoScrollText::OnScrollTimer, this, guSCROLL_TIMER_SCROLL );
+    Bind( wxEVT_SIZE, &guAutoScrollText::OnSize, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guAutoScrollText::~guAutoScrollText()
 {
-    Disconnect( wxEVT_PAINT, wxPaintEventHandler( guAutoScrollText::OnPaint ), NULL, this );
-    Disconnect( guSCROLL_TIMER_START, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnStartTimer ), NULL, this );
-    Disconnect( guSCROLL_TIMER_SCROLL, wxEVT_TIMER, wxTimerEventHandler( guAutoScrollText::OnScrollTimer ), NULL, this );
-    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAutoScrollText::OnSize ), NULL, this );
+    Unbind( wxEVT_PAINT, &guAutoScrollText::OnPaint, this );
+    Unbind( wxEVT_TIMER, &guAutoScrollText::OnStartTimer, this, guSCROLL_TIMER_START );
+    Unbind( wxEVT_TIMER, &guAutoScrollText::OnScrollTimer, this, guSCROLL_TIMER_SCROLL );
+    Unbind( wxEVT_SIZE, &guAutoScrollText::OnSize, this );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -308,7 +308,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
         wxCommandEvent ShowEvent;
         ShowEvent.SetInt( 1 );
 
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_COLLECTIONS_BASE );
+        wxCommandEvent Event( wxEVT_MENU, ID_COLLECTIONS_BASE );
         Event.SetInt( 1 );
         OnCollectionCommand( Event );
 
@@ -448,269 +448,159 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 //    // Load the layouts menu
 //    CreateLayoutMenus();
 
-    //
-	Connect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
-	Connect( wxEVT_SIZE, wxSizeEventHandler( guMainFrame::OnSize ), NULL, this );
+    // Bind events
+    Bind( wxEVT_IDLE, &guMainFrame::OnIdle, this );
+    Bind( wxEVT_SIZE, &guMainFrame::OnSize, this );
 
-    Connect( ID_MENU_PLAY_STREAM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayStream ), NULL, this );
-    Connect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
-    Connect( ID_MENU_VIEW_CLOSEWINDOW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCloseTab ), NULL, this );
-    Connect( ID_MENU_HIDE_CAPTIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnShowCaptions ), NULL, this );
-    Connect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayStream, this, ID_MENU_PLAY_STREAM );
+    Bind( wxEVT_MENU, &guMainFrame::OnUpdatePodcasts, this, ID_MENU_UPDATE_PODCASTS );
+    Bind( wxEVT_MENU, &guMainFrame::OnCloseTab, this, ID_MENU_VIEW_CLOSEWINDOW );
+    Bind( wxEVT_MENU, &guMainFrame::OnShowCaptions, this, ID_MENU_HIDE_CAPTIONS );
+    Bind( wxEVT_MENU, &guMainFrame::OnQuit, this, ID_MENU_QUIT );
 
-    Connect( ID_MENU_VOLUME_DOWN, ID_MENU_VOLUME_UP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnChangeVolume ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnChangeVolume, this, ID_MENU_VOLUME_DOWN, ID_MENU_VOLUME_UP );
 
-//    Connect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
-//    Connect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
-//    Connect( ID_MAGNATUNE_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMagnatuneUpdated ), NULL, this );
-//    Connect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
-//    Connect( ID_LIBRARY_CLEANFINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryCleanFinished ), NULL, this );
-//    Connect( ID_LIBRARY_RELOADCONTROLS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryReloadControls ), NULL, this );
+//    Bind( wxEVT_MENU, &guMainFrame::LibraryUpdated, this, ID_LIBRARY_UPDATED );
+//    Bind( wxEVT_MENU, &guMainFrame::OnJamendoUpdated, this, ID_JAMENDO_UPDATE_FINISHED );
+//    Bind( wxEVT_MENU, &guMainFrame::OnMagnatuneUpdated, this, ID_MAGNATUNE_UPDATE_FINISHED );
+//    Bind( wxEVT_MENU, &guMainFrame::DoLibraryClean, this, ID_LIBRARY_DOCLEANDB );
+//    Bind( wxEVT_MENU, &guMainFrame::LibraryCleanFinished, this, ID_LIBRARY_CLEANFINISHED );
+//    Bind( wxEVT_MENU, &guMainFrame::LibraryReloadControls, this, ID_LIBRARY_RELOADCONTROLS );
 
-    Connect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
-    Connect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
-    //Connect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
-    Connect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
-    Connect( ID_MENU_PREFERENCES_COMMANDS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
-    Connect( ID_MENU_PREFERENCES_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
-    Connect( ID_MENU_PREFERENCES_LINKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
-    Connect( ID_MENU_COLLECTION_NEW, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnAudioScrobbleUpdate, this, ID_AUDIOSCROBBLE_UPDATED );
+    Bind( wxEVT_CLOSE_WINDOW, &guMainFrame::OnCloseWindow, this );
+    //Bind( wxEVT_ICONIZE, &guMainFrame::OnIconizeWindow, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES );
+    Bind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES_COMMANDS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES_COPYTO );
+    Bind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES_LINKS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_COLLECTION_NEW );
 
-    Connect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
-    Connect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ), NULL, this );
-    Connect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
-    Connect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
-    Connect( ID_PLAYERPANEL_VOLUMECHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerVolumeChanged ), NULL, this );
-    Connect( ID_PLAYERPANEL_SEEKED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerSeeked ), NULL, this );
-
-
-	Connect( ID_MAINFRAME_SELECT_TRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-	Connect( ID_MAINFRAME_SELECT_ALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-	Connect( ID_MAINFRAME_SELECT_ALBUMARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-	Connect( ID_MAINFRAME_SELECT_COMPOSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-	Connect( ID_MAINFRAME_SELECT_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-	Connect( ID_MAINFRAME_SELECT_YEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-	Connect( ID_MAINFRAME_SELECT_GENRE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetSelection ), NULL, this );
-
-	Connect( ID_MAINFRAME_SELECT_LOCATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectLocation ), NULL, this );
-
-    Connect( ID_MAINFRAME_SET_ALLOW_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetAllowDenyFilter ), NULL, this );
-    Connect( ID_MAINFRAME_SET_DENY_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetAllowDenyFilter ), NULL, this );
-
-    Connect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ), NULL, this );
-    Connect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_STOP_ATEND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStopAtEnd ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_CLEAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnClearPlaylist ), NULL, this );
-    Connect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ), NULL, this );
-    Connect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
-    Connect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextAlbum ), NULL, this );
-    Connect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevAlbum ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
-    Connect( ID_PLAYER_PLAYLIST_UPDATETITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerPlayListUpdateTitle ), NULL, this );
-    Connect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
-    Connect( ID_MENU_HELP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnHelp ), NULL, this );
-    Connect( ID_MENU_COMMUNITY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCommunity ), NULL, this );
-
-    Connect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
-    Connect( ID_MAINFRAME_COPYTODEVICE_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
-    Connect( ID_MAINFRAME_COPYTODEVICE_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyPlayListToDevice ), NULL, this );
-
-//    Connect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
-
-    Connect( ID_MENU_LAYOUT_CREATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCreateNewLayout ), NULL, this );
-    Connect( ID_MENU_LAYOUT_LOAD, ID_MENU_LAYOUT_LOAD + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLoadLayout ), NULL, this );
-    Connect( ID_MENU_LAYOUT_DELETE, ID_MENU_LAYOUT_DELETE + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnDeleteLayout ), NULL, this );
-
-    Connect( ID_MENU_VIEW_PLAYER_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_PLAYER_FILTERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_PLAYER_VUMETERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_PLAYER_NOTEBOOK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_MAIN_LOCATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_MAIN_SHOWCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-
-    Connect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
-    Connect( ID_MENU_VIEW_RAD_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_RAD_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_RAD_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_RAD_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioProperties ), NULL, this );
-
-    Connect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
-    Connect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
-
-    Connect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
-    Connect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_POD_DETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
-    Connect( ID_MENU_VIEW_POD_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsProperties ), NULL, this );
-
-    Connect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
-
-    Connect( ID_ALBUM_COVER_CHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryCoverChanged ), NULL, this );
-    Connect( ID_PLAYERPANEL_COVERUPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerPanelCoverChanged ), NULL, this );
-
-    Connect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
-    Connect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnUpdateTrack, this, ID_PLAYERPANEL_TRACKCHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerStatusChanged, this, ID_PLAYERPANEL_STATUSCHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerTrackListChanged, this, ID_PLAYERPANEL_TRACKLISTCHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerCapsChanged, this, ID_PLAYERPANEL_CAPSCHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerVolumeChanged, this, ID_PLAYERPANEL_VOLUMECHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerSeeked, this, ID_PLAYERPANEL_SEEKED );
 
 
-    Connect( ID_VOLUMEMANAGER_MOUNT_CHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnVolumeMonitorUpdated ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_TRACK );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_ALBUM );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_ALBUMARTIST );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_COMPOSER );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_ARTIST );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_YEAR );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_GENRE );
 
-    Connect( ID_STATUSBAR_GAUGE_CREATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeCreate ), NULL, this );
-    Connect( ID_STATUSBAR_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
-    Connect( ID_STATUSBAR_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
-    Connect( ID_STATUSBAR_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
-    Connect( ID_STATUSBAR_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnSelectLocation, this, ID_MAINFRAME_SELECT_LOCATION );
 
-    Connect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetAllowDenyFilter, this, ID_MAINFRAME_SET_ALLOW_PLAYLIST );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetAllowDenyFilter, this, ID_MAINFRAME_SET_DENY_PLAYLIST );
 
-    Connect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
-    Connect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlay, this, ID_PLAYERPANEL_PLAY );
+    Bind( wxEVT_MENU, &guMainFrame::OnStop, this, ID_PLAYERPANEL_STOP );
+    Bind( wxEVT_MENU, &guMainFrame::OnStopAtEnd, this, ID_PLAYER_PLAYLIST_STOP_ATEND );
+    Bind( wxEVT_MENU, &guMainFrame::OnClearPlaylist, this, ID_PLAYER_PLAYLIST_CLEAR );
+    Bind( wxEVT_MENU, &guMainFrame::OnNextTrack, this, ID_PLAYERPANEL_NEXTTRACK );
+    Bind( wxEVT_MENU, &guMainFrame::OnPrevTrack, this, ID_PLAYERPANEL_PREVTRACK );
+    Bind( wxEVT_MENU, &guMainFrame::OnNextAlbum, this, ID_PLAYERPANEL_NEXTALBUM );
+    Bind( wxEVT_MENU, &guMainFrame::OnPrevAlbum, this, ID_PLAYERPANEL_PREVALBUM );
+    Bind( wxEVT_MENU, &guMainFrame::OnSmartPlay, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
+    Bind( wxEVT_MENU, &guMainFrame::OnRandomize, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
+    Bind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
+    Bind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerPlayListUpdateTitle, this, ID_PLAYER_PLAYLIST_UPDATETITLE );
+    Bind( wxEVT_MENU, &guMainFrame::OnAbout, this, ID_MENU_ABOUT );
+    Bind( wxEVT_MENU, &guMainFrame::OnHelp, this, ID_MENU_HELP );
+    Bind( wxEVT_MENU, &guMainFrame::OnCommunity, this, ID_MENU_COMMUNITY );
 
-    Connect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetForceGapless ), NULL, this  );
-    Connect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetAudioScrobble ), NULL, this  );
+    Bind( wxEVT_MENU, &guMainFrame::OnCopyTracksTo, this, ID_MAINFRAME_COPYTO );
+    Bind( wxEVT_MENU, &guMainFrame::OnCopyTracksToDevice, this, ID_MAINFRAME_COPYTODEVICE_TRACKS );
+    Bind( wxEVT_MENU, &guMainFrame::OnCopyPlayListToDevice, this, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
 
-    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guMainFrame::OnMainPaneClose ), NULL, this );
+//    Bind( wxEVT_MENU, &guMainFrame::OnUpdateLabels, this, ID_LABEL_UPDATELABELS );
 
-    m_MainNotebook->Connect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
-    m_MainNotebook->Connect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler( guMainFrame::OnPageClosed ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnCreateNewLayout, this, ID_MENU_LAYOUT_CREATE );
+    Bind( wxEVT_MENU, &guMainFrame::OnLoadLayout, this, ID_MENU_LAYOUT_LOAD, ID_MENU_LAYOUT_LOAD + 99 );
+    Bind( wxEVT_MENU, &guMainFrame::OnDeleteLayout, this, ID_MENU_LAYOUT_DELETE, ID_MENU_LAYOUT_DELETE + 99 );
 
-    Connect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
-    Connect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_PLAYLIST );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_FILTERS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_VUMETERS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_NOTEBOOK );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_MAIN_LOCATIONS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_MAIN_SHOWCOVER );
 
-    Connect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricFound ), NULL, this );
-    Connect( ID_MAINFRAME_LYRICSSEARCHFIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchFirst ), NULL, this );
-    Connect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
-    Connect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
-    Connect( ID_MAINFRAME_LYRICSEXECCOMMAND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricExecCommand ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewRadio, this, ID_MENU_VIEW_RADIO );
+    Bind( wxEVT_MENU, &guMainFrame::OnRadioShowPanel, this, ID_MENU_VIEW_RAD_TEXTSEARCH );
+    Bind( wxEVT_MENU, &guMainFrame::OnRadioShowPanel, this, ID_MENU_VIEW_RAD_LABELS );
+    Bind( wxEVT_MENU, &guMainFrame::OnRadioShowPanel, this, ID_MENU_VIEW_RAD_GENRES );
+    Bind( wxEVT_MENU, &guMainFrame::OnRadioProperties, this, ID_MENU_VIEW_RAD_PROPERTIES );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewLastFM, this, ID_MENU_VIEW_LASTFM );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewLyrics, this, ID_MENU_VIEW_LYRICS );
 
-    Connect( ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSongSetRating ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewPodcasts, this, ID_MENU_VIEW_PODCASTS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPodcastsShowPanel, this, ID_MENU_VIEW_POD_CHANNELS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPodcastsShowPanel, this, ID_MENU_VIEW_POD_DETAILS );
+    Bind( wxEVT_MENU, &guMainFrame::OnPodcastsProperties, this, ID_MENU_VIEW_POD_PROPERTIES );
 
-    Connect( ID_MAINFRAME_WINDOW_RAISE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRaiseWindow ), NULL, this );
-    Connect( ID_MAINFRAME_LOAD_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLoadPlayList ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewFileBrowser, this, ID_MENU_VIEW_FILEBROWSER );
 
-    Connect( ID_MENU_VIEW_PORTABLE_DEVICE, ID_MENU_VIEW_PORTABLE_DEVICE + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPortableDevice ), NULL, this );
-    Connect( ID_COLLECTIONS_BASE, ID_COLLECTIONS_BASE + ( guCOLLECTION_ACTION_COUNT * guCOLLECTIONS_MAXCOUNT ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCollectionCommand ), NULL, this );
-    Connect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateRadio ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnLibraryCoverChanged, this, ID_ALBUM_COVER_CHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayerPanelCoverChanged, this, ID_PLAYERPANEL_COVERUPDATED );
 
-    Connect( ID_MAINFRAME_MEDIAVIEWER_CLOSED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnMediaViewerClosed ), NULL, this );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewFullScreen, this, ID_MENU_VIEW_FULLSCREEN );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewStatusBar, this, ID_MENU_VIEW_STATUSBAR );
+
+
+    Bind( wxEVT_MENU, &guMainFrame::OnVolumeMonitorUpdated, this, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnGaugeCreate, this, ID_STATUSBAR_GAUGE_CREATE );
+    Bind( wxEVT_MENU, &guMainFrame::OnGaugePulse, this, ID_STATUSBAR_GAUGE_PULSE );
+    Bind( wxEVT_MENU, &guMainFrame::OnGaugeSetMax, this, ID_STATUSBAR_GAUGE_SETMAX );
+    Bind( wxEVT_MENU, &guMainFrame::OnGaugeUpdate, this, ID_STATUSBAR_GAUGE_UPDATE );
+    Bind( wxEVT_MENU, &guMainFrame::OnGaugeRemove, this, ID_STATUSBAR_GAUGE_REMOVE );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayListUpdated, this, ID_PLAYLIST_UPDATED );
+
+    Bind( guPodcastEvent, &guMainFrame::OnPodcastItemUpdated, this, ID_PODCASTS_ITEM_UPDATED );
+    Bind( wxEVT_MENU, &guMainFrame::OnRemovePodcastThread, this, ID_MAINFRAME_REMOVEPODCASTTHREAD );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnSetForceGapless, this, ID_MAINFRAME_SETFORCEGAPLESS );
+    Bind( wxEVT_MENU, &guMainFrame::OnSetAudioScrobble, this, ID_MAINFRAME_SETAUDIOSCROBBLE );
+
+    m_AuiManager.Bind( wxEVT_AUI_PANE_CLOSE, &guMainFrame::OnMainPaneClose, this );
+
+    m_MainNotebook->Bind( wxEVT_AUINOTEBOOK_PAGE_CHANGED, &guMainFrame::OnPageChanged, this );
+    m_MainNotebook->Bind( wxEVT_AUINOTEBOOK_PAGE_CLOSE, &guMainFrame::OnPageClosed, this );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnUpdateSelInfo, this, ID_MAINFRAME_UPDATE_SELINFO );
+    Bind( wxEVT_MENU, &guMainFrame::OnRequestCurrentTrack, this, ID_MAINFRAME_REQUEST_CURRENTTRACK );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnLyricFound, this, ID_LYRICS_LYRICFOUND );
+    Bind( wxEVT_MENU, &guMainFrame::OnLyricSearchFirst, this, ID_MAINFRAME_LYRICSSEARCHFIRST );
+    Bind( wxEVT_MENU, &guMainFrame::OnLyricSearchNext, this, ID_MAINFRAME_LYRICSSEARCHNEXT );
+    Bind( wxEVT_MENU, &guMainFrame::OnLyricSaveChanges, this, ID_MAINFRAME_LYRICSSAVECHANGES );
+    Bind( wxEVT_MENU, &guMainFrame::OnLyricExecCommand, this, ID_MAINFRAME_LYRICSEXECCOMMAND );
+
+    Bind( guConfigUpdatedEvent, &guMainFrame::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnSongSetRating, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnRaiseWindow, this, ID_MAINFRAME_WINDOW_RAISE );
+    Bind( wxEVT_MENU, &guMainFrame::OnLoadPlayList, this, ID_MAINFRAME_LOAD_PLAYLIST );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnViewPortableDevice, this, ID_MENU_VIEW_PORTABLE_DEVICE, ID_MENU_VIEW_PORTABLE_DEVICE + 99 );
+    Bind( wxEVT_MENU, &guMainFrame::OnCollectionCommand, this, ID_COLLECTIONS_BASE, ID_COLLECTIONS_BASE + ( guCOLLECTION_ACTION_COUNT * guCOLLECTIONS_MAXCOUNT ) );
+    Bind( wxEVT_MENU, &guMainFrame::OnUpdateRadio, this, ID_RADIO_DOUPDATE );
+
+    Bind( wxEVT_MENU, &guMainFrame::OnMediaViewerClosed, this, ID_MAINFRAME_MEDIAVIEWER_CLOSED );
 }
 
 // -------------------------------------------------------------------------------- //
 guMainFrame::~guMainFrame()
 {
-//    Disconnect( ID_MENU_UPDATE_LIBRARY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLibrary ), NULL, this );
-//    Disconnect( ID_MENU_UPDATE_LIBRARYFORCED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnForceUpdateLibrary ), NULL, this );
-//    Disconnect( ID_MENU_LIBRARY_ADD_PATH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAddLibraryPath ), NULL, this );
-    Disconnect( ID_MENU_UPDATE_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdatePodcasts ), NULL, this );
-//    Disconnect( ID_MENU_UPDATE_COVERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateCovers ), NULL, this );
-    Disconnect( ID_MENU_QUIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnQuit ), NULL, this );
-
-//    Disconnect( ID_LIBRARY_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::LibraryUpdated ), NULL, this );
-//    Disconnect( ID_JAMENDO_UPDATE_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnJamendoUpdated ), NULL, this );
-//    Disconnect( ID_LIBRARY_DOCLEANDB, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::DoLibraryClean ), NULL, this );
-
-    Disconnect( ID_AUDIOSCROBBLE_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAudioScrobbleUpdate ), NULL, this );
-    Disconnect( wxEVT_CLOSE_WINDOW, wxCloseEventHandler( guMainFrame::OnCloseWindow ), NULL, this );
-    //Disconnect( wxEVT_ICONIZE, wxIconizeEventHandler( guMainFrame::OnIconizeWindow ), NULL, this );
-    Disconnect( ID_MENU_PREFERENCES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPreferences ), NULL, this );
-
-    Disconnect( ID_PLAYERPANEL_TRACKCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateTrack ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_STATUSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerStatusChanged ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_TRACKLISTCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerTrackListChanged ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_CAPSCHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerCapsChanged ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_VOLUMECHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerVolumeChanged ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_SEEKED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerSeeked ), NULL, this );
-
-	Disconnect( ID_MAINFRAME_SELECT_LOCATION, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSelectLocation ), NULL, this );
-    Disconnect( ID_MENU_VIEW_MAIN_SHOWCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-
-    Disconnect( ID_PLAYERPANEL_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlay ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_STOP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnStop ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_NEXTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextTrack ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_PREVTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevTrack ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_NEXTALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnNextAlbum ), NULL, this );
-    Disconnect( ID_PLAYERPANEL_PREVALBUM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPrevAlbum ), NULL, this );
-    Disconnect( ID_PLAYER_PLAYLIST_SMARTPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSmartPlay ), NULL, this );
-    Disconnect( ID_PLAYER_PLAYLIST_RANDOMPLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRandomize ), NULL, this );
-    Disconnect( ID_PLAYER_PLAYLIST_REPEATPLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
-    Disconnect( ID_PLAYER_PLAYLIST_REPEATTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRepeat ), NULL, this );
-    Disconnect( ID_PLAYER_PLAYLIST_UPDATETITLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerPlayListUpdateTitle ), NULL, this );
-    Disconnect( ID_MENU_ABOUT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnAbout ), NULL, this );
-    Disconnect( ID_MENU_HELP, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnHelp ), NULL, this );
-    Disconnect( ID_MENU_COMMUNITY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCommunity ), NULL, this );
-
-    Disconnect( ID_MAINFRAME_COPYTO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksTo ), NULL, this );
-    Disconnect( ID_MAINFRAME_COPYTODEVICE_TRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyTracksToDevice ), NULL, this );
-    Disconnect( ID_MAINFRAME_COPYTODEVICE_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCopyPlayListToDevice ), NULL, this );
-
-//    Disconnect( ID_LABEL_UPDATELABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateLabels ), NULL, this );
-
-    Disconnect( ID_MENU_LAYOUT_CREATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCreateNewLayout ), NULL, this );
-    Disconnect( ID_MENU_LAYOUT_LOAD, ID_MENU_LAYOUT_LOAD + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLoadLayout ), NULL, this );
-    Disconnect( ID_MENU_LAYOUT_DELETE, ID_MENU_LAYOUT_DELETE + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnDeleteLayout ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_PLAYER_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_PLAYER_FILTERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_PLAYER_VUMETERS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_PLAYER_NOTEBOOK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_MAIN_LOCATIONS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayerShowPanel ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_RADIO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewRadio ), NULL, this );
-    Disconnect( ID_MENU_VIEW_RAD_TEXTSEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_RAD_LABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_RAD_GENRES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRadioShowPanel ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_LASTFM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLastFM ), NULL, this );
-    Disconnect( ID_MENU_VIEW_LYRICS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewLyrics ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_PODCASTS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPodcasts ), NULL, this );
-    Disconnect( ID_MENU_VIEW_POD_CHANNELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
-    Disconnect( ID_MENU_VIEW_POD_DETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPodcastsShowPanel ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_FILEBROWSER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFileBrowser ), NULL, this );
-
-    Disconnect( ID_ALBUM_COVER_CHANGED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLibraryCoverChanged ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_FULLSCREEN, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewFullScreen ), NULL, this );
-    Disconnect( ID_MENU_VIEW_STATUSBAR, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewStatusBar ), NULL, this );
-
-    Disconnect( ID_STATUSBAR_GAUGE_CREATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeCreate ), NULL, this );
-    Disconnect( ID_STATUSBAR_GAUGE_PULSE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugePulse ), NULL, this );
-    Disconnect( ID_STATUSBAR_GAUGE_SETMAX, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeSetMax ), NULL, this );
-    Disconnect( ID_STATUSBAR_GAUGE_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeUpdate ), NULL, this );
-    Disconnect( ID_STATUSBAR_GAUGE_REMOVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnGaugeRemove ), NULL, this );
-
-    Disconnect( ID_PLAYLIST_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnPlayListUpdated ), NULL, this );
-
-    Disconnect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guMainFrame::OnPodcastItemUpdated ), NULL, this );
-    Disconnect( ID_MAINFRAME_REMOVEPODCASTTHREAD, wxCommandEventHandler( guMainFrame::OnRemovePodcastThread ), NULL, this );
-
-    Disconnect( ID_MAINFRAME_SETFORCEGAPLESS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetForceGapless ), NULL, this  );
-    Disconnect( ID_MAINFRAME_SETAUDIOSCROBBLE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnSetAudioScrobble ), NULL, this  );
-
-    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guMainFrame::OnMainPaneClose ), NULL, this );
-
-    m_MainNotebook->Disconnect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CHANGED, wxAuiNotebookEventHandler( guMainFrame::OnPageChanged ), NULL, this );
-    m_MainNotebook->Disconnect( wxEVT_COMMAND_AUINOTEBOOK_PAGE_CLOSE, wxAuiNotebookEventHandler( guMainFrame::OnPageClosed ), NULL, this );
-
-    Disconnect( ID_MAINFRAME_UPDATE_SELINFO, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnUpdateSelInfo ), NULL, this );
-    Disconnect( ID_MAINFRAME_REQUEST_CURRENTTRACK, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRequestCurrentTrack ), NULL, this );
-
-    Disconnect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricFound ), NULL, this );
-    Disconnect( ID_MAINFRAME_LYRICSSEARCHFIRST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchFirst ), NULL, this );
-    Disconnect( ID_MAINFRAME_LYRICSSEARCHNEXT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSearchNext ), NULL, this );
-    Disconnect( ID_MAINFRAME_LYRICSSAVECHANGES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLyricSaveChanges ), NULL, this );
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guMainFrame::OnConfigUpdated ), NULL, this );
-
-    Disconnect( ID_MAINFRAME_WINDOW_RAISE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnRaiseWindow ), NULL, this );
-    Disconnect( ID_MAINFRAME_LOAD_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnLoadPlayList ), NULL, this );
-
-    Disconnect( ID_MENU_VIEW_PORTABLE_DEVICE, ID_MENU_VIEW_PORTABLE_DEVICE + 99, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnViewPortableDevice ), NULL, this );
-    Disconnect( ID_COLLECTIONS_BASE, ID_COLLECTIONS_BASE + ( guCOLLECTION_ACTION_COUNT * 24 ), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guMainFrame::OnCollectionCommand ), NULL, this );
-
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
@@ -800,6 +690,155 @@ guMainFrame::~guMainFrame()
     {
         delete m_LyricSearchEngine;
     }
+
+    // Unbind events
+    Unbind( wxEVT_IDLE, &guMainFrame::OnIdle, this );
+    Unbind( wxEVT_SIZE, &guMainFrame::OnSize, this );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayStream, this, ID_MENU_PLAY_STREAM );
+    Unbind( wxEVT_MENU, &guMainFrame::OnUpdatePodcasts, this, ID_MENU_UPDATE_PODCASTS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnCloseTab, this, ID_MENU_VIEW_CLOSEWINDOW );
+    Unbind( wxEVT_MENU, &guMainFrame::OnShowCaptions, this, ID_MENU_HIDE_CAPTIONS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnQuit, this, ID_MENU_QUIT );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnChangeVolume, this, ID_MENU_VOLUME_DOWN, ID_MENU_VOLUME_UP );
+
+//    Unbind( wxEVT_MENU, &guMainFrame::LibraryUpdated, this, ID_LIBRARY_UPDATED );
+//    Unbind( wxEVT_MENU, &guMainFrame::OnJamendoUpdated, this, ID_JAMENDO_UPDATE_FINISHED );
+//    Unbind( wxEVT_MENU, &guMainFrame::OnMagnatuneUpdated, this, ID_MAGNATUNE_UPDATE_FINISHED );
+//    Unbind( wxEVT_MENU, &guMainFrame::DoLibraryClean, this, ID_LIBRARY_DOCLEANDB );
+//    Unbind( wxEVT_MENU, &guMainFrame::LibraryCleanFinished, this, ID_LIBRARY_CLEANFINISHED );
+//    Unbind( wxEVT_MENU, &guMainFrame::LibraryReloadControls, this, ID_LIBRARY_RELOADCONTROLS );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnAudioScrobbleUpdate, this, ID_AUDIOSCROBBLE_UPDATED );
+    Unbind( wxEVT_CLOSE_WINDOW, &guMainFrame::OnCloseWindow, this );
+    //Unbind( wxEVT_ICONIZE, &guMainFrame::OnIconizeWindow, this );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES_COMMANDS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES_COPYTO );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_PREFERENCES_LINKS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPreferences, this, ID_MENU_COLLECTION_NEW );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnUpdateTrack, this, ID_PLAYERPANEL_TRACKCHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerStatusChanged, this, ID_PLAYERPANEL_STATUSCHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerTrackListChanged, this, ID_PLAYERPANEL_TRACKLISTCHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerCapsChanged, this, ID_PLAYERPANEL_CAPSCHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerVolumeChanged, this, ID_PLAYERPANEL_VOLUMECHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerSeeked, this, ID_PLAYERPANEL_SEEKED );
+
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_TRACK );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_ALBUM );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_ALBUMARTIST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_COMPOSER );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_ARTIST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_YEAR );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetSelection, this, ID_MAINFRAME_SELECT_GENRE );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnSelectLocation, this, ID_MAINFRAME_SELECT_LOCATION );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetAllowDenyFilter, this, ID_MAINFRAME_SET_ALLOW_PLAYLIST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetAllowDenyFilter, this, ID_MAINFRAME_SET_DENY_PLAYLIST );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlay, this, ID_PLAYERPANEL_PLAY );
+    Unbind( wxEVT_MENU, &guMainFrame::OnStop, this, ID_PLAYERPANEL_STOP );
+    Unbind( wxEVT_MENU, &guMainFrame::OnStopAtEnd, this, ID_PLAYER_PLAYLIST_STOP_ATEND );
+    Unbind( wxEVT_MENU, &guMainFrame::OnClearPlaylist, this, ID_PLAYER_PLAYLIST_CLEAR );
+    Unbind( wxEVT_MENU, &guMainFrame::OnNextTrack, this, ID_PLAYERPANEL_NEXTTRACK );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPrevTrack, this, ID_PLAYERPANEL_PREVTRACK );
+    Unbind( wxEVT_MENU, &guMainFrame::OnNextAlbum, this, ID_PLAYERPANEL_NEXTALBUM );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPrevAlbum, this, ID_PLAYERPANEL_PREVALBUM );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSmartPlay, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRandomize, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerPlayListUpdateTitle, this, ID_PLAYER_PLAYLIST_UPDATETITLE );
+    Unbind( wxEVT_MENU, &guMainFrame::OnAbout, this, ID_MENU_ABOUT );
+    Unbind( wxEVT_MENU, &guMainFrame::OnHelp, this, ID_MENU_HELP );
+    Unbind( wxEVT_MENU, &guMainFrame::OnCommunity, this, ID_MENU_COMMUNITY );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnCopyTracksTo, this, ID_MAINFRAME_COPYTO );
+    Unbind( wxEVT_MENU, &guMainFrame::OnCopyTracksToDevice, this, ID_MAINFRAME_COPYTODEVICE_TRACKS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnCopyPlayListToDevice, this, ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
+
+//    Unbind( wxEVT_MENU, &guMainFrame::OnUpdateLabels, this, ID_LABEL_UPDATELABELS );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnCreateNewLayout, this, ID_MENU_LAYOUT_CREATE );
+    Unbind( wxEVT_MENU, &guMainFrame::OnLoadLayout, this, ID_MENU_LAYOUT_LOAD, ID_MENU_LAYOUT_LOAD + 99 );
+    Unbind( wxEVT_MENU, &guMainFrame::OnDeleteLayout, this, ID_MENU_LAYOUT_DELETE, ID_MENU_LAYOUT_DELETE + 99 );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_PLAYLIST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_FILTERS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_VUMETERS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_PLAYER_NOTEBOOK );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_MAIN_LOCATIONS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerShowPanel, this, ID_MENU_VIEW_MAIN_SHOWCOVER );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewRadio, this, ID_MENU_VIEW_RADIO );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRadioShowPanel, this, ID_MENU_VIEW_RAD_TEXTSEARCH );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRadioShowPanel, this, ID_MENU_VIEW_RAD_LABELS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRadioShowPanel, this, ID_MENU_VIEW_RAD_GENRES );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRadioProperties, this, ID_MENU_VIEW_RAD_PROPERTIES );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewLastFM, this, ID_MENU_VIEW_LASTFM );
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewLyrics, this, ID_MENU_VIEW_LYRICS );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewPodcasts, this, ID_MENU_VIEW_PODCASTS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPodcastsShowPanel, this, ID_MENU_VIEW_POD_CHANNELS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPodcastsShowPanel, this, ID_MENU_VIEW_POD_DETAILS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPodcastsProperties, this, ID_MENU_VIEW_POD_PROPERTIES );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewFileBrowser, this, ID_MENU_VIEW_FILEBROWSER );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnLibraryCoverChanged, this, ID_ALBUM_COVER_CHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayerPanelCoverChanged, this, ID_PLAYERPANEL_COVERUPDATED );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewFullScreen, this, ID_MENU_VIEW_FULLSCREEN );
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewStatusBar, this, ID_MENU_VIEW_STATUSBAR );
+
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnVolumeMonitorUpdated, this, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnGaugeCreate, this, ID_STATUSBAR_GAUGE_CREATE );
+    Unbind( wxEVT_MENU, &guMainFrame::OnGaugePulse, this, ID_STATUSBAR_GAUGE_PULSE );
+    Unbind( wxEVT_MENU, &guMainFrame::OnGaugeSetMax, this, ID_STATUSBAR_GAUGE_SETMAX );
+    Unbind( wxEVT_MENU, &guMainFrame::OnGaugeUpdate, this, ID_STATUSBAR_GAUGE_UPDATE );
+    Unbind( wxEVT_MENU, &guMainFrame::OnGaugeRemove, this, ID_STATUSBAR_GAUGE_REMOVE );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayListUpdated, this, ID_PLAYLIST_UPDATED );
+
+    Unbind( guPodcastEvent, &guMainFrame::OnPodcastItemUpdated, this, ID_PODCASTS_ITEM_UPDATED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRemovePodcastThread, this, ID_MAINFRAME_REMOVEPODCASTTHREAD );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetForceGapless, this, ID_MAINFRAME_SETFORCEGAPLESS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnSetAudioScrobble, this, ID_MAINFRAME_SETAUDIOSCROBBLE );
+
+    m_AuiManager.Unbind( wxEVT_AUI_PANE_CLOSE, &guMainFrame::OnMainPaneClose, this );
+
+    m_MainNotebook->Unbind( wxEVT_AUINOTEBOOK_PAGE_CHANGED, &guMainFrame::OnPageChanged, this );
+    m_MainNotebook->Unbind( wxEVT_AUINOTEBOOK_PAGE_CLOSE, &guMainFrame::OnPageClosed, this );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnUpdateSelInfo, this, ID_MAINFRAME_UPDATE_SELINFO );
+    Unbind( wxEVT_MENU, &guMainFrame::OnRequestCurrentTrack, this, ID_MAINFRAME_REQUEST_CURRENTTRACK );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnLyricFound, this, ID_LYRICS_LYRICFOUND );
+    Unbind( wxEVT_MENU, &guMainFrame::OnLyricSearchFirst, this, ID_MAINFRAME_LYRICSSEARCHFIRST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnLyricSearchNext, this, ID_MAINFRAME_LYRICSSEARCHNEXT );
+    Unbind( wxEVT_MENU, &guMainFrame::OnLyricSaveChanges, this, ID_MAINFRAME_LYRICSSAVECHANGES );
+    Unbind( wxEVT_MENU, &guMainFrame::OnLyricExecCommand, this, ID_MAINFRAME_LYRICSEXECCOMMAND );
+
+    Unbind( guConfigUpdatedEvent, &guMainFrame::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnSongSetRating, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnRaiseWindow, this, ID_MAINFRAME_WINDOW_RAISE );
+    Unbind( wxEVT_MENU, &guMainFrame::OnLoadPlayList, this, ID_MAINFRAME_LOAD_PLAYLIST );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewPortableDevice, this, ID_MENU_VIEW_PORTABLE_DEVICE, ID_MENU_VIEW_PORTABLE_DEVICE + 99 );
+    Unbind( wxEVT_MENU, &guMainFrame::OnCollectionCommand, this, ID_COLLECTIONS_BASE, ID_COLLECTIONS_BASE + ( guCOLLECTION_ACTION_COUNT * guCOLLECTIONS_MAXCOUNT ) );
+    Unbind( wxEVT_MENU, &guMainFrame::OnUpdateRadio, this, ID_RADIO_DOUPDATE );
+
+    Unbind( wxEVT_MENU, &guMainFrame::OnMediaViewerClosed, this, ID_MAINFRAME_MEDIAVIEWER_CLOSED );
 }
 
 extern void wxClearGtkSystemObjects();
@@ -2587,19 +2626,19 @@ void guMainFrame::OnCollectionCommand( wxCommandEvent &event )
             }
             else if( Collection.m_Type == guMEDIA_COLLECTION_TYPE_NORMAL )
             {
-                wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+                wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
                 CmdEvent.SetInt( guPREFERENCE_PAGE_LIBRARY );
                 AddPendingEvent( CmdEvent );
             }
             else if( Collection.m_Type == guMEDIA_COLLECTION_TYPE_JAMENDO )
             {
-                wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+                wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
                 CmdEvent.SetInt( guPREFERENCE_PAGE_JAMENDO );
                 AddPendingEvent( CmdEvent );
             }
             else if( Collection.m_Type == guMEDIA_COLLECTION_TYPE_MAGNATUNE )
             {
-                wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+                wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
                 CmdEvent.SetInt( guPREFERENCE_PAGE_MAGNATUNE );
                 AddPendingEvent( CmdEvent );
             }
@@ -2695,7 +2734,7 @@ void guMainFrame::OnRadioShowPanel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnRadioProperties( wxCommandEvent &event )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_ONLINE );
     AddPendingEvent( CmdEvent );
 }
@@ -2725,7 +2764,7 @@ void guMainFrame::OnPodcastsShowPanel( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnPodcastsProperties( wxCommandEvent &event )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_PODCASTS );
     AddPendingEvent( CmdEvent );
 }
@@ -3309,7 +3348,7 @@ void guMainFrame::OnRequestCurrentTrack( wxCommandEvent &event )
     const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
     if( CurrentTrack->m_Loaded )
     {
-        wxCommandEvent UpdateEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_TRACKCHANGED );
+        wxCommandEvent UpdateEvent( wxEVT_MENU, ID_PLAYERPANEL_TRACKCHANGED );
         guTrack * Track = new guTrack( * CurrentTrack );
         UpdateEvent.SetClientData( Track );
 
@@ -3338,7 +3377,7 @@ void guMainFrame::OnRequestCurrentTrack( wxCommandEvent &event )
 void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Disconnect( wxEVT_IDLE, wxIdleEventHandler( guMainFrame::OnIdle ), NULL, this );
+    Unbind( wxEVT_IDLE, &guMainFrame::OnIdle, this );
 
 	m_MainStatusBar->Show( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "mainwindow" ) ) );
 
@@ -3346,7 +3385,7 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     if( Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) )
     {
         guLogMessage( wxT( "Updating the podcasts..." ) );
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_UPDATE_PODCASTS );
+        wxCommandEvent event( wxEVT_MENU, ID_MENU_UPDATE_PODCASTS );
         AddPendingEvent( event );
     }
 
@@ -3880,7 +3919,7 @@ void guMainFrame::OnSize( wxSizeEvent &event )
     if( m_LoadLayoutPending != wxNOT_FOUND )
     {
         //guLogMessage( wxT( "LoadLayout command sent" ) );
-        wxCommandEvent LoadLayoutEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_LAYOUT_LOAD + m_LoadLayoutPending );
+        wxCommandEvent LoadLayoutEvent( wxEVT_MENU, ID_MENU_LAYOUT_LOAD + m_LoadLayoutPending );
         m_LoadLayoutPending = wxNOT_FOUND;
         AddPendingEvent( LoadLayoutEvent );
     }
@@ -4219,7 +4258,7 @@ void guMainFrame::OnMainPaneClose( wxAuiManagerEvent &event )
     //guLogMessage( wxT( "OnMainPaneClose: %s  %i" ), PaneName.c_str(), CmdId );
     if( CmdId )
     {
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, CmdId );
+        wxCommandEvent evt( wxEVT_MENU, CmdId );
         evt.SetInt( 0 );
         AddPendingEvent( evt );
     }
@@ -4954,7 +4993,7 @@ guUpdatePodcastsThread::guUpdatePodcastsThread( guMainFrame * mainframe,
 // -------------------------------------------------------------------------------- //
 guUpdatePodcastsThread::~guUpdatePodcastsThread()
 {
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( m_MainFrame, event );
 }
@@ -4965,7 +5004,7 @@ guUpdatePodcastsThread::ExitCode guUpdatePodcastsThread::Entry()
     guPodcastChannelArray PodcastChannels;
     if( m_Db->GetPodcastChannels( &PodcastChannels ) )
     {
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+        wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
         event.SetInt( m_GaugeId );
         event.SetExtraLong( PodcastChannels.Count() );
         wxPostEvent( m_MainFrame, event );

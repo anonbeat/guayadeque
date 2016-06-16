@@ -51,7 +51,7 @@ guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) :
     m_LastHeight    = wxNOT_FOUND;
     m_LastWidth     = wxNOT_FOUND;
 
-    Connect( wxEVT_SIZE, wxSizeEventHandler( guVumeter::OnChangedSize ), NULL, this );
+    Bind( wxEVT_SIZE, &guVumeter::OnChangedSize, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -70,7 +70,7 @@ guVumeter::~guVumeter()
         m_OnBitmap = NULL;
     }
 
-    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guVumeter::OnChangedSize ), NULL, this );
+    Unbind( wxEVT_SIZE, &guVumeter::OnChangedSize, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -520,8 +520,8 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	this->Layout();
 
 
-    Connect( wxEVT_SIZE, wxSizeEventHandler( guPlayerVumeters::OnChangedSize ), NULL, this );
-    Connect( guVUMETERS_LEVEL_TIMERID, wxEVT_TIMER, wxTimerEventHandler( guPlayerVumeters::OnLevelsTimeout ), NULL, this );
+    Bind( wxEVT_SIZE, &guPlayerVumeters::OnChangedSize, this );
+    Bind( wxEVT_TIMER, &guPlayerVumeters::OnLevelsTimeout, this, guVUMETERS_LEVEL_TIMERID );
 
     m_VumLeft = m_HVumLeft;
     m_VumRight = m_HVumRight;
@@ -531,8 +531,8 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 // -------------------------------------------------------------------------------- //
 guPlayerVumeters::~guPlayerVumeters()
 {
-    Disconnect( guVUMETERS_LEVEL_TIMERID, wxEVT_TIMER, wxTimerEventHandler( guPlayerVumeters::OnLevelsTimeout ), NULL, this );
-    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guPlayerVumeters::OnChangedSize ), NULL, this );
+    Unbind( wxEVT_SIZE, &guPlayerVumeters::OnChangedSize, this );
+    Unbind( wxEVT_TIMER, &guPlayerVumeters::OnLevelsTimeout, this, guVUMETERS_LEVEL_TIMERID );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -35,9 +35,9 @@ guCoverPanel::guCoverPanel( wxWindow * parent, guPlayerPanel * playerpanel ) :
     m_PlayerPanel = playerpanel;
     m_LastSize = 100;
 
-	Connect( wxEVT_SIZE, wxSizeEventHandler( guCoverPanel::OnSize ) );
-	Connect( wxEVT_PAINT, wxPaintEventHandler( guCoverPanel::OnPaint ) );
-	Connect( guCOVERPANEL_RESIZE_TIMER_ID, wxEVT_TIMER, wxTimerEventHandler( guCoverPanel::OnResizeTimer ), NULL, this );
+    Bind( wxEVT_SIZE, &guCoverPanel::OnSize, this );
+    Bind( wxEVT_PAINT, &guCoverPanel::OnPaint, this );
+    Bind( wxEVT_TIMER, &guCoverPanel::OnResizeTimer, this, guCOVERPANEL_RESIZE_TIMER_ID );
 
     wxCommandEvent Event;
     OnUpdatedTrack( Event );
@@ -46,9 +46,9 @@ guCoverPanel::guCoverPanel( wxWindow * parent, guPlayerPanel * playerpanel ) :
 // -------------------------------------------------------------------------------- //
 guCoverPanel::~guCoverPanel()
 {
-	Disconnect( wxEVT_SIZE, wxSizeEventHandler( guCoverPanel::OnSize ) );
-	Disconnect( wxEVT_PAINT, wxPaintEventHandler( guCoverPanel::OnPaint ) );
-	Disconnect( guCOVERPANEL_RESIZE_TIMER_ID, wxEVT_TIMER, wxTimerEventHandler( guCoverPanel::OnResizeTimer ), NULL, this );
+    Unbind( wxEVT_SIZE, &guCoverPanel::OnSize, this );
+    Unbind( wxEVT_PAINT, &guCoverPanel::OnPaint, this );
+    Unbind( wxEVT_TIMER, &guCoverPanel::OnResizeTimer, this, guCOVERPANEL_RESIZE_TIMER_ID );
 }
 
 // -------------------------------------------------------------------------------- //

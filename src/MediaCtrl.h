@@ -135,6 +135,8 @@ enum guMediaState
 // -------------------------------------------------------------------------------- //
 class guMediaEvent : public wxNotifyEvent
 {
+    wxDECLARE_DYNAMIC_CLASS( guMediaEvent );
+
   public:
     guMediaEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 ) : wxNotifyEvent( commandType, winid ) { }
     guMediaEvent( const guMediaEvent &clone ) : wxNotifyEvent( clone ) { }
@@ -147,24 +149,24 @@ class guMediaEvent : public wxNotifyEvent
 
 
 //Function type(s) our events need
-typedef void (wxEvtHandler::*wxMediaEventFunction)(guMediaEvent&);
+typedef void (wxEvtHandler::*guMediaEventFunction)(guMediaEvent&);
 
-#define guMediaEventHandler(func) \
-    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxMediaEventFunction, &func)
+#define guMediaEventHandler(func)   wxEVENT_HANDLER_CAST( guMediaEventFunction, func )
 
-DECLARE_EVENT_TYPE( guEVT_MEDIA_LOADED,             wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_FINISHED,           wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_STATE,      wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_BUFFERING,          wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_LEVELINFO,          wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_TAGINFO,            wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_BITRATE,    wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_POSITION,   wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_CHANGED_LENGTH,     wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_FADEOUT_FINISHED,   wxID_ANY )
-DECLARE_EVENT_TYPE( guEVT_MEDIA_FADEIN_STARTED,     wxID_ANY )
+wxDECLARE_EVENT( guEVT_MEDIA_LOADED,           guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_FINISHED,         guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_STATE,    guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_BUFFERING,        guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_LEVELINFO,        guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_TAGINFO,          guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_BITRATE,  guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_POSITION, guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_LENGTH,   guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_FADEIN_STARTED,   guMediaEvent );
+wxDECLARE_EVENT( guEVT_MEDIA_ERROR,            guMediaEvent );
 
-DECLARE_EVENT_TYPE( guEVT_MEDIA_ERROR,              wxID_ANY )
+wxDECLARE_EVENT( guEVT_MEDIA_ERROR,            guMediaEvent );
 
 class guPlayerPanel;
 class guMediaCtrl;

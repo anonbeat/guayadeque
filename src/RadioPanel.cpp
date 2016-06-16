@@ -104,10 +104,10 @@ guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guRadioPanel * ra
 
     SetIndent( 10 );
 
-    Connect( wxEVT_COMMAND_TREE_ITEM_MENU, wxTreeEventHandler( guRadioGenreTreeCtrl::OnContextMenu ), NULL, this );
-    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guRadioGenreTreeCtrl::OnKeyDown ), NULL, this );
+    Bind( wxEVT_TREE_ITEM_MENU, &guRadioGenreTreeCtrl::OnContextMenu, this );
+    Bind( wxEVT_KEY_DOWN, &guRadioGenreTreeCtrl::OnKeyDown, this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioGenreTreeCtrl::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guRadioGenreTreeCtrl::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 }
@@ -207,7 +207,7 @@ void guRadioGenreTreeCtrl::OnKeyDown( wxKeyEvent &event )
     if( event.GetKeyCode() == WXK_DELETE )
     {
         // TODO : Limit to genres and searches
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_GENRE_DELETE );
+        wxCommandEvent CmdEvent( wxEVT_MENU, ID_RADIO_GENRE_DELETE );
         wxPostEvent( this, CmdEvent );
         return;
     }
@@ -255,7 +255,7 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guRadioPanel * 
         InsertColumn( Column );
     }
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioStationListBox::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guRadioStationListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 
@@ -279,7 +279,6 @@ guRadioStationListBox::~guRadioStationListBox()
         Config->WriteBool( wxString::Format( wxT( "show%u" ), index ), ( * m_Columns )[ index ].m_Enabled, wxT( "radios/columns/shows" ) );
     }
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioStationListBox::OnConfigUpdated ), NULL, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -370,7 +369,7 @@ void guRadioStationListBox::GetItemsList( void )
 {
     m_RadioPanel->GetProviderStations( &m_Radios );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -407,7 +406,7 @@ void guRadioStationListBox::RefreshStations( void )
 
     RefreshAll();
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -635,33 +634,33 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
     m_AuiManager.LoadPerspective( RadioLayout, true );
 
-	Connect( guRADIO_TIMER_TEXTSEARCH, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnTextChangedTimer ), NULL, this );
+    Bind( wxEVT_TIMER, &guRadioPanel::OnTextChangedTimer, this, guRADIO_TIMER_TEXTSEARCH );
 
-    Connect( wxEVT_COMMAND_TREE_SEL_CHANGED,  wxTreeEventHandler( guRadioPanel::OnRadioGenreListSelected ), NULL, this );
+    Bind( wxEVT_TREE_SEL_CHANGED, &guRadioPanel::OnRadioGenreListSelected, this );
 
-    Connect( ID_RADIO_DOUPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdate ), NULL, this );
-    Connect( ID_RADIO_UPDATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdated ), NULL, this );
-    Connect( ID_RADIO_UPDATE_END, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioUpdateEnd ), NULL, this );
-    Connect( ID_RADIO_CREATE_TREE_ITEM, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioCreateItems ), NULL, this );
-    Connect( ID_RADIO_LOADING_STATIONS_FINISHED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnLoadStationsFinished ), NULL, this );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioUpdate, this, ID_RADIO_DOUPDATE );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioUpdated, this, ID_RADIO_UPDATED );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioUpdateEnd, this, ID_RADIO_UPDATE_END );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioCreateItems, this, ID_RADIO_CREATE_TREE_ITEM );
+    Bind( wxEVT_MENU, &guRadioPanel::OnLoadStationsFinished, this, ID_RADIO_LOADING_STATIONS_FINISHED );
 
-    m_StationsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guRadioPanel::OnStationListActivated ), NULL, this );
-	m_StationsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guRadioPanel::OnStationListBoxColClick ), NULL, this );
+    m_StationsListBox->Bind( wxEVT_LISTBOX_DCLICK, &guRadioPanel::OnStationListActivated, this );
+    m_StationsListBox->Bind( wxEVT_LIST_COL_CLICK, &guRadioPanel::OnStationListBoxColClick, this );
 
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_ENTER, wxCommandEventHandler( guRadioPanel::OnSearchSelected ), NULL, this );
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guRadioPanel::OnSearchActivated ), NULL, this );
-    m_InputTextCtrl->Connect( wxEVT_COMMAND_SEARCHCTRL_CANCEL_BTN, wxCommandEventHandler( guRadioPanel::OnSearchCancelled ), NULL, this );
+    m_InputTextCtrl->Bind( wxEVT_TEXT_ENTER, &guRadioPanel::OnSearchSelected, this );
+    m_InputTextCtrl->Bind( wxEVT_TEXT, &guRadioPanel::OnSearchActivated, this );
+    m_InputTextCtrl->Bind( wxEVT_SEARCHCTRL_CANCEL_BTN, &guRadioPanel::OnSearchCancelled, this );
 
-    Connect( ID_RADIO_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsPlay ), NULL, this );
-    Connect( ID_RADIO_ENQUEUE_AFTER_ALL, ID_RADIO_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsEnqueue ), NULL, this );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioStationsPlay, this, ID_RADIO_PLAY );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioStationsEnqueue, this, ID_RADIO_ENQUEUE_AFTER_ALL, ID_RADIO_ENQUEUE_AFTER_ARTIST );
 
-    Connect( ID_RADIO_PLAYLIST_LOADED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnStationPlayListLoaded ), NULL, this );
+    Bind( wxEVT_MENU, &guRadioPanel::OnStationPlayListLoaded, this, ID_RADIO_PLAYLIST_LOADED );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guRadioPanel::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guRadioPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
-    Connect( guRADIO_TIMER_GENRESELECTED, wxEVT_TIMER, wxTimerEventHandler( guRadioPanel::OnGenreSelectTimeout ), NULL, this );
+    Bind( wxEVT_TIMER, &guRadioPanel::OnGenreSelectTimeout , this, guRADIO_TIMER_GENRESELECTED );
 
-    Connect( ID_RADIO_ADD_TO_USER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guRadioPanel::OnRadioStationsAddToUser ), NULL, this );
+    Bind( wxEVT_MENU, &guRadioPanel::OnRadioStationsAddToUser, this, ID_RADIO_ADD_TO_USER );
 
 
     // Create shoutcast radio provider
@@ -935,7 +934,7 @@ void guRadioPanel::OnStationListBoxColClick( wxListEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guRadioPanel::OnStationListActivated( wxListEvent &event )
+void guRadioPanel::OnStationListActivated( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
@@ -1259,7 +1258,7 @@ guShoutcastSearch::guShoutcastSearch( wxWindow * parent, guRadioItemData * itemd
 
 	ButtonsSizerOK->SetDefault();
 
-	Connect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guShoutcastSearch::OnOkButton ) );
+    Bind( wxEVT_BUTTON, &guShoutcastSearch::OnOkButton, this, wxID_OK );
 
 	m_SearchTextCtrl->SetFocus();
 }
@@ -1267,7 +1266,7 @@ guShoutcastSearch::guShoutcastSearch( wxWindow * parent, guRadioItemData * itemd
 // -------------------------------------------------------------------------------- //
 guShoutcastSearch::~guShoutcastSearch()
 {
-	Disconnect( wxID_OK, wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guShoutcastSearch::OnOkButton ) );
+    Unbind( wxEVT_BUTTON, &guShoutcastSearch::OnOkButton, this, wxID_OK );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1364,7 +1363,7 @@ guRadioPlayListLoadThread::ExitCode guRadioPlayListLoadThread::Entry()
     {
         //m_RadioPanel->StationUrlLoaded( Tracks, m_Enqueue, m_AsNext );
         //guLogMessage( wxT( "Send Event for station '%s'" ), m_StationUrl.c_str() );
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_PLAYLIST_LOADED );
+        wxCommandEvent Event( wxEVT_MENU, ID_RADIO_PLAYLIST_LOADED );
         Event.SetInt( m_Enqueue );
         Event.SetExtraLong( m_AfterCurrent );
         wxPostEvent( m_RadioPanel, Event );

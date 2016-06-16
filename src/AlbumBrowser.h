@@ -112,8 +112,8 @@ class guAlbumBrowserItemPanel : public wxPanel
     void                    OnAlbumDClicked( wxMouseEvent &event );
 
     void                    OnMouse( wxMouseEvent &event );
-    void                    OnBeginDrag( wxMouseEvent &event );
-    void                    OnCoverBeginDrag( wxMouseEvent &event );
+    void                    OnBeginDrag( wxCommandEvent &event );
+    void                    OnCoverBeginDrag( wxCommandEvent &event );
     int                     GetDragFiles( guDataObjectComposite * files );
 
     void                    OnBitmapClicked( wxMouseEvent &event );
@@ -250,7 +250,7 @@ class guAlbumBrowser : public wxPanel
     void                            OnBigCoverTracksEditLabelsClicked( wxCommandEvent &event );
     void                            OnBigCoverTracksEditTracksClicked( wxCommandEvent &event );
     void                            OnBigCoverTracksMouseMoved( wxMouseEvent &event );
-    void                            OnBigCoverTracksBeginDrag( wxMouseEvent &event );
+    void                            OnBigCoverTracksBeginDrag( wxCommandEvent &event );
     void                            OnBigCoverTracksPlaylistSave( wxCommandEvent &event );
     void                            OnBigCoverTracksSmartPlaylist( wxCommandEvent &event );
 

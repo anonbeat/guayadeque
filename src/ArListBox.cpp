@@ -38,8 +38,8 @@ guArListBox::guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 {
     m_LibPanel = libpanel;
 
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnCommandClicked ) );
+    Bind( wxEVT_MENU, &guArListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guArListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
     CreateAcceleratorTable();
 
@@ -49,8 +49,8 @@ guArListBox::guArListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
 // -------------------------------------------------------------------------------- //
 guArListBox::~guArListBox()
 {
-    Disconnect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnSearchLinkClicked ) );
-    Disconnect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guArListBox::OnCommandClicked ) );
+    Unbind( wxEVT_MENU, &guArListBox::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guArListBox::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -328,7 +328,7 @@ bool guArListBox::SelectArtistName( const wxString &ArtistName )
         wxArrayInt * Artists = new wxArrayInt();
         Artists->Add( ( * m_Items )[ item ].m_Id );
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ARTIST_SETSELECTION );
+        wxCommandEvent event( wxEVT_MENU, ID_ARTIST_SETSELECTION );
         event.SetClientData( ( void * ) Artists );
         wxPostEvent( wxTheApp->GetTopWindow(), event );
 

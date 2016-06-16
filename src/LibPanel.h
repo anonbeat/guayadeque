@@ -110,24 +110,24 @@ class guLibPanel : public guAuiManagerPanel
     bool                    DoTextSearch( const wxString &searchtext );
 
     // LabelsListBox Events
-    virtual void            OnLabelListActivated( wxListEvent &event );
-    virtual void            OnLabelListSelected( wxListEvent &event );
+    virtual void            OnLabelListActivated( wxCommandEvent &event );
+    virtual void            OnLabelListSelected( wxCommandEvent &event );
     virtual void            OnLabelPlayClicked( wxCommandEvent &event );
     virtual void            OnLabelQueueClicked( wxCommandEvent &event );
     virtual void            OnLabelCopyToClicked( wxCommandEvent &event );
     virtual void            OnLabelSavePlayListClicked( wxCommandEvent &event );
 
     // GenreListBox Events
-    virtual void            OnGenreListActivated( wxListEvent &event );
-    virtual void            OnGenreListSelected( wxListEvent &event );
+    virtual void            OnGenreListActivated( wxCommandEvent &event );
+    virtual void            OnGenreListSelected( wxCommandEvent &event );
     virtual void            OnGenrePlayClicked( wxCommandEvent &event );
     virtual void            OnGenreQueueClicked( wxCommandEvent &event );
     virtual void            OnGenreCopyToClicked( wxCommandEvent &event );
     virtual void            OnGenreSavePlayListClicked( wxCommandEvent &event );
 
     // ArtistsListBox Events
-    virtual void            OnArtistListActivated( wxListEvent &event );
-    virtual void            OnArtistListSelected( wxListEvent &event );
+    virtual void            OnArtistListActivated( wxCommandEvent &event );
+    virtual void            OnArtistListSelected( wxCommandEvent &event );
     virtual void            OnArtistPlayClicked( wxCommandEvent &event );
     virtual void            OnArtistQueueClicked( wxCommandEvent &event );
     virtual void            OnArtistEditLabelsClicked( wxCommandEvent &event );
@@ -136,8 +136,8 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnArtistSavePlayListClicked( wxCommandEvent &event );
 
     // AlbumsListBoxEvents
-    virtual void            OnAlbumListActivated( wxListEvent &event );
-    virtual void            OnAlbumListSelected( wxListEvent &event );
+    virtual void            OnAlbumListActivated( wxCommandEvent &event );
+    virtual void            OnAlbumListSelected( wxCommandEvent &event );
     virtual void            OnAlbumPlayClicked( wxCommandEvent &event );
     virtual void            OnAlbumQueueClicked( wxCommandEvent &event );
     virtual void            OnAlbumEditLabelsClicked( wxCommandEvent &event );
@@ -152,8 +152,8 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            DoDeleteAlbumCover( const int albumid );
 
     // YearsListBoxEvents
-    virtual void            OnYearListSelected( wxListEvent &event );
-    virtual void            OnYearListActivated( wxListEvent &event );
+    virtual void            OnYearListSelected( wxCommandEvent &event );
+    virtual void            OnYearListActivated( wxCommandEvent &event );
     virtual void            OnYearListPlayClicked( wxCommandEvent &event );
     virtual void            OnYearListQueueClicked( wxCommandEvent &event );
     virtual void            OnYearListEditTracksClicked( wxCommandEvent &event );
@@ -161,8 +161,8 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnYearSavePlayListClicked( wxCommandEvent &event );
 
     // RatingsListBoxEvents
-    virtual void            OnRatingListSelected( wxListEvent &event );
-    virtual void            OnRatingListActivated( wxListEvent &event );
+    virtual void            OnRatingListSelected( wxCommandEvent &event );
+    virtual void            OnRatingListActivated( wxCommandEvent &event );
     virtual void            OnRatingListPlayClicked( wxCommandEvent &event );
     virtual void            OnRatingListQueueClicked( wxCommandEvent &event );
     virtual void            OnRatingListEditTracksClicked( wxCommandEvent &event );
@@ -170,8 +170,8 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnRatingSavePlayListClicked( wxCommandEvent &event );
 
     // PlayCountListBoxEvents
-    virtual void            OnPlayCountListSelected( wxListEvent &event );
-    virtual void            OnPlayCountListActivated( wxListEvent &event );
+    virtual void            OnPlayCountListSelected( wxCommandEvent &event );
+    virtual void            OnPlayCountListActivated( wxCommandEvent &event );
     virtual void            OnPlayCountListPlayClicked( wxCommandEvent &event );
     virtual void            OnPlayCountListQueueClicked( wxCommandEvent &event );
     virtual void            OnPlayCountListEditTracksClicked( wxCommandEvent &event );
@@ -179,8 +179,8 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnPlayCountSavePlayListClicked( wxCommandEvent &event );
 
     // ComposersListBoxEvents
-    virtual void            OnComposerListSelected( wxListEvent &event );
-    virtual void            OnComposerListActivated( wxListEvent &event );
+    virtual void            OnComposerListSelected( wxCommandEvent &event );
+    virtual void            OnComposerListActivated( wxCommandEvent &event );
     virtual void            OnComposerListPlayClicked( wxCommandEvent &event );
     virtual void            OnComposerListQueueClicked( wxCommandEvent &event );
     virtual void            OnComposerListEditTracksClicked( wxCommandEvent &event );
@@ -188,8 +188,8 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnComposerSavePlayListClicked( wxCommandEvent &event );
 
     // AlbumArtistsListBoxEvents
-    virtual void            OnAlbumArtistListSelected( wxListEvent &event );
-    virtual void            OnAlbumArtistListActivated( wxListEvent &event );
+    virtual void            OnAlbumArtistListSelected( wxCommandEvent &event );
+    virtual void            OnAlbumArtistListActivated( wxCommandEvent &event );
     virtual void            OnAlbumArtistListPlayClicked( wxCommandEvent &event );
     virtual void            OnAlbumArtistListQueueClicked( wxCommandEvent &event );
     virtual void            OnAlbumArtistListEditTracksClicked( wxCommandEvent &event );
@@ -197,7 +197,7 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnAlbumArtistSavePlayListClicked( wxCommandEvent &event );
 
     // SongsListBox Events
-    virtual void            OnSongListActivated( wxListEvent &event );
+    virtual void            OnSongListActivated( wxCommandEvent &event );
     virtual void            OnSongPlayClicked( wxCommandEvent &event );
     virtual void            OnSongQueueClicked( wxCommandEvent &event );
     virtual void            OnSongsEditLabelsClicked( wxCommandEvent &event );

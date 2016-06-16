@@ -824,7 +824,7 @@ guIpodLibraryUpdate::~guIpodLibraryUpdate()
         m_MediaViewer->UpdateFinished();
     }
 
-    wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+    wxCommandEvent GaugeEvent( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     GaugeEvent.SetInt( m_GaugeId );
     wxPostEvent( wxTheApp->GetTopWindow(), GaugeEvent );
 }
@@ -852,7 +852,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
 
         guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
 
-        wxCommandEvent GaugeEvent( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+        wxCommandEvent GaugeEvent( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
         GaugeEvent.SetInt( m_GaugeId );
         GaugeEvent.SetExtraLong( itdb_tracks_number( iPodDb ) );
         wxPostEvent( MainFrame, GaugeEvent );
@@ -1365,7 +1365,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
             Playlists = Playlists->next;
         }
 
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYLIST_UPDATED );
+        wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
         //evt.SetClientData( ( void * ) m_iPodPanel );
         wxPostEvent( MainFrame, evt );
 
@@ -1398,200 +1398,6 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
     }
     return 0;
 }
-
-
-
-
-//////// -------------------------------------------------------------------------------- //
-//////// guIpodMediaLibPanel
-//////// -------------------------------------------------------------------------------- //
-//////guIpodMediaLibPanel::guIpodMediaLibPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel ) //: guPortableMediaLibPanel( parent, db, playerpanel )
-//////{
-//////    m_UpdateThread = NULL;
-//////    m_PortableDevice = NULL;
-//////
-////////    m_ContextMenuFlags = ( guCONTEXTMENU_EDIT_TRACKS | guCONTEXTMENU_DOWNLOAD_COVERS | guCONTEXTMENU_COPY_TO | guCONTEXTMENU_LINKS );
-//////
-//////    Connect( ID_STATUSBAR_GAUGE_CREATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guIpodMediaLibPanel::OnGaugeCreated ), NULL, this );
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////guIpodMediaLibPanel::~guIpodMediaLibPanel()
-//////{
-//////    if( m_UpdateThread )
-//////    {
-//////        m_UpdateThread->Pause();
-//////        m_UpdateThread->Delete();
-//////    }
-//////
-//////    Disconnect( ID_STATUSBAR_GAUGE_CREATED, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guIpodMediaLibPanel::OnGaugeCreated ), NULL, this );
-//////}
-//////
-//////
-//////// -------------------------------------------------------------------------------- //
-//////void guIpodMediaLibPanel::OnGaugeCreated( wxCommandEvent &event )
-//////{
-//////    m_UpdateThread = new guIpodLibraryUpdate( this, event.GetInt() );
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////void guIpodMediaLibPanel::DoUpdate( const bool forced )
-//////{
-//////    if( m_UpdateThread )
-//////        return;
-////////    m_UpdateThread = new guIpodLibraryUpdate( this );
-//////    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_CREATE );
-//////    Event.SetClientData( new wxString( m_PortableDevice->DeviceName() ) );
-//////    Event.SetEventObject( this );
-//////    Event.SetInt( 0 );
-//////    wxPostEvent( wxTheApp->GetTopWindow(), Event );
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////void guIpodMediaLibPanel::UpdateFinished( void )
-//////{
-//////    m_UpdateThread = NULL;
-//////
-//////    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_RELOADCONTROLS );
-//////    Event.SetClientData( ( void * ) this );
-//////    wxPostEvent( wxTheApp->GetTopWindow(), Event );
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////wxArrayString guIpodMediaLibPanel::GetLibraryPaths( void )
-//////{
-//////    wxArrayString RetVal;
-//////    RetVal.Add( m_PortableDevice->MountPath() );
-//////    return RetVal;
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////void guIpodMediaLibPanel::SetPortableMediaDevice( guPortableMediaDevice * portablemediadevice )
-//////{
-//////    m_PortableDevice = portablemediadevice;
-//////
-//////    m_PortableDevice->SetPattern( wxEmptyString );
-//////    if( !m_PortableDevice->AudioFormats() )
-//////    {
-//////        m_PortableDevice->SetAudioFormats( guPORTABLEMEDIA_AUDIO_FORMAT_MP3 | guPORTABLEMEDIA_AUDIO_FORMAT_AAC );
-//////        m_PortableDevice->SetTranscodeFormat( guTRANSCODE_FORMAT_MP3 );
-//////        m_PortableDevice->SetTranscodeScope( guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
-//////        m_PortableDevice->SetTranscodeQuality( guTRANSCODE_QUALITY_KEEP );
-//////        //m_PortableDevice->SetAudioFolders( wxT( "/" ) );
-//////        //m_PortableDevice->SetPlaylistFormats( 0 );
-//////        //m_PortableDevice->SetPlaylistFolder( wxEmptyString );
-//////        m_PortableDevice->SetCoverFormats( guPORTABLEMEDIA_COVER_FORMAT_EMBEDDED );
-//////        //m_PortableDevice->SetCoverName( wxEmptyString );
-//////        m_PortableDevice->SetCoverSize( 0 );
-//////    }
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////// guIpodPlayListPanel
-//////// -------------------------------------------------------------------------------- //
-//////guIpodPlayListPanel::guIpodPlayListPanel( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel ) :
-//////    guPortableMediaPlayListPanel( parent, db, playerpanel, libpanel )
-//////{
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////guIpodPlayListPanel::~guIpodPlayListPanel()
-//////{
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////void guIpodPlayListPanel::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
-//////{
-////////    int Index;
-////////    int Count = tracks->Count();
-////////    for( Index = 0; Index < Count; Index++ )
-////////    {
-////////        tracks->Item( Index ).m_LibPanel = m_LibPanel;
-////////    }
-//////}
-//////
-//////
-//////// -------------------------------------------------------------------------------- //
-//////// guIpodAlbumBrowser
-//////// -------------------------------------------------------------------------------- //
-//////guIpodAlbumBrowser::guIpodAlbumBrowser( wxWindow * parent, guIpodLibrary * db, guPlayerPanel * playerpanel, guIpodMediaLibPanel * libpanel ) :
-//////    guPortableMediaAlbumBrowser( parent, db, playerpanel, libpanel )
-//////{
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////guIpodAlbumBrowser::~guIpodAlbumBrowser()
-//////{
-//////}
-//////
-//////// -------------------------------------------------------------------------------- //
-//////void guIpodAlbumBrowser::OnBitmapMouseOver( const int coverid, const wxPoint &position )
-//////{
-//////    //guLogMessage( wxT( "guIpodAlbumBrowser::OnBitmapMouseOver" ) );
-//////
-//////    guIpodLibrary * Db = ( guIpodLibrary * ) m_Db;
-//////    Itdb_iTunesDB * iPodDb = ( ( guIpodLibrary * ) m_Db )->IpodDb();
-//////
-//////    if( iPodDb )
-//////    {
-//////        wxString SongPath;
-//////        wxString query = wxString::Format( wxT( "SELECT song_path, song_filename FROM songs WHERE song_coverid = %i LIMIT 1;" ), coverid );
-//////        wxSQLite3ResultSet dbRes;
-//////
-//////        dbRes = Db->ExecuteQuery( query );
-//////
-//////        if( dbRes.NextRow() )
-//////        {
-//////            SongPath = dbRes.GetString( 0 ) + dbRes.GetString( 1 );
-//////        }
-//////        dbRes.Finalize();
-//////
-//////        Itdb_Track * iPodTrack = Db->iPodFindTrack( SongPath );
-//////        if( iPodTrack )
-//////        {
-//////            GdkPixbuf * Pixbuf = ( GdkPixbuf * ) itdb_track_get_thumbnail( iPodTrack, -1, -1 );
-//////            if( Pixbuf )
-//////            {
-//////                void * Buffer = NULL;
-//////                gsize BufferSize = 0;
-//////                if( gdk_pixbuf_save_to_buffer( Pixbuf, ( gchar ** ) &Buffer, &BufferSize, "jpeg", NULL, "quality", "100", NULL ) )
-//////                {
-//////                    wxMemoryInputStream ImageStream( Buffer, BufferSize );
-//////                    wxImage * CoverImage = new wxImage( ImageStream, wxBITMAP_TYPE_JPEG );
-//////                    if( CoverImage )
-//////                    {
-//////                        if( CoverImage->IsOk() )
-//////                        {
-//////                            guImageResize( CoverImage, 300, true );
-//////
-//////                            guShowImage * ShowImage = new guShowImage( this, CoverImage, position );
-//////                            if( ShowImage )
-//////                            {
-//////                                ShowImage->Show();
-//////                            }
-//////                        }
-//////                        else
-//////                        {
-//////                            delete CoverImage;
-//////                            guLogMessage( wxT( "Error in image from ipod..." ) );
-//////                        }
-//////                    }
-//////                    g_free( Buffer );
-//////                }
-//////                else
-//////                {
-//////                    guLogMessage( wxT( "Couldnt save to a buffer the pixbuf for cover %i" ), coverid );
-//////                }
-//////                g_object_unref( Pixbuf );
-//////            }
-//////            else
-//////            {
-//////                guLogMessage( wxT( "Couldnt get the pixbuf for cover %i" ), coverid );
-//////            }
-//////        }
-//////    }
-//////}
-
 
 
 // -------------------------------------------------------------------------------- //
@@ -1636,41 +1442,6 @@ void guMediaVieweriPodDevice::LoadMediaDb( void )
         }
     }
 }
-
-//// -------------------------------------------------------------------------------- //
-//void guMediaVieweriPodDevice::UpdateCollectionProperties( void )
-//{
-//    m_MediaCollection->m_CoverWords.Empty();
-//    m_MediaCollection->m_CoverWords.Add( m_PortableDevice->CoverName() );
-//    m_MediaCollection->m_UpdateOnStart = true;
-//
-//
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//wxArrayString guMediaVieweriPodDevice::GetPaths( void )
-//{
-//    wxArrayString Paths = wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) );
-//    int Index;
-//    int Count = Paths.Count();
-//    for( Index = 0; Index < Count; Index++ )
-//    {
-//        Paths[ Index ] = m_PortableDevice->MountPath() + Paths[ Index ];
-//        if( Paths[ Index ].EndsWith( wxT( "//" ) ) )
-//        {
-//            Paths[ Index ].RemoveLast();
-//        }
-//    }
-//    return Paths;
-//}
-//
-//// -------------------------------------------------------------------------------- //
-//bool guMediaVieweriPodDevice::CreateLibraryView( void )
-//{
-//    m_LibPanel = new guPortableMediaLibPanel( this, this );
-//    m_LibPanel->SetBaseCommand( m_BaseCommand + 1 );
-//    return true;
-//}
 
 // -------------------------------------------------------------------------------- //
 void guMediaVieweriPodDevice::CreateContextMenu( wxMenu * menu, const int windowid )
@@ -1753,7 +1524,7 @@ void guMediaVieweriPodDevice::UpdateLibrary( void )
 // -------------------------------------------------------------------------------- //
 void guMediaVieweriPodDevice::CleanLibrary( void )
 {
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_LIBRARY_CLEANFINISHED );
+    wxCommandEvent event( wxEVT_MENU, ID_LIBRARY_CLEANFINISHED );
     AddPendingEvent( event );
 }
 

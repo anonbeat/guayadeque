@@ -162,26 +162,24 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
     m_LyricText->SetDropTarget( new guLyricsPanelDropTarget( this ) );
     m_LyricTextTimer.SetOwner( this );
 
-	m_UpdateCheckBox->Connect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
-	m_SetupButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSetupSelected ), NULL, this );
-	m_ReloadButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
-	m_EditButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
-	m_SaveButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
-	m_WebSearchButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnWebSearchBtnClick ), NULL, this );
-	m_ArtistTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-	m_TrackTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-    Connect( wxEVT_TIMER, wxTimerEventHandler( guLyricsPanel::OnTextTimer ), NULL, this );
+    m_UpdateCheckBox->Bind( wxEVT_CHECKBOX, &guLyricsPanel::OnUpdateChkBoxClicked, this );
+    m_SetupButton->Bind( wxEVT_BUTTON, &guLyricsPanel::OnSetupSelected, this );
+    m_ReloadButton->Bind( wxEVT_BUTTON, &guLyricsPanel::OnReloadBtnClick, this );
+    m_EditButton->Bind( wxEVT_BUTTON, &guLyricsPanel::OnEditBtnClick, this );
+    m_SaveButton->Bind( wxEVT_BUTTON, &guLyricsPanel::OnSaveBtnClick, this );
+    m_WebSearchButton->Bind( wxEVT_BUTTON, &guLyricsPanel::OnWebSearchBtnClick, this );
+    m_ArtistTextCtrl->Bind( wxEVT_TEXT, &guLyricsPanel::OnTextUpdated, this );
+    m_TrackTextCtrl->Bind( wxEVT_TEXT, &guLyricsPanel::OnTextUpdated, this );
+    Bind( wxEVT_TIMER, &guLyricsPanel::OnTextTimer, this );
 
-    m_LyricText->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
-    Connect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
-    Connect( ID_LYRICS_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPaste ), NULL, this );
-    Connect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
-//
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
-//	m_ServerChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricsPanel::OnServerSelected ), NULL, this );
+    m_LyricText->Bind( wxEVT_CONTEXT_MENU, &guLyricsPanel::OnContextMenu, this );
+    Bind( wxEVT_MENU, &guLyricsPanel::OnLyricsCopy, this, ID_LYRICS_COPY );
+    Bind( wxEVT_MENU, &guLyricsPanel::OnLyricsPaste, this, ID_LYRICS_PASTE );
+    Bind( wxEVT_MENU, &guLyricsPanel::OnLyricsPrint, this, ID_LYRICS_PRINT );
 
-    Connect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricFound ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guLyricsPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
+    Bind( wxEVT_MENU, &guLyricsPanel::OnLyricFound, this, ID_LYRICS_LYRICFOUND );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -193,25 +191,24 @@ guLyricsPanel::~guLyricsPanel()
 //    Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
     Config->UnRegisterObject( this );
 
-	m_UpdateCheckBox->Disconnect( wxEVT_COMMAND_CHECKBOX_CLICKED, wxCommandEventHandler( guLyricsPanel::OnUpdateChkBoxClicked ), NULL, this );
-	m_SetupButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSetupSelected ), NULL, this );
-	m_ReloadButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnReloadBtnClick ), NULL, this );
-	m_EditButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnEditBtnClick ), NULL, this );
-	m_SaveButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnSaveBtnClick ), NULL, this );
-	m_WebSearchButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricsPanel::OnWebSearchBtnClick ), NULL, this );
-	m_ArtistTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-	m_TrackTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guLyricsPanel::OnTextUpdated ), NULL, this );
-    Disconnect( wxEVT_TIMER, wxTimerEventHandler( guLyricsPanel::OnTextTimer ), NULL, this );
+    m_UpdateCheckBox->Unbind( wxEVT_CHECKBOX, &guLyricsPanel::OnUpdateChkBoxClicked, this );
+    m_SetupButton->Unbind( wxEVT_BUTTON, &guLyricsPanel::OnSetupSelected, this );
+    m_ReloadButton->Unbind( wxEVT_BUTTON, &guLyricsPanel::OnReloadBtnClick, this );
+    m_EditButton->Unbind( wxEVT_BUTTON, &guLyricsPanel::OnEditBtnClick, this );
+    m_SaveButton->Unbind( wxEVT_BUTTON, &guLyricsPanel::OnSaveBtnClick, this );
+    m_WebSearchButton->Unbind( wxEVT_BUTTON, &guLyricsPanel::OnWebSearchBtnClick, this );
+    m_ArtistTextCtrl->Unbind( wxEVT_TEXT, &guLyricsPanel::OnTextUpdated, this );
+    m_TrackTextCtrl->Unbind( wxEVT_TEXT, &guLyricsPanel::OnTextUpdated, this );
+    Unbind( wxEVT_TIMER, &guLyricsPanel::OnTextTimer, this );
 
-    m_LyricText->Disconnect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guLyricsPanel::OnContextMenu ), NULL, this );
-    Disconnect( ID_LYRICS_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsCopy ), NULL, this );
-    Disconnect( ID_LYRICS_PASTE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPaste ), NULL, this );
-    Disconnect( ID_LYRICS_PRINT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricsPrint ), NULL, this );
-//
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guLyricsPanel::OnConfigUpdated ), NULL, this );
-//	m_ServerChoice->Disconnect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricsPanel::OnServerSelected ), NULL, this );
+    m_LyricText->Unbind( wxEVT_CONTEXT_MENU, &guLyricsPanel::OnContextMenu, this );
+    Unbind( wxEVT_MENU, &guLyricsPanel::OnLyricsCopy, this, ID_LYRICS_COPY );
+    Unbind( wxEVT_MENU, &guLyricsPanel::OnLyricsPaste, this, ID_LYRICS_PASTE );
+    Unbind( wxEVT_MENU, &guLyricsPanel::OnLyricsPrint, this, ID_LYRICS_PRINT );
 
-    Disconnect( ID_LYRICS_LYRICFOUND, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guLyricsPanel::OnLyricFound ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guLyricsPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+
+    Unbind( wxEVT_MENU, &guLyricsPanel::OnLyricFound, this, ID_LYRICS_LYRICFOUND );
 
     if( m_LyricSearchContext )
     {
@@ -338,7 +335,7 @@ void guLyricsPanel::SetCurrentTrack( const guTrack * track )
         SetTrack( &ChangeInfo );
         m_CurrentLyricText = wxEmptyString;
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( event );
 
         m_WebSearchButton->Enable( m_CurrentTrack );
@@ -388,11 +385,11 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
 
     if( m_UpdateEnabled )
     {
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_REQUEST_CURRENTTRACK );
+        wxCommandEvent Event( wxEVT_MENU, ID_MAINFRAME_REQUEST_CURRENTTRACK );
         Event.SetClientData( this );
         wxPostEvent( wxTheApp->GetTopWindow(), Event );
 
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( CmdEvent );
     }
 
@@ -409,7 +406,7 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnSetupSelected( wxCommandEvent &event )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_LYRICS );
     wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 }
@@ -419,7 +416,7 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
 {
     if( m_UpdateEnabled )
     {
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHNEXT );
+        wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_LYRICSSEARCHNEXT );
         wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
 
         guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue(), m_MediaViewer );
@@ -449,7 +446,7 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
             m_LyricSearchEngine->SearchStart( m_LyricSearchContext );
         }
     }
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( CmdEvent );
 }
 
@@ -488,7 +485,7 @@ void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
 
     if( m_UpdateEnabled )
     {
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSAVECHANGES );
+        wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_LYRICSSAVECHANGES );
         CmdEvent.SetClientData( new wxString( m_CurrentLyricText ) );
         wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
     }
@@ -579,7 +576,7 @@ void guLyricsPanel::OnTextTimer( wxTimerEvent &event )
         m_ReloadButton->Enable( true );
         m_EditButton->Enable( true );
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( event );
     }
 }
@@ -795,7 +792,7 @@ void guLyricsPanel::SetLastSource( const int sourceindex )
         }
     }
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -814,7 +811,7 @@ void guLyricsPanel::UpdatedTracks( const guTrackArray * tracks )
         {
             SetCurrentTrack( Track );
 
-            wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHFIRST );
+            wxCommandEvent Event( wxEVT_MENU, ID_MAINFRAME_LYRICSSEARCHFIRST );
             wxPostEvent( wxTheApp->GetTopWindow(), Event );
 
             return;
@@ -829,7 +826,7 @@ void guLyricsPanel::UpdatedTrack( const guTrack * track )
     {
         SetCurrentTrack( track );
 
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSSEARCHFIRST );
+        wxCommandEvent Event( wxEVT_MENU, ID_MAINFRAME_LYRICSSEARCHFIRST );
         wxPostEvent( wxTheApp->GetTopWindow(), Event );
     }
 }
@@ -1490,7 +1487,7 @@ void guLyricSearchEngine::SearchFinished( guLyricSearchThread * searchthread )
 {
     m_LyricSearchThreadsMutex.Lock();
 
-    wxCommandEvent LyricEvent( wxEVT_COMMAND_MENU_SELECTED, ID_LYRICS_LYRICFOUND );
+    wxCommandEvent LyricEvent( wxEVT_MENU, ID_LYRICS_LYRICFOUND );
     LyricEvent.SetInt( searchthread->LyricSearchContext()->m_CurrentIndex );
     LyricEvent.SetClientData( new wxString( searchthread->LyricText() ) );
     wxPostEvent( searchthread->LyricSearchContext()->Owner(), LyricEvent );
@@ -1821,7 +1818,7 @@ void guLyricSearchThread::LyricCommand( guLyricSource &lyricsource )
     wxString * CommandText = new wxString( GetSource( lyricsource ) );
     guLogMessage( wxT( "Trying to execute command: %s" ), CommandText->c_str() );
 
-    wxCommandEvent CommandEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSEXECCOMMAND );
+    wxCommandEvent CommandEvent( wxEVT_MENU, ID_MAINFRAME_LYRICSEXECCOMMAND );
     CommandEvent.SetClientData( CommandText );
     CommandEvent.SetClientObject( ( wxClientData * ) this );
     CommandEvent.SetInt( false );
@@ -1931,7 +1928,7 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
                     wxString * CommandText = new wxString( GetSource( * LyricTarget ) );
                     guLogMessage( wxT( "Trying to execute save command: %s" ), CommandText->c_str() );
 
-                    wxCommandEvent CommandEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_LYRICSEXECCOMMAND );
+                    wxCommandEvent CommandEvent( wxEVT_MENU, ID_MAINFRAME_LYRICSEXECCOMMAND );
                     CommandEvent.SetClientObject( ( wxClientData * ) this );
                     CommandEvent.SetClientData( CommandText );
                     CommandEvent.SetInt( true );
@@ -2265,26 +2262,26 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
 	ButtonsSizerOK->SetDefault();
 
-	// Connect Events
-	m_TypeChoice->Connect( wxEVT_COMMAND_CHOICE_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnTypeChanged ), NULL, this );
-	m_ReplaceListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnReplaceSelected ), NULL, this );
-	m_ReplaceListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLyricSourceEditor::OnReplaceDClicked ), NULL, this );
-	m_ReplaceAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnReplaceAddClicked ), NULL, this );
-	m_ReplaceDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnReplaceDelClicked ), NULL, this );
+	// Bind Events
+    m_TypeChoice->Bind( wxEVT_CHOICE, &guLyricSourceEditor::OnTypeChanged, this );
+    m_ReplaceListBox->Bind( wxEVT_LISTBOX, &guLyricSourceEditor::OnReplaceSelected, this );
+    m_ReplaceListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnReplaceDClicked, this );
+    m_ReplaceAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnReplaceAddClicked, this );
+    m_ReplaceDel->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnReplaceDelClicked, this );
 	if( !istarget )
 	{
-        m_ExtractListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnExtractSelected ), NULL, this );
-        m_ExtractListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLyricSourceEditor::OnExtractDClicked ), NULL, this );
-        m_ExtractAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnExtractAddClicked ), NULL, this );
-        m_ExtractDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnExtractDelClicked ), NULL, this );
-        m_ExcludeListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnExcludeSelected ), NULL, this );
-        m_ExcludeListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLyricSourceEditor::OnExcludeDClicked ), NULL, this );
-        m_ExcludeAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnExcludeAddClicked ), NULL, this );
-        m_ExcludeDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnExcludeDelClicked ), NULL, this );
-        m_NotFoundListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guLyricSourceEditor::OnNotFoundSelected ), NULL, this );
-        m_NotFoundListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guLyricSourceEditor::OnNotFoundDClicked ), NULL, this );
-        m_NotFoundAdd->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnNotFoundAddClicked ), NULL, this );
-        m_NotFoundDel->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guLyricSourceEditor::OnNotFoundDelClicked ), NULL, this );
+        m_ExtractListBox->Bind( wxEVT_LISTBOX, &guLyricSourceEditor::OnExtractSelected, this );
+        m_ExtractListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnExtractDClicked, this );
+        m_ExtractAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnExtractAddClicked, this );
+        m_ExtractDel->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnExtractDelClicked, this );
+        m_ExcludeListBox->Bind( wxEVT_LISTBOX, &guLyricSourceEditor::OnExcludeSelected, this );
+        m_ExcludeListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnExcludeDClicked, this );
+        m_ExcludeAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnExcludeAddClicked, this );
+        m_ExcludeDel->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnExcludeDelClicked, this );
+        m_NotFoundListBox->Bind( wxEVT_LISTBOX, &guLyricSourceEditor::OnNotFoundSelected, this );
+        m_NotFoundListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnNotFoundDClicked, this );
+        m_NotFoundAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnNotFoundAddClicked, this );
+        m_NotFoundDel->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnNotFoundDelClicked, this );
 	}
 
 	m_NameTextCtrl->SetFocus();
@@ -2293,6 +2290,26 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 // -------------------------------------------------------------------------------- //
 guLyricSourceEditor::~guLyricSourceEditor()
 {
+    m_TypeChoice->Unbind( wxEVT_CHOICE, &guLyricSourceEditor::OnTypeChanged, this );
+    m_ReplaceListBox->Unbind( wxEVT_LISTBOX, &guLyricSourceEditor::OnReplaceSelected, this );
+    m_ReplaceListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnReplaceDClicked, this );
+    m_ReplaceAdd->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnReplaceAddClicked, this );
+    m_ReplaceDel->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnReplaceDelClicked, this );
+    if( !m_IsTarget )
+    {
+        m_ExtractListBox->Unbind( wxEVT_LISTBOX, &guLyricSourceEditor::OnExtractSelected, this );
+        m_ExtractListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnExtractDClicked, this );
+        m_ExtractAdd->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnExtractAddClicked, this );
+        m_ExtractDel->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnExtractDelClicked, this );
+        m_ExcludeListBox->Unbind( wxEVT_LISTBOX, &guLyricSourceEditor::OnExcludeSelected, this );
+        m_ExcludeListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnExcludeDClicked, this );
+        m_ExcludeAdd->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnExcludeAddClicked, this );
+        m_ExcludeDel->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnExcludeDelClicked, this );
+        m_NotFoundListBox->Unbind( wxEVT_LISTBOX, &guLyricSourceEditor::OnNotFoundSelected, this );
+        m_NotFoundListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnNotFoundDClicked, this );
+        m_NotFoundAdd->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnNotFoundAddClicked, this );
+        m_NotFoundDel->Unbind( wxEVT_BUTTON, &guLyricSourceEditor::OnNotFoundDelClicked, this );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//	Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -35,68 +35,68 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
     m_Db = db;
     m_Tracks = tracks;
 
-	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+    this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
+    MainSizer->Add( 0, 20, 0, wxEXPAND, 5 );
 
     wxFlexGridSizer * FieldsSizer = new wxFlexGridSizer( 2, 0, 0 );
-	FieldsSizer->AddGrowableCol( 1 );
-	FieldsSizer->AddGrowableRow( 2 );
-	FieldsSizer->SetFlexibleDirection( wxBOTH );
-	FieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    FieldsSizer->AddGrowableCol( 1 );
+    FieldsSizer->AddGrowableRow( 2 );
+    FieldsSizer->SetFlexibleDirection( wxBOTH );
+    FieldsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	PlayListLabel = new wxStaticText( this, wxID_ANY, _("Playlist:"), wxDefaultPosition, wxDefaultSize, 0 );
-	PlayListLabel->Wrap( -1 );
-	FieldsSizer->Add( PlayListLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+    PlayListLabel = new wxStaticText( this, wxID_ANY, _("Playlist:"), wxDefaultPosition, wxDefaultSize, 0 );
+    PlayListLabel->Wrap( -1 );
+    FieldsSizer->Add( PlayListLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-	m_PlayListComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	m_PlayListItems = plitems;
-	int index;
-	int count = plitems->Count();
-	for( index = 0; index < count; index++ )
+    m_PlayListComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+    m_PlayListItems = plitems;
+    int index;
+    int count = plitems->Count();
+    for( index = 0; index < count; index++ )
     {
         m_PlayListComboBox->Append( plitems->Item( index ).m_Name );
     }
     m_PlayListComboBox->SetValue( _( "New playlist" ) );
 
-	FieldsSizer->Add( m_PlayListComboBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    FieldsSizer->Add( m_PlayListComboBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	PosLabel = new wxStaticText( this, wxID_ANY, _( "Where:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	PosLabel->Wrap( -1 );
-	FieldsSizer->Add( PosLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+    PosLabel = new wxStaticText( this, wxID_ANY, _( "Where:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    PosLabel->Wrap( -1 );
+    FieldsSizer->Add( PosLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-	wxString m_PosChoiceChoices[] = { _("Beginning"), _("End") };
-	int m_PosChoiceNChoices = sizeof( m_PosChoiceChoices ) / sizeof( wxString );
-	m_PosChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PosChoiceNChoices, m_PosChoiceChoices, 0 );
-	m_PosChoice->SetSelection( 1 );
-	FieldsSizer->Add( m_PosChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    wxString m_PosChoiceChoices[] = { _("Beginning"), _("End") };
+    int m_PosChoiceNChoices = sizeof( m_PosChoiceChoices ) / sizeof( wxString );
+    m_PosChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PosChoiceNChoices, m_PosChoiceChoices, 0 );
+    m_PosChoice->SetSelection( 1 );
+    FieldsSizer->Add( m_PosChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	TracksLabel = new wxStaticText( this, wxID_ANY, _("Tracks:"), wxDefaultPosition, wxDefaultSize, 0 );
-	TracksLabel->Wrap( -1 );
-	FieldsSizer->Add( TracksLabel, 0, wxALL|wxALIGN_RIGHT, 5 );
+    TracksLabel = new wxStaticText( this, wxID_ANY, _("Tracks:"), wxDefaultPosition, wxDefaultSize, 0 );
+    TracksLabel->Wrap( -1 );
+    FieldsSizer->Add( TracksLabel, 0, wxALL|wxALIGN_RIGHT, 5 );
 
     m_TracksStaticText = new wxStaticText( this, wxID_ANY, wxString::Format( wxT( "%lu" ), tracks->Count() ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_TracksStaticText->Wrap( -1 );
-	FieldsSizer->Add( m_TracksStaticText, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_TracksStaticText->Wrap( -1 );
+    FieldsSizer->Add( m_TracksStaticText, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	MainSizer->Add( FieldsSizer, 1, wxEXPAND, 5 );
+    MainSizer->Add( FieldsSizer, 1, wxEXPAND, 5 );
 
-	StdBtnSizer = new wxStdDialogButtonSizer();
-	StdBtnSizerOK = new wxButton( this, wxID_OK );
-	StdBtnSizer->AddButton( StdBtnSizerOK );
-	StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
-	StdBtnSizer->AddButton( StdBtnSizerCancel );
-	StdBtnSizer->SetAffirmativeButton( StdBtnSizerOK );
-	StdBtnSizer->SetCancelButton( StdBtnSizerCancel );
-	StdBtnSizer->Realize();
-	MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    StdBtnSizer = new wxStdDialogButtonSizer();
+    StdBtnSizerOK = new wxButton( this, wxID_OK );
+    StdBtnSizer->AddButton( StdBtnSizerOK );
+    StdBtnSizerCancel = new wxButton( this, wxID_CANCEL );
+    StdBtnSizer->AddButton( StdBtnSizerCancel );
+    StdBtnSizer->SetAffirmativeButton( StdBtnSizerOK );
+    StdBtnSizer->SetCancelButton( StdBtnSizerCancel );
+    StdBtnSizer->Realize();
+    MainSizer->Add( StdBtnSizer, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    this->SetSizer( MainSizer );
+    this->Layout();
 
-	StdBtnSizerOK->SetDefault();
+    StdBtnSizerOK->SetDefault();
 
     m_PlayListComboBox->SetFocus();
 }

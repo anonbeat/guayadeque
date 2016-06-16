@@ -150,13 +150,13 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 
 	m_AcceptButton->SetDefault();
 
-	// Connect Events
-	m_NameTextCtrl->Connect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTreeViewFilterEditor::OnCheckAcceptButton ), NULL, this );
-	m_FiltersListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTreeViewFilterEditor::OnFilterListBoxSelected ), NULL, this );
-	m_UpFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnUpFilterBtnClick ), NULL, this );
-	m_DownFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnDownFilterBtnClick ), NULL, this );
-	m_DelFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnDelFilterBtnClick ), NULL, this );
-	m_AddFilterButton->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnAddFilterBtnClick ), NULL, this );
+    // Bind Events
+    m_NameTextCtrl->Bind( wxEVT_TEXT, &guTreeViewFilterEditor::OnCheckAcceptButton, this );
+    m_FiltersListBox->Bind( wxEVT_LISTBOX, &guTreeViewFilterEditor::OnFilterListBoxSelected, this );
+    m_UpFilterButton->Bind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnUpFilterBtnClick, this );
+    m_DownFilterButton->Bind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnDownFilterBtnClick, this );
+    m_DelFilterButton->Bind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnDelFilterBtnClick, this );
+    m_AddFilterButton->Bind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnAddFilterBtnClick, this );
 
 	m_NameTextCtrl->SetFocus();
 }
@@ -164,12 +164,12 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 // -------------------------------------------------------------------------------- //
 guTreeViewFilterEditor::~guTreeViewFilterEditor()
 {
-	m_NameTextCtrl->Disconnect( wxEVT_COMMAND_TEXT_UPDATED, wxCommandEventHandler( guTreeViewFilterEditor::OnCheckAcceptButton ), NULL, this );
-	m_FiltersListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guTreeViewFilterEditor::OnFilterListBoxSelected ), NULL, this );
-	m_UpFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnUpFilterBtnClick ), NULL, this );
-	m_DownFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnDownFilterBtnClick ), NULL, this );
-	m_DelFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnDelFilterBtnClick ), NULL, this );
-	m_AddFilterButton->Disconnect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guTreeViewFilterEditor::OnAddFilterBtnClick ), NULL, this );
+    m_NameTextCtrl->Unbind( wxEVT_TEXT, &guTreeViewFilterEditor::OnCheckAcceptButton, this );
+    m_FiltersListBox->Unbind( wxEVT_LISTBOX, &guTreeViewFilterEditor::OnFilterListBoxSelected, this );
+    m_UpFilterButton->Unbind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnUpFilterBtnClick, this );
+    m_DownFilterButton->Unbind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnDownFilterBtnClick, this );
+    m_DelFilterButton->Unbind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnDelFilterBtnClick, this );
+    m_AddFilterButton->Unbind( wxEVT_BUTTON, &guTreeViewFilterEditor::OnAddFilterBtnClick, this );
 }
 
 // -------------------------------------------------------------------------------- //

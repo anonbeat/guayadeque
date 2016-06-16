@@ -96,7 +96,7 @@ void guTVSoListBox::GetItemsList( void )
 
     SetItemCount( m_Items.Count() );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 

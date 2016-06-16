@@ -128,25 +128,25 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 {
                     if( !strcmp( KeyName, "Play" ) )
                     {
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
                     else if( !strcmp( KeyName, "Stop" ) )
                     {
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_STOP );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STOP );
                         wxPostEvent( m_PlayerPanel, event );
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
                     else if( !strcmp( KeyName, "Previous" ) )
                     {
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PREVTRACK );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PREVTRACK );
                         wxPostEvent( m_PlayerPanel, event );
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
                     else if( !strcmp( KeyName, "Next" ) )
                     {
-                        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_NEXTTRACK );
+                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_NEXTTRACK );
                         wxPostEvent( m_PlayerPanel, event );
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;
                     }
@@ -154,7 +154,7 @@ DBusHandlerResult guMMKeys::HandleMessages( guDBusMessage * msg, guDBusMessage *
                     {
                         if( m_PlayerPanel->GetState() == guMEDIASTATE_PLAYING )
                         {
-                            wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_PLAYERPANEL_PLAY );
+                            wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
                             wxPostEvent( m_PlayerPanel, event );
                         }
                         RetVal = DBUS_HANDLER_RESULT_HANDLED;

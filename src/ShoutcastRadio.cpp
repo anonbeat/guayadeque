@@ -41,12 +41,12 @@ namespace Guayadeque {
 guShoutcastRadioProvider::guShoutcastRadioProvider( guRadioPanel * radiopanel, guDbRadios * dbradios ) :
     guRadioProvider( radiopanel, dbradios )
 {
-    radiopanel->Connect( ID_RADIO_GENRE_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guShoutcastRadioProvider::OnGenreAdd ), NULL, this );
-    radiopanel->Connect( ID_RADIO_GENRE_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guShoutcastRadioProvider::OnGenreEdit ), NULL, this );
-    radiopanel->Connect( ID_RADIO_GENRE_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guShoutcastRadioProvider::OnGenreDelete ), NULL, this );
-    radiopanel->Connect( ID_RADIO_SEARCH_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guShoutcastRadioProvider::OnSearchAdd ), NULL, this );
-    radiopanel->Connect( ID_RADIO_SEARCH_EDIT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guShoutcastRadioProvider::OnSearchEdit ), NULL, this );
-    radiopanel->Connect( ID_RADIO_SEARCH_DELETE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guShoutcastRadioProvider::OnSearchDelete ), NULL, this );
+    radiopanel->Bind( wxEVT_MENU, &guShoutcastRadioProvider::OnGenreAdd, this, ID_RADIO_GENRE_ADD );
+    radiopanel->Bind( wxEVT_MENU, &guShoutcastRadioProvider::OnGenreEdit, this, ID_RADIO_GENRE_EDIT );
+    radiopanel->Bind( wxEVT_MENU, &guShoutcastRadioProvider::OnGenreDelete, this, ID_RADIO_GENRE_DELETE );
+    radiopanel->Bind( wxEVT_MENU, &guShoutcastRadioProvider::OnSearchAdd, this, ID_RADIO_SEARCH_ADD );
+    radiopanel->Bind( wxEVT_MENU, &guShoutcastRadioProvider::OnSearchEdit, this, ID_RADIO_SEARCH_EDIT );
+    radiopanel->Bind( wxEVT_MENU, &guShoutcastRadioProvider::OnSearchDelete, this, ID_RADIO_SEARCH_DELETE );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -558,7 +558,7 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
 //    guListItems Genres;
     int index;
     int count;
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_SETMAX );
+    wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     guShoutCast * ShoutCast = new guShoutCast();
     guRadioStations RadioStations;
     if( ShoutCast )
@@ -597,12 +597,12 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
 
             RadioStations.Clear();
 
-            //wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
+            //wxCommandEvent event( wxEVT_MENU, ID_RADIO_UPDATED );
             event.SetId( ID_RADIO_UPDATED );
             wxPostEvent( m_RadioPanel, event );
             Sleep( 30 ); // Its wxThread::Sleep
 
-//            wxCommandEvent event2( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_UPDATE );
+//            wxCommandEvent event2( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
             event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
             event.SetInt( m_GaugeId );
             event.SetExtraLong( index );
@@ -611,12 +611,12 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
 
         delete ShoutCast;
     }
-//    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATE_END );
+//    wxCommandEvent event( wxEVT_MENU, ID_RADIO_UPDATE_END );
     event.SetId( ID_RADIO_UPDATE_END );
     wxPostEvent( m_RadioPanel, event );
 //    wxMilliSleep( 1 );
 
-//    wxCommandEvent event2( wxEVT_COMMAND_MENU_SELECTED, ID_STATUSBAR_GAUGE_REMOVE );
+//    wxCommandEvent event2( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
     wxPostEvent( wxTheApp->GetTopWindow(), event );

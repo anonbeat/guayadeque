@@ -62,6 +62,13 @@ guImportFiles::~guImportFiles()
     wxSize WindowSize = GetSize();
     Config->WriteNum( wxT( "Width" ), WindowSize.x, wxT( "positions/import_files/position" ) );
     Config->WriteNum( wxT( "Height" ), WindowSize.y, wxT( "positions/import_files/position" ) );
+
+    m_CopyToSetupBtn->Unbind( wxEVT_BUTTON, &guImportFiles::OnCopyToSetupClicked, this );
+    m_FilesListBox->Unbind( wxEVT_LISTBOX, &guImportFiles::OnFileSelected, this );
+    m_AddFilesBtn->Unbind( wxEVT_BUTTON, &guImportFiles::OnAddFilesClicked, this );
+    m_DelFilesBtn->Unbind( wxEVT_BUTTON, &guImportFiles::OnDelFilesClicked, this );
+
+    Unbind( guConfigUpdatedEvent, &guImportFiles::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -84,7 +91,7 @@ void guImportFiles::CreateControls( void )
 	CopyToStaticText->Wrap( -1 );
 	CopyToSizer->Add( CopyToStaticText, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-	wxBoxSizer* CopyToChoiceSIzer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * CopyToChoiceSIzer = new wxBoxSizer( wxHORIZONTAL );
 
     wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
     int Index;
@@ -177,12 +184,12 @@ void guImportFiles::CreateControls( void )
 
 	UpdateCounters();
 
-	m_CopyToSetupBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnCopyToSetupClicked ), NULL, this );
-	m_FilesListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED, wxCommandEventHandler( guImportFiles::OnFileSelected ), NULL, this );
-	m_AddFilesBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnAddFilesClicked ), NULL, this );
-	m_DelFilesBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guImportFiles::OnDelFilesClicked ), NULL, this );
+    m_CopyToSetupBtn->Bind( wxEVT_BUTTON, &guImportFiles::OnCopyToSetupClicked, this );
+    m_FilesListBox->Bind( wxEVT_LISTBOX, &guImportFiles::OnFileSelected, this );
+    m_AddFilesBtn->Bind( wxEVT_BUTTON, &guImportFiles::OnAddFilesClicked, this );
+    m_DelFilesBtn->Bind( wxEVT_BUTTON, &guImportFiles::OnDelFilesClicked, this );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guImportFiles::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guImportFiles::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -212,7 +219,7 @@ void guImportFiles::OnConfigUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guImportFiles::OnCopyToSetupClicked( wxCommandEvent &event )
 {
-    wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MENU_PREFERENCES );
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_COPYTO );
     wxPostEvent( ( wxEvtHandler * ) m_MediaViewer->GetMainFrame(), CmdEvent );
 }

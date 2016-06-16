@@ -74,13 +74,13 @@ guAuiManagerPanel::guAuiManagerPanel( wxWindow * parent ) :
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL );
 
-    m_AuiManager.Connect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guAuiManagerPanel::OnPaneClose ), NULL, this );
+    m_AuiManager.Bind( wxEVT_AUI_PANE_CLOSE, &guAuiManagerPanel::OnPaneClose, this );
 }
 
 // -------------------------------------------------------------------------------- //
 guAuiManagerPanel::~guAuiManagerPanel()
 {
-    m_AuiManager.Disconnect( wxEVT_AUI_PANE_CLOSE, wxAuiManagerEventHandler( guAuiManagerPanel::OnPaneClose ), NULL, this );
+    m_AuiManager.Unbind( wxEVT_AUI_PANE_CLOSE, &guAuiManagerPanel::OnPaneClose, this );
 
     m_AuiManager.UnInit();
 }

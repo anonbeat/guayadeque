@@ -86,7 +86,7 @@ void guTuneInRadioProvider::EndReadStationsThread( void )
     m_ReadStationsThread = NULL;
 
 //    m_RadioPanel->EndLoadingStations();
-    wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_LOADING_STATIONS_FINISHED );
+    wxCommandEvent Event( wxEVT_MENU, ID_RADIO_LOADING_STATIONS_FINISHED );
     wxPostEvent( m_RadioPanel, Event );
 }
 
@@ -323,7 +323,7 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, guRadioStati
                 //guLogMessage( wxT( "AddPendingItem '%s' '%s'" ), Name.c_str(), Url.c_str() );
                 m_TuneInProvider->AddPendingItem( Name + wxT( "|" ) + Url );
 
-                wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_CREATE_TREE_ITEM );
+                wxCommandEvent Event( wxEVT_MENU, ID_RADIO_CREATE_TREE_ITEM );
                 wxPostEvent( m_RadioPanel, Event );
                 Sleep( 20 );
             }
@@ -380,7 +380,7 @@ void guTuneInReadStationsThread::ReadStations( wxXmlNode * xmlnode, guRadioStati
     {
         SortStations();
 
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
+        wxCommandEvent Event( wxEVT_MENU, ID_RADIO_UPDATED );
         wxPostEvent( m_RadioPanel, Event );
     }
 }
@@ -434,7 +434,7 @@ int guTuneInReadStationsThread::AddStations( const wxString &url, guRadioStation
     {
         SortStations();
 
-        wxCommandEvent Event( wxEVT_COMMAND_MENU_SELECTED, ID_RADIO_UPDATED );
+        wxCommandEvent Event( wxEVT_MENU, ID_RADIO_UPDATED );
         wxPostEvent( m_RadioPanel, Event );
 
         return stations->Count();

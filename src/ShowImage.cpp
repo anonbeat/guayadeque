@@ -47,15 +47,14 @@ guShowImage::guShowImage( wxWindow * parent, wxImage * image, const wxPoint &pos
         delete image;
     }
 
-	Connect( wxEVT_ACTIVATE, wxActivateEventHandler( guShowImage::FrameActivate ) );
-	Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
-	Connect( wxEVT_RIGHT_DOWN, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
-	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guShowImage::OnClick ), NULL, this );
+	Bind( wxEVT_ACTIVATE, &guShowImage::FrameActivate, this );
+	Bind( wxEVT_LEFT_DOWN, &guShowImage::OnClick, this );
+	Bind( wxEVT_RIGHT_DOWN, &guShowImage::OnClick, this );
+	Bind( wxEVT_MOUSEWHEEL, &guShowImage::OnClick, this );
 
-	m_Bitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guShowImage::OnMouse ), NULL, this );
-	Connect( wxEVT_MOTION, wxMouseEventHandler( guShowImage::OnMouse ), NULL, this );
-	Connect( wxEVT_MOUSE_CAPTURE_LOST, wxMouseCaptureLostEventHandler( guShowImage::OnCaptureLost ), NULL, this );
-
+	m_Bitmap->Bind( wxEVT_MOTION, &guShowImage::OnMouse, this );
+	Bind( wxEVT_MOTION, &guShowImage::OnMouse, this );
+	Bind( wxEVT_MOUSE_CAPTURE_LOST, &guShowImage::OnCaptureLost, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -63,6 +62,15 @@ guShowImage::~guShowImage()
 {
     if( m_CapturedMouse )
         ReleaseMouse();
+
+    Unbind( wxEVT_ACTIVATE, &guShowImage::FrameActivate, this );
+    Unbind( wxEVT_LEFT_DOWN, &guShowImage::OnClick, this );
+    Unbind( wxEVT_RIGHT_DOWN, &guShowImage::OnClick, this );
+    Unbind( wxEVT_MOUSEWHEEL, &guShowImage::OnClick, this );
+
+    m_Bitmap->Unbind( wxEVT_MOTION, &guShowImage::OnMouse, this );
+    Unbind( wxEVT_MOTION, &guShowImage::OnMouse, this );
+    Unbind( wxEVT_MOUSE_CAPTURE_LOST, &guShowImage::OnCaptureLost, this );
 }
 
 // -------------------------------------------------------------------------------- //

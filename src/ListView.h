@@ -43,9 +43,10 @@ class guListViewHeader;
 #define guLISTVIEW_COLUMN_CLICK_EVENTS  0x20000
 #define guLISTVIEW_HIDE_HEADER          0x40000
 
-DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_CLICKED, wxID_ANY )
+wxDECLARE_EVENT( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEvent );
 #define EVT_LISTBOX_ITEM_COL_CLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_CLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
-DECLARE_EVENT_TYPE( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxID_ANY )
+
+wxDECLARE_EVENT( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEvent );
 #define EVT_LISTBOX_ITEM_COL_RCLICKED(winid, fn) DECLARE_EVENT_TABLE_ENTRY( guEVT_LISTBOX_ITEM_COL_RCLICKED, winid, wxID_ANY, wxListEventHandler(fn), (wxObject *) NULL ),
 
 extern wxColour wxAuiStepColour( const wxColour & c, int percent );
@@ -289,7 +290,7 @@ class guListView : public wxScrolledWindow
     virtual wxCoord     OnMeasureItem( size_t row ) const;
     virtual wxString    GetItemSearchText( const int row ) { return GetItemName( row ); }
 
-    virtual void        OnBeginDrag( wxMouseEvent &event );
+    virtual void        OnBeginDrag( wxCommandEvent &event );
     virtual void        OnDragOver( const wxCoord x, const wxCoord y );
     virtual void        OnDropBegin( void ) {}
     virtual void        OnDropFile( const wxString &filename ) {}

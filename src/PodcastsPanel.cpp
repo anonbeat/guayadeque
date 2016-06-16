@@ -1063,28 +1063,28 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
     m_AuiManager.LoadPerspective( PodcastLayout, true );
 
-    Connect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
-    Connect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
-    Connect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
-    Connect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ), NULL, this );
-    m_ChannelsListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
+    // Bind events
+    Bind( wxEVT_MENU, &guPodcastPanel::AddChannel, this, ID_PODCASTS_CHANNEL_ADD );
+    Bind( wxEVT_MENU, &guPodcastPanel::DeleteChannels, this, ID_PODCASTS_CHANNEL_DEL );
+    Bind( wxEVT_MENU, &guPodcastPanel::ChannelProperties, this, ID_PODCASTS_CHANNEL_PROPERTIES );
+    Bind( wxEVT_MENU, &guPodcastPanel::UpdateChannels, this, ID_PODCASTS_CHANNEL_UPDATE );
+    m_ChannelsListBox->Bind( wxEVT_MENU, &guPodcastPanel::ChannelsCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    Connect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
+    Bind( guPodcastEvent, &guPodcastPanel::OnPodcastItemUpdated, this, ID_PODCASTS_ITEM_UPDATED );
 
-    m_ChannelsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnChannelsSelected ), NULL, this );
-    m_ChannelsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnChannelsActivated ), NULL, this );
-	m_PodcastsListBox->Connect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPodcastPanel::OnPodcastsColClick ), NULL, this );
-    m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnPodcastItemSelected ), NULL, this );
-    m_PodcastsListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnPodcastItemActivated ), NULL, this );
+    m_ChannelsListBox->Bind( wxEVT_LISTBOX, &guPodcastPanel::OnChannelsSelected, this );
+    m_ChannelsListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPodcastPanel::OnChannelsActivated, this );
+    m_PodcastsListBox->Bind( wxEVT_LIST_COL_CLICK, &guPodcastPanel::OnPodcastsColClick, this );
+    m_PodcastsListBox->Bind( wxEVT_LISTBOX, &guPodcastPanel::OnPodcastItemSelected, this );
+    m_PodcastsListBox->Bind( wxEVT_LISTBOX_DCLICK, &guPodcastPanel::OnPodcastItemActivated, this );
 
-    Connect( ID_PODCASTS_ITEM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ), NULL, this );
-    Connect( ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ), NULL, this );
-    Connect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
-    Connect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
-    m_PodcastsListBox->Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
+    Bind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemPlay, this, ID_PODCASTS_ITEM_PLAY );
+    Bind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemEnqueue, this, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemDelete, this, ID_PODCASTS_ITEM_DEL );
+    Bind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemDownload, this, ID_PODCASTS_ITEM_DOWNLOAD );
+    m_PodcastsListBox->Bind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
-
+    Bind( guConfigUpdatedEvent, &guPodcastPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1100,28 +1100,28 @@ guPodcastPanel::~guPodcastPanel()
         Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "podcasts" ) );
     }
 
-    Disconnect( ID_PODCASTS_CHANNEL_ADD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::AddChannel ), NULL, this );
-    Disconnect( ID_PODCASTS_CHANNEL_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::DeleteChannels ), NULL, this );
-    Disconnect( ID_PODCASTS_CHANNEL_PROPERTIES, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelProperties ), NULL, this );
-    m_ChannelsListBox->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::ChannelsCopyTo ), NULL, this );
-    Disconnect( ID_PODCASTS_CHANNEL_UPDATE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::UpdateChannels ), NULL, this );
+    // Unbind events
+    Unbind( wxEVT_MENU, &guPodcastPanel::AddChannel, this, ID_PODCASTS_CHANNEL_ADD );
+    Unbind( wxEVT_MENU, &guPodcastPanel::DeleteChannels, this, ID_PODCASTS_CHANNEL_DEL );
+    Unbind( wxEVT_MENU, &guPodcastPanel::ChannelProperties, this, ID_PODCASTS_CHANNEL_PROPERTIES );
+    Unbind( wxEVT_MENU, &guPodcastPanel::UpdateChannels, this, ID_PODCASTS_CHANNEL_UPDATE );
+    m_ChannelsListBox->Unbind( wxEVT_MENU, &guPodcastPanel::ChannelsCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    Disconnect( ID_PODCASTS_ITEM_UPDATED, guPodcastEvent, wxCommandEventHandler( guPodcastPanel::OnPodcastItemUpdated ), NULL, this );
+    Unbind( guPodcastEvent, &guPodcastPanel::OnPodcastItemUpdated, this, ID_PODCASTS_ITEM_UPDATED );
 
-    m_ChannelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnChannelsSelected ), NULL, this );
-    m_ChannelsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnChannelsActivated ), NULL, this );
-	m_PodcastsListBox->Disconnect( wxEVT_COMMAND_LIST_COL_CLICK, wxListEventHandler( guPodcastPanel::OnPodcastsColClick ), NULL, this );
-    m_PodcastsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_SELECTED,  wxListEventHandler( guPodcastPanel::OnPodcastItemSelected ), NULL, this );
-    m_PodcastsListBox->Disconnect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxListEventHandler( guPodcastPanel::OnPodcastItemActivated ), NULL, this );
+    m_ChannelsListBox->Unbind( wxEVT_LISTBOX, &guPodcastPanel::OnChannelsSelected, this );
+    m_ChannelsListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guPodcastPanel::OnChannelsActivated, this );
+    m_PodcastsListBox->Unbind( wxEVT_LIST_COL_CLICK, &guPodcastPanel::OnPodcastsColClick, this );
+    m_PodcastsListBox->Unbind( wxEVT_LISTBOX, &guPodcastPanel::OnPodcastItemSelected, this );
+    m_PodcastsListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guPodcastPanel::OnPodcastItemActivated, this );
 
-    Disconnect( ID_PODCASTS_ITEM_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemPlay ), NULL, this );
-    Disconnect( ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemEnqueue ), NULL, this );
-    Disconnect( ID_PODCASTS_ITEM_DEL, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDelete ), NULL, this );
-    Disconnect( ID_PODCASTS_ITEM_DOWNLOAD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemDownload ), NULL, this );
-    m_PodcastsListBox->Disconnect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guPodcastPanel::OnPodcastItemCopyTo ), NULL, this );
+    Unbind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemPlay, this, ID_PODCASTS_ITEM_PLAY );
+    Unbind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemEnqueue, this, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL, ID_PODCASTS_ITEM_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemDelete, this, ID_PODCASTS_ITEM_DEL );
+    Unbind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemDownload, this, ID_PODCASTS_ITEM_DOWNLOAD );
+    m_PodcastsListBox->Unbind( wxEVT_MENU, &guPodcastPanel::OnPodcastItemCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastPanel::OnConfigUpdated ), NULL, this );
-
+    Unbind( guConfigUpdatedEvent, &guPodcastPanel::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1366,7 +1366,7 @@ void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnChannelsSelected( wxListEvent &event )
+void guPodcastPanel::OnChannelsSelected( wxCommandEvent &event )
 {
     wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
     m_PodcastsListBox->SetFilters( SelectedItems );
@@ -1393,7 +1393,7 @@ void guPodcastPanel::ProcessChannel( guPodcastChannel * channel )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnChannelsActivated( wxListEvent &event )
+void guPodcastPanel::OnChannelsActivated( wxCommandEvent &event )
 {
     wxArrayInt Selected = m_ChannelsListBox->GetSelectedItems();
 
@@ -1416,7 +1416,7 @@ void guPodcastPanel::OnPodcastsColClick( wxListEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnPodcastItemSelected( wxListEvent &event )
+void guPodcastPanel::OnPodcastItemSelected( wxCommandEvent &event )
 {
     wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
     UpdatePodcastInfo( Selection.Count() ? Selection[ 0 ] : -1 );
@@ -1598,7 +1598,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue, const int aftercurrent )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPodcastPanel::OnPodcastItemActivated( wxListEvent &event )
+void guPodcastPanel::OnPodcastItemActivated( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     OnSelectPodcasts( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
@@ -1717,7 +1717,7 @@ void guChannelsListBox::OnKeyDown( wxKeyEvent &event )
 {
     if( event.GetKeyCode() == WXK_DELETE )
     {
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PODCASTS_CHANNEL_DEL );
+        wxCommandEvent CmdEvent( wxEVT_MENU, ID_PODCASTS_CHANNEL_DEL );
         wxPostEvent( this, CmdEvent );
         return;
     }
@@ -1841,7 +1841,7 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbPodcasts * db ) :
         InsertColumn( Column );
     }
 
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastListBox::OnConfigUpdated ), NULL, this );
+    Bind( guConfigUpdatedEvent, &guPodcastListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     CreateAcceleratorTable();
 
@@ -1876,7 +1876,7 @@ guPodcastListBox::~guPodcastListBox()
         delete m_Images[ index ];
     }
 
-    Disconnect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guPodcastListBox::OnConfigUpdated ), NULL, this );
+    Unbind( guConfigUpdatedEvent, &guPodcastListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1992,7 +1992,7 @@ void guPodcastListBox::GetItemsList( void )
 {
     m_Db->GetPodcastItems( &m_PodItems, m_PodChFilters, m_Order, m_OrderDesc );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -2032,7 +2032,7 @@ void guPodcastListBox::OnKeyDown( wxKeyEvent &event )
 {
     if( event.GetKeyCode() == WXK_DELETE )
     {
-        wxCommandEvent CmdEvent( wxEVT_COMMAND_MENU_SELECTED, ID_PODCASTS_ITEM_DEL );
+        wxCommandEvent CmdEvent( wxEVT_MENU, ID_PODCASTS_ITEM_DEL );
         wxPostEvent( this, CmdEvent );
         return;
     }

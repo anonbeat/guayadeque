@@ -125,7 +125,7 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
 
             if( !TestDestroy() )
             {
-                wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUMBROWSER_UPDATEDETAILS );
+                wxCommandEvent event( wxEVT_MENU, ID_ALBUMBROWSER_UPDATEDETAILS );
                 //event.SetInt( Index );
                 wxPostEvent( m_AlbumBrowser, event );
                 //guLogMessage( wxT( "Sent Details %i %i for %i" ), m_AlbumBrowser->m_AlbumItems[ Index ].m_Year, m_AlbumBrowser->m_AlbumItems[ Index ].m_TrackCount, Index );
@@ -178,47 +178,81 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
     m_BitmapTimer.SetOwner( this );
 
-    Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowserItemPanel::OnContextMenu ), NULL, this );
+    Bind( wxEVT_CONTEXT_MENU, &guAlbumBrowserItemPanel::OnContextMenu, this, wxID_ANY );
 
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCommandClicked ) );
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnSearchLinkClicked ) );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCommandClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnSearchLinkClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
-	m_Bitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guAlbumBrowserItemPanel::OnAlbumDClicked ), NULL, this );
-	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnBitmapClicked ), NULL, this );
+    m_Bitmap->Bind( wxEVT_LEFT_DCLICK, &guAlbumBrowserItemPanel::OnAlbumDClicked, this );
+    m_Bitmap->Bind( wxEVT_LEFT_DOWN, &guAlbumBrowserItemPanel::OnBitmapClicked, this );
 
-    Connect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnPlayClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnEnqueueClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEditTracksClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnCopyToClipboard ), NULL, this );
-    Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumSelectName ), NULL, this );
-    Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnArtistSelectName ), NULL, this );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnPlayClicked, this, ID_ALBUMBROWSER_PLAY );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnEnqueueClicked, this, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked, this, ID_ALBUMBROWSER_EDITLABELS );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumEditTracksClicked, this, ID_ALBUMBROWSER_EDITTRACKS );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCopyToClipboard, this, ID_ALBUMBROWSER_COPYTOCLIPBOARD );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumSelectName, this, ID_ALBUM_SELECTNAME );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnArtistSelectName, this, ID_ARTIST_SELECTNAME );
 
-    Connect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_EMBEDCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumEmbedCoverClicked ), NULL, this );
-    Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowserItemPanel::OnAlbumCopyToClicked ), NULL, this );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked, this, ID_ALBUMBROWSER_SEARCHCOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked, this, ID_ALBUMBROWSER_SELECTCOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked, this, ID_ALBUMBROWSER_DELETECOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumEmbedCoverClicked, this, ID_ALBUMBROWSER_EMBEDCOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
-	m_Bitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
-	m_Bitmap->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
-	m_Bitmap->Connect( wxEVT_MOTION, wxMouseEventHandler( guAlbumBrowserItemPanel::OnMouse ), NULL, this );
+    m_Bitmap->Bind( wxEVT_LEFT_DOWN, &guAlbumBrowserItemPanel::OnMouse, this );
+    m_Bitmap->Bind( wxEVT_LEFT_UP, &guAlbumBrowserItemPanel::OnMouse, this );
+    m_Bitmap->Bind( wxEVT_MOTION, &guAlbumBrowserItemPanel::OnMouse, this );
 
-    Connect( ID_ALBUMBROWSER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnBeginDrag ), NULL, this );
-    Connect( ID_ALBUMBROWSER_COVER_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowserItemPanel::OnCoverBeginDrag ), NULL, this );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnBeginDrag, this, ID_ALBUMBROWSER_BEGINDRAG );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCoverBeginDrag, this, ID_ALBUMBROWSER_COVER_BEGINDRAG );
 
-	Connect( wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowserItemPanel::OnTimer ), NULL, this );
+    Bind( wxEVT_TIMER, &guAlbumBrowserItemPanel::OnTimer, this );
 
-    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
-    m_Bitmap->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
-    m_AlbumLabel->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
-    m_ArtistLabel->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
-    m_TracksLabel->Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, m_AlbumBrowser );
+    m_Bitmap->Bind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
+    m_AlbumLabel->Bind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
+    m_ArtistLabel->Bind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
+    m_TracksLabel->Bind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
 }
 
 // -------------------------------------------------------------------------------- //
 guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
 {
+    Unbind( wxEVT_CONTEXT_MENU, &guAlbumBrowserItemPanel::OnContextMenu, this, wxID_ANY );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCommandClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnSearchLinkClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+
+    m_Bitmap->Unbind( wxEVT_LEFT_DCLICK, &guAlbumBrowserItemPanel::OnAlbumDClicked, this );
+    m_Bitmap->Unbind( wxEVT_LEFT_DOWN, &guAlbumBrowserItemPanel::OnBitmapClicked, this );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnPlayClicked, this, ID_ALBUMBROWSER_PLAY );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnEnqueueClicked, this, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumEditLabelsClicked, this, ID_ALBUMBROWSER_EDITLABELS );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumEditTracksClicked, this, ID_ALBUMBROWSER_EDITTRACKS );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCopyToClipboard, this, ID_ALBUMBROWSER_COPYTOCLIPBOARD );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumSelectName, this, ID_ALBUM_SELECTNAME );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnArtistSelectName, this, ID_ARTIST_SELECTNAME );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumDownloadCoverClicked, this, ID_ALBUMBROWSER_SEARCHCOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumSelectCoverClicked, this, ID_ALBUMBROWSER_SELECTCOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumDeleteCoverClicked, this, ID_ALBUMBROWSER_DELETECOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumEmbedCoverClicked, this, ID_ALBUMBROWSER_EMBEDCOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnAlbumCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
+
+    m_Bitmap->Unbind( wxEVT_LEFT_DOWN, &guAlbumBrowserItemPanel::OnMouse, this );
+    m_Bitmap->Unbind( wxEVT_LEFT_UP, &guAlbumBrowserItemPanel::OnMouse, this );
+    m_Bitmap->Unbind( wxEVT_MOTION, &guAlbumBrowserItemPanel::OnMouse, this );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnBeginDrag, this, ID_ALBUMBROWSER_BEGINDRAG );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCoverBeginDrag, this, ID_ALBUMBROWSER_COVER_BEGINDRAG );
+
+    Unbind( wxEVT_TIMER, &guAlbumBrowserItemPanel::OnTimer, this );
+
+    m_Bitmap->Unbind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
+    m_AlbumLabel->Unbind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
+    m_ArtistLabel->Unbind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
+    m_TracksLabel->Unbind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, m_AlbumBrowser );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -568,7 +602,7 @@ void guAlbumBrowserItemPanel::OnMouse( wxMouseEvent &event )
             if( m_BitmapTimer.IsRunning() )
                 m_BitmapTimer.Stop();
 
-            wxCommandEvent DragEvent( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUMBROWSER_BEGINDRAG );
+            wxCommandEvent DragEvent( wxEVT_MENU, ID_ALBUMBROWSER_BEGINDRAG );
             if( event.ControlDown() )
             {
                 DragEvent.SetId( ID_ALBUMBROWSER_COVER_BEGINDRAG );
@@ -606,7 +640,7 @@ int guAlbumBrowserItemPanel::GetDragFiles( guDataObjectComposite * files )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowserItemPanel::OnBeginDrag( wxMouseEvent &event )
+void guAlbumBrowserItemPanel::OnBeginDrag( wxCommandEvent &event )
 {
     if( !m_AlbumBrowserItem )
         return;
@@ -625,7 +659,7 @@ void guAlbumBrowserItemPanel::OnBeginDrag( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowserItemPanel::OnCoverBeginDrag( wxMouseEvent &event )
+void guAlbumBrowserItemPanel::OnCoverBeginDrag( wxCommandEvent &event )
 {
     if( !m_AlbumBrowserItem )
         return;
@@ -738,12 +772,54 @@ guAlbumBrowser::~guAlbumBrowser()
     if( m_BlankCD )
         delete m_BlankCD;
 
-    Disconnect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
-	m_NavSlider->Disconnect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
-	m_NavSlider->Disconnect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
-	Disconnect( wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnRefreshTimer ), NULL, this );
-	Disconnect( ID_ALBUMBROWSER_UPDATEDETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnUpdateDetails ), NULL, this );
-	Disconnect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guAlbumBrowser::OnMouseWheel ), NULL, this );
+    Unbind( wxEVT_SIZE, &guAlbumBrowser::OnChangedSize, this );
+    Unbind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, this );
+
+    m_NavSlider->Unbind( wxEVT_SCROLL_CHANGED, &guAlbumBrowser::OnChangingPosition, this );
+    m_NavSlider->Unbind( wxEVT_SCROLL_THUMBTRACK, &guAlbumBrowser::OnChangingPosition, this );
+    Unbind( wxEVT_TIMER, &guAlbumBrowser::OnRefreshTimer, this, guALBUMBROWSER_TIMER_ID_REFRESH );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnUpdateDetails, this, ID_ALBUMBROWSER_UPDATEDETAILS );
+    Unbind( wxEVT_MOUSEWHEEL, &guAlbumBrowser::OnMouseWheel, this );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnGoToSearch, this, ID_ALBUMBROWSER_SEARCH );
+    Unbind( guConfigUpdatedEvent, &guAlbumBrowser::OnConfigUpdated, this, ID_CONFIG_UPDATED );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnSortSelected, this, ID_ALBUMBROWSER_ORDER_NAME, ID_ALBUMBROWSER_ORDER_ADDEDTIME );
+
+    m_BigCoverBackBtn->Unbind( wxEVT_BUTTON, &guAlbumBrowser::OnBigCoverBackClicked, this );
+    m_BigCoverBitmap->Unbind( wxEVT_LEFT_DOWN, &guAlbumBrowser::OnBigCoverBitmapClicked, this );
+    m_BigCoverBitmap->Unbind( wxEVT_LEFT_DCLICK, &guAlbumBrowser::OnBigCoverBitmapDClicked, this );
+    m_BigCoverTracksListBox->Unbind( wxEVT_LISTBOX_DCLICK, &guAlbumBrowser::OnBigCoverTracksDClicked, this );
+    m_BigCoverBitmap->Unbind( wxEVT_CONTEXT_MENU, &guAlbumBrowser::OnBigCoverContextMenu, this );
+    m_BigCoverTracksListBox->Unbind( wxEVT_CONTEXT_MENU, &guAlbumBrowser::OnBigCoverTracksContextMenu, this );
+
+    Unbind( wxEVT_TIMER, &guAlbumBrowser::OnTimerTimeout, this, guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverPlayClicked, this, ID_ALBUMBROWSER_PLAY );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEnqueueClicked, this, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEditLabelsClicked, this, ID_ALBUMBROWSER_EDITLABELS );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEditTracksClicked, this, ID_ALBUMBROWSER_EDITTRACKS );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverCopyToClipboard, this, ID_ALBUMBROWSER_COPYTOCLIPBOARD );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverAlbumSelectName, this, ID_ALBUM_SELECTNAME );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverArtistSelectName, this, ID_ARTIST_SELECTNAME );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverDownloadCoverClicked, this, ID_ALBUMBROWSER_SEARCHCOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverSelectCoverClicked, this, ID_ALBUMBROWSER_SELECTCOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverDeleteCoverClicked, this, ID_ALBUMBROWSER_DELETECOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEmbedCoverClicked, this, ID_ALBUMBROWSER_EMBEDCOVER );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksPlayClicked, this, ID_ALBUMBROWSER_TRACKS_PLAY );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksEnqueueClicked, this, ID_ALBUMBROWSER_TRACKS_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_TRACKS_ENQUEUE_AFTER_ARTIST );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksEditLabelsClicked, this, ID_ALBUMBROWSER_TRACKS_EDITLABELS );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksEditTracksClicked, this, ID_ALBUMBROWSER_TRACKS_EDITTRACKS );
+    m_BigCoverTracksListBox->Unbind( wxEVT_LEFT_DOWN, &guAlbumBrowser::OnBigCoverTracksMouseMoved, this );
+    m_BigCoverTracksListBox->Unbind( wxEVT_LEFT_UP, &guAlbumBrowser::OnBigCoverTracksMouseMoved, this );
+    m_BigCoverTracksListBox->Unbind( wxEVT_MOTION, &guAlbumBrowser::OnBigCoverTracksMouseMoved, this );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksBeginDrag, this, ID_ALBUMBROWSER_TRACKS_BEGINDRAG );
+
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksPlaylistSave, this, ID_ALBUMBROWSER_TRACKS_PLAYLIST_SAVE );
+    Unbind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksSmartPlaylist, this, ID_ALBUMBROWSER_TRACKS_SMART_PLAYLIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -856,55 +932,54 @@ void guAlbumBrowser::CreateControls( void )
 	m_MainSizer->Hide( m_BigCoverSizer, true );
 	m_MainSizer->FitInside( this );
 
-    Connect( wxEVT_SIZE, wxSizeEventHandler( guAlbumBrowser::OnChangedSize ), NULL, this );
-    Connect( wxEVT_KEY_DOWN, wxKeyEventHandler( guAlbumBrowser::OnKeyDown ), NULL, this );
+    Bind( wxEVT_SIZE, &guAlbumBrowser::OnChangedSize, this );
+    Bind( wxEVT_KEY_DOWN, &guAlbumBrowser::OnKeyDown, this );
 
-	m_NavSlider->Connect( wxEVT_SCROLL_CHANGED, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
-	m_NavSlider->Connect( wxEVT_SCROLL_THUMBTRACK, wxScrollEventHandler( guAlbumBrowser::OnChangingPosition ), NULL, this );
-	Connect( guALBUMBROWSER_TIMER_ID_REFRESH, wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnRefreshTimer ), NULL, this );
-	Connect( ID_ALBUMBROWSER_UPDATEDETAILS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnUpdateDetails ), NULL, this );
-	Connect( wxEVT_MOUSEWHEEL, wxMouseEventHandler( guAlbumBrowser::OnMouseWheel ), NULL, this );
-	Connect( ID_ALBUMBROWSER_SEARCH, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnGoToSearch ), NULL, this );
-    Connect( ID_CONFIG_UPDATED, guConfigUpdatedEvent, wxCommandEventHandler( guAlbumBrowser::OnConfigUpdated ), NULL, this );
+    m_NavSlider->Bind( wxEVT_SCROLL_CHANGED, &guAlbumBrowser::OnChangingPosition, this );
+    m_NavSlider->Bind( wxEVT_SCROLL_THUMBTRACK, &guAlbumBrowser::OnChangingPosition, this );
+    Bind( wxEVT_TIMER, &guAlbumBrowser::OnRefreshTimer, this, guALBUMBROWSER_TIMER_ID_REFRESH );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnUpdateDetails, this, ID_ALBUMBROWSER_UPDATEDETAILS );
+    Bind( wxEVT_MOUSEWHEEL, &guAlbumBrowser::OnMouseWheel, this );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnGoToSearch, this, ID_ALBUMBROWSER_SEARCH );
+    Bind( guConfigUpdatedEvent, &guAlbumBrowser::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
-	Connect( ID_ALBUMBROWSER_ORDER_NAME, ID_ALBUMBROWSER_ORDER_ADDEDTIME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnSortSelected ), NULL, this );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnSortSelected, this, ID_ALBUMBROWSER_ORDER_NAME, ID_ALBUMBROWSER_ORDER_ADDEDTIME );
 
-	m_BigCoverBackBtn->Connect( wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverBackClicked ), NULL, this );
-	m_BigCoverBitmap->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowser::OnBigCoverBitmapClicked ), NULL, this );
-	m_BigCoverBitmap->Connect( wxEVT_LEFT_DCLICK, wxMouseEventHandler( guAlbumBrowser::OnBigCoverBitmapDClicked ), NULL, this );
-	m_BigCoverTracksListBox->Connect( wxEVT_COMMAND_LISTBOX_DOUBLECLICKED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksDClicked ), NULL, this );
-    m_BigCoverBitmap->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowser::OnBigCoverContextMenu ), NULL, this );
-    m_BigCoverTracksListBox->Connect( wxEVT_CONTEXT_MENU, wxContextMenuEventHandler( guAlbumBrowser::OnBigCoverTracksContextMenu ), NULL, this );
+    m_BigCoverBackBtn->Bind( wxEVT_BUTTON, &guAlbumBrowser::OnBigCoverBackClicked, this );
+    m_BigCoverBitmap->Bind( wxEVT_LEFT_DOWN, &guAlbumBrowser::OnBigCoverBitmapClicked, this );
+    m_BigCoverBitmap->Bind( wxEVT_LEFT_DCLICK, &guAlbumBrowser::OnBigCoverBitmapDClicked, this );
+    m_BigCoverTracksListBox->Bind( wxEVT_LISTBOX_DCLICK, &guAlbumBrowser::OnBigCoverTracksDClicked, this );
+    m_BigCoverBitmap->Bind( wxEVT_CONTEXT_MENU, &guAlbumBrowser::OnBigCoverContextMenu, this );
+    m_BigCoverTracksListBox->Bind( wxEVT_CONTEXT_MENU, &guAlbumBrowser::OnBigCoverTracksContextMenu, this );
 
-	Connect( guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED, wxEVT_TIMER, wxTimerEventHandler( guAlbumBrowser::OnTimerTimeout ), NULL, this );
+    Bind( wxEVT_TIMER, &guAlbumBrowser::OnTimerTimeout, this, guALBUMBROWSER_TIMER_ID_BITMAP_CLICKED );
 
-    Connect( ID_ALBUMBROWSER_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverPlayClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEnqueueClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEditLabelsClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEditTracksClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_COPYTOCLIPBOARD, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverCopyToClipboard ), NULL, this );
-    Connect( ID_ALBUM_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverAlbumSelectName ), NULL, this );
-    Connect( ID_ARTIST_SELECTNAME, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverArtistSelectName ), NULL, this );
-    Connect( ID_ALBUMBROWSER_SEARCHCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverDownloadCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_SELECTCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverSelectCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_DELETECOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverDeleteCoverClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_EMBEDCOVER, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverEmbedCoverClicked ), NULL, this );
-    Connect( ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverCopyToClicked ), NULL, this );
-    Connect( ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverCommandClicked ) );
-    Connect( ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverSearchLinkClicked ) );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverPlayClicked, this, ID_ALBUMBROWSER_PLAY );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEnqueueClicked, this, ID_ALBUMBROWSER_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEditLabelsClicked, this, ID_ALBUMBROWSER_EDITLABELS );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEditTracksClicked, this, ID_ALBUMBROWSER_EDITTRACKS );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverCopyToClipboard, this, ID_ALBUMBROWSER_COPYTOCLIPBOARD );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverAlbumSelectName, this, ID_ALBUM_SELECTNAME );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverArtistSelectName, this, ID_ARTIST_SELECTNAME );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverDownloadCoverClicked, this, ID_ALBUMBROWSER_SEARCHCOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverSelectCoverClicked, this, ID_ALBUMBROWSER_SELECTCOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverDeleteCoverClicked, this, ID_ALBUMBROWSER_DELETECOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverEmbedCoverClicked, this, ID_ALBUMBROWSER_EMBEDCOVER );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
 
-    Connect( ID_ALBUMBROWSER_TRACKS_PLAY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksPlayClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_TRACKS_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_TRACKS_ENQUEUE_AFTER_ARTIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksEnqueueClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_TRACKS_EDITLABELS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksEditLabelsClicked ), NULL, this );
-    Connect( ID_ALBUMBROWSER_TRACKS_EDITTRACKS, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksEditTracksClicked ), NULL, this );
-	m_BigCoverTracksListBox->Connect( wxEVT_LEFT_DOWN, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksMouseMoved ), NULL, this );
-	m_BigCoverTracksListBox->Connect( wxEVT_LEFT_UP, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksMouseMoved ), NULL, this );
-	m_BigCoverTracksListBox->Connect( wxEVT_MOTION, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksMouseMoved ), NULL, this );
-    Connect( ID_ALBUMBROWSER_TRACKS_BEGINDRAG, wxEVT_COMMAND_MENU_SELECTED, wxMouseEventHandler( guAlbumBrowser::OnBigCoverTracksBeginDrag ), NULL, this );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksPlayClicked, this, ID_ALBUMBROWSER_TRACKS_PLAY );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksEnqueueClicked, this, ID_ALBUMBROWSER_TRACKS_ENQUEUE_AFTER_ALL, ID_ALBUMBROWSER_TRACKS_ENQUEUE_AFTER_ARTIST );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksEditLabelsClicked, this, ID_ALBUMBROWSER_TRACKS_EDITLABELS );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksEditTracksClicked, this, ID_ALBUMBROWSER_TRACKS_EDITTRACKS );
+    m_BigCoverTracksListBox->Bind( wxEVT_LEFT_DOWN, &guAlbumBrowser::OnBigCoverTracksMouseMoved, this );
+    m_BigCoverTracksListBox->Bind( wxEVT_LEFT_UP, &guAlbumBrowser::OnBigCoverTracksMouseMoved, this );
+    m_BigCoverTracksListBox->Bind( wxEVT_MOTION, &guAlbumBrowser::OnBigCoverTracksMouseMoved, this );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksBeginDrag, this, ID_ALBUMBROWSER_TRACKS_BEGINDRAG );
 
-    Connect( ID_ALBUMBROWSER_TRACKS_PLAYLIST_SAVE, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksPlaylistSave ), NULL, this );
-    Connect( ID_ALBUMBROWSER_TRACKS_SMART_PLAYLIST, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler( guAlbumBrowser::OnBigCoverTracksSmartPlaylist ), NULL, this );
-
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksPlaylistSave, this, ID_ALBUMBROWSER_TRACKS_PLAYLIST_SAVE );
+    Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksSmartPlaylist, this, ID_ALBUMBROWSER_TRACKS_SMART_PLAYLIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1092,7 +1167,7 @@ void guAlbumBrowser::RefreshAll( void )
     m_AlbumItemsMutex.Unlock();
     Layout();
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -1338,7 +1413,7 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid, const int commandi
     m_Db->GetAlbumsSongs( Albums, Tracks, true );
     NormalizeTracks( Tracks );
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_COPYTO );
     int Index = commandid - ID_COPYTO_BASE;
     if( Index >= guCOPYTO_DEVICE_BASE )
     {
@@ -1558,7 +1633,7 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         RefreshAll();
 
         //
-        wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUM_COVER_CHANGED );
+        wxCommandEvent evt( wxEVT_MENU, ID_ALBUM_COVER_CHANGED );
         evt.SetInt( albumid );
         evt.SetClientData( NULL );
         wxPostEvent( wxTheApp->GetTopWindow(), evt );
@@ -1644,7 +1719,7 @@ void guAlbumBrowser::OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPo
 
         Layout();
 
-        wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+        wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( event );
     }
 }
@@ -1652,7 +1727,7 @@ void guAlbumBrowser::OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPo
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnAlbumSelectName( const int albumid )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ALBUM );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ALBUM );
     evt.SetInt( albumid );
     evt.SetClientData( m_MediaViewer );
     //evt.SetExtraLong( guTRACK_TYPE_DB );
@@ -1662,7 +1737,7 @@ void guAlbumBrowser::OnAlbumSelectName( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnArtistSelectName( const int artistid )
 {
-    wxCommandEvent evt( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_SELECT_ARTIST );
+    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
     evt.SetInt( artistid );
     evt.SetClientData( m_MediaViewer );
     //evt.SetExtraLong( guTRACK_TYPE_DB );
@@ -1776,7 +1851,7 @@ void guAlbumBrowser::DoBackToAlbums( void )
     Layout();
     m_NavSlider->SetFocus();
 
-    wxCommandEvent event( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_UPDATE_SELINFO );
+    wxCommandEvent event( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
     AddPendingEvent( event );
 }
 
@@ -2237,7 +2312,7 @@ void guAlbumBrowser::OnBigCoverCopyToClicked( wxCommandEvent &event )
         guTrackArray * Tracks = new guTrackArray();
         GetSelectedTracks( Tracks );
 
-        wxCommandEvent CopyEvent( wxEVT_COMMAND_MENU_SELECTED, ID_MAINFRAME_COPYTO );
+        wxCommandEvent CopyEvent( wxEVT_MENU, ID_MAINFRAME_COPYTO );
         int Index = event.GetId() - ID_COPYTO_BASE;
         if( Index >= guCOPYTO_DEVICE_BASE )
         {
@@ -2337,7 +2412,7 @@ void guAlbumBrowser::OnBigCoverTracksMouseMoved( wxMouseEvent &event )
 
         if( ++m_DragCount == 3 )
         {
-            wxCommandEvent DragEvent( wxEVT_COMMAND_MENU_SELECTED, ID_ALBUMBROWSER_TRACKS_BEGINDRAG );
+            wxCommandEvent DragEvent( wxEVT_MENU, ID_ALBUMBROWSER_TRACKS_BEGINDRAG );
             DragEvent.SetEventObject( this );
             GetEventHandler()->ProcessEvent( DragEvent );
         }
@@ -2358,7 +2433,7 @@ void guAlbumBrowser::OnBigCoverTracksMouseMoved( wxMouseEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guAlbumBrowser::OnBigCoverTracksBeginDrag( wxMouseEvent &event )
+void guAlbumBrowser::OnBigCoverTracksBeginDrag( wxCommandEvent &event )
 {
     int Index;
     int Count;
