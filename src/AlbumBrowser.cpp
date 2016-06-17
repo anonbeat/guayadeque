@@ -180,8 +180,8 @@ guAlbumBrowserItemPanel::guAlbumBrowserItemPanel( wxWindow * parent, const int i
 
     Bind( wxEVT_CONTEXT_MENU, &guAlbumBrowserItemPanel::OnContextMenu, this, wxID_ANY );
 
-    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCommandClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
-    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnSearchLinkClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Bind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
     m_Bitmap->Bind( wxEVT_LEFT_DCLICK, &guAlbumBrowserItemPanel::OnAlbumDClicked, this );
     m_Bitmap->Bind( wxEVT_LEFT_DOWN, &guAlbumBrowserItemPanel::OnBitmapClicked, this );
@@ -220,8 +220,8 @@ guAlbumBrowserItemPanel::~guAlbumBrowserItemPanel()
 {
     Unbind( wxEVT_CONTEXT_MENU, &guAlbumBrowserItemPanel::OnContextMenu, this, wxID_ANY );
 
-    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCommandClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
-    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnSearchLinkClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnSearchLinkClicked, this, ID_LINKS_BASE, ID_LINKS_BASE + guLINKS_MAXCOUNT );
+    Unbind( wxEVT_MENU, &guAlbumBrowserItemPanel::OnCommandClicked, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
 
     m_Bitmap->Unbind( wxEVT_LEFT_DCLICK, &guAlbumBrowserItemPanel::OnAlbumDClicked, this );
     m_Bitmap->Unbind( wxEVT_LEFT_DOWN, &guAlbumBrowserItemPanel::OnBitmapClicked, this );
