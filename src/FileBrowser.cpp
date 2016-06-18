@@ -173,6 +173,9 @@ void guGenericDirCtrl::SetupSections()
 // -------------------------------------------------------------------------------- //
 void guGenericDirCtrl::OnBeginRenameDir( wxTreeEvent &event )
 {
+    wxTreeCtrl * TreeCtrl = GetTreeCtrl();
+    m_RenameItemId = TreeCtrl->GetSelection();
+    m_RenameName = GetPath();
     OnBeginEditItem( event );
 }
 
