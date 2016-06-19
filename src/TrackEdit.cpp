@@ -698,7 +698,7 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     m_MBTiCopyButton->Bind( wxEVT_BUTTON, &guTrackEditor::OnMBrainzTitleCopyButtonClicked, this );
     m_MBNuCopyButton->Bind( wxEVT_BUTTON, &guTrackEditor::OnMBrainzNumberCopyButtonClicked, this );
 
-    //Bind( ID_LYRICS_LYRICFOUND, &wxCommandEventHandler( guTrackEditoOnDownloadedLyric ), NULL, this );
+    Bind( wxEVT_MENU, &guTrackEditor::OnDownloadedLyric, this, ID_LYRICS_LYRICFOUND );
 
     Bind( wxEVT_TIMER, &guTrackEditor::OnSelectTimeout, this, guTRACKEDIT_TIMER_SELECTION_ID );
     Bind( wxEVT_TIMER, &guTrackEditor::OnArtistChangedTimeout, this, guTRACKEDIT_TIMER_ARTIST_ID );
@@ -784,7 +784,7 @@ guTrackEditor::~guTrackEditor()
     m_MBTiCopyButton->Unbind( wxEVT_BUTTON, &guTrackEditor::OnMBrainzTitleCopyButtonClicked, this );
     m_MBNuCopyButton->Unbind( wxEVT_BUTTON, &guTrackEditor::OnMBrainzNumberCopyButtonClicked, this );
 
-    //Unbind( ID_LYRICS_LYRICFOUND, &wxCommandEventHandler( guTrackEditoOnDownloadedLyric ), NULL, this );
+    Unbind( wxEVT_MENU, &guTrackEditor::OnDownloadedLyric, this, ID_LYRICS_LYRICFOUND );
 
     Unbind( wxEVT_TIMER, &guTrackEditor::OnSelectTimeout, this, guTRACKEDIT_TIMER_SELECTION_ID );
     Unbind( wxEVT_TIMER, &guTrackEditor::OnArtistChangedTimeout, this, guTRACKEDIT_TIMER_ARTIST_ID );
@@ -1876,8 +1876,8 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnTextUpdated( wxCommandEvent& event )
 {
-    bool Enabled = !m_LyricArtistTextCtrl->IsEmpty() &&
-        !m_LyricTrackTextCtrl->IsEmpty();
+    bool Enabled = !m_LyricArtistTextCtrl->GetValue().IsEmpty() &&
+        !m_LyricTrackTextCtrl->GetValue().IsEmpty();
 
     m_LyricReloadButton->Enable( Enabled );
 }
