@@ -181,6 +181,7 @@ INSTALL( FILES runtime/guayadeque.png DESTINATION share/pixmaps/ )
 INSTALL( FILES runtime/guayadeque.default.conf DESTINATION share/guayadeque )
 INSTALL( FILES runtime/equalizers.default.conf DESTINATION share/guayadeque )
 INSTALL( FILES runtime/lyrics_sources.xml DESTINATION share/guayadeque )
+INSTALL( FILES runtime/guayadeque.appdata.xml DESTINATION share/appdata )
 
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
