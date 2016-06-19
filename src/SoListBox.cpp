@@ -349,8 +349,8 @@ void guSoListBox::ReloadItems( bool reset )
 
     if( !reset )
     {
-      SetSelectedIndexs( Selection );
-      ScrollToRow( FirstVisible );
+        SetSelectedIndexs( Selection );
+        ScrollToRow( FirstVisible );
     }
     RefreshAll();
 }

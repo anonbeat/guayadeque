@@ -415,22 +415,22 @@ wxArrayInt guListView::GetSelectedIndexs( const bool convertall ) const
 // -------------------------------------------------------------------------------- //
 void guListView::SetSelectedItems( const wxArrayInt &selection )
 {
-    int index;
-    int count = GetItemCount();
+    int Count = GetItemCount();
 
     // TODO Need to speed up this
     ClearSelectedItems();
-    if( selection.Count() )
+
+    if( Count && selection.Count() )
     {
         bool IsMultiple = m_ListBox->HasMultipleSelection();
-        for( index = 0; index < count; index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
-            if( selection.Index( GetItemId( index ) ) != wxNOT_FOUND )
+            if( selection.Index( GetItemId( Index ) ) != wxNOT_FOUND )
             {
                 if( IsMultiple )
-                    Select( index );
+                    Select( Index );
                 else
-                    SetSelection( index );
+                    SetSelection( Index );
             }
         }
         wxCommandEvent event( wxEVT_LISTBOX, m_ListBox->GetId() );
@@ -443,25 +443,26 @@ void guListView::SetSelectedItems( const wxArrayInt &selection )
 // -------------------------------------------------------------------------------- //
 void guListView::SetSelectedIndexs( const wxArrayInt &selection )
 {
-    int index;
-    int count;
-
     // TODO Need to speed up this
     ClearSelectedItems();
-    if( ( count = selection.Count() ) )
+    if( GetItemCount() )
     {
-        bool IsMultiple = m_ListBox->HasMultipleSelection();
-        for( index = 0; index < count; index++ )
+        int Count;
+        if( ( Count = selection.Count() ) )
         {
-            if( IsMultiple )
-                Select( selection[ index ] );
-            else
-                SetSelection( selection[ index ] );
+            bool IsMultiple = m_ListBox->HasMultipleSelection();
+            for( int Index = 0; Index < Count; Index++ )
+            {
+                if( IsMultiple )
+                    Select( selection[ Index ] );
+                else
+                    SetSelection( selection[ Index ] );
+            }
+            wxCommandEvent event( wxEVT_LISTBOX, m_ListBox->GetId() );
+            event.SetEventObject( m_ListBox );
+            event.SetInt( selection[ 0 ] );
+            (void) GetEventHandler()->ProcessEvent( event );
         }
-        wxCommandEvent event( wxEVT_LISTBOX, m_ListBox->GetId() );
-        event.SetEventObject( m_ListBox );
-        event.SetInt( selection[ 0 ] );
-        (void) GetEventHandler()->ProcessEvent( event );
     }
 }
 
