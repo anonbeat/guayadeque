@@ -255,11 +255,6 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
     // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
 
-    for( int Index = 0; Index < 6; Index++ )
-    {
-        guLogMessage( wxT( "Size %i : %i, %i" ), Index, border_points[ Index ].x, border_points[ Index ].y );
-    }
-
     int drawn_tab_yoff = border_points[ 1 ].y;
     int drawn_tab_height = border_points[ 0 ].y - border_points[ 1 ].y;
 
