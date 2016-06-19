@@ -26,6 +26,8 @@
 
 namespace Guayadeque {
 
+#define guAUI_TAB_HEIGHT    28
+
 // -------------------------------------------------------------------------------- //
 unsigned char wxAuiBlendColour( unsigned char fg, unsigned char bg, double alpha )
 {
@@ -119,7 +121,7 @@ void guAuiTabArt::DrawBackground( wxDC &dc, wxWindow * wnd, const wxRect &rect )
     // draw background
    //wxColour top_color      = m_base_colour;
    wxColour top_color      = m_BgColor;
-   wxColour bottom_color   = wxAuiStepColour( m_baseColour, 120 );
+   wxColour bottom_color   = m_BgColor; //wxAuiStepColour( m_baseColour, 120 );
    wxRect r;
 
    if( m_flags & wxAUI_NB_BOTTOM )
@@ -179,10 +181,10 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
                                  close_button_state,
                                  x_extent);
 
-    wxCoord tab_height = m_tabCtrlHeight - 1;
-    if( !page.active )
-        tab_height -= 2;
-    wxCoord tab_width = tab_size.x;
+    wxCoord tab_height = m_tabCtrlHeight;
+    //if( !page.active )
+    //    tab_height -= 2;
+    wxCoord tab_width = tab_size.x - 1;
     wxCoord tab_x = in_rect.x;
     wxCoord tab_y = in_rect.y + in_rect.height - tab_height;
 
@@ -199,7 +201,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     }
     else
     {
-        dc.SetFont(m_normalFont);
+        dc.SetFont( m_normalFont );
         texty = normal_texty;
     }
 
@@ -228,33 +230,38 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 */
     // since the above code above doesn't play well with WXDFB or WXCOCOA,
     // we'll just use a rectangle for the clipping region for now --
-    dc.SetClippingRegion(tab_x, tab_y, clip_width+1, tab_height-3);
+    dc.SetClippingRegion( tab_x, tab_y, clip_width + 1, tab_height - 3 );
 
 
     wxPoint border_points[6];
     if( m_flags & wxAUI_NB_BOTTOM )
     {
-       border_points[0] = wxPoint(tab_x,             tab_y);
-       border_points[1] = wxPoint(tab_x,             tab_y+tab_height-6);
-       border_points[2] = wxPoint(tab_x+2,           tab_y+tab_height-4);
-       border_points[3] = wxPoint(tab_x+tab_width-2, tab_y+tab_height-4);
-       border_points[4] = wxPoint(tab_x+tab_width,   tab_y+tab_height-6);
-       border_points[5] = wxPoint(tab_x+tab_width,   tab_y);
+       border_points[ 0 ] = wxPoint( tab_x,                 tab_y );
+       border_points[ 1 ] = wxPoint( tab_x,                 tab_y + tab_height - 6 );
+       border_points[ 2 ] = wxPoint( tab_x + 2,             tab_y + tab_height - 4 );
+       border_points[ 3 ] = wxPoint( tab_x + tab_width - 2, tab_y + tab_height - 4 );
+       border_points[ 4 ] = wxPoint( tab_x + tab_width,     tab_y + tab_height - 6 );
+       border_points[ 5 ] = wxPoint( tab_x + tab_width,     tab_y );
     }
     else //if (m_flags & wxAUI_NB_TOP) {}
     {
-       border_points[0] = wxPoint(tab_x,             tab_y+tab_height-4);
-       border_points[1] = wxPoint(tab_x,             tab_y+2);
-       border_points[2] = wxPoint(tab_x+2,           tab_y);
-       border_points[3] = wxPoint(tab_x+tab_width-2, tab_y);
-       border_points[4] = wxPoint(tab_x+tab_width,   tab_y+2);
-       border_points[5] = wxPoint(tab_x+tab_width,   tab_y+tab_height-4);
-    }
+       border_points[ 0 ] = wxPoint( tab_x,                 tab_y + tab_height - 4 );
+       border_points[ 1 ] = wxPoint( tab_x,                 tab_y + 6 );
+       border_points[ 2 ] = wxPoint( tab_x + 6,             tab_y );
+       border_points[ 3 ] = wxPoint( tab_x + tab_width - 2, tab_y );
+       border_points[ 4 ] = wxPoint( tab_x + tab_width,     tab_y + 2 );
+       border_points[ 5 ] = wxPoint( tab_x + tab_width,     tab_y + tab_height - 4 );
+     }
     // TODO: else if (m_flags &wxAUI_NB_LEFT) {}
     // TODO: else if (m_flags &wxAUI_NB_RIGHT) {}
 
-    int drawn_tab_yoff = border_points[1].y;
-    int drawn_tab_height = border_points[0].y - border_points[1].y;
+    for( int Index = 0; Index < 6; Index++ )
+    {
+        guLogMessage( wxT( "Size %i : %i, %i" ), Index, border_points[ Index ].x, border_points[ Index ].y );
+    }
+
+    int drawn_tab_yoff = border_points[ 1 ].y;
+    int drawn_tab_height = border_points[ 0 ].y - border_points[ 1 ].y;
 
 
 //    if( page.active )
@@ -288,7 +295,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
 
     int text_offset = tab_x + 8;
     int close_button_width = 0;
-    if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
+    if( close_button_state != wxAUI_BUTTON_STATE_HIDDEN )
     {
         close_button_width = m_activeCloseBmp.GetWidth();
     }
@@ -414,24 +421,25 @@ guAuiNotebook::~guAuiNotebook()
 bool guAuiNotebook::UpdateTabCtrlHeight()
 {
     // get the tab ctrl height we will use
-    int height = CalculateTabCtrlHeight();
+    //int height = CalculateTabCtrlHeight();
 
-    wxAuiTabArt* art = m_tabs.GetArtProvider();
+    wxAuiTabArt * ArtProvider = m_tabs.GetArtProvider();
 
-    m_tabCtrlHeight = height;
+    m_tabCtrlHeight = guAUI_TAB_HEIGHT;
+    guLogMessage( wxT( "The Tab CtrlHeight: %d" ), m_tabCtrlHeight );
 
-    wxAuiPaneInfoArray& all_panes = m_mgr.GetAllPanes();
-    size_t i, pane_count = all_panes.GetCount();
-    for (i = 0; i < pane_count; ++i)
+    wxAuiPaneInfoArray &ALlPanes = m_mgr.GetAllPanes();
+    size_t PaneCount = ALlPanes.GetCount();
+    for( size_t PaneIndex = 0; PaneIndex < PaneCount; ++PaneIndex )
     {
-        wxAuiPaneInfo& pane = all_panes.Item(i);
-        if (pane.name == wxT("dummy"))
+        wxAuiPaneInfo &Pane = ALlPanes.Item( PaneIndex );
+        if( Pane.name == wxT( "dummy" ) )
             continue;
-        wxTabFrame* tab_frame = (wxTabFrame*)pane.window;
-        wxAuiTabCtrl* tabctrl = tab_frame->m_tabs;
-        tab_frame->SetTabCtrlHeight(m_tabCtrlHeight);
-        tabctrl->SetArtProvider(art->Clone());
-        tab_frame->DoSizing();
+        wxTabFrame * TabFrame = ( wxTabFrame * ) Pane.window;
+        wxAuiTabCtrl * Tabs = TabFrame->m_tabs;
+        TabFrame->SetTabCtrlHeight( m_tabCtrlHeight );
+        Tabs->SetArtProvider( ArtProvider->Clone() );
+        TabFrame->DoSizing();
     }
 
     return true;

@@ -53,7 +53,7 @@ class wxTabFrame : public wxWindow
     {
         m_tabs = NULL;
         m_rect = wxRect(0,0,200,200);
-        m_tab_ctrl_height = 20;
+        m_tab_ctrl_height = 16;
     }
 
     ~wxTabFrame()
