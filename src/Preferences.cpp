@@ -3484,7 +3484,8 @@ void guPrefDialog::OnRecDelTracksClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLastFMASUserNameChanged( wxCommandEvent &event )
 {
-    if( m_LastFMUserNameTextCtrl->IsEmpty() || m_LastFMPasswdTextCtrl->IsEmpty() )
+    if( m_LastFMUserNameTextCtrl->GetValue().IsEmpty() ||
+        m_LastFMPasswdTextCtrl->GetValue().IsEmpty() )
     {
         m_LastFMASEnableChkBox->Disable();
     }
@@ -3497,7 +3498,8 @@ void guPrefDialog::OnLastFMASUserNameChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLibreFMASUserNameChanged( wxCommandEvent &event )
 {
-    if( m_LibreFMUserNameTextCtrl->IsEmpty() || m_LibreFMPasswdTextCtrl->IsEmpty() )
+    if( m_LibreFMUserNameTextCtrl->GetValue().IsEmpty() ||
+        m_LibreFMPasswdTextCtrl->GetValue().IsEmpty() )
     {
         m_LibreFMASEnableChkBox->Disable();
     }
@@ -3783,7 +3785,7 @@ void guPrefDialog::OnLinkMoveDownBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnLinksTextChanged( wxCommandEvent &event )
 {
-    if( !m_LinksUrlTextCtrl->IsEmpty() )
+    if( !m_LinksUrlTextCtrl->GetValue().IsEmpty() )
     {
         m_LinksAddBtn->Enable();
         if( m_LinkSelected != wxNOT_FOUND )
@@ -3907,7 +3909,7 @@ void guPrefDialog::OnCmdMoveDownBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCmdTextChanged( wxCommandEvent &event )
 {
-    if( !m_CmdTextCtrl->IsEmpty() )
+    if( !m_CmdTextCtrl->GetValue().IsEmpty() )
     {
         m_CmdAddBtn->Enable();
         if( m_CmdSelected != wxNOT_FOUND )
@@ -4056,7 +4058,7 @@ void guPrefDialog::OnCopyToMoveDownBtnClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnCopyToTextChanged( wxCommandEvent &event )
 {
-    if( !m_CopyToPatternTextCtrl->IsEmpty() )
+    if( !m_CopyToPatternTextCtrl->GetValue().IsEmpty() )
     {
         m_CopyToAddBtn->Enable();
         if( m_CopyToSelected != wxNOT_FOUND )

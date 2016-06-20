@@ -262,7 +262,7 @@ wxString guTreeViewFilterEditor::GetTreeViewFilterEntry( void )
 // -------------------------------------------------------------------------------- //
 void guTreeViewFilterEditor::OnCheckAcceptButton( wxCommandEvent &event )
 {
-	m_AcceptButton->Enable( !m_NameTextCtrl->IsEmpty() && m_FiltersListBox->GetCount() );
+    m_AcceptButton->Enable( !event.GetString().IsEmpty() && m_FiltersListBox->GetCount() );
 }
 
 }

@@ -351,7 +351,8 @@ void guLyricsPanel::OnSetCurrentTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLyricsPanel::OnTextUpdated( wxCommandEvent& event )
 {
-    bool IsEnable = !m_ArtistTextCtrl->IsEmpty() && !m_TrackTextCtrl->IsEmpty();
+    bool IsEnable = !m_ArtistTextCtrl->GetValue().IsEmpty() &&
+                    !m_TrackTextCtrl->GetValue().IsEmpty();
     m_ReloadButton->Enable( IsEnable );
     m_WebSearchButton->Enable( IsEnable );
     if( m_LyricSearchContext )

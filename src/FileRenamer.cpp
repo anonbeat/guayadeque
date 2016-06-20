@@ -186,7 +186,7 @@ void guFileRenamer::OnFileSelected( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guFileRenamer::OnPatternChanged( wxCommandEvent& event )
 {
-    bool Enabled = !m_PatTextCtrl->IsEmpty();
+    bool Enabled = !event.GetString().IsEmpty();
     m_PatApplyBtn->Enable( Enabled );
     m_PatRevertBtn->Enable( Enabled );
 }

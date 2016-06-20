@@ -2743,7 +2743,7 @@ void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::OnTextUpdated( wxCommandEvent& event )
 {
-    m_TrackTextCtrl->Enable( !m_UpdateCheckBox->IsChecked() && !m_ArtistTextCtrl->IsEmpty() );
+    m_TrackTextCtrl->Enable( !m_UpdateCheckBox->IsChecked() && !event.GetString().IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //

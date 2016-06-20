@@ -1010,19 +1010,24 @@ void guDynPlayListEditor::OnFilterDateOption2Selected( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::OnFilterTextChanged( wxCommandEvent& event )
 {
+    wxString FilterText = event.GetString();
     int FilterType = m_FilterFieldChoice->GetSelection();
     if( ( FilterType > guDYNAMIC_FILTER_TYPE_PATH ) &&
         ( FilterType != guDYNAMIC_FILTER_TYPE_DISK ) )
     {
         unsigned long value = 0;
-        if( !m_FilterText->IsEmpty() && !m_FilterText->GetValue().ToULong( &value ) )
-            m_FilterText->SetValue( wxEmptyString );
+
+        if( !FilterText.IsEmpty() && !FilterText.ToULong( &value ) )
+        {
+            m_FilterText->ChangeValue( wxEmptyString );
+            //m_FilterText->SetValue( wxEmptyString );
+        }
     }
 
 
-    bool Enable = !m_FilterText->IsEmpty() ||
-                         ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
-                         ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) );
+    bool Enable = !FilterText.IsEmpty() ||
+                     ( ( m_FilterFieldChoice->GetSelection() == guDYNAMIC_FILTER_TYPE_LABEL ) &&
+                     ( m_FilterLabelOptionChoice->GetSelection() == guDYNAMIC_FILTER_OPTION_LABELS_NOTSET ) );
 
     m_FilterAdd->Enable( Enable );
 
@@ -1101,7 +1106,7 @@ void guDynPlayListEditor::OnSortChecked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guDynPlayListEditor::OnNameChanged( wxCommandEvent &event )
 {
-    m_BtnOk->Enable( m_Filters->Count() && !m_NameTextCtrl->IsEmpty() );
+    m_BtnOk->Enable( m_Filters->Count() && !event.GetString().IsEmpty() );
 }
 
 // -------------------------------------------------------------------------------- //
