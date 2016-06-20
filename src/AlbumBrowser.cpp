@@ -1090,6 +1090,56 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guAlbumBrowser::RefreshCount( void )
+{
+    m_AlbumsCount = m_Db->GetAlbumsCount( m_DynFilter.IsEmpty() ? NULL : &m_DynFilter, m_TextSearchFilter );
+    //m_ItemStart = 0;
+    RefreshPageCount();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::ClearUpdateDetailsThread( void )
+{
+    m_UpdateDetailsMutex.Lock();
+    m_UpdateDetails = NULL;
+    m_UpdateDetailsMutex.Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::RefreshPageCount( void )
+{
+    if( m_ItemCount && m_AlbumsCount )
+    {
+        m_PagesCount = m_AlbumsCount / m_ItemCount;
+        if( ( m_PagesCount * m_ItemCount ) < m_AlbumsCount )
+            m_PagesCount++;
+    }
+    else
+    {
+        m_PagesCount = 0;
+    }
+
+    //guLogMessage( wxT( "RefreshPageCount: Albums: %i   Items: %i  Pages: %i"  ), m_AlbumsCount, m_ItemCount, m_PagesCount );
+    UpdateNavLabel( 0 );
+
+    m_NavSlider->Enable( m_PagesCount > 1 );
+    if( m_PagesCount > 1 )
+        m_NavSlider->SetRange( 0, m_PagesCount - 1 );
+    //else
+    //    m_NavSlider->SetRange( 0, 0 );
+}
+
+// -------------------------------------------------------------------------------- //
+void guAlbumBrowser::SetCurrentPage( int page )
+{
+    m_NavSlider->SetValue( page );
+
+    wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
+    ScrollEvent.SetPosition( page );
+    wxPostEvent( m_NavSlider, ScrollEvent );
+}
+
+// -------------------------------------------------------------------------------- //
 bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
 {
     if( m_LastSearchString != searchtext )
@@ -1102,13 +1152,11 @@ bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
                 m_TextSearchFilter = guSplitWords( m_LastSearchString );
 
                 RefreshCount();
-                m_ItemStart = 0;
-                m_LastItemStart = wxNOT_FOUND;
-                ReloadItems();
-                m_NavSlider->SetValue( 0 );
-                RefreshAll();
 
-    //            m_SearchTextCtrl->ShowCancelButton( true );
+                m_LastItemStart = wxNOT_FOUND;
+                SetCurrentPage( 0 );
+
+//                m_SearchTextCtrl->ShowCancelButton( true );
             }
             return true;
         }
@@ -1117,13 +1165,11 @@ bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
             m_TextSearchFilter.Clear();
 
             RefreshCount();
-            m_ItemStart = 0;
-            m_LastItemStart = wxNOT_FOUND;
-            ReloadItems();
-            m_NavSlider->SetValue( 0 );
-            RefreshAll();
 
-    //        m_SearchTextCtrl->ShowCancelButton( false );
+            m_LastItemStart = wxNOT_FOUND;
+            SetCurrentPage( 0 );
+
+//            m_SearchTextCtrl->ShowCancelButton( false );
         }
     }
     return false;
@@ -1179,9 +1225,6 @@ void guAlbumBrowser::OnChangingPosition( wxScrollEvent& event )
     //guLogMessage( wxT( "ChangePosition: %i -> %i     Albums(%i / %i)" ), m_ItemStart, m_LastItemStart, CurPage, m_AlbumsCount );
     if( m_LastItemStart != m_ItemStart )
     {
-        if( m_RefreshTimer.IsRunning() )
-            m_RefreshTimer.Stop();
-
         m_RefreshTimer.Start( guALBUMBROWSER_REFRESH_DELAY, wxTIMER_ONE_SHOT );
 
         UpdateNavLabel( CurPage );
@@ -1228,20 +1271,18 @@ void guAlbumBrowser::SetFilter( const wxString &filterstr )
 {
     m_DynFilter.FromString( filterstr.AfterFirst( wxT( ':' ) ) );
     RefreshCount();
-    ReloadItems();
+
     m_LastItemStart = wxNOT_FOUND;
-    m_NavSlider->SetValue( 0 );
-    RefreshAll();
+    SetCurrentPage( 0 );
 }
 
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnSortSelected( wxCommandEvent &event )
 {
     m_SortSelected = event.GetId() - ID_ALBUMBROWSER_ORDER_NAME;
-    ReloadItems();
+
     m_LastItemStart = wxNOT_FOUND;
-    m_NavSlider->SetValue( 0 );
-    RefreshAll();
+    SetCurrentPage( 0 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1548,11 +1589,7 @@ void guAlbumBrowser::OnKeyDown( wxKeyEvent &event )
     if( CurPos < m_NavSlider->GetMin() )
         CurPos = m_NavSlider->GetMin();
 
-    m_NavSlider->SetValue( CurPos );
-
-    wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
-    ScrollEvent.SetPosition( CurPos );
-    wxPostEvent( m_NavSlider, ScrollEvent );
+    SetCurrentPage( CurPos );
 
     event.Skip();
 }
@@ -1576,11 +1613,7 @@ void guAlbumBrowser::OnMouseWheel( wxMouseEvent& event )
     if( CurPos < m_NavSlider->GetMin() )
         CurPos = m_NavSlider->GetMin();
 
-    m_NavSlider->SetValue( CurPos );
-
-    wxScrollEvent ScrollEvent( wxEVT_SCROLL_CHANGED );
-    ScrollEvent.SetPosition( CurPos );
-    wxPostEvent( m_NavSlider, ScrollEvent );
+    SetCurrentPage( CurPos );
 
     event.Skip();
 }

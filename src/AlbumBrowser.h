@@ -196,6 +196,7 @@ class guAlbumBrowser : public wxPanel
 
     void                            OnChangedSize( wxSizeEvent &event );
     void                            OnChangingPosition( wxScrollEvent& event );
+    void                            SetCurrentPage( int page );
     void                            OnRefreshTimer( wxTimerEvent &event );
 
     void                            OnAddFilterClicked( wxCommandEvent &event );
@@ -274,42 +275,9 @@ class guAlbumBrowser : public wxPanel
 
     virtual void                    CreateContextMenu( wxMenu * Menu );
 
-    void RefreshCount( void )
-    {
-        m_AlbumsCount = m_Db->GetAlbumsCount( m_DynFilter.IsEmpty() ? NULL : &m_DynFilter, m_TextSearchFilter );
-        //m_ItemStart = 0;
-        RefreshPageCount();
-    }
-
-    void ClearUpdateDetailsThread( void )
-    {
-        m_UpdateDetailsMutex.Lock();
-        m_UpdateDetails = NULL;
-        m_UpdateDetailsMutex.Unlock();
-    }
-
-    void RefreshPageCount( void )
-    {
-        if( m_ItemCount && m_AlbumsCount )
-        {
-            m_PagesCount = m_AlbumsCount / m_ItemCount;
-            if( ( m_PagesCount * m_ItemCount ) < m_AlbumsCount )
-                m_PagesCount++;
-        }
-        else
-        {
-            m_PagesCount = 0;
-        }
-
-        //guLogMessage( wxT( "RefreshPageCount: Albums: %i   Items: %i  Pages: %i"  ), m_AlbumsCount, m_ItemCount, m_PagesCount );
-        UpdateNavLabel( 0 );
-
-        m_NavSlider->Enable( m_PagesCount > 1 );
-        if( m_PagesCount > 1 )
-            m_NavSlider->SetRange( 0, m_PagesCount - 1 );
-        //else
-        //    m_NavSlider->SetRange( 0, 0 );
-    }
+    void                            RefreshCount( void );
+    void                            ClearUpdateDetailsThread( void );
+    void                            RefreshPageCount( void );
 
     void                            ReloadItems( void );
     void                            RefreshAll( void );
