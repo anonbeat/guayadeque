@@ -136,16 +136,19 @@ ENDIF( NOT LIBWXSQLITE3_LIBRARIES )
 # Include wxWidgets macros
 INCLUDE(${wxWidgets_USE_FILE})
 
-# Get the latest abbreviated commit hash of the working branch
-execute_process(
-  COMMAND git log -1 --format=%h
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  OUTPUT_VARIABLE _GUREVISION_
-  OUTPUT_STRIP_TRAILING_WHITESPACE
-)
+IF( NOT _GUREVISION_ )
+    # Get the latest abbreviated commit hash of the working branch
+    execute_process(
+      COMMAND git log -1 --format=%h
+      WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+      OUTPUT_VARIABLE _GUREVISION_
+      OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+ENDIF( NOT _GUREVISION_ )
 
-#
-CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h )
+# Make Version.h
+CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in
+                ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h )
 
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
