@@ -642,7 +642,7 @@ unsigned int RedBookToMTime( const wxString &rbtime )
 // -------------------------------------------------------------------------------- //
 inline wxString RemoveQuotationMark( const wxString &text )
 {
-    guLogMessage( wxT( "RemoveQuotationMark: '%s'" ), text.c_str() );
+    //guLogMessage( wxT( "RemoveQuotationMark: '%s'" ), text.c_str() );
     if( text.StartsWith( wxT( "\"" ) ) )
     {
         return text.Mid( 1, text.Length() - 2 );
@@ -653,7 +653,7 @@ inline wxString RemoveQuotationMark( const wxString &text )
 // -------------------------------------------------------------------------------- //
 inline wxString GetKeyValue( const wxString &line, const wxString &key )
 {
-    guLogMessage( wxT( "GetKeyValue: '%s' ==> '%s'" ), line.c_str(), key.c_str() );
+    //guLogMessage( wxT( "GetKeyValue: '%s' ==> '%s'" ), line.c_str(), key.c_str() );
     int Pos = line.Find( key );
     if( Pos != wxNOT_FOUND )
     {
@@ -676,7 +676,7 @@ bool guCuePlaylistFile::LoadFromText( const wxString &content )
         {
             Lines[ Index ].Trim( wxString::both );
             wxString Line = Lines[ Index ];
-            guLogMessage( wxT( "'%s'" ), Line.c_str() );
+            //guLogMessage( wxT( "'%s'" ), Line.c_str() );
             wxArrayString Keys = wxStringTokenize( Line, wxT( " " ) );
 
             if( !Keys.Count() )
@@ -843,7 +843,7 @@ bool guCuePlaylistFile::Load( const wxString &location )
 
         if( Uri.IsReference() )
         {
-            guLogMessage( wxT( "CuePlaylist from file : '%s'" ), m_Location.c_str() );
+            //guLogMessage( wxT( "CuePlaylist from file : '%s'" ), m_Location.c_str() );
 
             wxFile PlaylistFile( m_Location, wxFile::read );
 

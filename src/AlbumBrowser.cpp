@@ -2402,8 +2402,16 @@ void guAlbumBrowser::OnBigCoverTracksMouseMoved( wxMouseEvent &event )
     // when you click over selected items the items was unselected
     // even when you tried to drag then.
     // Here we check if the item was selected and if so wait for the button up
-    // to unselecte the item
-    //guLogMessage( wxT( "ID: %u LD: %i LU: %i SD: %i CD: %i WasLeftUp: %i  Selecting: %i " ), event.GetId(), event.LeftDown(), event.LeftUp(), event.ShiftDown(), event.ControlDown(), m_MouseWasLeftUp, m_MouseSelecting );
+    // to unselect the item
+    //guLogMessage( wxT( "Item: %u LD: %i LU: %i SD: %i CD: %i WasLeftUp: %i  Selecting: %i Dragging: %i" ),
+    //              Item,
+    //              event.LeftDown(),
+    //              event.LeftUp(),
+    //              event.ShiftDown(),
+    //              event.ControlDown(),
+    //              m_MouseWasLeftUp,
+    //              m_MouseSelecting,
+    //              event.Dragging() );
     if( !m_MouseWasLeftUp && !event.ShiftDown() && !event.ControlDown() )
     {
         m_MouseWasLeftUp = event.LeftUp();
@@ -2419,7 +2427,8 @@ void guAlbumBrowser::OnBigCoverTracksMouseMoved( wxMouseEvent &event )
                         // Its a LeftUp event
                         event.SetEventType( wxEVT_LEFT_DOWN );
                         event.m_leftDown = true;
-                        m_BigCoverTracksListBox->GetEventHandler()->AddPendingEvent( event );
+                        //m_BigCoverTracksListBox->GetEventHandler()->AddPendingEvent( NewEvent );
+                        AddPendingEvent( event );
                     }
                     return;
                 }

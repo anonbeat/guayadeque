@@ -54,8 +54,6 @@ class guSplashFrame : public wxFrame
 	// event handlers, overide them in your derived class
 	void OnSplashClick( wxMouseEvent& event );
     void OnEraseBackground( wxEraseEvent &event );
-    void DoPaint( wxDC &dc );
-    void OnPaint( wxPaintEvent & );
 
   public:
 	guSplashFrame( wxWindow * parent, int timeout = 4000 ); //, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 500,358 ), long style = 0|wxTAB_TRAVERSAL );

@@ -132,37 +132,6 @@ void guSplashFrame::OnTimeout( wxTimerEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guSplashFrame::DoPaint( wxDC &dc )
-{
-//    wxString Version = wxT( ID_GUAYADEQUE_VERSION );
-//#ifdef ID_GUAYADEQUE_REVISION
-//    Version += wxT( "-" ID_GUAYADEQUE_REVISION );
-//#endif
-//    wxString Credits = wxT( "J.Rios anonbeat@gmail.com" );
-//
-//    wxFont Font( 10, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL );
-//
-//    dc.SetBackgroundMode( wxTRANSPARENT );
-//    dc.SetTextForeground( wxColour( 60, 60, 60 ) );
-//    dc.SetFont( Font );
-//
-//    wxCoord width, height;
-//
-//    dc.GetTextExtent( Version,  &width, &height, 0, 0, &Font );
-//    dc.DrawText( Version, 493 - width, 270 - height );
-//
-//    dc.GetTextExtent( Credits,  &width, &height, 0, 0, &Font );
-//    dc.DrawText( Credits, 493 - width, 270 - ( height * 2 ) );
-}
-
-// -------------------------------------------------------------------------------- //
-void guSplashFrame::OnPaint( wxPaintEvent &event )
-{
-    wxPaintDC dc( this );
-    DoPaint( dc );
-}
-
-// -------------------------------------------------------------------------------- //
 void guSplashFrame::OnEraseBackground( wxEraseEvent &event )
 {
     wxDC * dc = event.GetDC();
