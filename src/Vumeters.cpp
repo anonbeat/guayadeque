@@ -346,8 +346,6 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
     m_LastHeight = wxNOT_FOUND;
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
-	this->SetMinSize( wxSize( -1, 40 ) );
-
 	m_VumMainSizer = new wxBoxSizer( wxVERTICAL );
 
     //
@@ -368,7 +366,6 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	m_HVumFlexSizer->Add( HVumLeftLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
 	m_HVumLeft = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxDefaultSize, wxGA_HORIZONTAL|wxGA_SMOOTH );
-	m_HVumLeft->SetMinSize( wxSize( -1, 2 ) );
 	m_HVumFlexSizer->Add( m_HVumLeft, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxRIGHT, 5 );
 
 	wxBoxSizer * HLabelsSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -427,7 +424,6 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 	m_HVumRight = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL );
 	//m_HVumRight->SetValue( 0 );
-	m_HVumRight->SetMinSize( wxSize( -1, 2 ) );
 
 	m_HVumFlexSizer->Add( m_HVumRight, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 	m_VumMainSizer->Add( m_HVumFlexSizer, 1, wxEXPAND, 5 );

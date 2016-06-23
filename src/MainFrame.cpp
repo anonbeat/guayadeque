@@ -265,13 +265,13 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
     m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
-        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
+        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 150, 63 ).
         CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
         Bottom().Layer( 0 ).Row( 1 ).Position( 0 ) );
 
     m_PlayerPlayList = new guPlayerPlayList( this, m_Db, &m_AuiManager );
 	m_AuiManager.AddPane( m_PlayerPlayList, wxAuiPaneInfo().Name( wxT( "PlayerPlayList" ) ).
-        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 100, 100 ).
+        DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 150, 100 ).
         CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
         Bottom().Layer( 0 ).Row( 2 ).Position( 0 ) );
 
@@ -4355,7 +4355,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
                 guConfig * Config = ( guConfig * ) guConfig::Get();
                 m_PlayerVumeters = new guPlayerVumeters( this );
                 m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "VU Meters" ) ).
-                    DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
+                    DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
                     CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
                     Left().Layer( 0 ).Row( 1 ).Position( 1 ).Hide() );
                 if( m_PlayerPanel )
