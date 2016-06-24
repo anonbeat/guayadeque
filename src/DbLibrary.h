@@ -60,7 +60,8 @@ enum guTrackType {
     guTRACK_TYPE_PODCAST,
     guTRACK_TYPE_JAMENDO,
     guTRACK_TYPE_MAGNATUNE,
-    guTRACK_TYPE_IPOD
+    guTRACK_TYPE_IPOD,
+    guTRACK_TYPE_AUDIOCD
 };
 
 enum guTrackMode {

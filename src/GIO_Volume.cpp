@@ -64,7 +64,6 @@ guGIO_Mount::guGIO_Mount( GMount * mount )
 {
     m_Mount = mount;
     g_object_ref( mount );
-//    m_PanelActive = wxNOT_FOUND;
 
     char * mount_name = g_mount_get_name( m_Mount );
     if( mount_name )
@@ -104,7 +103,6 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
 {
     m_Mount = mount;
     g_object_ref( mount );
-//    m_PanelActive = wxNOT_FOUND;
     m_MountPath = mountpath;
     if( !m_MountPath.EndsWith( wxT( "/" ) ) )
         m_MountPath.Append( wxT( "/" ) );
@@ -130,8 +128,8 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
         g_object_unref( Icon );
     }
 
-    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_MountPath + wxT( ".is_audio_player" ) );
-    m_Id = Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
+    wxFileConfig Config( wxEmptyString, wxEmptyString, m_MountPath + wxT( ".is_audio_player" ) );
+    m_Id = Config.Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -308,15 +306,40 @@ void guGIO_VolumeMonitor::OnMountRemoved( GMount * mount )
 }
 
 // -------------------------------------------------------------------------------- //
+void guGIO_VolumeMonitor::CheckAudioCDVolume( GVolume * volume, const bool adding )
+{
+    GFile * activation_root = g_volume_get_activation_root( volume );
+    if( activation_root )
+    {
+        char * root_uri = g_file_get_uri( activation_root );
+        if( root_uri )
+        {
+            wxString VolumeUri = wxString::FromUTF8( root_uri );
+            guLogMessage( wxT( "Uri: %s" ), VolumeUri.c_str() );
+            if( VolumeUri.StartsWith( "cdda" ) ) // If it is a audio cd
+            {
+                wxCommandEvent event( wxEVT_MENU, ID_VOLUMEMANAGER_AUDIOCD_CHANGED );
+                event.SetInt( adding );
+                wxPostEvent( m_MainFrame, event );
+            }
+            g_free( root_uri );
+        }
+        g_object_unref( activation_root );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guGIO_VolumeMonitor::OnVolumeAdded( GVolume * volume )
 {
     guLogMessage( wxT( "Volume Added..." ) );
+    CheckAudioCDVolume( true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guGIO_VolumeMonitor::OnVolumeRemoved( GVolume * volume )
 {
     guLogMessage( wxT( "Volume Removed..." ) );
+    CheckAudioCDVolume( false );
 }
 
 // -------------------------------------------------------------------------------- //

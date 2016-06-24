@@ -48,11 +48,9 @@ class guGIO_Volume
     wxString        GetName( void );
     wxString        GetUUID( void );
     wxString        GetIcon( void );
-    //GDrive          GetDrive( void );
     guGIO_Mount     GetMount( void );
     bool            CanMount( void );
     bool            ShouldAutoMount( void );
-    //void            Mount( int flags,
     bool            CanEject( void );
 
 };
@@ -64,7 +62,6 @@ class guGIO_Mount
     GMount * m_Mount;
 
   protected :
-//    int             m_PanelActive;
     wxString        m_Id;
     bool            m_IsReadOnly;
     wxString        m_Name;
@@ -80,8 +77,6 @@ class guGIO_Mount
 
     bool            IsReadOnly( void ) { return m_IsReadOnly; }
 
-//    int             PanelActive( void ) { guLogMessage( wxT( "PanelActive: %i" ), m_PanelActive ); return m_PanelActive; }
-//    void            SetPanelActive( int active ) { m_PanelActive = active; }
     void            SetId( const wxString &id ) { m_Id = id; }
     wxString        GetId( void ) { return m_Id; }
 
@@ -114,6 +109,7 @@ class guGIO_VolumeMonitor
     int                 FindMount( GMount * mount );
 
     void                GetCurrentMounts( void );
+    void                CheckAudioCDVolume( GVolume * volume, const bool adding );
 
   public :
     guGIO_VolumeMonitor( guMainFrame * mainframe );
@@ -129,9 +125,8 @@ class guGIO_VolumeMonitor
     guGIO_Mount *       GetMount( const int index ) { return m_MountedVolumes->Item( index ); }
     guGIO_Mount *       GetMountById( const wxString &id );
     guGIO_Mount *       GetMountByPath( const wxString &path );
-    guGIO_Mount *       GetMountByName( const wxString &name );
+    guGIO_Mount *       GetMountByName( const wxString &name );    
 
-//    int                 PanelActive( const int index ) { return m_MountedVolumes->Item( index )->PanelActive(); }
 };
 
 }
