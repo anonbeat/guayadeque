@@ -94,8 +94,8 @@ guGIO_Mount::guGIO_Mount( GMount * mount )
         g_object_unref( Icon );
     }
 
-    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_MountPath + wxT( ".is_audio_player" ) );
-    m_Id = Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
+    wxFileConfig Config( wxEmptyString, wxEmptyString, m_MountPath + wxT( ".is_audio_player" ) );
+    m_Id = Config.Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
 }
 
 // -------------------------------------------------------------------------------- //
