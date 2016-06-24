@@ -332,14 +332,14 @@ void guGIO_VolumeMonitor::CheckAudioCDVolume( GVolume * volume, const bool addin
 void guGIO_VolumeMonitor::OnVolumeAdded( GVolume * volume )
 {
     guLogMessage( wxT( "Volume Added..." ) );
-    CheckAudioCDVolume( true );
+    CheckAudioCDVolume( volume, true );
 }
 
 // -------------------------------------------------------------------------------- //
 void guGIO_VolumeMonitor::OnVolumeRemoved( GVolume * volume )
 {
     guLogMessage( wxT( "Volume Removed..." ) );
-    CheckAudioCDVolume( false );
+    CheckAudioCDVolume( volume, false );
 }
 
 // -------------------------------------------------------------------------------- //
