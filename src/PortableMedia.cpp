@@ -345,7 +345,7 @@ guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
 
     wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
     m_Id = mount->GetId(); //Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
-    m_Pattern = Config->Read( wxT( "audio_file_pattern" ), wxT( "{a} - {b}/{n} - {a} - {t}" ) );
+    m_Pattern = Config->Read( wxT( "audio_file_pattern" ), wxT( "{A} - {b}/{n} - {a} - {t}" ) );
     m_AudioFormats = MimeStrToAudioFormat( Config->Read( wxT( "output_formats" ), wxT( "mp3" ) ) );
     m_TranscodeFormat = Config->Read( wxT( "transcode_format" ), guTRANSCODE_FORMAT_KEEP );
     m_TranscodeScope = Config->Read( wxT( "transcode_scope" ), guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
