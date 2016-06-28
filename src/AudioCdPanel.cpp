@@ -292,7 +292,7 @@ void guAudioCdReadTocThread::SetMbDiscId( const wxString &mbdiscid )
     guMBReleaseArray MBReleases;
 
     int TrackCount = m_CdTracks.Count();
-    guLogMessage( wxT( "There was %i tracks..." ), TrackCount );
+    //guLogMessage( wxT( "There was %i tracks..." ), TrackCount );
     if( TrackCount && MusicBrainz.GetDiscIdReleases( m_MBDiscId, &MBReleases ) )
     {
         // MusicBrainz is very strict with request rate...
@@ -300,12 +300,12 @@ void guAudioCdReadTocThread::SetMbDiscId( const wxString &mbdiscid )
 
         // Get the release track list
         int ReleaseCount = MBReleases.GetCount();
-        guLogMessage( wxT( "Got %i releases"), ReleaseCount );
+        //guLogMessage( wxT( "Got %i releases"), ReleaseCount );
         for( int ReleaseIndex = 0; ReleaseIndex < ReleaseCount; ReleaseIndex++ )
         {
             MusicBrainz.GetRecordings( MBReleases[ ReleaseIndex ] );
             wxSleep( 1 );
-            guLogMessage( wxT( "Got %li tracks in this release..." ), MBReleases[ ReleaseIndex ].m_Recordings.Count() );
+            //guLogMessage( wxT( "Got %li tracks in this release..." ), MBReleases[ ReleaseIndex ].m_Recordings.Count() );
         }
         for( int ReleaseIndex = 0; ReleaseIndex < ReleaseCount; ReleaseIndex++ )
         {
@@ -587,14 +587,13 @@ void guCdTracksListBox::OnItemColumnRClicked( wxListEvent &event )
 {
     m_LastColumnRightClicked = event.m_col;
     m_LastRowRightClicked = event.GetInt();
-    guLogMessage( wxT( "Column %i Row %i Right Clicked..." ), m_LastColumnRightClicked, event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guCdTracksListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
 {
     wxMenuItem * MenuItem;
-    guLogMessage( wxT( "guCdTracksListBox::AppendFastEditMenu %i - %i" ), m_LastColumnRightClicked, m_LastRowRightClicked );
+    //guLogMessage( wxT( "guCdTracksListBox::AppendFastEditMenu %i - %i" ), m_LastColumnRightClicked, m_LastRowRightClicked );
     if( m_LastColumnRightClicked == wxNOT_FOUND || ( m_LastColumnRightClicked >= ( int ) m_Columns->Count() ) )
     {
         return;
