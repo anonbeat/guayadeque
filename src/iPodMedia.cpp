@@ -826,7 +826,7 @@ guIpodLibraryUpdate::~guIpodLibraryUpdate()
 
     wxCommandEvent GaugeEvent( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     GaugeEvent.SetInt( m_GaugeId );
-    wxPostEvent( wxTheApp->GetTopWindow(), GaugeEvent );
+    wxPostEvent( guMainFrame::GetMainFrame(), GaugeEvent );
 }
 
 extern "C" {
@@ -850,7 +850,7 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
         //Db->ExecuteUpdate( wxT( "DELETE FROM songs" ) );
         guPortableMediaDevice * PortableMediaDevice = m_MediaViewer->GetPortableMediaDevice();
 
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
 
         wxCommandEvent GaugeEvent( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
         GaugeEvent.SetInt( m_GaugeId );

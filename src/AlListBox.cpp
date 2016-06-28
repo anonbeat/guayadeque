@@ -140,7 +140,7 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
 
         wxCommandEvent event( wxEVT_MENU, ID_ALBUM_SETSELECTION );
         event.SetClientData( ( void * ) Albums );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( guMainFrame::GetMainFrame(), event );
         return true;
     }
     return false;

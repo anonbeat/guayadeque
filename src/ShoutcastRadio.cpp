@@ -269,7 +269,7 @@ void guShoutcastRadioProvider::DoUpdate( void )
 
     if( GenresIds.Count() )
     {
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
         int GaugeId = ( ( guStatusBar * ) MainFrame->GetStatusBar() )->AddGauge( _( "Radios" ) );
         guShoutcastUpdateThread * UpdateRadiosThread = new guShoutcastUpdateThread( m_Db, m_RadioPanel, GenresIds, Source, GaugeId );
         if( !UpdateRadiosThread )
@@ -581,7 +581,7 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
 
         event.SetInt( m_GaugeId );
         event.SetExtraLong( count );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( guMainFrame::GetMainFrame(), event );
 
         for( index = 0; index < count; index++ )
         {
@@ -606,7 +606,7 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
             event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
             event.SetInt( m_GaugeId );
             event.SetExtraLong( index );
-            wxPostEvent( wxTheApp->GetTopWindow(), event );
+            wxPostEvent( guMainFrame::GetMainFrame(), event );
         }
 
         delete ShoutCast;
@@ -619,7 +619,7 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
 //    wxCommandEvent event2( wxEVT_MENU, ID_STATUSBAR_GAUGE_REMOVE );
     event.SetId( ID_STATUSBAR_GAUGE_REMOVE );
     event.SetInt( m_GaugeId );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
     //
     return 0;
 }

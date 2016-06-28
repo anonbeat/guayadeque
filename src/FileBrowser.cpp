@@ -1204,7 +1204,7 @@ void guFilesListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
         MainFrame->CreateCopyToMenu( Menu );
 
         AppendItemsCommands( Menu, SelCount, SelCount ? GetType( Selection[ 0 ] ) : guFILEITEM_TYPE_FILE );
@@ -1286,7 +1286,7 @@ int guFilesListBox::GetTracksFromFiles( const wxArrayString &files, guTrackArray
                     if( !m_Db || !m_Db->FindTrackFile( FileName, Track ) )
                     {
                         guPodcastItem PodcastItem;
-                        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+                        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
                         guDbPodcasts * DbPodcasts = MainFrame->GetPodcastsDb();
                         if( DbPodcasts->GetPodcastItemFile( FileName, &PodcastItem ) )
                         {

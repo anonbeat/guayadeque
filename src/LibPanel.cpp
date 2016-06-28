@@ -743,7 +743,7 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -844,7 +844,7 @@ void guLibPanel::OnLabelCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1052,7 +1052,7 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1206,7 +1206,7 @@ void guLibPanel::DoDeleteAlbumCover( const int albumid )
     wxCommandEvent evt( wxEVT_MENU, ID_ALBUM_COVER_CHANGED );
     evt.SetInt( albumid );
     evt.SetClientData( this );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    wxPostEvent( guMainFrame::GetMainFrame(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1258,7 +1258,7 @@ void guLibPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1398,7 +1398,7 @@ void guLibPanel::OnSongCopyToClicked( wxCommandEvent &event )
         }
         event.SetInt( Index );
         event.SetClientData( ( void * ) new guTrackArray( Tracks ) );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( guMainFrame::GetMainFrame(), event );
     }
 }
 
@@ -1410,7 +1410,7 @@ void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &tracks, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( guMainFrame::GetMainFrame(), m_Db, &tracks, &PlayLists );
 
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
@@ -1575,9 +1575,8 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
 
     wxArrayString Items;
 
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxVariant Value;
         guTrack * Track = &Tracks[ Index ];
@@ -2132,7 +2131,7 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2236,7 +2235,7 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2340,7 +2339,7 @@ void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2445,7 +2444,7 @@ void guLibPanel::OnComposerListCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2550,7 +2549,7 @@ void guLibPanel::OnAlbumArtistListCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //

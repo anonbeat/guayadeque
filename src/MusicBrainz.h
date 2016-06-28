@@ -75,8 +75,10 @@ class guMusicBrainz
     guMusicBrainz();
     virtual ~guMusicBrainz();
 
-    int             GetReleases( const wxString &artist, const wxString &title, guMBReleaseArray * releases );
-    int             GetReleases( const wxString &recordid, guMBReleaseArray * releases );
+    int             GetRecordReleases( const wxString &artist, const wxString &title, guMBReleaseArray * releases );
+    int             GetRecordReleases( const wxString &recordid, guMBReleaseArray * releases );
+
+    int             GetDiscIdReleases( const wxString &discid, guMBReleaseArray * releases );
 
     int             GetRecordings( const wxString &releaseid, guMBRecordingArray * recordings );
     int             GetRecordings( guMBRelease &mbrelease );

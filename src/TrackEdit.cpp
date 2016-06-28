@@ -1449,7 +1449,7 @@ void guTrackEditor::OnMBrainzAddButtonClicked( wxCommandEvent &event )
             m_MBAlbums = new guMBReleaseArray();
         }
 
-        MusicBrainz->GetReleases( m_MBQueryArtistTextCtrl->GetValue(), m_MBQueryTitleTextCtrl->GetValue(), m_MBAlbums );
+        MusicBrainz->GetRecordReleases( m_MBQueryArtistTextCtrl->GetValue(), m_MBQueryTitleTextCtrl->GetValue(), m_MBAlbums );
 
         ReloadMBAlbums();
 
@@ -1529,7 +1529,7 @@ void guTrackEditor::OnAcousticIdMBIdFound( const wxString &mbid )
         {
             m_MBAlbumChoice->Clear();
 
-            MusicBrainz->GetReleases( mbid, m_MBAlbums );
+            MusicBrainz->GetRecordReleases( mbid, m_MBAlbums );
 
             ReloadMBAlbums();
         }
@@ -1891,7 +1891,7 @@ void guTrackEditor::OnSearchLyrics( wxCommandEvent &event )
 
     if( !m_LyricSearchEngine )
     {
-        m_LyricSearchEngine = ( ( guMainFrame * ) wxTheApp->GetTopWindow() )->LyricSearchEngine();
+        m_LyricSearchEngine = ( ( guMainFrame * ) guMainFrame::GetMainFrame() )->LyricSearchEngine();
     }
 
     if( m_LyricSearchEngine )

@@ -215,7 +215,7 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
 
     if( ( Count = RenameFiles.Count() ) )
     {
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
         guDbPodcasts * DbPodcasts = MainFrame->GetPodcastsDb();
         for( Index = 0; Index < Count; Index++ )
         {

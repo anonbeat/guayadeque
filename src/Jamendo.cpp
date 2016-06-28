@@ -447,7 +447,7 @@ guJamendoUpdateThread::guJamendoUpdateThread( guMediaViewerJamendo * mediaviewer
 {
     m_MediaViewer = mediaviewer;
     m_Db = ( guJamendoLibrary * ) mediaviewer->GetDb();
-    m_MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    m_MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
     m_Action = action;
     m_GaugeId = gaugeid;
 
@@ -750,7 +750,7 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
             }
 
             evtmax.SetExtraLong( XmlFile.Length() );
-            wxPostEvent( wxTheApp->GetTopWindow(), evtmax );
+            wxPostEvent( guMainFrame::GetMainFrame(), evtmax );
 
             wxFileOffset CurPos;
 
@@ -785,7 +785,7 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
 //                        m_Db->ExecuteUpdate( query );
 
                         evtup.SetExtraLong( CurPos );
-                        wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                        wxPostEvent( guMainFrame::GetMainFrame(), evtup );
 
 //                        query = wxT( "BEGIN TRANSACTION" );
 //                        m_Db->ExecuteUpdate( query );

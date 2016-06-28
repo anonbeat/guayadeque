@@ -1264,7 +1264,7 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
             dc.SetClippingRegion( cRect );
             dc.DrawText( CurCol->m_Label, cRect.x + 2, hLabel );
             dc.DestroyClippingRegion();
-            dc.SetPen( wxPen( wxSystemSettings::GetColour( wxSYS_COLOUR_3DSHADOW ), 1, wxSHORT_DASH ) );
+            dc.SetPen( wxPen( wxSystemSettings::GetColour( wxSYS_COLOUR_3DLIGHT ), 1, wxSOLID ) );
             dc.DrawLine( cRect.x + cRect.width - 1, 4, cRect.x + cRect.width - 1, cRect.height - 4 );
 
             if( CurCol->m_ImageIndex >= 0 )

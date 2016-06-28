@@ -70,6 +70,8 @@ class guSoListBox : public guListView
     wxBitmap *                  m_NormalStar;
     wxBitmap *                  m_SelectStar;
 
+    wxArrayString               m_ColumnNames;
+
     virtual void                DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const;
     virtual void                CreateContextMenu( wxMenu * Menu ) const;
     virtual wxString            OnGetItemText( const int row, const int column ) const;

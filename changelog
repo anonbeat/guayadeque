@@ -1,3 +1,4 @@
+  * Added audio cd support
   * Reduced the tabs height
   * Moved from Connect to Bind event
   * Fixed magnatune cover download

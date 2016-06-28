@@ -2400,7 +2400,7 @@ wxImage * guTagGetPicture( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guTagSetPicture( const wxString &filename, wxImage * picture )
 {
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
 
     const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
     if( CurrentTrack && CurrentTrack->m_Loaded )
@@ -2456,7 +2456,7 @@ wxString guTagGetLyrics( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guTagSetLyrics( const wxString &filename, const wxString &lyrics )
 {
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
 
     const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
     if( CurrentTrack && CurrentTrack->m_Loaded )

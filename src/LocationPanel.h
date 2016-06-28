@@ -22,7 +22,7 @@
 
 #include "MainFrame.h"
 
-#include <wx/aui/aui.h>
+//#include <wx/aui/aui.h>
 #include <wx/string.h>
 #include <wx/stattext.h>
 #include <wx/gdicmn.h>

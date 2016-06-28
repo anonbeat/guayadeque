@@ -860,7 +860,6 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
     wxStaticText * DetailDescLabel;
     wxStaticText * DetailAuthorLabel;
     wxStaticText * DetailOwnerLabel;
-    //wxStaticText * DetailEmailLabel;
     wxStaticLine * DetailStaticLine1;
     wxStaticLine * DetailStaticLine2;
     wxStaticText * DetailItemTitleLabel;
@@ -1677,7 +1676,7 @@ void guPodcastPanel::OnPodcastItemCopyTo( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1767,7 +1766,7 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
         MainFrame->CreateCopyToMenu( Menu );
     }
 }
@@ -2094,7 +2093,7 @@ void guPodcastListBox::CreateContextMenu( wxMenu * Menu ) const
 
         Menu->AppendSeparator();
 
-        guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+        guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
         MainFrame->CreateCopyToMenu( Menu );
     }
     else

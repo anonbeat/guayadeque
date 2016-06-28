@@ -1501,7 +1501,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 if( !strcmp( Member, "Raise" ) )
                 {
                     wxCommandEvent RaiseCmd( wxEVT_MENU, ID_MAINFRAME_WINDOW_RAISE );
-                    wxPostEvent( wxTheApp->GetTopWindow(), RaiseCmd );
+                    wxPostEvent( guMainFrame::GetMainFrame(), RaiseCmd );
 
                     Send( reply );
                     Flush();
@@ -1510,7 +1510,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 else if( !strcmp( Member, "Quit" ) )
                 {
                     wxCommandEvent QuitCmd( wxEVT_MENU, ID_MENU_QUIT );
-                    wxPostEvent( wxTheApp->GetTopWindow(), QuitCmd );
+                    wxPostEvent( guMainFrame::GetMainFrame(), QuitCmd );
                     Send( reply );
                     Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;
@@ -1701,7 +1701,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             // Send Event to the PlayerPanel to load the playlist
                             wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_LOAD_PLAYLIST );
                             CmdEvent.SetInt( PlaylistId );
-                            wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+                            wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 
                             Send( reply );
                             Flush();

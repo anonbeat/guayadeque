@@ -1143,7 +1143,7 @@ void guTreeViewPanel::OnTreeViewSaveToPlayList( wxCommandEvent &event )
             guListItems PlayLists;
             m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
-            guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
+            guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( guMainFrame::GetMainFrame(), m_Db, &NewSongs, &PlayLists );
 
             if( PlayListAppendDlg->ShowModal() == wxID_OK )
             {
@@ -1259,7 +1259,7 @@ void guTreeViewPanel::OnTreeViewCopyTo( wxCommandEvent &event )
         }
         event.SetInt( Index );
         event.SetClientData( ( void * ) Tracks );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( guMainFrame::GetMainFrame(), event );
     }
 }
 
@@ -1381,7 +1381,7 @@ void guTreeViewPanel::OnTVTracksCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1415,7 +1415,7 @@ void guTreeViewPanel::OnTVTracksSavePlayListClicked( wxCommandEvent &event )
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( guMainFrame::GetMainFrame(), m_Db, &NewSongs, &PlayLists );
 
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
@@ -1812,7 +1812,7 @@ void guTreeViewPanel::OnTVTracksDeleteDrive( wxCommandEvent &event )
 void guTreeViewPanel::SendPlayListUpdatedEvent( void )
 {
 //    wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
-//    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+//    wxPostEvent( guMainFrame::GetMainFrame(), evt );
     m_MediaViewer->UpdatePlaylists();
 }
 

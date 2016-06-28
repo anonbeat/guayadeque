@@ -20,10 +20,11 @@
 #include "StatusBar.h"
 
 #include "AuiNotebook.h"
-#include "Images.h"
-#include "Utils.h"
 #include "EventCommandIds.h"
+#include "Images.h"
 #include "Preferences.h"
+#include "MainFrame.h"
+#include "Utils.h"
 
 namespace Guayadeque {
 
@@ -391,7 +392,7 @@ void guStatusBar::OnAudioScrobbleDClicked( void )
     //guLogMessage( wxT( "AUdioScrobble clicked..." ) );
     wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_AUDIOSCROBBLE );
-    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+    wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -406,7 +407,7 @@ void guStatusBar::OnPlayModeClicked( void )
 
         wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_SETFORCEGAPLESS );
         CmdEvent.SetInt( m_ForceGapless );
-        wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+        wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
     }
 }
 
@@ -415,7 +416,7 @@ void guStatusBar::OnPlayModeDClicked( void )
 {
     wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_CROSSFADER );
-    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+    wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -49,8 +49,8 @@
 
 namespace Guayadeque {
 
-// The default update podcasts timeout is 15 minutes
-#define guPODCASTS_UPDATE_TIMEOUT   ( 15 * 60 * 1000 )
+// The default update podcasts timeout is 30 minutes
+#define guPODCASTS_UPDATE_TIMEOUT   ( 30 * 60 * 1000 )
 
 guMainFrame * guMainFrame::m_MainFrame = NULL;
 
@@ -149,6 +149,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     m_VolumeMonitor = NULL;
     m_LocationPanel = NULL;
     m_CoverPanel = NULL;
+    m_AudioCdPanel = NULL;
 
     m_MenuPlayerPlayList = NULL;
     m_MenuPlayerFilters = NULL;
@@ -316,6 +317,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
         if( m_VisiblePanels & guPANEL_MAIN_RADIOS )
         {
             OnViewRadio( ShowEvent );
+        }
+
+        if( m_VisiblePanels & guPANEL_MAIN_AUDIOCD )
+        {
+            OnViewAudioCD( ShowEvent );
         }
 
         // LastFM Info Panel
@@ -539,6 +545,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 
     Bind( wxEVT_MENU, &guMainFrame::OnViewLastFM, this, ID_MENU_VIEW_LASTFM );
     Bind( wxEVT_MENU, &guMainFrame::OnViewLyrics, this, ID_MENU_VIEW_LYRICS );
+    Bind( wxEVT_MENU, &guMainFrame::OnViewAudioCD, this, ID_MENU_VIEW_AUDIOCD );
 
     Bind( wxEVT_MENU, &guMainFrame::OnViewPodcasts, this, ID_MENU_VIEW_PODCASTS );
     Bind( wxEVT_MENU, &guMainFrame::OnPodcastsShowPanel, this, ID_MENU_VIEW_POD_CHANNELS );
@@ -554,7 +561,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     Bind( wxEVT_MENU, &guMainFrame::OnViewStatusBar, this, ID_MENU_VIEW_STATUSBAR );
 
 
-    Bind( wxEVT_MENU, &guMainFrame::OnVolumeMonitorUpdated, this, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnMountMonitorUpdated, this, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+    Bind( wxEVT_MENU, &guMainFrame::OnAudioCdVolumeUpdated, this, ID_VOLUMEMANAGER_AUDIOCD_CHANGED );
+
 
     Bind( wxEVT_MENU, &guMainFrame::OnGaugeCreate, this, ID_STATUSBAR_GAUGE_CREATE );
     Bind( wxEVT_MENU, &guMainFrame::OnGaugePulse, this, ID_STATUSBAR_GAUGE_PULSE );
@@ -782,6 +791,7 @@ guMainFrame::~guMainFrame()
 
     Unbind( wxEVT_MENU, &guMainFrame::OnViewLastFM, this, ID_MENU_VIEW_LASTFM );
     Unbind( wxEVT_MENU, &guMainFrame::OnViewLyrics, this, ID_MENU_VIEW_LYRICS );
+    Unbind( wxEVT_MENU, &guMainFrame::OnViewAudioCD, this, ID_MENU_VIEW_AUDIOCD );
 
     Unbind( wxEVT_MENU, &guMainFrame::OnViewPodcasts, this, ID_MENU_VIEW_PODCASTS );
     Unbind( wxEVT_MENU, &guMainFrame::OnPodcastsShowPanel, this, ID_MENU_VIEW_POD_CHANNELS );
@@ -797,7 +807,7 @@ guMainFrame::~guMainFrame()
     Unbind( wxEVT_MENU, &guMainFrame::OnViewStatusBar, this, ID_MENU_VIEW_STATUSBAR );
 
 
-    Unbind( wxEVT_MENU, &guMainFrame::OnVolumeMonitorUpdated, this, ID_VOLUMEMANAGER_MOUNT_CHANGED );
+    Unbind( wxEVT_MENU, &guMainFrame::OnMountMonitorUpdated, this, ID_VOLUMEMANAGER_MOUNT_CHANGED );
 
     Unbind( wxEVT_MENU, &guMainFrame::OnGaugeCreate, this, ID_STATUSBAR_GAUGE_CREATE );
     Unbind( wxEVT_MENU, &guMainFrame::OnGaugePulse, this, ID_STATUSBAR_GAUGE_PULSE );
@@ -852,9 +862,9 @@ extern void wxClearGtkSystemObjects();
 //}
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
+void guMainFrame::OnMountMonitorUpdated( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMainFrame::OnVolumeMonitorUpdated" ) );
+    guLogMessage( wxT( "guMainFrame::OnMountMonitorUpdated" ) );
 
     // a mount point have been removed
     if( !event.GetInt() )
@@ -884,6 +894,16 @@ void guMainFrame::OnVolumeMonitorUpdated( wxCommandEvent &event )
     }
 
     CollectionsUpdated();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnAudioCdVolumeUpdated( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "guMainFrame::OnCdAudioVolumeUpdated" ) );
+    if( m_AudioCdPanel )
+    {
+        m_AudioCdPanel->UpdateVolume( event.GetInt() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1139,16 +1159,15 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
         CollectionBaseCommand += guCOLLECTION_ACTION_COUNT;
     }
 
-	MenuItem = new wxMenuItem( menu, ID_MENU_PLAY_STREAM,
+    MenuItem = new wxMenuItem( menu, ID_MENU_PLAY_STREAM,
                                wxString( _( "Play Stream" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_PLAY_STREAM ),
                                _( "Play a online music stream" ), wxITEM_NORMAL );
 	menu->Append( MenuItem );
 
     menu->AppendSeparator();
 
-//    MenuItem = new wxMenuItem( menu, -1, _( "Portable Devices" ), wxEmptyString, wxITEM_NORMAL );
-//    menu->Append( MenuItem );
-//    MenuItem->Enable( false );
+    m_MenuAudioCD = new wxMenuItem( menu, ID_MENU_VIEW_AUDIOCD, _( "Audio CD" ), _( "View the audio cd panel" ), wxITEM_CHECK );
+    menu->Append( m_MenuAudioCD );
 
     int PortableDeviceMenuCount = 0;
 
@@ -2800,6 +2819,36 @@ void guMainFrame::OnViewLastFM( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guMainFrame::OnViewAudioCD( wxCommandEvent &event )
+{
+    bool IsEnabled = event.IsChecked();
+    if( IsEnabled )
+    {
+        if( !m_AudioCdPanel )
+            m_AudioCdPanel = new guAudioCdPanel( m_MainNotebook, m_PlayerPanel );
+
+        InsertTabPanel( m_AudioCdPanel, 1, _( "Audio CD" ), wxT( "AudioCd" ) );
+
+        m_VisiblePanels |= guPANEL_MAIN_AUDIOCD;
+    }
+    else
+    {
+
+        RemoveTabPanel( m_AudioCdPanel );
+
+        m_VisiblePanels ^= guPANEL_MAIN_AUDIOCD;
+    }
+    m_MainNotebook->Refresh();
+
+    m_MenuAudioCD->Check( IsEnabled );
+
+    if( m_LocationPanel )
+    {
+        m_LocationPanel->OnPanelVisibleChanged();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewLyrics( wxCommandEvent &event )
 {
     bool IsEnabled = event.IsChecked();
@@ -3059,6 +3108,10 @@ void guMainFrame::OnSelectLocation( wxCommandEvent &event )
             PanelIndex = m_MainNotebook->GetPageIndex( m_FileBrowserPanel );
             break;
 
+        case ID_MENU_VIEW_AUDIOCD :
+            PanelIndex = m_MainNotebook->GetPageIndex( m_AudioCdPanel );
+            break;
+
         default : // Its a Collection
         {
             int CollectionIndex = ( event.GetInt() - ID_COLLECTIONS_BASE ) / guCOLLECTION_ACTION_COUNT;
@@ -3077,6 +3130,7 @@ void guMainFrame::OnSelectLocation( wxCommandEvent &event )
     {
         m_MainNotebook->SetSelection( PanelIndex );
     }
+
     if( m_LocationPanel )
         m_LocationPanel->SetFocus();
 }
@@ -3226,6 +3280,11 @@ void guMainFrame::DoPageClose( wxPanel * curpage )
         m_MenuFileBrowser->Check( false );
         PanelId = guPANEL_MAIN_FILEBROWSER;
     }
+    else if( curpage == m_AudioCdPanel )
+    {
+        m_MenuAudioCD->Check( false );
+        PanelId = guPANEL_MAIN_AUDIOCD;
+    }
     else if( FindCollectionMediaViewer( curpage ) )
     {
         guMediaViewer * MediaViewer = ( guMediaViewer * ) curpage;
@@ -3324,6 +3383,17 @@ void guMainFrame::OnUpdateSelInfo( wxCommandEvent &event )
         {
             m_MainStatusBar->SetSelInfo( wxEmptyString );
         }
+    }
+    else if( m_CurrentPage == ( wxWindow * ) m_AudioCdPanel )
+    {
+        m_AudioCdPanel->GetCounters( &m_SelCount, &m_SelLength, &m_SelSize );
+
+        wxString SelInfo = wxString::Format( wxT( "%llu " ), m_SelCount.GetValue() );
+        SelInfo += m_SelCount == 1 ? _( "track" ) : _( "tracks" );
+        SelInfo += wxString::Format( wxT( ",   %s,   %s" ),
+            LenToString( m_SelLength.GetValue() ).c_str(),
+            SizeToString( m_SelSize.GetValue() ).c_str() );
+        m_MainStatusBar->SetSelInfo( SelInfo );
     }
     else
     {
@@ -3571,7 +3641,7 @@ void guMainFrame::UpdatePodcasts( void )
                 return;
         }
 
-        guLogMessage( wxT( "%s -- %s" ), LastUpdate.Format().c_str(), UpdateTime.Format().c_str() );
+        //guLogMessage( wxT( "%s -- %s" ), LastUpdate.Format().c_str(), UpdateTime.Format().c_str() );
 
         if( UpdateTime.IsLaterThan( LastUpdate ) )
         {
@@ -4186,6 +4256,10 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         else if( TabName == wxT( "Last.fm" ) )
         {
             OnViewLastFM( event );
+        }
+        else if( TabName == wxT( "AudioCd" ) )
+        {
+            OnViewAudioCD( event );
         }
         else if( TabName == wxT( "Lyrics" ) )
         {

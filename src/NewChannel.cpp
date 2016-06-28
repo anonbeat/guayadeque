@@ -20,9 +20,10 @@
 #include "NewChannel.h"
 
 #include "Config.h"
-#include "Utils.h"
 #include "Images.h"
+#include "MainFrame.h"
 #include "Settings.h"
+#include "Utils.h"
 
 #include <wx/wfstream.h>
 #include <wx/tokenzr.h>
@@ -375,7 +376,7 @@ void guNewPodcastChannelSelector::OnFilterDirectoryClicked( wxCommandEvent &even
         }
         FilterText.RemoveLast();
     }
-    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( wxTheApp->GetTopWindow(), _( "Filter Text: " ), _( "Enter the text to filter podcasts channels" ), FilterText );
+    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( guMainFrame::GetMainFrame(), _( "Filter Text: " ), _( "Enter the text to filter podcasts channels" ), FilterText );
     if( EntryDialog->ShowModal() == wxID_OK )
     {
         m_Filters = wxStringTokenize( EntryDialog->GetValue(), wxT( "\t\r\n " ) );

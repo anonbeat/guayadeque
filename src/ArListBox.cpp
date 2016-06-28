@@ -25,6 +25,7 @@
 #include "Images.h"
 #include "LibPanel.h"
 #include "MainApp.h"
+#include "MainFrame.h"
 #include "MediaViewer.h"
 #include "OnlineLinks.h"
 #include "Settings.h"
@@ -330,7 +331,7 @@ bool guArListBox::SelectArtistName( const wxString &ArtistName )
 
         wxCommandEvent event( wxEVT_MENU, ID_ARTIST_SETSELECTION );
         event.SetClientData( ( void * ) Artists );
-        wxPostEvent( wxTheApp->GetTopWindow(), event );
+        wxPostEvent( guMainFrame::GetMainFrame(), event );
 
         return true;
     }

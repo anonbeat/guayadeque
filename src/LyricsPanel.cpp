@@ -24,6 +24,7 @@
 #include "Preferences.h"
 #include "Images.h"
 #include "ListView.h"
+#include "MainFrame.h"
 #include "TagInfo.h"
 #include "Utils.h"
 
@@ -388,7 +389,7 @@ void guLyricsPanel::SetAutoUpdate( const bool autoupdate )
     {
         wxCommandEvent Event( wxEVT_MENU, ID_MAINFRAME_REQUEST_CURRENTTRACK );
         Event.SetClientData( this );
-        wxPostEvent( wxTheApp->GetTopWindow(), Event );
+        wxPostEvent( guMainFrame::GetMainFrame(), Event );
 
         wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_UPDATE_SELINFO );
         AddPendingEvent( CmdEvent );
@@ -409,7 +410,7 @@ void guLyricsPanel::OnSetupSelected( wxCommandEvent &event )
 {
     wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
     CmdEvent.SetInt( guPREFERENCE_PAGE_LYRICS );
-    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+    wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -418,7 +419,7 @@ void guLyricsPanel::OnReloadBtnClick( wxCommandEvent& event )
     if( m_UpdateEnabled )
     {
         wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_LYRICSSEARCHNEXT );
-        wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+        wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 
         guTrackChangeInfo TrackChangeInfo( m_ArtistTextCtrl->GetValue(), m_TrackTextCtrl->GetValue(), m_MediaViewer );
         SetTrack( &TrackChangeInfo, true );
@@ -488,7 +489,7 @@ void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
     {
         wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_LYRICSSAVECHANGES );
         CmdEvent.SetClientData( new wxString( m_CurrentLyricText ) );
-        wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+        wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
     }
     else
     {
@@ -813,7 +814,7 @@ void guLyricsPanel::UpdatedTracks( const guTrackArray * tracks )
             SetCurrentTrack( Track );
 
             wxCommandEvent Event( wxEVT_MENU, ID_MAINFRAME_LYRICSSEARCHFIRST );
-            wxPostEvent( wxTheApp->GetTopWindow(), Event );
+            wxPostEvent( guMainFrame::GetMainFrame(), Event );
 
             return;
         }
@@ -828,7 +829,7 @@ void guLyricsPanel::UpdatedTrack( const guTrack * track )
         SetCurrentTrack( track );
 
         wxCommandEvent Event( wxEVT_MENU, ID_MAINFRAME_LYRICSSEARCHFIRST );
-        wxPostEvent( wxTheApp->GetTopWindow(), Event );
+        wxPostEvent( guMainFrame::GetMainFrame(), Event );
     }
 }
 
@@ -1823,7 +1824,7 @@ void guLyricSearchThread::LyricCommand( guLyricSource &lyricsource )
     CommandEvent.SetClientData( CommandText );
     CommandEvent.SetClientObject( ( wxClientData * ) this );
     CommandEvent.SetInt( false );
-    wxPostEvent( wxTheApp->GetTopWindow(), CommandEvent );
+    wxPostEvent( guMainFrame::GetMainFrame(), CommandEvent );
 
     m_CommandIsExecuting = true;
 
@@ -1933,7 +1934,7 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
                     CommandEvent.SetClientObject( ( wxClientData * ) this );
                     CommandEvent.SetClientData( CommandText );
                     CommandEvent.SetInt( true );
-                    wxPostEvent( wxTheApp->GetTopWindow(), CommandEvent );
+                    wxPostEvent( guMainFrame::GetMainFrame(), CommandEvent );
                 }
             }
         }

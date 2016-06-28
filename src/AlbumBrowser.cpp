@@ -465,7 +465,7 @@ void guAlbumBrowserItemPanel::OnContextMenu( wxContextMenuEvent &event )
 
             if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
             {
-                guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+                guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
                 MainFrame->CreateCopyToMenu( &Menu );
             }
 
@@ -1463,7 +1463,7 @@ void guAlbumBrowser::OnAlbumCopyToClicked( const int albumid, const int commandi
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1669,7 +1669,7 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         wxCommandEvent evt( wxEVT_MENU, ID_ALBUM_COVER_CHANGED );
         evt.SetInt( albumid );
         evt.SetClientData( NULL );
-        wxPostEvent( wxTheApp->GetTopWindow(), evt );
+        wxPostEvent( guMainFrame::GetMainFrame(), evt );
     }
 }
 
@@ -1764,7 +1764,7 @@ void guAlbumBrowser::OnAlbumSelectName( const int albumid )
     evt.SetInt( albumid );
     evt.SetClientData( m_MediaViewer );
     //evt.SetExtraLong( guTRACK_TYPE_DB );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    wxPostEvent( guMainFrame::GetMainFrame(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1774,7 +1774,7 @@ void guAlbumBrowser::OnArtistSelectName( const int artistid )
     evt.SetInt( artistid );
     evt.SetClientData( m_MediaViewer );
     //evt.SetExtraLong( guTRACK_TYPE_DB );
-    wxPostEvent( wxTheApp->GetTopWindow(), evt );
+    wxPostEvent( guMainFrame::GetMainFrame(), evt );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2042,7 +2042,7 @@ void guAlbumBrowser::OnBigCoverContextMenu( wxContextMenuEvent &event )
 
         if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
         {
-            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+            guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
             MainFrame->CreateCopyToMenu( &Menu );
         }
 
@@ -2147,7 +2147,7 @@ void guAlbumBrowser::OnBigCoverTracksContextMenu( wxContextMenuEvent &event )
 
         if( ContextMenuFlags & guCONTEXTMENU_COPY_TO )
         {
-            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+            guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
             MainFrame->CreateCopyToMenu( &Menu );
         }
 
@@ -2354,7 +2354,7 @@ void guAlbumBrowser::OnBigCoverCopyToClicked( wxCommandEvent &event )
         }
         CopyEvent.SetInt( Index );
         CopyEvent.SetClientData( ( void * ) Tracks );
-        wxPostEvent( wxTheApp->GetTopWindow(), CopyEvent );
+        wxPostEvent( guMainFrame::GetMainFrame(), CopyEvent );
     }
 }
 
@@ -2522,7 +2522,7 @@ void guAlbumBrowser::OnBigCoverTracksPlaylistSave( wxCommandEvent &event )
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &TrackIds, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( guMainFrame::GetMainFrame(), m_Db, &TrackIds, &PlayLists );
 
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {

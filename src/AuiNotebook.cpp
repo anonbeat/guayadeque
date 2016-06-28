@@ -421,7 +421,6 @@ bool guAuiNotebook::UpdateTabCtrlHeight()
     wxAuiTabArt * ArtProvider = m_tabs.GetArtProvider();
 
     m_tabCtrlHeight = guAUI_TAB_HEIGHT;
-    guLogMessage( wxT( "The Tab CtrlHeight: %d" ), m_tabCtrlHeight );
 
     wxAuiPaneInfoArray &ALlPanes = m_mgr.GetAllPanes();
     size_t PaneCount = ALlPanes.GetCount();

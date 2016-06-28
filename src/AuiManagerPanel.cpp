@@ -111,7 +111,7 @@ void guAuiManagerPanel::ShowPanel( const int panelid, bool show )
 
         if( !m_MenuBar )
         {
-            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+            guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
             m_MenuBar = MainFrame->GetMenuBar();
         }
         if( m_MenuBar )

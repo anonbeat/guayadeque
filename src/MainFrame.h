@@ -21,6 +21,7 @@
 #define MAINFRAME_H
 
 #include "AlbumBrowser.h"
+#include "AudioCdPanel.h"
 #include "AuiNotebook.h"
 #include "Config.h"
 #include "CoverPanel.h"
@@ -73,7 +74,6 @@ namespace Guayadeque {
 
 #include "libindicate/server.h"
 #include "libindicate/indicator.h"
-//#include "libindicate-gtk/indicator.h"
 
 #endif
 
@@ -93,6 +93,7 @@ namespace Guayadeque {
 #define     guPANEL_MAIN_LOCATIONS          ( 1 << 13 )
 #define     guPANEL_MAIN_SHOWCOVER          ( 1 << 14 )
 #define     guPANEL_MAIN_TREEVIEW           ( 1 << 15 )
+#define     guPANEL_MAIN_AUDIOCD            ( 1 << 16 )
 
 
 #define     guPANEL_MAIN_SELECTOR           ( guPANEL_MAIN_RADIOS | guPANEL_MAIN_LASTFM | guPANEL_MAIN_LYRICS | guPANEL_MAIN_PODCASTS )
@@ -143,20 +144,16 @@ class guMainFrame : public wxFrame
     guPlayerPlayList *              m_PlayerPlayList;
     guPlayerVumeters *              m_PlayerVumeters;
     guPlayerPanel *                 m_PlayerPanel;
-//    guLibPanel *                    m_LibPanel;
 
     guRadioPanel *                  m_RadioPanel;
     guLastFMPanel *                 m_LastFMPanel;
     guLyricsPanel *                 m_LyricsPanel;
-//    guPlayListPanel *               m_PlayListPanel;
     guPodcastPanel *                m_PodcastsPanel;
-//    guAlbumBrowser *                m_AlbumBrowserPanel;
     guFileBrowser *                 m_FileBrowserPanel;
-//    guJamendoPanel *                m_JamendoPanel;
-//    guMagnatunePanel *              m_MagnatunePanel;
     guLocationPanel *               m_LocationPanel;
     guCoverPanel *                  m_CoverPanel;
-//    guTreeViewPanel *               m_TreeViewPanel;
+
+    guAudioCdPanel *                m_AudioCdPanel;
 
     guTaskBarIcon *                 m_TaskBarIcon;
 #ifdef WITH_LIBINDICATE_SUPPORT
@@ -190,6 +187,8 @@ class guMainFrame : public wxFrame
 
     wxMenuItem *                    m_MenuLastFM;
     wxMenuItem *                    m_MenuLyrics;
+
+    wxMenuItem *                    m_MenuAudioCD;
 
     wxMenuItem *                    m_MenuFileBrowser;
 
@@ -353,6 +352,8 @@ class guMainFrame : public wxFrame
     void                            OnPodcastsShowPanel( wxCommandEvent &event );
     void                            OnPodcastsProperties( wxCommandEvent &event );
 
+    void                            OnViewAudioCD( wxCommandEvent &event );
+
     void                            OnViewFileBrowser( wxCommandEvent &event );
 
     void                            OnViewPortableDevice( wxCommandEvent &event );
@@ -380,7 +381,8 @@ class guMainFrame : public wxFrame
     void                            OnLibraryCoverChanged( wxCommandEvent &event );
     void                            OnPlayerPanelCoverChanged( wxCommandEvent &event );
 
-    void                            OnVolumeMonitorUpdated( wxCommandEvent &event );
+    void                            OnMountMonitorUpdated( wxCommandEvent &event );
+    void                            OnAudioCdVolumeUpdated( wxCommandEvent &event );
 
     void                            OnSetForceGapless( wxCommandEvent &event );
     void                            OnSetAudioScrobble( wxCommandEvent &event );

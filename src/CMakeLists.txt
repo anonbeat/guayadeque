@@ -15,7 +15,7 @@ INCLUDE_DIRECTORIES(
         ${CMAKE_CURRENT_SOURCE_DIR}/hmac
         ${CMAKE_CURRENT_SOURCE_DIR}/network
         ${GSTREAMER_INCLUDE_DIRS}
-        ${GSTREAMER_CTRL_INCLUDE_DIRS}
+        ${GSTREAMER_TAG_INCLUDE_DIRS}
         ${SQLITE3_INCLUDE_DIRS}
         ${LIBCURL_INCLUDE_DIRS}
         ${LIBTAG_INCLUDE_DIRS}
@@ -284,6 +284,9 @@ ADD_EXECUTABLE( guayadeque
         AcousticId.h
         MusicBrainz.cpp
         MusicBrainz.h
+        AudioCdPanel.cpp
+        AudioCdPanel.h
+        Version.h
         ${DBUS_SOURCES}
         ${HMAC_SHA2_SOURCES}
         ${NETWORK_SOURCES}
@@ -292,7 +295,7 @@ ADD_EXECUTABLE( guayadeque
 TARGET_LINK_LIBRARIES( guayadeque
         ${wxWidgets_LIBRARIES}
         ${GSTREAMER_LIBRARIES}
-        ${GSTREAMER_CTRL_LIBRARIES}
+        ${GSTREAMER_TAG_LIBRARIES}
         ${SQLITE3_LIBRARIES}
         ${LIBCURL_LIBRARIES}
         ${LIBTAG_LIBRARIES}

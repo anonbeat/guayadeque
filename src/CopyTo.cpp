@@ -48,7 +48,7 @@ guCopyToAction::guCopyToAction()
 // -------------------------------------------------------------------------------- //
 guCopyToAction::guCopyToAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
 {
-    guLogMessage( wxT( "guCopyToAction %li files : delete = %i" ), tracks->Count(), movefiles );
+    //guLogMessage( wxT( "guCopyToAction %li files : delete = %i" ), tracks->Count(), movefiles );
     m_Type = guCOPYTO_ACTION_COPYTO;
     m_Tracks = tracks;
     m_MediaViewer = mediaviewer;
@@ -200,7 +200,7 @@ guCopyToThread::~guCopyToThread()
 // -------------------------------------------------------------------------------- //
 void guCopyToThread::AddAction( guTrackArray * tracks, guMediaViewer * mediaviewer, const wxString &destdir, const wxString &pattern, int format, int quality, bool movefiles )
 {
-    guLogMessage( wxT( "AddAction %li files : delete = %i" ), tracks->Count(), movefiles );
+    //guLogMessage( wxT( "AddAction %li files : delete = %i" ), tracks->Count(), movefiles );
     guCopyToAction * CopyToAction = new guCopyToAction( tracks, mediaviewer, destdir, pattern, format, quality, movefiles );
     if( CopyToAction )
     {
@@ -256,7 +256,7 @@ void guCopyToThread::AddAction( wxString * playlistpath, guMediaViewer * mediavi
 bool guCopyToThread::CopyFile( const wxString &from, const wxString &to )
 {
     bool RetVal = true;
-    guLogMessage( wxT( "Copy %s =>> %s" ), from.c_str(), to.c_str() );
+    //guLogMessage( wxT( "Copy %s =>> %s" ), from.c_str(), to.c_str() );
     if( wxFileName::Mkdir( wxPathOnly( to ), 0777, wxPATH_MKDIR_FULL ) )
     {
         if( !wxCopyFile( from, to ) )
@@ -276,8 +276,8 @@ bool guCopyToThread::CopyFile( const wxString &from, const wxString &to )
 // -------------------------------------------------------------------------------- //
 bool guCopyToThread::TranscodeFile( const guTrack * track, const wxString &target, int format, int quality )
 {
-    guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\nSource: '%s'\nTarget: '%s'\nFormat: %i\nQuality: %i" ),
-                    track->m_FileName.c_str(), target.c_str(), format, quality );
+    //guLogMessage( wxT( "guCopyToDeviceThread::TranscodeFile\nSource: '%s'\nTarget: '%s'\nFormat: %i\nQuality: %i" ),
+    //                track->m_FileName.c_str(), target.c_str(), format, quality );
     bool RetVal = false;
     wxString OutFile = target + wxT( "." ) + guTranscodeFormatString( format );
     if( wxFileName::Mkdir( wxPathOnly( target ), 0777, wxPATH_MKDIR_FULL ) )
@@ -342,7 +342,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
     guMediaViewer * MediaViewer = copytoaction.GetMediaViewer();
 
     FilePattern = copytoaction.Pattern();
-    guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
+    //guLogMessage( wxT( "Using pattern '%s'" ), FilePattern.c_str() );
 
     DestDir = copytoaction.DestDir();
 
@@ -401,7 +401,9 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             wxRegEx RegEx( wxT( "[<>:\\|?*]" ) );
             RegEx.ReplaceAll( &FileName, wxT( "_" ) );
 
-            if( !CurTrack->m_Offset && ( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP ) )
+            if( !CurTrack->m_Offset &&
+                ( CurTrack->m_Type != guTRACK_TYPE_AUDIOCD ) &&
+                ( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP ) )
             {
                 ActionIsCopy = true;
             }
@@ -411,7 +413,8 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 
                 if( copytoaction.Type() == guCOPYTO_ACTION_COPYTO )
                 {
-                    if( CurTrack->m_Offset && ( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP ) )
+                    if( CurTrack->m_Offset &&
+                        ( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP ) )
                     {
                         switch( FileFormat )
                         {
@@ -434,7 +437,6 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                             case guPORTABLEMEDIA_AUDIO_FORMAT_FLAC :
                                 copytoaction.Format( guTRANSCODE_FORMAT_FLAC );
                                 break;
-
 
                             default :
                                 copytoaction.Format( guTRANSCODE_FORMAT_MP3 );
@@ -494,7 +496,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     // If the file is not supported then need to transcode it
                     if( CurTrack->m_Offset || !( MediaViewer->AudioFormats() & FileFormat ) )
                     {
-                        guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
+                        //guLogMessage( wxT( "Its an unsupported format... Transcoding" ) );
                         ActionIsCopy = false;
                         if( copytoaction.Format() == guTRANSCODE_FORMAT_KEEP )
                         {
@@ -528,7 +530,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                     }
                     else    // The file is supported
                     {
-                        guLogMessage( wxT( "Its a supported format" ) );
+                        //guLogMessage( wxT( "Its a supported format" ) );
                         // The file is supported and we dont need to trasncode in all cases so copy the file
                         if( MediaViewer->TranscodeScope() != guPORTABLEMEDIA_TRANSCODE_SCOPE_ALWAYS )
                         {
@@ -637,7 +639,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                         if( DevCoverFormats ) // if has cover handling enabled
                         {
                             wxString CoverPath = Db->GetCoverPath( CurTrack->m_CoverId );
-                            guLogMessage( wxT( "Original Cover Path %i = '%s'" ), CurTrack->m_CoverId, CoverPath.c_str() );
+                            //guLogMessage( wxT( "Original Cover Path %i = '%s'" ), CurTrack->m_CoverId, CoverPath.c_str() );
                             wxImage * CoverImage = new wxImage( CoverPath );
                             if( CoverImage )
                             {
@@ -753,7 +755,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         guIpodLibrary * IpodDb = ( guIpodLibrary *  ) MediaViewer->GetDb();
         if( PlayListFile )
         {
-            guLogMessage( wxT( "It was a playlist...") );
+            //guLogMessage( wxT( "It was a playlist...") );
             IpodDb->CreateiPodPlayList( PlayListFile->GetName(), m_FilesToAdd );
         }
         if( !guMoreCopyToIpodActions( m_CopyToActions ) )
@@ -775,7 +777,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
         guPlaylistFile * PlayListFile = copytoaction.PlayListFile();
         if( PlayListFile )
         {
-            guLogMessage( wxT( "Normal device and is from a playlist..." ) );
+            //guLogMessage( wxT( "Normal device and is from a playlist..." ) );
             wxArrayInt TrackIds;
             // The tracks just copied was part of a playlist we need to create too
             Count = m_FilesToAdd.Count();

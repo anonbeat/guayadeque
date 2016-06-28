@@ -437,28 +437,44 @@ void guTranscodeThread::BuildPipeline( void )
   {
     GstElement * src;
     //src = gst_element_factory_make( "filesrc", "guTransSource" );
-    src = gst_element_factory_make( "giosrc", "guTransSource" );
+    if( m_Track->m_Type == guTRACK_TYPE_AUDIOCD )
+    {
+        src = gst_element_make_from_uri( GST_URI_SRC, "cdda://", "guTransSource", NULL );
+    }
+    else
+    {
+        src = gst_element_factory_make( "giosrc", "guTransSource" );
+    }
     if( GST_IS_ELEMENT( src ) )
     {
-      wxString Location;
-      wxURI URI( m_Track->m_FileName );
-      if( URI.IsReference() )
+      if( m_Track->m_Type == guTRACK_TYPE_AUDIOCD )
       {
-          Location = wxT( "file://" ) + m_Track->m_FileName;
+        g_object_set( src, "mode", 0, NULL );
+        g_object_set( src, "track", m_Track->m_Number, NULL );
       }
       else
       {
-          if( !URI.HasScheme() )
+          wxString Location;
+          wxURI URI( m_Track->m_FileName );
+          if( URI.IsReference() )
           {
-              Location = wxT( "http://" ) + m_Track->m_FileName;
+              Location = wxT( "file://" ) + m_Track->m_FileName;
           }
           else
           {
-            Location = m_Track->m_FileName;
+              if( !URI.HasScheme() )
+              {
+                  Location = wxT( "http://" ) + m_Track->m_FileName;
+              }
+              else
+              {
+                Location = m_Track->m_FileName;
+              }
           }
-      }
 
-      g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
+          guLogMessage( wxT( "Transode source location: '%s'" ), Location.c_str() );
+          g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
+      }
 
       GstElement * dec;
       dec = gst_element_factory_make( "decodebin", "guTransDecoder" );
@@ -639,7 +655,7 @@ void guTranscodeThread::Stop( void )
     guTagInfo * OutTagInfo = guGetTagInfoHandler( m_Target );
     if( OutTagInfo )
     {
-        if( !m_StartPos )
+        if( !m_StartPos && m_Track->m_Type != guTRACK_TYPE_AUDIOCD )
         {
             guTagInfo * InTagInfo = guGetTagInfoHandler( m_Track->m_FileName );
             if( InTagInfo )
@@ -672,9 +688,13 @@ void guTranscodeThread::Stop( void )
                 {
                     WriteFlags |= guTRACK_CHANGED_DATA_LABELS;
                 }
-            }
 
-            delete InTagInfo;
+                delete InTagInfo;
+            }
+            else
+            {
+                guLogMessage( wxT( "Could not get the tag handler for %s" ), m_Track->m_FileName.c_str() );
+            }
         }
         else
         {

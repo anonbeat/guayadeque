@@ -55,17 +55,33 @@ guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxStri
     m_Db->SetTracksOrder( m_TracksOrder );
     m_Db->SetTracksOrderDesc( m_TracksOrderDesc );
 
-    wxArrayString ColumnNames = GetColumnNames();
+    m_ColumnNames.Add( wxT( "#" ) );
+    m_ColumnNames.Add( _( "Title" ) );
+    m_ColumnNames.Add( _( "Artist" ) );
+    m_ColumnNames.Add( _( "Album Artist" ) );
+    m_ColumnNames.Add( _( "Album" ) );
+    m_ColumnNames.Add( _( "Genre" ) );
+    m_ColumnNames.Add( _( "Composer" ) );
+    m_ColumnNames.Add( _( "Disc" ) );
+    m_ColumnNames.Add( _( "Length" ) );
+    m_ColumnNames.Add( _( "Year" ) );
+    m_ColumnNames.Add( _( "Bit Rate" ) );
+    m_ColumnNames.Add( _( "Rating" ) );
+    m_ColumnNames.Add( _( "Plays" ) );
+    m_ColumnNames.Add( _( "Last Played" ) );
+    m_ColumnNames.Add( _( "Added" ) );
+    m_ColumnNames.Add( _( "Format" ) );
+    m_ColumnNames.Add( _( "Path" ) );
+    m_ColumnNames.Add( _( "Offset" ) );
 
     int ColId;
     wxString ColName;
-    int index;
-    int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    int Count = m_ColumnNames.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
-        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, m_ConfName + wxT( "/columns/ids" ) );
+        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), Index ), Index, m_ConfName + wxT( "/columns/ids" ) );
 
-        ColName = ColumnNames[ ColId ];
+        ColName = m_ColumnNames[ ColId ];
 
         if( style & guLISTVIEW_COLUMN_SORTING )
             ColName += ( ( ColId == m_TracksOrder ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
@@ -73,8 +89,8 @@ guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxStri
         guListViewColumn * Column = new guListViewColumn(
             ColName,
             ColId,
-            Config->ReadNum( wxString::Format( wxT( "width%u" ), index ), 80, m_ConfName + wxT( "/columns/widths" ) ),
-            Config->ReadBool( wxString::Format( wxT( "show%u" ), index ), true, m_ConfName + wxT( "/columns/shows" ) )
+            Config->ReadNum( wxString::Format( wxT( "width%u" ), Index ), 80, m_ConfName + wxT( "/columns/widths" ) ),
+            Config->ReadBool( wxString::Format( wxT( "show%u" ), Index ), true, m_ConfName + wxT( "/columns/shows" ) )
             );
         InsertColumn( Column );
     }
@@ -181,68 +197,68 @@ void guSoListBox::CreateAcceleratorTable( void )
 // -------------------------------------------------------------------------------- //
 wxString guSoListBox::OnGetItemText( const int row, const int col ) const
 {
-    guTrack * Song;
+    guTrack * Track;
     //guLogMessage( wxT( "GetItemText( %i, %i )    %i-%i  %i" ), row, col, m_ItemsFirst, m_ItemsLast, m_Items.Count() );
 
-    Song = &m_Items[ row - m_ItemsFirst ];
+    Track = &m_Items[ row - m_ItemsFirst ];
 
     switch( ( * m_Columns )[ col ].m_Id )
     {
         case guSONGS_COLUMN_NUMBER :
-          if( Song->m_Number )
-            return wxString::Format( wxT( "%u" ), Song->m_Number );
+          if( Track->m_Number )
+            return wxString::Format( wxT( "%u" ), Track->m_Number );
           else
             return wxEmptyString;
 
         case guSONGS_COLUMN_TITLE  :
-          return Song->m_SongName;
+          return Track->m_SongName;
 
         case guSONGS_COLUMN_ARTIST :
-          return Song->m_ArtistName;
+          return Track->m_ArtistName;
 
         case guSONGS_COLUMN_ALBUMARTIST :
-            return Song->m_AlbumArtist;
+            return Track->m_AlbumArtist;
 
         case guSONGS_COLUMN_ALBUM :
-          return Song->m_AlbumName;
+          return Track->m_AlbumName;
 
         case guSONGS_COLUMN_GENRE :
-          return Song->m_GenreName;
+          return Track->m_GenreName;
 
         case guSONGS_COLUMN_COMPOSER :
-          return Song->m_Composer;
+          return Track->m_Composer;
 
         case guSONGS_COLUMN_DISK :
-          return Song->m_Disk;
+          return Track->m_Disk;
 
         case guSONGS_COLUMN_LENGTH :
-          return LenToString( Song->m_Length );
+          return LenToString( Track->m_Length );
 
         case guSONGS_COLUMN_YEAR :
-            if( Song->m_Year )
-                return wxString::Format( wxT( "%u" ), Song->m_Year );
+            if( Track->m_Year )
+                return wxString::Format( wxT( "%u" ), Track->m_Year );
             else
                 return wxEmptyString;
 
         case guSONGS_COLUMN_BITRATE :
-            return wxString::Format( wxT( "%u" ), Song->m_Bitrate );
+            return wxString::Format( wxT( "%u" ), Track->m_Bitrate );
 
         case guSONGS_COLUMN_RATING :
-            return wxString::Format( wxT( "%i" ), Song->m_Rating );
+            return wxString::Format( wxT( "%i" ), Track->m_Rating );
 
         case guSONGS_COLUMN_PLAYCOUNT :
         {
-            if( Song->m_PlayCount )
-                return wxString::Format( wxT( "%u" ), Song->m_PlayCount );
+            if( Track->m_PlayCount )
+                return wxString::Format( wxT( "%u" ), Track->m_PlayCount );
             break;
         }
 
         case guSONGS_COLUMN_LASTPLAY :
         {
-            if( Song->m_LastPlay )
+            if( Track->m_LastPlay )
             {
                 wxDateTime LastPlay;
-                LastPlay.Set( ( time_t ) Song->m_LastPlay );
+                LastPlay.Set( ( time_t ) Track->m_LastPlay );
                 return LastPlay.FormatDate();
             }
             else
@@ -252,23 +268,23 @@ wxString guSoListBox::OnGetItemText( const int row, const int col ) const
         case guSONGS_COLUMN_ADDEDDATE :
         {
             wxDateTime AddedDate;
-            AddedDate.Set( ( time_t ) Song->m_AddedTime );
+            AddedDate.Set( ( time_t ) Track->m_AddedTime );
             return AddedDate.FormatDate();
         }
 
         case guSONGS_COLUMN_FORMAT :
         {
-            return Song->m_Format;
+            return Track->m_Format;
         }
 
         case guSONGS_COLUMN_FILEPATH :
         {
-            return Song->m_FileName; // contains both path and filename
+            return Track->m_FileName; // contains both path and filename
         }
 
         case guSONGS_COLUMN_OFFSET :
-          if( Song->m_Offset )
-            return LenToString( Song->m_Offset );
+          if( Track->m_Offset )
+            return LenToString( Track->m_Offset );
           else
             return wxEmptyString;
 
@@ -407,26 +423,7 @@ void guSoListBox::GetAllSongs( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 wxArrayString guSoListBox::GetColumnNames( void ) const
 {
-    wxArrayString ColumnNames;
-    ColumnNames.Add( wxT( "#" ) );
-    ColumnNames.Add( _( "Title" ) );
-    ColumnNames.Add( _( "Artist" ) );
-    ColumnNames.Add( _( "Album Artist" ) );
-    ColumnNames.Add( _( "Album" ) );
-    ColumnNames.Add( _( "Genre" ) );
-    ColumnNames.Add( _( "Composer" ) );
-    ColumnNames.Add( _( "Disc" ) );
-    ColumnNames.Add( _( "Length" ) );
-    ColumnNames.Add( _( "Year" ) );
-    ColumnNames.Add( _( "Bit Rate" ) );
-    ColumnNames.Add( _( "Rating" ) );
-    ColumnNames.Add( _( "Plays" ) );
-    ColumnNames.Add( _( "Last Played" ) );
-    ColumnNames.Add( _( "Added" ) );
-    ColumnNames.Add( _( "Format" ) );
-    ColumnNames.Add( _( "Path" ) );
-    ColumnNames.Add( _( "Offset" ) );
-    return ColumnNames;
+    return m_ColumnNames;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -492,10 +489,8 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
         ColumnId == guSONGS_COLUMN_FILEPATH )
         return;
 
-    wxArrayString ColumnNames = GetColumnNames();
-
     wxString MenuText = _( "Edit" );
-    MenuText += wxT( " " ) + ColumnNames[ ColumnId ];
+    MenuText += wxT( " " ) + m_ColumnNames[ ColumnId ];
 
     MenuItem = new wxMenuItem( menu, ID_TRACKS_EDIT_COLUMN,  MenuText, _( "Edit the clicked column for the selected tracks" ) );
     MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_edit ) );
@@ -504,7 +499,7 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
     if( selcount > 1 )
     {
         MenuText = _( "Set" );
-        MenuText += wxT( " " ) + ColumnNames[ ColumnId ] + wxT( " " );
+        MenuText += wxT( " " ) + m_ColumnNames[ ColumnId ] + wxT( " " );
         MenuText += _( "to" );
         wxString ItemText = OnGetItemText( m_LastRowRightClicked, m_LastColumnRightClicked );
         ItemText.Replace( wxT( "&" ), wxT( "&&" ) );
@@ -976,15 +971,13 @@ void guSoListBox::SetTracksOrder( const int order )
     int ColId = m_TracksOrder;
 
     // Create the Columns
-    wxArrayString ColumnNames = GetColumnNames();
     int CurColId;
-    int Index;
-    int Count = ColumnNames.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = m_ColumnNames.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         CurColId = GetColumnId( Index );
         SetColumnLabel( Index,
-            ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+            m_ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
 
     ReloadItems();

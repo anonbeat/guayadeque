@@ -313,7 +313,7 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
         int TrackCount = m_PlayListPanel->GetPlaylistTrackCount();
         if( TrackCount )
         {
-            guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+            guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
             MainFrame->CreateCopyToMenu( &Menu );
 
 
@@ -1105,7 +1105,7 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
                 {
                     event.SetId( ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
                     event.SetClientData( new wxString( PlayListPath ) );
-                    wxPostEvent( wxTheApp->GetTopWindow(), event );
+                    wxPostEvent( guMainFrame::GetMainFrame(), event );
                 }
                 else
                 {
@@ -1135,7 +1135,7 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
 
                         event.SetId( ID_MAINFRAME_COPYTODEVICE_PLAYLIST );
                         event.SetClientData( new wxString( PlayListPath ) );
-                        wxPostEvent( wxTheApp->GetTopWindow(), event );
+                        wxPostEvent( guMainFrame::GetMainFrame(), event );
                     }
                 }
             }
@@ -1150,7 +1150,7 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
 
             event.SetInt( Index );
             event.SetClientData( ( void * ) Tracks );
-            wxPostEvent( wxTheApp->GetTopWindow(), event );
+            wxPostEvent( guMainFrame::GetMainFrame(), event );
         }
     }
 }
@@ -1415,7 +1415,7 @@ void guPlayListPanel::OnPLTracksCopyToClicked( wxCommandEvent &event )
     }
     event.SetInt( Index );
     event.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), event );
+    wxPostEvent( guMainFrame::GetMainFrame(), event );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1449,7 +1449,7 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
         guListItems PlayLists;
         m_Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), m_Db, &NewSongs, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( guMainFrame::GetMainFrame(), m_Db, &NewSongs, &PlayLists );
 
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
@@ -1887,7 +1887,7 @@ void guPlayListPanel::OnSetAllowDenyFilter( wxCommandEvent &event )
         {
             event.SetInt( ItemData->GetData() );
 
-            wxPostEvent( wxTheApp->GetTopWindow(), event );
+            wxPostEvent( guMainFrame::GetMainFrame(), event );
         }
     }
 }

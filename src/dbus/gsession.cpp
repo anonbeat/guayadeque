@@ -19,6 +19,7 @@
 // -------------------------------------------------------------------------------- //
 #include "gsession.h"
 
+#include "MainFrame.h"
 #include "Utils.h"
 
 namespace Guayadeque {
@@ -183,7 +184,7 @@ DBusHandlerResult guGSession::HandleMessages( guDBusMessage * msg, guDBusMessage
                 RetVal = DBUS_HANDLER_RESULT_HANDLED;
 
                 // Closes the App
-                wxTheApp->GetTopWindow()->Close( true );
+                guMainFrame::GetMainFrame()->Close( true );
             }
             else if( !strcmp( Member, "CancelEndSession" ) )
             {

@@ -395,15 +395,14 @@ void guPLSoListBox::SetTracksOrder( const int order )
         int ColId = m_TracksOrder;
 
         // Create the Columns
-        wxArrayString ColumnNames = GetColumnNames();
         int CurColId;
         int Index;
-        int Count = ColumnNames.Count();
+        int Count = m_ColumnNames.Count();
         for( Index = 0; Index < Count; Index++ )
         {
             CurColId = GetColumnId( Index );
             SetColumnLabel( Index,
-                ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
+                m_ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TracksOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
         }
 
         ReloadItems();

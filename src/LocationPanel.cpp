@@ -90,18 +90,16 @@ guLocationTreeCtrl::guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainfra
 
     m_RootId   = AddRoot( wxT( "Sources" ), -1, -1, NULL );
 
-    //SetIndent( 2 );
-
     wxFont FontBold = GetFont();
     FontBold.SetWeight( wxFONTWEIGHT_BOLD );
 
-    m_LocalMusicId = AppendItem( m_RootId, _( "Local Music" ), 0, -1, NULL );
+    m_LocalMusicId = AppendItem( m_RootId, _( "Local Music" ), 0 );
 
-    m_OnlineMusicId = AppendItem( m_RootId, _( "Online Music" ), 2, -1, NULL );
+    m_OnlineMusicId = AppendItem( m_RootId, _( "Online Music" ), 2 );
 
-    m_PortableDeviceId = AppendItem( m_RootId, _( "Portable Devices" ), 1, -1, NULL );
+    m_PortableDeviceId = AppendItem( m_RootId, _( "Portable Devices" ), 1 );
 
-    m_ContextId = AppendItem( m_RootId, _( "Context" ), -1, -1, NULL );
+    m_ContextId = AppendItem( m_RootId, _( "Context" ), -1 );
 
     SetIndent( 5 );
 
@@ -129,9 +127,8 @@ int guLocationTreeCtrl::GetIconIndex( const wxString &iconstring )
     {
         //. GThemedIcon drive-removable-media-usb drive-removable-media drive-removable drive
         wxArrayString IconNames = wxStringTokenize( iconstring, wxT( " " ) );
-        int Index;
         int Count = IconNames.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             //guLogMessage( wxT( "Trying to load the icon '%s'" ), IconNames[ Index ].c_str() );
             if( IconNames[ Index ] == wxT( "." ) || IconNames[ Index ] == wxT( "GThemedIcon" ) )
@@ -193,7 +190,7 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     wxFont BoldFont = GetFont();
     BoldFont.SetWeight( wxFONTWEIGHT_BOLD );
 
-    wxColour DisableItemColor = wxAuiStepColour( GetItemTextColour( m_LocalMusicId ), 160 );
+    wxColour DisableItemColor = wxSystemSettings::GetColour( wxSYS_COLOUR_GRAYTEXT );
 
     // Delete all the previous childrens
     DeleteChildren( m_LocalMusicId );
@@ -214,12 +211,15 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     if( VisiblePanels & guPANEL_MAIN_PODCASTS )
         SetItemFont( CurrentItem, BoldFont );
 
+    CurrentItem = AppendItem( m_PortableDeviceId, _( "Audio CD" ), GetIconIndex( "media-cdrom-audio" ), -1,
+                              new guLocationItemData( ID_MENU_VIEW_AUDIOCD, ( VisiblePanels & guPANEL_MAIN_AUDIOCD ) ) );
+    if( VisiblePanels & guPANEL_MAIN_AUDIOCD )
+        SetItemFont( CurrentItem, BoldFont );
 
     const guMediaCollectionArray & Collections = m_MainFrame->GetMediaCollections();
-    int Index;
     int Count = Collections.Count();
     int CollectionBaseCommand = ID_COLLECTIONS_BASE;
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guMediaCollection &Collection = Collections[ Index ];
 
@@ -302,7 +302,7 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
 }
 
 // -------------------------------------------------------------------------------- //
-void inline CreateMenuRadio( wxMenu * menu, const int visiblepanels, guRadioPanel * radiopanel )
+void CreateMenuRadio( wxMenu * menu, const int visiblepanels, guRadioPanel * radiopanel )
 {
     wxMenuItem * MenuItem;
     MenuItem = new wxMenuItem( menu, ID_MENU_VIEW_RADIO,
@@ -343,7 +343,7 @@ void inline CreateMenuRadio( wxMenu * menu, const int visiblepanels, guRadioPane
 }
 
 // -------------------------------------------------------------------------------- //
-void inline CreateMenuPodcasts( wxMenu * menu, const int visiblepanels, guPodcastPanel * podcastpanel )
+void CreateMenuPodcasts( wxMenu * menu, const int visiblepanels, guPodcastPanel * podcastpanel )
 {
     wxMenuItem * MenuItem;
 
@@ -383,7 +383,7 @@ void inline CreateMenuPodcasts( wxMenu * menu, const int visiblepanels, guPodcas
 }
 
 // -------------------------------------------------------------------------------- //
-void inline CreateMenuCollection( wxMenu * menu, const wxString &uniqueid, const int collectiontype,
+void CreateMenuCollection( wxMenu * menu, const wxString &uniqueid, const int collectiontype,
                 guMediaViewer * mediaviewer, const bool ispresent, const int basecommand )
 {
     int ViewMode = mediaviewer ? mediaviewer->GetViewMode() : guMEDIAVIEWER_MODE_NONE;

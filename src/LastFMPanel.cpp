@@ -2731,7 +2731,7 @@ void guLastFMPanel::OnUpdateChkBoxClick( wxCommandEvent &event )
     {
         wxCommandEvent UpdateEvent( wxEVT_MENU, ID_MAINFRAME_REQUEST_CURRENTTRACK );
         UpdateEvent.SetClientData( this );
-        wxPostEvent( wxTheApp->GetTopWindow(), UpdateEvent );
+        wxPostEvent( guMainFrame::GetMainFrame(), UpdateEvent );
     }
     //
     m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
@@ -3241,7 +3241,7 @@ void guLastFMPanel::OnContextMenu( wxContextMenuEvent &event )
 
     Menu.AppendSeparator();
 
-    guMainFrame * MainFrame = ( guMainFrame * ) wxTheApp->GetTopWindow();
+    guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
     MainFrame->CreateCopyToMenu( &Menu );
 
     PopupMenu( &Menu, Point.x, Point.y );
@@ -3369,7 +3369,7 @@ void guLastFMPanel::OnSaveClicked( wxCommandEvent &event )
         guDbLibrary * Db = m_Db ? m_Db : m_DefaultDb;
         Db->GetPlayLists( &PlayLists, guPLAYLIST_TYPE_STATIC );
 
-        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( wxTheApp->GetTopWindow(), Db, &TrackIds, &PlayLists );
+        guPlayListAppend * PlayListAppendDlg = new guPlayListAppend( guMainFrame::GetMainFrame(), Db, &TrackIds, &PlayLists );
 
         if( PlayListAppendDlg->ShowModal() == wxID_OK )
         {
@@ -3400,7 +3400,7 @@ void guLastFMPanel::OnSaveClicked( wxCommandEvent &event )
             }
 
             wxCommandEvent evt( wxEVT_MENU, ID_PLAYLIST_UPDATED );
-            wxPostEvent( wxTheApp->GetTopWindow(), evt );
+            wxPostEvent( guMainFrame::GetMainFrame(), evt );
         }
         PlayListAppendDlg->Destroy();
     }
@@ -3422,7 +3422,7 @@ void guLastFMPanel::OnCopyToClicked( wxCommandEvent &event )
     }
     CmdEvent.SetInt( Index );
     CmdEvent.SetClientData( ( void * ) Tracks );
-    wxPostEvent( wxTheApp->GetTopWindow(), CmdEvent );
+    wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -778,7 +778,7 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
 
 
             evtmax.SetExtraLong( XmlFile.Length() );
-            wxPostEvent( wxTheApp->GetTopWindow(), evtmax );
+            wxPostEvent( guMainFrame::GetMainFrame(), evtmax );
 
             wxFileOffset CurPos;
 
@@ -812,7 +812,7 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
                     //guLogMessage( wxT( "Chunk : '%s ... %s'" ), AlbumChunk.Left( 35 ).c_str(), AlbumChunk.Right( 35 ).c_str() );
 
                     evtup.SetExtraLong( CurPos );
-                    wxPostEvent( wxTheApp->GetTopWindow(), evtup );
+                    wxPostEvent( guMainFrame::GetMainFrame(), evtup );
                 }
 
                 if( m_GenreList.Count() )
