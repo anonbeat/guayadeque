@@ -70,6 +70,7 @@ int FindMBReleaseId( guMBReleaseArray * releases, const wxString &releaseid );
 class guMusicBrainz
 {
   protected :
+    wxString        m_ErrorMsg;
 
   public :
     guMusicBrainz();

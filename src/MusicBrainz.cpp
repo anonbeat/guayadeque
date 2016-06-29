@@ -221,13 +221,24 @@ int guMusicBrainz::GetRecordReleases( const wxString &artist, const wxString &ti
         wxStringInputStream ins( Content );
         wxXmlDocument XmlDoc( ins );
         wxXmlNode * XmlNode = XmlDoc.GetRoot();
-        if( XmlNode && ( XmlNode->GetName() == wxT( "metadata" ) ) )
+        while( XmlNode )
         {
-            XmlNode = XmlNode->GetChildren();
-            if( XmlNode && XmlNode->GetName() == wxT( "release-list" ) )
+            if( XmlNode->GetName() == wxT( "error" ) )
+            {
+                m_ErrorMsg = XmlNode->GetNodeContent();
+                return -1;
+            }
+            else if( XmlNode->GetName() == wxT( "metadata" ) )
+            {
+                XmlNode = XmlNode->GetChildren();
+                continue;
+            }
+            else if( XmlNode && XmlNode->GetName() == wxT( "release-list" ) )
             {
                 ReadXmlReleases( XmlNode->GetChildren(), mbreleases );
             }
+
+            XmlNode = XmlNode->GetNext();
         }
     }
 
@@ -257,7 +268,8 @@ int guMusicBrainz::GetRecordReleases( const wxString &recordid, guMBReleaseArray
         {
             if( XmlNode->GetName() == wxT( "error" ) )
             {
-                break;
+                m_ErrorMsg = XmlNode->GetNodeContent();
+                return -1;
             }
             else if( XmlNode->GetName() == wxT( "metadata" ) )
             {
@@ -304,7 +316,8 @@ int guMusicBrainz::GetDiscIdReleases( const wxString &discid, guMBReleaseArray *
         {
             if( XmlNode->GetName() == wxT( "error" ) )
             {
-                break;
+                m_ErrorMsg = XmlNode->GetNodeContent();
+                return -1;
             }
             else if( XmlNode->GetName() == wxT( "metadata" ) )
             {

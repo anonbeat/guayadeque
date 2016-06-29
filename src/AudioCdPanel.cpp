@@ -204,7 +204,7 @@ bool guAudioCdReadTocThread::BuildPipeline( void )
               CdTrack->m_Number = Index + 1;
               CdTrack->m_Type = guTRACK_TYPE_AUDIOCD;
               CdTrack->m_FileName = wxString::Format( wxT( "cdda://%i" ), CdTrack->m_Number );
-              CdTrack->m_SongName = wxString::Format( wxT( "Track%02i" ), CdTrack->m_Number );
+              CdTrack->m_SongName = wxString::Format( wxT( "Track%03i" ), CdTrack->m_Number );
               m_CdTracks.Add( CdTrack );
             }
             else
@@ -293,9 +293,9 @@ void guAudioCdReadTocThread::SetMbDiscId( const wxString &mbdiscid )
 
     int TrackCount = m_CdTracks.Count();
     //guLogMessage( wxT( "There was %i tracks..." ), TrackCount );
-    if( TrackCount && MusicBrainz.GetDiscIdReleases( m_MBDiscId, &MBReleases ) )
+    if( TrackCount && ( MusicBrainz.GetDiscIdReleases( m_MBDiscId, &MBReleases ) > 0 ) )
     {
-        // MusicBrainz is very strict with request rate...
+        // MusicBrainz is very strict with request rate... wait 1 second
         wxSleep( 1 );
 
         // Get the release track list
