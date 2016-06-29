@@ -112,6 +112,7 @@ void                GetMediaViewerTracks( const guTrackArray &sourcetracks, cons
                                  const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags );
 void                GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks );
 void                GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs );
+wxString            ExtractString( const wxString &source, const wxString &start, const wxString &end );
 
 }
 

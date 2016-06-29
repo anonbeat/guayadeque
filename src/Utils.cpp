@@ -75,7 +75,7 @@ wxString LenToString( wxUint64 len )
     {
         LenStr += LenStr.Format( wxT( "%02u:" ), h );
     }
-    LenStr += LenStr.Format( wxT( "%02u:%02lu" ), m, len );
+    LenStr += LenStr.Format( wxT( "%02u:%02llu" ), m, len );
     //guLogMessage( wxT( "%lu -> %s" ), len, LenStr.c_str() );
     return LenStr;
 }
@@ -875,6 +875,23 @@ void GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewe
             }
         }
     }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString ExtractString( const wxString &source, const wxString &start, const wxString &end )
+{
+    int StartPos = source.Find( start );
+    int EndPos;
+    if( StartPos != wxNOT_FOUND )
+    {
+        wxString SearchStr = source.Mid( StartPos + start.Length() );
+        EndPos = SearchStr.Find( end );
+        if( EndPos != wxNOT_FOUND )
+        {
+            return SearchStr.Mid( 0, EndPos );
+        }
+    }
+    return wxEmptyString;
 }
 
 }
