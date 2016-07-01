@@ -39,15 +39,20 @@ guVumeter::guVumeter( wxWindow * parent, wxWindowID id, const int style ) :
 {
     m_Style         = style;
     m_PeakLevel     = -INFINITY;
+    m_RmsLevel      = -INFINITY;
     m_DecayLevel    = -INFINITY;
-    m_GreenOff      = wxColour(   0, 128,   0 );
-    m_GreenOn       = wxColour(   0, 255,   0 );
-    m_OrangeOff     = wxColour( 191,  95,   0 );
-    m_OrangeOn      = wxColour( 255, 128,   0 );
-    m_RedOff        = wxColour( 128,   0,   0 );
-    m_RedOn         = wxColour( 255,   0,   0 );
+    m_Green         = guVumeterColour( wxColour(   0, 128,   0 ),
+                                       wxColour(   0, 255,   0 ),
+                                       wxColour(   0, 230,   0 ) );
+    m_Orange        = guVumeterColour( wxColour( 191,  95,   0 ),
+                                       wxColour( 255, 128,   0 ),
+                                       wxColour( 230, 128,   0 ) );
+    m_Red           = guVumeterColour( wxColour( 128,   0,   0 ),
+                                       wxColour( 255,   0,   0 ),
+                                       wxColour( 230,   0, 0 ) );
     m_OffBitmap     = NULL;
-    m_OnBitmap      = NULL;
+    m_PeakBitmap    = NULL;
+    m_RmsBitmap     = NULL;
     m_LastHeight    = wxNOT_FOUND;
     m_LastWidth     = wxNOT_FOUND;
 
@@ -64,10 +69,16 @@ guVumeter::~guVumeter()
         m_OffBitmap = NULL;
     }
 
-    if( m_OnBitmap )
+    if( m_PeakBitmap )
     {
-        delete m_OnBitmap;
-        m_OnBitmap = NULL;
+        delete m_PeakBitmap;
+        m_PeakBitmap = NULL;
+    }
+
+    if( m_RmsBitmap )
+    {
+        delete m_RmsBitmap;
+        m_RmsBitmap = NULL;
     }
 
     Unbind( wxEVT_SIZE, &guVumeter::OnChangedSize, this );
@@ -138,6 +149,7 @@ void guVumeter::PaintHoriz( void )
     //m_PeakLevel = TestValues[ wxGetUTCTime() % 19 ];
     //guLogMessage( wxT( "%0.2f -> %0.2f" ), m_PeakLevel, IEC_Scale( m_PeakLevel ) );
     int PeakLevel = IEC_Scale( m_PeakLevel ) * 100;
+    int RmsLevel = IEC_Scale( m_RmsLevel ) * 100;
     int DecayLevel = IEC_Scale( m_DecayLevel ) * 100;
     //guLogMessage( wxT( "Peak: %i  %i" ), PeakLevel, DecayLevel );
 
@@ -153,7 +165,17 @@ void guVumeter::PaintHoriz( void )
         ClipRect.x = 0;
         ClipRect.width = ( PeakLevel * Width ) / 100;
         dc.SetClippingRegion( ClipRect );
-        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+        dc.DrawBitmap( * m_PeakBitmap, 0, 0, false );
+        dc.DestroyClippingRegion();
+    }
+
+    if( RmsLevel )
+    {
+        ClipRect.y = 0;
+        ClipRect.x = 0;
+        ClipRect.width = ( RmsLevel * Width ) / 100;
+        dc.SetClippingRegion( ClipRect );
+        dc.DrawBitmap( * m_RmsBitmap, 0, 0, false );
         dc.DestroyClippingRegion();
     }
 
@@ -162,7 +184,7 @@ void guVumeter::PaintHoriz( void )
         ClipRect.x = ( DecayLevel * Width ) / 100;;
         ClipRect.width = 2;
         dc.SetClippingRegion( ClipRect );
-        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+        dc.DrawBitmap( * m_PeakBitmap, 0, 0, false );
         dc.DestroyClippingRegion();
     }
 
@@ -181,6 +203,7 @@ void guVumeter::PaintVert( void )
     //guLogMessage( wxT( "%0.2f -> %0.2f" ), m_PeakLevel, IEC_Scale( m_PeakLevel ) );
     //m_PeakLevel = TestValues[ wxGetUTCTime() % 20 ];
     int PeakLevel = IEC_Scale( m_PeakLevel ) * 100;
+    int RmsLevel = IEC_Scale( m_RmsLevel ) * 100;
     int DecayLevel = IEC_Scale( m_DecayLevel ) * 100;
     //guLogMessage( wxT( "Peak: %i" ), PeakLevel );
 
@@ -196,7 +219,17 @@ void guVumeter::PaintVert( void )
         ClipRect.height = ( PeakLevel * Height ) / 100;
         ClipRect.y = Height - ClipRect.height;
         dc.SetClippingRegion( ClipRect );
-        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+        dc.DrawBitmap( * m_PeakBitmap, 0, 0, false );
+        dc.DestroyClippingRegion();
+    }
+
+    if( RmsLevel )
+    {
+        ClipRect.x = 0;
+        ClipRect.height = ( RmsLevel * Height ) / 100;
+        ClipRect.y = Height - ClipRect.height;
+        dc.SetClippingRegion( ClipRect );
+        dc.DrawBitmap( * m_RmsBitmap, 0, 0, false );
         dc.DestroyClippingRegion();
     }
 
@@ -205,7 +238,7 @@ void guVumeter::PaintVert( void )
         ClipRect.height = 2;
         ClipRect.y = Height - ( DecayLevel * Height ) / 100;
         dc.SetClippingRegion( ClipRect );
-        dc.DrawBitmap( * m_OnBitmap, 0, 0, false );
+        dc.DrawBitmap( * m_PeakBitmap, 0, 0, false );
         dc.DestroyClippingRegion();
     }
 
@@ -268,8 +301,8 @@ void guVumeter::DrawVVumeter( wxBitmap * bitmap, int width, int height, wxColour
 void guVumeter::RefreshBitmaps( void )
 {
     wxMutexLocker Locker( m_BitmapMutex );
-    if( m_OnBitmap )
-        delete m_OnBitmap;
+    if( m_PeakBitmap )
+        delete m_PeakBitmap;
 
     if( m_OffBitmap )
         delete m_OffBitmap;
@@ -283,16 +316,20 @@ void guVumeter::RefreshBitmaps( void )
     if( m_Style == guVU_HORIZONTAL )
     {
         m_OffBitmap = new wxBitmap( Width, Height, -1 );
-        DrawHVumeter( m_OffBitmap, Width, Height, m_GreenOff, m_OrangeOff, m_RedOff );
-        m_OnBitmap = new wxBitmap( Width, Height, -1 );
-        DrawHVumeter( m_OnBitmap, Width, Height, m_GreenOn, m_OrangeOn, m_RedOn );
+        DrawHVumeter( m_OffBitmap, Width, Height, m_Green.m_Off, m_Orange.m_Off, m_Red.m_Off );
+        m_PeakBitmap = new wxBitmap( Width, Height, -1 );
+        DrawHVumeter( m_PeakBitmap, Width, Height, m_Green.m_Peak, m_Orange.m_Peak, m_Red.m_Peak);
+        m_RmsBitmap = new wxBitmap( Width, Height, -1 );
+        DrawHVumeter( m_RmsBitmap, Width, Height, m_Green.m_Rms, m_Orange.m_Rms, m_Red.m_Rms );
     }
     else
     {
         m_OffBitmap = new wxBitmap( Width, Height, -1 );
-        DrawVVumeter( m_OffBitmap, Width, Height, m_GreenOff, m_OrangeOff, m_RedOff );
-        m_OnBitmap = new wxBitmap( Width, Height, -1 );
-        DrawVVumeter( m_OnBitmap, Width, Height, m_GreenOn, m_OrangeOn, m_RedOn );
+        DrawVVumeter( m_OffBitmap, Width, Height, m_Green.m_Off, m_Orange.m_Off, m_Red.m_Off );
+        m_PeakBitmap = new wxBitmap( Width, Height, -1 );
+        DrawVVumeter( m_PeakBitmap, Width, Height, m_Green.m_Peak, m_Orange.m_Peak, m_Red.m_Peak);
+        m_RmsBitmap = new wxBitmap( Width, Height, -1 );
+        DrawVVumeter( m_RmsBitmap, Width, Height, m_Green.m_Rms, m_Orange.m_Rms, m_Red.m_Rms );
     }
 }
 
@@ -322,11 +359,14 @@ void guVumeter::OnChangedSize( wxSizeEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guVumeter::SetLevel( const double peak, const double decay )
+void guVumeter::SetLevel( const double peak, const double rms, const double decay )
 {
-    if( ( m_PeakLevel != peak ) || ( m_DecayLevel != decay ) )
+    if( ( m_PeakLevel != peak ) ||
+        ( m_RmsLevel != rms ) ||
+        ( m_DecayLevel != decay ) )
     {
         m_PeakLevel = peak;
+        m_RmsLevel = rms;
         m_DecayLevel = decay;
         Refresh();
         //Update();
@@ -577,11 +617,11 @@ void guPlayerVumeters::SetLevels( const guLevelInfo &levels )
 {
     m_LevelsTimer.Start( guVUMETERS_LEVEL_TIMEOUT, wxTIMER_ONE_SHOT );
 
-    m_VumLeft->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
+    m_VumLeft->SetLevel( levels.m_Peak_L, levels.m_RMS_L, levels.m_Decay_L );
     if( levels.m_Channels > 1 )
-        m_VumRight->SetLevel( levels.m_Peak_R, levels.m_Decay_R );
+        m_VumRight->SetLevel( levels.m_Peak_R, levels.m_RMS_R, levels.m_Decay_R );
     else
-        m_VumRight->SetLevel( levels.m_Peak_L, levels.m_Decay_L );
+        m_VumRight->SetLevel( levels.m_Peak_L, levels.m_RMS_L, levels.m_Decay_L );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -590,8 +630,8 @@ void guPlayerVumeters::OnLevelsTimeout( wxTimerEvent &event )
     double DecayL = m_VumLeft->DecayLevel();
     double DecayR = m_VumRight->DecayLevel();
 
-    m_VumLeft->SetLevel( -99.0, DecayL - 4.00 );
-    m_VumRight->SetLevel( -99.0, DecayR - 4.00 );
+    m_VumLeft->SetLevel( -99.0, -99.0, DecayL - 4.00 );
+    m_VumRight->SetLevel( -99.0, -99.0, DecayR - 4.00 );
 
     if( ( DecayL > -70.0 ) || ( DecayR > -70.0 ) )
     {

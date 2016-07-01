@@ -40,6 +40,22 @@ namespace Guayadeque {
 #define guVU_VERTICAL       1
 
 // -------------------------------------------------------------------------------- //
+class guVumeterColour
+{
+  public :
+    wxColour    m_Off;
+    wxColour    m_Peak;
+    wxColour    m_Rms;
+
+    guVumeterColour() {}
+    guVumeterColour( wxColour off, wxColour peak, wxColour rms ) {
+        m_Off = off; m_Peak = peak; m_Rms = rms;
+    }
+    virtual ~guVumeterColour() {}
+
+};
+
+// -------------------------------------------------------------------------------- //
 // Class guVumeters
 // -------------------------------------------------------------------------------- //
 class guVumeter : public wxControl
@@ -47,16 +63,14 @@ class guVumeter : public wxControl
   protected :
     int                 m_Style;
     double              m_PeakLevel;
+    double              m_RmsLevel;
     double              m_DecayLevel;
-    wxColour            m_RedOn;
-    wxColour            m_RedOff;
-    wxColour            m_GreenOn;
-    wxColour            m_GreenOff;
-    wxColour            m_OrangeOn;
-    wxColour            m_OrangeOff;
-
-    wxBitmap *          m_OnBitmap;
+    guVumeterColour     m_Green;
+    guVumeterColour     m_Orange;
+    guVumeterColour     m_Red;
     wxBitmap *          m_OffBitmap;
+    wxBitmap *          m_PeakBitmap;
+    wxBitmap *          m_RmsBitmap;
     wxMutex             m_BitmapMutex;
 
 	int                 m_LastWidth;
@@ -81,9 +95,10 @@ class guVumeter : public wxControl
 	wxSize              DoGetBestSize() const;
 	void                OnPaint( wxPaintEvent& event );
 
-    void                SetLevel( const double peak, const double decay );
+    void                SetLevel( const double peak, const double rms, const double decay );
 
     double              DecayLevel( void ) { return m_DecayLevel; }
+    double              RmsLevel( void ) { return m_RmsLevel; }
     double              PeakLevel( void ) { return m_PeakLevel; }
 
 	DECLARE_EVENT_TABLE();

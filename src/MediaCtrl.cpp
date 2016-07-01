@@ -307,20 +307,25 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
                     ////guLogDebug( wxT( "endtime: %" GST_TIME_FORMAT ", channels: %d" ), GST_TIME_ARGS( endtime ), channels );
 
                     // we can get the number of channels as the length of any of the value lists
-    //                list = gst_structure_get_value( s, "rms" );
-    //                channels = LevelInfo->m_Channels = gst_value_list_get_size( list );
-    //                value = gst_value_list_get_value( list, 0 );
-    //                LevelInfo->m_RMS_L = g_value_get_double( value );
-    //                if( channels > 1 )
-    //                {
-    //                    value = gst_value_list_get_value( list, 1 );
-    //                    LevelInfo->m_RMS_R = g_value_get_double( value );
-    //                }
+                    list = gst_structure_get_value( s, "rms" );
+                    avalue = ( GValueArray * ) g_value_get_boxed( list );
+
+                    channels = avalue->n_values;
+                    LevelInfo->m_Channels = channels;
+                    //value = g_value_array_get_nth( avalue, 0 );
+                    value = avalue->values;
+                    LevelInfo->m_RMS_L = g_value_get_double( value );
+                    if( channels > 1 )
+                    {
+                        //value = g_value_array_get_nth( avalue, 1 );
+                        value = avalue->values + 1;
+                        LevelInfo->m_RMS_R = g_value_get_double( value );
+                    }
 
                     list = gst_structure_get_value( s, "peak" );
                     avalue = ( GValueArray * ) g_value_get_boxed( list );
 
-                    channels = avalue->n_values;
+                    //channels = avalue->n_values;
                     //value = g_value_array_get_nth( avalue, 0 );
                     value = avalue->values;
                     LevelInfo->m_Peak_L = g_value_get_double( value );
