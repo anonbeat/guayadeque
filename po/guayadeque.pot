@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-29 21:16+0100\n"
+"POT-Creation-Date: 2016-07-10 18:57+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -933,14 +933,14 @@ msgstr ""
 msgid "Don't ask again"
 msgstr ""
 
-#: CopyTo.cpp:887
+#: CopyTo.cpp:889
 #, c-format
 msgid ""
 "Copied %u files (%s)\n"
 "in %s seconds"
 msgstr ""
 
-#: CopyTo.cpp:892
+#: CopyTo.cpp:894
 msgid "Finished copying files"
 msgstr ""
 
@@ -965,20 +965,20 @@ msgstr ""
 msgid "Embed into tracks"
 msgstr ""
 
-#: DbLibrary.cpp:291 DbLibrary.cpp:303 DbLibrary.cpp:1779 DbLibrary.cpp:1791
-#: DbLibrary.cpp:1864 DbLibrary.cpp:1876 Jamendo.cpp:647 PlayerPanel.cpp:1440
+#: DbLibrary.cpp:290 DbLibrary.cpp:302 DbLibrary.cpp:1778 DbLibrary.cpp:1790
+#: DbLibrary.cpp:1863 DbLibrary.cpp:1875 Jamendo.cpp:647 PlayerPanel.cpp:1440
 msgid "Unknown"
 msgstr ""
 
-#: DbLibrary.cpp:645
+#: DbLibrary.cpp:644
 msgid "Recently added tracks"
 msgstr ""
 
-#: DbLibrary.cpp:653
+#: DbLibrary.cpp:652
 msgid "Last played tracks"
 msgstr ""
 
-#: DbLibrary.cpp:660
+#: DbLibrary.cpp:659
 msgid "Best rated tracks"
 msgstr ""
 

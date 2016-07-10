@@ -394,12 +394,14 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #endif
         {
 
-            FileName = DestDir + guExpandTrackMacros( FilePattern, CurTrack, m_CurrentFile - 1 );
+            FileName = guExpandTrackMacros( FilePattern, CurTrack, m_CurrentFile - 1 );
 
             // TODO : Check target file system and filter the appropiate characters for every file system
             // Replace all the special chars <>:" / \ | ? *
             wxRegEx RegEx( wxT( "[<>:\\|?*]" ) );
             RegEx.ReplaceAll( &FileName, wxT( "_" ) );
+            // The mtp devices may include a ':' in the mount folder
+            FileName = DestDir + FileName;
 
             if( !CurTrack->m_Offset &&
                 ( CurTrack->m_Type != guTRACK_TYPE_AUDIOCD ) &&
