@@ -1316,11 +1316,11 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forc
             m_IsSkipping = false;
 
             wxCommandEvent event;
+            event.SetId( ID_PLAYERPANEL_NEXTTRACK );
             event.SetInt( playtype );
-            OnNextTrackButtonClick( event );
-
-            RemoveItem( CurItem );
+            wxPostEvent( this, event );
             //m_PlayListCtrl->RefreshAll( m_PlayListCtrl->GetCurItem() );
+            RemoveItem( CurItem );
         }
     }
     catch(...)
