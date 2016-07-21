@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUARLISTBOX_H
-#define GUARLISTBOX_H
+#ifndef __ARLISTBOX_H__
+#define __ARLISTBOX_H__
 
 #include <wx/wx.h>
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AUDIOCDPANEL_H
-#define AUDIOCDPANEL_H
+#ifndef __AUDIOCDPANEL_H__
+#define __AUDIOCDPANEL_H__
 
 #include "AuiManagerPanel.h"
 #include "DbLibrary.h"

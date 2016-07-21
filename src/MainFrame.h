@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MAINFRAME_H
-#define MAINFRAME_H
+#ifndef __MAINFRAME_H__
+#define __MAINFRAME_H__
 
 #include "AlbumBrowser.h"
 #include "AudioCdPanel.h"

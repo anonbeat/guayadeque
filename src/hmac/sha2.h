@@ -31,8 +31,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef SHA2_H
-#define SHA2_H
+#ifndef __SHA2_H__
+#define __SHA2_H__
 
 #define SHA224_DIGEST_SIZE ( 224 / 8)
 #define SHA256_DIGEST_SIZE ( 256 / 8)

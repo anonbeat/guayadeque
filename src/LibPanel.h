@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LIBPANEL_H
-#define LIBPANEL_H
+#ifndef __LIBPANEL_H__
+#define __LIBPANEL_H__
 
 #include "AAListBox.h"
 #include "AlListBox.h"

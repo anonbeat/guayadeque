@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef SPLASHWIN_H
-#define SPLASHWIN_H
+#ifndef __SPLASHWIN_H__
+#define __SPLASHWIN_H__
 
 #include <wx/bitmap.h>
 #include <wx/colour.h>

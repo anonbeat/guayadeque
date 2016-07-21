@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guAUINOTEBOOK_H
-#define guAUINOTEBOOK_H
+#ifndef __AUINOTEBOOK_H__
+#define __AUINOTEBOOK_H__
 
 #include "Utils.h"
 

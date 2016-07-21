@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AUDIOSCROBBLE_H
-#define AUDIOSCROBBLE_H
+#ifndef __AUDIOSCROBBLE_H__
+#define __AUDIOSCROBBLE_H__
 
 #include <wx/wx.h>
 #include "EventCommandIds.h"

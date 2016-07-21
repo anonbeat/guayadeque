@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef APETAG_H
-#define APETAG_H
+#ifndef __APETAG_H__
+#define __APETAG_H__
 
 #include "Utils.h"
 

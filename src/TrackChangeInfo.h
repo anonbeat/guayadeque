@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TRACKCHANGEINFO_H
-#define TRACKCHANGEINFO_H
+#ifndef __TRACKCHANGEINFO_H__
+#define __TRACKCHANGEINFO_H__
 
 
 #include <wx/dynarray.h>

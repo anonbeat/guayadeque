@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef SHOUTCAST_H
-#define SHOUTCAST_H
+#ifndef __SHOUTCAST_H__
+#define __SHOUTCAST_H__
 
 #include "DbRadios.h"
 #include "PlayListFile.h"

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUALLISTBOX_H
-#define GUALLISTBOX_H
+#ifndef __ALLISTBOX_H__
+#define __ALLISTBOX_H__
 
 #include "DbLibrary.h"
 #include "ItemListBox.h"

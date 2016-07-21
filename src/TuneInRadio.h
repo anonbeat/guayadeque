@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUTUNEINRADIO_H
-#define GUTUNEINRADIO_H
+#ifndef __TUNEINRADIO_H__
+#define __TUNEINRADIO_H__
 
 #include "RadioProvider.h"
 

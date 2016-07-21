@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUPCLISTBOX_H
-#define GUPCLISTBOX_H
+#ifndef __PCLISTBOX_H__
+#define __PCLISTBOX_H__
 
 #include <wx/wx.h>
 

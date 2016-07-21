@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUDBUS_H
-#define GUDBUS_H
+#ifndef __DBUS_H__
+#define __DBUS_H__
 
 #include <dbus/dbus.h>
 #include <wx/dynarray.h>

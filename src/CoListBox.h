@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUCOLISTBOX_H
-#define GUCOLISTBOX_H
+#ifndef __COLISTBOX_H__
+#define __COLISTBOX_H__
 
 #include <wx/wx.h>
 

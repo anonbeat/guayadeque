@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ALBUMBROWSER_H
-#define ALBUMBROWSER_H
+#ifndef __ALBUMBROWSER_H__
+#define __ALBUMBROWSER_H__
 
 #include "AutoScrollText.h"
 #include "DbLibrary.h"

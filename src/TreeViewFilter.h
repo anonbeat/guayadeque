@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUTREEVIEWFILTER_H
-#define GUTREEVIEWFILTER_H
+#ifndef __TREEVIEWFILTER_H__
+#define __TREEVIEWFILTER_H__
 
 #include <wx/dynarray.h>
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GOOGLE_H
-#define GOOGLE_H
+#ifndef __GOOGLE_H__
+#define __GOOGLE_H__
 
 #include "ArrayStringArray.h"
 #include "CoverFetcher.h"

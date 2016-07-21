@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guSETTINGS_H
-#define guSETTINGS_H
+#ifndef __SETTINGS_H__
+#define __SETTINGS_H__
 
 namespace Guayadeque {
 

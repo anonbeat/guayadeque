@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUSOLISTBOX_H
-#define GUSOLISTBOX_H
+#ifndef __SOLISTBOX_H__
+#define __SOLISTBOX_H__
 
 #include "DbLibrary.h"
 #include "ListView.h"

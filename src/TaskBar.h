@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TASKBAR_H
-#define TASKBAR_H
+#ifndef __TASKBAR_H__
+#define __TASKBAR_H__
 
 #include <wx/taskbar.h>
 #include "MainFrame.h"

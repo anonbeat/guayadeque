@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PLAYLISTFILE_H
-#define PLAYLISTFILE_H
+#ifndef __PLAYLISTFILE_H__
+#define __PLAYLISTFILE_H__
 
 #include <wx/arrstr.h>
 #include <wx/dynarray.h>

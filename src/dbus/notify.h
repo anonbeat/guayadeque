@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef NOTIFY_H
-#define NOTIFY_H
+#ifndef __NOTIFY_H__
+#define __NOTIFY_H__
 
 #include "gudbus.h"
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PLAYLISTPANEL_H
-#define PLAYLISTPANEL_H
+#ifndef __PLAYLISTPANEL_H__
+#define __PLAYLISTPANEL_H__
 
 #include "AuiManagerPanel.h"
 #include "DbLibrary.h"

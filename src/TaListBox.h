@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TALISTBOX_H
-#define TALISTBOX_H
+#ifndef __TALISTBOX_H__
+#define __TALISTBOX_H__
 
 #include "AccelListBox.h"
 

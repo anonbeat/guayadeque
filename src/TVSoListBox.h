@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUTVSOLISTBOX_H
-#define GUTVSOLISTBOX_H
+#ifndef __TVSOLISTBOX_H__
+#define __TVSOLISTBOX_H__
 
 #include "SoListBox.h"
 #include "TreeViewFilter.h"

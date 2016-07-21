@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef STATICBITMAP_H
-#define STATICBITMAP_H
+#ifndef __STATICBITMAP_H__
+#define __STATICBITMAP_H__
 
 #include <wx/wx.h>
 

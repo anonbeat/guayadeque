@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guDBCACHE_H
-#define guDBCACHE_H
+#ifndef __DBCACHE_H__
+#define __DBCACHE_H__
 
 #include "Db.h"
 

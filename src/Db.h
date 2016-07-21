@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guDB_H
-#define guDB_H
+#ifndef __DB_H__
+#define __DB_H__
 
 #include "Utils.h"
 

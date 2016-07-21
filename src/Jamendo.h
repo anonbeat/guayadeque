@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef JAMENDO_H
-#define JAMENDO_H
+#ifndef __JAMENDO_H__
+#define __JAMENDO_H__
 
 #include "Config.h"
 #include "LibPanel.h"

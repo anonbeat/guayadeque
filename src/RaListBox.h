@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GURALISTBOX_H
-#define GURALISTBOX_H
+#ifndef __RALISTBOX_H__
+#define __RALISTBOX_H__
 
 #include <wx/wx.h>
 

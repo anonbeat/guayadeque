@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef EVENTCOMMANDIDS_H
-#define EVENTCOMMANDIDS_H
+#ifndef __EVENTCOMMANDIDS_H__
+#define __EVENTCOMMANDIDS_H__
 
 namespace Guayadeque {
 

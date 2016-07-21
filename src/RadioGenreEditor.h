@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef RADIOGENREEDITOR_H
-#define RADIOGENREEDITOR_H
+#ifndef __RADIOGENREEDITOR_H__
+#define __RADIOGENREEDITOR_H__
 
 #include "DbRadios.h"
 

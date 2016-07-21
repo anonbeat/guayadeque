@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef SMARTMODE_H
-#define SMARTMODE_H
+#ifndef __SMARTMODE_H__
+#define __SMARTMODE_H__
 
 #include "DbLibrary.h"
 #include "LastFM.h"

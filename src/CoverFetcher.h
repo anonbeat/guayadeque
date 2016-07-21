@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef COVERFETCHER_H
-#define COVERFETCHER_H
+#ifndef __COVERFETCHER_H__
+#define __COVERFETCHER_H__
 
 #include "CoverEdit.h"
 

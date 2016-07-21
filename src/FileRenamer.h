@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.h"tml
 //
 // -------------------------------------------------------------------------------- //
-#ifndef FILERENAMER_H
-#define FILERENAMER_H
+#ifndef __FILERENAMER_H__
+#define __FILERENAMER_H__
 
 #include "DbLibrary.h"
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MPRIS_H
-#define MPRIS_H
+#ifndef __MPRIS_H__
+#define __MPRIS_H__
 
 #include "gudbus.h"
 #include "PlayerPanel.h"

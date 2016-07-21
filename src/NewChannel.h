@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef NEWCHANNEL_H
-#define NEWCHANNEL_H
+#ifndef __NEWCHANNEL_H__
+#define __NEWCHANNEL_H__
 
 #include <wx/string.h>
 #include <wx/stattext.h>

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef COVEREDIT_H
-#define COVEREDIT_H
+#ifndef __COVEREDIT_H__
+#define __COVEREDIT_H__
 
 #include "ArrayStringArray.h"
 #include "AutoPulseGauge.h"

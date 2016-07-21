@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guCOLLECTIONS_H
-#define guCOLLECTIONS_H
+#ifndef __COLLECTIONS_H__
+#define __COLLECTIONS_H__
 
 #include <wx/string.h>
 #include <wx/arrstr.h>

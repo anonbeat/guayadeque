@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LOCATIONPANEL_H
-#define LOCATIONPANEL_H
+#ifndef __LOCATIONPANEL_H__
+#define __LOCATIONPANEL_H__
 
 #include "MainFrame.h"
 

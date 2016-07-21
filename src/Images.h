@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef IMAGES_H
-#define IMAGES_H
+#ifndef __IMAGES_H__
+#define __IMAGES_H__
 
 #include <wx/bitmap.h>
 #include <wx/image.h>

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LASTFMCOVERS_H
-#define LASTFMCOVERS_H
+#ifndef __LASTFMCOVERS_H__
+#define __LASTFMCOVERS_H__
 
 #include "ArrayStringArray.h"
 #include "CoverFetcher.h"

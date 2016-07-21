@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef SELCOVERFILE_H
-#define SELCOVERFILE_H
+#ifndef __SELCOVERFILE_H__
+#define __SELCOVERFILE_H__
 
 #include "DbLibrary.h"
 

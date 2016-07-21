@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef STATUSBAR_H
-#define STATUSBAR_H
+#ifndef __STATUSBAR_H__
+#define __STATUSBAR_H__
 
 #include <wx/wx.h>
 

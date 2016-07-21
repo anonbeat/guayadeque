@@ -19,8 +19,8 @@
 // This code is provided "as is" and comes without any warranty!
 // -------------------------------------------------------------------------------- //
 
-#ifndef MD5_H
-#define MD5_H
+#ifndef __MD5_H__
+#define __MD5_H__
 
 #ifdef __BORLANDC__
         #pragma hdrstop

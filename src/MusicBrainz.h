@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MUSICBRAINZ_H
-#define MUSICBRAINZ_H
+#ifndef __MUSICBRAINZ_H__
+#define __MUSICBRAINZ_H__
 
 #include "DbLibrary.h"
 #include "AcousticId.h"

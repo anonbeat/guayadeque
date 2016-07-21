@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TRANSCODE_H
-#define TRANSCODE_H
+#ifndef __TRANSCODE_H__
+#define __TRANSCODE_H__
 
 #include "DbLibrary.h"
 

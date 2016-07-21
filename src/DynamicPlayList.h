@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef DYNAMICPLAYLIST_H
-#define DYNAMICPLAYLIST_H
+#ifndef __DYNAMICPLAYLIST_H__
+#define __DYNAMICPLAYLIST_H__
 
 #include "RatingCtrl.h"
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef __VERSION_H__
+#define __VERSION_H__
 
 namespace Guayadeque {
 

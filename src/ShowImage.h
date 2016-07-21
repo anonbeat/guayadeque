@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef SHOWIMAGE_H
-#define SHOWIMAGE_H
+#ifndef __SHOWIMAGE_H__
+#define __SHOWIMAGE_H__
 
 #include "DbCache.h"
 

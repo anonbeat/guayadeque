@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GAUGE_H
-#define GAUGE_H
+#ifndef __GAUGE_H__
+#define __GAUGE_H__
 
 #include <wx/gauge.h>
 #include <wx/timer.h>

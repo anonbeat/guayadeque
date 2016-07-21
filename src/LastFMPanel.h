@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LASTFMPANEL_H
-#define LASTFMPANEL_H
+#ifndef __LASTFMPANEL_H__
+#define __LASTFMPANEL_H__
 
 #include "AuiNotebook.h"
 #include "DbCache.h"

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LIBUPDATE_H
-#define LIBUPDATE_H
+#ifndef __LIBUPDATE_H__
+#define __LIBUPDATE_H__
 
 #include "DbLibrary.h"
 #include "MainFrame.h"

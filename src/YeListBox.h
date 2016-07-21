@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUYELISTBOX_H
-#define GUYELISTBOX_H
+#ifndef __YELISTBOX_H__
+#define __YELISTBOX_H__
 
 #include <wx/wx.h>
 

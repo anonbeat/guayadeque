@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TRACKEDIT_H
-#define TRACKEDIT_H
+#ifndef __TRACKEDIT_H__
+#define __TRACKEDIT_H__
 
 #include "AcousticId.h"
 #include "DbLibrary.h"

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LYRICSPANEL_H
-#define LYRICSPANEL_H
+#ifndef __LYRICSPANEL_H__
+#define __LYRICSPANEL_H__
 
 #include "AuiNotebook.h"
 #include "DbLibrary.h"

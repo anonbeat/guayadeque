@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AUTOSCROLLTEXT_H
-#define AUTOSCROLLTEXT_H
+#ifndef __AUTOSCROLLTEXT_H__
+#define __AUTOSCROLLTEXT_H__
 
 #include <wx/control.h>
 #include <wx/string.h>

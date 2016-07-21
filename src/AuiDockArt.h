@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AUIDOCKART_H
-#define AUIDOCKART_H
+#ifndef __AUIDOCKART_H__
+#define __AUIDOCKART_H__
 
 #include <wx/aui/aui.h>
 #include <wx/aui/dockart.h>

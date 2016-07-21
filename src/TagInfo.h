@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TAGINFO_H
-#define TAGINFO_H
+#ifndef __TAGINFO_H__
+#define __TAGINFO_H__
 
 #include "ApeTag.h"
 #include "DbLibrary.h"

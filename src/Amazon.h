@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AMAZON_H
-#define AMAZON_H
+#ifndef __AMAZON_H__
+#define __AMAZON_H__
 
 #include "ArrayStringArray.h"
 #include "CoverFetcher.h"

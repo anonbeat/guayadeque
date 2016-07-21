@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef COVERPANEL_H
-#define COVERPANEL_H
+#ifndef __COVERPANEL_H__
+#define __COVERPANEL_H__
 
 #include "PlayerPanel.h"
 

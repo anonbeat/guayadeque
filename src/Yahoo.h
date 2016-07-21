@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef YAHOO_H
-#define YAHOO_H
+#ifndef __YAHOO_H__
+#define __YAHOO_H__
 
 #include "ArrayStringArray.h"
 #include "CoverFetcher.h"

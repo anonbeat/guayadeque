@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef DBLISTBOX_H
-#define DBLISTBOX_H
+#ifndef __DBLISTBOX_H__
+#define __DBLISTBOX_H__
 
 // -------------------------------------------------------------------------------- //
 guDbListBoxCache : public wxObject

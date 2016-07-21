@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ARRAYSTRINGARRAY_H
-#define ARRAYSTRINGARRAY_H
+#ifndef __ARRAYSTRINGARRAY_H__
+#define __ARRAYSTRINGARRAY_H__
 
 #include <wx/arrstr.h>
 #include <wx/dynarray.h>

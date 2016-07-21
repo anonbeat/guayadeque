@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ACOUSTICID_H
-#define ACOUSTICID_H
+#ifndef __ACOUSTICID_H__
+#define __ACOUSTICID_H__
 
 #include "DbLibrary.h"
 

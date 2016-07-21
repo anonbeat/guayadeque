@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef DISCOGS_H
-#define DISCOGS_H
+#ifndef __DISCOGS_H__
+#define __DISCOGS_H__
 
 #include "CoverFetcher.h"
 

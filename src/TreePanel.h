@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TREEPANEL_H
-#define TREEPANEL_H
+#ifndef __TREEPANEL_H__
+#define __TREEPANEL_H__
 
 #include "AuiManagerPanel.h"
 #include "DbLibrary.h"

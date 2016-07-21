@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ONLINELINKS_H
-#define ONLINELINKS_H
+#ifndef __ONLINELINKS_H__
+#define __ONLINELINKS_H__
 
 #include <wx/menu.h>
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef CONFIRMEXIT_H
-#define CONFIRMEXIT_H
+#ifndef __CONFIRMEXIT_H__
+#define __CONFIRMEXIT_H__
 
 #include <wx/bitmap.h>
 #include <wx/image.h>

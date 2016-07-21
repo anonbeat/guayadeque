@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MMKEYS_H
-#define MMKEYS_H
+#ifndef __MMKEYS_H__
+#define __MMKEYS_H__
 
 #include "gudbus.h"
 #include "PlayerPanel.h"

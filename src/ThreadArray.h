@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef THREADARRAY_H
-#define THREADARRAY_H
+#ifndef __THREADARRAY_H__
+#define __THREADARRAY_H__
 
 #include <wx/dynarray.h>
 #include <wx/thread.h>

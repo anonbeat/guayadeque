@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LABELEDITOR_H
-#define LABELEDITOR_H
+#ifndef __LABELEDITOR_H__
+#define __LABELEDITOR_H__
 
 #include "DbLibrary.h"
 #include "DbRadios.h"

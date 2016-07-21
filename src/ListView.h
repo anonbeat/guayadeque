@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GULISTVIEW_H
-#define GULISTVIEW_H
+#ifndef __LISTVIEW_H__
+#define __LISTVIEW_H__
 
 #include "DbLibrary.h"
 #include "Utils.h"

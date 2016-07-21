@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef COPYTO_H
-#define COPYTO_H
+#ifndef __COPYTO_H__
+#define __COPYTO_H__
 
 #include "DbLibrary.h"
 #include "MainFrame.h"

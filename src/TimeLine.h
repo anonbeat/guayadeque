@@ -18,8 +18,8 @@
 //
 //  Bassed on the QTimeLine class from QT
 // -------------------------------------------------------------------------------- //
-#ifndef guTIMELINE_H
-#define guTIMELINE_H
+#ifndef __TIMELINE_H__
+#define __TIMELINE_H__
 
 #include <wx/event.h>
 #include <gst/gst.h>

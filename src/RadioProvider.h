@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GURADIOPROVIDER_H
-#define GURADIOPROVIDER_H
+#ifndef __RADIOPROVIDER_H__
+#define __RADIOPROVIDER_H__
 
 #include "DbRadios.h"
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef EQUALIZER_H
-#define EQUALIZER_H
+#ifndef __EQUALIZER_H__
+#define __EQUALIZER_H__
 
 #include "MediaCtrl.h"
 

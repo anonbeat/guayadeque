@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PODCASTS_H
-#define PODCASTS_H
+#ifndef __PODCASTS_H__
+#define __PODCASTS_H__
 
 #include <wx/dynarray.h>
 #include <wx/xml/xml.h>

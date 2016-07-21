@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUCONFIG_H
-#define GUCONFIG_H
+#ifndef __CONFIG_H__
+#define __CONFIG_H__
 
 #include "Collections.h"
 #include "Settings.h"

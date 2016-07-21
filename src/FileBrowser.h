@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef FILEBROWSER_H
-#define FILEBROWSER_H
+#ifndef __FILEBROWSER_H__
+#define __FILEBROWSER_H__
 
 #include "AuiManagerPanel.h"
 #include "AuiNotebook.h"

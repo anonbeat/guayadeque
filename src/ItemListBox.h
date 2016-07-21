@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUITEMLISTBOX_H
-#define GUITEMLISTBOX_H
+#ifndef __ITEMLISTBOX_H__
+#define __ITEMLISTBOX_H__
 
 #include "ListView.h"
 #include "DbLibrary.h"

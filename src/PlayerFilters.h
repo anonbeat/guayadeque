@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PLAYERFILTERS_H
-#define PLAYERFILTERS_H
+#ifndef __PLAYERFILTERS_H__
+#define __PLAYERFILTERS_H__
 
 #include "DbLibrary.h"
 

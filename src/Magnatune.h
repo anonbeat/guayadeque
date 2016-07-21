@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MAGNATUNE_H
-#define MAGNATUNE_H
+#ifndef __MAGNATUNE_H__
+#define __MAGNATUNE_H__
 
 #include "Config.h"
 #include "DbLibrary.h"

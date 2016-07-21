@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUGELISTBOX_H
-#define GUGELISTBOX_H
+#ifndef __GELISTBOX_H__
+#define __GELISTBOX_H__
 
 #include "AccelListBox.h"
 

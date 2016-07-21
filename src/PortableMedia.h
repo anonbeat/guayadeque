@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PORTABLEMEDIA_H
-#define PORTABLEMEDIA_H
+#ifndef __PORTABLEMEDIA_H__
+#define __PORTABLEMEDIA_H__
 
 #include "AlbumBrowser.h"
 #include "Config.h"

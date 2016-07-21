@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef RADIOEDITOR_H
-#define RADIOEDITOR_H
+#ifndef __RADIOEDITOR_H__
+#define __RADIOEDITOR_H__
 
 #include <wx/string.h>
 #include <wx/stattext.h>

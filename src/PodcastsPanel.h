@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PODCASTSPANEL_H
-#define PODCASTSPANEL_H
+#ifndef __PODCASTSPANEL_H__
+#define __PODCASTSPANEL_H__
 
 #include "AuiManagerPanel.h"
 #include "AuiNotebook.h"

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef RADIOPANEL_H
-#define RADIOPANEL_H
+#ifndef __RADIOPANEL_H__
+#define __RADIOPANEL_H__
 
 #include "AuiManagerPanel.h"
 #include "AuiNotebook.h"

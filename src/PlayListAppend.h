@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PLAYLISTAPPEND_H
-#define PLAYLISTAPPEND_H
+#ifndef __PLAYLISTAPPEND_H__
+#define __PLAYLISTAPPEND_H__
 
 #include <wx/string.h>
 #include <wx/stattext.h>

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef VOLUMEFRAME_H
-#define VOLUMEFRAME_H
+#ifndef __VOLUMEFRAME_H__
+#define __VOLUMEFRAME_H__
 
 #include <wx/wx.h>
 #include "PlayerPanel.h"

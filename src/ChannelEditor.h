@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef CHANNELEDITOR_H
-#define CHANNELEDITOR_H
+#ifndef __CHANNELEDITOR_H__
+#define __CHANNELEDITOR_H__
 
 #include "DbLibrary.h"
 

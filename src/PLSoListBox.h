@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUPLSOLISTBOX_H
-#define GUPLSOLISTBOX_H
+#ifndef __PLSOLISTBOX_H__
+#define __PLSOLISTBOX_H__
 
 #include "SoListBox.h"
 

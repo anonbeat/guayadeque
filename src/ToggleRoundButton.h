@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef TOGGLEROUNDBUTTON_H
-#define TOGGLEROUNDBUTTON_H
+#ifndef __TOGGLEROUNDBUTTON_H__
+#define __TOGGLEROUNDBUTTON_H__
 
 #include "RoundButton.h"
 

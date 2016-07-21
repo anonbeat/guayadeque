@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MEDIACTRL_H
-#define MEDIACTRL_H
+#ifndef __MEDIACTRL_H__
+#define __MEDIACTRL_H__
 
 #include "DbLibrary.h"
 #include "TimeLine.h"

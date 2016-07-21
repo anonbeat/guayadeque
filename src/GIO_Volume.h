@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GIO_VOLUME_H
-#define GIO_VOLUME_H
+#ifndef __GIO_VOLUME_H__
+#define __GIO_VOLUME_H__
 
 #include <gio/gio.h>
 

@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef LASTFM_H
-#define LASTFM_H
+#ifndef __LASTFM_H__
+#define __LASTFM_H__
 
 #include "DbLibrary.h"
 #include "MD5.h"

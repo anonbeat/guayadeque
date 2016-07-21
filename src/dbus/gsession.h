@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GSESSION_H
-#define GSESSION_H
+#ifndef __GSESSION_H__
+#define __GSESSION_H__
 
 #include "gudbus.h"
 

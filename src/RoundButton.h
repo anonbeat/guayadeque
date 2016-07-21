@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ROUNDBUTTON_H
-#define ROUNDBUTTON_H
+#ifndef __ROUNDBUTTON_H__
+#define __ROUNDBUTTON_H__
 
 #include <wx/control.h>
 #include <wx/bitmap.h>

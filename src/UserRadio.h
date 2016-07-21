@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUUSERRADIO_H
-#define GUUSERRADIO_H
+#ifndef __USERRADIO_H__
+#define __USERRADIO_H__
 
 #include "RadioProvider.h"
 

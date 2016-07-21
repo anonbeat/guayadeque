@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guMEDIAVIEWERLIBRARY_H
-#define guMEDIAVIEWERLIBRARY_H
+#ifndef __MEDIAVIEWERLIBRARY_H__
+#define __MEDIAVIEWERLIBRARY_H__
 
 #include "MediaViewer.h"
 

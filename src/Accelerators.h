@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ACCELERATORS_H
-#define ACCELERATORS_H
+#ifndef __ACCELERATORS_H__
+#define __ACCELERATORS_H__
 
 #include <wx/wx.h>
 

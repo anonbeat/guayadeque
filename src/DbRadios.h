@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef DBRADIOS_H
-#define DBRADIOS_H
+#ifndef __DBRADIOS_H__
+#define __DBRADIOS_H__
 
 #include "DbLibrary.h"
 

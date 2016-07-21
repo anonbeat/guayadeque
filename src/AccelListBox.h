@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef ACCELLISTBOX_H
-#define ACCELLISTBOX_H
+#ifndef __ACCELLISTBOX_H__
+#define __ACCELLISTBOX_H__
 
 #include <wx/wx.h>
 

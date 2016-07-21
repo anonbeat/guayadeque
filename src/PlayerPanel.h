@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MUSICPLAYER_H
-#define MUSICPLAYER_H
+#ifndef __PLAYERPANEL_H__
+#define __PLAYERPANEL_H__
 
 #include "AudioScrobble.h"
 #include "AutoScrollText.h"

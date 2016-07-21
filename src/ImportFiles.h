@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUIMPORTFILES_H
-#define GUIMPORTFILES_H
+#ifndef __IMPORTFILES_H__
+#define __IMPORTFILES_H__
 
 #include "DbLibrary.h"
 

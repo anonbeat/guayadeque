@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef PREFERENCES_H
-#define PREFERENCES_H
+#ifndef __PREFERENCES_H__
+#define __PREFERENCES_H__
 
 #include "Collections.h"
 #include "Config.h"

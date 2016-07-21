@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef MAINAPP_H
-#define MAINAPP_H
+#ifndef __MAINAPP_H__
+#define __MAINAPP_H__
 
 #include "Config.h"
 #include "DbLibrary.h"

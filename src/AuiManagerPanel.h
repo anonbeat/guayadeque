@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef AUIMANAGERPANEL_H
-#define AUIMANAGERPANEL_H
+#ifndef __AUIMANAGERPANEL_H__
+#define __AUIMANAGERPANEL_H__
 
 #include <wx/aui/aui.h>
 #include <wx/string.h>

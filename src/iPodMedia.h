@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef IPODMEDIA_H
-#define IPODMEDIA_H
+#ifndef __IPODMEDIA_H__
+#define __IPODMEDIA_H__
 
 #ifdef WITH_LIBGPOD_SUPPORT
 

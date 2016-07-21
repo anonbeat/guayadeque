@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef DBLIBRARY_H
-#define DBLIBRARY_H
+#ifndef __DBLIBRARY_H__
+#define __DBLIBRARY_H__
 
 #include "Db.h"
 #include "Podcasts.h"

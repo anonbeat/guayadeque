@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef GUTREEVIEWFILTEREDITOR_H
-#define GUTREEVIEWFILTEREDITOR_H
+#ifndef __TREEVIEWFILTEREDITOR_H__
+#define __TREEVIEWFILTEREDITOR_H__
 
 // -------------------------------------------------------------------------------- //
 #include <wx/string.h>

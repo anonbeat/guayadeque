@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef guMEDIAVIEWER_H
-#define guMEDIAVIEWER_H
+#ifndef __MEDIAVIEWER_H__
+#define __MEDIAVIEWER_H__
 
 #include "AlbumBrowser.h"
 #include "AuiNotebook.h"

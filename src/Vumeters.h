@@ -17,8 +17,8 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#ifndef VUMETERS_H
-#define VUMETERS_H
+#ifndef __VUMETERS_H__
+#define __VUMETERS_H__
 
 #include "MediaCtrl.h"
 #include "Utils.h"
