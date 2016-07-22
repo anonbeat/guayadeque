@@ -134,12 +134,12 @@ ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( po )
 
 # default configuration and desktop icon
-INSTALL( FILES runtime/guayadeque.desktop DESTINATION share/applications )
-INSTALL( FILES runtime/guayadeque.png DESTINATION share/pixmaps/ )
-INSTALL( FILES runtime/guayadeque.default.conf DESTINATION share/guayadeque )
-INSTALL( FILES runtime/equalizers.default.conf DESTINATION share/guayadeque )
-INSTALL( FILES runtime/lyrics_sources.xml DESTINATION share/guayadeque )
-INSTALL( FILES runtime/guayadeque.appdata.xml DESTINATION share/appdata )
+INSTALL( FILES defconfig/guayadeque.desktop DESTINATION share/applications )
+INSTALL( FILES defconfig/guayadeque.png DESTINATION share/pixmaps/ )
+INSTALL( FILES defconfig/guayadeque.default.conf DESTINATION share/guayadeque )
+INSTALL( FILES defconfig/equalizers.default.conf DESTINATION share/guayadeque )
+INSTALL( FILES defconfig/lyrics_sources.xml DESTINATION share/guayadeque )
+INSTALL( FILES defconfig/guayadeque.appdata.xml DESTINATION share/appdata )
 
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
