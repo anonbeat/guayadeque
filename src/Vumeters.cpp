@@ -301,11 +301,15 @@ void guVumeter::DrawVVumeter( wxBitmap * bitmap, int width, int height, wxColour
 void guVumeter::RefreshBitmaps( void )
 {
     wxMutexLocker Locker( m_BitmapMutex );
-    if( m_PeakBitmap )
-        delete m_PeakBitmap;
 
     if( m_OffBitmap )
         delete m_OffBitmap;
+
+    if( m_PeakBitmap )
+        delete m_PeakBitmap;
+
+    if( m_RmsBitmap )
+        delete m_RmsBitmap;
 
     wxCoord Width;
     wxCoord Height;
