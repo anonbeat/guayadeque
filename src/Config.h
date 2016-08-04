@@ -21,6 +21,7 @@
 #define __CONFIG_H__
 
 #include "Collections.h"
+#include "ConfigConsts.h"
 #include "Settings.h"
 
 #include <wx/wx.h>
@@ -56,39 +57,6 @@ class guConfig
     bool                LoadFile( const wxString &filename );
     bool                LoadWithBackup( const wxString &filename );
     bool                AddBackupFile( const wxString &filename );
-
-    void                LoadOldConfig( const wxString &conffile );
-    void                LoadOldAccelerators( wxFileConfig * fileconfig );
-    void                LoadOldAlbumBrowser( wxFileConfig * fileconfig, const wxString &uniqueid );
-    void                LoadOldAlbumBrowserFilters( wxFileConfig * fileconfig, const wxString &uniqueid );
-    void                LoadOldCommands( wxFileConfig * fileconfig );
-    void                LoadOldCopyTo( wxFileConfig * fileconfig );
-    void                LoadOldCoverSearch( wxFileConfig * fileconfig, guMediaCollection * collection );
-    void                LoadOldCrossfader( wxFileConfig * fileconfig );
-    void                LoadOldEqualizer( wxFileConfig * fileconfig );
-    void                LoadOldFileBrowser( wxFileConfig * fileconfig );
-    void                LoadOldFileRenamer( wxFileConfig * fileconfig );
-    void                LoadOldGeneral( wxFileConfig * fileconfig, guMediaCollection * collection, const wxString &uniqueid );
-    void                LoadOldJamendo( wxFileConfig * fileconfig );
-    void                LoadOldJamendoGenres( wxFileConfig * fileconfig );
-    void                LoadOldLastFM( wxFileConfig * fileconfig );
-    void                LoadOldLibPaths( wxFileConfig * fileconfig, guMediaCollection * collection );
-    void                LoadOldLibreFM( wxFileConfig * fileconfig );
-    void                LoadOldLyrics( wxFileConfig * fileconfig );
-    void                LoadOldMagnatune( wxFileConfig * fileconfig );
-    void                LoadOldMagnatuneGenreList( wxFileConfig * fileconfig );
-    void                LoadOldMagnatuneGenres( wxFileConfig * fileconfig );
-    void                LoadOldMainSources( wxFileConfig * fileconfig );
-    void                LoadOldPlayback( wxFileConfig * fileconfig );
-    void                LoadOldPlayList( wxFileConfig * fileconfig );
-    void                LoadOldPodcasts( wxFileConfig * fileconfig );
-    void                LoadOldPositions( wxFileConfig * fileconfig );
-    void                LoadOldRadios( wxFileConfig * fileconfig );
-    void                LoadOldRecord( wxFileConfig * fileconfig );
-    void                LoadOldSearchFilters( wxFileConfig * fileconfig );
-    void                LoadOldSearchLinks( wxFileConfig * fileconfig );
-    void                LoadOldTreeView( wxFileConfig * fileconfig, const wxString &uniqueid );
-    void                LoadOldTreeViewFilters( wxFileConfig * fileconfig, const wxString &uniqueid );
 
   public :
     guConfig( const wxString &conffile = guPATH_CONFIG_FILENAME );

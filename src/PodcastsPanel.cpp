@@ -874,13 +874,17 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
     InitPanelData();
 
     // Check that the directory to store podcasts are created
-    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
+    m_PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH,
+                                      guPATH_PODCASTS,
+                                      CONFIG_PATH_PODCASTS );
     if( !wxDirExists( m_PodcastsPath ) )
     {
         wxMkdir( m_PodcastsPath, 0770 );
     }
 
-    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_PODCASTS_VISIBLE_DEFAULT, wxT( "podcasts" ) );
+    m_VisiblePanels = Config->ReadNum( CONFIG_KEY_PODCASTS_VISIBLE_PANELS,
+                                       guPANEL_PODCASTS_VISIBLE_DEFAULT,
+                                       CONFIG_PATH_PODCASTS );
 
 	ChannelsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 	wxBoxSizer * ChannelsMainSizer;
@@ -896,7 +900,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
     m_AuiManager.AddPane( ChannelsPanel,
             wxAuiPaneInfo().Name( wxT( "PodcastsChannels" ) ).Caption( _( "Channels" ) ).
             MinSize( 50, 50 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+            CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
             Dockable( true ).Left() );
 
 
@@ -1043,10 +1047,12 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
     m_AuiManager.AddPane( DetailsPanel, wxAuiPaneInfo().Name( wxT( "PodcastsDetails" ) ).Caption( _( "Podcast Details" ) ).
             MinSize( 100, 100 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+            CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
             Dockable( true ).Bottom() );
 
-    wxString PodcastLayout = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "podcasts" ) );
+    wxString PodcastLayout = Config->ReadStr( CONFIG_KEY_PODCASTS_LASTLAYOUT,
+                                              wxEmptyString,
+                                              CONFIG_PATH_PODCASTS );
     if( Config->GetIgnoreLayouts() || PodcastLayout.IsEmpty() )
     {
         m_VisiblePanels = guPANEL_PODCASTS_VISIBLE_DEFAULT;
@@ -1095,8 +1101,12 @@ guPodcastPanel::~guPodcastPanel()
     {
         Config->UnRegisterObject( this );
 
-        Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "podcasts" ) );
-        Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "podcasts" ) );
+        Config->WriteNum( CONFIG_KEY_PODCASTS_VISIBLE_PANELS,
+                          m_VisiblePanels,
+                          CONFIG_PATH_PODCASTS );
+        Config->WriteStr( CONFIG_KEY_PODCASTS_LASTLAYOUT,
+                          m_AuiManager.SavePerspective(),
+                          CONFIG_PATH_PODCASTS );
     }
 
     // Unbind events
@@ -1145,7 +1155,9 @@ void guPodcastPanel::OnConfigUpdated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
 
         // Check that the directory to store podcasts are created
-        m_PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
+        m_PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH,
+                                          guPATH_PODCASTS,
+                                          CONFIG_PATH_PODCASTS );
         if( !wxDirExists( m_PodcastsPath ) )
         {
             wxMkdir( m_PodcastsPath, 0770 );
@@ -1600,7 +1612,7 @@ void guPodcastPanel::OnSelectPodcasts( bool enqueue, const int aftercurrent )
 void guPodcastPanel::OnPodcastItemActivated( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    OnSelectPodcasts( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
+    OnSelectPodcasts( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1808,8 +1820,8 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbPodcasts * db ) :
     m_ColumnNames.Add( _( "Last Played" ) );
     m_ColumnNames.Add( _( "Added" ) );
 
-    m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "podcasts" ) );
-    m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "podcasts" ) );
+    m_Order = Config->ReadNum( CONFIG_KEY_PODCASTS_ORDER, 0, CONFIG_PATH_PODCASTS );
+    m_OrderDesc = Config->ReadNum( CONFIG_KEY_PODCASTS_ORDERDESC, false, CONFIG_PATH_PODCASTS );
 
     // Construct the images for the status
     m_Images[ guPODCAST_STATUS_NORMAL ] = NULL;
@@ -1866,8 +1878,8 @@ guPodcastListBox::~guPodcastListBox()
                            ( * m_Columns )[ index ].m_Enabled, wxT( "podcasts/columns/shows" ) );
     }
 
-    Config->WriteNum( wxT( "Order" ), m_Order, wxT( "podcasts" ) );
-    Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "podcasts" ) );
+    Config->WriteNum( CONFIG_KEY_PODCASTS_ORDER, m_Order, CONFIG_PATH_PODCASTS );
+    Config->WriteBool( CONFIG_KEY_PODCASTS_ORDERDESC, m_OrderDesc, CONFIG_PATH_PODCASTS );
 
 
     for( index = 0; index < guPODCAST_STATUS_ERROR + 1; index++ )

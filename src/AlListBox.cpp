@@ -227,8 +227,8 @@ void AddAlbumCommands( wxMenu * Menu, int SelCount )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
+        wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
+        wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
@@ -410,7 +410,7 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+            wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
             //guLogMessage( wxT( "CommandId: %u" ), index );
             index -= ID_COMMANDS_BASE;

@@ -566,7 +566,7 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
         //
         guConfig * Config = ( guConfig * ) guConfig::Get();
         long MinBitRate;
-        Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "radios" ) ).ToLong( &MinBitRate );
+        MinBitRate = Config->ReadNum( CONFIG_KEY_RADIOS_MIN_BITRATE, 128, CONFIG_PATH_RADIOS );
 
 //        m_Db->GetRadioGenres( &Genres, false );
 //        guLogMessage( wxT ( "Loaded the genres" ) );

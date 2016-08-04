@@ -131,7 +131,7 @@ wxString RemoveSearchFilters( const wxString &SearchStr )
     wxArrayString Filters;
     if( Config )
     {
-        Filters = Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "searchfilters" ) );
+        Filters = Config->ReadAStr( CONFIG_KEY_SEARCH_FILTERS_FILTER, wxEmptyString, CONFIG_PATH_SEARCH_FILTERS );
     }
     int Count = Filters.Count();
     for( int Index = 0; Index < Count; Index++ )
@@ -380,7 +380,7 @@ int guWebExecute( const wxString &Url )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        wxString BrowserCmd = Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "general" ) );
+        wxString BrowserCmd = Config->ReadStr( CONFIG_KEY_GENERAL_BROWSER_COMMAND, wxT( "firefox --new-tab" ), CONFIG_PATH_GENERAL );
         wxString Cmd = Url;
         Cmd.Replace( wxT( "(" ), wxT( "%28" ) );
         Cmd.Replace( wxT( ")" ), wxT( "%29" ) );

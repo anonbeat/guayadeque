@@ -39,11 +39,11 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "PosX" ), -1, wxT( "filebrowser/filerenamer" ) );
-    WindowPos.y = Config->ReadNum( wxT( "PosY" ), -1, wxT( "filebrowser/filerenamer" ) );
+    WindowPos.x = Config->ReadNum( CONFIG_KEY_FILE_RENAMER_POS_X, -1, CONFIG_PATH_FILE_RENAMER );
+    WindowPos.y = Config->ReadNum( CONFIG_KEY_FILE_RENAMER_POS_Y, -1, CONFIG_PATH_FILE_RENAMER );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "SizeWidth" ), 500, wxT( "filebrowser/filerenamer" ) );
-    WindowSize.y = Config->ReadNum( wxT( "SizeHeight" ), 320, wxT( "filebrowser/filerenamer" ) );
+    WindowSize.x = Config->ReadNum( CONFIG_KEY_FILE_RENAMER_SIZE_WIDTH, 500, CONFIG_PATH_FILE_RENAMER );
+    WindowSize.y = Config->ReadNum( CONFIG_KEY_FILE_RENAMER_SIZE_HEIGHT, 320, CONFIG_PATH_FILE_RENAMER );
 
     Create( parent, wxID_ANY, _( "Rename Files" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
 
@@ -79,7 +79,7 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 	wxBoxSizer* PatternSizer;
 	PatternSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    m_PatTextCtrl = new wxTextCtrl( this, wxID_ANY, Config->ReadStr( wxT( "Pattern" ), wxT( "{n} - {a} - {t}" ), wxT( "filebrowser/filerenamer" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PatTextCtrl = new wxTextCtrl( this, wxID_ANY, Config->ReadStr( CONFIG_KEY_FILE_RENAMER_PATTERN, wxT( "{n} - {a} - {t}" ), CONFIG_PATH_FILE_RENAMER ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PatTextCtrl->SetToolTip( _( "Pattern flags:\n{g} : Genre\n{a} : Artist\n{aa}: Album Artist\n{A} : {aa} or {a}\n{b} : Album\n{t} : Title\n{n} : Number\n{y} : Year\n{d} : Disk" ) );
 
 	PatternSizer->Add( m_PatTextCtrl, 1, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
@@ -127,13 +127,13 @@ guFileRenamer::~guFileRenamer()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     // Save the window position and size
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PosX" ), WindowPos.x, wxT( "filebrowser/filerenamer" ) );
-    Config->WriteNum( wxT( "PosY" ), WindowPos.y, wxT( "filebrowser/filerenamer" ) );
+    Config->WriteNum( CONFIG_KEY_FILE_RENAMER_POS_X, WindowPos.x, CONFIG_PATH_FILE_RENAMER );
+    Config->WriteNum( CONFIG_KEY_FILE_RENAMER_POS_Y, WindowPos.y, CONFIG_PATH_FILE_RENAMER );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "SizeWidth" ), WindowSize.x, wxT( "filebrowser/filerenamer" ) );
-    Config->WriteNum( wxT( "SizeHeight" ), WindowSize.y, wxT( "filebrowser/filerenamer" ) );
+    Config->WriteNum( CONFIG_KEY_FILE_RENAMER_SIZE_WIDTH, WindowSize.x, CONFIG_PATH_FILE_RENAMER );
+    Config->WriteNum( CONFIG_KEY_FILE_RENAMER_SIZE_HEIGHT, WindowSize.y, CONFIG_PATH_FILE_RENAMER );
 
-	Config->WriteStr( wxT( "Pattern" ), m_PatTextCtrl->GetLineText( 0 ), wxT( "filebrowser/filerenamer" ) );
+    Config->WriteStr( CONFIG_KEY_FILE_RENAMER_PATTERN, m_PatTextCtrl->GetLineText( 0 ), CONFIG_PATH_FILE_RENAMER );
 
     Unbind( wxEVT_BUTTON, &guFileRenamer::OnOKButton, this, wxID_OK );
 

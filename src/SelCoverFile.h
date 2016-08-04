@@ -36,6 +36,8 @@
 
 namespace Guayadeque {
 
+class guMediaViewer;
+
 // -------------------------------------------------------------------------------- //
 // Class guSelCoverFile
 // -------------------------------------------------------------------------------- //
@@ -44,6 +46,7 @@ class guSelCoverFile : public wxDialog
   protected:
     guDbLibrary *   m_Db;
     wxString        m_AlbumPath;
+    guMediaViewer * m_MediaViewer;
 
     // GUI
     wxTextCtrl *    m_FileLink;
@@ -57,7 +60,7 @@ class guSelCoverFile : public wxDialog
     void            OnCoverFinish( wxCommandEvent &event );
 
   public:
-    guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int albumid = wxNOT_FOUND ); //, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select Cover File"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,125 ), long style = wxDEFAULT_DIALOG_STYLE );
+    guSelCoverFile( wxWindow * parent, guMediaViewer * mediaviewer, const int albumid = wxNOT_FOUND ); //, wxWindowID id = wxID_ANY, const wxString& title = wxT("Select Cover File"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,125 ), long style = wxDEFAULT_DIALOG_STYLE );
 	~guSelCoverFile();
 
     wxString GetSelFile( void );

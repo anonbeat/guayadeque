@@ -268,7 +268,7 @@ void guLastFMInfoCtrl::OnDoubleClicked( wxMouseEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( m_PlayerPanel && Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Tracks );
             }
@@ -392,7 +392,7 @@ guArtistInfoCtrl::guArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCac
     m_Info = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_ShowLongBioText = Config->ReadBool( wxT( "ShowLongBioText" ), false, wxT( "lastfm" )  );
+    m_ShowLongBioText = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_LONG_BIO, false, CONFIG_PATH_LASTFM  );
 
     CreateControls( parent );
 
@@ -407,7 +407,7 @@ guArtistInfoCtrl::~guArtistInfoCtrl()
         delete m_Info;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "ShowLongBioText" ), m_ShowLongBioText, wxT( "lastfm" )  );
+    Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_LONG_BIO, m_ShowLongBioText, CONFIG_PATH_LASTFM  );
 
     m_ShowMoreHyperLink->Unbind( wxEVT_HYPERLINK, &guArtistInfoCtrl::OnShowMoreLinkClicked, this );
     m_ArtistDetails->Unbind( wxEVT_HTML_LINK_CLICKED, &guArtistInfoCtrl::OnHtmlLinkClicked, this );
@@ -1652,14 +1652,14 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_ShowArtistDetails = Config->ReadBool( wxT( "ShowArtistInfo" ), true, wxT( "lastfm" )  );
-        m_ShowAlbums = Config->ReadBool( wxT( "ShowAlbums" ), true, wxT( "lastfm" )  );
-        m_ShowTopTracks = Config->ReadBool( wxT( "ShowTopTracks" ), true, wxT( "lastfm" )  );
-        m_ShowSimArtists = Config->ReadBool( wxT( "ShowArtists" ), true, wxT( "lastfm" )  );
-        m_ShowSimTracks = Config->ReadBool( wxT( "ShowTracks" ), true, wxT( "lastfm" )  );
-        m_ShowEvents = Config->ReadBool( wxT( "ShowEvents" ), true, wxT( "lastfm" )  );
+        m_ShowArtistDetails = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_ARTIST_INFO, true, CONFIG_PATH_LASTFM  );
+        m_ShowAlbums = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_ALBUMS, true, CONFIG_PATH_LASTFM  );
+        m_ShowTopTracks = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_TOP_TRACKS, true, CONFIG_PATH_LASTFM  );
+        m_ShowSimArtists = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_ARTISTS, true, CONFIG_PATH_LASTFM  );
+        m_ShowSimTracks = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_TRACKS, true, CONFIG_PATH_LASTFM  );
+        m_ShowEvents = Config->ReadBool( CONFIG_KEY_LASTFM_SHOW_EVENTS, true, CONFIG_PATH_LASTFM  );
     }
-    m_UpdateEnabled = Config->ReadBool( wxT( "FollowPlayer" ), true, wxT( "lastfm" ) );
+    m_UpdateEnabled = Config->ReadBool( CONFIG_KEY_LASTFM_FOLLOW_PLAYER, true, CONFIG_PATH_LASTFM );
 
     wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
 
@@ -2090,13 +2090,13 @@ guLastFMPanel::~guLastFMPanel()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        Config->WriteBool( wxT( "ShowArtistInfo" ), m_ShowArtistDetails, wxT( "lastfm" ) );
-        Config->WriteBool( wxT( "ShowAlbums" ), m_ShowAlbums, wxT( "lastfm" ) );
-        Config->WriteBool( wxT( "ShowTopTracks" ), m_ShowTopTracks, wxT( "lastfm" ) );
-        Config->WriteBool( wxT( "ShowArtists" ), m_ShowSimArtists, wxT( "lastfm" ) );
-        Config->WriteBool( wxT( "ShowTracks" ), m_ShowSimTracks, wxT( "lastfm" ) );
-        Config->WriteBool( wxT( "ShowEvents" ), m_ShowEvents, wxT( "lastfm" ) );
-        Config->WriteBool( wxT( "FollowPlayer" ), m_UpdateCheckBox->GetValue(), wxT( "lastfm" ) );
+        Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_ARTIST_INFO, m_ShowArtistDetails, CONFIG_PATH_LASTFM );
+        Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_ALBUMS, m_ShowAlbums, CONFIG_PATH_LASTFM );
+        Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_TOP_TRACKS, m_ShowTopTracks, CONFIG_PATH_LASTFM );
+        Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_ARTISTS, m_ShowSimArtists, CONFIG_PATH_LASTFM );
+        Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_TRACKS, m_ShowSimTracks, CONFIG_PATH_LASTFM );
+        Config->WriteBool( CONFIG_KEY_LASTFM_SHOW_EVENTS, m_ShowEvents, CONFIG_PATH_LASTFM );
+        Config->WriteBool( CONFIG_KEY_LASTFM_FOLLOW_PLAYER, m_UpdateCheckBox->GetValue(), CONFIG_PATH_LASTFM );
     }
 
     Unbind( wxEVT_MENU, &guLastFMPanel::OnUpdateArtistInfo, this, ID_LASTFM_UPDATE_ARTISTINFO );

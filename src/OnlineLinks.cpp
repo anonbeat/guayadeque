@@ -42,8 +42,8 @@ void AddOnlineLinksMenu( wxMenu * Menu )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "searchlinks/links" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "searchlinks/names" ) );
+        wxArrayString Links = Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_LINK, wxEmptyString, CONFIG_PATH_SEARCHLINKS_LINKS );
+        wxArrayString Names = Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_NAME, wxEmptyString, CONFIG_PATH_SEARCHLINKS_NAMES );
         if( ( count = Links.Count() ) )
         {
             for( index = 0; index < count; index++ )
@@ -80,12 +80,12 @@ void ExecuteOnlineLink( const int linkid, const wxString &text )
     //guLogMessage( wxT( "ExecuteOnlineLink( %i, '%s' )" ), index, text.c_str() );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString Links = Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "searchlinks/links" ) );
+    wxArrayString Links = Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_LINK, wxEmptyString, CONFIG_PATH_SEARCHLINKS_LINKS );
 
     if( index >= 0 && ( index < ( int ) Links.Count() ) )
     {
         wxString SearchLink = Links[ index ];
-        wxString Lang = Config->ReadStr( wxT( "Language" ), wxT( "en" ), wxT( "lastfm" ) );
+        wxString Lang = Config->ReadStr( CONFIG_KEY_LASTFM_LANGUAGE, wxT( "en" ), CONFIG_PATH_LASTFM );
         if( Lang.IsEmpty() )
         {
             Lang = ( ( guMainApp * ) wxTheApp )->GetLocale()->GetCanonicalName().Mid( 0, 2 );

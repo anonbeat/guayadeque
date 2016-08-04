@@ -493,7 +493,7 @@ guMagnatuneUpdateThread::guMagnatuneUpdateThread( guMediaViewer * mediaviewer, i
     m_GaugeId = gaugeid;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_AllowedGenres = Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genres" ) );
+    m_AllowedGenres = Config->ReadAStr( CONFIG_KEY_MAGNATUNE_GENRES_GENRE, wxEmptyString, CONFIG_PATH_MAGNATUNE_GENRES );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -515,7 +515,7 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
         if( Config )
         {
             wxDateTime Now = wxDateTime::Now();
-            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "magnatune" ) );
+            Config->WriteNum( CONFIG_KEY_MAGNATUNE_LAST_UPDATE, Now.GetTicks(), CONFIG_PATH_MAGNATUNE );
             Config->Flush();
         }
 
@@ -818,7 +818,7 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
                 if( m_GenreList.Count() )
                 {
                     guConfig * Config = ( guConfig * ) guConfig::Get();
-                    Config->WriteAStr( wxT( "Genre" ), m_GenreList, wxT( "magnatune/genrelist" ) );
+                    Config->WriteAStr( CONFIG_KEY_MAGNATUNE_GENRES_GENRE, m_GenreList, CONFIG_PATH_MAGNATUNE_GENRELIST );
                     Config->Flush();
                 }
             }
@@ -847,9 +847,9 @@ guMediaViewerMagnatune::guMediaViewerMagnatune( wxWindow * parent, guMediaCollec
     m_ContextMenuFlags = ( guCONTEXTMENU_DOWNLOAD_COVERS | guCONTEXTMENU_LINKS );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
-    m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) );
-    m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) );
+    m_Membership = Config->ReadNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, 0, CONFIG_PATH_MAGNATUNE );
+    m_UserName = Config->ReadStr( CONFIG_KEY_MAGNATUNE_USERNAME, wxEmptyString, CONFIG_PATH_MAGNATUNE );
+    m_Password = Config->ReadStr( CONFIG_KEY_MAGNATUNE_PASSWORD, wxEmptyString, CONFIG_PATH_MAGNATUNE );
 
     Bind( wxEVT_MENU, &guMediaViewerMagnatune::OnCoverDownloaded, this, ID_MAGNATUNE_COVER_DOWNLAODED  );
     Bind( wxEVT_MENU, &guMediaViewerMagnatune::OnUpdateFinished, this, ID_MAGNATUNE_UPDATE_FINISHED  );
@@ -880,15 +880,15 @@ void guMediaViewerMagnatune::OnConfigUpdated( wxCommandEvent &event )
     if( event.GetInt() & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_Membership = Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
-        m_UserName = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) );
-        m_Password = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) );
+        m_Membership = Config->ReadNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, guMAGNATUNE_MEMBERSHIP_FREE, CONFIG_PATH_MAGNATUNE );
+        m_UserName = Config->ReadStr( CONFIG_KEY_MAGNATUNE_USERNAME, wxEmptyString, CONFIG_PATH_MAGNATUNE );
+        m_Password = Config->ReadStr( CONFIG_KEY_MAGNATUNE_PASSWORD, wxEmptyString, CONFIG_PATH_MAGNATUNE );
         if( m_UserName.IsEmpty() || m_Password.IsEmpty() )
         {
-            m_Membership = 0;
+            m_Membership = guMAGNATUNE_MEMBERSHIP_FREE;
         }
 
-        if( Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "magnatune" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_MAGNATUNE_NEED_UPGRADE, false, CONFIG_PATH_MAGNATUNE ) )
         {
             UpdateLibrary();
         }
@@ -928,13 +928,12 @@ void guMediaViewerMagnatune::UpgradeLibrary( void )
 // -------------------------------------------------------------------------------- //
 void guMediaViewerMagnatune::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
-    int Index;
     int Count;
     if( tracks && ( Count = tracks->Count() ) )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "magnatune" ) );
-        for( Index = 0; Index < Count; Index++ )
+        int AudioFormat = Config->ReadNum( CONFIG_KEY_MAGNATUNE_AUDIO_FORMAT, 1, CONFIG_PATH_MAGNATUNE );
+        for( int Index = 0; Index < Count; Index++ )
         {
             guTrack * Track = &( * tracks )[ Index ];
             //guLogMessage( wxT( "'%s'" ), Track->m_FileName.c_str() );
@@ -1129,7 +1128,7 @@ wxString guMediaViewerMagnatune::GetCoverName( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guMediaViewerMagnatune::SelectAlbumCover( const int albumid )
 {
-    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, this, albumid );
     if( SelCoverFile )
     {
         if( SelCoverFile->ShowModal() == wxID_OK )
@@ -1194,7 +1193,7 @@ void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
     if( ( Count = albumids.Count() ) )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        int DownloadFormat = Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "magnatune" ) );
+        int DownloadFormat = Config->ReadNum( CONFIG_KEY_MAGNATUNE_DOWNLOAD_FORMAT, 0, CONFIG_PATH_MAGNATUNE );
         //guLogMessage( wxT( "DownloadFormat: %i %s" ), DownloadFormat, StartLabel[ DownloadFormat ].c_str() );
         if( ( DownloadFormat < 0 ) || ( DownloadFormat > 5 ) )
         {

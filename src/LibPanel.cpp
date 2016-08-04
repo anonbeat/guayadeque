@@ -205,7 +205,7 @@ void guLibPanel::CreateControls( void )
 
     guConfig *          Config = ( guConfig * ) guConfig::Get();
 
-    bool ShowCloseButton = Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) );
+    bool ShowCloseButton = Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL );
 
 	GenreSizer = new wxBoxSizer( wxVERTICAL );
 	GenrePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
@@ -694,7 +694,7 @@ void guLibPanel::OnGenreListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -789,7 +789,7 @@ void guLibPanel::OnLabelListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -907,7 +907,7 @@ void guLibPanel::OnArtistListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -1098,7 +1098,7 @@ void guLibPanel::OnAlbumListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "general" )) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false , CONFIG_PATH_GENERAL) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -1293,7 +1293,7 @@ void guLibPanel::OnSongListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -2071,7 +2071,7 @@ void guLibPanel::OnYearListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -2175,7 +2175,7 @@ void guLibPanel::OnRatingListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -2279,7 +2279,7 @@ void guLibPanel::OnPlayCountListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -2383,7 +2383,7 @@ void guLibPanel::OnComposerListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }
@@ -2488,7 +2488,7 @@ void guLibPanel::OnAlbumArtistListActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Songs );
             }

@@ -39,11 +39,11 @@ guImportFiles::guImportFiles( wxWindow * parent, guMediaViewer * mediaviewer, gu
     Config->RegisterObject( this );
 
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "PosX" ), -1, wxT( "positions/import_files/position" ) );
-    WindowPos.y = Config->ReadNum( wxT( "PosY" ), -1, wxT( "positions/import_files/position" ) );
+    WindowPos.x = Config->ReadNum( CONFIG_KEY_IMPORT_FILES_POS_X, -1, CONFIG_PATH_IMPORT_FILES_POSITION );
+    WindowPos.y = Config->ReadNum( CONFIG_KEY_IMPORT_FILES_POS_Y, -1, CONFIG_PATH_IMPORT_FILES_POSITION );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "Width" ), 480, wxT( "positions/import_files/size" ) );
-    WindowSize.y = Config->ReadNum( wxT( "Height" ), 340, wxT( "positions/import_files/size" ) );
+    WindowSize.x = Config->ReadNum( CONFIG_KEY_IMPORT_FILES_WIDTH, 480, CONFIG_PATH_IMPORT_FILES_POSITION );
+    WindowSize.y = Config->ReadNum( CONFIG_KEY_IMPORT_FILES_HEIGHT, 340, CONFIG_PATH_IMPORT_FILES_POSITION );
 
     Create( parent, wxID_ANY, _( "Import Files" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
 
@@ -57,11 +57,11 @@ guImportFiles::~guImportFiles()
     Config->UnRegisterObject( this );
 
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PosX" ), WindowPos.x, wxT( "positions/import_files/position" ) );
-    Config->WriteNum( wxT( "PosY" ), WindowPos.y, wxT( "positions/import_files/position" ) );
+    Config->WriteNum( CONFIG_KEY_IMPORT_FILES_POS_X, WindowPos.x, CONFIG_PATH_IMPORT_FILES_POSITION );
+    Config->WriteNum( CONFIG_KEY_IMPORT_FILES_POS_Y, WindowPos.y, CONFIG_PATH_IMPORT_FILES_POSITION );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "Width" ), WindowSize.x, wxT( "positions/import_files/position" ) );
-    Config->WriteNum( wxT( "Height" ), WindowSize.y, wxT( "positions/import_files/position" ) );
+    Config->WriteNum( CONFIG_KEY_IMPORT_FILES_WIDTH, WindowSize.x, CONFIG_PATH_IMPORT_FILES_POSITION );
+    Config->WriteNum( CONFIG_KEY_IMPORT_FILES_HEIGHT, WindowSize.y, CONFIG_PATH_IMPORT_FILES_POSITION );
 
     m_CopyToSetupBtn->Unbind( wxEVT_BUTTON, &guImportFiles::OnCopyToSetupClicked, this );
     m_FilesListBox->Unbind( wxEVT_LISTBOX, &guImportFiles::OnFileSelected, this );
@@ -93,7 +93,7 @@ void guImportFiles::CreateControls( void )
 
     wxBoxSizer * CopyToChoiceSIzer = new wxBoxSizer( wxHORIZONTAL );
 
-    wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+    wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
     int Index;
     int Count;
     if( ( Count = CopyToOptions.Count() ) )
@@ -199,7 +199,7 @@ void guImportFiles::OnConfigUpdated( wxCommandEvent &event )
     if( Flags & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+        wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
         int Index;
         int Count;
         if( ( Count = CopyToOptions.Count() ) )

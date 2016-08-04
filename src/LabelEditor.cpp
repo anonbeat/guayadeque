@@ -46,11 +46,11 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "LabelEditPosX" ), -1, wxT( "positions" ) );
-    WindowPos.y = Config->ReadNum( wxT( "LabelEditPosY" ), -1, wxT( "positions" ) );
+    WindowPos.x = Config->ReadNum( CONFIG_KEY_POSITIONS_LABELEDIT_POSX, -1, CONFIG_PATH_POSITIONS );
+    WindowPos.y = Config->ReadNum( CONFIG_KEY_POSITIONS_LABELEDIT_POSY, -1, CONFIG_PATH_POSITIONS );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "LabelEditSizeWidth" ), 500, wxT( "positions" ) );
-    WindowSize.y = Config->ReadNum( wxT( "LabelEditSizeHeight" ), 300, wxT( "positions" ) );
+    WindowSize.x = Config->ReadNum( CONFIG_KEY_POSITIONS_LABELEDIT_WIDTH, 500, CONFIG_PATH_POSITIONS );
+    WindowSize.y = Config->ReadNum( CONFIG_KEY_POSITIONS_LABELEDIT_HEIGHT, 300, CONFIG_PATH_POSITIONS );
 
     //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
     Create( parent, wxID_ANY, title, WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
@@ -180,13 +180,13 @@ guLabelEditor::~guLabelEditor()
 {
     // Save the window position and size
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "LabelEditSashPos" ), m_Splitter->GetSashPosition(), wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_LABELEDIT_SASHPOS, m_Splitter->GetSashPosition(), CONFIG_PATH_POSITIONS );
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "LabelEditPosX" ), WindowPos.x, wxT( "positions" ) );
-    Config->WriteNum( wxT( "LabelEditPosY" ), WindowPos.y, wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_LABELEDIT_POSX, WindowPos.x, CONFIG_PATH_POSITIONS );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_LABELEDIT_POSY, WindowPos.y, CONFIG_PATH_POSITIONS );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "LabelEditSizeWidth" ), WindowSize.x, wxT( "positions" ) );
-    Config->WriteNum( wxT( "LabelEditSizeHeight" ), WindowSize.y, wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_LABELEDIT_WIDTH, WindowSize.x, CONFIG_PATH_POSITIONS );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_LABELEDIT_HEIGHT, WindowSize.y, CONFIG_PATH_POSITIONS );
 
     // Unbind Events
     m_ItemsListBox->Unbind( wxEVT_LISTBOX, &guLabelEditor::OnItemSelected, this );
@@ -352,7 +352,7 @@ void guLabelEditor::OnCopyLabelsClicked( wxCommandEvent& event )
 void guLabelEditor::OnIdle( wxIdleEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_Splitter->SetSashPosition( Config->ReadNum( wxT( "LabelEditSashPos" ), 177, wxT( "positions" ) ) );
+    m_Splitter->SetSashPosition( Config->ReadNum( CONFIG_KEY_POSITIONS_LABELEDIT_SASHPOS, 177, CONFIG_PATH_POSITIONS ) );
     m_Splitter->Unbind( wxEVT_IDLE, &guLabelEditor::OnIdle, this );
 }
 

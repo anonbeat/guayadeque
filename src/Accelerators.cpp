@@ -249,7 +249,7 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
 void guAccelOnConfigUpdated( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    guAccelKeys = Config->ReadANum( wxT( "AccelKey" ), 0, wxT( "accelerators" ) );
+    guAccelKeys = Config->ReadANum( CONFIG_KEY_ACCELERATORS_ACCELKEY, 0, CONFIG_PATH_ACCELERATORS );
     if( guAccelKeys.Count() == 0 )
     {
         guAccelGetDefaultKeys( guAccelKeys );

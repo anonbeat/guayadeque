@@ -121,11 +121,11 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
 
 
     wxPoint WindowPos;
-    WindowPos.x = m_Config->ReadNum( wxT( "PosX" ), -1, wxT( "preferences" ) );
-    WindowPos.y = m_Config->ReadNum( wxT( "PosY" ), -1, wxT( "preferences" ) );
+    WindowPos.x = m_Config->ReadNum( CONFIG_KEY_PREFERENCES_POSX, -1, CONFIG_PATH_PREFERENCES );
+    WindowPos.y = m_Config->ReadNum( CONFIG_KEY_PREFERENCES_POSY, -1, CONFIG_PATH_PREFERENCES );
     wxSize WindowSize;
-    WindowSize.x = m_Config->ReadNum( wxT( "Width" ), 600, wxT( "preferences" ) );
-    WindowSize.y = m_Config->ReadNum( wxT( "Height" ), 530, wxT( "preferences" ) );
+    WindowSize.x = m_Config->ReadNum( CONFIG_KEY_PREFERENCES_WIDTH, 600, CONFIG_PATH_PREFERENCES );
+    WindowSize.y = m_Config->ReadNum( CONFIG_KEY_PREFERENCES_HEIGHT, 530, CONFIG_PATH_PREFERENCES );
 
     //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
     Create( parent, wxID_ANY, _( "Preferences" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
@@ -293,7 +293,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
 
     if( pagenum == guPREFERENCE_PAGE_LASTUSED )
     {
-        pagenum = m_Config->ReadNum( wxT( "LastPage" ), guPREFERENCE_PAGE_GENERAL, wxT( "preferences" ) );
+        pagenum = m_Config->ReadNum( CONFIG_KEY_PREFERENCES_LAST_PAGE, guPREFERENCE_PAGE_GENERAL, CONFIG_PATH_PREFERENCES );
     }
 
     switch( pagenum )
@@ -400,12 +400,12 @@ guPrefDialog::~guPrefDialog()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     // Save the window position and size
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PosX" ), WindowPos.x, wxT( "preferences" ) );
-    Config->WriteNum( wxT( "PosY" ), WindowPos.y, wxT( "preferences" ) );
+    Config->WriteNum( CONFIG_KEY_PREFERENCES_POSX, WindowPos.x, CONFIG_PATH_PREFERENCES );
+    Config->WriteNum( CONFIG_KEY_PREFERENCES_POSY, WindowPos.y, CONFIG_PATH_PREFERENCES );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "Width" ), WindowSize.x, wxT( "preferences" ) );
-    Config->WriteNum( wxT( "Height" ), WindowSize.y, wxT( "preferences" ) );
-    m_Config->WriteNum( wxT( "LastPage" ), m_MainNotebook->GetSelection(), wxT( "preferences" ) );
+    Config->WriteNum( CONFIG_KEY_PREFERENCES_WIDTH, WindowSize.x, CONFIG_PATH_PREFERENCES );
+    Config->WriteNum( CONFIG_KEY_PREFERENCES_HEIGHT, WindowSize.y, CONFIG_PATH_PREFERENCES );
+    m_Config->WriteNum( CONFIG_KEY_PREFERENCES_LAST_PAGE, m_MainNotebook->GetSelection(), CONFIG_PATH_PREFERENCES );
 
 }
 
@@ -461,7 +461,7 @@ void guPrefDialog::BuildGeneralPage( void )
 	LangSizer->Add( LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT|wxBOTTOM, 5 );
 
 	m_MainLangChoice = new wxChoice( m_GenPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MainLangChoices, 0 );
-	int LangEntry = m_MainLangCodes.Index( m_Config->ReadNum( wxT( "Language" ), 0, wxT( "general" ) ) );
+    int LangEntry = m_MainLangCodes.Index( m_Config->ReadNum( CONFIG_KEY_GENERAL_LANGUAGE, 0, CONFIG_PATH_GENERAL ) );
 	if( LangEntry == wxNOT_FOUND )
         LangEntry = 0;
 	m_MainLangChoice->SetSelection( LangEntry );
@@ -474,22 +474,22 @@ void guPrefDialog::BuildGeneralPage( void )
 	StartSizer->Add( LangSizer, 1, wxEXPAND, 5 );
 
 	m_ShowSplashChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Show splash screen"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_ShowSplashChkBox->SetValue( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "general" ) ) );
+    m_ShowSplashChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_SPLASH_SCREEN, true, CONFIG_PATH_GENERAL ) );
 	StartSizer->Add( m_ShowSplashChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_MinStartChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Start minimized"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_MinStartChkBox->SetValue( m_Config->ReadBool( wxT( "StartMinimized" ), false, wxT( "general" ) ) );
+    m_MinStartChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_START_MINIMIZED, false, CONFIG_PATH_GENERAL ) );
 	StartSizer->Add( m_MinStartChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	wxBoxSizer * StartPlayingSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_SavePosCheckBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Restore position for tracks longer than"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_SavePosCheckBox->SetValue( m_Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) );
+    m_SavePosCheckBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SAVE_CURRENT_TRACK_POSITION, false, CONFIG_PATH_GENERAL ) );
 
 	StartPlayingSizer->Add( m_SavePosCheckBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	m_MinLenSpinCtrl = new wxSpinCtrl( m_GenPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 9999, 10 );
-	m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "general" ) ) );
+    m_MinLenSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_GENERAL_MIN_SAVE_PLAYL_POST_LENGTH, 10, CONFIG_PATH_GENERAL ) );
 	m_MinLenSpinCtrl->SetToolTip( _( "set the minimun length in minutes to save track position" ) );
 
 	StartPlayingSizer->Add( m_MinLenSpinCtrl, 0, wxALIGN_CENTER_VERTICAL, 5 );
@@ -501,7 +501,7 @@ void guPrefDialog::BuildGeneralPage( void )
 	StartSizer->Add( StartPlayingSizer, 1, wxEXPAND, 5 );
 
     m_IgnoreLayoutsChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Load default layout" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_IgnoreLayoutsChkBox->SetValue( m_Config->ReadBool( wxT( "LoadDefaultLayouts" ), false, wxT( "general" ) ) );
+    m_IgnoreLayoutsChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_LOAD_DEFAULT_LAYOUTS, false, CONFIG_PATH_GENERAL ) );
 	StartSizer->Add( m_IgnoreLayoutsChkBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	GenMainSizer->Add( StartSizer, 0, wxEXPAND|wxALL, 5 );
@@ -509,7 +509,7 @@ void guPrefDialog::BuildGeneralPage( void )
 	wxStaticBoxSizer * BehaviSizer = new wxStaticBoxSizer( new wxStaticBox( m_GenPanel, wxID_ANY, _(" Behaviour ") ), wxVERTICAL );
 
 	m_TaskIconChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Activate task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_TaskIconChkBox->SetValue( m_Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "general" ) ) );
+    m_TaskIconChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_TASK_BAR_ICON, false, CONFIG_PATH_GENERAL ) );
 	BehaviSizer->Add( m_TaskIconChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
     m_SoundMenuChkBox = NULL;
@@ -524,30 +524,30 @@ void guPrefDialog::BuildGeneralPage( void )
     if( WithIndicateSupport || IsSoundMenuAvailable )
     {
         m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Integrate into SoundMenu" ), wxDefaultPosition, wxDefaultSize, 0 );
-        m_SoundMenuChkBox->SetValue( m_Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "general" ) ) );
+        m_SoundMenuChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL ) );
         m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
         BehaviSizer->Add( m_SoundMenuChkBox, 0, wxLEFT | wxRIGHT, 5 );
     }
 
 	m_EnqueueChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Enqueue as default action"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EnqueueChkBox->SetValue( m_Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
+    m_EnqueueChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) );
 	BehaviSizer->Add( m_EnqueueChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_DropFilesChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Drop files clear playlist"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_DropFilesChkBox->SetValue( m_Config->ReadBool( wxT( "DropFilesClearPlaylist" ), false, wxT( "general" ) ) );
+    m_DropFilesChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_DROP_FILES_CLEAR_PLAYLIST, false, CONFIG_PATH_GENERAL ) );
 	BehaviSizer->Add( m_DropFilesChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_InstantSearchChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Instant text search" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_InstantSearchChkBox->SetValue( m_Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) ) );
+    m_InstantSearchChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, true, CONFIG_PATH_GENERAL ) );
 	BehaviSizer->Add( m_InstantSearchChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_EnterSearchChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "When searching, pressing enter queues the result" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EnterSearchChkBox->SetValue( m_Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) ) );
+    m_EnterSearchChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, false, CONFIG_PATH_GENERAL ) );
     m_EnterSearchChkBox->Enable( m_InstantSearchChkBox->IsChecked() );
 	BehaviSizer->Add( m_EnterSearchChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_ShowCDFrameChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Show CD cover frame in player" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_ShowCDFrameChkBox->SetValue( m_Config->ReadNum( wxT( "CoverFrame" ), 1, wxT( "general" ) ) );
+    m_ShowCDFrameChkBox->SetValue( m_Config->ReadNum( CONFIG_KEY_GENERAL_COVER_FRAME, 1, CONFIG_PATH_GENERAL ) );
 	BehaviSizer->Add( m_ShowCDFrameChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	GenMainSizer->Add( BehaviSizer, 0, wxEXPAND|wxALL, 5 );
@@ -559,12 +559,12 @@ void guPrefDialog::BuildGeneralPage( void )
 	OnCloseSizer->Add( m_SavePlayListChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_CloseTaskBarChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Close to task bar icon"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_CloseTaskBarChkBox->SetValue( m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "general" ) ) );
+    m_CloseTaskBarChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_CLOSE_TO_TASKBAR, false, CONFIG_PATH_GENERAL ) );
     m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && ( !m_SoundMenuChkBox || !m_SoundMenuChkBox->IsChecked() ) );
 	OnCloseSizer->Add( m_CloseTaskBarChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	m_ExitConfirmChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Ask confirmation on exit"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_ExitConfirmChkBox->SetValue( m_Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "general" ) ) );
+    m_ExitConfirmChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM, true, CONFIG_PATH_GENERAL ) );
 	OnCloseSizer->Add( m_ExitConfirmChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	GenMainSizer->Add( OnCloseSizer, 0, wxEXPAND|wxALL, 5 );
@@ -733,7 +733,7 @@ void guPrefDialog::BuildLibraryPage( void )
 
 	wxArrayString CopyToChoices;
 	CopyToChoices.Add( _( "None" ) );
-	wxArrayString CopyToOptions = m_Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+    wxArrayString CopyToOptions = m_Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
 	Count = CopyToOptions.Count();
 	for( Index = 0; Index < Count; Index++ )
 	{
@@ -809,14 +809,14 @@ void guPrefDialog::BuildPlaybackPage( void )
 	wxBoxSizer * RandomPlaySizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_RndPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Play random" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_RndPlayChkBox->SetValue( m_Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "general" ) ) );
+    m_RndPlayChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_RANDOM_PLAY_ON_EMPTY_PLAYLIST, false, CONFIG_PATH_GENERAL ) );
 	RandomPlaySizer->Add( m_RndPlayChkBox, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	wxString m_RndModeChoiceChoices[] = { _( "track" ), _( "album" ) };
 	int m_RndModeChoiceNChoices = sizeof( m_RndModeChoiceChoices ) / sizeof( wxString );
 	m_RndModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RndModeChoiceNChoices, m_RndModeChoiceChoices, 0 );
     m_RndModeChoice->Enable( m_RndPlayChkBox->IsChecked() );
-	m_RndModeChoice->SetSelection( m_Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), 0, wxT( "general" ) ) );
+    m_RndModeChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_GENERAL_RANDOM_MODE_ON_EMPTY_PLAYLIST, 0, CONFIG_PATH_GENERAL ) );
 	//m_RndModeChoice->SetMinSize( wxSize( 150,-1 ) );
 	RandomPlaySizer->Add( m_RndModeChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -827,11 +827,11 @@ void guPrefDialog::BuildPlaybackPage( void )
 	PlayGenSizer->Add( RandomPlaySizer, 1, wxEXPAND, 5 );
 
 	m_DelPlayChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Delete played tracks from playlist" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_DelPlayChkBox->SetValue( m_Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) ) );
+    m_DelPlayChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_PLAYBACK_DEL_TRACKS_PLAYED, false, CONFIG_PATH_PLAYBACK ) );
 	PlayGenSizer->Add( m_DelPlayChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
 	m_NotifyChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Show notifications" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_NotifyChkBox->SetValue( m_Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "general" ) ) );
+    m_NotifyChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS, true, CONFIG_PATH_GENERAL ) );
 	PlayGenSizer->Add( m_NotifyChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
 	wxBoxSizer * PlayReplaySizer = new wxBoxSizer( wxHORIZONTAL );
@@ -842,8 +842,8 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	wxString m_PlayReplayModeChoiceChoices[] = { _( "Disabled" ), _("Track"), _("Album") };
 	int m_PlayReplayModeChoiceNChoices = sizeof( m_PlayReplayModeChoiceChoices ) / sizeof( wxString );
-	m_PlayReplayModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PlayReplayModeChoiceNChoices, m_PlayReplayModeChoiceChoices, 0 );
-	int ReplayGainModeVal = m_Config->ReadNum( wxT( "ReplayGainMode"), 0, wxT( "general" ) );
+    m_PlayReplayModeChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PlayReplayModeChoiceNChoices, m_PlayReplayModeChoiceChoices, 0 );
+    int ReplayGainModeVal = m_Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE, 0, CONFIG_PATH_GENERAL );
 	m_PlayReplayModeChoice->SetSelection( ReplayGainModeVal );
 	PlayReplaySizer->Add( m_PlayReplayModeChoice, 0, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -851,7 +851,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	PlayPreAmpLabel->Wrap( -1 );
 	PlayReplaySizer->Add( PlayPreAmpLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
-    int ReplayGainPreAmpVal = m_Config->ReadNum( wxT( "ReplayGainPreAmp"), 6, wxT( "general" ) );
+    int ReplayGainPreAmpVal = m_Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, 6, CONFIG_PATH_GENERAL );
 	m_PlayPreAmpLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%idb"), ReplayGainPreAmpVal ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayPreAmpLevelVal->Wrap( -1 );
 	m_PlayPreAmpLevelVal->Enable( ReplayGainModeVal );
@@ -873,7 +873,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
 	m_MinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 10, 4 );
-    m_MinTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) ) );
+    m_MinTracksSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, 4, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayListFlexGridSizer->Add( m_MinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * MinTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Tracks left to start search"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -881,7 +881,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayListFlexGridSizer->Add( MinTracksStaticText, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_NumTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 3 );
-    m_NumTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "playback" ) ) );
+    m_NumTracksSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_NUM_TRACKS_TO_ADD, 3, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayListFlexGridSizer->Add( m_NumTracksSpinCtrl, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	wxStaticText * AddTracksStaticText = new wxStaticText( m_PlayPanel, wxID_ANY, _("Tracks added each time"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -889,7 +889,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayListFlexGridSizer->Add( AddTracksStaticText, 0, wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_MaxTracksPlayed = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 999, 20 );
-    m_MaxTracksPlayed->SetValue( m_Config->ReadNum( wxT( "MaxTracksPlayed" ), 20, wxT( "playback" ) ) );
+    m_MaxTracksPlayed->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_MAX_TRACKS_PLAYED, 20, CONFIG_PATH_PLAYBACK ) );
     m_MaxTracksPlayed->Enable( !m_DelPlayChkBox->IsChecked() );
 	SmartPlayListFlexGridSizer->Add( m_MaxTracksPlayed, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -906,7 +906,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayFilterSizer->Add( SmartPlayFilterLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
 	m_SmartPlayArtistsSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 50, 20 );
-    m_SmartPlayArtistsSpinCtrl->SetValue( m_Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "playback" ) ) );
+    m_SmartPlayArtistsSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_ARTISTS, 20, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayFilterSizer->Add( m_SmartPlayArtistsSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * SmartPlayArtistLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("artists or"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -914,7 +914,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayFilterSizer->Add( SmartPlayArtistLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	m_SmartPlayTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 55,-1 ), wxSP_ARROW_KEYS, 0, 200, 100 );
-    m_SmartPlayTracksSpinCtrl->SetValue( m_Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "playback" ) ) );
+    m_SmartPlayTracksSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_TRACKS, 100, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayFilterSizer->Add( m_SmartPlayTracksSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * SmartPlayTracksLabel = new wxStaticText( m_PlayPanel, wxID_ANY, _("tracks"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -929,12 +929,12 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	wxBoxSizer * PlayLevelSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	bool IsPlayLevelEnabled = m_Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "playback" ) );
+    bool IsPlayLevelEnabled = m_Config->ReadBool( CONFIG_KEY_PLAYBCK_SILENCE_DETECTOR, false, CONFIG_PATH_PLAYBACK );
 	m_PlayLevelEnabled = new wxCheckBox( m_PlayPanel, wxID_ANY, _("Skip at"), wxDefaultPosition, wxDefaultSize, 0 );
     m_PlayLevelEnabled->SetValue( IsPlayLevelEnabled );
 	PlayLevelSizer->Add( m_PlayLevelEnabled, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-    int PlayLevelValue = m_Config->ReadNum( wxT( "SilenceLevel" ), -500, wxT( "playback" ) );
+    int PlayLevelValue = m_Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_LEVEL, -500, CONFIG_PATH_PLAYBACK );
 	m_PlayLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%02idb"), PlayLevelValue ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayLevelVal->Wrap( -1 );
 	m_PlayLevelVal->Enable( IsPlayLevelEnabled );
@@ -950,12 +950,12 @@ void guPrefDialog::BuildPlaybackPage( void )
 	PlayEndTimeSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_PlayEndTimeCheckBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _("In the last"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_PlayEndTimeCheckBox->SetValue( m_Config->ReadBool( wxT( "SilenceAtEnd" ), true, wxT( "playback" ) ) );
+    m_PlayEndTimeCheckBox->SetValue( m_Config->ReadBool( CONFIG_KEY_PLAYBCK_SILENCE_AT_END, true, CONFIG_PATH_PLAYBACK ) );
 	m_PlayEndTimeCheckBox->Enable( IsPlayLevelEnabled );
 	PlayEndTimeSizer->Add( m_PlayEndTimeCheckBox, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_PlayEndTimeSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 5, 360,
-	    m_Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "playback" ) ) );
+        m_Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_END_TIME, 45, CONFIG_PATH_PLAYBACK ) );
 	m_PlayEndTimeSpinCtrl->Enable( IsPlayLevelEnabled && m_PlayEndTimeCheckBox->IsChecked() );
 	PlayEndTimeSizer->Add( m_PlayEndTimeSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
@@ -978,11 +978,11 @@ void guPrefDialog::BuildPlaybackPage( void )
     OutputDeviceOptions.Add( wxT( "Other" ) );
 
 	m_PlayOutDevChoice = new wxChoice( m_PlayPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, OutputDeviceOptions, 0 );
-	int OutDevice = m_Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "playback" ) );
+    int OutDevice = m_Config->ReadNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, guOUTPUT_DEVICE_AUTOMATIC, CONFIG_PATH_PLAYBACK );
 	m_PlayOutDevChoice->SetSelection( OutDevice );
 	PlayOutDeviceSizer->Add( m_PlayOutDevChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	m_PlayOutDevName = new wxTextCtrl( m_PlayPanel, wxID_ANY, m_Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "playback" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PlayOutDevName = new wxTextCtrl( m_PlayPanel, wxID_ANY, m_Config->ReadStr( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE_NAME, wxEmptyString, CONFIG_PATH_PLAYBACK ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayOutDevName->Enable( OutDevice > guOUTPUT_DEVICE_GCONF );
 	PlayOutDeviceSizer->Add( m_PlayOutDevName, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
@@ -1036,7 +1036,7 @@ void guPrefDialog::BuildCrossfaderPage( void )
 	m_XFadeOutLenVal->Wrap( -1 );
 	XFadeFlexSizer->Add( m_XFadeOutLenVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+    m_XFadeOutLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeOutLenSlider->SetToolTip( _( "Select the length of the fade out. 0 for gapless playback" ) );
 	XFadeFlexSizer->Add( m_XFadeOutLenSlider, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
@@ -1048,7 +1048,7 @@ void guPrefDialog::BuildCrossfaderPage( void )
 	m_XFadeInLenVal->Wrap( -1 );
 	XFadeFlexSizer->Add( m_XFadeInLenVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+    m_XFadeInLenSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_TIME, 10, CONFIG_PATH_CROSSFADER ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInLenSlider->SetToolTip( _( "Select the length of the fade in" ) );
 	XFadeFlexSizer->Add( m_XFadeInLenSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
@@ -1060,7 +1060,7 @@ void guPrefDialog::BuildCrossfaderPage( void )
 	m_XFadeInStartVal->Wrap( -1 );
 	XFadeFlexSizer->Add( m_XFadeInStartVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "crossfader" ) ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+    m_XFadeInStartSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, 80, CONFIG_PATH_CROSSFADER ), 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInStartSlider->SetToolTip( _( "Select the initial volume of the fade in" ) );
 	XFadeFlexSizer->Add( m_XFadeInStartSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
@@ -1072,7 +1072,7 @@ void guPrefDialog::BuildCrossfaderPage( void )
 	m_XFadeTrigerVal->Wrap( -1 );
 	XFadeFlexSizer->Add( m_XFadeTrigerVal, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "crossfader" ) ), 10, 90, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+    m_XFadeInTrigerSlider = new wxSlider( m_XFadePanel, wxID_ANY, m_Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_TRIGER, 50, CONFIG_PATH_CROSSFADER ), 10, 90, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
     m_XFadeInTrigerSlider->SetToolTip( _( "Select at which volume of the fade out the fade in starts" ) );
 	XFadeFlexSizer->Add( m_XFadeInTrigerSlider, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxRIGHT, 5 );
 
@@ -1120,7 +1120,7 @@ void guPrefDialog::BuildRecordPage( void )
 	wxStaticBoxSizer * RecordSizer = new wxStaticBoxSizer( new wxStaticBox( m_RecordPanel, wxID_ANY, _(" Record ") ), wxVERTICAL );
 
 	m_RecordChkBox = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Enable recording"), wxDefaultPosition, wxDefaultSize, 0 );
-	m_RecordChkBox->SetValue( m_Config->ReadBool( wxT( "Enabled" ), false, wxT( "record" ) ) );
+    m_RecordChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_RECORD_ENABLED, false, CONFIG_PATH_RECORD ) );
 	RecordSizer->Add( m_RecordChkBox, 0, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer * RecSelDirSizer = new wxBoxSizer( wxHORIZONTAL );
@@ -1130,7 +1130,7 @@ void guPrefDialog::BuildRecordPage( void )
 	RecSelDirSizer->Add( RecSelDirLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_RecSelDirPicker = new wxDirPickerCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE|wxDIRP_DIR_MUST_EXIST );
-    m_RecSelDirPicker->SetPath( m_Config->ReadStr( wxT( "Path" ), guPATH_DEFAULT_RECORDINGS, wxT( "record" ) ) );
+    m_RecSelDirPicker->SetPath( m_Config->ReadStr( CONFIG_KEY_RECORD_PATH, guPATH_DEFAULT_RECORDINGS, CONFIG_PATH_RECORD ) );
     m_RecSelDirPicker->Enable( m_RecordChkBox->IsChecked() );
 	RecSelDirSizer->Add( m_RecSelDirPicker, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -1150,7 +1150,7 @@ void guPrefDialog::BuildRecordPage( void )
 	wxString m_RecFormatChoiceChoices[] = { wxT("mp3"), wxT("ogg"), wxT("flac") };
 	int m_RecFormatChoiceNChoices = sizeof( m_RecFormatChoiceChoices ) / sizeof( wxString );
 	m_RecFormatChoice = new wxChoice( m_RecordPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_RecFormatChoiceNChoices, m_RecFormatChoiceChoices, 0 );
-	m_RecFormatChoice->SetSelection( m_Config->ReadNum( wxT( "Format" ), 0, wxT( "record" ) ) );
+    m_RecFormatChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_RECORD_FORMAT, 0, CONFIG_PATH_RECORD ) );
     m_RecFormatChoice->Enable( m_RecordChkBox->IsChecked() );
 	m_RecFormatChoice->SetMinSize( wxSize( 150,-1 ) );
 	RecPropFlexSizer->Add( m_RecFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -1167,7 +1167,7 @@ void guPrefDialog::BuildRecordPage( void )
 	RecQualityChoiceChoices.Add( _( "Very Low" ) );
 
 	m_RecQualityChoice = new wxChoice( m_RecordPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, RecQualityChoiceChoices, 0 );
-	m_RecQualityChoice->SetSelection( m_Config->ReadNum( wxT( "Quality" ), 2, wxT( "record" ) ) );
+    m_RecQualityChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_RECORD_QUALITY, 2, CONFIG_PATH_RECORD ) );
     m_RecQualityChoice->Enable( m_RecordChkBox->IsChecked() );
 	m_RecQualityChoice->SetMinSize( wxSize( 150,-1 ) );
 	RecPropFlexSizer->Add( m_RecQualityChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -1177,19 +1177,19 @@ void guPrefDialog::BuildRecordPage( void )
 	RecordSizer->Add( RecPropSizer, 1, wxEXPAND|wxALL, 5 );
 
 	m_RecSplitChkBox = new wxCheckBox( m_RecordPanel, wxID_ANY, _( "Split tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_RecSplitChkBox->SetValue( m_Config->ReadBool( wxT( "Split" ), false, wxT( "record" ) ) );
+    m_RecSplitChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_RECORD_SPLIT, false, CONFIG_PATH_RECORD ) );
     m_RecSplitChkBox->Enable( m_RecordChkBox->IsChecked() );
 	RecordSizer->Add( m_RecSplitChkBox, 0, wxALL, 5 );
 
 	wxBoxSizer * RecDelSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_RecDelTracks = new wxCheckBox( m_RecordPanel, wxID_ANY, _("Delete tracks shorter than"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_RecDelTracks->SetValue( m_Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "record" ) ) );
+    m_RecDelTracks->SetValue( m_Config->ReadBool( CONFIG_KEY_RECORD_DELETE, false, CONFIG_PATH_RECORD ) );
 
 	RecDelSizer->Add( m_RecDelTracks, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
 	m_RecDelTime = new wxSpinCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 999,
-                                    m_Config->ReadNum( wxT( "DeleteTime" ), 50, wxT( "record" ) ) );
+                                    m_Config->ReadNum( CONFIG_KEY_RECORD_DELETE_TIME, 50, CONFIG_PATH_RECORD ) );
 	m_RecDelTime->Enable( m_RecDelTracks->IsChecked() );
 	RecDelSizer->Add( m_RecDelTime, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
@@ -1229,7 +1229,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	wxStaticBoxSizer * LastFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Last.fm audioscrobble ") ), wxVERTICAL );
 
 	m_LastFMASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _("Enabled"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LastFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) );
+    m_LastFMASEnableChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_LASTFM_ENABLED, false, CONFIG_PATH_LASTFM ) );
 	LastFMASSizer->Add( m_LastFMASEnableChkBox, 0, wxALL, 5 );
 
     wxFlexGridSizer * ASLoginSizer = new wxFlexGridSizer( 2, 0, 0 );
@@ -1241,7 +1241,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	ASLoginSizer->Add( UserNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_LastFMUserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
-	m_LastFMUserNameTextCtrl->SetValue( m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "lastfm" ) ) );
+    m_LastFMUserNameTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_LASTFM_USERNAME, wxEmptyString, CONFIG_PATH_LASTFM ) );
 	ASLoginSizer->Add( m_LastFMUserNameTextCtrl, 0, wxALL, 5 );
 
 	wxStaticText * PasswdStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1249,7 +1249,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	ASLoginSizer->Add( PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_LastFMPasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
-	m_LastFMPasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "lastfm" ) ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
+    m_LastFMPasswdTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_LASTFM_PASSWORD, wxEmptyString, CONFIG_PATH_LASTFM ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
 	// Password is saved in md5 form so we cant load it back
 	ASLoginSizer->Add( m_LastFMPasswdTextCtrl, 0, wxALL, 5 );
 
@@ -1264,7 +1264,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	wxStaticBoxSizer * LibreFMASSizer = new wxStaticBoxSizer( new wxStaticBox( m_LastFMPanel, wxID_ANY, _(" Libre.fm audioscrobble ") ), wxVERTICAL );
 
 	m_LibreFMASEnableChkBox = new wxCheckBox( m_LastFMPanel, wxID_ANY, _( "Enabled" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_LibreFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) ) );
+    m_LibreFMASEnableChkBox->SetValue( m_Config->ReadBool( wxT( "SubmitEnabled" ), false, CONFIG_PATH_LIBREFM ) );
 	LibreFMASSizer->Add( m_LibreFMASEnableChkBox, 0, wxALL, 5 );
 
     wxFlexGridSizer * LibreFMASLoginSizer = new wxFlexGridSizer( 2, 0, 0 );
@@ -1276,7 +1276,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	LibreFMASLoginSizer->Add( LibreFMUserNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_LibreFMUserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
-	m_LibreFMUserNameTextCtrl->SetValue( m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "librefm" ) ) );
+    m_LibreFMUserNameTextCtrl->SetValue( m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, CONFIG_PATH_LIBREFM ) );
 	LibreFMASLoginSizer->Add( m_LibreFMUserNameTextCtrl, 0, wxALL, 5 );
 
 	wxStaticText * LibreFMPasswdStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1284,7 +1284,7 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	LibreFMASLoginSizer->Add( LibreFMPasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
 	m_LibreFMPasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
-	m_LibreFMPasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "librefm" ) ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
+    m_LibreFMPasswdTextCtrl->SetValue( m_Config->ReadStr( wxT( "Password" ), wxEmptyString, CONFIG_PATH_LIBREFM ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
 	// Password is saved in md5 form so we cant load it back
 	LibreFMASLoginSizer->Add( m_LibreFMPasswdTextCtrl, 0, wxALL, 5 );
 
@@ -1423,7 +1423,7 @@ void guPrefDialog::BuildLyricsPage( void )
 	LyricsFontSizer->Add( LyricsFontLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
 
 	wxFont LyricFont;
-	LyricFont.SetNativeFontInfo( m_Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "lyrics" ) ) );
+    LyricFont.SetNativeFontInfo( m_Config->ReadStr( CONFIG_KEY_LYRICS_FONT, wxEmptyString, CONFIG_PATH_LYRICS ) );
 	if( !LyricFont.IsOk() )
         LyricFont = GetFont();
 	m_LyricFontPicker = new wxFontPickerCtrl( m_LyricsPanel, wxID_ANY, LyricFont, wxDefaultPosition, wxDefaultSize, wxFNTP_DEFAULT_STYLE );
@@ -1439,7 +1439,7 @@ void guPrefDialog::BuildLyricsPage( void )
 	LyricsAlignChoices.Add( _( "Center" ) );
 	LyricsAlignChoices.Add( _( "Right" ) );
 	m_LyricsAlignChoice = new wxChoice( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), LyricsAlignChoices, 0 );
-	m_LyricsAlignChoice->SetSelection( m_Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "lyrics" ) ) );
+    m_LyricsAlignChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, 1, CONFIG_PATH_LYRICS ) );
 	LyricsFontSizer->Add( m_LyricsAlignChoice, 1, wxRIGHT, 5 );
 
 	LyricsMainSizer->Add( LyricsFontSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
@@ -1481,7 +1481,7 @@ void guPrefDialog::BuildOnlinePage( void )
     wxStaticBoxSizer * OnlineFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Filters ") ), wxHORIZONTAL );
 
     m_OnlineFiltersListBox = new wxListBox( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-    m_OnlineFiltersListBox->Append( m_Config->ReadAStr( wxT( "Filter" ), wxEmptyString, wxT( "searchfilters" ) ) );
+    m_OnlineFiltersListBox->Append( m_Config->ReadAStr( CONFIG_KEY_SEARCH_FILTERS_FILTER, wxEmptyString, CONFIG_PATH_SEARCH_FILTERS ) );
     OnlineFiltersSizer->Add( m_OnlineFiltersListBox, 1, wxALL|wxEXPAND, 5 );
 
     wxBoxSizer * OnlineBtnSizer = new wxBoxSizer( wxVERTICAL );
@@ -1505,7 +1505,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     m_LangChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LFMLangNames, 0 );
 
-    int LangIndex = m_LFMLangIds.Index( m_Config->ReadStr( wxT( "Language" ), wxEmptyString, wxT( "lastfm" ) ) );
+    int LangIndex = m_LFMLangIds.Index( m_Config->ReadStr( CONFIG_KEY_LASTFM_LANGUAGE, wxEmptyString, CONFIG_PATH_LASTFM ) );
     if( LangIndex == wxNOT_FOUND ) LangIndex = 0;
 
     m_LangChoice->SetSelection( LangIndex );
@@ -1516,25 +1516,12 @@ void guPrefDialog::BuildOnlinePage( void )
 
     wxStaticBoxSizer * BrowserCmdSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Browser command ") ), wxHORIZONTAL );
 
-    m_BrowserCmdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, m_Config->ReadStr( wxT( "BrowserCommand" ), wxT( "firefox --new-tab" ), wxT( "general" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_BrowserCmdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, m_Config->ReadStr( CONFIG_KEY_GENERAL_BROWSER_COMMAND, wxT( "firefox --new-tab" ), CONFIG_PATH_GENERAL ), wxDefaultPosition, wxDefaultSize, 0 );
     BrowserCmdSizer->Add( m_BrowserCmdTextCtrl, 1, wxALL, 5 );
 
     OnlineMainSizer->Add( BrowserCmdSizer, 0, wxEXPAND|wxALL, 5 );
 
-//	m_RadioMinBitRateRadBox = new wxRadioBox( m_OnlinePanel, wxID_ANY, _( "Radio min. allowed bit rate "), wxDefaultPosition, wxDefaultSize, m_RadioMinBitRateRadBoxChoices, 10, wxRA_SPECIFY_COLS );
-//	wxString MinBitRate = m_Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "radios" ) );
-//	int RadioMinBitRateIndex = m_RadioMinBitRateRadBoxChoices.Index( MinBitRate );
-//    if( RadioMinBitRateIndex != wxNOT_FOUND )
-//    {
-//        m_RadioMinBitRateRadBox->SetSelection( RadioMinBitRateIndex );
-//    }
-//    else
-//    {
-//        m_RadioMinBitRateRadBox->SetSelection( 4 );
-//    }
-//	OnlineMainSizer->Add( m_RadioMinBitRateRadBox, 0, wxALL|wxEXPAND, 5 );
-
-    m_LastMinBitRate = m_Config->ReadNum( wxT( "RadioMinBitRate" ), 128, wxT( "radios" ) );
+    m_LastMinBitRate = m_Config->ReadNum( CONFIG_KEY_RADIOS_MIN_BITRATE, 128, CONFIG_PATH_RADIOS );
     wxStaticBoxSizer * RadioBitRateSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Minimum radio allowed bit rate " ) ), wxHORIZONTAL );
 
     m_RadioMinBitRateSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_LastMinBitRate, 0, 320, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
@@ -1544,7 +1531,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     wxStaticBoxSizer * BufferSizeSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Player online buffer size ") ), wxHORIZONTAL );
 
-    m_BufferSizeSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "general" ) ), 32, 1024, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
+    m_BufferSizeSlider = new wxSlider( m_OnlinePanel, wxID_ANY, m_Config->ReadNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, 64, CONFIG_PATH_GENERAL ), 32, 1024, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL|wxSL_LABELS );
     BufferSizeSizer->Add( m_BufferSizeSlider, 1, wxEXPAND, 5 );
 
     OnlineMainSizer->Add( BufferSizeSizer, 0, wxEXPAND|wxALL, 5 );
@@ -1587,22 +1574,22 @@ void guPrefDialog::BuildPodcastsPage( void )
     PathSizer->Add( PodcastPathStaticText, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 5 );
 
     m_PodcastPath = new wxDirPickerCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, _("Select podcasts folder"), wxDefaultPosition, wxDefaultSize, wxDIRP_DEFAULT_STYLE | wxDIRP_DIR_MUST_EXIST );
-    m_PodcastPath->SetPath( m_Config->ReadStr( wxT( "Path" ), wxGetHomeDir(), wxT( "podcasts" ) ) );
+    m_PodcastPath->SetPath( m_Config->ReadStr( CONFIG_KEY_PODCASTS_PATH, guPATH_PODCASTS, CONFIG_PATH_PODCASTS ) );
     PathSizer->Add( m_PodcastPath, 1, wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL|wxEXPAND, 5 );
 
     PodcastsSizer->Add( PathSizer, 0, wxEXPAND, 5 );
 
     wxBoxSizer * UpdateSizer = new wxBoxSizer( wxHORIZONTAL );
 
-    m_PodcastUpdate = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Check every"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_PodcastUpdate->SetValue( m_Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) );
+    m_PodcastUpdate = new wxCheckBox( m_PodcastPanel, wxID_ANY, _( "Check every" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_PodcastUpdate->SetValue( m_Config->ReadBool( CONFIG_KEY_PODCASTS_UPDATE, true, CONFIG_PATH_PODCASTS ) );
 
     UpdateSizer->Add( m_PodcastUpdate, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-    wxString m_PodcastUpdatePeriodChoices[] = { _( "Hour" ), _("Day"), _("Week"), _("Month") };
+    wxString m_PodcastUpdatePeriodChoices[] = { _( "Hour" ), _( "Day" ), _( "Week" ), _( "Month" ) };
     int m_PodcastUpdatePeriodNChoices = sizeof( m_PodcastUpdatePeriodChoices ) / sizeof( wxString );
     m_PodcastUpdatePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastUpdatePeriodNChoices, m_PodcastUpdatePeriodChoices, 0 );
-    m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "podcasts" ) ) );
+    m_PodcastUpdatePeriod->SetSelection( m_Config->ReadNum( CONFIG_KEY_PODCASTS_UPDATEPERIOD, 0, CONFIG_PATH_PODCASTS ) );
     m_PodcastUpdatePeriod->SetMinSize( wxSize( 150,-1 ) );
     UpdateSizer->Add( m_PodcastUpdatePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
@@ -1611,25 +1598,25 @@ void guPrefDialog::BuildPodcastsPage( void )
     wxBoxSizer * DeleteSizer = new wxBoxSizer( wxHORIZONTAL );
 
     m_PodcastDelete = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Delete after"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_PodcastDelete->SetValue( m_Config->ReadBool( wxT( "Delete" ), false, wxT( "podcasts" ) ) );
+    m_PodcastDelete->SetValue( m_Config->ReadBool( CONFIG_KEY_PODCASTS_DELETE, false, CONFIG_PATH_PODCASTS ) );
 
     DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
     m_PodcastDeleteTime = new wxSpinCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
-    m_Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "podcasts" ) ) );
+    m_Config->ReadNum( CONFIG_KEY_PODCASTS_DELETETIME, 15, CONFIG_PATH_PODCASTS ) );
     DeleteSizer->Add( m_PodcastDeleteTime, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
     wxString m_PodcastDeletePeriodChoices[] = { _("Days"), _("Weeks"), _("Months") };
     int m_PodcastDeletePeriodNChoices = sizeof( m_PodcastDeletePeriodChoices ) / sizeof( wxString );
     m_PodcastDeletePeriod = new wxChoice( m_PodcastPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_PodcastDeletePeriodNChoices, m_PodcastDeletePeriodChoices, 0 );
-    m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( wxT( "DeletePeriod" ), 0, wxT( "podcasts" ) ) );
+    m_PodcastDeletePeriod->SetSelection( m_Config->ReadNum( CONFIG_KEY_PODCASTS_DELETEPERIOD, 0, CONFIG_PATH_PODCASTS ) );
     m_PodcastDeletePeriod->SetMinSize( wxSize( 150,-1 ) );
     DeleteSizer->Add( m_PodcastDeletePeriod, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
     DeleteSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
     m_PodcastDeletePlayed = new wxCheckBox( m_PodcastPanel, wxID_ANY, _("Only if played"), wxDefaultPosition, wxDefaultSize, 0 );
-    m_PodcastDeletePlayed->SetValue( m_Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) );
+    m_PodcastDeletePlayed->SetValue( m_Config->ReadBool( CONFIG_KEY_PODCASTS_DELETEPLAYED, false, CONFIG_PATH_PODCASTS ) );
 
     DeleteSizer->Add( m_PodcastDeletePlayed, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -1669,7 +1656,7 @@ void guPrefDialog::BuildJamendoPage( void )
 
     } while( true );
 
-    m_LastJamendoGenres = m_Config->ReadANum( wxT( "Genre" ), 0, wxT( "jamendo/genres" ) );
+    m_LastJamendoGenres = m_Config->ReadANum( CONFIG_KEY_JAMENDO_GENRES_GENRE, 0, CONFIG_PATH_JAMENDO_GENRES );
     guLogMessage( wxT( "Read %li jamendo genres" ), m_LastJamendoGenres.Count() );
 
     m_JamGenresListBox = new wxCheckListBox( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), JamendoGenres, 0 );
@@ -1711,14 +1698,14 @@ void guPrefDialog::BuildJamendoPage( void )
     m_JamFormatChoices.Add( wxT( "mp3" ) );
     m_JamFormatChoices.Add( wxT( "ogg" ) );
     m_JamFormatChoice = new wxChoice( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_JamFormatChoices, 0 );
-    m_JamFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) ) );
+    m_JamFormatChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_JAMENDO_AUDIOFORMAT, 1, CONFIG_PATH_JAMENDO ) );
     JamFlexSizer->Add( m_JamFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
     wxStaticText * JamBTCmdLabel = new wxStaticText( m_JamendoPanel, wxID_ANY, _( "Torrent command:" ), wxDefaultPosition, wxDefaultSize, 0 );
     JamBTCmdLabel->Wrap( -1 );
     JamFlexSizer->Add( JamBTCmdLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT|wxALIGN_RIGHT, 5 );
 
-    m_JamBTCmd = new wxTextCtrl( m_JamendoPanel, wxID_ANY, m_Config->ReadStr( wxT( "TorrentCommand" ), wxT( "transmission" ), wxT( "jamendo" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_JamBTCmd = new wxTextCtrl( m_JamendoPanel, wxID_ANY, m_Config->ReadStr( CONFIG_KEY_JAMENDO_TORRENT_COMMAND, wxT( "transmission" ), CONFIG_PATH_JAMENDO ), wxDefaultPosition, wxDefaultSize, 0 );
     JamFlexSizer->Add( m_JamBTCmd, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
     JamOtherSizer->Add( JamFlexSizer, 1, wxEXPAND, 5 );
@@ -1749,7 +1736,7 @@ void guPrefDialog::BuildMagnatunePage( void )
 
     wxStaticBoxSizer * MagGenresSizer = new wxStaticBoxSizer( new wxStaticBox( m_MagnatunePanel, wxID_ANY, _(" Genres ") ), wxHORIZONTAL );
 
-    wxArrayString MagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genrelist" ) );
+    wxArrayString MagnatuneGenres = m_Config->ReadAStr( CONFIG_KEY_MAGNATUNE_GENRES_GENRE, wxEmptyString, CONFIG_PATH_MAGNATUNE_GENRELIST );
     if( !MagnatuneGenres.Count() )
     {
         int Index = 0;
@@ -1764,7 +1751,7 @@ void guPrefDialog::BuildMagnatunePage( void )
         } while( true );
     }
 
-    m_LastMagnatuneGenres = m_Config->ReadAStr( wxT( "Genre" ), wxEmptyString, wxT( "magnatune/genres" ) );
+    m_LastMagnatuneGenres = m_Config->ReadAStr( CONFIG_KEY_MAGNATUNE_GENRES_GENRE, wxEmptyString, CONFIG_PATH_MAGNATUNE_GENRES );
 
     m_MagGenresListBox = new wxCheckListBox( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), MagnatuneGenres, 0 );
     int Index;
@@ -1808,7 +1795,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     m_MagNoRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "None" ), wxDefaultPosition, wxDefaultSize, wxRB_GROUP );
     m_MagStRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Streaming" ), wxDefaultPosition, wxDefaultSize );
     m_MagDlRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Downloading" ), wxDefaultPosition, wxDefaultSize );
-    int Membership = m_Config->ReadNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
+    int Membership = m_Config->ReadNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, 0, CONFIG_PATH_MAGNATUNE );
     
     if( Membership == 1 ) m_MagStRadioItem->SetValue( true );
     else if( Membership == 2 ) m_MagDlRadioItem->SetValue( true );
@@ -1824,7 +1811,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     MagUserLabel->Wrap( -1 );
     MagFlexSizer->Add( MagUserLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-    m_MagUserTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "magnatune" ) ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_MagUserTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( CONFIG_KEY_MAGNATUNE_USERNAME, wxEmptyString, CONFIG_PATH_MAGNATUNE ), wxDefaultPosition, wxDefaultSize, 0 );
     m_MagUserTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
     MagFlexSizer->Add( m_MagUserTextCtrl, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -1832,7 +1819,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     MagPassLabel->Wrap( -1 );
     MagFlexSizer->Add( MagPassLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
 
-    m_MagPassTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "magnatune" ) ), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
+    m_MagPassTextCtrl = new wxTextCtrl( m_MagnatunePanel, wxID_ANY, m_Config->ReadStr( CONFIG_KEY_MAGNATUNE_PASSWORD, wxEmptyString, CONFIG_PATH_MAGNATUNE ), wxDefaultPosition, wxDefaultSize, wxTE_PASSWORD );
     m_MagPassTextCtrl->Enable( !m_MagNoRadioItem->GetValue() );
     MagFlexSizer->Add( m_MagPassTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
@@ -1844,7 +1831,7 @@ void guPrefDialog::BuildMagnatunePage( void )
 //    MagFormatChoices.Add( wxT( "mp3" ) );
 //    MagFormatChoices.Add( wxT( "ogg" ) );
 //    m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, MagFormatChoices, 0 );
-//    m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "Magnatune" ) ) );
+//    m_MagFormatChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_MAGNATUNE_AUDIO_FORMAT, 1, CONFIG_PATH_MAGNATUNE ) );
 //    MagFlexSizer->Add( m_MagFormatChoice, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
     wxStaticText * MagFormatLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _( "Stream as :" ), wxDefaultPosition, wxDefaultSize, 0 );
     MagFormatLabel->Wrap( -1 );
@@ -1855,7 +1842,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     wxString m_MagFormatChoiceChoices[] = { wxT("mp3"), wxT("ogg") };
     int m_MagFormatChoiceNChoices = sizeof( m_MagFormatChoiceChoices ) / sizeof( wxString );
     m_MagFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagFormatChoiceNChoices, m_MagFormatChoiceChoices, 0 );
-    m_MagFormatChoice->SetSelection( m_Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "magnatune" ) ) );
+    m_MagFormatChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_MAGNATUNE_AUDIO_FORMAT, 1, CONFIG_PATH_MAGNATUNE ) );
     m_MagFormatChoice->SetMinSize( wxSize( 100,-1 ) );
 
     FormatSizer->Add( m_MagFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
@@ -1867,7 +1854,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     wxString m_MagDownFormatChoiceChoices[] = { _( "Download Page" ), wxT("mp3 (VBR)"), wxT("mp3 (128Kbits)"), wxT("ogg"), wxT("flac"), wxT("wav") };
     int m_MagDownFormatChoiceNChoices = sizeof( m_MagDownFormatChoiceChoices ) / sizeof( wxString );
     m_MagDownFormatChoice = new wxChoice( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_MagDownFormatChoiceNChoices, m_MagDownFormatChoiceChoices, 0 );
-    m_MagDownFormatChoice->SetSelection( m_Config->ReadNum( wxT( "DownloadFormat" ), 0, wxT( "magnatune" ) ) );
+    m_MagDownFormatChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_MAGNATUNE_DOWNLOAD_FORMAT, 0, CONFIG_PATH_MAGNATUNE ) );
     m_MagDownFormatChoice->Enable( Membership == 2 );
     m_MagDownFormatChoice->SetMinSize( wxSize( 100,-1 ) );
 
@@ -1910,9 +1897,9 @@ void guPrefDialog::BuildLinksPage( void )
 	wxBoxSizer * LinksListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_LinksListBox = new wxListBox( m_LinksPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-    wxArrayString SearchLinks = m_Config->ReadAStr( wxT( "Link" ), wxEmptyString, wxT( "searchlinks/links" ) );
+    wxArrayString SearchLinks = m_Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_LINK, wxEmptyString, CONFIG_PATH_SEARCHLINKS_LINKS );
 	m_LinksListBox->Append( SearchLinks );
-	m_LinksNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "searchlinks/names" ) );
+    m_LinksNames = m_Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_NAME, wxEmptyString, CONFIG_PATH_SEARCHLINKS_NAMES );
     int count = m_LinksListBox->GetCount();
 	while( ( int ) m_LinksNames.Count() < count )
         m_LinksNames.Add( wxEmptyString );
@@ -2033,9 +2020,9 @@ void guPrefDialog::BuildCommandsPage( void )
 	wxBoxSizer * CmdListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_CmdListBox = new wxListBox( m_CmdPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-    wxArrayString Commands = m_Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+    wxArrayString Commands = m_Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 	m_CmdListBox->Append( Commands );
-	m_CmdNames = m_Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
+    m_CmdNames = m_Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
 	int index;
     int count = m_CmdListBox->GetCount();
 	while( ( int ) m_CmdNames.Count() < count )
@@ -2157,7 +2144,7 @@ void guPrefDialog::BuildCopyToPage( void )
 
 	m_CopyToOptions = new guCopyToPatternArray();
 
-	wxArrayString Options = m_Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+    wxArrayString Options = m_Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
 	wxArrayString Names;
     int Index;
     int Count;
@@ -2335,7 +2322,7 @@ void guPrefDialog::BuildAcceleratorsPage( void )
 
     guAccelGetActionNames( m_AccelActionNames );
 
-	m_AccelKeys = m_Config->ReadANum( wxT( "AccelKey"), 0, wxT( "accelerators" ) );
+    m_AccelKeys = m_Config->ReadANum( CONFIG_KEY_ACCELERATORS_ACCELKEY, 0, CONFIG_PATH_ACCELERATORS );
 	if( !m_AccelKeys.Count() )
 	{
 	    guAccelGetDefaultKeys( m_AccelKeys );
@@ -2427,23 +2414,23 @@ void guPrefDialog::SaveSettings( void )
     // Save all configurations
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
-        m_Config->WriteNum( wxT( "Language" ), m_MainLangCodes[ m_MainLangChoice->GetSelection() ], wxT( "general" ) );
-        m_Config->WriteBool( wxT( "ShowSplashScreen" ), m_ShowSplashChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "StartMinimized" ), m_MinStartChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "LoadDefaultLayouts" ), m_IgnoreLayoutsChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "ShowTaskBarIcon" ), m_TaskIconChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "CloseToTaskBar" ), m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), wxT( "general" ) );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_LANGUAGE, m_MainLangCodes[ m_MainLangChoice->GetSelection() ], CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_SPLASH_SCREEN, m_ShowSplashChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_START_MINIMIZED, m_MinStartChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_LOAD_DEFAULT_LAYOUTS, m_IgnoreLayoutsChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_TASK_BAR_ICON, m_TaskIconChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_CLOSE_TO_TASKBAR, m_TaskIconChkBox->IsChecked() && m_CloseTaskBarChkBox->GetValue(), CONFIG_PATH_GENERAL );
         if( m_SoundMenuChkBox )
-            m_Config->WriteBool( wxT( "SoundMenuIntegration" ), m_SoundMenuChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "DefaultActionEnqueue" ), m_EnqueueChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "DropFilesClearPlaylist" ), m_DropFilesChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "InstantTextSearchEnabled" ), m_InstantSearchChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "TextSearchEnterRelax" ), m_EnterSearchChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteNum( wxT( "CoverFrame" ), m_ShowCDFrameChkBox->GetValue(), wxT( "general" ) );
+            m_Config->WriteBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, m_SoundMenuChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, m_EnqueueChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_DROP_FILES_CLEAR_PLAYLIST, m_DropFilesChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, m_InstantSearchChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, m_EnterSearchChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_COVER_FRAME, m_ShowCDFrameChkBox->GetValue(), CONFIG_PATH_GENERAL );
         m_Config->WriteBool( wxT( "SaveOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "playlist" ) );
-        m_Config->WriteBool( wxT( "SaveCurrentTrackPos" ), m_SavePosCheckBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteNum( wxT( "MinSavePlayPosLength" ), m_MinLenSpinCtrl->GetValue(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "ShowCloseConfirm" ), m_ExitConfirmChkBox->GetValue(), wxT( "general" ) );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_SAVE_CURRENT_TRACK_POSITION, m_SavePosCheckBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_MIN_SAVE_PLAYL_POST_LENGTH, m_MinLenSpinCtrl->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM, m_ExitConfirmChkBox->GetValue(), CONFIG_PATH_GENERAL );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LIBRARY )
@@ -2459,96 +2446,95 @@ void guPrefDialog::SaveSettings( void )
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PLAYBACK )
     {
-        m_Config->WriteBool( wxT( "RndPlayOnEmptyPlayList" ), m_RndPlayChkBox->GetValue(), wxT( "general" ) );
-        m_Config->WriteNum( wxT( "RndModeOnEmptyPlayList" ), m_RndModeChoice->GetSelection(), wxT( "general" ) );
-        m_Config->WriteBool( wxT( "DelTracksPlayed" ), m_DelPlayChkBox->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "ReplayGainMode" ), m_PlayReplayModeChoice->GetSelection(), wxT( "general" ) );
-        m_Config->WriteNum( wxT( "ReplayGainPreAmp" ), m_PlayPreAmpLevelSlider->GetValue(), wxT( "general" ) );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_RANDOM_PLAY_ON_EMPTY_PLAYLIST, m_RndPlayChkBox->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_RANDOM_MODE_ON_EMPTY_PLAYLIST, m_RndModeChoice->GetSelection(), CONFIG_PATH_GENERAL );
+        m_Config->WriteBool( CONFIG_KEY_PLAYBACK_DEL_TRACKS_PLAYED, m_DelPlayChkBox->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE, m_PlayReplayModeChoice->GetSelection(), CONFIG_PATH_GENERAL );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, m_PlayPreAmpLevelSlider->GetValue(), CONFIG_PATH_GENERAL );
 
-        m_Config->WriteBool( wxT( "SilenceDetector" ), m_PlayLevelEnabled->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "SilenceLevel" ), m_PlayLevelSlider->GetValue(), wxT( "playback" ) );
-        m_Config->WriteBool( wxT( "SilenceAtEnd" ), m_PlayEndTimeCheckBox->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "SilenceEndTime" ), m_PlayEndTimeSpinCtrl->GetValue(), wxT( "playback" ) );
-        m_Config->WriteBool( wxT( "ShowNotifications" ), m_NotifyChkBox->GetValue(), wxT( "general" ) );
+        m_Config->WriteBool( CONFIG_KEY_PLAYBCK_SILENCE_DETECTOR, m_PlayLevelEnabled->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBCK_SILENCE_LEVEL, m_PlayLevelSlider->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteBool( CONFIG_KEY_PLAYBCK_SILENCE_AT_END, m_PlayEndTimeCheckBox->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBCK_SILENCE_END_TIME, m_PlayEndTimeSpinCtrl->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS, m_NotifyChkBox->GetValue(), CONFIG_PATH_GENERAL );
 
-        m_Config->WriteNum( wxT( "MinTracksToPlay" ), m_MinTracksSpinCtrl->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "NumTracksToAdd" ), m_NumTracksSpinCtrl->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "MaxTracksPlayed" ), m_MaxTracksPlayed->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "SmartFilterArtists" ), m_SmartPlayArtistsSpinCtrl->GetValue(), wxT( "playback" ) );
-        m_Config->WriteNum( wxT( "SmartFilterTracks" ), m_SmartPlayTracksSpinCtrl->GetValue(), wxT( "playback" ) );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, m_MinTracksSpinCtrl->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBACK_NUM_TRACKS_TO_ADD, m_NumTracksSpinCtrl->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBACK_MAX_TRACKS_PLAYED, m_MaxTracksPlayed->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_ARTISTS, m_SmartPlayArtistsSpinCtrl->GetValue(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_TRACKS, m_SmartPlayTracksSpinCtrl->GetValue(), CONFIG_PATH_PLAYBACK );
 
-        m_Config->WriteNum( wxT( "OutputDevice" ), m_PlayOutDevChoice->GetSelection(), wxT( "playback" ) );
-        m_Config->WriteStr( wxT( "OutputDeviceName" ), m_PlayOutDevName->GetValue(), wxT( "playback" ) );
+        m_Config->WriteNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, m_PlayOutDevChoice->GetSelection(), CONFIG_PATH_PLAYBACK );
+        m_Config->WriteStr( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE_NAME, m_PlayOutDevName->GetValue(), CONFIG_PATH_PLAYBACK );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_CROSSFADER )
     {
-        m_Config->WriteNum( wxT( "FadeOutTime" ), m_XFadeOutLenSlider->GetValue(), wxT( "crossfader" ) );
-        m_Config->WriteNum( wxT( "FadeInTime" ), m_XFadeInLenSlider->GetValue(), wxT( "crossfader" ) );
-        m_Config->WriteNum( wxT( "FadeInVolStart" ), m_XFadeInStartSlider->GetValue(), wxT( "crossfader" ) );
-        m_Config->WriteNum( wxT( "FadeInVolTriger" ), m_XFadeInTrigerSlider->GetValue(), wxT( "crossfader" ) );
+        m_Config->WriteNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, m_XFadeOutLenSlider->GetValue(), CONFIG_PATH_CROSSFADER );
+        m_Config->WriteNum( CONFIG_KEY_CROSSFADER_FADEIN_TIME, m_XFadeInLenSlider->GetValue(), CONFIG_PATH_CROSSFADER );
+        m_Config->WriteNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, m_XFadeInStartSlider->GetValue(), CONFIG_PATH_CROSSFADER );
+        m_Config->WriteNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_TRIGER, m_XFadeInTrigerSlider->GetValue(), CONFIG_PATH_CROSSFADER );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
     {
-        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LastFMASEnableChkBox->IsEnabled() && m_LastFMASEnableChkBox->GetValue(), wxT( "lastfm" ) );
-        m_Config->WriteStr( wxT( "UserName" ), m_LastFMUserNameTextCtrl->GetValue(), wxT( "lastfm" ) );
+        m_Config->WriteBool( CONFIG_KEY_LASTFM_ENABLED, m_LastFMASEnableChkBox->IsEnabled() && m_LastFMASEnableChkBox->GetValue(), CONFIG_PATH_LASTFM );
+        m_Config->WriteStr( CONFIG_KEY_LASTFM_USERNAME, m_LastFMUserNameTextCtrl->GetValue(), CONFIG_PATH_LASTFM );
         if( !m_LastFMPasswdTextCtrl->IsEmpty() && m_LastFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
         {
             guMD5 MD5;
-            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LastFMPasswdTextCtrl->GetValue() ), wxT( "lastfm" ) );
+            m_Config->WriteStr( CONFIG_KEY_LASTFM_PASSWORD, MD5.MD5( m_LastFMPasswdTextCtrl->GetValue() ), CONFIG_PATH_LASTFM );
             //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
             //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
         }
-        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), wxT( "librefm" ) );
-        m_Config->WriteStr( wxT( "UserName" ), m_LibreFMUserNameTextCtrl->GetValue(), wxT( "librefm" ) );
+        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), CONFIG_PATH_LIBREFM );
+        m_Config->WriteStr( wxT( "UserName" ), m_LibreFMUserNameTextCtrl->GetValue(), CONFIG_PATH_LIBREFM );
         if( !m_LibreFMPasswdTextCtrl->IsEmpty() && m_LibreFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
         {
             guMD5 MD5;
-            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), wxT( "librefm" ) );
+            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), CONFIG_PATH_LIBREFM );
         }
     }
 
     // LastFM Panel Info language
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ONLINE )
     {
-        m_Config->WriteStr( wxT( "Language" ), m_LFMLangIds[ m_LangChoice->GetSelection() ], wxT( "lastfm" ) );
+        m_Config->WriteStr( CONFIG_KEY_LASTFM_LANGUAGE, m_LFMLangIds[ m_LangChoice->GetSelection() ], CONFIG_PATH_LASTFM );
 
-        m_Config->WriteAStr( wxT( "Filter" ), m_OnlineFiltersListBox->GetStrings(), wxT( "searchfilters" ) );
+        m_Config->WriteAStr( CONFIG_KEY_SEARCH_FILTERS_FILTER, m_OnlineFiltersListBox->GetStrings(), CONFIG_PATH_SEARCH_FILTERS );
 
-        m_Config->WriteStr( wxT( "BrowserCommand" ), m_BrowserCmdTextCtrl->GetValue(), wxT( "general" ) );
-        //m_Config->WriteStr( wxT( "RadioMinBitRate" ), m_RadioMinBitRateRadBoxChoices[ m_RadioMinBitRateRadBox->GetSelection() ], wxT( "radios" ) );
-        m_Config->WriteNum( wxT( "RadioMinBitRate" ), m_RadioMinBitRateSlider->GetValue(), wxT( "radios" ) );
-        m_Config->WriteNum( wxT( "BufferSize" ), m_BufferSizeSlider->GetValue(), wxT( "general" ) );
+        m_Config->WriteStr( CONFIG_KEY_GENERAL_BROWSER_COMMAND, m_BrowserCmdTextCtrl->GetValue(), CONFIG_PATH_GENERAL );
+        m_Config->WriteNum( CONFIG_KEY_RADIOS_MIN_BITRATE, m_RadioMinBitRateSlider->GetValue(), CONFIG_PATH_RADIOS );
+        m_Config->WriteNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, m_BufferSizeSlider->GetValue(), CONFIG_PATH_GENERAL );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
     {
-        m_Config->WriteBool( wxT( "Enabled" ), m_RecordChkBox->GetValue(), wxT( "record" ) );
-        m_Config->WriteStr( wxT( "Path" ), m_RecSelDirPicker->GetPath(), wxT( "record" ) );
-        m_Config->WriteNum( wxT( "Format" ), m_RecFormatChoice->GetSelection(), wxT( "record" ) );
-        m_Config->WriteNum( wxT( "Quality" ), m_RecQualityChoice->GetSelection(), wxT( "record" ) );
-        m_Config->WriteBool( wxT( "Split" ), m_RecSplitChkBox->GetValue(), wxT( "record" ) );
-        m_Config->WriteBool( wxT( "DeleteTracks" ), m_RecDelTracks->GetValue(), wxT( "record" ) );
-        m_Config->WriteNum( wxT( "DeleteTime" ), m_RecDelTime->GetValue(), wxT( "record" ) );
+        m_Config->WriteBool( CONFIG_KEY_RECORD_ENABLED, m_RecordChkBox->GetValue(), CONFIG_PATH_RECORD );
+        m_Config->WriteStr( CONFIG_KEY_RECORD_PATH, m_RecSelDirPicker->GetPath(), CONFIG_PATH_RECORD );
+        m_Config->WriteNum( CONFIG_KEY_RECORD_FORMAT, m_RecFormatChoice->GetSelection(), CONFIG_PATH_RECORD );
+        m_Config->WriteNum( CONFIG_KEY_RECORD_QUALITY, m_RecQualityChoice->GetSelection(), CONFIG_PATH_RECORD );
+        m_Config->WriteBool( CONFIG_KEY_RECORD_SPLIT, m_RecSplitChkBox->GetValue(), CONFIG_PATH_RECORD );
+        m_Config->WriteBool( CONFIG_KEY_RECORD_DELETE, m_RecDelTracks->GetValue(), CONFIG_PATH_RECORD );
+        m_Config->WriteNum( CONFIG_KEY_RECORD_DELETE_TIME, m_RecDelTime->GetValue(), CONFIG_PATH_RECORD );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_PODCASTS )
     {
-        m_Config->WriteStr( wxT( "Path" ), m_PodcastPath->GetPath(), wxT( "podcasts" ) );
-        m_Config->WriteBool( wxT( "Update" ), m_PodcastUpdate->GetValue(), wxT( "podcasts" ) );
-        m_Config->WriteNum( wxT( "UpdatePeriod" ), m_PodcastUpdatePeriod->GetSelection(), wxT( "podcasts" ) );
-        m_Config->WriteBool( wxT( "Delete" ), m_PodcastDelete->GetValue(), wxT( "podcasts" ) );
-        m_Config->WriteNum( wxT( "DeleteTime" ), m_PodcastDeleteTime->GetValue(), wxT( "podcasts" ) );
-        m_Config->WriteNum( wxT( "DeletePeriod" ), m_PodcastDeletePeriod->GetSelection(), wxT( "podcasts" ) );
-        m_Config->WriteBool( wxT( "DeletePlayed" ), m_PodcastDeletePlayed->GetValue(), wxT( "podcasts" ) );
+        m_Config->WriteStr( CONFIG_KEY_PODCASTS_PATH, m_PodcastPath->GetPath(), CONFIG_PATH_PODCASTS );
+        m_Config->WriteBool( CONFIG_KEY_PODCASTS_UPDATE, m_PodcastUpdate->GetValue(), CONFIG_PATH_PODCASTS );
+        m_Config->WriteNum( CONFIG_KEY_PODCASTS_UPDATEPERIOD, m_PodcastUpdatePeriod->GetSelection(), CONFIG_PATH_PODCASTS );
+        m_Config->WriteBool( CONFIG_KEY_PODCASTS_DELETE, m_PodcastDelete->GetValue(), CONFIG_PATH_PODCASTS );
+        m_Config->WriteNum( CONFIG_KEY_PODCASTS_DELETETIME, m_PodcastDeleteTime->GetValue(), CONFIG_PATH_PODCASTS );
+        m_Config->WriteNum( CONFIG_KEY_PODCASTS_DELETEPERIOD, m_PodcastDeletePeriod->GetSelection(), CONFIG_PATH_PODCASTS );
+        m_Config->WriteBool( CONFIG_KEY_PODCASTS_DELETEPLAYED, m_PodcastDeletePlayed->GetValue(), CONFIG_PATH_PODCASTS );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LYRICS )
     {
         m_LyricSearchEngine->Save();
-        m_Config->WriteStr( wxT( "Font" ), m_LyricFontPicker->GetSelectedFont().GetNativeFontInfoDesc(), wxT( "lyrics" ) );
-        m_Config->WriteNum( wxT( "TextAlign" ), m_LyricsAlignChoice->GetSelection(), wxT( "lyrics" ) );
+        m_Config->WriteStr( CONFIG_KEY_LYRICS_FONT, m_LyricFontPicker->GetSelectedFont().GetNativeFontInfoDesc(), CONFIG_PATH_LYRICS );
+        m_Config->WriteNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, m_LyricsAlignChoice->GetSelection(), CONFIG_PATH_LYRICS );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_JAMENDO )
@@ -2562,7 +2548,7 @@ void guPrefDialog::SaveSettings( void )
                 EnabledGenres.Add( Index );
         }
 
-        m_Config->WriteANum( wxT( "Genre" ), EnabledGenres, wxT( "jamendo/genres" ) );
+        m_Config->WriteANum( CONFIG_KEY_JAMENDO_GENRES_GENRE, EnabledGenres, CONFIG_PATH_JAMENDO_GENRES );
         bool DoUpgrade = ( EnabledGenres.Count() != m_LastJamendoGenres.Count() );
         if( !DoUpgrade )
         {
@@ -2577,9 +2563,9 @@ void guPrefDialog::SaveSettings( void )
             }
         }
 
-        m_Config->WriteBool( wxT( "NeedUpgrade" ), DoUpgrade, wxT( "jamendo" ) );
-        m_Config->WriteNum( wxT( "AudioFormat" ), m_JamFormatChoice->GetSelection(), wxT( "jamendo" ) );
-        m_Config->WriteStr( wxT( "TorrentCommand" ), m_JamBTCmd->GetValue(), wxT( "jamendo" ) );
+        m_Config->WriteBool( CONFIG_KEY_JAMENDO_NEED_UPGRADE, DoUpgrade, CONFIG_PATH_JAMENDO );
+        m_Config->WriteNum( CONFIG_KEY_JAMENDO_AUDIOFORMAT, m_JamFormatChoice->GetSelection(), CONFIG_PATH_JAMENDO );
+        m_Config->WriteStr( CONFIG_KEY_JAMENDO_TORRENT_COMMAND, m_JamBTCmd->GetValue(), CONFIG_PATH_JAMENDO );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
@@ -2592,7 +2578,7 @@ void guPrefDialog::SaveSettings( void )
             if( m_MagGenresListBox->IsChecked( Index ) )
                 EnabledGenres.Add( m_MagGenresListBox->GetString( Index ) );
         }
-        m_Config->WriteAStr( wxT( "Genre" ), EnabledGenres, wxT( "magnatune/genres" ) );
+        m_Config->WriteAStr( CONFIG_KEY_MAGNATUNE_GENRES_GENRE, EnabledGenres, CONFIG_PATH_MAGNATUNE_GENRES );
 
         bool DoUpgrade = ( EnabledGenres.Count() != m_LastMagnatuneGenres.Count() );
         if( !DoUpgrade )
@@ -2608,24 +2594,24 @@ void guPrefDialog::SaveSettings( void )
             }
         }
 
-        m_Config->WriteBool( wxT( "NeedUpgrade" ), DoUpgrade, wxT( "magnatune" ) );
+        m_Config->WriteBool( CONFIG_KEY_MAGNATUNE_NEED_UPGRADE, DoUpgrade, CONFIG_PATH_MAGNATUNE );
         if( m_MagNoRadioItem->GetValue() )
-            m_Config->WriteNum( wxT( "Membership" ), 0, wxT( "magnatune" ) );
+            m_Config->WriteNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, 0, CONFIG_PATH_MAGNATUNE );
         else if( m_MagStRadioItem->GetValue() )
-            m_Config->WriteNum( wxT( "Membership" ), 1, wxT( "magnatune" ) );
+            m_Config->WriteNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, 1, CONFIG_PATH_MAGNATUNE );
         else
-            m_Config->WriteNum( wxT( "Membership" ), 2, wxT( "magnatune" ) );
-        m_Config->WriteStr( wxT( "UserName" ), m_MagUserTextCtrl->GetValue(), wxT( "magnatune" ) );
-        m_Config->WriteStr( wxT( "Password" ), m_MagPassTextCtrl->GetValue(), wxT( "magnatune" ) );
-        m_Config->WriteNum( wxT( "AudioFormat" ), m_MagFormatChoice->GetSelection(), wxT( "magnatune" ) );
-        m_Config->WriteNum( wxT( "DownloadFormat" ), m_MagDownFormatChoice->GetSelection(), wxT( "magnatune" ) );
+            m_Config->WriteNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, 2, CONFIG_PATH_MAGNATUNE );
+        m_Config->WriteStr( CONFIG_KEY_MAGNATUNE_USERNAME, m_MagUserTextCtrl->GetValue(), CONFIG_PATH_MAGNATUNE );
+        m_Config->WriteStr( CONFIG_KEY_MAGNATUNE_PASSWORD, m_MagPassTextCtrl->GetValue(), CONFIG_PATH_MAGNATUNE );
+        m_Config->WriteNum( CONFIG_KEY_MAGNATUNE_AUDIO_FORMAT, m_MagFormatChoice->GetSelection(), CONFIG_PATH_MAGNATUNE );
+        m_Config->WriteNum( CONFIG_KEY_MAGNATUNE_DOWNLOAD_FORMAT, m_MagDownFormatChoice->GetSelection(), CONFIG_PATH_MAGNATUNE );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_LINKS )
     {
         wxArrayString SearchLinks = m_LinksListBox->GetStrings();
-        m_Config->WriteAStr( wxT( "Link" ), SearchLinks, wxT( "searchlinks/links" ) );
-        m_Config->WriteAStr( wxT( "Name" ), m_LinksNames, wxT( "searchlinks/names" ), false );
+        m_Config->WriteAStr( CONFIG_KEY_SEARCHLINKS_LINK, SearchLinks, CONFIG_PATH_SEARCHLINKS_LINKS );
+        m_Config->WriteAStr( CONFIG_KEY_SEARCHLINKS_NAME, m_LinksNames, CONFIG_PATH_SEARCHLINKS_NAMES, false );
 
         // TODO : Make this process in a thread
         int index;
@@ -2666,8 +2652,8 @@ void guPrefDialog::SaveSettings( void )
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COMMANDS )
     {
         wxArrayString Commands = m_CmdListBox->GetStrings();
-        m_Config->WriteAStr( wxT( "Exec" ), Commands, wxT( "commands/execs" ) );
-        m_Config->WriteAStr( wxT( "Name" ), m_CmdNames, wxT( "commands/names" ) );
+        m_Config->WriteAStr( CONFIG_KEY_COMMANDS_EXEC, Commands, CONFIG_PATH_COMMANDS_EXECS );
+        m_Config->WriteAStr( CONFIG_KEY_COMMANDS_NAME, m_CmdNames, CONFIG_PATH_COMMANDS_NAMES );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
@@ -2681,12 +2667,12 @@ void guPrefDialog::SaveSettings( void )
             Options.Add( CopyToPattern.ToString() );
         }
 
-        m_Config->WriteAStr( wxT( "Option" ), Options, wxT( "copyto/options" ) );
+        m_Config->WriteAStr( CONFIG_KEY_COPYTO_OPTION, Options, CONFIG_PATH_COPYTO );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
     {
-        m_Config->WriteANum( wxT( "AccelKey" ), m_AccelKeys, wxT( "accelerators" ) );
+        m_Config->WriteANum( CONFIG_KEY_ACCELERATORS_ACCELKEY, m_AccelKeys, CONFIG_PATH_ACCELERATORS );
     }
 
     m_Config->Flush();
@@ -4173,7 +4159,7 @@ void guPrefDialog::UpdateCopyToOptions( void )
         }
         else
         {
-            wxArrayString CopyToOptions = m_Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+            wxArrayString CopyToOptions = m_Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
             Count = CopyToOptions.Count();
             for( Index = 0; Index < Count; Index++ )
             {

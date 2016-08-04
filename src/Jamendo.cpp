@@ -319,8 +319,8 @@ guJamendoDownloadThread::ExitCode guJamendoDownloadThread::Entry()
     int Count;
     int LoopCount = 0;
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) );
-    wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "jamendo" ) );
+    int AudioFormat = Config->ReadNum( CONFIG_KEY_JAMENDO_AUDIOFORMAT, 1, CONFIG_PATH_JAMENDO );
+    wxString TorrentCmd = Config->ReadStr( CONFIG_KEY_JAMENDO_TORRENT_COMMAND, wxEmptyString, CONFIG_PATH_JAMENDO );
     while( !TestDestroy() )
     {
         m_CoversMutex.Lock();
@@ -452,7 +452,7 @@ guJamendoUpdateThread::guJamendoUpdateThread( guMediaViewerJamendo * mediaviewer
     m_GaugeId = gaugeid;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_AllowedGenres = Config->ReadANum( wxT( "Genre" ), 0, wxT( "jamendo/genres" ) );
+    m_AllowedGenres = Config->ReadANum( CONFIG_KEY_JAMENDO_GENRES_GENRE, 0, CONFIG_PATH_JAMENDO_GENRES );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -475,7 +475,7 @@ guJamendoUpdateThread::~guJamendoUpdateThread()
         if( Config )
         {
             wxDateTime Now = wxDateTime::Now();
-            Config->WriteNum( wxT( "LastUpdate" ), Now.GetTicks(), wxT( "jamendo" ) );
+            Config->WriteNum( CONFIG_KEY_JAMENDO_LAST_UPDATE, Now.GetTicks(), CONFIG_PATH_JAMENDO );
             Config->Flush();
         }
 
@@ -981,7 +981,7 @@ void guMediaViewerJamendo::OnConfigUpdated( wxCommandEvent &event )
     if( event.GetInt() & guPREFERENCE_PAGE_FLAG_JAMENDO )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config->ReadBool( wxT( "NeedUpgrade" ), false, wxT( "jamendo" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_JAMENDO_NEED_UPGRADE, false, CONFIG_PATH_JAMENDO ) )
         {
             UpdateLibrary();
         }
@@ -1026,7 +1026,7 @@ void guMediaViewerJamendo::NormalizeTracks( guTrackArray * tracks, const bool is
     if( tracks && ( Count = tracks->Count() ) )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        int AudioFormat = Config->ReadNum( wxT( "AudioFormat" ), 1, wxT( "jamendo" ) );
+        int AudioFormat = Config->ReadNum( CONFIG_KEY_JAMENDO_AUDIOFORMAT, 1, CONFIG_PATH_JAMENDO );
         for( Index = 0; Index < Count; Index++ )
         {
             guTrack * Track = &( * tracks )[ Index ];
@@ -1230,7 +1230,7 @@ wxString guMediaViewerJamendo::GetCoverName( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guMediaViewerJamendo::SelectAlbumCover( const int albumid )
 {
-    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, this, albumid );
     if( SelCoverFile )
     {
         if( SelCoverFile->ShowModal() == wxID_OK )
@@ -1261,7 +1261,7 @@ void guMediaViewerJamendo::DownloadAlbums( const wxArrayInt &albums, const bool 
         if( istorrent )
         {
             guConfig * Config = ( guConfig * ) guConfig::Get();
-            wxString TorrentCmd = Config->ReadStr( wxT( "TorrentCommand" ), wxEmptyString, wxT( "jamendo" ) );
+            wxString TorrentCmd = Config->ReadStr( CONFIG_KEY_JAMENDO_TORRENT_COMMAND, wxEmptyString, CONFIG_PATH_JAMENDO );
             if( TorrentCmd.IsEmpty() )
             {
                 //OnEditSetup( event );

@@ -362,8 +362,8 @@ guCdTracksListBox::guCdTracksListBox( wxWindow * parent ) :
     m_ColumnNames.Add( _( "Length" ) );
     m_ColumnNames.Add( _( "Year" ) );
 
-    m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "audiocd" ) );
-    m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "audiocd" ) );
+    m_Order = Config->ReadNum( CONFIG_KEY_AUDIOCD_ORDER, 0, CONFIG_PATH_AUDIOCD );
+    m_OrderDesc = Config->ReadNum( CONFIG_KEY_AUDIOCD_ORDERDESC, false, CONFIG_PATH_AUDIOCD );
 
     int ColId;
     wxString ColName;
@@ -410,8 +410,8 @@ guCdTracksListBox::~guCdTracksListBox()
                            ( * m_Columns )[ Index ].m_Enabled, wxT( "audiocd/columns/shows" ) );
     }
 
-    Config->WriteNum( wxT( "Order" ), m_Order, wxT( "audiocd" ) );
-    Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "audiocd" ) );
+    Config->WriteNum( CONFIG_KEY_AUDIOCD_ORDER, m_Order, CONFIG_PATH_AUDIOCD );
+    Config->WriteBool( CONFIG_KEY_AUDIOCD_ORDERDESC, m_OrderDesc, CONFIG_PATH_AUDIOCD );
 
 
     Unbind( guConfigUpdatedEvent, &guCdTracksListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
@@ -952,7 +952,7 @@ void guAudioCdPanel::OnAudioCdTrackCopyTo( wxCommandEvent &event )
 void guAudioCdPanel::OnAudioCdTrackActivated( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    OnSelectAudioCdTracks( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
+    OnSelectAudioCdTracks( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) );
 }
 
 

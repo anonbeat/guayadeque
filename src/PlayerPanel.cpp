@@ -121,42 +121,41 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Config->RegisterObject( this );
 
     //guLogDebug( wxT( "Reading PlayerPanel Config" ) );
-    SavedVol = Config->ReadNum( wxT( "PlayerCurVol" ), 50, wxT( "general" ) );
+    SavedVol = Config->ReadNum( CONFIG_KEY_GENERAL_PLAYER_VOLUME, 50, CONFIG_PATH_GENERAL );
     //guLogDebug( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
-    m_PlayLoop = Config->ReadNum( wxT( "PlayerLoop" ), 0, wxT( "general" )  );
-    m_PlaySmart = Config->ReadBool( wxT( "PlayerSmart" ), m_PlayLoop ? false : true, wxT( "general" )  );
-    m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "general" ) );
-    m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "general" ) );
-    m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "general" ) );
-    m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "general" ) );
+    m_PlayLoop = Config->ReadNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, 0, CONFIG_PATH_GENERAL  );
+    m_PlaySmart = Config->ReadBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlayLoop ? false : true, CONFIG_PATH_GENERAL  );
+    m_PlayRandom = Config->ReadBool( CONFIG_KEY_GENERAL_RANDOM_PLAY_ON_EMPTY_PLAYLIST, false, CONFIG_PATH_GENERAL );
+    m_PlayRandomMode = Config->ReadNum( CONFIG_KEY_GENERAL_RANDOM_MODE_ON_EMPTY_PLAYLIST, guRANDOM_MODE_TRACK, CONFIG_PATH_GENERAL );
+    m_ShowNotifications = Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS, true, CONFIG_PATH_GENERAL );
+    m_ShowNotificationsTime = Config->ReadNum( CONFIG_KEY_GENERAL_NOTIFICATION_TIME, 0, CONFIG_PATH_GENERAL );
 
-    m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "playback" ) );
-    m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) );
-    m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) );
-	m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "playback" ) );
-	m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "playback" ) );
+    m_SmartPlayAddTracks = Config->ReadNum( CONFIG_KEY_PLAYBACK_NUM_TRACKS_TO_ADD, 3, CONFIG_PATH_PLAYBACK );
+    m_SmartPlayMinTracksToPlay = Config->ReadNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, 4, CONFIG_PATH_PLAYBACK );
+    m_DelTracksPlayed = Config->ReadBool( CONFIG_KEY_PLAYBACK_DEL_TRACKS_PLAYED, false, CONFIG_PATH_PLAYBACK );
+    m_SmartMaxArtistsList = Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_ARTISTS, 20, CONFIG_PATH_PLAYBACK );
+    m_SmartMaxTracksList = Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_TRACKS, 100, CONFIG_PATH_PLAYBACK );
 
-    m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) ||
-                             Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) );
-    Equalizer = Config->ReadANum( wxT( "Band" ), 0, wxT( "equalizer" ) );
+    m_AudioScrobbleEnabled = Config->ReadBool( CONFIG_KEY_LASTFM_ENABLED, false, CONFIG_PATH_LASTFM ) ||
+                             Config->ReadBool( CONFIG_KEY_LIBREFM_ENABLED, false, CONFIG_PATH_LIBREFM );
+    Equalizer = Config->ReadANum( CONFIG_KEY_EQUALIZER_BAND, 0, CONFIG_PATH_EQUALIZER );
     if( Equalizer.Count() != guEQUALIZER_BAND_COUNT )
     {
         Equalizer.Empty();
         Equalizer.Add( 0, guEQUALIZER_BAND_COUNT );
     }
 
-    m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "playback" ) );
-    m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "playback" ) );
-    if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "playback" ) ) )
+    m_SilenceDetector = Config->ReadBool( CONFIG_KEY_PLAYBCK_SILENCE_DETECTOR, false, CONFIG_PATH_PLAYBACK );
+    m_SilenceDetectorLevel = Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_LEVEL, -55, CONFIG_PATH_PLAYBACK );
+    if( Config->ReadBool( CONFIG_KEY_PLAYBCK_SILENCE_AT_END, false, CONFIG_PATH_PLAYBACK ) )
     {
-        m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "playback" ) ) * 1000;
+        m_SilenceDetectorTime = Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_END_TIME, 45, CONFIG_PATH_PLAYBACK ) * 1000;
     }
 
-    m_ShowRevTime = Config->ReadBool( wxT( "ShowRevTime" ), false, wxT( "general" ) );
+    m_ShowRevTime = Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_REV_TIME, false, CONFIG_PATH_GENERAL );
 
-    m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "crossfader" ) );
-    m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
-//        m_ShowFiltersChoices = Config->ReadBool( wxT( "ShowFiltersChoices" ), true, wxT( "Positions" ) );
+    m_ForceGapless = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
+    m_FadeOutTime = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
 
     m_SliderIsDragged = false;
     m_SmartSearchEnabled = false;
@@ -196,7 +195,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_RecordButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_record ), guImage( guIMAGE_INDEX_player_normal_record ), guImage( guIMAGE_INDEX_player_highlight_record ) );
     m_RecordButton->SetToolTip( _( "Record to file" ) );
     m_RecordButton->Enable( false );
-    m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "record" ) ) );
+    m_RecordButton->Show( Config->ReadBool( CONFIG_KEY_RECORD_ENABLED, false, CONFIG_PATH_RECORD ) );
     PlayerBtnSizer->Add( m_RecordButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
 
 	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
@@ -488,21 +487,21 @@ guPlayerPanel::~guPlayerPanel()
         Config->UnRegisterObject( this );
 
         //printf( "guPlayerPanel::guConfig Save\n" );
-        //Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != guMEDIASTATE_PLAYING, wxT( "general" ) );
-        Config->WriteNum( wxT( "PlayerCurVol" ), m_CurVolume, wxT( "general" ) );
-        Config->WriteNum( wxT( "PlayerLoop" ), m_PlayLoop, wxT( "general" ) );
-        Config->WriteBool( wxT( "PlayerSmart" ), m_PlaySmart, wxT( "general" ) );
+        //Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != guMEDIASTATE_PLAYING, CONFIG_PATH_GENERAL );
+        Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_VOLUME, m_CurVolume, CONFIG_PATH_GENERAL );
+        Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, m_PlayLoop, CONFIG_PATH_GENERAL );
+        Config->WriteBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlaySmart, CONFIG_PATH_GENERAL );
         // If the track length is at least the configured minimun track length save the pos offset
-        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_GENERAL_SAVE_CURRENT_TRACK_POSITION, false, CONFIG_PATH_GENERAL ) )
         {
             if( ( m_LastPlayState != guMEDIASTATE_STOPPED ) &&
-                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( wxT( "MinSavePlayPosLength" ), 10, wxT( "general" ) ) * 60000 ) ) )
+                ( m_MediaSong.m_Length >= ( unsigned int ) ( Config->ReadNum( CONFIG_KEY_GENERAL_MIN_SAVE_PLAYL_POST_LENGTH, 10, CONFIG_PATH_GENERAL ) * 60000 ) ) )
             {
-                Config->WriteNum( wxT( "CurrentTrackPos" ), m_LastCurPos, wxT( "general" ) );
+                Config->WriteNum( CONFIG_KEY_GENERAL_CURRENT_TRACK_POS, m_LastCurPos, CONFIG_PATH_GENERAL );
             }
             else
             {
-                Config->WriteNum( wxT( "CurrentTrackPos" ), 0, wxT( "general" ) );
+                Config->WriteNum( CONFIG_KEY_GENERAL_CURRENT_TRACK_POS, 0, CONFIG_PATH_GENERAL );
             }
         }
         //printf( PlaySmart ? "Smart Enabled" : "Smart Disabled" );  printf( "\n" );
@@ -513,9 +512,9 @@ guPlayerPanel::~guPlayerPanel()
         {
             Equalizer.Add( m_MediaCtrl->GetEqualizerBand( index ) );
         }
-        Config->WriteANum( wxT( "Band" ), Equalizer, wxT( "equalizer" ) );
+        Config->WriteANum( CONFIG_KEY_EQUALIZER_BAND, Equalizer, CONFIG_PATH_EQUALIZER );
 
-        Config->WriteBool( wxT( "ShowRevTime" ), m_ShowRevTime, wxT( "general" ) );
+        Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_REV_TIME, m_ShowRevTime, CONFIG_PATH_GENERAL );
     }
 
     // Unbind Events
@@ -594,16 +593,16 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         Config = ( guConfig * ) guConfig::Get();
 
         //guLogDebug( wxT( "Reading PlayerPanel Config Updated" ) );
-        m_PlayRandom = Config->ReadBool( wxT( "RndPlayOnEmptyPlayList" ), false, wxT( "general" ) );
-        m_PlayRandomMode = Config->ReadNum( wxT( "RndModeOnEmptyPlayList" ), guRANDOM_MODE_TRACK, wxT( "general" ) );
-        m_ShowNotifications = Config->ReadBool( wxT( "ShowNotifications" ), true, wxT( "general" ) );
-        m_ShowNotificationsTime = Config->ReadNum( wxT( "NotificationsTime" ), 0, wxT( "general" ) );
+        m_PlayRandom = Config->ReadBool( CONFIG_KEY_GENERAL_RANDOM_PLAY_ON_EMPTY_PLAYLIST, false, CONFIG_PATH_GENERAL );
+        m_PlayRandomMode = Config->ReadNum( CONFIG_KEY_GENERAL_RANDOM_MODE_ON_EMPTY_PLAYLIST, guRANDOM_MODE_TRACK, CONFIG_PATH_GENERAL );
+        m_ShowNotifications = Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS, true, CONFIG_PATH_GENERAL );
+        m_ShowNotificationsTime = Config->ReadNum( CONFIG_KEY_GENERAL_NOTIFICATION_TIME, 0, CONFIG_PATH_GENERAL );
 
-        m_SmartPlayAddTracks = Config->ReadNum( wxT( "NumTracksToAdd" ), 3, wxT( "playback" ) );
-        m_SmartPlayMinTracksToPlay = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) );
-        m_DelTracksPlayed = Config->ReadBool( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) );
-        m_SmartMaxArtistsList = Config->ReadNum( wxT( "SmartFilterArtists" ), 20, wxT( "playback" ) );
-        m_SmartMaxTracksList = Config->ReadNum( wxT( "SmartFilterTracks" ), 100, wxT( "playback" ) );
+        m_SmartPlayAddTracks = Config->ReadNum( CONFIG_KEY_PLAYBACK_NUM_TRACKS_TO_ADD, 3, CONFIG_PATH_PLAYBACK );
+        m_SmartPlayMinTracksToPlay = Config->ReadNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, 4, CONFIG_PATH_PLAYBACK );
+        m_DelTracksPlayed = Config->ReadBool( CONFIG_KEY_PLAYBACK_DEL_TRACKS_PLAYED, false, CONFIG_PATH_PLAYBACK );
+        m_SmartMaxArtistsList = Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_ARTISTS, 20, CONFIG_PATH_PLAYBACK );
+        m_SmartMaxTracksList = Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_TRACKS, 100, CONFIG_PATH_PLAYBACK );
 
         // We only insert the last CACHEITEMS as the rest should be forgiven
         while( ( int ) m_SmartAddedTracks.Count() > m_SmartMaxTracksList )
@@ -612,11 +611,11 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         while( ( int ) m_SmartAddedArtists.Count() > m_SmartMaxArtistsList )
             m_SmartAddedArtists.RemoveAt( 0 );
 
-        m_SilenceDetector = Config->ReadBool( wxT( "SilenceDetector" ), false, wxT( "playback" ) );
-        m_SilenceDetectorLevel = Config->ReadNum( wxT( "SilenceLevel" ), -55, wxT( "playback" ) );
-        if( Config->ReadBool( wxT( "SilenceAtEnd" ), false, wxT( "playback" ) ) )
+        m_SilenceDetector = Config->ReadBool( CONFIG_KEY_PLAYBCK_SILENCE_DETECTOR, false, CONFIG_PATH_PLAYBACK );
+        m_SilenceDetectorLevel = Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_LEVEL, -55, CONFIG_PATH_PLAYBACK );
+        if( Config->ReadBool( CONFIG_KEY_PLAYBCK_SILENCE_AT_END, false, CONFIG_PATH_PLAYBACK ) )
         {
-            m_SilenceDetectorTime = Config->ReadNum( wxT( "SilenceEndTime" ), 45, wxT( "playback" ) ) * 1000;
+            m_SilenceDetectorTime = Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_END_TIME, 45, CONFIG_PATH_PLAYBACK ) * 1000;
         }
 
         MediaCtrlNeedUpdated = true;
@@ -627,7 +626,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_RecordButton->Show( Config->ReadBool( wxT( "Enabled" ), false, wxT( "record" ) ) );
+        m_RecordButton->Show( Config->ReadBool( CONFIG_KEY_RECORD_ENABLED, false, CONFIG_PATH_RECORD ) );
         Layout();
 
         if( m_MediaRecordCtrl )
@@ -641,8 +640,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_ForceGapless = Config->ReadBool( wxT( "ForceGapless"), false, wxT( "crossfader" ) );
-        m_FadeOutTime = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
+        m_ForceGapless = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
+        m_FadeOutTime = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
 
         MediaCtrlNeedUpdated = true;
     }
@@ -652,8 +651,8 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) ||
-                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) );
+        m_AudioScrobbleEnabled = Config->ReadBool( CONFIG_KEY_LASTFM_ENABLED, false, CONFIG_PATH_LASTFM ) ||
+                                 Config->ReadBool( CONFIG_KEY_LIBREFM_ENABLED, false, CONFIG_PATH_LIBREFM );
 
         if( m_AudioScrobbleEnabled )
         {
@@ -3157,13 +3156,13 @@ void guPlayerPanel::CheckStartPlaying( void )
     }
     else
     {
-        if( Config->ReadBool( wxT( "SaveCurrentTrackPos" ), false, wxT( "general" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_GENERAL_SAVE_CURRENT_TRACK_POSITION, false, CONFIG_PATH_GENERAL ) )
         {
-            m_TrackStartPos = wxMax( 0, Config->ReadNum( wxT( "CurrentTrackPos" ), 0, wxT( "general" ) ) - 500 );
+            m_TrackStartPos = wxMax( 0, Config->ReadNum( CONFIG_KEY_GENERAL_CURRENT_TRACK_POS, 0, CONFIG_PATH_GENERAL ) - 500 );
             if( m_TrackStartPos > 0 )
             {
                 wxCommandEvent event;
-                event.SetInt( Config->ReadNum( wxT( "CurItem" ), 0, wxT( "playlist/nowplaying" ) ) );
+                event.SetInt( Config->ReadNum( CONFIG_KEY_PLAYLIST_CURITEM, 0, CONFIG_PATH_PLAYLIST_NOWPLAYING ) );
                 OnPlayListDClick( event );
             }
             else

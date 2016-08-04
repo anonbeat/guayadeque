@@ -91,7 +91,7 @@ void guTaskBarIcon::OnClick( wxTaskBarIconEvent &event )
             if( m_MainFrame->IsIconized() )
                 m_MainFrame->Iconize( false );
         }
-        else if( Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "general" ) ) )
+        else if( Config->ReadBool( CONFIG_KEY_GENERAL_CLOSE_TO_TASKBAR, false, CONFIG_PATH_GENERAL ) )
         {
             m_MainFrame->Show( false );
         }

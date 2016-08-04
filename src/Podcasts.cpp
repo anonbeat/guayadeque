@@ -203,8 +203,9 @@ void guPodcastChannel::CheckLogo( void )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
 
-        wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                    guPATH_PODCASTS, wxT( "podcasts" ) );
+        wxString PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH,
+                                                 guPATH_PODCASTS,
+                                                 CONFIG_PATH_PODCASTS );
 
         //guLogMessage( wxT( "Downloading the Image..." ) );
         wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
@@ -391,18 +392,18 @@ void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
     // Get the config object
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    if( Config->ReadBool( wxT( "Delete" ), false, wxT( "podcasts" ) ) )
+    if( Config->ReadBool( CONFIG_KEY_PODCASTS_DELETE, false, CONFIG_PATH_PODCASTS ) )
     {
         wxString query = wxT( "SELECT podcastitem_file FROM podcastitems, podcastchs " );
 
         wxString Condition = wxT( "WHERE podcastitem_chid = podcastch_id AND podcastch_allowdel = 1 " );
 
-        int TimeOption = Config->ReadNum( wxT( "DeleteTime" ), 15, wxT( "podcasts" ) );
+        int TimeOption = Config->ReadNum( CONFIG_KEY_PODCASTS_DELETETIME, 15, CONFIG_PATH_PODCASTS );
 
         wxDateTime DeleteTime = wxDateTime::Now();
 
         //
-        switch( Config->ReadNum( wxT( "DeletePeriod" ), guPODCAST_DELETE_DAY, wxT( "podcasts" ) ) )
+        switch( Config->ReadNum( CONFIG_KEY_PODCASTS_DELETEPERIOD, guPODCAST_DELETE_DAY, CONFIG_PATH_PODCASTS ) )
         {
             case guPODCAST_DELETE_DAY :
                 DeleteTime.Subtract( wxDateSpan::Days( TimeOption ) );
@@ -424,7 +425,7 @@ void guPodcastChannel::CheckDeleteItems( guDbPodcasts * db )
         Condition += wxString::Format( wxT( "AND podcastitem_time < %lu " ), DeleteTime.GetTicks() );
 
         //
-        if( Config->ReadBool( wxT( "DeletePlayed" ), false, wxT( "podcasts" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_PODCASTS_DELETEPLAYED, false, CONFIG_PATH_PODCASTS ) )
         {
             Condition += wxT( "AND podcastitem_playcount > 0" );
         }
@@ -484,7 +485,7 @@ void guPodcastChannel::CheckDir( void )
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     // Check that the directory to store podcasts are created
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH, guPATH_PODCASTS, CONFIG_PATH_PODCASTS );
 
     // Create the channel dir
     wxFileName ChannelDir = wxFileName( PodcastsPath + wxT( "/" ) + m_Title );
@@ -569,7 +570,7 @@ guPodcastDownloadQueueThread::guPodcastDownloadQueueThread( guMainFrame * mainfr
     m_GaugeId = wxNOT_FOUND;
 
     // Check that the directory to store podcasts are created
-    m_PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
+    m_PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH, guPATH_PODCASTS, CONFIG_PATH_PODCASTS );
 
     if( Create() == wxTHREAD_NO_ERROR )
     {

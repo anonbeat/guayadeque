@@ -332,7 +332,7 @@ bool guMainApp::OnInit()
     wxInitAllImageHandlers();
 
     // If enabled Show the Splash Screen on Startup
-    if( m_Config->ReadBool( wxT( "ShowSplashScreen" ), true, wxT( "general" ) ) )
+    if( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_SPLASH_SCREEN, true, CONFIG_PATH_GENERAL ) )
     {
         guSplashFrame * SplashFrame = new guSplashFrame( 0 );
         if( !SplashFrame )
@@ -348,7 +348,7 @@ bool guMainApp::OnInit()
     // Init the Curl Library
     guCurl::CurlInit();
 
-    int LangId = m_Config->ReadNum( wxT( "Language" ), wxLANGUAGE_DEFAULT, wxT( "general" ) );
+    int LangId = m_Config->ReadNum( CONFIG_KEY_GENERAL_LANGUAGE, wxLANGUAGE_DEFAULT, CONFIG_PATH_GENERAL );
     if( m_Locale.Init( LangId ) )
     {
         m_Locale.AddCatalogLookupPathPrefix( wxT( "/usr/share/locale" ) );
@@ -389,10 +389,10 @@ bool guMainApp::OnInit()
     Frame->SetIcon( MainIcon );
 
     // If Minimize is enabled minimized or hide it if Taskbar Icon is enabled
-    if( m_Config->ReadBool( wxT( "StartMinimized" ), false, wxT( "general" ) ) )
+    if( m_Config->ReadBool( CONFIG_KEY_GENERAL_START_MINIMIZED, false, CONFIG_PATH_GENERAL ) )
     {
-        if( m_Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "general" ) ) &&
-            m_Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "general" ) ) )
+        if( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_TASK_BAR_ICON, false, CONFIG_PATH_GENERAL ) &&
+            m_Config->ReadBool( CONFIG_KEY_GENERAL_CLOSE_TO_TASKBAR, false, CONFIG_PATH_GENERAL ) )
         {
             Frame->Show( false );
             //Frame->Hide();

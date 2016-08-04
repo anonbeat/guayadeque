@@ -146,7 +146,7 @@ void guGenericDirCtrl::SetupSections()
             }
         }
 
-        wxString Path = Config->ReadStr( wxT( "Path" ), wxEmptyString, wxT( "podcasts" ) );
+        wxString Path = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH, wxEmptyString, CONFIG_PATH_PODCASTS );
         if( !Path.IsEmpty() )
         {
             wxString Name = Path;
@@ -155,7 +155,7 @@ void guGenericDirCtrl::SetupSections()
             AddSection( Path, wxFileNameFromPath( Name ), guDIR_IMAGE_INDEX_PODCASTS );
         }
 
-        Path = Config->ReadStr( wxT( "Path" ), wxEmptyString, wxT( "record" ) );
+        Path = Config->ReadStr( CONFIG_KEY_RECORD_PATH, wxEmptyString, CONFIG_PATH_RECORD );
         if( !Path.IsEmpty() )
         {
             wxString Name = Path;
@@ -215,7 +215,7 @@ guFileBrowserDirCtrl::guFileBrowserDirCtrl( wxWindow * parent, guMainFrame * mai
 	wxBoxSizer * MainSizer;
 	MainSizer = new wxBoxSizer( wxVERTICAL );
 
-    int ShowPaths = Config->ReadNum( wxT( "ShowLibPaths" ), guFILEBROWSER_SHOWPATH_LOCATIONS, wxT( "filebrowser" ) );
+    int ShowPaths = Config->ReadNum( CONFIG_KEY_FILE_BROWSER_SHOW_LIB_PATHS, guFILEBROWSER_SHOWPATH_LOCATIONS, CONFIG_PATH_FILE_BROWSER );
 	m_DirCtrl = new guGenericDirCtrl( this, m_MainFrame, ShowPaths );
 	m_DirCtrl->ShowHidden( false );
 	SetPath( dirpath, FindMediaViewerByPath( m_MainFrame, dirpath ) );
@@ -252,7 +252,7 @@ guFileBrowserDirCtrl::~guFileBrowserDirCtrl()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Config->WriteNum( wxT( "ShowLibPaths" ), m_ShowLibPathsBtn->GetValue(), wxT( "filebrowser" ) );
+    Config->WriteNum( CONFIG_KEY_FILE_BROWSER_SHOW_LIB_PATHS, m_ShowLibPathsBtn->GetValue(), CONFIG_PATH_FILE_BROWSER );
 
     m_DirCtrl->Unbind( wxEVT_TREE_ITEM_MENU, &guFileBrowserDirCtrl::OnContextMenu, this );
     m_ShowLibPathsBtn->Unbind( wxEVT_TOGGLEBUTTON, &guFileBrowserDirCtrl::OnShowLibPathsClick, this );
@@ -310,8 +310,8 @@ void AppendFolderCommands( wxMenu * menu )
     SubMenu = new wxMenu();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
-    wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
+    wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
+    wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
     if( ( Count = Commands.Count() ) )
     {
         for( Index = 0; Index < Count; Index++ )
@@ -665,17 +665,16 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_Order = Config->ReadNum( wxT( "Order" ), 0, wxT( "filebrowser" ) );
-    m_OrderDesc = Config->ReadNum( wxT( "OrderDesc" ), false, wxT( "filebrowser" ) );
+    m_Order = Config->ReadNum( CONFIG_KEY_FILE_BROWSER_ORDER, 0, CONFIG_PATH_FILE_BROWSER );
+    m_OrderDesc = Config->ReadNum( CONFIG_KEY_FILE_BROWSER_ORDERDESC, false, CONFIG_PATH_FILE_BROWSER );
 
     int ColId;
     wxString ColName;
     wxArrayString ColumnNames = GetColumnNames();
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        ColId = Config->ReadNum( wxString::Format( wxT( "Id%u" ), index ), index, wxT( "filebrowser/columns/ids" ) );
+        ColId = Config->ReadNum( wxString::Format( wxT( "Id%u" ), index ), index, CONFIG_PATH_FILE_BROWSER_COLUMNS_IDS );
 
         ColName = ColumnNames[ ColId ];
 
@@ -684,8 +683,8 @@ guFilesListBox::guFilesListBox( wxWindow * parent, guDbLibrary * db ) :
         guListViewColumn * Column = new guListViewColumn(
             ColName,
             ColId,
-            Config->ReadNum( wxString::Format( wxT( "Width%u" ), index ), 80, wxT( "filebrowser/columns/widths" ) ),
-            Config->ReadBool( wxString::Format( wxT( "Show%u" ), index ), true, wxT( "filebrowser/columns/shows" ) )
+            Config->ReadNum( wxString::Format( wxT( "Width%u" ), index ), 80, CONFIG_PATH_FILE_BROWSER_COLUMNS_WIDTHS ),
+            Config->ReadBool( wxString::Format( wxT( "Show%u" ), index ), true, CONFIG_PATH_FILE_BROWSER_COLUMNS_SHOWS )
             );
         InsertColumn( Column );
     }
@@ -705,20 +704,19 @@ guFilesListBox::~guFilesListBox()
     Config->UnRegisterObject( this );
 
     wxArrayString ColumnNames = GetColumnNames();
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "Id%u" ), index ),
-                          ( * m_Columns )[ index ].m_Id, wxT( "filebrowser/columns/ids" ) );
+                          ( * m_Columns )[ index ].m_Id, CONFIG_PATH_FILE_BROWSER_COLUMNS_IDS );
         Config->WriteNum( wxString::Format( wxT( "Width%u" ), index ),
-                          ( * m_Columns )[ index ].m_Width, wxT( "filebrowser/columns/widths" ) );
+                          ( * m_Columns )[ index ].m_Width, CONFIG_PATH_FILE_BROWSER_COLUMNS_WIDTHS );
         Config->WriteBool( wxString::Format( wxT( "Show%u" ), index ),
-                           ( * m_Columns )[ index ].m_Enabled, wxT( "filebrowser/columns/shows" ) );
+                           ( * m_Columns )[ index ].m_Enabled, CONFIG_PATH_FILE_BROWSER_COLUMNS_SHOWS );
     }
 
-    Config->WriteNum( wxT( "Order" ), m_Order, wxT( "filebrowser" ) );
-    Config->WriteBool( wxT( "OrderDesc" ), m_OrderDesc, wxT( "filebrowser" ) );
+    Config->WriteNum( CONFIG_KEY_FILE_BROWSER_ORDER, m_Order, CONFIG_PATH_FILE_BROWSER );
+    Config->WriteBool( CONFIG_KEY_FILE_BROWSER_ORDERDESC, m_OrderDesc, CONFIG_PATH_FILE_BROWSER );
 
     Unbind( guConfigUpdatedEvent, &guFilesListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 }
@@ -1082,8 +1080,8 @@ void AppendItemsCommands( wxMenu * menu, int selcount, int seltype )
     guLogMessage( wxT( "AppendItemCommands: %i  %i" ), selcount, seltype );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
-    wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
+    wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
+    wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
     if( ( Count = Commands.Count() ) )
     {
         for( Index = 0; Index < Count; Index++ )
@@ -1539,10 +1537,10 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
 
     guConfig *  Config = ( guConfig * ) guConfig::Get();
 
-    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_FILEBROWSER_VISIBLE_DEFAULT, wxT( "filebrowser" ) );
+    m_VisiblePanels = Config->ReadNum( CONFIG_KEY_FILE_BROWSER_VISIBLE_PANELS, guPANEL_FILEBROWSER_VISIBLE_DEFAULT, CONFIG_PATH_FILE_BROWSER );
 
 
-    wxString LastPath = Config->ReadStr( wxT( "Path" ), wxEmptyString, wxT( "filebrowser" ) );
+    wxString LastPath = Config->ReadStr( CONFIG_KEY_FILE_BROWSER_PATH, wxEmptyString, CONFIG_PATH_FILE_BROWSER );
     m_DirCtrl = new guFileBrowserDirCtrl( this, m_MainFrame, db, LastPath );
     guLogMessage( wxT( "LastPath: '%s'" ), LastPath.c_str() );
 
@@ -1559,7 +1557,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
             wxAuiPaneInfo().Name( wxT( "FileBrowserFilesCtrl" ) ).
             Dockable( true ).CenterPane() );
 
-    wxString FileBrowserLayout = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "filebrowser" ) );
+    wxString FileBrowserLayout = Config->ReadStr( CONFIG_KEY_FILE_BROWSER_LAST_LAYOUT, wxEmptyString, CONFIG_PATH_FILE_BROWSER );
     if( Config->GetIgnoreLayouts() || FileBrowserLayout.IsEmpty() )
     {
         m_VisiblePanels = guPANEL_FILEBROWSER_VISIBLE_DEFAULT;
@@ -1606,9 +1604,9 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
 guFileBrowser::~guFileBrowser()
 {
     guConfig *  Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "filebrowser" ) );
-    Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "filebrowser" ) );
-    Config->WriteStr( wxT( "Path" ), m_DirCtrl->GetPath(), wxT( "filebrowser" ) );
+    Config->WriteNum( CONFIG_KEY_FILE_BROWSER_VISIBLE_PANELS, m_VisiblePanels, CONFIG_PATH_FILE_BROWSER );
+    Config->WriteStr( CONFIG_KEY_FILE_BROWSER_LAST_LAYOUT, m_AuiManager.SavePerspective(), CONFIG_PATH_FILE_BROWSER );
+    Config->WriteStr( CONFIG_KEY_FILE_BROWSER_PATH, m_DirCtrl->GetPath(), CONFIG_PATH_FILE_BROWSER );
 
     m_DirCtrl->Unbind( wxEVT_TREE_SEL_CHANGED, &guFileBrowser::OnDirItemChanged, this );
     m_FilesCtrl->Unbind( wxEVT_LISTBOX_DCLICK, &guFileBrowser::OnFileItemActivated, this );
@@ -1685,7 +1683,7 @@ void guFileBrowser::OnFileItemActivated( wxCommandEvent &Event )
             guConfig * Config = ( guConfig * ) guConfig::Get();
             if( Config )
             {
-                if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "general" )) )
+                if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false , CONFIG_PATH_GENERAL) )
                 {
                     m_PlayerPanel->AddToPlayList( Files );
                 }
@@ -2258,7 +2256,7 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
         Index -= ID_COMMANDS_BASE;
         wxString CurCmd = Commands[ Index ];
@@ -2296,7 +2294,7 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
         Index -= ID_COMMANDS_BASE;
         wxString CurCmd = Commands[ Index ];

@@ -289,8 +289,9 @@ void guNewPodcastChannelSelector::LoadPodcastDirectory( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ),
-                                guPATH_PODCASTS, wxT( "podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH,
+                                             guPATH_PODCASTS,
+                                             CONFIG_PATH_PODCASTS );
 
     wxSetCursor( * wxHOURGLASS_CURSOR );
     wxTheApp->Yield();
@@ -391,7 +392,9 @@ void guNewPodcastChannelSelector::OnReloadDirectoryClicked( wxCommandEvent &even
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    wxString PodcastsPath = Config->ReadStr( wxT( "Path" ), guPATH_PODCASTS, wxT( "podcasts" ) );
+    wxString PodcastsPath = Config->ReadStr( CONFIG_KEY_PODCASTS_PATH,
+                                             guPATH_PODCASTS,
+                                             CONFIG_PATH_PODCASTS );
 
     wxRemoveFile( PodcastsPath + wxT( "/Podcast.Directory.xml" ) );
 

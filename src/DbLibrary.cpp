@@ -424,6 +424,7 @@ int guDbLibrary::GetDbVersion( void )
   return RetVal;
 }
 
+/*
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::DoCleanUp( void )
 {
@@ -468,6 +469,7 @@ void guDbLibrary::DoCleanUp( void )
 
   CleanItems( SongsToDel, CoversToDel );
 }
+*/
 
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::CleanFiles( const wxArrayString &Files )
@@ -568,7 +570,7 @@ bool guDbLibrary::CheckDbVersion( void )
       guConfig * Config = ( guConfig * ) guConfig::Get();
       if( Config )
       {
-        Config->WriteStr( wxT( "LastUpdate" ), wxEmptyString, wxT( "general" ) );
+        Config->WriteStr( CONFIG_KEY_GENERAL_LAST_UPDATE, wxEmptyString, CONFIG_PATH_GENERAL );
       }
 
       query.Add( wxT( "CREATE TABLE IF NOT EXISTS songs( song_id INTEGER PRIMARY KEY AUTOINCREMENT, " \

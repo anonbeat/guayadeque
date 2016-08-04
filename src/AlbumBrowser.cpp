@@ -698,7 +698,7 @@ void guAlbumBrowserItemPanel::OnAlbumDClicked( wxMouseEvent &event )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
         m_AlbumBrowser->SelectAlbum( m_AlbumBrowserItem->m_AlbumId,
-            Config->ReadBool( wxT( "DefaultActionEnqueue" ), false , wxT( "general" ) ) );
+            Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false , CONFIG_PATH_GENERAL ) );
     }
 }
 
@@ -1299,7 +1299,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+            wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
             index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ index ];
@@ -1362,7 +1362,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+            wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
             Index -= ID_COMMANDS_BASE;
             wxString CurCmd = Commands[ Index ];
@@ -1650,9 +1650,7 @@ void  guAlbumBrowser::SetAlbumCover( const int albumid, const wxString &cover )
         wxImage CoverImage( cover );
         if( CoverImage.IsOk() )
         {
-            guConfig * Config = ( guConfig * ) guConfig::Get();
-            wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
-            wxString CoverName = AlbumPath + ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+            wxString CoverName = AlbumPath + m_MediaViewer->CoverName() + wxT( ".jpg" );
             if( CoverImage.SaveFile( CoverName, wxBITMAP_TYPE_JPEG ) )
             {
                 m_Db->SetAlbumCover( albumid, CoverName );

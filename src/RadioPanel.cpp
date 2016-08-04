@@ -550,17 +550,17 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     guConfig *  Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
- 	Config->ReadStr( wxT( "RadioMinBitRate" ), wxT( "128" ), wxT( "radios" ) ).ToLong( &m_MinBitRate );
-    m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "radios" ) );
-    m_StationsOrderDesc = Config->ReadNum( wxT( "StationsOrderDesc" ), false, wxT( "radios" ) );;
+    m_MinBitRate = Config->ReadNum( CONFIG_KEY_RADIOS_MIN_BITRATE, 128, CONFIG_PATH_RADIOS );
+    m_StationsOrder = Config->ReadNum( CONFIG_KEY_RADIOS_STATIONS_ORDER, 0, CONFIG_PATH_RADIOS );
+    m_StationsOrderDesc = Config->ReadNum( CONFIG_KEY_RADIOS_STATIONS_ORDERDESC, false, CONFIG_PATH_RADIOS );;
 
     m_RadioProviders = new guRadioProviderArray();
 
     InitPanelData();
 
-    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_RADIO_VISIBLE_DEFAULT, wxT( "radios" ) );
-    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) );
-    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) );
+    m_VisiblePanels = Config->ReadNum( CONFIG_KEY_RADIOS_VISIBLE_PANELS, guPANEL_RADIO_VISIBLE_DEFAULT, CONFIG_PATH_RADIOS );
+    m_InstantSearchEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, true, CONFIG_PATH_GENERAL );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, false, CONFIG_PATH_GENERAL );
 
 
 	wxBoxSizer * SearchSizer;
@@ -578,7 +578,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "RadioTextSearch" ) ).Caption( _( "Text Search" ) ).
             Direction( 1 ).Layer( 2 ).Row( 0 ).Position( 0 ).BestSize( 111, 26 ).MinSize( 60, 26 ).MaxSize( -1, 26 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+            CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
             Dockable( true ).Top() );
 
     wxPanel * GenrePanel;
@@ -596,7 +596,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 	m_AuiManager.AddPane( GenrePanel,
             wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genre" ) ).
             Direction( 4 ).Layer( 1 ).Row( 0 ).Position( 0 ).BestSize( 220, 60 ).MinSize( 60, 60 ).
-            CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+            CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
             Dockable( true ).Left() );
 
     wxPanel * StationsPanel;
@@ -619,7 +619,7 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
 
 
 
-    wxString RadioLayout = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "radios" ) );
+    wxString RadioLayout = Config->ReadStr( CONFIG_KEY_RADIOS_LAST_LAYOUT, wxEmptyString, CONFIG_PATH_RADIOS );
     if( Config->GetIgnoreLayouts() || RadioLayout.IsEmpty() )
     {
         m_VisiblePanels = guPANEL_RADIO_VISIBLE_DEFAULT;
@@ -677,10 +677,10 @@ guRadioPanel::~guRadioPanel()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "radios" ) );
-    Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "radios" ) );
-    Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "radios" ) );
-    Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "radios" ) );;
+    Config->WriteNum( CONFIG_KEY_RADIOS_VISIBLE_PANELS, m_VisiblePanels, CONFIG_PATH_RADIOS );
+    Config->WriteStr( CONFIG_KEY_RADIOS_LAST_LAYOUT, m_AuiManager.SavePerspective(), CONFIG_PATH_RADIOS );
+    Config->WriteNum( CONFIG_KEY_RADIOS_STATIONS_ORDER, m_StationsOrder, CONFIG_PATH_RADIOS );
+    Config->WriteBool( CONFIG_KEY_RADIOS_STATIONS_ORDERDESC, m_StationsOrderDesc, CONFIG_PATH_RADIOS );;
 
     m_RadioPlayListLoadThreadMutex.Lock();
     if( m_RadioPlayListLoadThread )
@@ -725,8 +725,8 @@ void guRadioPanel::OnConfigUpdated( wxCommandEvent &event )
     if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) );
-        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) );
+        m_InstantSearchEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, true, CONFIG_PATH_GENERAL );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, false, CONFIG_PATH_GENERAL );
     }
 }
 
@@ -868,7 +868,7 @@ void guRadioPanel::OnSearchSelected( wxCommandEvent& event )
     if( !DoTextSearch() || !m_EnterSelectSearchEnabled || !m_InstantSearchEnabled )
         return;
 
-    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
+    OnSelectStations( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -937,7 +937,7 @@ void guRadioPanel::OnStationListBoxColClick( wxListEvent &event )
 void guRadioPanel::OnStationListActivated( wxCommandEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    OnSelectStations( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) );
+    OnSelectStations( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) );
 }
 
 // -------------------------------------------------------------------------------- //

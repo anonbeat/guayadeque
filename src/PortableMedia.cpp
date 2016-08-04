@@ -674,11 +674,11 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "PMPropertiesPosX" ), -1, wxT( "positions" ) );
-    WindowPos.y = Config->ReadNum( wxT( "PMPropertiesPosY" ), -1, wxT( "positions" ) );
+    WindowPos.x = Config->ReadNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_POSX, -1, CONFIG_PATH_POSITIONS );
+    WindowPos.y = Config->ReadNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_POSY, -1, CONFIG_PATH_POSITIONS );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "PMPropertiesWidth" ), 570, wxT( "positions" ) );
-    WindowSize.y = Config->ReadNum( wxT( "PMPropertiesHeight" ), 420, wxT( "positions" ) );
+    WindowSize.x = Config->ReadNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_WIDTH, 570, CONFIG_PATH_POSITIONS );
+    WindowSize.y = Config->ReadNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_HEIGHT, 420, CONFIG_PATH_POSITIONS );
 
     Create( parent, wxID_ANY, _( "Portable Media Properties" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
 
@@ -952,11 +952,11 @@ guPortableMediaProperties::~guPortableMediaProperties()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PMPropertiesPosX" ), WindowPos.x, wxT( "positions" ) );
-    Config->WriteNum( wxT( "PMPropertiesPosY" ), WindowPos.y, wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_POSX, WindowPos.x, CONFIG_PATH_POSITIONS );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_POSY, WindowPos.y, CONFIG_PATH_POSITIONS );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "PMPropertiesWidth" ), WindowSize.x, wxT( "positions" ) );
-    Config->WriteNum( wxT( "PMPropertiesHeight" ), WindowSize.y, wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_WIDTH, WindowSize.x, CONFIG_PATH_POSITIONS );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_HEIGHT, WindowSize.y, CONFIG_PATH_POSITIONS );
     Config->Flush();
 
     if( !m_IsIpod )

@@ -70,6 +70,7 @@ ADD_EXECUTABLE( guayadeque
         EventCommandIds.h
         Config.cpp
         Config.h
+        ConfigConsts.h
         ConfirmExit.cpp
         ConfirmExit.h
         CoverEdit.cpp

@@ -362,7 +362,7 @@ class guDbLibrary : public guDb
     guMediaViewer *     GetMediaViewer( void ) { return m_MediaViewer; }
     void                SetMediaViewer( guMediaViewer * mediaviewer );
 
-    void                DoCleanUp( void );
+    //void                DoCleanUp( void );
     void                CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers );
     void                CleanFiles( const wxArrayString &files );
     virtual bool        CheckDbVersion( void );

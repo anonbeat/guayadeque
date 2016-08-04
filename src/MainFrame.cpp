@@ -174,11 +174,11 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     // guMainFrame GUI components
     //
     wxPoint MainWindowPos;
-    MainWindowPos.x = Config->ReadNum( wxT( "PosX" ), 1, wxT( "mainwindow/positions" ) );
-    MainWindowPos.y = Config->ReadNum( wxT( "PosY" ), 1, wxT( "mainwindow/positions" ) );
+    MainWindowPos.x = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_POSX, 1, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
+    MainWindowPos.y = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_POSY, 1, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
     wxSize MainWindowSize;
-    MainWindowSize.x = Config->ReadNum( wxT( "Width" ), 800, wxT( "mainwindow/positions" ) );
-    MainWindowSize.y = Config->ReadNum( wxT( "Height" ), 600, wxT( "mainwindow/positions" ) );
+    MainWindowSize.x = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_WIDTH, 800, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
+    MainWindowSize.y = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_HEIGHT, 600, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
     Create( parent, wxID_ANY, wxT( "Guayadeque Music Player " ID_GUAYADEQUE_VERSION "-" ID_GUAYADEQUE_REVISION ),
             MainWindowPos, MainWindowSize, wxDEFAULT_FRAME_STYLE );
     m_AuiManager.SetManagedWindow( this );
@@ -219,9 +219,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
             wxAUI_GRADIENT_VERTICAL );
 
-    if( Config->ReadBool( wxT( "LoadDefaultLayouts" ), false, wxT( "general" ) ) )
+    if( Config->ReadBool( CONFIG_KEY_GENERAL_LOAD_DEFAULT_LAYOUTS, false, CONFIG_PATH_GENERAL ) )
     {
-        Config->WriteBool( wxT( "LoadDefaultLayouts" ), false, wxT( "general" ) );
+        Config->WriteBool( CONFIG_KEY_GENERAL_LOAD_DEFAULT_LAYOUTS, false, CONFIG_PATH_GENERAL );
         Config->SetIgnoreLayouts( true );
     }
 
@@ -242,7 +242,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     m_Db = MediaViewer->GetDb();
 
 
-    m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "mainwindow" ) );
+    m_VisiblePanels = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_VISIBLE_PANELS, guPANEL_MAIN_VISIBLE_DEFAULT, CONFIG_PATH_MAIN_WINDOW );
     if( Config->GetIgnoreLayouts() )
         m_VisiblePanels = guPANEL_MAIN_VISIBLE_DEFAULT;
     //guLogMessage( wxT( "%08X" ), m_VisiblePanels );
@@ -267,13 +267,13 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     m_PlayerFilters = new guPlayerFilters( this, m_Db );
     m_AuiManager.AddPane( m_PlayerFilters, wxAuiPaneInfo().Name( wxT( "PlayerFilters" ) ).Caption( _( "Filters" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 150, 63 ).
-        CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+        CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
         Bottom().Layer( 0 ).Row( 1 ).Position( 0 ) );
 
     m_PlayerPlayList = new guPlayerPlayList( this, m_Db, &m_AuiManager );
 	m_AuiManager.AddPane( m_PlayerPlayList, wxAuiPaneInfo().Name( wxT( "PlayerPlayList" ) ).
         DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 150, 100 ).
-        CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+        CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
         Bottom().Layer( 0 ).Row( 2 ).Position( 0 ) );
 
 	m_PlayerPanel = new guPlayerPanel( this, m_Db, m_PlayerPlayList->GetPlayListCtrl(), m_PlayerFilters );
@@ -299,7 +299,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     if( m_LocationPanel )
         m_LocationPanel->Lock();
 
-    m_NBPerspective = Config->ReadStr( wxT( "NotebookLayout" ), wxEmptyString, wxT( "mainwindow" ) );
+    m_NBPerspective = Config->ReadStr( CONFIG_KEY_MAIN_WINDOW_NOTEBOOK_LAYOUT, wxEmptyString, CONFIG_PATH_MAIN_WINDOW );
     if( !Config->GetIgnoreLayouts() && !m_NBPerspective.IsEmpty() )
     {
         LoadTabsPerspective( m_NBPerspective );
@@ -354,7 +354,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
         CenterPane() );
 
     //m_AuiManager.Update();
-    wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "mainwindow" ) );
+    wxString Perspective = Config->ReadStr( CONFIG_KEY_MAIN_WINDOW_LAST_LAYOUT, wxEmptyString, CONFIG_PATH_MAIN_WINDOW );
     if( !Config->GetIgnoreLayouts() && !Perspective.IsEmpty() )
     {
         //m_AuiManager.LoadPerspective( Perspective, true );
@@ -446,7 +446,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     // Fill the Format extensions array
     guIsValidAudioFile( wxEmptyString );
 
-    if( Config->ReadBool( wxT( "ShowFullScreen" ), IsFullScreen(), wxT( "mainwindow" ) ) != IsFullScreen() )
+    if( Config->ReadBool( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN, IsFullScreen(), CONFIG_PATH_MAIN_WINDOW ) != IsFullScreen() )
     {
         ShowFullScreen( !IsFullScreen(), wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
     }
@@ -614,21 +614,21 @@ guMainFrame::~guMainFrame()
     if( Config )
     {
         wxPoint MainWindowPos = GetPosition();
-        Config->WriteNum( wxT( "PosX" ), MainWindowPos.x, wxT( "mainwindow/positions" ) );
-        Config->WriteNum( wxT( "PosY" ), MainWindowPos.y, wxT( "mainwindow/positions" ) );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_POSX, MainWindowPos.x, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_POSY, MainWindowPos.y, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
         wxSize MainWindowSize = GetSize();
-        Config->WriteNum( wxT( "Width" ), MainWindowSize.x, wxT( "mainwindow/positions" ) );
-        Config->WriteNum( wxT( "Height" ), MainWindowSize.y, wxT( "mainwindow/positions" ) );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_WIDTH, MainWindowSize.x, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_POSITIONS_HEIGHT, MainWindowSize.y, CONFIG_PATH_MAIN_WINDOW_POSITIONS );
 
-        Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "mainwindow" ) );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_VISIBLE_PANELS, m_VisiblePanels, CONFIG_PATH_MAIN_WINDOW );
 
         wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
         PaneInfo.Caption( _( "Now Playing" ) );
-        Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "mainwindow" ) );
-        Config->WriteStr( wxT( "NotebookLayout" ), m_MainNotebook->SavePerspective(), wxT( "mainwindow" ) );
+        Config->WriteStr( CONFIG_KEY_MAIN_WINDOW_LAST_LAYOUT, m_AuiManager.SavePerspective(), CONFIG_PATH_MAIN_WINDOW );
+        Config->WriteStr( CONFIG_KEY_MAIN_WINDOW_NOTEBOOK_LAYOUT, m_MainNotebook->SavePerspective(), CONFIG_PATH_MAIN_WINDOW );
 
-        Config->WriteBool( wxT( "ShowFullScreen" ), IsFullScreen() , wxT( "mainwindow" ) );
-        Config->WriteBool( wxT( "ShowStatusBar" ), m_MainStatusBar->IsShown() , wxT( "mainwindow" ) );
+        Config->WriteBool( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN, IsFullScreen() , CONFIG_PATH_MAIN_WINDOW );
+        Config->WriteBool( CONFIG_KEY_MAIN_WINDOW_STATUS_BAR, m_MainStatusBar->IsShown() , CONFIG_PATH_MAIN_WINDOW );
     }
 
     if( m_TaskBarIcon )
@@ -872,9 +872,8 @@ void guMainFrame::OnMountMonitorUpdated( wxCommandEvent &event )
         guLogMessage( wxT( "It was unmounted..." ) );
         GMount * Mount = ( GMount * ) event.GetClientData();
 
-        int Index;
         int Count = m_MediaViewers.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guMediaViewer * MediaViewer = m_MediaViewers[ Index ];
             int Type = MediaViewer->GetType();
@@ -910,9 +909,8 @@ void guMainFrame::OnAudioCdVolumeUpdated( wxCommandEvent &event )
 guMediaViewer * guMainFrame::FindCollectionMediaViewer( const wxString &uniqueid )
 {
     //guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
-    int Index;
     int Count = m_MediaViewers.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         //guLogMessage( wxT( "Collection[ %i/%i ] -> '%s'" ), Index, Count, m_MediaViewers[ Index ]->GetMediaCollection()->m_UniqueId.c_str() );
         if( m_MediaViewers[ Index ]->GetMediaCollection()->m_UniqueId == uniqueid )
@@ -925,9 +923,8 @@ guMediaViewer * guMainFrame::FindCollectionMediaViewer( const wxString &uniqueid
 int guMainFrame::GetMediaViewerIndex( guMediaViewer * mediaviewer )
 {
     //guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
-    int Index;
     int Count = m_MediaViewers.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_MediaViewers[ Index ] == mediaviewer )
             return Index;
@@ -939,9 +936,8 @@ int guMainFrame::GetMediaViewerIndex( guMediaViewer * mediaviewer )
 guMediaViewer * guMainFrame::GetDefaultMediaViewer( void )
 {
     //guLogMessage( wxT( "FindCollectionMediaViewer( '%s' )" ), uniqueid.c_str() );
-    int Index;
     int Count = m_MediaViewers.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_MediaViewers[ Index ]->IsDefault() )
             return m_MediaViewers[ Index ];
@@ -952,9 +948,8 @@ guMediaViewer * guMainFrame::GetDefaultMediaViewer( void )
 // -------------------------------------------------------------------------------- //
 guMediaCollection * guMainFrame::FindCollection( const wxString &uniqueid )
 {
-    int Index;
     int Count = m_Collections.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guMediaCollection &Collection = m_Collections[ Index ];
 
@@ -967,9 +962,8 @@ guMediaCollection * guMainFrame::FindCollection( const wxString &uniqueid )
 // -------------------------------------------------------------------------------- //
 guMediaViewer * guMainFrame::FindCollectionMediaViewer( void * windowptr )
 {
-    int Index;
     int Count = m_MediaViewers.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_MediaViewers[ Index ] == windowptr )
             return ( guMediaViewer * ) windowptr;
@@ -980,9 +974,8 @@ guMediaViewer * guMainFrame::FindCollectionMediaViewer( void * windowptr )
 // -------------------------------------------------------------------------------- //
 int FindCollectionUniqueId( guMediaCollectionArray * collections, const wxString &uniqueid )
 {
-    int Index;
     int Count = collections->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( collections->Item( Index ).m_UniqueId == uniqueid )
             return Index;
@@ -1039,9 +1032,8 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
     menu->AppendSeparator();
 
     //CollectionBaseCommand = ID_COLLECTIONS_BASE;
-    int Index;
     int Count = m_Collections.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Collections[ Index ].m_Type == guMEDIA_COLLECTION_TYPE_NORMAL )
         {
@@ -1149,7 +1141,7 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
 
 
     CollectionBaseCommand = ID_COLLECTIONS_BASE;
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( ( m_Collections[ Index ].m_Type == guMEDIA_COLLECTION_TYPE_JAMENDO ) ||
             ( m_Collections[ Index ].m_Type == guMEDIA_COLLECTION_TYPE_MAGNATUNE ) )
@@ -1172,7 +1164,7 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
     int PortableDeviceMenuCount = 0;
 
     CollectionBaseCommand = ID_COLLECTIONS_BASE;
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( ( m_Collections[ Index ].m_Type == guMEDIA_COLLECTION_TYPE_PORTABLE_DEVICE ) ||
             ( m_Collections[ Index ].m_Type == guMEDIA_COLLECTION_TYPE_IPOD ) )
@@ -1190,7 +1182,7 @@ void guMainFrame::CreateCollectionsMenu( wxMenu * menu )
 	    Count = m_VolumeMonitor->GetMountCount();
 	    if( Count )
 	    {
-	        for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
 	        {
                 guGIO_Mount * Mount = m_VolumeMonitor->GetMount( Index );
 	            guLogMessage( wxT( "Mount: '%s' => '%s'" ), Mount->GetName().c_str(), Mount->GetMountPath().c_str() );
@@ -1485,19 +1477,19 @@ void guMainFrame::CreateViewMenu( wxMenu * menu )
                                     wxString( _( "Full Screen" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_FULLSCREEN ),
                                     _( "Show/Restore the main window in full screen" ), wxITEM_CHECK );
     menu->Append( m_MenuFullScreen );
-    m_MenuFullScreen->Check( Config->ReadBool( wxT( "ShowFullScreen" ), false, wxT( "mainwindow" ) ) );
+    m_MenuFullScreen->Check( Config->ReadBool( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN, false, CONFIG_PATH_MAIN_WINDOW ) );
 
     m_MenuStatusBar = new wxMenuItem( menu, ID_MENU_VIEW_STATUSBAR,
                                     wxString( _( "Statusbar" ) ) + guAccelGetCommandKeyCodeString( ID_MENU_VIEW_STATUSBAR ),
                                     _( "Show/Hide the statusbar" ), wxITEM_CHECK );
     menu->Append( m_MenuStatusBar );
-    m_MenuStatusBar->Check( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "mainwindow" ) ) );
+    m_MenuStatusBar->Check( Config->ReadBool( CONFIG_KEY_MAIN_WINDOW_STATUS_BAR, true, CONFIG_PATH_MAIN_WINDOW ) );
 
     MenuItem = new wxMenuItem( menu, ID_MENU_HIDE_CAPTIONS,
                                     wxString( _( "Show Captions" ) ),
                                     _( "Show/Hide the windows caption" ), wxITEM_CHECK );
     menu->Append( MenuItem );
-    MenuItem->Check( Config->ReadBool( wxT( "ShowCaptions" ), true, wxT( "mainwindow" ) ) );
+    MenuItem->Check( Config->ReadBool( CONFIG_KEY_MAIN_WINDOW_CAPTIONS, true, CONFIG_PATH_MAIN_WINDOW ) );
 
     menu->AppendSeparator();
 
@@ -1800,7 +1792,7 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 #else
     if( m_MPRIS2->Indicators_Sound_Available() )
     {
-        if( Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "general" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL ) )
         {
             guMediaState State = m_PlayerPanel->GetState();
             if( State == guMEDIASTATE_PLAYING )
@@ -1818,8 +1810,8 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
     {
         // If the icon
         if( m_TaskBarIcon &&
-            Config->ReadBool( wxT( "ShowTaskBarIcon" ), false, wxT( "general" ) ) &&
-            Config->ReadBool( wxT( "CloseToTaskBar" ), false, wxT( "general" ) ) )
+            Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_TASK_BAR_ICON, false, CONFIG_PATH_GENERAL ) &&
+            Config->ReadBool( CONFIG_KEY_GENERAL_CLOSE_TO_TASKBAR, false, CONFIG_PATH_GENERAL ) )
         {
             if( event.CanVeto() )
             {
@@ -1827,7 +1819,7 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
                 return;
             }
         }
-        else if( Config->ReadBool( wxT( "ShowCloseConfirm" ), true, wxT( "general" ) ) )
+        else if( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM, true, CONFIG_PATH_GENERAL ) )
         {
             guExitConfirmDlg * ExitConfirmDlg = new guExitConfirmDlg( this );
             if( ExitConfirmDlg )
@@ -1835,7 +1827,7 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
                 int Result = ExitConfirmDlg->ShowModal();
                 if( ExitConfirmDlg->GetConfirmChecked() )
                 {
-                    Config->WriteBool( wxT( "ShowCloseConfirm" ), false, wxT( "general" ) );
+                    Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM, false, CONFIG_PATH_GENERAL );
                 }
                 ExitConfirmDlg->Destroy();
 
@@ -2024,9 +2016,8 @@ void guMainFrame::DoShowCaptions( const bool visible )
     //guLogMessage( wxT( "guMainFrame::OnShowCaptions( %i )" ) );
     wxAuiPaneInfoArray &PaneInfoArray = m_AuiManager.GetAllPanes();
 
-    int Index;
     int Count = PaneInfoArray.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxAuiPaneInfo &PaneInfo = PaneInfoArray[ Index ];
         if( PaneInfo.dock_direction != wxAUI_DOCK_CENTER )
@@ -2039,7 +2030,7 @@ void guMainFrame::DoShowCaptions( const bool visible )
     m_AuiManager.Update();
     //
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "ShowCaptions" ), visible, wxT( "mainwindow" ) );
+    Config->WriteBool( CONFIG_KEY_MAIN_WINDOW_CAPTIONS, visible, CONFIG_PATH_MAIN_WINDOW );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2239,7 +2230,7 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
             }
 
             guConfig * Config = ( guConfig * ) guConfig::Get();
-            wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option"), wxEmptyString, wxT( "copyto/options") );
+            wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
             wxArrayString SelCopyTo = wxStringTokenize( CopyToOptions[ event.GetInt() ], wxT( ":") );
 
             while( SelCopyTo.Count() != 6 )
@@ -2331,13 +2322,12 @@ void guMainFrame::ImportFiles( guMediaViewer * mediaviewer, guTrackArray * track
     guCopyToPattern * CopyToPattern = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+    wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
 
-    int Index;
     int Count;
     if( ( Count = CopyToOptions.Count() ) )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) ) == copytooption )
             {
@@ -2418,9 +2408,8 @@ void guMainFrame::OnCopyPlayListToDevice( wxCommandEvent &event )
 //// -------------------------------------------------------------------------------- //
 //int GetPageIndex( wxAuiNotebook * Notebook, wxPanel * Page )
 //{
-//    int index;
 //    int count = Notebook->GetPageCount();
-//    for( index = 0; index < count; index++ )
+//    for( int index = 0; index < count; index++ )
 //    {
 //        if( Notebook->GetPage( index ) == Page )
 //            return index;
@@ -2463,7 +2452,7 @@ void guMainFrame::RemoveTabPanel( wxPanel * panel )
         else
         {
             guConfig * Config = ( guConfig * ) guConfig::Get();
-            Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "mainwindow/notebook" ) );
+            Config->WriteStr( CONFIG_KEY_MAIN_WINDOW_NOTEBOOK_LAST_LAYOUT, m_AuiManager.SavePerspective(), CONFIG_PATH_MAIN_WINDOW_NOTEBOOK );
             wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( m_MainNotebook );
             PaneInfo.Hide();
             m_AuiManager.Update();
@@ -2484,7 +2473,7 @@ void guMainFrame::InsertTabPanel( wxPanel * panel, const int index, const wxStri
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
 
-        LoadPerspective( Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "mainwindow/notebook" ) ) );
+        LoadPerspective( Config->ReadStr( CONFIG_KEY_MAIN_WINDOW_NOTEBOOK_LAST_LAYOUT, wxEmptyString, CONFIG_PATH_MAIN_WINDOW_NOTEBOOK ) );
         wxWindow * OldPage = m_MainNotebook->GetPage( 0 );
         // Was hidden
         if( PageIndex == wxNOT_FOUND )
@@ -2686,8 +2675,6 @@ void guMainFrame::OnCollectionCommand( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnViewRadio( wxCommandEvent &event )
 {
-//	guConfig *      Config = ( guConfig * ) guConfig::Get();
-//	Config->WriteBool( wxT( "ShowRadio" ), event.IsChecked(), wxT( "ViewPanels" ) );
     bool IsEnabled = event.IsChecked();
 
     if( IsEnabled )
@@ -2985,35 +2972,35 @@ void guMainFrame::OnViewFullScreen( wxCommandEvent &event )
     if( IsFull )
     {
         // Save the normal perspective
-        Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "mainwindow" ) );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_VISIBLE_PANELS, m_VisiblePanels, CONFIG_PATH_MAIN_WINDOW );
         wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
         PaneInfo.Caption( _( "Now Playing" ) );
-        Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "mainwindow" ) );
+        Config->WriteStr( CONFIG_KEY_MAIN_WINDOW_LAST_LAYOUT, m_AuiManager.SavePerspective(), CONFIG_PATH_MAIN_WINDOW );
 
         ShowFullScreen( IsFull, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
 
         // Restore the previous full screen layout
-        m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "mainwindow/fullscreen" ) );
+        m_VisiblePanels = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN_VISIBLE_PANELS, guPANEL_MAIN_VISIBLE_DEFAULT, CONFIG_PATH_MAIN_WINDOW_FULLSCREEN );
 
-        wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "mainwindow/fullscreen" ) );
+        wxString Perspective = Config->ReadStr( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN_LAST_LAYOUT, wxEmptyString, CONFIG_PATH_MAIN_WINDOW_FULLSCREEN );
 
         LoadPerspective( Perspective );
     }
     else
     {
         // Save the full screen layout
-        Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "mainwindow/fullscreen" ) );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN_VISIBLE_PANELS, m_VisiblePanels, CONFIG_PATH_MAIN_WINDOW_FULLSCREEN );
         wxAuiPaneInfo &PaneInfo = m_AuiManager.GetPane( wxT( "PlayerPlayList" ) );
         PaneInfo.Caption( _( "Now Playing" ) );
-        Config->WriteStr( wxT( "LastLayout" ), m_AuiManager.SavePerspective(), wxT( "mainwindow/fullscreen" ) );
+        Config->WriteStr( CONFIG_KEY_MAIN_WINDOW_FULLSCREEN_LAST_LAYOUT, m_AuiManager.SavePerspective(), CONFIG_PATH_MAIN_WINDOW_FULLSCREEN );
 
         ShowFullScreen( IsFull, wxFULLSCREEN_NOSTATUSBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION );
 
         // Restore the normal layout
-        m_VisiblePanels = Config->ReadNum( wxT( "VisiblePanels" ), guPANEL_MAIN_VISIBLE_DEFAULT, wxT( "mainwindow" ) );
-        Config->WriteNum( wxT( "VisiblePanels" ), m_VisiblePanels, wxT( "mainwindow" ) );
+        m_VisiblePanels = Config->ReadNum( CONFIG_KEY_MAIN_WINDOW_VISIBLE_PANELS, guPANEL_MAIN_VISIBLE_DEFAULT, CONFIG_PATH_MAIN_WINDOW );
+        Config->WriteNum( CONFIG_KEY_MAIN_WINDOW_VISIBLE_PANELS, m_VisiblePanels, CONFIG_PATH_MAIN_WINDOW );
 
-        wxString Perspective = Config->ReadStr( wxT( "LastLayout" ), wxEmptyString, wxT( "mainwindow" ) );
+        wxString Perspective = Config->ReadStr( CONFIG_KEY_MAIN_WINDOW_LAST_LAYOUT, wxEmptyString, CONFIG_PATH_MAIN_WINDOW );
 
         LoadPerspective( Perspective );
     }
@@ -3449,10 +3436,10 @@ void guMainFrame::OnIdle( wxIdleEvent& WXUNUSED( event ) )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Unbind( wxEVT_IDLE, &guMainFrame::OnIdle, this );
 
-	m_MainStatusBar->Show( Config->ReadBool( wxT( "ShowStatusBar" ), true, wxT( "mainwindow" ) ) );
+    m_MainStatusBar->Show( Config->ReadBool( CONFIG_KEY_MAIN_WINDOW_STATUS_BAR, true, CONFIG_PATH_MAIN_WINDOW ) );
 
     // If the Podcasts update is enable launch it...
-    if( Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) )
+    if( Config->ReadBool( CONFIG_KEY_PODCASTS_UPDATE, true, CONFIG_PATH_PODCASTS ) )
     {
         guLogMessage( wxT( "Updating the podcasts..." ) );
         wxCommandEvent event( wxEVT_MENU, ID_MENU_UPDATE_PODCASTS );
@@ -3493,13 +3480,13 @@ void guMainFrame::CreateTaskBarIcon( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    bool ShowIcon = Config->ReadBool( wxT( "ShowTaskBarIcon" ), true, wxT( "general" ) );
+    bool ShowIcon = Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_TASK_BAR_ICON, true, CONFIG_PATH_GENERAL );
     bool SoundMenuEnabled = false;
 
     if( ShowIcon )
     {
 #ifdef WITH_LIBINDICATE_SUPPORT
-        SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "general" ) );
+        SoundMenuEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL );
         if( SoundMenuEnabled )
         {
             if( !m_IndicateServer )
@@ -3513,7 +3500,7 @@ void guMainFrame::CreateTaskBarIcon( void )
 #else
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
-            SoundMenuEnabled = Config->ReadBool( wxT( "SoundMenuIntegration" ), false, wxT( "general" ) );
+            SoundMenuEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL );
             int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
             if( IsBlacklisted != wxNOT_FOUND )
             {
@@ -3601,7 +3588,7 @@ void guMainFrame::CreateTaskBarIcon( void )
 void guMainFrame::UpdatePodcasts( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config->ReadBool( wxT( "Update" ), true, wxT( "podcasts" ) ) )
+    if( Config->ReadBool( CONFIG_KEY_PODCASTS_UPDATE, true, CONFIG_PATH_PODCASTS ) )
     {
         if( !m_UpdatePodcastsTimer )
         {
@@ -3611,15 +3598,17 @@ void guMainFrame::UpdatePodcasts( void )
         }
 
         wxDateTime LastUpdate;
-        LastUpdate.ParseDateTime( Config->ReadStr( wxT( "LastPodcastUpdate" ),
-                                  wxDateTime::Now().Format(),
-                                  wxT( "podcasts" ) ) );
+        LastUpdate.ParseDateTime( Config->ReadStr( CONFIG_KEY_PODCASTS_LASTUPDATE,
+                                                   wxDateTime::Now().Format(),
+                                                   CONFIG_PATH_PODCASTS ) );
         if( !LastUpdate.IsValid() )
             LastUpdate = wxDateTime::Now();
 
         wxDateTime UpdateTime = wxDateTime::Now();
 
-        switch( Config->ReadNum( wxT( "UpdatePeriod" ), 0, wxT( "podcasts" ) ) )
+        switch( Config->ReadNum( CONFIG_KEY_PODCASTS_UPDATEPERIOD,
+                                 guPODCAST_UPDATE_HOUR,
+                                 CONFIG_PATH_PODCASTS ) )
         {
             case guPODCAST_UPDATE_HOUR :    // Hour
                 UpdateTime.Subtract( wxTimeSpan::Hour() );
@@ -3653,7 +3642,9 @@ void guMainFrame::UpdatePodcasts( void )
                 guLogError( wxT( "Could not create the Update Podcasts thread" ) );
             }
 
-            Config->WriteStr( wxT( "LastPodcastUpdate" ), wxDateTime::Now().Format(), wxT( "podcasts" ) );
+            Config->WriteStr( CONFIG_KEY_PODCASTS_LASTUPDATE,
+                              wxDateTime::Now().Format(),
+                              CONFIG_PATH_PODCASTS );
         }
     }
 }
@@ -3661,7 +3652,6 @@ void guMainFrame::UpdatePodcasts( void )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
 {
-    int Index;
     int Count = items->Count();
     if( Count )
     {
@@ -3671,7 +3661,7 @@ void guMainFrame::AddPodcastsDownloadItems( guPodcastItemArray * items )
         }
 
         guDbPodcasts * DbPodcasts = GetPodcastsDb();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( items->Item( Index ).m_Status != guPODCAST_STATUS_PENDING )
             {
@@ -3804,11 +3794,10 @@ void guMainFrame::ReloadLayoutMenus( void )
     while( m_MenuLayoutDelete->GetMenuItemCount() )
         m_MenuLayoutDelete->Destroy( m_MenuLayoutDelete->FindItemByPosition( 0 ) );
 
-    int Index;
     int Count = m_LayoutNames.Count();
     if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_MenuLayoutLoad->Append( ID_MENU_LAYOUT_LOAD + Index, m_LayoutNames[ Index ], _( "Load this user defined layout" ) );
             m_MenuLayoutDelete->Append( ID_MENU_LAYOUT_DELETE + Index, m_LayoutNames[ Index ], _( "Delete this user defined layout" ) );
@@ -3908,9 +3897,8 @@ bool guMainFrame::SaveCurrentLayout( const wxString &layoutname )
         m_FileBrowserPanel->SaveLayout( RootNode, wxT( "filebrowser" ) );
     }
 
-    int Index;
     int Count = m_MediaViewers.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_MediaViewers[ Index ]->SaveLayout( RootNode );
     }
@@ -4015,9 +4003,8 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                 if( XmlNode && XmlNode->GetName() == wxT( "layout" ) )
                 {
                     wxArrayString OpenViewers;
-                    int Index;
                     int Count = m_MediaViewers.Count();
-                    for( Index = 0; Index < Count; Index++ )
+                    for( int Index = 0; Index < Count; Index++ )
                     {
                         guMediaViewer * CurMediaViewer = m_MediaViewers[ Index ];
                         if( !CurMediaViewer->IsDefault() ||
@@ -4102,10 +4089,9 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                             PanelIds.Add( guPANEL_MAIN_PLAYERVUMETERS );
                             PanelIds.Add( guPANEL_MAIN_LOCATIONS );
                             PanelIds.Add( guPANEL_MAIN_SHOWCOVER );
-                            int Index;
-                            int Count = PanelIds.Count();
 
-                            for( Index = 0; Index < Count; Index++ )
+                            int Count = PanelIds.Count();
+                            for( int Index = 0; Index < Count; Index++ )
                             {
                                 int PanelId = PanelIds[ Index ];
                                 if( ( VisiblePanels & PanelId ) != ( int ) ( m_VisiblePanels & PanelId ) )
@@ -4183,7 +4169,7 @@ void guMainFrame::OnLoadLayout( wxCommandEvent &event )
                     if( OpenViewers.Count() )
                     {
                         Count = OpenViewers.Count();
-                        for( Index = 0; Index < Count; Index++ )
+                        for( int Index = 0; Index < Count; Index++ )
                         {
                             int CollectionIndex = FindCollectionUniqueId( &m_Collections, OpenViewers[ Index ] );
                             event.SetId( ID_COLLECTIONS_BASE + ( CollectionIndex * guCOLLECTION_ACTION_COUNT ) );
@@ -4219,9 +4205,8 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
         m_LocationPanel->Lock();
 
     // Empty the tabs
-    int Index = 0;
     int Count = m_MainNotebook->GetPageCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         RemoveTabPanel( ( wxPanel * ) m_MainNotebook->GetPage( 0 ) );
     }
@@ -4239,7 +4224,7 @@ void guMainFrame::LoadTabsPerspective( const wxString &layout )
 
     // Reset the Menu entry for all elements
 //    ResetViewMenuState();
-    Index = 0;
+    int Index = 0;
     while( true )
     {
         int FindPos = TabsLayout.Find( wxString::Format( wxT( "%02i[" ), Index ) );
@@ -4430,7 +4415,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
                 m_PlayerVumeters = new guPlayerVumeters( this );
                 m_AuiManager.AddPane( m_PlayerVumeters, wxAuiPaneInfo().Name( wxT( "PlayerVumeters" ) ).Caption( _( "VU Meters" ) ).
                     DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
-                    CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+                    CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
                     Left().Layer( 0 ).Row( 1 ).Position( 1 ).Hide() );
                 if( m_PlayerPanel )
                     m_PlayerPanel->SetPlayerVumeters( m_PlayerVumeters );
@@ -4448,7 +4433,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
 
                 m_AuiManager.AddPane( m_LocationPanel, wxAuiPaneInfo().Name( wxT( "MainSources" ) ).Caption( _( "Sources" ) ).
                     DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 20, 20 ).
-                    CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+                    CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
                     Left().Layer( 3 ).Row( 0 ).Position( 0 ).Hide() );
             }
             PaneName = wxT( "MainSources" );
@@ -4464,7 +4449,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
 
                 m_AuiManager.AddPane( m_CoverPanel, wxAuiPaneInfo().Name( wxT( "MainShowCover" ) ).Caption( _( "Cover" ) ).
                     DestroyOnClose( false ).Resizable( true ).Floatable( true ).MinSize( 50, 50 ).
-                    CloseButton( Config->ReadBool( wxT( "ShowPaneCloseButton" ), true, wxT( "general" ) ) ).
+                    CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
                     Left().Layer( 3 ).Row( 0 ).Position( 0 ).Hide() );
             }
             PaneName = wxT( "MainShowCover" );
@@ -4484,7 +4469,7 @@ void guMainFrame::ShowMainPanel( const int panelid, const bool show )
         {
             PaneInfo.Show();
             guConfig * Config = ( guConfig * ) guConfig::Get();
-            DoShowCaptions( Config->ReadBool( wxT( "ShowCaptions" ), true, wxT( "mainwindow" ) ) );
+            DoShowCaptions( Config->ReadBool( CONFIG_KEY_MAIN_WINDOW_CAPTIONS, true, CONFIG_PATH_MAIN_WINDOW ) );
         }
         else
         {
@@ -4520,9 +4505,8 @@ void guMainFrame::UpdatedTracks( int updatedby, const guTrackArray * tracks )
 
     if( updatedby != guUPDATED_TRACKS_MEDIAVIEWER )
     {
-        int Index;
         int Count = m_MediaViewers.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_MediaViewers[ Index ]->UpdatedTracks( updatedby, tracks );
         }
@@ -4595,17 +4579,16 @@ void guMainFrame::OnPlayerPanelCoverChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::CreateCopyToMenu( wxMenu * menu )
 {
-    int Index;
     int Count;
     wxMenuItem * MenuItem;
     wxMenu * SubMenu = new wxMenu();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString CopyToOptions = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+    wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
 
     if( ( Count = CopyToOptions.Count() ) )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxArrayString CurOption = wxStringTokenize( CopyToOptions[ Index ], wxT( ":") );
             MenuItem = new wxMenuItem( SubMenu, ID_COPYTO_BASE + Index, unescape_configlist_str( CurOption[ 0 ] ), _( "Copy the current selected songs to a directory or device" ) );
@@ -4615,7 +4598,7 @@ void guMainFrame::CreateCopyToMenu( wxMenu * menu )
 
     bool SeparatorAdded = false;
     Count = m_MediaViewers.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guMediaViewer * MediaViewer = m_MediaViewers[ Index ];
         int Type = MediaViewer->GetType();
@@ -4788,9 +4771,8 @@ void guMainFrame::OnConfigUpdated( wxCommandEvent &event )
         Config->LoadCollections( &Collections, guMEDIA_COLLECTION_TYPE_IPOD );
 
         //wxArrayInt DeletedIndex;
-        int Index;
         int Count = m_Collections.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( FindCollectionUniqueId( &Collections, m_Collections[ Index ].m_UniqueId ) == wxNOT_FOUND )
             {
@@ -4808,7 +4790,7 @@ void guMainFrame::OnConfigUpdated( wxCommandEvent &event )
         m_Collections = Collections;
         Count = m_Collections.Count();
         int CollectionBaseCommand = ID_COLLECTIONS_BASE;
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guMediaCollection &Collection = m_Collections[ Index ];
             guMediaViewer * MediaViewer = FindCollectionMediaViewer( Collection.m_UniqueId );
@@ -4833,8 +4815,8 @@ void guMainFrame::OnConfigUpdated( wxCommandEvent &event )
     if( Flags & guPREFERENCE_PAGE_FLAG_AUDIOSCROBBLE )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        bool AudioScrobbleEnabled = Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "lastfm" ) ) ||
-                                 Config->ReadBool( wxT( "SubmitEnabled" ), false, wxT( "librefm" ) );
+        bool AudioScrobbleEnabled = Config->ReadBool( CONFIG_KEY_LASTFM_ENABLED, false, CONFIG_PATH_LASTFM ) ||
+                                 Config->ReadBool( CONFIG_KEY_LIBREFM_ENABLED, false, CONFIG_PATH_LIBREFM );
         m_MenuAudioScrobble->Check( AudioScrobbleEnabled );
     }
 }
@@ -4896,9 +4878,8 @@ void guMainFrame::SaveCollections( void )
 // -------------------------------------------------------------------------------- //
 void inline AddCollectionCoverNames( wxArrayString &covernames, const guMediaCollection &mediacollection )
 {
-    int Index;
     int Count = mediacollection.m_CoverWords.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxString CoverName = mediacollection.m_CoverWords[ Index ];
         if( covernames.Index( CoverName ) == wxNOT_FOUND )
@@ -4909,9 +4890,8 @@ void inline AddCollectionCoverNames( wxArrayString &covernames, const guMediaCol
 // -------------------------------------------------------------------------------- //
 void guMainFrame::GetCollectionsCoverNames( wxArrayString &covernames )
 {
-    int Index;
     int Count = m_Collections.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         AddCollectionCoverNames( covernames, m_Collections[ Index ] );
     }
@@ -4973,11 +4953,10 @@ void guMainFrame::AddPendingUpdateTrack( const wxString &filename, const wxImage
 void guMainFrame::CheckPendingUpdates( const guTrack * track )
 {
     wxMutexLocker Lock( m_PendingUpdateMutex );
-    int Index;
     int Count = m_PendingUpdateTracks.Count();
     if( Count )
     {
-        for( Index = Count - 1; Index >= 0; Index-- )
+        for( int Index = Count - 1; Index >= 0; Index-- )
         {
             bool RemoveTrack = false;
             wxString CurFile = m_PendingUpdateFiles[ Index ];

@@ -1160,17 +1160,16 @@ bool guMediaCtrl::Seek( wxFileOffset where, const bool accurate )
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config  = ( guConfig * ) guConfig::Get();
-    m_ForceGapless          = Config->ReadBool( wxT( "ForceGapless" ), false, wxT( "crossfader" ) );
-    m_FadeOutTime           = Config->ReadNum( wxT( "FadeOutTime" ), 50, wxT( "crossfader" ) ) * 100;
-    m_FadeInTime            = Config->ReadNum( wxT( "FadeInTime" ), 10, wxT( "crossfader" ) ) * 100;
-    m_FadeInVolStart        = double( Config->ReadNum( wxT( "FadeInVolStart" ), 80, wxT( "crossfader" ) ) ) / 100.0;
-    m_FadeInVolTriger       = double( Config->ReadNum( wxT( "FadeInVolTriger" ), 50, wxT( "crossfader" ) ) ) / 100.0;
-    m_BufferSize            = Config->ReadNum( wxT( "BufferSize" ), 64, wxT( "general" ) );
-    m_ReplayGainMode        = Config->ReadNum( wxT( "ReplayGainMode" ), 0, wxT( "general" ) );
-    m_ReplayGainPreAmp      = double( Config->ReadNum( wxT( "ReplayGainPreAmp" ), 6, wxT( "general" ) ) );
-    //m_ReplayGainFallback    = double( Config->ReadNum( wxT( "ReplayGainFallback" ), -6, wxT( "General" ) ) );
-    m_OutputDevice          = Config->ReadNum( wxT( "OutputDevice" ), guOUTPUT_DEVICE_AUTOMATIC, wxT( "playback" ) );
-    m_OutputDeviceName      = Config->ReadStr( wxT( "OutputDeviceName" ), wxEmptyString, wxT( "playback" ) );
+    m_ForceGapless          = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
+    m_FadeOutTime           = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
+    m_FadeInTime            = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_TIME, 10, CONFIG_PATH_CROSSFADER ) * 100;
+    m_FadeInVolStart        = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, 80, CONFIG_PATH_CROSSFADER ) ) / 100.0;
+    m_FadeInVolTriger       = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_TRIGER, 50, CONFIG_PATH_CROSSFADER ) ) / 100.0;
+    m_BufferSize            = Config->ReadNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, 64, CONFIG_PATH_GENERAL );
+    m_ReplayGainMode        = Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE, 0, CONFIG_PATH_GENERAL );
+    m_ReplayGainPreAmp      = double( Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, 6, CONFIG_PATH_GENERAL ) );
+    m_OutputDevice          = Config->ReadNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, guOUTPUT_DEVICE_AUTOMATIC, CONFIG_PATH_PLAYBACK );
+    m_OutputDeviceName      = Config->ReadStr( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE_NAME, wxEmptyString, CONFIG_PATH_PLAYBACK );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2688,12 +2687,12 @@ guMediaRecordCtrl::~guMediaRecordCtrl()
 void guMediaRecordCtrl::UpdatedConfig( void )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_MainPath = Config->ReadStr( wxT( "Path" ), guPATH_DEFAULT_RECORDINGS, wxT( "record" ) );
-    m_Format = Config->ReadNum( wxT( "Format" ), guRECORD_FORMAT_MP3, wxT( "record" ) );
-    m_Quality = Config->ReadNum( wxT( "Quality" ), guRECORD_QUALITY_NORMAL, wxT( "record" ) );
-    m_SplitTracks = Config->ReadBool( wxT( "Split" ), false, wxT( "record" ) );
-    m_DeleteTracks = Config->ReadBool( wxT( "DeleteTracks" ), false, wxT( "record" ) );
-    m_DeleteTime = Config->ReadNum( wxT( "DeleteTime" ), 55, wxT( "record" ) ) * 1000;
+    m_MainPath = Config->ReadStr( CONFIG_KEY_RECORD_PATH, guPATH_DEFAULT_RECORDINGS, CONFIG_PATH_RECORD );
+    m_Format = Config->ReadNum( CONFIG_KEY_RECORD_FORMAT, guRECORD_FORMAT_MP3, CONFIG_PATH_RECORD );
+    m_Quality = Config->ReadNum( CONFIG_KEY_RECORD_QUALITY, guRECORD_QUALITY_NORMAL, CONFIG_PATH_RECORD );
+    m_SplitTracks = Config->ReadBool( CONFIG_KEY_RECORD_SPLIT, false, CONFIG_PATH_RECORD );
+    m_DeleteTracks = Config->ReadBool( CONFIG_KEY_RECORD_DELETE, false, CONFIG_PATH_RECORD );
+    m_DeleteTime = Config->ReadNum( CONFIG_KEY_RECORD_DELETE_TIME, 55, CONFIG_PATH_RECORD ) * 1000;
 
     if( !m_MainPath.EndsWith( wxT( "/" ) ) )
         m_MainPath += wxT( "/" );

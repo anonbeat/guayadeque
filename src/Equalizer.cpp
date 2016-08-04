@@ -35,12 +35,11 @@ WX_DEFINE_OBJARRAY(guEQPresetArray);
 bool ReadEQPresets( const wxString &value, wxArrayInt &preset )
 {
     long CurVal;
-    int index;
     int count;
     wxArrayString Values = wxStringTokenize( value, wxT( "," ), wxTOKEN_RET_EMPTY_ALL );
     if( ( count = Values.Count() ) == guEQUALIZER_BAND_COUNT )
     {
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             if( Values[ index ].ToLong( &CurVal ) )
             {
@@ -62,11 +61,11 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "PosX" ), -1, wxT( "equalizer" ) );
-    WindowPos.y = Config->ReadNum( wxT( "PosY" ), -1, wxT( "equalizer" ) );
+    WindowPos.x = Config->ReadNum( CONFIG_KEY_EQUALIZER_POS_X, -1, CONFIG_PATH_EQUALIZER );
+    WindowPos.y = Config->ReadNum( CONFIG_KEY_EQUALIZER_POS_Y, -1, CONFIG_PATH_EQUALIZER );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "Width" ), 400, wxT( "equalizer" ) );
-    WindowSize.y = Config->ReadNum( wxT( "Height" ), 250, wxT( "equalizer" ) );
+    WindowSize.x = Config->ReadNum( CONFIG_KEY_EQUALIZER_WIDTH, 400, CONFIG_PATH_EQUALIZER );
+    WindowSize.y = Config->ReadNum( CONFIG_KEY_EQUALIZER_HEIGHT, 250, CONFIG_PATH_EQUALIZER );
 
     Create( parent, wxID_ANY, _( "Equalizer" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
 
@@ -115,7 +114,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     TopSizer->Add( PresetLabel, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
 
     m_PresetComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
-    wxString LastPreset = Config->ReadStr( wxT( "LastEqPreset" ), wxEmptyString, wxT( "equalizer" ) );
+    wxString LastPreset = Config->ReadStr( CONFIG_KEY_EQUALIZER_LAST_PRESET, wxEmptyString, CONFIG_PATH_EQUALIZER );
     int LastPresetIndex = wxNOT_FOUND;
     int index;
     int count = m_EQPresets.Count();
@@ -413,22 +412,21 @@ guEq10Band::~guEq10Band()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "PosX" ), WindowPos.x, wxT( "equalizer" ) );
-    Config->WriteNum( wxT( "PosY" ), WindowPos.y, wxT( "equalizer" ) );
+    Config->WriteNum( CONFIG_KEY_EQUALIZER_POS_X, WindowPos.x, CONFIG_PATH_EQUALIZER );
+    Config->WriteNum( CONFIG_KEY_EQUALIZER_POS_Y, WindowPos.y, CONFIG_PATH_EQUALIZER );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "Width" ), WindowSize.x, wxT( "equalizer" ) );
-    Config->WriteNum( wxT( "Height" ), WindowSize.y, wxT( "equalizer" ) );
+    Config->WriteNum( CONFIG_KEY_EQUALIZER_WIDTH, WindowSize.x, CONFIG_PATH_EQUALIZER );
+    Config->WriteNum( CONFIG_KEY_EQUALIZER_HEIGHT, WindowSize.y, CONFIG_PATH_EQUALIZER );
 
-    Config->WriteStr( wxT( "LastEqPreset" ), m_BandChanged ? wxT( "" ) : m_PresetComboBox->GetValue(), wxT( "equalizer" ) );
+    Config->WriteStr( CONFIG_KEY_EQUALIZER_LAST_PRESET, m_BandChanged ? wxT( "" ) : m_PresetComboBox->GetValue(), CONFIG_PATH_EQUALIZER );
 
     wxFileConfig * EqConfig = new wxFileConfig( wxEmptyString, wxEmptyString, wxGetHomeDir() + wxT( "/.guayadeque/equalizers.conf" ) );
     if( EqConfig )
     {
         EqConfig->DeleteGroup( wxT( "Equalizers" ) );
         EqConfig->SetPath( wxT( "Equalizers" ) );
-        int index;
         int count = m_EQPresets.Count();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             if( !EqConfig->Write( m_EQPresets[ index ].m_Name, wxString::Format( wxT( "%i,%i,%i,%i,%i,%i,%i,%i,%i,%i" ),
               m_EQPresets[ index ].m_Sets[ 0 ],

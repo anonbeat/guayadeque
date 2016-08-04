@@ -21,16 +21,18 @@
 
 #include "Config.h"
 #include "EventCommandIds.h"
+#include "MediaViewer.h"
 
 #include <wx/filedlg.h>
 
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
-guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int albumid ) :
+guSelCoverFile::guSelCoverFile( wxWindow * parent, guMediaViewer * mediaviewer, const int albumid ) :
     wxDialog( parent, wxID_ANY, _( "Select Cover File" ), wxDefaultPosition, wxSize( 400, 132 ), wxDEFAULT_DIALOG_STYLE )
 {
-    m_Db = db;
+    m_MediaViewer = mediaviewer;
+    m_Db = mediaviewer->GetDb();
     if( albumid != wxNOT_FOUND )
     {
         wxString AlbumName;
@@ -66,7 +68,7 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 	MainSizer->Add( ControlsSizer, 1, wxEXPAND, 5 );
 
 	m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "general" ) ) );
+    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( CONFIG_KEY_GENERAL_EMBED_TO_FILES, false, CONFIG_PATH_GENERAL ) );
 	MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
 	wxStdDialogButtonSizer * StdBtnSizer = new wxStdDialogButtonSizer();
@@ -97,7 +99,7 @@ guSelCoverFile::guSelCoverFile( wxWindow * parent, guDbLibrary * db, const int a
 guSelCoverFile::~guSelCoverFile()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "general" ) );
+    Config->WriteBool( CONFIG_KEY_GENERAL_EMBED_TO_FILES, m_EmbedToFilesChkBox->GetValue(), CONFIG_PATH_GENERAL );
 
     m_SelFileBtn->Unbind( wxEVT_BUTTON, &guSelCoverFile::OnSelFileClicked, this );
     m_FileLink->Unbind( wxEVT_TEXT, &guSelCoverFile::OnPathChanged, this );
@@ -108,9 +110,12 @@ guSelCoverFile::~guSelCoverFile()
 // -------------------------------------------------------------------------------- //
 void guSelCoverFile::OnSelFileClicked( wxCommandEvent& event )
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
-    wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+    wxString CoverName = m_MediaViewer->CoverName();
+    if( CoverName.IsEmpty() )
+    {
+        CoverName = wxT( "cover" );
+    }
+    CoverName += wxT( ".jpg " );
 
     wxFileDialog * FileDialog = new wxFileDialog( this, _( "Select the cover filename" ),
         m_AlbumPath, CoverName, wxT( "*.jpg;*.JPG;*.jpeg;*.JPEG;*.png;*,PNG" ),

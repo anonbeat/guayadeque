@@ -133,7 +133,7 @@ void guCoverFrame::SetBitmap( const guSongCoverType CoverType, const wxString &C
     if( CoverImage.IsOk() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
+        int CoverFrame = Config->ReadNum( CONFIG_KEY_GENERAL_COVER_FRAME, guCOVERFRAME_DEFAULT, CONFIG_PATH_GENERAL );
         if( CoverFrame == guCOVERFRAME_DEFAULT )
         {
             wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );

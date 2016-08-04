@@ -90,8 +90,8 @@ guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_StationsOrder = Config->ReadNum( wxT( "StationsOrder" ), 0, wxT( "radios" ) );
-        m_StationsOrderDesc = Config->ReadBool( wxT( "StationsOrderDesc" ), false, wxT( "radios" ) );
+        m_StationsOrder = Config->ReadNum( CONFIG_KEY_RADIOS_STATIONS_ORDER, 0, CONFIG_PATH_RADIOS );
+        m_StationsOrderDesc = Config->ReadBool( CONFIG_KEY_RADIOS_STATIONS_ORDERDESC, false, CONFIG_PATH_RADIOS );
     }
     m_RadioSource = guRADIO_SOURCE_SHOUTCAST_GENRE;
 
@@ -106,8 +106,8 @@ guDbRadios::~guDbRadios()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        Config->WriteNum( wxT( "StationsOrder" ), m_StationsOrder, wxT( "radios" ) );
-        Config->WriteBool( wxT( "StationsOrderDesc" ), m_StationsOrderDesc, wxT( "radios" ) );
+        Config->WriteNum( CONFIG_KEY_RADIOS_STATIONS_ORDER, m_StationsOrder, CONFIG_PATH_RADIOS );
+        Config->WriteBool( CONFIG_KEY_RADIOS_STATIONS_ORDERDESC, m_StationsOrderDesc, CONFIG_PATH_RADIOS );
     }
 }
 

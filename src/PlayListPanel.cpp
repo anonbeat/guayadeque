@@ -954,7 +954,7 @@ void guPlayListPanel::OnPLNamesActivated( wxTreeEvent& event )
             guConfig * Config = ( guConfig * ) guConfig::Get();
             if( Config )
             {
-                if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+                if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
                 {
                     m_PlayerPanel->AddToPlayList( Tracks );
                 }
@@ -1283,7 +1283,7 @@ void guPlayListPanel::OnPLTracksActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Tracks );
             }

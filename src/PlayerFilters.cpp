@@ -66,8 +66,8 @@ guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 
     UpdateFilters();
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_FilterDenyChoice->SetSelection( Config->ReadNum( wxT( "PlayListDenyFilter" ), 0, wxT( "playback" ) ) );
-    m_FilterAllowChoice->SetSelection( Config->ReadNum( wxT( "PlayListAllowFilter" ), 0, wxT( "playback" ) ) );
+    m_FilterDenyChoice->SetSelection( Config->ReadNum( CONFIG_KEY_PLAYBACK_PLAYLIST_DENY_FILTER, 0, CONFIG_PATH_PLAYBACK ) );
+    m_FilterAllowChoice->SetSelection( Config->ReadNum( CONFIG_KEY_PLAYBACK_PLAYLIST_ALLOW_FILTER, 0, CONFIG_PATH_PLAYBACK ) );
 
 }
 
@@ -75,8 +75,8 @@ guPlayerFilters::guPlayerFilters( wxWindow * parent, guDbLibrary * db ) :
 guPlayerFilters::~guPlayerFilters()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "PlayListAllowFilter" ), m_FilterAllowChoice->GetSelection(), wxT( "playback" ) );
-    Config->WriteNum( wxT( "PlayListDenyFilter" ), m_FilterDenyChoice->GetSelection(), wxT( "playback" ) );
+    Config->WriteNum( CONFIG_KEY_PLAYBACK_PLAYLIST_ALLOW_FILTER, m_FilterAllowChoice->GetSelection(), CONFIG_PATH_PLAYBACK );
+    Config->WriteNum( CONFIG_KEY_PLAYBACK_PLAYLIST_DENY_FILTER, m_FilterDenyChoice->GetSelection(), CONFIG_PATH_PLAYBACK );
 }
 
 // -------------------------------------------------------------------------------- //

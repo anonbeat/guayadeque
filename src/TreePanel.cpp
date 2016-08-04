@@ -323,8 +323,8 @@ void AddTreeViewCommands( wxMenu * Menu, int ItemType )
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
+        wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
+        wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
@@ -715,7 +715,7 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+        wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
         //guLogMessage( wxT( "CommandId: %u" ), Index );
         Index -= ID_COMMANDS_BASE;
@@ -1275,7 +1275,7 @@ void guTreeViewPanel::OnTVTracksActivated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            if( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "general" ) ) )
+            if( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) )
             {
                 m_PlayerPanel->AddToPlayList( Tracks );
             }

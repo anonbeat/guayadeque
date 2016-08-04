@@ -77,12 +77,12 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
     m_PlayListPanel = NULL;
     m_DoneClearSearchText = false;
 
-    m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) );
-    m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) );
+    m_InstantSearchEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, true, CONFIG_PATH_GENERAL );
+    m_EnterSelectSearchEnabled = !Config->ReadBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, false, CONFIG_PATH_GENERAL );
 
     if( !m_MediaCollection->m_DefaultCopyAction.IsEmpty() )
     {
-        wxArrayString Options = Config->ReadAStr( wxT( "Option" ), wxEmptyString, wxT( "copyto/options" ) );
+        wxArrayString Options = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
         int Index;
         int Count;
 
@@ -334,8 +334,8 @@ void guMediaViewer::OnConfigUpdated( wxCommandEvent &event )
     if( Flags & guPREFERENCE_PAGE_FLAG_GENERAL )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        m_InstantSearchEnabled = Config->ReadBool( wxT( "InstantTextSearchEnabled" ), true, wxT( "general" ) );
-        m_EnterSelectSearchEnabled = !Config->ReadBool( wxT( "TextSearchEnterRelax" ), false, wxT( "general" ) );
+        m_InstantSearchEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, true, CONFIG_PATH_GENERAL );
+        m_EnterSelectSearchEnabled = !Config->ReadBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, false, CONFIG_PATH_GENERAL );
     }
 
     if( Flags & guPREFERENCE_PAGE_FLAG_ACCELERATORS )
@@ -736,7 +736,7 @@ void guMediaViewer::OnSearchSelected( wxCommandEvent& event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        PlayAllTracks( Config->ReadBool( wxT( "DefaultActionEnqueue" ), false, wxT( "General" ) ) );
+        PlayAllTracks( Config->ReadBool( CONFIG_KEY_GENERAL_ACTION_ENQUEUE, false, CONFIG_PATH_GENERAL ) );
     }
 }
 
@@ -1506,7 +1506,7 @@ void guMediaViewer::DownloadAlbumCover( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::SelectAlbumCover( const int albumid )
 {
-    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, m_Db, albumid );
+    guSelCoverFile * SelCoverFile = new guSelCoverFile( this, this, albumid );
     if( SelCoverFile )
     {
         if( SelCoverFile->ShowModal() == wxID_OK )

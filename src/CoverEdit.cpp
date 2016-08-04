@@ -111,7 +111,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_left ), wxDefaultPosition, wxSize( 32, 96 ), wxBU_AUTODRAW );
     CoverSizer->Add( m_PrevButton, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-    int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
+    int CoverFrame = Config->ReadNum( CONFIG_KEY_GENERAL_COVER_FRAME, guCOVERFRAME_DEFAULT, CONFIG_PATH_GENERAL );
     wxImage DefaultCover( guImage( CoverFrame ? guIMAGE_INDEX_blank_cd_cover : guIMAGE_INDEX_no_cover ) );
     
     if( !CoverFrame ) DefaultCover.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
@@ -149,7 +149,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     MainSizer->Add( GaugeSizer, 0, wxEXPAND, 5 );
 
     m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( wxT( "EmbedToFiles" ), false, wxT( "general" ) ) );
+    m_EmbedToFilesChkBox->SetValue( Config->ReadBool( CONFIG_KEY_GENERAL_EMBED_TO_FILES, false, CONFIG_PATH_GENERAL ) );
     MainSizer->Add( m_EmbedToFilesChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
     wxStdDialogButtonSizer * ButtonsSizer;
@@ -174,7 +174,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     m_AlbumTextCtrl->SetValue( Album );
     m_CurrentImage = 0;
 
-    m_EngineIndex = Config->ReadNum( wxT( "CoverSearchEngine" ), 0, wxT( "general" ) );
+    m_EngineIndex = Config->ReadNum( CONFIG_KEY_GENERAL_COVER_SEARCH_ENGINE, 0, CONFIG_PATH_GENERAL );
     m_EngineChoice->SetSelection( m_EngineIndex );
 
     // Bind Events
@@ -205,8 +205,8 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 guCoverEditor::~guCoverEditor()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "CoverSearchEngine" ), m_EngineChoice->GetSelection(), wxT( "general" ) );
-    Config->WriteBool( wxT( "EmbedToFiles" ), m_EmbedToFilesChkBox->GetValue(), wxT( "general" ) );
+    Config->WriteNum( CONFIG_KEY_GENERAL_COVER_SEARCH_ENGINE, m_EngineChoice->GetSelection(), CONFIG_PATH_GENERAL );
+    Config->WriteBool( CONFIG_KEY_GENERAL_EMBED_TO_FILES, m_EmbedToFilesChkBox->GetValue(), CONFIG_PATH_GENERAL );
 
     m_DownloadThreadMutex.Lock();
     int index;
@@ -365,7 +365,7 @@ void guCoverEditor::UpdateCoverBitmap( void )
     m_InfoTextCtrl->SetLabel( wxString::Format( wxT( "%02u/%02lu" ),  m_AlbumCovers.Count() ? m_CurrentImage + 1 : 0, m_AlbumCovers.Count() ) );
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    int CoverFrame = Config->ReadNum( wxT( "CoverFrame" ), guCOVERFRAME_DEFAULT, wxT( "general" ) );
+    int CoverFrame = Config->ReadNum( CONFIG_KEY_GENERAL_COVER_FRAME, guCOVERFRAME_DEFAULT, CONFIG_PATH_GENERAL );
     if( CoverFrame == guCOVERFRAME_DEFAULT )
     {
         wxBitmap * BlankCD = new wxBitmap( guImage( guIMAGE_INDEX_blank_cd_cover ) );

@@ -185,10 +185,10 @@ guLastFM::guLastFM()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
-        m_UserName    = Config->ReadStr( wxT( "UserName" ), wxEmptyString, wxT( "lastfm" ) );
-        m_Password    = Config->ReadStr( wxT( "Password" ), wxEmptyString, wxT( "lastfm" ) );
-        m_AuthSession = Config->ReadStr( wxT( "SessionKey" ), wxEmptyString, wxT( "lastfm" ) );
-        m_Language    = Config->ReadStr( wxT( "Language" ), wxEmptyString, wxT( "lastfm" ) );
+        m_UserName    = Config->ReadStr( CONFIG_KEY_LASTFM_USERNAME, wxEmptyString, CONFIG_PATH_LASTFM );
+        m_Password    = Config->ReadStr( CONFIG_KEY_LASTFM_PASSWORD, wxEmptyString, CONFIG_PATH_LASTFM );
+        m_AuthSession = Config->ReadStr( CONFIG_KEY_LASTFM_SESSIONKEY, wxEmptyString, CONFIG_PATH_LASTFM );
+        m_Language    = Config->ReadStr( CONFIG_KEY_LASTFM_LANGUAGE, wxEmptyString, CONFIG_PATH_LASTFM );
     }
     m_ErrorCode = 0;
     //DoAuthentication();

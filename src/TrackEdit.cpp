@@ -93,11 +93,11 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxPoint WindowPos;
-    WindowPos.x = Config->ReadNum( wxT( "TrackEditPosX" ), -1, wxT( "positions" ) );
-    WindowPos.y = Config->ReadNum( wxT( "TrackEditPosY" ), -1, wxT( "positions" ) );
+    WindowPos.x = Config->ReadNum( CONFIG_KEY_POSITIONS_TRACKEDIT_POSX, -1, CONFIG_PATH_POSITIONS );
+    WindowPos.y = Config->ReadNum( CONFIG_KEY_POSITIONS_TRACKEDIT_POSY, -1, CONFIG_PATH_POSITIONS );
     wxSize WindowSize;
-    WindowSize.x = Config->ReadNum( wxT( "TrackEditSizeWidth" ), 625, wxT( "positions" ) );
-    WindowSize.y = Config->ReadNum( wxT( "TrackEditSizeHeight" ), 440, wxT( "positions" ) );
+    WindowSize.x = Config->ReadNum( CONFIG_KEY_POSITIONS_TRACKEDIT_WIDTH, 625, CONFIG_PATH_POSITIONS );
+    WindowSize.y = Config->ReadNum( CONFIG_KEY_POSITIONS_TRACKEDIT_HEIGHT, 440, CONFIG_PATH_POSITIONS );
 
     //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
     Create( parent, wxID_ANY, _( "Songs Editor" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
@@ -724,13 +724,13 @@ guTrackEditor::~guTrackEditor()
 {
     // Save the window position and size
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteNum( wxT( "TrackEditSashPos" ), m_SongListSplitter->GetSashPosition(), wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_TRACKEDIT_SASHPOS, m_SongListSplitter->GetSashPosition(), CONFIG_PATH_POSITIONS );
     wxPoint WindowPos = GetPosition();
-    Config->WriteNum( wxT( "TrackEditPosX" ), WindowPos.x, wxT( "positions" ) );
-    Config->WriteNum( wxT( "TrackEditPosY" ), WindowPos.y, wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_TRACKEDIT_POSX, WindowPos.x, CONFIG_PATH_POSITIONS );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_TRACKEDIT_POSY, WindowPos.y, CONFIG_PATH_POSITIONS );
     wxSize WindowSize = GetSize();
-    Config->WriteNum( wxT( "TrackEditSizeWidth" ), WindowSize.x, wxT( "positions" ) );
-    Config->WriteNum( wxT( "TrackEditSizeHeight" ), WindowSize.y, wxT( "positions" ) );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_TRACKEDIT_WIDTH, WindowSize.x, CONFIG_PATH_POSITIONS );
+    Config->WriteNum( CONFIG_KEY_POSITIONS_TRACKEDIT_HEIGHT, WindowSize.y, CONFIG_PATH_POSITIONS );
 
     // Unbind Events
     Unbind( wxEVT_BUTTON, &guTrackEditor::OnOKButton, this, wxID_OK );
@@ -1342,12 +1342,22 @@ void guTrackEditor::OnSaveImageClicked( wxCommandEvent &event )
 {
     wxASSERT( m_CurItem >= 0 );
 
-    wxImage * pCurImage = ( * m_Images )[ m_CurItem ];
+    wxImage * pCurImage = m_Images->Item( m_CurItem );
+    guTrack * CurTrack = &m_Items->Item( m_CurItem );
     wxASSERT( pCurImage );
 
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    wxArrayString SearchCovers = Config->ReadAStr( wxT( "Word" ), wxEmptyString, wxT( "coversearch" ) );
-    wxString CoverName = ( SearchCovers.Count() ? SearchCovers[ 0 ] : wxT( "cover" ) ) + wxT( ".jpg" );
+    wxString CoverName;
+    if( CurTrack->m_MediaViewer )
+    {
+        CoverName = CurTrack->m_MediaViewer->CoverName();
+    }
+
+    if( CoverName.IsEmpty() )
+    {
+        CoverName = wxT( "cover" );
+    }
+
+    CoverName += wxT( ".jpg" );
 
     wxFileDialog * FileDialog = new wxFileDialog( this,
         wxT( "Select the filename to save" ),
@@ -1866,7 +1876,7 @@ void guTrackEditor::SongListSplitterOnIdle( wxIdleEvent& )
 {
     //guLogMessage( wxT( "SplitterOnIdle..." ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    m_SongListSplitter->SetSashPosition( Config->ReadNum( wxT( "TrackEditSashPos" ), 200, wxT( "positions" ) ) );
+    m_SongListSplitter->SetSashPosition( Config->ReadNum( CONFIG_KEY_POSITIONS_TRACKEDIT_SASHPOS, 200, CONFIG_PATH_POSITIONS ) );
     // Idle Events
     m_SongListSplitter->Unbind( wxEVT_IDLE, &guTrackEditor::SongListSplitterOnIdle, this );
 

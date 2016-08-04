@@ -86,36 +86,9 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "playback" ) );
-    m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) );
-    m_DelTracksPLayed = Config->ReadNum( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) );
-
-//    int Count;
-//    int Index;
-//    guMainApp * MainApp = ( guMainApp * ) wxTheApp;
-//    if( MainApp && MainApp->argc > 1 )
-//    {
-//        Count = MainApp->argc;
-//        for( Index = 1; Index < Count; Index++ )
-//        {
-//            //guLogMessage( wxT( "%u-%u %s" ), Index, MainApp->argc, MainApp->argv[ Index ] );
-//            AddPlayListItem( MainApp->argv[ Index ], guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
-//            m_StartPlaying = true;
-//        }
-//    }
-//    else
-//    {
-//        LoadPlaylistTracks();
-//    }
-//
-//    wxCommandEvent event( wxEVT_MENU, ID_PLAYER_PLAYLIST_UPDATELIST );
-//    //event.SetEventObject( ( wxObject * ) this );
-//    event.SetInt( 1 );
-//    wxPostEvent( this, event );
-//
-//    m_CurItem = Config->ReadNum( wxT( "CurItem" ), wxNOT_FOUND, wxT( "playlist/nowplaying" ) );
-//    if( ( size_t ) m_CurItem > m_Items.Count() )
-//        m_CurItem = wxNOT_FOUND;
+    m_MaxPlayedTracks = Config->ReadNum( CONFIG_KEY_PLAYBACK_MAX_TRACKS_PLAYED, 15, CONFIG_PATH_PLAYBACK );
+    m_MinPlayListTracks = Config->ReadNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, 4, CONFIG_PATH_PLAYBACK );
+    m_DelTracksPLayed = Config->ReadNum( CONFIG_KEY_PLAYBACK_DEL_TRACKS_PLAYED, false, CONFIG_PATH_PLAYBACK );
 
     m_PlayBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_light_play ) );
     m_StopBitmap = new wxBitmap( guImage( guIMAGE_INDEX_player_tiny_red_stop ) );
@@ -240,9 +213,9 @@ void guPlayList::OnConfigUpdated( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            m_MaxPlayedTracks = Config->ReadNum( wxT( "MaxTracksPlayed" ), 15, wxT( "playback" ) );
-            m_MinPlayListTracks = Config->ReadNum( wxT( "MinTracksToPlay" ), 4, wxT( "playback" ) );
-            m_DelTracksPLayed = Config->ReadNum( wxT( "DelTracksPlayed" ), false, wxT( "playback" ) );
+            m_MaxPlayedTracks = Config->ReadNum( CONFIG_KEY_PLAYBACK_MAX_TRACKS_PLAYED, 15, CONFIG_PATH_PLAYBACK );
+            m_MinPlayListTracks = Config->ReadNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, 4, CONFIG_PATH_PLAYBACK );
+            m_DelTracksPLayed = Config->ReadNum( CONFIG_KEY_PLAYBACK_DEL_TRACKS_PLAYED, false, CONFIG_PATH_PLAYBACK );
         }
     }
 
@@ -258,7 +231,7 @@ void guPlayList::OnDropBegin( void )
     if( GetItemCount() )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        if( Config->ReadBool( wxT( "DropFilesClearPlaylist" ), false, wxT( "general" ) ) )
+        if( Config->ReadBool( CONFIG_KEY_GENERAL_DROP_FILES_CLEAR_PLAYLIST, false, CONFIG_PATH_GENERAL ) )
         {
             ClearItems();
             RefreshAll();
@@ -311,7 +284,7 @@ void guPlayList::OnDropEnd( void )
     // Once finished send the update guPlayList event to the guPlayList object
     wxCommandEvent event( wxEVT_MENU, ID_PLAYER_PLAYLIST_UPDATELIST );
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    if( Config->ReadBool( wxT( "DropFilesClearPlaylist" ), false, wxT( "general" ) ) )
+    if( Config->ReadBool( CONFIG_KEY_GENERAL_DROP_FILES_CLEAR_PLAYLIST, false, CONFIG_PATH_GENERAL ) )
     {
         event.SetExtraLong( 1 );
     }
@@ -1490,8 +1463,8 @@ void AddPlayListCommands( wxMenu * Menu, int SelCount )
         wxASSERT( SubMenu );
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
-        wxArrayString Names = Config->ReadAStr( wxT( "Name" ), wxEmptyString, wxT( "commands/names" ) );
+        wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
+        wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
         if( ( count = Commands.Count() ) )
         {
             for( index = 0; index < count; index++ )
@@ -2352,7 +2325,7 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
-            wxArrayString Commands = Config->ReadAStr( wxT( "Exec" ), wxEmptyString, wxT( "commands/execs" ) );
+            wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
             wxASSERT( Commands.Count() > 0 );
 
             index -= ID_COMMANDS_BASE;
@@ -2720,7 +2693,7 @@ void guPlayList::SavePlaylistTracks( void )
     int Count;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-    if( Config->ReadBool( wxT( "SaveOnClose" ), true, wxT( "playlist" ) ) )
+    if( Config->ReadBool( CONFIG_KEY_PLAYLIST_SAVE_ON_CLOSE, true, CONFIG_PATH_PLAYLIST ) )
     {
         Count = m_Items.Count();
         for( Index = 0; Index < Count; Index++ )

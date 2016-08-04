@@ -112,10 +112,10 @@ guLocationTreeCtrl::guLocationTreeCtrl( wxWindow * parent, guMainFrame * mainfra
 guLocationTreeCtrl::~guLocationTreeCtrl()
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "LocalMusic" ), IsExpanded( m_LocalMusicId ), wxT( "mainsources") );
-    Config->WriteBool( wxT( "OnlineMusic" ), IsExpanded( m_OnlineMusicId ), wxT( "mainsources") );
-    Config->WriteBool( wxT( "PortableDevices" ), IsExpanded( m_PortableDeviceId ), wxT( "mainsources") );
-    Config->WriteBool( wxT( "ContextExpanded" ), IsExpanded( m_ContextId ), wxT( "mainsources") );
+    Config->WriteBool( CONFIG_KEY_MAIN_SOURCES_LOCAL_MUSIC, IsExpanded( m_LocalMusicId ), CONFIG_PATH_MAIN_SOURCES );
+    Config->WriteBool( CONFIG_KEY_MAIN_SOURCES_ONLINE_MUSIC, IsExpanded( m_OnlineMusicId ), CONFIG_PATH_MAIN_SOURCES );
+    Config->WriteBool( CONFIG_KEY_MAIN_SOURCES_PORTABLE_DEVICES, IsExpanded( m_PortableDeviceId ), CONFIG_PATH_MAIN_SOURCES );
+    Config->WriteBool( CONFIG_KEY_MAIN_SOURCES_CONTEXT, IsExpanded( m_ContextId ), CONFIG_PATH_MAIN_SOURCES );
 
     Unbind( wxEVT_TREE_ITEM_MENU, &guLocationTreeCtrl::OnContextMenu, this );
 }
@@ -174,10 +174,10 @@ void guLocationTreeCtrl::ReloadItems( const bool loadstate )
     if( loadstate )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
-        LocalMusicExpanded = Config->ReadBool( wxT( "LocalMusic" ), true, wxT( "mainsources") );
-        OnlineMusicExpanded = Config->ReadBool( wxT( "OnlineMusic" ), true, wxT( "mainsources") );
-        PortableDeviceExpanded = Config->ReadBool( wxT( "PortableDevices" ), true, wxT( "mainsources") );
-        ContextExpanded = Config->ReadBool( wxT( "ContextExpanded" ), true, wxT( "mainsources") );
+        LocalMusicExpanded = Config->ReadBool( CONFIG_KEY_MAIN_SOURCES_LOCAL_MUSIC, true, CONFIG_PATH_MAIN_SOURCES );
+        OnlineMusicExpanded = Config->ReadBool( CONFIG_KEY_MAIN_SOURCES_ONLINE_MUSIC, true, CONFIG_PATH_MAIN_SOURCES );
+        PortableDeviceExpanded = Config->ReadBool( CONFIG_KEY_MAIN_SOURCES_PORTABLE_DEVICES, true, CONFIG_PATH_MAIN_SOURCES );
+        ContextExpanded = Config->ReadBool( CONFIG_KEY_MAIN_SOURCES_CONTEXT, true, CONFIG_PATH_MAIN_SOURCES );
     }
     else
     {

@@ -64,10 +64,10 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-    m_UpdateEnabled = Config->ReadBool( wxT( "FollowPlayer" ), true, wxT( "lyrics" ) );
-    m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "lyrics" ) ) ];
+    m_UpdateEnabled = Config->ReadBool( CONFIG_KEY_LYRICS_FOLLOW_PLAYER, true, CONFIG_PATH_LYRICS );
+    m_LyricAlign = LyricAligns[ Config->ReadNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, 1, CONFIG_PATH_LYRICS ) ];
     wxFont CurrentFont;
-	CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "lyrics" ) ) );
+    CurrentFont.SetNativeFontInfo( Config->ReadStr( CONFIG_KEY_LYRICS_FONT, wxEmptyString, CONFIG_PATH_LYRICS ) );
 	if( !CurrentFont.IsOk() )
         CurrentFont = GetFont();
 
@@ -188,8 +188,7 @@ guLyricsPanel::~guLyricsPanel()
 {
 //    // Save the current selected server
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( wxT( "FollowPlayer" ), m_UpdateEnabled, wxT( "lyrics" ) );
-//    Config->WriteNum( wxT( "LyricSearchEngine" ), m_ServerChoice->GetSelection(), wxT( "General" ) );
+    Config->WriteBool( CONFIG_KEY_LYRICS_FOLLOW_PLAYER, m_UpdateEnabled, CONFIG_PATH_LYRICS );
     Config->UnRegisterObject( this );
 
     m_UpdateCheckBox->Unbind( wxEVT_CHECKBOX, &guLyricsPanel::OnUpdateChkBoxClicked, this );
@@ -232,12 +231,12 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
         if( Config )
         {
             wxFont CurrentFont;
-            CurrentFont.SetNativeFontInfo( Config->ReadStr( wxT( "Font" ), wxEmptyString, wxT( "lyrics" ) ) );
+            CurrentFont.SetNativeFontInfo( Config->ReadStr( CONFIG_KEY_LYRICS_FONT, wxEmptyString, CONFIG_PATH_LYRICS ) );
             if( !CurrentFont.IsOk() )
                 CurrentFont = GetFont();
 
             m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() ^ m_LyricAlign );
-            m_LyricAlign = LyricAligns[ Config->ReadNum( wxT( "TextAlign" ), 1, wxT( "lyrics" ) ) ];
+            m_LyricAlign = LyricAligns[ Config->ReadNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, 1, CONFIG_PATH_LYRICS ) ];
             m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() | m_LyricAlign );
 
             m_LyricText->SetDefaultStyle( wxTextAttr( m_LyricTitle->GetForegroundColour(),
