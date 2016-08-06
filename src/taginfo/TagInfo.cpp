@@ -20,7 +20,6 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
-#include "ApeTag.h"
 #include "MainFrame.h"
 #include "TrackEdit.h"
 

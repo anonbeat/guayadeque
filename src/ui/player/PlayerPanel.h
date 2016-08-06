@@ -216,7 +216,6 @@ class guPlayerPanel : public wxPanel
 	guRoundButton *             m_PrevTrackButton;
 	guRoundButton *             m_NextTrackButton;
 	guRoundButton *             m_PlayButton;
-	guRoundButton *             m_StopButton;
 	guToggleRoundButton *       m_RecordButton;
 	guRoundButton *             m_VolumeButton;
 	//
@@ -439,10 +438,10 @@ class guPlayerPanel : public wxPanel
 
     void                        UpdateLabels( void );
 
-    void                        SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; };
+    void                        SetPlayerVumeters( guPlayerVumeters * vumeters ) { m_PlayerVumeters = vumeters; }
     void                        ResetVumeterLevel( void );
 
-    void                        SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; };
+    void                        SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; }
     void                        SendNotifyInfo( wxImage * image );
 
     void                        SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }

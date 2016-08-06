@@ -20,7 +20,6 @@
 #ifndef __TAGINFO_H__
 #define __TAGINFO_H__
 
-#include "ApeTag.h"
 #include "DbLibrary.h"
 
 

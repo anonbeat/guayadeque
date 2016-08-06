@@ -18,10 +18,9 @@ MESSAGE( STATUS "Using install prefix ${CMAKE_INSTALL_PREFIX} ..." )
 
 FIND_PACKAGE(PkgConfig)
 
-SET(    SEARCH_LIBS
+SET( SEARCH_LIBS
         /usr/lib
         /usr/local/lib )
-
 
 SET( wxWidgets_USE_LIBS base core adv net html xml aui qa )
 
@@ -112,8 +111,8 @@ ADD_DEFINITIONS( -Wall -O2 )
  
 # We define the include paths here, our minimal source dir is one, 
 # and also the include dirs defined by wxWidgets
-INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
-        ${Guayadeque_SOURCE_DIR}/src
+INCLUDE_DIRECTORIES(
+        ${CMAKE_CURRENT_SOURCE_DIR}
         ${wxWidgets_INCLUDE_DIRS}
         ${GSTREAMER_INCLUDE_DIRS}
         ${GSTREAMER_TAG_INCLUDE_DIRS}
@@ -129,6 +128,18 @@ INCLUDE_DIRECTORIES(${Guayadeque_SOURCE_DIR}
         ${LIBWXSQLITE3_INCLUDE_DIRS}
         ${LIBWXSQLITE330_INCLUDE_DIRS}
 )
+
+IF( DEBUG )
+        ADD_DEFINITIONS( -g )
+        MESSAGE( "Adding debug symbols." )
+ENDIF( DEBUG )
+
+IF( PROFILE )
+        ADD_DEFINITIONS( -pg )
+        SET(CMAKE_EXE_LINKER_FLAGS "-pg -g")
+        MESSAGE( "Adding profiling code." )
+ENDIF( PROFILE )
+
  
 ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( po )
