@@ -20,6 +20,7 @@
 #ifndef __VUMETERS_H__
 #define __VUMETERS_H__
 
+#include "LevelInfo.h"
 #include "MediaCtrl.h"
 #include "Utils.h"
 

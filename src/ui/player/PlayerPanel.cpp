@@ -27,7 +27,9 @@
 #include "Equalizer.h"
 #include "FileRenamer.h" // NormalizeField
 #include "Images.h"
+#include "LevelInfo.h"
 #include "MainFrame.h"
+#include "RadioTagInfo.h"
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "Utils.h"

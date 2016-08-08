@@ -25,6 +25,7 @@
 #include "dbus/notify.h"
 #include "LastFM.h"
 #include "MediaCtrl.h"
+#include "MediaEvent.h"
 #include "PlayerFilters.h"
 #include "PlayList.h"
 #include "RatingCtrl.h"

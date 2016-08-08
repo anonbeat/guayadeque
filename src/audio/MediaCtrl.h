@@ -13,7 +13,9 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program; see the file LICENSE.  If not, write to
-//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+//    Boston, MA 02110-1301 USA.
+//
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
@@ -21,12 +23,11 @@
 #define __MEDIACTRL_H__
 
 #include "DbLibrary.h"
-#include "TimeLine.h"
+#include "MediaEvent.h"
+#include "FaderTimeLine.h"
 
-#include <wx/event.h>
 #include <wx/wx.h>
 #include <wx/uri.h>
-//#include <wx/mediactrl.h>
 #include <wx/dynarray.h>
 
 #undef ATTRIBUTE_PRINTF // there are warnings about redefined ATTRIBUTE_PRINTF in Fedora
@@ -36,11 +37,8 @@ namespace Guayadeque {
 
 #define guEQUALIZER_BAND_COUNT  10
 
-//#define guFADERPLAYBIN_MESSAGE_PLAYING          "guayadeque-playing"
 #define guFADERPLAYBIN_MESSAGE_FADEOUT_DONE     "guayadeque-fade-out-done"
 #define guFADERPLAYBIN_MESSAGE_FADEIN_START     "guayadeque-fade-in-start"
-//#define guFADERPLAYBIN_MESSAGE_FADEIN_DONE      "guayadeque-fade-in-done"
-//#define guFADERPLAYBIN_MESSAGE_EOS              "guayadeque-eos"
 
 // GstPlayFlags flags from playbin2. It is the policy of GStreamer to
 // not publicly expose element-specific enums. That's why this
@@ -81,45 +79,6 @@ enum guOutputDeviceSink {
 };
 
 // -------------------------------------------------------------------------------- //
-class guLevelInfo
-{
-  public :
-    GstClockTime    m_EndTime;
-    wxFileOffset    m_OutTime;
-    gint            m_Channels;
-    double          m_RMS_L;
-    double          m_RMS_R;
-    double          m_Peak_L;
-    double          m_Peak_R;
-    double          m_Decay_L;
-    double          m_Decay_R;
-};
-WX_DEFINE_ARRAY_PTR( guLevelInfo *, guLevelInfoArray );
-
-// -------------------------------------------------------------------------------- //
-class guRadioTagInfo
-{
-  public :
-    gchar * m_Organization;
-    gchar * m_Location;
-    gchar * m_Title;
-    gchar * m_Genre;
-
-    guRadioTagInfo() { m_Organization = NULL; m_Location = NULL; m_Title = NULL; m_Genre = NULL; }
-    ~guRadioTagInfo()
-    {
-        if( m_Organization )
-            g_free( m_Organization );
-        if( m_Location )
-            g_free( m_Location );
-        if( m_Title )
-            g_free( m_Title );
-        if( m_Genre )
-            g_free( m_Genre );
-    }
-};
-
-// -------------------------------------------------------------------------------- //
 enum guMediaState
 {
     guMEDIASTATE_STOPPED,
@@ -128,48 +87,9 @@ enum guMediaState
     guMEDIASTATE_ERROR
 };
 
-// -------------------------------------------------------------------------------- //
-//
-// guMediaEvent
-//
-// -------------------------------------------------------------------------------- //
-class guMediaEvent : public wxNotifyEvent
-{
-    wxDECLARE_DYNAMIC_CLASS( guMediaEvent );
-
-  public:
-    guMediaEvent( wxEventType commandType = wxEVT_NULL, int winid = 0 ) : wxNotifyEvent( commandType, winid ) { }
-    guMediaEvent( const guMediaEvent &clone ) : wxNotifyEvent( clone ) { }
-
-    virtual wxEvent * Clone() const
-    {
-        return new guMediaEvent( * this );
-    }
-};
-
-
-//Function type(s) our events need
-typedef void (wxEvtHandler::*guMediaEventFunction)(guMediaEvent&);
-
-#define guMediaEventHandler(func)   wxEVENT_HANDLER_CAST( guMediaEventFunction, func )
-
-wxDECLARE_EVENT( guEVT_MEDIA_LOADED,           guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_FINISHED,         guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_STATE,    guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_BUFFERING,        guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_LEVELINFO,        guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_TAGINFO,          guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_BITRATE,  guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_POSITION, guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_CHANGED_LENGTH,   guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_FADEIN_STARTED,   guMediaEvent );
-wxDECLARE_EVENT( guEVT_MEDIA_ERROR,            guMediaEvent );
-
-wxDECLARE_EVENT( guEVT_MEDIA_ERROR,            guMediaEvent );
-
 class guPlayerPanel;
 class guMediaCtrl;
+class guFaderPlayBin;
 
 enum guFADERPLAYBIN_PLAYTYPE {
     guFADERPLAYBIN_PLAYTYPE_CROSSFADE,
@@ -189,29 +109,6 @@ enum guFADERPLAYBIN_STATE {
     guFADERPLAYBIN_STATE_FADEOUT_PAUSE,
     guFADERPLAYBIN_STATE_PENDING_REMOVE,
     guFADERPLAYBIN_STATE_ERROR
-};
-
-
-class guMediaCtrl;
-class guFaderPlayBin;
-
-// -------------------------------------------------------------------------------- //
-class guFaderTimeLine : public guTimeLine
-{
-  protected :
-    guFaderPlayBin * m_FaderPlayBin;
-    double           m_VolStep;
-    double           m_VolStart;
-    double           m_VolEnd;
-
-  public :
-    guFaderTimeLine( const int timeout = 3000, wxEvtHandler * parent = NULL, guFaderPlayBin * playbin = NULL,
-        double volstart = 0.0, double volend = 1.0 );
-    ~guFaderTimeLine();
-
-    virtual void    ValueChanged( float value );
-    virtual void    Finished( void );
-    virtual int     TimerCreate( void );
 };
 
 // -------------------------------------------------------------------------------- //
