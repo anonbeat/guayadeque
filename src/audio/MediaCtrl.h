@@ -345,57 +345,6 @@ class guMediaCtrl : public wxEvtHandler
     friend class guFaderPlayBin;
 };
 
-// -------------------------------------------------------------------------------- //
-class guMediaRecordCtrl
-{
-  protected:
-    guPlayerPanel * m_PlayerPanel;
-    guMediaCtrl *   m_MediaCtrl;
-    guTrack         m_TrackInfo;
-    guTrack         m_PrevTrack;
-    wxString        m_PrevFileName;
-
-    wxString        m_MainPath;
-    int             m_Format;
-    int             m_Quality;
-    bool            m_DeleteTracks;
-    int             m_DeleteTime;
-    wxString        m_Ext;
-    wxString        m_FileName;
-
-
-    bool            m_Recording;
-    bool            m_SplitTracks;
-    bool            m_FirstChange;
-
-    wxString        GenerateRecordFileName( void );
-
-  public :
-    guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl * mediactrl );
-    ~guMediaRecordCtrl();
-
-    void            SetTrack( const guTrack &track );
-    void            SetTrackName( const wxString &artistname, const wxString &trackname );
-
-    void            SetStation( const wxString &station );
-
-    void            SetGenre( const wxString &genre ) { m_TrackInfo.m_GenreName = genre; }
-
-    bool            SaveTagInfo( const wxString &filename, const guTrack * track );
-
-    bool            IsRecording( void ) { return m_Recording; }
-
-    bool            Start( const guTrack * track );
-    bool            Stop( void );
-
-    void            SplitTrack( void );
-
-    void            UpdatedConfig( void );
-
-    wxString        GetRecordFileName( void ) { return m_FileName; }
-
-};
-
 }
 
 #endif
