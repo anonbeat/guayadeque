@@ -28,19 +28,19 @@
 
 namespace Guayadeque {
 
-class guFaderPlayBin;
+class guFaderPlaybin;
 
 // -------------------------------------------------------------------------------- //
 class guFaderTimeLine : public guTimeLine
 {
   protected :
-    guFaderPlayBin * m_FaderPlayBin;
+    guFaderPlaybin * m_FaderPlayBin;
     double           m_VolStep;
     double           m_VolStart;
     double           m_VolEnd;
 
   public :
-    guFaderTimeLine( const int timeout = 3000, wxEvtHandler * parent = NULL, guFaderPlayBin * playbin = NULL,
+    guFaderTimeLine( const int timeout = 3000, wxEvtHandler * parent = NULL, guFaderPlaybin * playbin = NULL,
         double volstart = 0.0, double volend = 1.0 );
     ~guFaderTimeLine();
 

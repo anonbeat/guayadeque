@@ -26,7 +26,7 @@
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
-guFaderTimeLine::guFaderTimeLine( const int timeout, wxEvtHandler * parent, guFaderPlayBin * faderplaybin,
+guFaderTimeLine::guFaderTimeLine( const int timeout, wxEvtHandler * parent, guFaderPlaybin * faderplaybin,
     double volstart, double volend ) :
     guTimeLine( timeout, parent )
 {
