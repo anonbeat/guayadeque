@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2016 Martin Gansser <martinkg@fedoraproject.org> -->
-<application>
-  <id type="desktop">guayadeque.desktop</id>
-  <metadata_license>CC0</metadata_license>
+<component type="desktop">
+  <id>guayadeque.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+
+  <!--FIXME: convert to an SPDX ID-->
   <project_license>GPL-3.0+ and BSD and LGPL-2.0+ and wxWidgets</project_license>
   <name>Guayadeque</name>
   <summary>Music orgainizer and player</summary>
@@ -16,11 +18,31 @@
     </p>
   </description>
   <screenshots>
-    <screenshot type="default">http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Albumbrowser.png</screenshot>
-    <screenshot>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Library.png</screenshot>
-    <screenshot>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Treeview.png</screenshot>
-    <screenshot>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Playlists.png</screenshot>
+    <screenshot type="default">
+      <image>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Albumbrowser.png</image>
+      <caption>Select albums by cover with own filters</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Library.png</image>
+      <caption>Library view with configurable panels</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Treeview.png</image>
+      <caption>Tree view where you can create your own organization order</caption>
+    </screenshot>
+    <screenshot>
+      <image>http://guayadeque.org/uploads/screenshots/Guayadeque.Screenshot_Playlists.png</image>
+      <caption>Static and dynamic playlists</caption>
+    </screenshot>
   </screenshots>
   <url type="homepage">http://guayadeque.org/</url>
-  <updatecontact>anonbeat@gmail.com</updatecontact>
-</application>
+  <update_contact>anonbeat@gmail.com</update_contact>
+
+  <developer_name>J.Rios</developer_name>
+
+  <url type="bugtracker">http://www.guayadeque.org/index.php?p=/categories/development</url>
+
+  <url type="donation">https://goo.gl/GHDEEO</url>
+
+  <url type="help">http://www.guayadeque.org/index.php?p=/discussions</url>
+</component>
