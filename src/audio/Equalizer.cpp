@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//  Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -13,7 +13,9 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with this program; see the file LICENSE.  If not, write to
-//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+//    Boston, MA 02110-1301 USA.
+//
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
