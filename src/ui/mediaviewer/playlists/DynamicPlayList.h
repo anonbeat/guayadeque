@@ -151,11 +151,11 @@ class guFilterItem
     int         m_Option2;
     wxString    m_Label;
 
-    guFilterItem() { m_Type = 0; };
-    ~guFilterItem() {};
+    guFilterItem() { m_Type = 0; }
+    ~guFilterItem() {}
     void        Set( int type, int option, const wxString &text );
     void        Set( int type, int option, int number, int option2 );
-    wxString    GetLabel( void ) { return m_Label; };
+    wxString    GetLabel( void ) { return m_Label; }
     void        SetFilterLabel( void );
 
 };
@@ -178,7 +178,7 @@ class guDynPlayList
 
     guDynPlayList() { m_Id = 0; m_Limited = false; m_LimitValue = 0; m_LimitType = 0;
                       m_Sorted = false; m_SortType = 0; m_SortDesc = false; m_AnyOption = false; };
-    ~guDynPlayList() {};
+    ~guDynPlayList() {}
 
     wxString            ToString( void );
     void                FromString( const wxString &playlist );

@@ -39,7 +39,7 @@ class guAuiManagedPanel : public wxPanel
     guAuiManagedPanel( wxWindow * parent, wxAuiManager * manager );
     ~guAuiManagedPanel();
 
-    virtual void    CreateShowHideMenu( wxMenu * menu ) {};
+    virtual void    CreateShowHideMenu( wxMenu * menu ) {}
 
 };
 

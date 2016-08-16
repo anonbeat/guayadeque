@@ -38,7 +38,7 @@ class guStaticBitmapTimer : public wxTimer
     guStaticBitmap * m_Bitmap;
 
   public :
-    guStaticBitmapTimer( guStaticBitmap * bitmap ) { m_Bitmap = bitmap; };
+    guStaticBitmapTimer( guStaticBitmap * bitmap ) { m_Bitmap = bitmap; }
 
     void Notify();
 };

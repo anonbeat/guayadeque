@@ -81,8 +81,8 @@ class guListViewColumn
     int      m_ImageIndex;
     bool     m_Enabled;
 
-    guListViewColumn() {};
-    ~guListViewColumn() {};
+    guListViewColumn() {}
+    ~guListViewColumn() {}
     guListViewColumn( const wxString &label, const int id, const int width = -1, const bool enabled = true )
     {
         m_Label = label;
@@ -90,7 +90,7 @@ class guListViewColumn
         m_Width = width;
         m_Enabled = enabled;
         m_ImageIndex = wxNOT_FOUND;
-    };
+    }
 
 };
 WX_DECLARE_OBJARRAY(guListViewColumn, guListViewColumnArray);
@@ -110,13 +110,13 @@ class guListViewAttr
     wxBrush     m_DragBgColor;
     wxFont *    m_Font;
 
-    guListViewAttr() { LoadSysColors(); };
+    guListViewAttr() { LoadSysColors(); }
 
     ~guListViewAttr()
     {
         if( m_Font )
             delete m_Font;
-    };
+    }
 
     guListViewAttr( const wxColour &selbg, const wxColour &selfg,
                     const wxColour &evebg, const wxColour &oddbg,
@@ -128,7 +128,7 @@ class guListViewAttr
         m_OddBgColor = oddbg;
         m_TextFgColor = textfg;
         m_Font = font;
-    };
+    }
 
     void LoadSysColors( void )
     {
@@ -308,9 +308,9 @@ class guListView : public wxScrolledWindow
     void                OnContextMenu( wxContextMenuEvent &event );
     void                OnHScroll( wxScrollWinEvent &event );
 
-    virtual void        ItemsLock() {};
-    virtual void        ItemsUnlock() {};
-    virtual void        ItemsCheckRange( const int start, const int end ) {};
+    virtual void        ItemsLock() {}
+    virtual void        ItemsUnlock() {}
+    virtual void        ItemsCheckRange( const int start, const int end ) {}
 
   public :
     guListView( wxWindow * parent, const int flags = wxLB_MULTIPLE, wxWindowID id = wxID_ANY,
@@ -321,7 +321,7 @@ class guListView : public wxScrolledWindow
     void                    SetItemCount( const int count );
     int                     GetItemCount( void ) const { return m_ListBox->GetItemCount(); }
     void                    SetItemHeight( const int height ) { m_ListBox->SetItemHeigth( height ); }
-    void                    SetAttr( const guListViewAttr &attr ) { m_Attr = attr; };
+    void                    SetAttr( const guListViewAttr &attr ) { m_Attr = attr; }
 
 
     int                     GetFirstSelected( unsigned long &cookie ) const { return m_ListBox->GetFirstSelected( cookie ); }

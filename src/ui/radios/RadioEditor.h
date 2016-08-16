@@ -47,8 +47,8 @@ class guRadioEditor : public wxDialog
             const wxString &name = wxEmptyString, const wxString &link = wxEmptyString );
     ~guRadioEditor();
 
-    wxString GetName( void ) { return m_NameTextCtrl->GetValue(); };
-    wxString GetLink( void ) { return m_LinkTextCtrl->GetValue(); };
+    wxString GetName( void ) { return m_NameTextCtrl->GetValue(); }
+    wxString GetLink( void ) { return m_LinkTextCtrl->GetValue(); }
 
 };
 

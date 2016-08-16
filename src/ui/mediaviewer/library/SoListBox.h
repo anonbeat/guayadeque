@@ -86,8 +86,8 @@ class guSoListBox : public guListView
     void                        OnItemColumnClicked( wxListEvent &event );
     void                        OnItemColumnRClicked( wxListEvent &event );
 
-    virtual void                ItemsLock() { m_ItemsMutex.Lock(); };
-    virtual void                ItemsUnlock() { m_ItemsMutex.Unlock(); };
+    virtual void                ItemsLock() { m_ItemsMutex.Lock(); }
+    virtual void                ItemsUnlock() { m_ItemsMutex.Unlock(); }
     virtual void                ItemsCheckRange( const int start, const int end );
 
     virtual void                AppendFastEditMenu( wxMenu * menu, const int selcount ) const;

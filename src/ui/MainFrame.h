@@ -441,7 +441,7 @@ class guMainFrame : public wxFrame
     void                            UpdatedTracks( int updatedby, const guTrackArray * tracks );
     void                            UpdatedTrack( int updatedby, const guTrack * track );
 
-    guDBusNotify *                  GetNotifyObject( void ) { return m_NotifySrv; };
+    guDBusNotify *                  GetNotifyObject( void ) { return m_NotifySrv; }
 
     guDbPodcasts *                  GetPodcastsDb( void )
     {

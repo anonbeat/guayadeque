@@ -356,7 +356,7 @@ class guPlayerPanel : public wxPanel
     void                        OnArtistNameDClicked( wxMouseEvent &event );
     void                        OnYearDClicked( wxMouseEvent &event );
     void                        OnTimeDClicked( wxMouseEvent &event ) { m_ShowRevTime = !m_ShowRevTime;
-                                                                UpdatePositionLabel( GetPosition() ); };
+                                                                UpdatePositionLabel( GetPosition() ); }
     void                        OnRatingChanged( guRatingEvent &event );
     void                        CheckFiltersEnable( void );
 
@@ -385,7 +385,7 @@ class guPlayerPanel : public wxPanel
     void                        AddToPlayList( const wxString &FileName, const int aftercurrent = guINSERT_AFTER_CURRENT_NONE );
     void                        AddToPlayList( const wxArrayString &files, const int aftercurrent = guINSERT_AFTER_CURRENT_NONE );
     void                        AddToPlayList( const wxArrayString &files, const bool play, const int aftercurrent );
-    void                        ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); };
+    void                        ClearPlayList( void ) { m_PlayListCtrl->ClearItems(); }
     void                        SetPlayList( const wxArrayString &files );
     guPlayList *                PlayListCtrl( void ) { return m_PlayListCtrl; }
 

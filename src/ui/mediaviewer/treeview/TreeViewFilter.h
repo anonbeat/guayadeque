@@ -33,12 +33,12 @@ class guTreeViewFilterItem
     int         m_Id;
     int         m_Type;
 
-    guTreeViewFilterItem( const int type, const int id ) { m_Id = id; m_Type = type; };
+    guTreeViewFilterItem( const int type, const int id ) { m_Id = id; m_Type = type; }
 
-    int         Id( void ) { return m_Id; };
-    void        Id( int id ) { m_Id = id; };
-    int         Type( void ) { return m_Type; };
-    void        Type( int type ) { m_Type = type; };
+    int         Id( void ) { return m_Id; }
+    void        Id( int id ) { m_Id = id; }
+    int         Type( void ) { return m_Type; }
+    void        Type( int type ) { m_Type = type; }
 };
 
 WX_DECLARE_OBJARRAY(guTreeViewFilterItem, guTreeViewFilterEntry);

@@ -328,7 +328,7 @@ class guAlbumBrowserDropTarget : public wxDropTarget
 
   public:
     guAlbumBrowserDropTarget( guMediaViewer * mediaviewer, guAlbumBrowserItemPanel * itempanel );
-    ~guAlbumBrowserDropTarget() {};
+    ~guAlbumBrowserDropTarget() {}
 
     virtual wxDragResult OnData( wxCoord x, wxCoord y, wxDragResult def );
 };

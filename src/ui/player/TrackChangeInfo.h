@@ -40,7 +40,7 @@ class guTrackChangeInfo
     wxString            m_TrackName;
     guMediaViewer *     m_MediaViewer;
 
-    guTrackChangeInfo() {};
+    guTrackChangeInfo() {}
     guTrackChangeInfo( const wxString &artist, const wxString &track, guMediaViewer * mediaviewer )
     {
         m_ArtistName = artist;
@@ -48,7 +48,7 @@ class guTrackChangeInfo
         m_MediaViewer = mediaviewer;
     };
 
-    ~guTrackChangeInfo() {};
+    ~guTrackChangeInfo() {}
 };
 WX_DECLARE_OBJARRAY(guTrackChangeInfo, guTrackChangeInfoArray);
 

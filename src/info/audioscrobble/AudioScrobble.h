@@ -91,7 +91,7 @@ class guAudioScrobbleSender
     int                         DoRequest( const wxString &Url, int Timeout = 60, const wxString &PostData = wxEmptyString );
     int                         ProcessError( const wxString &ErrorStr );
 
-    virtual void                ReadUserConfig( void ) {};
+    virtual void                ReadUserConfig( void ) {}
 
   public:
                                 guAudioScrobbleSender( guDbLibrary * db, const wxString &serverurl );

@@ -108,7 +108,7 @@ class guSimilarArtistInfo {
     wxString m_Url;
     wxString m_ImageLink;
 
-    guSimilarArtistInfo() {};
+    guSimilarArtistInfo() {}
     guSimilarArtistInfo( guSimilarArtistInfo * info )
     {
         wxASSERT( info );
@@ -131,7 +131,7 @@ class guSimilarTrackInfo {
     wxString m_Url;
     wxString m_ImageLink;
 
-    guSimilarTrackInfo() {};
+    guSimilarTrackInfo() {}
     guSimilarTrackInfo( guSimilarTrackInfo * info )
     {
         wxASSERT( info );
@@ -184,13 +184,13 @@ class guLastFM
     guLastFM();
     ~guLastFM();
 
-    void                        SetUserName( const wxString &NewUser ) { m_UserName = NewUser; };
-    void                        SetPassword( const wxString &NewPass ) { m_Password = NewPass; };
-    void                        SetLanguage( const wxString &lang ) { m_Language = lang; };
+    void                        SetUserName( const wxString &NewUser ) { m_UserName = NewUser; }
+    void                        SetPassword( const wxString &NewPass ) { m_Password = NewPass; }
+    void                        SetLanguage( const wxString &lang ) { m_Language = lang; }
     wxString                    GetAuthSession();
     wxString                    GetAuthURL();
     bool                        DoAuthentication();
-    int                         GetLastError() { return m_ErrorCode; };
+    int                         GetLastError() { return m_ErrorCode; }
     bool                        IsOk();
 
     wxString                    AuthGetSession();

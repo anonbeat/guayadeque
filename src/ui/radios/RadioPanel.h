@@ -185,10 +185,10 @@ class guRadioGenreTreeCtrl : public wxTreeCtrl
 
     void            ReloadProviders( guRadioProviderArray * radioproviders );
 //    void            ReloadItems( void );
-//    wxTreeItemId *  GetShoutcastId( void ) { return &m_ShoutcastId; };
-//    wxTreeItemId *  GetShoutcastGenreId( void ) { return &m_ShoutcastGenreId; };
-//    wxTreeItemId *  GetShoutcastSearchId( void ) { return &m_ShoutcastSearchsId; };
-//    wxTreeItemId *  GetManualId( void ) { return &m_ManualId; };
+//    wxTreeItemId *  GetShoutcastId( void ) { return &m_ShoutcastId; }
+//    wxTreeItemId *  GetShoutcastGenreId( void ) { return &m_ShoutcastGenreId; }
+//    wxTreeItemId *  GetShoutcastSearchId( void ) { return &m_ShoutcastSearchsId; }
+//    wxTreeItemId *  GetManualId( void ) { return &m_ManualId; }
 //    wxTreeItemId *  GetTuneInId( void ) { return &m_TuneInId; }
     wxTreeItemId    GetItemId( wxTreeItemId * itemid, const int id );
 

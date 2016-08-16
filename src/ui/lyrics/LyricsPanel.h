@@ -183,7 +183,7 @@ class guLyricSourceOption
 
   public :
     guLyricSourceOption() {}
-    guLyricSourceOption( const wxString &string1, const wxString &string2 = wxEmptyString ) { m_Text1 = string1; m_Text2 = string2; };
+    guLyricSourceOption( const wxString &string1, const wxString &string2 = wxEmptyString ) { m_Text1 = string1; m_Text2 = string2; }
     ~guLyricSourceOption() {}
 
     guLyricSourceOption( wxXmlNode * xmlnode, const wxString &tag1, const wxString &tag2 = wxEmptyString );
@@ -204,7 +204,7 @@ class guLyricSourceReplace : public guLyricSourceOption
   protected :
   public :
     guLyricSourceReplace() : guLyricSourceOption() {}
-    guLyricSourceReplace( const wxString &string1, const wxString &string2 ) : guLyricSourceOption( string1, string2 ) {};
+    guLyricSourceReplace( const wxString &string1, const wxString &string2 ) : guLyricSourceOption( string1, string2 ) {}
     ~guLyricSourceReplace() {}
 
     guLyricSourceReplace( wxXmlNode * xmlnode ) : guLyricSourceOption( xmlnode, wxT( "replace" ), wxT( "with" ) ) {}
@@ -222,7 +222,7 @@ class guLyricSourceExtract : public guLyricSourceOption
   protected :
   public :
     guLyricSourceExtract() : guLyricSourceOption() {}
-    guLyricSourceExtract( const wxString &string1, const wxString &string2 = wxEmptyString ) : guLyricSourceOption( string1, string2 ) {};
+    guLyricSourceExtract( const wxString &string1, const wxString &string2 = wxEmptyString ) : guLyricSourceOption( string1, string2 ) {}
     ~guLyricSourceExtract() {}
 
     guLyricSourceExtract( wxXmlNode * xmlnode );
@@ -243,7 +243,7 @@ class guLyricSourceExclude : public guLyricSourceExtract
   protected :
   public :
     guLyricSourceExclude() : guLyricSourceExtract() {}
-    guLyricSourceExclude( const wxString &string1, const wxString &string2 = wxEmptyString ) : guLyricSourceExtract( string1, string2 ) {};
+    guLyricSourceExclude( const wxString &string1, const wxString &string2 = wxEmptyString ) : guLyricSourceExtract( string1, string2 ) {}
     ~guLyricSourceExclude() {}
 
     guLyricSourceExclude( wxXmlNode * xmlnode ) : guLyricSourceExtract( xmlnode ) {}

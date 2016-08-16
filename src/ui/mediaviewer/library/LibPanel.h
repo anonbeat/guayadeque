@@ -267,7 +267,7 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            NormalizeTracks( guTrackArray * tracks, const bool isdrag = false );
 
 //    virtual wxString        GetName( void );
-    virtual guDbLibrary *   GetDb( void ) { return m_Db; };
+    virtual guDbLibrary *   GetDb( void ) { return m_Db; }
     void                    SetPlayerPanel( guPlayerPanel * playerpanel ) { m_PlayerPanel = playerpanel; }
 //    virtual wxArrayString   GetLibraryPaths( void );
     virtual wxString        GetPlaylistPath( void ) { return wxEmptyString; }

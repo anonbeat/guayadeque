@@ -128,7 +128,7 @@ class guPLNamesDropTarget : public wxDropTarget
     guPLNamesTreeCtrl *             m_PLNamesTreeCtrl;
     guPLNamesDropFilesThread *      m_PLNamesDropFilesThread;
 
-    void ClearPlayListFilesThread( void ) { m_PLNamesDropFilesThread = NULL; };
+    void ClearPlayListFilesThread( void ) { m_PLNamesDropFilesThread = NULL; }
 
   public:
     guPLNamesDropTarget( guPLNamesTreeCtrl * plnamestreectrl );
@@ -222,8 +222,8 @@ class guPlayListPanel : public guAuiManagerPanel
 
     bool                GetPlayListCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size );
 
-    void inline         UpdatedTracks( const guTrackArray * tracks ) { m_PLTracksListBox->UpdatedTracks( tracks ); };
-    void inline         UpdatedTrack( const guTrack * track ) { m_PLTracksListBox->UpdatedTrack( track ); };
+    void inline         UpdatedTracks( const guTrackArray * tracks ) { m_PLTracksListBox->UpdatedTracks( tracks ); }
+    void inline         UpdatedTrack( const guTrack * track ) { m_PLTracksListBox->UpdatedTrack( track ); }
 
     virtual int         GetListViewColumnCount( void ) { return guSONGS_COLUMN_COUNT; }
     virtual bool        GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PLTracksListBox->GetColumnData( id, index, width, enabled ); }

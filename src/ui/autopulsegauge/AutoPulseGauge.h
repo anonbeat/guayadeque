@@ -54,9 +54,9 @@ class guGaugeTimer : public wxTimer
     guAutoPulseGauge * m_Gauge;
 
   public:
-    guGaugeTimer( guAutoPulseGauge * gauge ) { m_Gauge = gauge; };
+    guGaugeTimer( guAutoPulseGauge * gauge ) { m_Gauge = gauge; }
 
-    void Notify() { m_Gauge->Pulse(); };
+    void Notify() { m_Gauge->Pulse(); }
 };
 
 }

@@ -68,12 +68,12 @@ class guTreeViewData : public wxTreeItemData
     int         m_Id;
     int         m_Type;
 
-    guTreeViewData( const int id, const int type ) { m_Id = id; m_Type = type; };
+    guTreeViewData( const int id, const int type ) { m_Id = id; m_Type = type; }
 
-    int         GetData( void ) { return m_Id; };
-    void        SetData( int id ) { m_Id = id; };
-    int         GetType( void ) { return m_Type; };
-    void        SetType( int type ) { m_Type = type; };
+    int         GetData( void ) { return m_Id; }
+    void        SetData( int id ) { m_Id = id; }
+    int         GetType( void ) { return m_Type; }
+    void        SetType( int type ) { m_Type = type; }
 };
 
 // -------------------------------------------------------------------------------- //

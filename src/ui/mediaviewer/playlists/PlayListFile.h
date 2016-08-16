@@ -38,7 +38,7 @@ class guPlaylistItem
     wxString m_Location;
     int      m_Length;
 
-    guPlaylistItem() { m_Length = 0; };
+    guPlaylistItem() { m_Length = 0; }
 
     guPlaylistItem( const wxString &location, const wxString &title, const int length = wxNOT_FOUND )
     {
@@ -82,19 +82,19 @@ class guPlaylistFile
     bool                WriteAsxFile( const wxString &filename, const bool relative = false );
 
   public :
-    guPlaylistFile( void ) {};
+    guPlaylistFile( void ) {}
     guPlaylistFile( const wxString &uri );
     ~guPlaylistFile();
 
     bool                    Load( const wxString &uri );
     bool                    Save( const wxString &filename, const bool relative = false );
 
-    wxString                GetName( void ) { return m_Name; };
-    void                    SetName( const wxString &name ) { m_Name = name; };
-    guPlaylistItemArray     GetPlayList( void ) { return m_Playlist; };
-    void                    SetPlayList( const guPlaylistItemArray &playlist ) { m_Playlist = playlist; };
+    wxString                GetName( void ) { return m_Name; }
+    void                    SetName( const wxString &name ) { m_Name = name; }
+    guPlaylistItemArray     GetPlayList( void ) { return m_Playlist; }
+    void                    SetPlayList( const guPlaylistItemArray &playlist ) { m_Playlist = playlist; }
 
-    size_t                  Count( void ) const { return m_Playlist.Count(); };
+    size_t                  Count( void ) const { return m_Playlist.Count(); }
 
     guPlaylistItem   GetItem( const size_t index )
     {
@@ -172,7 +172,7 @@ class guCuePlaylistFile
     bool                    LoadFromText( const wxString &playlist );
     //bool                  Save( const wxString &filename );
 
-    size_t                  Count( void ) const { return m_PlaylistItems.Count(); };
+    size_t                  Count( void ) const { return m_PlaylistItems.Count(); }
 
     guCuePlaylistItem &     GetItem( const size_t index ) { return m_PlaylistItems[ index ]; }
 

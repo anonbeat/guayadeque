@@ -35,7 +35,7 @@ class guMediaViewerLibrary : public guMediaViewer
     guMediaViewerLibrary( wxWindow * parent, guMediaCollection &mediacollection, const int basecommand, guMainFrame * mainframe, const int mode, guPlayerPanel * playerpanel );
     ~guMediaViewerLibrary();
 
-    //virtual void CreateCollectionMenu( wxMenu * menu, const int basecommand ) {};
+    //virtual void CreateCollectionMenu( wxMenu * menu, const int basecommand ) {}
 
 };
 

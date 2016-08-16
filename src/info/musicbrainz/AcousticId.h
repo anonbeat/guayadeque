@@ -37,12 +37,12 @@ namespace Guayadeque {
 class guAcousticIdClient
 {
   public :
-    virtual ~guAcousticIdClient() {};
+    virtual ~guAcousticIdClient() {}
 
-    virtual void OnAcousticIdFingerprintFound( const wxString &fingerprint ) {};
-    virtual void OnAcousticIdMBIdFound( const wxString &mbid ) {};
+    virtual void OnAcousticIdFingerprintFound( const wxString &fingerprint ) {}
+    virtual void OnAcousticIdMBIdFound( const wxString &mbid ) {}
 
-    virtual void OnAcousticIdError( const int errorcode ) {};
+    virtual void OnAcousticIdError( const int errorcode ) {}
 
 };
 

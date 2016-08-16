@@ -61,7 +61,7 @@ class guMD5
     guMD5CTX m_Context;
 
   public :
-    guMD5(){};
+    guMD5(){}
 
     wxString inline MD5( const wxString &Input )
     {

@@ -59,19 +59,19 @@ class guLastFMInfo
     wxImage *               m_Image;
     wxString                m_ImageUrl;
 
-    guLastFMInfo() {};
+    guLastFMInfo() {}
 
     guLastFMInfo( int index, wxImage * image = NULL )
     {
         m_Index = index;
         m_Image = image;
-    };
+    }
 
     ~guLastFMInfo()
     {
         if( m_Image )
             delete m_Image;
-    };
+    }
 };
 WX_DECLARE_OBJARRAY(guLastFMInfo, guLastFMInfoArray);
 
@@ -82,19 +82,19 @@ class guLastFMArtistInfo : public guLastFMInfo
     guArtistInfo *  m_Artist;
     int             m_ArtistId;
 
-    guLastFMArtistInfo() { m_Artist = NULL; m_ArtistId = wxNOT_FOUND; };
+    guLastFMArtistInfo() { m_Artist = NULL; m_ArtistId = wxNOT_FOUND; }
     guLastFMArtistInfo( int index, wxImage * image = NULL, guArtistInfo * artist = NULL ) :
       guLastFMInfo( index, image )
     {
         m_Artist = artist;
         m_ArtistId = wxNOT_FOUND;
-    };
+    }
 
     ~guLastFMArtistInfo()
     {
         if( m_Artist )
             delete m_Artist;
-    };
+    }
 };
 
 
@@ -105,7 +105,7 @@ class guLastFMSimilarArtistInfo : public guLastFMInfo
     guSimilarArtistInfo *   m_Artist;
     int                     m_ArtistId;
 
-    guLastFMSimilarArtistInfo() { m_Artist = NULL; m_ArtistId = wxNOT_FOUND; };
+    guLastFMSimilarArtistInfo() { m_Artist = NULL; m_ArtistId = wxNOT_FOUND; }
 
     guLastFMSimilarArtistInfo( int index, wxImage * image = NULL,
                   guSimilarArtistInfo * artist = NULL ) :
@@ -130,7 +130,7 @@ class guLastFMAlbumInfo : public guLastFMInfo
     guAlbumInfo  *  m_Album;
     int             m_AlbumId;
 
-    guLastFMAlbumInfo() { m_Album = NULL; m_AlbumId = wxNOT_FOUND; };
+    guLastFMAlbumInfo() { m_Album = NULL; m_AlbumId = wxNOT_FOUND; }
 
     guLastFMAlbumInfo( int index, wxImage * image = NULL, guAlbumInfo * album = NULL ) :
             guLastFMInfo( index, image )
@@ -155,7 +155,7 @@ class guLastFMTrackInfo : public guLastFMInfo
     int                    m_TrackId;
     int                    m_ArtistId;
 
-    guLastFMTrackInfo() { m_Track = NULL; m_TrackId = wxNOT_FOUND; };
+    guLastFMTrackInfo() { m_Track = NULL; m_TrackId = wxNOT_FOUND; }
 
     guLastFMTrackInfo( int index, wxImage * image = NULL,
                   guSimilarTrackInfo * track = NULL ) :
@@ -164,13 +164,13 @@ class guLastFMTrackInfo : public guLastFMInfo
         m_Track = track;
         m_TrackId = wxNOT_FOUND;
         m_ArtistId = wxNOT_FOUND;
-    };
+    }
 
     ~guLastFMTrackInfo()
     {
         if( m_Track )
             delete m_Track;
-    };
+    }
 };
 WX_DECLARE_OBJARRAY(guLastFMTrackInfo, guLastFMTrackInfoArray);
 
@@ -182,7 +182,7 @@ class guLastFMTopTrackInfo : public guLastFMInfo
     int                    m_TrackId;
     int                    m_ArtistId;
 
-    guLastFMTopTrackInfo() { m_TopTrack = NULL; m_TrackId = wxNOT_FOUND; };
+    guLastFMTopTrackInfo() { m_TopTrack = NULL; m_TrackId = wxNOT_FOUND; }
 
     guLastFMTopTrackInfo( int index, wxImage * image = NULL,
                   guTopTrackInfo * track = NULL ) :
@@ -207,7 +207,7 @@ class guLastFMEventInfo : public guLastFMInfo
   public:
     guEventInfo *       m_Event;
 
-    guLastFMEventInfo() { m_Event = NULL; };
+    guLastFMEventInfo() { m_Event = NULL; }
 
     guLastFMEventInfo( int index, wxImage * image = NULL,
                   guEventInfo * event = NULL ) :
@@ -444,9 +444,9 @@ class guArtistInfoCtrl : public guLastFMInfoCtrl
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnArtistSelectName( wxCommandEvent &event );
 
-    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); }
 
-    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_ArtistId != wxNOT_FOUND ); };
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_ArtistId != wxNOT_FOUND ); }
 
   protected :
     virtual void        OnCopyToClipboard( wxCommandEvent &event );
@@ -476,9 +476,9 @@ class guAlbumInfoCtrl : public guLastFMInfoCtrl
     virtual int         GetSelectedTracks( guTrackArray * tracks );
     virtual void        OnAlbumSelectName( wxCommandEvent &event );
 
-    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); }
 
-    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_AlbumId != wxNOT_FOUND ); };
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_AlbumId != wxNOT_FOUND ); }
 
   public :
     guAlbumInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
@@ -507,9 +507,9 @@ class guSimilarArtistInfoCtrl : public guLastFMInfoCtrl
     virtual void        OnArtistSelectName( wxCommandEvent &event );
     void                OnSelectArtist( wxCommandEvent &event );
 
-    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); }
 
-    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_ArtistId != wxNOT_FOUND ); };
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_ArtistId != wxNOT_FOUND ); }
 
   public :
     guSimilarArtistInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
@@ -539,9 +539,9 @@ class guTrackInfoCtrl : public guLastFMInfoCtrl
 
     void                OnSelectArtist( wxCommandEvent &event );
 
-    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); }
 
-    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); };
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); }
 
   public :
     guTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
@@ -571,9 +571,9 @@ class guTopTrackInfoCtrl : public guLastFMInfoCtrl
 
     void                OnSelectArtist( wxCommandEvent &event );
 
-    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); }
 
-    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); };
+    virtual bool        ItemWasFound( void ) { return m_Info && ( m_Info->m_TrackId != wxNOT_FOUND ); }
 
   public :
     guTopTrackInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );
@@ -599,9 +599,9 @@ class guEventInfoCtrl : public guLastFMInfoCtrl
     virtual wxString    GetItemUrl( void );
     virtual int         GetSelectedTracks( guTrackArray * tracks );
 
-    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); };
+    virtual wxString    GetBitmapImageUrl( void ) { return m_Info ? m_Info->m_ImageUrl : wxT( "" ); }
 
-    virtual bool        ItemWasFound( void ) { return true; };
+    virtual bool        ItemWasFound( void ) { return true; }
 
   public :
     guEventInfoCtrl( wxWindow * parent, guDbLibrary * db, guDbCache * dbcache, guPlayerPanel * playerpanel );

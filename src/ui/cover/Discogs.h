@@ -36,8 +36,8 @@ class guDiscogsImage
     int         m_Width;
     int         m_Height;
 
-    guDiscogsImage() {};
-    ~guDiscogsImage() {};
+    guDiscogsImage() {}
+    ~guDiscogsImage() {}
     guDiscogsImage( const wxString &url, int width = -1, int height = -1 )
     {
         m_Url = url;
@@ -56,8 +56,8 @@ class guDiscogsTrack
     int      m_Length;
     int      m_Position;
 
-    guDiscogsTrack() {};
-    ~guDiscogsTrack() {};
+    guDiscogsTrack() {}
+    ~guDiscogsTrack() {}
 };
 WX_DECLARE_OBJARRAY( guDiscogsTrack, guDiscogsTrackArray );
 
@@ -74,8 +74,8 @@ class guDiscogsRelease
     guDiscogsImageArray     m_Images;
     guDiscogsTrackArray     m_Tracks;
 
-    guDiscogsRelease() {};
-    ~guDiscogsRelease() {};
+    guDiscogsRelease() {}
+    ~guDiscogsRelease() {}
 };
 WX_DECLARE_OBJARRAY( guDiscogsRelease, guDiscogsReleaseArray );
 
@@ -90,8 +90,8 @@ class guDiscogsArtist
     //wxArrayString           m_Aliases;
     guDiscogsReleaseArray   m_Releases;
 
-    guDiscogsArtist() {};
-    ~guDiscogsArtist() {};
+    guDiscogsArtist() {}
+    ~guDiscogsArtist() {}
 };
 
 // -------------------------------------------------------------------------------- //

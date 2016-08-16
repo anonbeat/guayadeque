@@ -46,7 +46,7 @@ class guShoutcastUpdateThread : public wxThread
     guShoutcastUpdateThread( guDbRadios * db, guRadioPanel * radiopanel,
                                 const wxArrayInt &ids, const int source, int gaugeid = wxNOT_FOUND );
 
-    ~guShoutcastUpdateThread(){};
+    ~guShoutcastUpdateThread(){}
 
     virtual ExitCode Entry();
 };

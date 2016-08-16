@@ -138,7 +138,7 @@ class guTrack
         m_CoverId = 0;
     };
 
-    virtual ~guTrack() {};
+    virtual ~guTrack() {}
 
     bool ReadFromFile( const wxString &file );
 
@@ -151,8 +151,8 @@ class guListItem //: public wxObject
   public:
     int m_Id;
     wxString m_Name;
-    guListItem() {};
-    guListItem( int NewId, const wxString &NewName = wxEmptyString ) { m_Id = NewId; m_Name = NewName; };
+    guListItem() {}
+    guListItem( int NewId, const wxString &NewName = wxEmptyString ) { m_Id = NewId; m_Name = NewName; }
 };
 WX_DECLARE_OBJARRAY(guListItem,guListItems);
 
@@ -164,18 +164,18 @@ class guArrayListItem //: public wxObject
 //    wxString m_Name;
     wxArrayInt m_Data;
   public :
-    guArrayListItem() { m_Id = -1; };
-    guArrayListItem( int NewId ) { m_Id = NewId; };
-//    guArrayListItem( int NewId, const wxString &NewName ) { m_Id = NewId; m_Name = NewName; };
-    ~guArrayListItem() {};
-    void SetId( int NewId ) { m_Id = NewId; };
-    void AddData( int m_Id ) { m_Data.Add( m_Id ); };
-    void DelData( int m_Id ) { m_Data.Remove( m_Id ); };
-    wxArrayInt GetData( void ) { return m_Data; };
-    int GetId() { return m_Id; };
+    guArrayListItem() { m_Id = -1; }
+    guArrayListItem( int NewId ) { m_Id = NewId; }
+//    guArrayListItem( int NewId, const wxString &NewName ) { m_Id = NewId; m_Name = NewName; }
+    ~guArrayListItem() {}
+    void SetId( int NewId ) { m_Id = NewId; }
+    void AddData( int m_Id ) { m_Data.Add( m_Id ); }
+    void DelData( int m_Id ) { m_Data.Remove( m_Id ); }
+    wxArrayInt GetData( void ) { return m_Data; }
+    int GetId() { return m_Id; }
     int Index( int id ) { return m_Data.Index( id ); }
-//    const wxString GetName( void ) { return m_Name; };
-//    void SetName( const wxString &NewName ) { m_Name = NewName; };
+//    const wxString GetName( void ) { return m_Name; }
+//    void SetName( const wxString &NewName ) { m_Name = NewName; }
 };
 WX_DECLARE_OBJARRAY(guArrayListItem, guArrayListItems);
 
@@ -359,7 +359,7 @@ class guDbLibrary : public guDb
 
 //    void                ConfigChanged( void );
 
-    bool                NeedUpdate( void ) { return m_NeedUpdate; };
+    bool                NeedUpdate( void ) { return m_NeedUpdate; }
 
     guMediaViewer *     GetMediaViewer( void ) { return m_MediaViewer; }
     void                SetMediaViewer( guMediaViewer * mediaviewer );
@@ -405,7 +405,7 @@ class guDbLibrary : public guDb
     void                GetAlbumArtists( guListItems * items, const bool FullList = false );
     void                GetComposers( guListItems * items, const bool FullList = false );
     void                SetAlbumsOrder( const int order );
-    int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; };
+    int                 GetAlbumsOrder( void ) { return m_AlbumsOrder; }
     void                GetAlbums( guListItems * Albums, bool FullList = false );
     void                GetAlbums( guAlbumItems * Albums, bool FullList = false );
     wxArrayString       GetAlbumsPaths( const wxArrayInt &AlbumIds );

@@ -72,7 +72,7 @@ class guCopyToAction
     wxString                    Pattern( void ) { return m_Pattern; }
     int                         Format( void ) { return m_Format; }
     void                        Format( const int format ) { m_Format = format; }
-    int                         Quality( void ) { return m_Quality; };
+    int                         Quality( void ) { return m_Quality; }
     void                        Quality( const int quality ) { m_Quality = quality; }
     bool                        MoveFiles( void ) { return m_MoveFiles; }
     int                         CoverFormats( void ) { return m_CoverFormats; }

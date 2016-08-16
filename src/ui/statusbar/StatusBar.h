@@ -47,13 +47,13 @@ class guGauge : public wxControl
 
 
   public :
-    guGauge() : wxControl() { m_LastValue = wxNOT_FOUND; m_PaintWidth = 0; };
+    guGauge() : wxControl() { m_LastValue = wxNOT_FOUND; m_PaintWidth = 0; }
     guGauge( wxWindow * parent, const wxString &label = wxEmptyString, bool showporcent = true, wxWindowID id = wxID_ANY, unsigned int max = 100,
                const wxPoint &pos = wxDefaultPosition, const wxSize &size = wxDefaultSize, long style = wxGA_HORIZONTAL | wxBORDER_NONE );
     ~guGauge( void );
 
     void    SetRange( int range );
-    int     GetValue( void ) { return m_Value; };
+    int     GetValue( void ) { return m_Value; }
     bool    SetValue( int value );
 
   DECLARE_EVENT_TABLE()
@@ -95,9 +95,9 @@ class guStatusBar : public wxStatusBar
     void                UpdateAudioScrobbleIcon( bool Enabled = false );
     int                 AddGauge( const wxString &text = wxEmptyString, bool showporcent = true );
     int                 RemoveGauge( int gaugeid );
-    void                Pulse( int id ) { /*m_Gauges[ id ]->Pulse(); */ };
-    void                SetTotal( int id, int total ) { m_Gauges[ id ]->SetRange( total ); };
-    void                SetValue( int id, int value ) { m_Gauges[ id ]->SetValue( value ); };
+    void                Pulse( int id ) { /*m_Gauges[ id ]->Pulse(); */ }
+    void                SetTotal( int id, int total ) { m_Gauges[ id ]->SetRange( total ); }
+    void                SetValue( int id, int value ) { m_Gauges[ id ]->SetValue( value ); }
 
     void                SetSelInfo( const wxString &label );
 

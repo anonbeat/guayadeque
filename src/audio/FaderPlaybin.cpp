@@ -1332,7 +1332,7 @@ bool guFaderPlaybin::StartFade( double volstart, double volend, int timeout )
 
     m_FaderTimeLine = new guFaderTimeLine( timeout, NULL, this, volstart, volend );
     m_FaderTimeLine->SetDirection( volstart > volend ? guFaderTimeLine::Backward : guFaderTimeLine::Forward );
-    m_FaderTimeLine->SetCurveShape( guTimeLine::LinearCurve );
+    m_FaderTimeLine->SetCurveShape( guTimeLine::EaseInOutCurve );
     m_FaderTimeLine->Start();
 
     return true;

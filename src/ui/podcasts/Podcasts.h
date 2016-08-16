@@ -135,7 +135,7 @@ class guPodcastChannel
     wxString            m_DownloadText;
     bool                m_AllowDelete;
 
-                guPodcastChannel() {};
+                guPodcastChannel() {}
                 guPodcastChannel( const wxString &url );
     void        Update( guDbPodcasts * db, guMainFrame * mainframe );
     void        CheckLogo( void );

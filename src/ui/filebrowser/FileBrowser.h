@@ -99,7 +99,7 @@ class guGenericDirCtrl : public wxGenericDirCtrl
     void            OnEndRenameDir( wxTreeEvent &event );
 
   public :
-    guGenericDirCtrl() : wxGenericDirCtrl() { m_FileBrowserDirCtrl = NULL; };
+    guGenericDirCtrl() : wxGenericDirCtrl() { m_FileBrowserDirCtrl = NULL; }
     guGenericDirCtrl( wxWindow * parent, guMainFrame * mainframe, const int showpaths  );
     ~guGenericDirCtrl();
 
@@ -152,7 +152,7 @@ class guFileBrowserDirCtrl : public wxPanel
     void                SetMediaViewer( guMediaViewer * mediaviewer );
 
     void                RenamedDir( const wxString &oldname, const wxString &newname );
-    void                FolderRename( void ) { m_DirCtrl->FolderRename(); };
+    void                FolderRename( void ) { m_DirCtrl->FolderRename(); }
     void                FolderNew( void );
     void                FolderDelete( void );
     bool                ExpandPath( const wxString &path ) { return m_DirCtrl->ExpandPath( path ); }
