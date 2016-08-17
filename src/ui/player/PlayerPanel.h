@@ -255,7 +255,6 @@ class guPlayerPanel : public wxPanel
 	double                      m_LastVolume;
 	wxFileOffset                m_LastCurPos;
 	wxFileOffset                m_LastLength;
-	bool                        m_IsSkipping;
 	bool                        m_ShowNotifications;
 	int                         m_ShowNotificationsTime;
 

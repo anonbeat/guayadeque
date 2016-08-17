@@ -110,7 +110,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PlayRandomMode = guRANDOM_MODE_TRACK;
     m_DelTracksPlayed = false;
     m_PendingScrob = false;
-    m_IsSkipping = false;
     m_ShowNotifications = true;
     m_ShowNotificationsTime = 0;
     m_ErrorFound = false;
@@ -1311,7 +1310,6 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forc
             guLogError( wxT( "ee: Failed load of file '%s'" ), Uri.c_str() );
 
             int CurItem = m_PlayListCtrl->GetCurItem();
-            m_IsSkipping = false;
 
             wxCommandEvent event;
             event.SetId( ID_PLAYERPANEL_NEXTTRACK );
@@ -1445,7 +1443,6 @@ void guPlayerPanel::OnMediaError( guMediaEvent &event )
 
     int CurItem = m_PlayListCtrl->GetCurItem();
 
-    m_IsSkipping = false;
     m_NextTrackId = 0;
 
     wxCommandEvent CmdEvent;
@@ -1930,9 +1927,6 @@ void guPlayerPanel::OnMediaPlayStarted( void )
         m_AudioScrobble->SendNowPlayingTrack( m_MediaSong );
         //m_PendingScrob = false;
     }
-
-    if( m_IsSkipping )
-        m_IsSkipping = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2251,9 +2245,6 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
 //    wxFileOffset CurPos;
     guTrack * PrevItem;
 
-    if( m_IsSkipping )
-        return;
-
     // If we are already in the first Item start again the song from the begining
     State = m_MediaCtrl->GetState();
     //CurPos = m_MediaCtrl->Tell();
@@ -2274,7 +2265,6 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         {
 //            if( State == guMEDIASTATE_PLAYING )
 //            {
-            m_IsSkipping = true;
             LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE :
                 ( ForceSkip ? guFADERPLAYBIN_PLAYTYPE_REPLACE : guFADERPLAYBIN_PLAYTYPE_AFTER_EOS ), ForceSkip );
 //            }
@@ -2331,12 +2321,9 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         OnNextAlbumButtonClick( event );
         return;
     }
-    guLogDebug( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i  %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt(), m_IsSkipping );
+    guLogDebug( wxT( "OnNextTrackButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, event.GetInt() );
     guMediaState State;
     guTrack * NextItem;
-
-    if( m_IsSkipping )
-        return;
 
     NextItem = m_PlayListCtrl->GetNext( m_PlayLoop, ForceSkip );
     if( NextItem )
@@ -2348,8 +2335,6 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 
         if( State == guMEDIASTATE_PLAYING || State == guMEDIASTATE_ERROR )
         {
-            m_IsSkipping = true;
-
             if( ( State != guMEDIASTATE_ERROR ) &&
                 !ForceSkip &&
                 !( !m_ForceGapless && m_FadeOutTime ) &&
@@ -2447,11 +2432,8 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
 {
-    guLogDebug( wxT( "OnNextAlbumButtonClick Cur: %i    %li   %i" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId, m_IsSkipping );
+    guLogDebug( wxT( "OnNextAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
     guMediaState State;
-
-    if( m_IsSkipping )
-        return;
 
     guTrack * NextAlbumTrack = m_PlayListCtrl->GetNextAlbum( m_PlayLoop, true );
     if( NextAlbumTrack )
@@ -2462,8 +2444,6 @@ void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
 
         if( State == guMEDIASTATE_PLAYING )
         {
-            m_IsSkipping = true;
-
             bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_NEXTTRACK ) ||
                               ( event.GetEventObject() == m_NextTrackButton );
             LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ),
@@ -2506,9 +2486,6 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
     //guLogDebug( wxT( "OnPrevAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
     guMediaState State;
 
-    if( m_IsSkipping )
-        return;
-
     guTrack * NextAlbumTrack = m_PlayListCtrl->GetPrevAlbum( m_PlayLoop, true );
     if( NextAlbumTrack )
     {
@@ -2518,7 +2495,6 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
 
         if( State == guMEDIASTATE_PLAYING )
         {
-            m_IsSkipping = true;
             bool ForceSkip = ( event.GetId() == ID_PLAYERPANEL_PREVTRACK ) ||
                               ( event.GetEventObject() == m_PrevTrackButton );
             LoadMedia( ( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE ),
