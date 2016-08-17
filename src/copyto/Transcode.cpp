@@ -345,6 +345,7 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
             if( GST_IS_ELEMENT( * enc ) )
             {
                 g_object_set( * enc, "bitrate", guTranscodeMp3Bitrates[ m_Quality ], NULL );
+                g_object_set( * enc, "cbr", TRUE, NULL );
 
                 * mux = gst_element_factory_make( "xingmux", "guTransMp3Mux" );
                 if( GST_IS_ELEMENT( * mux ) )
