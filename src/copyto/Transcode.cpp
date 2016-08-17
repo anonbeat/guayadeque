@@ -344,18 +344,13 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
             * enc = gst_element_factory_make( "lamemp3enc", "guTransLame" );
             if( GST_IS_ELEMENT( * enc ) )
             {
-                g_object_set( * enc, "bitrate", guTranscodeMp3Bitrates[ m_Quality ], NULL );
+                g_object_set( * enc, "target", 1, NULL );
                 g_object_set( * enc, "cbr", TRUE, NULL );
+                g_object_set( * enc, "bitrate", guTranscodeMp3Bitrates[ m_Quality ], NULL );
 
-                * mux = gst_element_factory_make( "xingmux", "guTransMp3Mux" );
-                if( GST_IS_ELEMENT( * mux ) )
-                {
-                    return true;
-                }
-
-                g_object_unref( * enc );
-                * enc = NULL;
+                return true;
             }
+            * enc = NULL;
             break;
         }
 
