@@ -61,6 +61,8 @@
 
 namespace Guayadeque {
 
+#define guPORTABLEMEDIA_CONFIG_FILE             wxT( ".is_audio_player" )
+
 #define guPORTABLEMEDIA_AUDIO_FORMAT_MP3        ( 1 << 0 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_OGG        ( 1 << 1 )
 #define guPORTABLEMEDIA_AUDIO_FORMAT_FLAC       ( 1 << 2 )
@@ -134,7 +136,8 @@ class guPortableMediaDevice
 {
   protected :
     guGIO_Mount *   m_Mount;
-    //
+
+    wxString        m_ConfigPath;
     wxString        m_Id;
 
     int             m_Type;

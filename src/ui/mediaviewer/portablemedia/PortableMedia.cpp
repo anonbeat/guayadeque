@@ -343,19 +343,23 @@ wxString CoverFormatsToMimeStr( const int formats )
 guPortableMediaDevice::guPortableMediaDevice( guGIO_Mount * mount )
 {
     m_Mount = mount;
-    m_Type = guPORTABLE_MEDIA_TYPE_MSC;
 
-    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
+    m_Type = guPORTABLE_MEDIA_TYPE_MSC;
+    // On mtp devices the config file must be inside the device folder ('Internal storage', 'SD Card', etc)
+    m_ConfigPath = m_Mount->GetMountPath() + guPORTABLEMEDIA_CONFIG_FILE;
+    guLogMessage( wxT( "Using config path '%s'" ), m_ConfigPath.c_str() );
+
+    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_ConfigPath );
     m_Id = mount->GetId(); //Config->Read( wxT( "audio_player_id" ), wxString::Format( wxT( "%08lX" ), wxGetLocalTime() ) );
     m_Pattern = Config->Read( wxT( "audio_file_pattern" ), wxT( "{A} - {b}/{n} - {a} - {t}" ) );
-    m_AudioFormats = MimeStrToAudioFormat( Config->Read( wxT( "output_formats" ), wxT( "mp3" ) ) );
+    m_AudioFormats = MimeStrToAudioFormat( Config->Read( wxT( "output_formats" ), wxT( "audio/mpeg" ) ) );
     m_TranscodeFormat = Config->Read( wxT( "transcode_format" ), guTRANSCODE_FORMAT_KEEP );
     m_TranscodeScope = Config->Read( wxT( "transcode_scope" ), guPORTABLEMEDIA_TRANSCODE_SCOPE_NOT_SUPPORTED );
     m_TranscodeQuality = Config->Read( wxT( "transcode_quality" ), guTRANSCODE_QUALITY_KEEP );
     m_AudioFolders = Config->Read( wxT( "audio_folders" ), wxT( "" ) );
     m_PlaylistFormats = MimeStrToPlaylistFormat( Config->Read( wxT( "playlist_format" ), wxEmptyString ) );
     m_PlaylistFolder = Config->Read( wxT( "playlist_path" ), wxEmptyString );
-    m_CoverFormats = MimeStrToCoverFormat( Config->Read( wxT( "cover_art_file_type" ), wxT( "jpeg" ) ) );
+    m_CoverFormats = MimeStrToCoverFormat( Config->Read( wxT( "cover_art_file_type" ), wxT( "image/jpeg" ) ) );
     m_CoverName = Config->Read( wxT( "cover_art_file_name" ), wxT( "cover" ) );
     m_CoverSize = Config->Read( wxT( "cover_art_size" ), 100 );
 
@@ -375,7 +379,7 @@ guPortableMediaDevice::~guPortableMediaDevice()
 // -------------------------------------------------------------------------------- //
 void guPortableMediaDevice::WriteConfig( void )
 {
-    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_Mount->GetMountPath() + wxT( ".is_audio_player" ) );
+    wxFileConfig * Config = new wxFileConfig( wxEmptyString, wxEmptyString, m_ConfigPath );
     Config->Write( wxT( "audio_file_pattern" ), m_Pattern );
     Config->Write( wxT( "output_formats" ), AudioFormatsToMimeStr( m_AudioFormats ) );
     Config->Write( wxT( "transcode_format" ), m_TranscodeFormat );
@@ -390,7 +394,6 @@ void guPortableMediaDevice::WriteConfig( void )
     Config->Flush();
 
     delete Config;
-
 }
 
 // -------------------------------------------------------------------------------- //

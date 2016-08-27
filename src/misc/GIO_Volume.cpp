@@ -79,6 +79,21 @@ guGIO_Mount::guGIO_Mount( GMount * mount )
     {
         char * Path = g_file_get_path( RootFile );
         m_MountPath = wxString( Path, wxConvUTF8 ) + wxT( "/" );
+        // If it is a mtp device find the first writeable folder...
+        if( m_MountPath.Find( "mtp:" ) != wxNOT_FOUND )
+        {
+            wxFileName FileName( m_MountPath );
+
+            if( !FileName.IsDirWritable() ) // if cant be created in the default location ...
+            {
+                wxString WriteableFolder = FindWriteableFolder( m_MountPath );
+                if( !WriteableFolder.IsEmpty() )
+                {
+                    m_MountPath = WriteableFolder;
+                }
+            }
+        }
+
         guLogMessage( wxT( "Mount Path: %s" ), m_MountPath.c_str() );
         g_free( Path );
         g_object_unref( RootFile );
@@ -108,6 +123,20 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
     m_MountPath = mountpath;
     if( !m_MountPath.EndsWith( wxT( "/" ) ) )
         m_MountPath.Append( wxT( "/" ) );
+    // If it is a mtp device find the first writeable folder...
+    if( m_MountPath.Find( "mtp:" ) != wxNOT_FOUND )
+    {
+        wxFileName FileName( m_MountPath );
+
+        if( !FileName.IsDirWritable() ) // if cant be created in the default location ...
+        {
+            wxString WriteableFolder = FindWriteableFolder( m_MountPath );
+            if( !WriteableFolder.IsEmpty() )
+            {
+                m_MountPath = WriteableFolder;
+            }
+        }
+    }
 
     char * mount_name = g_mount_get_name( m_Mount );
     if( mount_name )
@@ -137,12 +166,48 @@ guGIO_Mount::guGIO_Mount( GMount * mount, wxString &mountpath )
 // -------------------------------------------------------------------------------- //
 guGIO_Mount::~guGIO_Mount()
 {
-//    if( m_Mount )
-//    {
-//        guLogMessage( wxT( ">> ~guGIO_Mount()" ) );
-//        //g_object_unref( m_Mount );
-//        guLogMessage( wxT( "<< ~guGIO_Mount()" ) );
-//    }
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guGIO_Mount::FindWriteableFolder( const wxString &mountpath )
+{
+    wxDir       Dir;
+    wxString    FoundFile;
+    wxString    MountPath = mountpath;
+    if( !MountPath.EndsWith( wxT( "/" ) ) )
+        MountPath += wxT( "/" );
+
+    Dir.Open( MountPath );
+
+    if( Dir.IsOpened() )
+    {
+        if( Dir.GetFirst( &FoundFile, wxEmptyString, wxDIR_DIRS ) )
+        {
+            do {
+                //guLogMessage( wxT( "Found file '%s'" ), FoundFile.c_str() );
+
+                if( FoundFile == wxT( "." ) ||
+                    FoundFile == wxT( ".." ) )
+                    continue;
+
+                if( wxIsWritable( MountPath + FoundFile + wxT( "/" ) ) )
+                    return MountPath + FoundFile + wxT( "/" );
+
+                if( Dir.Exists( MountPath + FoundFile ) )
+                {
+                    wxString WriteableFolder = FindWriteableFolder( MountPath + FoundFile );
+                    if( !WriteableFolder.IsEmpty() )
+                    {
+                        //guLogMessage( wxT( "Found writeable folder at '%s'" ), WriteableFolder.c_str() );
+                        return WriteableFolder;
+                    }
+                }
+
+            } while( Dir.GetNext( &FoundFile ) );
+        }
+    }
+
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -70,6 +70,8 @@ class guGIO_Mount
     wxString        m_MountPath;
     wxString        m_IconString;
 
+    wxString        FindWriteableFolder( const wxString &mountpath );
+
   public :
     guGIO_Mount( GMount * mount );
     guGIO_Mount( GMount * mount, wxString &mountpath );

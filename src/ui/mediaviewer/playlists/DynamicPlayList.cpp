@@ -78,7 +78,7 @@ void inline InitArrayStrings( void )
         m_FilterTextOptionChoices.Add( _("ends with") );
 //    }
 //
-//    if( !m_FilterTextOptionChoices.Count() )
+//    if( !m_FilterLabelOptionChoices.Count() )
 //    {
         m_FilterLabelOptionChoices.Add( _("contains") );
         m_FilterLabelOptionChoices.Add( _("does not contain") );
