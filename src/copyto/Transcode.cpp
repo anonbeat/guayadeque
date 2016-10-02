@@ -27,6 +27,8 @@
 #include "Version.h"
 #include "PortableMedia.h"
 
+#include <wx/filefn.h>
+#include <wx/filename.h>
 #include <wx/uri.h>
 
 namespace Guayadeque {
@@ -54,7 +56,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
             break;
         }
 
-//        case GST_MESSAGE_STATE_CHANGED:
+        case GST_MESSAGE_STATE_CHANGED:
 //        {
 //            //  GST_STATE_VOID_PENDING        = 0,
 //            //  GST_STATE_NULL                = 1,
@@ -64,7 +66,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
 //            GstState oldstate, newstate, pendingstate;
 //            gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
 //
-//            //guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
+//            guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
 //            if( pendingstate == GST_STATE_VOID_PENDING )
 //            {
 //                guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
@@ -136,6 +138,8 @@ guTranscodeThread::guTranscodeThread( const guTrack * track, const wxChar * targ
 {
     m_Track = track;
     m_Target = wxString( target );
+    m_TempName = wxFileName::CreateTempFileName( wxT( "guayadeque" ) ) + wxT( "." ) + m_Target.AfterLast( '.' );
+    guLogMessage( wxT( "The temporary filename is %s" ), m_TempName.c_str() );
     m_Format = format;
     m_Quality = quality;
     m_StartPos = track->m_Offset;
@@ -491,7 +495,7 @@ void guTranscodeThread::BuildPipeline( void )
             filesink = gst_element_factory_make( "filesink", "guTransFileSink" );
             if( GST_IS_ELEMENT( filesink ) )
             {
-              g_object_set( filesink, "location", ( const char * ) m_Target.mb_str( wxConvFile ), NULL );
+              g_object_set( filesink, "location", ( const char * ) m_TempName.mb_str( wxConvFile ), NULL );
 
               if( mux )
               {
@@ -641,16 +645,25 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
 
             Sleep( 100 );
         }
-        Sleep( 500 );
+
+        if( !TestDestroy() )
+        {
+            SetStateAndWait( m_Pipeline, GST_STATE_NULL );
+            gst_object_unref( GST_OBJECT( m_Pipeline ) );
+            Sleep( 500 );
+            m_Pipeline = NULL;
+
+            WriteTags();
+        }
     }
     return 0;
 }
 
 // -------------------------------------------------------------------------------- //
-void guTranscodeThread::Stop( void )
+void guTranscodeThread::WriteTags()
 {
     int WriteFlags = guTRACK_CHANGED_DATA_TAGS;
-    guTagInfo * OutTagInfo = guGetTagInfoHandler( m_Target );
+    guTagInfo * OutTagInfo = guGetTagInfoHandler( m_TempName );
     if( OutTagInfo )
     {
         if( !m_StartPos && m_Track->m_Type != guTRACK_TYPE_AUDIOCD )
@@ -714,12 +727,22 @@ void guTranscodeThread::Stop( void )
         {
             WriteFlags |= guTRACK_CHANGED_DATA_RATING;
         }
-
         OutTagInfo->Write( WriteFlags );
 
         delete OutTagInfo;
-    }
 
+        if( !wxCopyFile( m_TempName, m_Target ) )
+        {
+            guLogMessage( wxT( "Could not create the file %s" ), m_Target.c_str() );
+        }
+
+        wxRemoveFile( m_TempName );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guTranscodeThread::Stop( void )
+{
     m_Running = false;
 }
 

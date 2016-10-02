@@ -63,6 +63,7 @@ class guTranscodeThread : public wxThread
   protected :
     const guTrack *     m_Track;
     wxString            m_Target;
+    wxString            m_TempName;
     int                 m_Format;
     int                 m_Quality;
     int                 m_StartPos;
@@ -74,19 +75,20 @@ class guTranscodeThread : public wxThread
 
     void                BuildPipeline( void );
     bool                BuildEncoder( GstElement ** enc, GstElement ** mux );
+    void                WriteTags();
 
   public :
     guTranscodeThread( const guTrack * track, const wxChar * target, const int format, const int quality );
     ~guTranscodeThread();
 
     virtual ExitCode    Entry();
-    void                Stop( void );
+    void                Stop();
     bool                IsTranscoding( void ) { return m_Running; }
-    bool                IsOk( void ) { return !m_HasError; }
+    bool                IsOk() { return !m_HasError; }
     void                SetError( bool error ) { m_HasError = error; }
-    bool                CheckTrackEnd( void );
-    GstElement *        GetPipeline( void ) { return m_Pipeline; }
-    bool                DoStartSeek( void );
+    bool                CheckTrackEnd();
+    GstElement *        GetPipeline() { return m_Pipeline; }
+    bool                DoStartSeek();
 
 };
 
