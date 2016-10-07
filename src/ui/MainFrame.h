@@ -317,6 +317,7 @@ class guMainFrame : public wxFrame
 
     void                            OnIdle( wxIdleEvent &event );
     void                            OnSize( wxSizeEvent &event );
+    void                            OnIconize( wxIconizeEvent &event );
     void                            OnPageChanged( wxAuiNotebookEvent& event );
     void                            OnPageClosed( wxAuiNotebookEvent& event );
     void                            DoPageClose( wxPanel * panel );

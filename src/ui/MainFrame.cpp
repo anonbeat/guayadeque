@@ -459,6 +459,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     // Bind events
     Bind( wxEVT_IDLE, &guMainFrame::OnIdle, this );
     Bind( wxEVT_SIZE, &guMainFrame::OnSize, this );
+    Bind( wxEVT_ICONIZE, &guMainFrame::OnIconize, this );
 
     Bind( wxEVT_MENU, &guMainFrame::OnPlayStream, this, ID_MENU_PLAY_STREAM );
     Bind( wxEVT_MENU, &guMainFrame::OnUpdatePodcasts, this, ID_MENU_UPDATE_PODCASTS );
@@ -3974,14 +3975,24 @@ void guMainFrame::LoadPerspective( const wxString &layout )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSize( wxSizeEvent &event )
 {
-    //wxSize Size = event.GetSize();
-    //guLogMessage( wxT( "MainFrame.Size( %i, %i ) %i" ), Size.GetWidth(), Size.GetHeight(), m_LoadLayoutPending );
+    wxSize Size = event.GetSize();
+    guLogMessage( wxT( "MainFrame.Size( %i, %i ) %i" ), Size.GetWidth(), Size.GetHeight(), m_LoadLayoutPending );
     if( m_LoadLayoutPending != wxNOT_FOUND )
     {
         //guLogMessage( wxT( "LoadLayout command sent" ) );
         wxCommandEvent LoadLayoutEvent( wxEVT_MENU, ID_MENU_LAYOUT_LOAD + m_LoadLayoutPending );
         m_LoadLayoutPending = wxNOT_FOUND;
         AddPendingEvent( LoadLayoutEvent );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guMainFrame::OnIconize( wxIconizeEvent &event )
+{
+    guLogMessage( wxT( "MainFrame::OnIconize: %i" ), event.IsIconized() );
+    if( !event.IsIconized() )
+    {
+        Layout();
     }
 }
 
