@@ -650,8 +650,8 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
         {
             SetStateAndWait( m_Pipeline, GST_STATE_NULL );
             gst_object_unref( GST_OBJECT( m_Pipeline ) );
-            Sleep( 500 );
             m_Pipeline = NULL;
+            Sleep( 500 );
 
             WriteTags();
         }
