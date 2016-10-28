@@ -32,6 +32,7 @@
 #include <wx/regex.h>
 #include <wx/sstream.h>
 #include <wx/uri.h>
+#include <wx/protocol/http.h>
 #include <wx/zstream.h>
 
 namespace Guayadeque {
@@ -170,11 +171,8 @@ bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings )
 wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
 {
     wxImage *   Image = NULL;
-    wxURI       Uri( url );
 
-    wxString FileName = Uri.GetPath().Lower();
-
-    //guLogMessage( wxT( "Downloading '%s' from '%s'" ), FileName.c_str(), url.c_str() );
+    //guLogMessage( wxT( "Downloading '%s'" ), url.c_str() );
     wxMemoryOutputStream Buffer;
     guHttp Http;
     Http.AddHeader( wxT( "User-Agent" ), guDEFAULT_BROWSER_USER_AGENT );
@@ -212,29 +210,15 @@ wxImage * guGetRemoteImage( const wxString &url, wxBitmapType &imgtype )
             wxMemoryInputStream Ins( Buffer );
             if( Ins.IsOk() )
             {
-                if( FileName.EndsWith( wxT( ".jpg" ) ) ||
-                    FileName.EndsWith( wxT( ".jpeg" ) ) )
-                  imgtype = wxBITMAP_TYPE_JPEG;
-                else if( FileName.EndsWith( wxT( ".png" ) ) )
-                  imgtype = wxBITMAP_TYPE_PNG;
-                else if( FileName.EndsWith( wxT( ".gif" ) ) )
-                  imgtype = wxBITMAP_TYPE_GIF;
-                else if( FileName.EndsWith( wxT( ".bmp" ) ) )
-                  imgtype = wxBITMAP_TYPE_BMP;
-                else
-                  imgtype = wxBITMAP_TYPE_INVALID;
-
-                if( imgtype != wxBITMAP_TYPE_INVALID )
+                Image = new wxImage( Ins );
+                if( Image )
                 {
-                    Image = new wxImage( Ins, imgtype );
-                    if( Image )
+                    if( Image->IsOk() )
                     {
-                        if( Image->IsOk() )
-                        {
-                            return Image;
-                        }
-                        delete Image;
+                        imgtype = Image->GetType();
+                        return Image;
                     }
+                    delete Image;
                 }
             }
         }
