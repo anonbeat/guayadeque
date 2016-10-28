@@ -107,15 +107,13 @@ guCurl::guCurl( const wxString &url )
     m_ProxyPort = 0;
 
     m_ErrorBuffer[ 0 ] = 0;
-
-    InitHandle();
 }
 
 // -------------------------------------------------------------------------------- //
 guCurl::~guCurl()
 {
-    CleanupHandle();
     CleanHeaders();
+    CleanupHandle();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -351,62 +349,66 @@ void guCurl::SetDefaultOptions( const wxString &url )
     if( m_CurlHandle )
     {
         ResetHandle();
-        ResetResVars();
-
-        SetOption( CURLOPT_URL, m_Url );
-
-        SetOption( CURLOPT_HEADERFUNCTION, ( void * ) string_write_callback );
-        SetOption( CURLOPT_HEADERDATA, ( void * ) &m_ResHeader );
-
-        SetOption( CURLOPT_ERRORBUFFER, ( void * ) m_ErrorBuffer );
-
-        if( !wxCHARBUFFER_ISEMPTY( m_User ) &&
-            !wxCHARBUFFER_ISEMPTY( m_Password ) )
-        {
-            wxString str = wxString( m_User, wxConvLibc ) +
-                           wxT( ":" ) +
-                           wxString( m_Password, wxConvLibc );
-
-            m_CurlUserPass = str.ToAscii();
-            SetOption( CURLOPT_USERPWD, m_CurlUserPass );
-
-            SetOption( CURLOPT_HTTPAUTH, CURLAUTH_ANY );
-        }
-
-        if( m_Port )
-        {
-            SetOption( CURLOPT_PORT, m_Port );
-        }
-
-        if( m_UseProxy )
-        {
-            if( !wxCHARBUFFER_ISEMPTY( m_ProxyHost ) )
-            {
-                SetOption( CURLOPT_PROXY, m_ProxyHost );
-            }
-
-            if( m_ProxyPort )
-            {
-                SetOption( CURLOPT_PROXYPORT, m_ProxyPort );
-            }
-
-            if( !wxCHARBUFFER_ISEMPTY( m_ProxyUser ) &&
-                !wxCHARBUFFER_ISEMPTY( m_ProxyPassword ) )
-            {
-                wxString str = wxString( m_ProxyUser, wxConvLibc ) +
-                               wxT( ":" ) +
-                               wxString( m_ProxyPassword, wxConvLibc );
-
-                m_CurlProxyUserPass = str.ToAscii();
-                SetOption( CURLOPT_PROXYUSERPWD, m_CurlProxyUserPass );
-            }
-        }
-
-        SetOption( CURLOPT_VERBOSE, CURL_VERBOSE_MODE );
-        SetOption( CURLOPT_NOSIGNAL, CURL_NO_SIGNALS );
-        SetOption( CURLOPT_FOLLOWLOCATION, CURL_FOLLOW_LOCATIONS );
-        SetOption( CURLOPT_MAXREDIRS, CURL_MAX_REDIRS );
     }
+    else
+    {
+        InitHandle();
+    }
+    ResetResVars();
+
+    SetOption( CURLOPT_URL, m_Url );
+
+    SetOption( CURLOPT_HEADERFUNCTION, ( void * ) string_write_callback );
+    SetOption( CURLOPT_HEADERDATA, ( void * ) &m_ResHeader );
+
+    SetOption( CURLOPT_ERRORBUFFER, ( void * ) m_ErrorBuffer );
+
+    if( !wxCHARBUFFER_ISEMPTY( m_User ) &&
+        !wxCHARBUFFER_ISEMPTY( m_Password ) )
+    {
+        wxString str = wxString( m_User, wxConvLibc ) +
+                       wxT( ":" ) +
+                       wxString( m_Password, wxConvLibc );
+
+        m_CurlUserPass = str.ToAscii();
+        SetOption( CURLOPT_USERPWD, m_CurlUserPass );
+
+        SetOption( CURLOPT_HTTPAUTH, CURLAUTH_ANY );
+    }
+
+    if( m_Port )
+    {
+        SetOption( CURLOPT_PORT, m_Port );
+    }
+
+    if( m_UseProxy )
+    {
+        if( !wxCHARBUFFER_ISEMPTY( m_ProxyHost ) )
+        {
+            SetOption( CURLOPT_PROXY, m_ProxyHost );
+        }
+
+        if( m_ProxyPort )
+        {
+            SetOption( CURLOPT_PROXYPORT, m_ProxyPort );
+        }
+
+        if( !wxCHARBUFFER_ISEMPTY( m_ProxyUser ) &&
+            !wxCHARBUFFER_ISEMPTY( m_ProxyPassword ) )
+        {
+            wxString str = wxString( m_ProxyUser, wxConvLibc ) +
+                           wxT( ":" ) +
+                           wxString( m_ProxyPassword, wxConvLibc );
+
+            m_CurlProxyUserPass = str.ToAscii();
+            SetOption( CURLOPT_PROXYUSERPWD, m_CurlProxyUserPass );
+        }
+    }
+
+    SetOption( CURLOPT_VERBOSE, CURL_VERBOSE_MODE );
+    SetOption( CURLOPT_NOSIGNAL, CURL_NO_SIGNALS );
+    SetOption( CURLOPT_FOLLOWLOCATION, CURL_FOLLOW_LOCATIONS );
+    SetOption( CURLOPT_MAXREDIRS, CURL_MAX_REDIRS );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -436,7 +438,7 @@ void guCurl::SetHeaders()
 // -------------------------------------------------------------------------------- //
 void guCurl::CleanHeaders()
 {
-    m_ReqHeaders.Empty();
+    m_ReqHeaders.Clear();
 
     if( m_CurlHeaders )
     {

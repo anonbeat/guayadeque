@@ -52,14 +52,12 @@ bool guHttp::Post( const char * buffer, size_t size, const wxString &url )
 // -------------------------------------------------------------------------------- //
 bool guHttp::Post( wxInputStream &instream, const wxString &url )
 {
-    curl_off_t Size = 0;
-
-    if( m_CurlHandle && instream.IsOk() )
+    if( instream.IsOk() )
     {
         SetDefaultOptions( url );
         SetHeaders();
 
-        Size = instream.GetSize();
+        curl_off_t Size = instream.GetSize();
         if( !Size )
             return false;
 
@@ -71,10 +69,12 @@ bool guHttp::Post( wxInputStream &instream, const wxString &url )
         if( Perform() )
         {
             CleanHeaders();
+            CleanupHandle();
 
             return ( m_ResCode >= 200 && m_ResCode < 300 );
         }
         CleanHeaders();
+        CleanupHandle();
     }
 
     return false;
@@ -92,14 +92,12 @@ bool guHttp::Get( const wxString &filename, const wxString &url )
 // -------------------------------------------------------------------------------- //
 size_t guHttp::Get( char * &buffer, const wxString &url )
 {
-    wxMemoryOutputStream outStream;
-
     buffer = NULL;
-    size_t Retval = 0;
+    wxMemoryOutputStream outStream;
 
     if( Get( outStream, url ) )
     {
-        Retval = outStream.GetSize();
+        size_t Retval = outStream.GetSize();
         buffer = ( char * ) malloc( Retval + 1 );
         if( buffer )
         {
@@ -122,7 +120,7 @@ size_t guHttp::Get( char * &buffer, const wxString &url )
 // -------------------------------------------------------------------------------- //
 bool guHttp::Get( wxOutputStream &buffer, const wxString &url )
 {
-    if( m_CurlHandle && buffer.IsOk() )
+    if( buffer.IsOk() )
     {
         SetDefaultOptions( url );
         SetHeaders();
@@ -132,10 +130,12 @@ bool guHttp::Get( wxOutputStream &buffer, const wxString &url )
         if( Perform() )
         {
             CleanHeaders();
+            CleanupHandle();
 
             return ( m_ResCode >= 200 && m_ResCode < 300 );
         }
         CleanHeaders();
+        CleanupHandle();
     }
 
     return false;
