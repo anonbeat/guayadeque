@@ -45,11 +45,11 @@ namespace Guayadeque {
 
 #define GULASTFM_DOWNLOAD_IMAGE_DELAY    10
 
-WX_DEFINE_OBJARRAY(guLastFMInfoArray);
-WX_DEFINE_OBJARRAY(guLastFMSimilarArtistInfoArray);
-WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray);
-WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray);
-WX_DEFINE_OBJARRAY(guLastFMTopTrackInfoArray);
+WX_DEFINE_OBJARRAY(guLastFMInfoArray)
+WX_DEFINE_OBJARRAY(guLastFMSimilarArtistInfoArray)
+WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray)
+WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray)
+WX_DEFINE_OBJARRAY(guLastFMTopTrackInfoArray)
 
 // -------------------------------------------------------------------------------- //
 guHtmlWindow::guHtmlWindow( wxWindow * parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style ) :
@@ -2159,8 +2159,6 @@ guLastFMPanel::~guLastFMPanel()
 // -------------------------------------------------------------------------------- //
 void guLastFMPanel::ShowCurrentTrack( void )
 {
-    int index;
-
     m_ArtistName = m_TrackChangeItems[ m_CurrentTrackInfo ].m_ArtistName;
     m_TrackName = m_TrackChangeItems[ m_CurrentTrackInfo ].m_TrackName;
     m_MediaViewer = m_TrackChangeItems[ m_CurrentTrackInfo ].m_MediaViewer;
@@ -2212,7 +2210,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         // Clear the LastFM controls to default values
         m_ArtistInfoCtrl->Clear( m_MediaViewer );
 
-        for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
+        for( int index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
         {
             m_AlbumsInfoCtrls[ index ]->Clear( m_MediaViewer );
             m_TopTrackInfoCtrls[ index ]->Clear( m_MediaViewer );
@@ -2245,6 +2243,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
         UpdateEventsRangeLabel();
 
         m_LastArtistName = m_ArtistName;
+
         if( !m_ArtistName.IsEmpty() )
         {
             m_ArtistsUpdateThread = new guFetchArtistInfoThread( this, m_DbCache, m_ArtistName.c_str() );
@@ -2253,6 +2252,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_SimArtistsUpdateThread = new guFetchSimilarArtistInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_TopTracksPageStart );
             m_EventsUpdateThread = new guFetchEventsInfoThread( this, m_DbCache, m_ArtistName.c_str(), m_EventsPageStart );
         }
+
         m_ArtistTextCtrl->SetValue( m_ArtistName );
 
         m_EventsUpdateThreadMutex.Unlock();
@@ -2272,7 +2272,7 @@ void guLastFMPanel::ShowCurrentTrack( void )
             m_SimTracksUpdateThread = NULL;
         }
 
-        for( index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
+        for( int index = 0; index < GULASTFMINFO_MAXITEMS; index++ )
         {
             m_SimTracksInfoCtrls[ index ]->Clear( m_MediaViewer );
         }
@@ -3590,7 +3590,10 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
                             break;
                         }
                     }
-                    guImageResize( Image, Size );
+
+                    wxImage * ScaledImage = guResizeImage( Image, Size );
+                    delete Image;
+                    Image = ScaledImage;
                 }
             }
 
@@ -3702,8 +3705,6 @@ guFetchAlbumInfoThread::~guFetchAlbumInfoThread()
 // -------------------------------------------------------------------------------- //
 guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
 {
-    int index;
-    int count;
     guLastFM * LastFM = new guLastFM();
     if( LastFM )
     {
@@ -3711,7 +3712,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
         {
             //guLogMessage( wxT( "==== Getting Top Albums ====" ) );
             guAlbumInfoArray TopAlbums = LastFM->ArtistGetTopAlbums( m_ArtistName );
-            count = TopAlbums.Count();
+            int count = TopAlbums.Count();
 
             wxCommandEvent CountEvent( wxEVT_MENU, ID_LASTFM_UPDATE_ALBUM_COUNT );
             CountEvent.SetInt( count );
@@ -3721,7 +3722,7 @@ guFetchAlbumInfoThread::ExitCode guFetchAlbumInfoThread::Entry()
             {
                 count = wxMin( count, m_Start + GULASTFMINFO_MAXITEMS );
 
-                for( index = m_Start; index < count; index++ )
+                for( int index = m_Start; index < count; index++ )
                 {
                     m_DownloadThreadsMutex.Lock();
                     if( !TestDestroy() )
