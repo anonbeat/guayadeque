@@ -3591,9 +3591,7 @@ guDownloadImageThread::ExitCode guDownloadImageThread::Entry()
                         }
                     }
 
-                    wxImage * ScaledImage = guResizeImage( Image, Size );
-                    delete Image;
-                    Image = ScaledImage;
+                    guImageResize( Image, Size );
                 }
             }
 
