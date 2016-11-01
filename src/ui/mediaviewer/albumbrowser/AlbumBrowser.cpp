@@ -749,7 +749,6 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
 
-
     if( guALBUMBROWSER_GRID_SIZE_HEIGHT == -1 )
     {
         CalculateMaxItemHeight();
@@ -760,7 +759,6 @@ guAlbumBrowser::guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer )
     CreateAcceleratorTable();
 
     RefreshCount();
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -841,7 +839,7 @@ void guAlbumBrowser::CreateControls( void )
 
 	m_AlbumsSizer = new wxGridSizer( 1, 1, 0, 0 );
 
-	m_ItemPanels.Add( new guAlbumBrowserItemPanel( this, 0 ) );
+    m_ItemPanels.Add( new guAlbumBrowserItemPanel( this, 0 ) );
 
 	m_AlbumsSizer->Add( m_ItemPanels[ 0 ], 1, wxEXPAND|wxALL, 5 );
 
@@ -900,7 +898,7 @@ void guAlbumBrowser::CreateControls( void )
 	m_BigCoverDetailsLabel->SetFont( CurFont );
 	BigCoverSizer->Add( m_BigCoverDetailsLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	BigCoverCenterSizer->Add( BigCoverSizer, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
+    BigCoverCenterSizer->Add( BigCoverSizer, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
 	BigCoverCenterSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
@@ -982,6 +980,7 @@ void guAlbumBrowser::CreateControls( void )
 
     Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksPlaylistSave, this, ID_ALBUMBROWSER_TRACKS_PLAYLIST_SAVE );
     Bind( wxEVT_MENU, &guAlbumBrowser::OnBigCoverTracksSmartPlaylist, this, ID_ALBUMBROWSER_TRACKS_SMART_PLAYLIST );
+
 }
 
 // -------------------------------------------------------------------------------- //

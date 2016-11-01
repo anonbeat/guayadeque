@@ -375,7 +375,7 @@ class guPlayerPanel : public wxPanel
   public:
     guPlayerPanel( wxWindow * parent, guDbLibrary * db,
                    guPlayList * playlist, guPlayerFilters * filters );
-    ~guPlayerPanel();
+    virtual ~guPlayerPanel();
 
     guMainFrame *               MainFrame( void ) { return m_MainFrame; }
 

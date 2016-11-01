@@ -2518,6 +2518,10 @@ void guMainFrame::OnCollectionCommand( wxCommandEvent &event )
     {
         guLogMessage( wxT( "MediaViewer Not Found for '%s'" ), Collection.m_UniqueId.c_str() );
     }
+    else
+    {
+        m_MainNotebook->SetSelection( m_MainNotebook->GetPageIndex( MediaViewer ) );
+    }
 
     switch( CollectionCmdId )
     {

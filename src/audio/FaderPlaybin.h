@@ -138,7 +138,7 @@ class guFaderPlaybin
 
   public :
     guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, const int playtype, const int startpos = 0 );
-    ~guFaderPlaybin();
+    virtual ~guFaderPlaybin();
 
     void                SendEvent( guMediaEvent &event );
 

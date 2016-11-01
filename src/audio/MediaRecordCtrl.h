@@ -58,7 +58,7 @@ class guMediaRecordCtrl
 
   public :
     guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl * mediactrl );
-    ~guMediaRecordCtrl();
+    virtual ~guMediaRecordCtrl();
 
     void            SetTrack( const guTrack &track );
     void            SetTrackName( const wxString &artistname, const wxString &trackname );

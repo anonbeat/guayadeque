@@ -269,7 +269,7 @@ class guAlbumBrowser : public wxPanel
   public :
     //guAlbumBrowser( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel );
     guAlbumBrowser( wxWindow * parent, guMediaViewer * mediaviewer );
-    ~guAlbumBrowser();
+    virtual ~guAlbumBrowser();
 
     virtual int                     GetContextMenuFlags( void );
 

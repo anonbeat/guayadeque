@@ -42,7 +42,7 @@ class guFaderTimeLine : public guTimeLine
   public :
     guFaderTimeLine( const int timeout = 3000, wxEvtHandler * parent = NULL, guFaderPlaybin * playbin = NULL,
         double volstart = 0.0, double volend = 1.0 );
-    ~guFaderTimeLine();
+    virtual ~guFaderTimeLine();
 
     virtual void    ValueChanged( float value );
     virtual void    Finished( void );

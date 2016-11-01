@@ -545,8 +545,8 @@ guPlayerPanel::~guPlayerPanel()
     m_PlayerPositionSlider->Unbind( wxEVT_SCROLL_CHANGED	, &guPlayerPanel::OnPlayerPositionSliderChanged, this );
     m_PlayerPositionSlider->Unbind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnPlayerPositionSliderMouseWheel, this );
 
-    m_PlayListCtrl->Unbind( wxEVT_MENU, &guPlayerPanel::OnPlayListUpdated, this, ID_PLAYER_PLAYLIST_UPDATELIST );
-    m_PlayListCtrl->Unbind( wxEVT_LISTBOX_DCLICK, &guPlayerPanel::OnPlayListDClick, this );
+    //m_PlayListCtrl->Unbind( wxEVT_MENU, &guPlayerPanel::OnPlayListUpdated, this, ID_PLAYER_PLAYLIST_UPDATELIST );
+    //m_PlayListCtrl->Unbind( wxEVT_LISTBOX_DCLICK, &guPlayerPanel::OnPlayListDClick, this );
 
     Unbind( guEVT_MEDIA_LOADED, &guPlayerPanel::OnMediaLoaded, this );
     Unbind( guEVT_MEDIA_FINISHED, &guPlayerPanel::OnMediaFinished, this );

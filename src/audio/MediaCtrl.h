@@ -85,7 +85,7 @@ class guMediaCtrl : public wxEvtHandler
   public :
 
     guMediaCtrl( guPlayerPanel * playerpanel );
-    ~guMediaCtrl();
+    virtual ~guMediaCtrl();
 
     static bool     Init();
 
