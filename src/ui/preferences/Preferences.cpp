@@ -874,7 +874,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayListFlexGridSizer->SetFlexibleDirection( wxBOTH );
 	SmartPlayListFlexGridSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_MinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 10, 4 );
+	m_MinTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 10, 4 );
     m_MinTracksSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_MIN_TRACKS_PLAY, 4, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayListFlexGridSizer->Add( m_MinTracksSpinCtrl, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -882,7 +882,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	MinTracksStaticText->Wrap( -1 );
 	SmartPlayListFlexGridSizer->Add( MinTracksStaticText, 0, wxTOP|wxBOTTOM|wxRIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_NumTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 10, 3 );
+	m_NumTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 10, 3 );
     m_NumTracksSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_NUM_TRACKS_TO_ADD, 3, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayListFlexGridSizer->Add( m_NumTracksSpinCtrl, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
@@ -890,7 +890,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	AddTracksStaticText->Wrap( -1 );
 	SmartPlayListFlexGridSizer->Add( AddTracksStaticText, 0, wxRIGHT|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_MaxTracksPlayed = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 999, 20 );
+	m_MaxTracksPlayed = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 999, 20 );
     m_MaxTracksPlayed->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_MAX_TRACKS_PLAYED, 20, CONFIG_PATH_PLAYBACK ) );
     m_MaxTracksPlayed->Enable( !m_DelPlayChkBox->IsChecked() );
 	SmartPlayListFlexGridSizer->Add( m_MaxTracksPlayed, 0, wxLEFT|wxRIGHT|wxBOTTOM|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
@@ -907,7 +907,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayFilterLabel->Wrap( -1 );
 	SmartPlayFilterSizer->Add( SmartPlayFilterLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	m_SmartPlayArtistsSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 0, 50, 20 );
+	m_SmartPlayArtistsSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 50, 20 );
     m_SmartPlayArtistsSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_ARTISTS, 20, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayFilterSizer->Add( m_SmartPlayArtistsSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
@@ -915,7 +915,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	SmartPlayArtistLabel->Wrap( -1 );
 	SmartPlayFilterSizer->Add( SmartPlayArtistLabel, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
-	m_SmartPlayTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 55,-1 ), wxSP_ARROW_KEYS, 0, 200, 100 );
+	m_SmartPlayTracksSpinCtrl = new wxSpinCtrl( m_PlayPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 0, 200, 100 );
     m_SmartPlayTracksSpinCtrl->SetValue( m_Config->ReadNum( CONFIG_KEY_PLAYBACK_SMART_FILTER_TRACKS, 100, CONFIG_PATH_PLAYBACK ) );
 	SmartPlayFilterSizer->Add( m_SmartPlayTracksSpinCtrl, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
@@ -1190,7 +1190,7 @@ void guPrefDialog::BuildRecordPage( void )
 
 	RecDelSizer->Add( m_RecDelTracks, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_RecDelTime = new wxSpinCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 999,
+	m_RecDelTime = new wxSpinCtrl( m_RecordPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 999,
                                     m_Config->ReadNum( CONFIG_KEY_RECORD_DELETE_TIME, 50, CONFIG_PATH_RECORD ) );
 	m_RecDelTime->Enable( m_RecDelTracks->IsChecked() );
 	RecDelSizer->Add( m_RecDelTime, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -1604,7 +1604,7 @@ void guPrefDialog::BuildPodcastsPage( void )
 
     DeleteSizer->Add( m_PodcastDelete, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-    m_PodcastDeleteTime = new wxSpinCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50,-1 ), wxSP_ARROW_KEYS, 1, 99,
+    m_PodcastDeleteTime = new wxSpinCtrl( m_PodcastPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 1, 99,
     m_Config->ReadNum( CONFIG_KEY_PODCASTS_DELETETIME, 15, CONFIG_PATH_PODCASTS ) );
     DeleteSizer->Add( m_PodcastDeleteTime, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
