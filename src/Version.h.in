@@ -24,7 +24,7 @@
 
 namespace Guayadeque {
 
-#define ID_GUAYADEQUE_VERSION	"0.4.3"
+#define ID_GUAYADEQUE_VERSION	"0.4.5"
 #define ID_GUAYADEQUE_REVISION	"${_GUREVISION_}"
 
 }
