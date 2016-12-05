@@ -132,6 +132,8 @@ INCLUDE_DIRECTORIES(
 IF( DEBUG )
         ADD_DEFINITIONS( -g )
         MESSAGE( "Adding debug symbols." )
+ELSE( DEBUG )
+    ADD_DEFINITIONS( -DNDEBUG=1 )
 ENDIF( DEBUG )
 
 IF( PROFILE )
