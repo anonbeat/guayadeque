@@ -10,6 +10,15 @@ ENDIF(POLICY CMP0037)
  
 project( Guayadeque )
 
+# Set Release type for builds where CMAKE_BUILD_TYPE is unset.
+# This is usually a good default as this implictly enables
+#
+#   CFLAGS = -O3 -DNDEBUG
+#
+IF( NOT CMAKE_BUILD_TYPE )
+        SET( CMAKE_BUILD_TYPE "Release" )
+ENDIF( NOT CMAKE_BUILD_TYPE )
+
 # Adhere to GNU filesystem layout conventions
 include( GNUInstallDirs )
 
@@ -134,13 +143,6 @@ INCLUDE_DIRECTORIES(
         ${LIBWXSQLITE3_INCLUDE_DIRS}
         ${LIBWXSQLITE330_INCLUDE_DIRS}
 )
-
-IF( DEBUG )
-        ADD_DEFINITIONS( -g )
-        MESSAGE( "Adding debug symbols." )
-ELSE( DEBUG )
-    ADD_DEFINITIONS( -DNDEBUG=1 )
-ENDIF( DEBUG )
 
 IF( PROFILE )
         ADD_DEFINITIONS( -pg )
