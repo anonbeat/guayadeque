@@ -117,7 +117,7 @@ ENDIF( NOT _GUREVISION_ )
 
 # Make Version.h
 CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in
-                ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h )
+                ${CMAKE_CURRENT_BINARY_DIR}/Version.h )
 
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
@@ -127,7 +127,7 @@ ADD_DEFINITIONS( -DDATADIR=\"${CMAKE_INSTALL_FULL_DATADIR}/guayadeque\" -DDATARO
 # We define the include paths here, our minimal source dir is one, 
 # and also the include dirs defined by wxWidgets
 INCLUDE_DIRECTORIES(
-        ${CMAKE_CURRENT_SOURCE_DIR}
+        ${CMAKE_CURRENT_BINARY_DIR}
         ${wxWidgets_INCLUDE_DIRS}
         ${GSTREAMER_INCLUDE_DIRS}
         ${GSTREAMER_TAG_INCLUDE_DIRS}
