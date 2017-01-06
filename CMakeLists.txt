@@ -113,7 +113,7 @@ CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in
 
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
-ADD_DEFINITIONS( -Wall -O2 )
+ADD_COMPILE_OPTIONS( -Wall )
  
 # We define the include paths here, our minimal source dir is one, 
 # and also the include dirs defined by wxWidgets
