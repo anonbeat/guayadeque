@@ -1,5 +1,5 @@
 # define minimum cmake version
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 3.0)
 IF(POLICY CMP0005)
    cmake_policy(SET CMP0005 NEW)
 ENDIF(POLICY CMP0005)
@@ -10,9 +10,8 @@ ENDIF(POLICY CMP0037)
  
 project( Guayadeque )
 
-IF( NOT EXISTS ${CMAKE_INSTALL_PREFIX} )
-        SET( CMAKE_INSTALL_PREFIX  "/usr" )
-ENDIF( NOT EXISTS ${CMAKE_INSTALL_PREFIX} )
+# Adhere to GNU filesystem layout conventions
+include( GNUInstallDirs )
 
 MESSAGE( STATUS "Using install prefix ${CMAKE_INSTALL_PREFIX} ..." )
 
@@ -114,6 +113,7 @@ CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in
 #    
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
 ADD_COMPILE_OPTIONS( -Wall )
+ADD_DEFINITIONS( -DDATADIR=\"${CMAKE_INSTALL_FULL_DATADIR}/guayadeque\" -DDATAROOTDIR=\"${CMAKE_INSTALL_FULL_DATAROOTDIR}\" )
  
 # We define the include paths here, our minimal source dir is one, 
 # and also the include dirs defined by wxWidgets
@@ -153,12 +153,15 @@ ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( po )
 
 # default configuration and desktop icon
-INSTALL( FILES defconfig/guayadeque.desktop DESTINATION share/applications )
-INSTALL( FILES defconfig/guayadeque.png DESTINATION share/pixmaps/ )
-INSTALL( FILES defconfig/guayadeque.default.conf DESTINATION share/guayadeque )
-INSTALL( FILES defconfig/equalizers.default.conf DESTINATION share/guayadeque )
-INSTALL( FILES defconfig/lyrics_sources.xml DESTINATION share/guayadeque )
-INSTALL( FILES defconfig/guayadeque.appdata.xml DESTINATION share/appdata )
+# freedesktop.org-specific files
+INSTALL( FILES defconfig/guayadeque.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
+INSTALL( FILES defconfig/guayadeque.png DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/pixmaps )
+INSTALL( FILES defconfig/guayadeque.appdata.xml DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/appdata )
+
+# program-specific files
+INSTALL( FILES defconfig/guayadeque.default.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/guayadeque )
+INSTALL( FILES defconfig/equalizers.default.conf DESTINATION ${CMAKE_INSTALL_DATADIR}/guayadeque )
+INSTALL( FILES defconfig/lyrics_sources.xml DESTINATION ${CMAKE_INSTALL_DATADIR}/guayadeque )
 
 CONFIGURE_FILE(
   "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"

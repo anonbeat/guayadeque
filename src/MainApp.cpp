@@ -110,9 +110,9 @@ guMainApp::guMainApp() : wxApp()
 
     if( !wxFileExists( guPATH_CONFIG_FILENAME ) )
     {
-        if( wxFileExists( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ) ) )
+        if( wxFileExists( wxT( DATADIR "/guayadeque.default.conf" ) ) )
         {
-            wxCopyFile( wxT( "/usr/share/guayadeque/guayadeque.default.conf" ),
+            wxCopyFile( wxT( DATADIR "/guayadeque.default.conf" ),
                         guPATH_CONFIG_FILENAME, false );
         }
         else if( wxFileExists( wxT( "/usr/local/share/guayadeque/guayadeque.default.conf" ) ) )
@@ -125,9 +125,9 @@ guMainApp::guMainApp() : wxApp()
 
     if( !wxFileExists( guPATH_EQUALIZERS_FILENAME ) )
     {
-        if( wxFileExists( wxT( "/usr/share/guayadeque/equalizers.default.conf" ) ) )
+        if( wxFileExists( wxT( DATADIR "/equalizers.default.conf" ) ) )
         {
-            wxCopyFile( wxT( "/usr/share/guayadeque/equalizers.default.conf" ),
+            wxCopyFile( wxT( DATADIR "/equalizers.default.conf" ),
                         guPATH_EQUALIZERS_FILENAME, false );
         }
         else if( wxFileExists( wxT( "/usr/local/share/guayadeque/equalizers.default.conf" ) ) )
@@ -140,9 +140,9 @@ guMainApp::guMainApp() : wxApp()
 
     if( !wxFileExists( guPATH_LYRICS_SOURCES_FILENAME ) )
     {
-        if( wxFileExists( wxT( "/usr/share/guayadeque/lyrics_sources.xml" ) ) )
+        if( wxFileExists( wxT( DATADIR "/lyrics_sources.xml" ) ) )
         {
-            wxCopyFile( wxT( "/usr/share/guayadeque/lyrics_sources.xml" ),
+            wxCopyFile( wxT( DATADIR "/lyrics_sources.xml" ),
                         guPATH_LYRICS_SOURCES_FILENAME, false );
         }
         else if( wxFileExists( wxT( "/usr/local/share/guayadeque/lyrics_sources.xml" ) ) )

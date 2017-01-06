@@ -10,7 +10,7 @@ MACRO(GETTEXT_PROCESS_POFILE _lang _moFile _poFile )
       COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${_absmoFile} ${_absFile}
       DEPENDS ${_absFile}
    )
-   INSTALL(FILES ${_absmoFile} DESTINATION share/locale/${_lang}/LC_MESSAGES )
+   INSTALL(FILES ${_absmoFile} DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${_lang}/LC_MESSAGES )
    ADD_CUSTOM_TARGET( ${_moBasename}.${_lang}.mo ALL DEPENDS ${_absmoFile} )
 ENDMACRO(GETTEXT_PROCESS_POFILE )
 
