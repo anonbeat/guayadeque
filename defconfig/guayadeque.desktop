@@ -1,4 +1,3 @@
-
 [Desktop Entry]
 Version=1.0
 Name=Guayadeque Music Player
@@ -17,22 +16,22 @@ Name[en_US]=Guayadeque Music Player
 
 GenericName=
 
-[PlayPause Shortcut Group]
+[X-PlayPause Shortcut Group]
 Name=Play - Pause
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Play
 TargetEnvironment=Unity
 
-[Stop Shortcut Group]
+[X-Stop Shortcut Group]
 Name=Stop (+shift Stop at End)
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Stop
 TargetEnvironment=Unity
 
-[Previous Shortcut Group]
+[X-Previous Shortcut Group]
 Name=Prev. (+shift Prev. Album)
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Prev
 TargetEnvironment=Unity
 
-[Next Shortcut Group]
+[X-Next Shortcut Group]
 Name=Next (+shift Next Album)
 Exec=dbus-send --type=method_call --dest=org.mpris.guayadeque /Player org.freedesktop.MediaPlayer.Next
 TargetEnvironment=Unity
