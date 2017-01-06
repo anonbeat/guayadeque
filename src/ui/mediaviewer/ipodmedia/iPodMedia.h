@@ -281,9 +281,9 @@ class guMediaVieweriPodDevice : public guMediaViewerPortableDeviceBase
 
 };
 
-#endif
-
 }
+
+#endif
 
 #endif
 // -------------------------------------------------------------------------------- //

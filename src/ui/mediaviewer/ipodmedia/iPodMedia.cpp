@@ -33,9 +33,9 @@
 
 #include <wx/tokenzr.h>
 
-namespace Guayadeque {
-
 #ifdef WITH_LIBGPOD_SUPPORT
+
+namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 void inline CheckUpdateField( gchar ** fieldptr, const wxString &newval )
