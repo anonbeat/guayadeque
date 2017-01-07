@@ -72,7 +72,7 @@ namespace Guayadeque {
 #ifdef WITH_LIBINDICATE_SUPPORT
 
 #define GUAYADEQUE_INDICATOR_NAME               "music.guayadeque"
-#define GUAYADEQUE_DESKTOP_PATH                 "/usr/share/applications/guayadeque.desktop"
+#define GUAYADEQUE_DESKTOP_PATH                 DATAROOTDIR "/applications/guayadeque.desktop"
 
 #include "libindicate/server.h"
 #include "libindicate/indicator.h"
