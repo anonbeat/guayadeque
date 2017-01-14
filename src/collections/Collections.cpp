@@ -28,8 +28,8 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY( guMediaCollectionArray );
-WX_DEFINE_OBJARRAY( guManagedCollectionArray );
+WX_DEFINE_OBJARRAY( guMediaCollectionArray )
+WX_DEFINE_OBJARRAY( guManagedCollectionArray )
 
 // -------------------------------------------------------------------------------- //
 guMediaCollection::guMediaCollection( const int type )

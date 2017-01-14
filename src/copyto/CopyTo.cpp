@@ -31,7 +31,7 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY( guCopyToActionArray );
+WX_DEFINE_OBJARRAY( guCopyToActionArray )
 
 // -------------------------------------------------------------------------------- //
 // guCopyToAction
