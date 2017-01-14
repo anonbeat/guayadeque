@@ -29,8 +29,8 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY( guMBRecordingArray );
-WX_DEFINE_OBJARRAY( guMBReleaseArray );
+WX_DEFINE_OBJARRAY( guMBRecordingArray )
+WX_DEFINE_OBJARRAY( guMBReleaseArray )
 
 
 // -------------------------------------------------------------------------------- //

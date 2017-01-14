@@ -49,7 +49,7 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray );
+WX_DEFINE_OBJARRAY( guAlbumBrowserItemArray )
 
 #define guALBUMBROWSER_REFRESH_DELAY            60
 #define guALBUMBROWSER_GRID_SIZE_WIDTH          140

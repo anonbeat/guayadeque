@@ -47,10 +47,10 @@ namespace Guayadeque {
 
 int LyricAligns[] = { wxTE_LEFT, wxTE_CENTER, wxTE_RIGHT };
 
-WX_DEFINE_OBJARRAY(guLyricSourceReplaceArray);
-WX_DEFINE_OBJARRAY(guLyricSourceExtractArray);
-WX_DEFINE_OBJARRAY(guLyricSourceExcludeArray);
-WX_DEFINE_OBJARRAY(guLyricSourceArray);
+WX_DEFINE_OBJARRAY( guLyricSourceReplaceArray )
+WX_DEFINE_OBJARRAY( guLyricSourceExtractArray )
+WX_DEFINE_OBJARRAY( guLyricSourceExcludeArray )
+WX_DEFINE_OBJARRAY( guLyricSourceArray )
 
 
 // -------------------------------------------------------------------------------- //

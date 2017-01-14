@@ -33,8 +33,8 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guPodcastChannelArray);
-WX_DEFINE_OBJARRAY(guPodcastItemArray);
+WX_DEFINE_OBJARRAY( guPodcastChannelArray )
+WX_DEFINE_OBJARRAY( guPodcastItemArray )
 
 wxDEFINE_EVENT( guPodcastEvent, wxCommandEvent );
 

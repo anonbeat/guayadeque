@@ -35,8 +35,8 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guPlaylistItemArray);
-WX_DEFINE_OBJARRAY(guCuePlaylistItemArray);
+WX_DEFINE_OBJARRAY( guPlaylistItemArray )
+WX_DEFINE_OBJARRAY( guCuePlaylistItemArray )
 
 // -------------------------------------------------------------------------------- //
 // guPlaylistItem

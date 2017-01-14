@@ -41,7 +41,7 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guFileItemArray);
+WX_DEFINE_OBJARRAY( guFileItemArray )
 
 // -------------------------------------------------------------------------------- //
 guMediaViewer * FindMediaViewerByPath( guMainFrame * mainframe, const wxString curpath )

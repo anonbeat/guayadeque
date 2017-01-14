@@ -25,7 +25,7 @@
 
 namespace Guayadeque {
 // -------------------------------------------------------------------------------- //
-WX_DEFINE_OBJARRAY(guArrayStringArray);
+WX_DEFINE_OBJARRAY( guArrayStringArray )
 
 }
 

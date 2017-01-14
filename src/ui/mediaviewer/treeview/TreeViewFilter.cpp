@@ -25,8 +25,8 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guTreeViewFilterEntry);
-WX_DEFINE_OBJARRAY(guTreeViewFilterArray);
+WX_DEFINE_OBJARRAY( guTreeViewFilterEntry )
+WX_DEFINE_OBJARRAY( guTreeViewFilterArray )
 
 }
 

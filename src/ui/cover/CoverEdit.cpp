@@ -49,7 +49,7 @@ enum guCOVER_SEARCH_ENGINE {
     guCOVER_SEARCH_ENGINE_YAHOO
 };
 
-WX_DEFINE_OBJARRAY(guCoverImageArray);
+WX_DEFINE_OBJARRAY( guCoverImageArray )
 
 // -------------------------------------------------------------------------------- //
 guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wxString &Album ) :

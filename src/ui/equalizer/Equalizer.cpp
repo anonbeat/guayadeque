@@ -31,7 +31,7 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guEQPresetArray);
+WX_DEFINE_OBJARRAY( guEQPresetArray )
 
 // -------------------------------------------------------------------------------- //
 bool ReadEQPresets( const wxString &value, wxArrayInt &preset )

@@ -39,9 +39,9 @@
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
-WX_DEFINE_OBJARRAY( guDiscogsImageArray );
-WX_DEFINE_OBJARRAY( guDiscogsTrackArray );
-WX_DEFINE_OBJARRAY( guDiscogsReleaseArray );
+WX_DEFINE_OBJARRAY( guDiscogsImageArray )
+WX_DEFINE_OBJARRAY( guDiscogsTrackArray )
+WX_DEFINE_OBJARRAY( guDiscogsReleaseArray )
 
 // -------------------------------------------------------------------------------- //
 guDiscogs::guDiscogs()

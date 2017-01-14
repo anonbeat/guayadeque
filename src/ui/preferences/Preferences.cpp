@@ -42,7 +42,7 @@ namespace Guayadeque {
 
 #define guPREFERENCES_LISTBOX_HEIGHT    110
 
-WX_DEFINE_OBJARRAY( guCopyToPatternArray );
+WX_DEFINE_OBJARRAY( guCopyToPatternArray )
 
 // -------------------------------------------------------------------------------- //
 // guCopyToPattern

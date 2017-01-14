@@ -58,7 +58,7 @@ namespace Guayadeque {
 wxDEFINE_EVENT( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEvent );
 wxDEFINE_EVENT( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEvent );
 
-WX_DEFINE_OBJARRAY(guListViewColumnArray);
+WX_DEFINE_OBJARRAY( guListViewColumnArray )
 
 static wxString FindChars = wxT( "abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789 @&*+-_=/\\ºª:.,;çÇ<>$%()'\"|" );
 
