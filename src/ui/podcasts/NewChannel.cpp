@@ -35,8 +35,8 @@ namespace Guayadeque {
 
 #define guDIGITALPODCAST_OPML       wxT( "http://www.digitalpodcast.com/opml/digitalpodcast.opml" )
 
-WX_DEFINE_OBJARRAY(guNewPodcastItemArray);
-WX_DEFINE_OBJARRAY(guNewPodcastChannelArray);
+WX_DEFINE_OBJARRAY( guNewPodcastItemArray )
+WX_DEFINE_OBJARRAY( guNewPodcastChannelArray )
 
 
 // -------------------------------------------------------------------------------- //

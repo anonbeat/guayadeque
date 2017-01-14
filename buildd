@@ -2,6 +2,5 @@
 rm CMakeCache.txt
 cmake . \
  -DCMAKE_BUILD_TYPE='Debug' \
- -DDEBUG=YES \
  -DCMAKE_INSTALL_PREFIX=/usr \
  && make

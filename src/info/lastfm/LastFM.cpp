@@ -33,11 +33,11 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guAlbumInfoArray);
-WX_DEFINE_OBJARRAY(guTopTrackInfoArray);
-WX_DEFINE_OBJARRAY(guSimilarArtistInfoArray);
-WX_DEFINE_OBJARRAY(guSimilarTrackInfoArray);
-WX_DEFINE_OBJARRAY(guEventInfoArray);
+WX_DEFINE_OBJARRAY( guAlbumInfoArray )
+WX_DEFINE_OBJARRAY( guTopTrackInfoArray )
+WX_DEFINE_OBJARRAY( guSimilarArtistInfoArray )
+WX_DEFINE_OBJARRAY( guSimilarTrackInfoArray )
+WX_DEFINE_OBJARRAY( guEventInfoArray )
 
 // -------------------------------------------------------------------------------- //
 // guLastFMRequest

@@ -27,8 +27,8 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guFilterItemArray);
-WX_DEFINE_OBJARRAY(guDynPlayListArray);
+WX_DEFINE_OBJARRAY( guFilterItemArray )
+WX_DEFINE_OBJARRAY( guDynPlayListArray )
 
 wxArrayString m_FilterFieldChoices;
 wxArrayString m_FilterTextOptionChoices;

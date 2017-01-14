@@ -39,12 +39,12 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY( guTrackArray );
-WX_DEFINE_OBJARRAY( guListItems );
-WX_DEFINE_OBJARRAY( guArrayListItems );
-WX_DEFINE_OBJARRAY( guAlbumItems );
-WX_DEFINE_OBJARRAY( guCoverInfos );
-WX_DEFINE_OBJARRAY( guAS_SubmitInfoArray );
+WX_DEFINE_OBJARRAY( guTrackArray )
+WX_DEFINE_OBJARRAY( guListItems )
+WX_DEFINE_OBJARRAY( guArrayListItems )
+WX_DEFINE_OBJARRAY( guAlbumItems )
+WX_DEFINE_OBJARRAY( guCoverInfos )
+WX_DEFINE_OBJARRAY( guAS_SubmitInfoArray )
 
 #define GU_CURRENT_DBVERSION    "21"
 

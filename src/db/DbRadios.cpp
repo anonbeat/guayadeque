@@ -27,7 +27,7 @@
 
 namespace Guayadeque {
 
-WX_DEFINE_OBJARRAY(guRadioStations);
+WX_DEFINE_OBJARRAY( guRadioStations )
 
 // -------------------------------------------------------------------------------- //
 guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )

@@ -45,11 +45,11 @@ namespace Guayadeque {
 
 #define GULASTFM_DOWNLOAD_IMAGE_DELAY    10
 
-WX_DEFINE_OBJARRAY(guLastFMInfoArray)
-WX_DEFINE_OBJARRAY(guLastFMSimilarArtistInfoArray)
-WX_DEFINE_OBJARRAY(guLastFMTrackInfoArray)
-WX_DEFINE_OBJARRAY(guLastFMAlbumInfoArray)
-WX_DEFINE_OBJARRAY(guLastFMTopTrackInfoArray)
+WX_DEFINE_OBJARRAY( guLastFMInfoArray )
+WX_DEFINE_OBJARRAY( guLastFMSimilarArtistInfoArray )
+WX_DEFINE_OBJARRAY( guLastFMTrackInfoArray )
+WX_DEFINE_OBJARRAY( guLastFMAlbumInfoArray )
+WX_DEFINE_OBJARRAY( guLastFMTopTrackInfoArray )
 
 // -------------------------------------------------------------------------------- //
 guHtmlWindow::guHtmlWindow( wxWindow * parent, wxWindowID id, const wxPoint &pos, const wxSize &size, long style ) :
