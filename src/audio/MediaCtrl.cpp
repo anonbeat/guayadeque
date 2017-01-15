@@ -129,6 +129,8 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
 
     if( Init() )
     {
+        guConfig * Config = guConfig::Get();
+        m_ForceGapless = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
         UpdatedConfig();
     }
 }
@@ -764,7 +766,7 @@ bool guMediaCtrl::Seek( wxFileOffset where, const bool accurate )
 void guMediaCtrl::UpdatedConfig( void )
 {
     guConfig * Config  = ( guConfig * ) guConfig::Get();
-    m_ForceGapless          = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
+    //m_ForceGapless          = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
     m_FadeOutTime           = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
     m_FadeInTime            = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_TIME, 10, CONFIG_PATH_CROSSFADER ) * 100;
     m_FadeInVolStart        = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, 80, CONFIG_PATH_CROSSFADER ) ) / 100.0;

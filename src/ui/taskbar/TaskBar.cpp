@@ -43,9 +43,9 @@ guTaskBarIcon::guTaskBarIcon( guMainFrame * NewMainFrame, guPlayerPanel * NewPla
     Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVTRACK );
     Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVALBUM );
     Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MENU_QUIT );
-    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
-    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
-    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYMODE_SMART );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST );
+    Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYMODE_REPEAT_TRACK );
     Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
     Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
     Bind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MAINFRAME_SETFORCEGAPLESS );
@@ -64,9 +64,9 @@ guTaskBarIcon::~guTaskBarIcon()
     Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVTRACK );
     Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_PREVALBUM );
     Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MENU_QUIT );
-    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
-    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
-    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYMODE_SMART );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST );
+    Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYMODE_REPEAT_TRACK );
     Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
     Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
     Unbind( wxEVT_MENU, &guTaskBarIcon::SendEventToMainFrame, this, ID_MAINFRAME_SETFORCEGAPLESS );
@@ -166,17 +166,17 @@ wxMenu * guTaskBarIcon::CreatePopupMenu()
         Menu->AppendSubMenu( RatingMenu, _( "Rating" ), _( "Set the current track rating" ) );
 
         Menu->AppendSeparator();
-        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_SMARTPLAY, _( "&Smart Play" ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYMODE_SMART, _( "&Smart Play" ), _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
         Menu->Append( MenuItem );
         MenuItem->Check( m_PlayerPanel->GetPlaySmart() );
 
-        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST, _( "&Repeat Playlist" ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST, _( "&Repeat Playlist" ), _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
         Menu->Append( MenuItem );
-        MenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
+        MenuItem->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
 
-        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_REPEATTRACK, _( "&Repeat Track" ), _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYMODE_REPEAT_TRACK, _( "&Repeat Track" ), _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
         Menu->Append( MenuItem );
-        MenuItem->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
+        MenuItem->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_TRACK );
 
         MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_RANDOMPLAY, _( "R&andomize" ), _( "Randomize the playlist" ), wxITEM_NORMAL );
         Menu->Append( MenuItem );

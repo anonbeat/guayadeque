@@ -65,8 +65,8 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_PLAYERPANEL_SETRATING_3 );
         guAccelCmdIds.Add( ID_PLAYERPANEL_SETRATING_4 );
         guAccelCmdIds.Add( ID_PLAYERPANEL_SETRATING_5 );
-        guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
-        guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_REPEATTRACK );
+        guAccelCmdIds.Add( ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST );
+        guAccelCmdIds.Add( ID_PLAYER_PLAYMODE_REPEAT_TRACK );
         guAccelCmdIds.Add( ID_MENU_LAYOUT_CREATE );
         //
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_SAVE );
@@ -91,7 +91,7 @@ void guAccelInit( void )
         guAccelCmdIds.Add( ID_PLAYERPANEL_PREVTRACK );
         guAccelCmdIds.Add( ID_PLAYERPANEL_PREVALBUM );
         //
-        guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_SMARTPLAY );
+        guAccelCmdIds.Add( ID_PLAYER_PLAYMODE_SMART );
         guAccelCmdIds.Add( ID_PLAYERPANEL_STOP );
         guAccelCmdIds.Add( ID_PLAYER_PLAYLIST_STOP_ATEND );
         guAccelCmdIds.Add( ID_MENU_UPDATE_COVERS );

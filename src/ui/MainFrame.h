@@ -287,12 +287,11 @@ class guMainFrame : public wxFrame
     void                            OnPrevTrack( wxCommandEvent &event );
     void                            OnNextAlbum( wxCommandEvent &event );
     void                            OnPrevAlbum( wxCommandEvent &event );
-    void                            OnSmartPlay( wxCommandEvent &event );
     void                            OnRandomize( wxCommandEvent &event );
-    void                            OnRepeat( wxCommandEvent &event );
     void                            OnAbout( wxCommandEvent &event );
     void                            OnHelp( wxCommandEvent &event );
     void                            OnCommunity( wxCommandEvent &event );
+    void                            OnPlayMode( wxCommandEvent &event );
 
     void                            OnCopyTracksTo( wxCommandEvent &event );
     void                            OnCopyTracksToDevice( wxCommandEvent &event );

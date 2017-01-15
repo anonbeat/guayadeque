@@ -126,8 +126,9 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     //guLogDebug( wxT( "Reading PlayerPanel Config" ) );
     SavedVol = Config->ReadNum( CONFIG_KEY_GENERAL_PLAYER_VOLUME, 50, CONFIG_PATH_GENERAL );
     //guLogDebug( wxT( "Current Volume Var : %d" ), ( int ) m_CurVolume );
-    m_PlayLoop = Config->ReadNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, 0, CONFIG_PATH_GENERAL  );
-    m_PlaySmart = Config->ReadBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlayLoop ? false : true, CONFIG_PATH_GENERAL  );
+    //m_PlayLoop = Config->ReadNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, 0, CONFIG_PATH_GENERAL  );
+    //m_PlaySmart = Config->ReadBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlayLoop ? false : true, CONFIG_PATH_GENERAL  );
+    m_PlayMode = Config->ReadNum( CONFIG_KEY_GENERAL_PLAYER_PLAYMODE, guPLAYER_PLAYMODE_SMART, CONFIG_PATH_GENERAL );
     m_PlayRandom = Config->ReadBool( CONFIG_KEY_GENERAL_RANDOM_PLAY_ON_EMPTY_PLAYLIST, false, CONFIG_PATH_GENERAL );
     m_PlayRandomMode = Config->ReadNum( CONFIG_KEY_GENERAL_RANDOM_MODE_ON_EMPTY_PLAYLIST, guRANDOM_MODE_TRACK, CONFIG_PATH_GENERAL );
     m_ShowNotifications = Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS, true, CONFIG_PATH_GENERAL );
@@ -190,6 +191,10 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_NextTrackButton->SetToolTip( _( "Go to the playlist next track" ) );
 	PlayerBtnSizer->Add( m_NextTrackButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
+    m_StopButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_stop ), guImage( guIMAGE_INDEX_player_highlight_stop ) );
+    m_StopButton->SetToolTip( _( "Stops the current track" ) );
+    PlayerBtnSizer->Add( m_StopButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
+
     m_RecordButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_record ), guImage( guIMAGE_INDEX_player_normal_record ), guImage( guIMAGE_INDEX_player_highlight_record ) );
     m_RecordButton->SetToolTip( _( "Record to file" ) );
     m_RecordButton->Enable( false );
@@ -198,63 +203,37 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
 
-	//m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
-    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
-	PlayerBtnSizer->Add( m_VolumeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
+    m_PlayModeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
+    UpdatePlayModeButton();
+    PlayerBtnSizer->Add( m_PlayModeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	//m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
-    m_EqualizerButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_equalizer ), guImage( guIMAGE_INDEX_player_highlight_equalizer ) );
-	m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
-	PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
-
-	PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
-
-	//m_SmartPlayButton = new wxToggleBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_smart ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SmartPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_smart ), guImage( guIMAGE_INDEX_player_normal_smart ), guImage( guIMAGE_INDEX_player_highlight_smart ) );
-	//m_SmartPlayButton->SetToolTip( _( "Add tracks to the playlist based on LastFM" ) );
-    wxString TipText = _( "Smart Play: " );
-    if( !m_PlaySmart )
-    {
-        TipText += _( "Disabled" );
-    }
-    else
-    {
-        TipText += _( "Enabled" );
-    }
-    m_SmartPlayButton->SetToolTip( TipText );
-	// Get PlayerPanel value from config file
-	m_SmartPlayButton->SetValue( m_PlaySmart );
-	PlayerBtnSizer->Add( m_SmartPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
-
-	m_RepeatPlayButton = new guToggleRoundButton( this, guImage( guIMAGE_INDEX_player_light_repeat ), guImage( guIMAGE_INDEX_player_normal_repeat ), guImage( guIMAGE_INDEX_player_highlight_repeat ) );
-	//m_RepeatPlayButton->SetToolTip( _( "Select the repeat mode" ) );
-    TipText = _( "Repeat: " );
-    if( !m_PlayLoop )
-    {
-        TipText += _( "Disabled" );
-    }
-    else if( m_PlayLoop == guPLAYER_PLAYLOOP_TRACK )
-    {
-        TipText += _( "Track" );
-    }
-    else
-    {
-        TipText += _( "Playlist" );
-    }
-    m_RepeatPlayButton->SetToolTip( TipText );
-	m_RepeatPlayButton->SetValue( m_PlayLoop );
-	PlayerBtnSizer->Add( m_RepeatPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
-
-	//m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
+    //m_RandomPlayButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_random ), wxDefaultPosition, wxDefaultSize, 0 );
     m_RandomPlayButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_random ), guImage( guIMAGE_INDEX_player_highlight_random ) );
 	m_RandomPlayButton->SetToolTip( _( "Randomize the tracks in playlist" ) );
 	PlayerBtnSizer->Add( m_RandomPlayButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-	PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
+    m_ForceGaplessButton = new guRoundButton( this,
+                                guImage( m_ForceGapless ? guIMAGE_INDEX_player_normal_gapless : guIMAGE_INDEX_player_normal_crossfading ),
+                                guImage( m_ForceGapless ? guIMAGE_INDEX_player_highlight_gapless : guIMAGE_INDEX_player_highlight_crossfading ) );
+    m_ForceGaplessButton->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
+    PlayerBtnSizer->Add( m_ForceGaplessButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
+
+    PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
+
+    //m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_EqualizerButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_equalizer ), guImage( guIMAGE_INDEX_player_highlight_equalizer ) );
+    m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
+    PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
+
+    //m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
+    m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
+    PlayerBtnSizer->Add( m_VolumeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
+
+    PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
 
 
-	wxBoxSizer* PlayerDetailsSizer;
+    wxBoxSizer * PlayerDetailsSizer;
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
 	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
@@ -394,14 +373,16 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_PrevTrackButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnPrevTrackButtonClick, this );
     m_NextTrackButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnNextTrackButtonClick, this );
     m_PlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnPlayButtonClick, this );
-    //m_StopButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
+    m_StopButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
     m_RecordButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRecordButtonClick, this );
+    m_ForceGaplessButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnForceGaplessClick, this );
     m_VolumeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnVolumenButtonClick, this );
 	m_VolumeButton->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumenMouseWheel, this );
-    m_SmartPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
+    //m_SmartPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
     m_RandomPlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
-    m_RepeatPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
+    //m_RepeatPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
     m_EqualizerButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnEqualizerButtonClicked, this );
+    m_PlayModeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnPlayModeButtonClicked, this );
 
     Bind( wxEVT_MENU, &guPlayerPanel::OnRandomPlayButtonClick, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
 
@@ -487,8 +468,9 @@ guPlayerPanel::~guPlayerPanel()
         //printf( "guPlayerPanel::guConfig Save\n" );
         //Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != guMEDIASTATE_PLAYING, CONFIG_PATH_GENERAL );
         Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_VOLUME, m_CurVolume, CONFIG_PATH_GENERAL );
-        Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, m_PlayLoop, CONFIG_PATH_GENERAL );
-        Config->WriteBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlaySmart, CONFIG_PATH_GENERAL );
+        //Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, m_PlayLoop, CONFIG_PATH_GENERAL );
+        //Config->WriteBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlaySmart, CONFIG_PATH_GENERAL );
+        Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_PLAYMODE, m_PlayMode, CONFIG_PATH_GENERAL );
         // If the track length is at least the configured minimun track length save the pos offset
         if( Config->ReadBool( CONFIG_KEY_GENERAL_SAVE_CURRENT_TRACK_POSITION, false, CONFIG_PATH_GENERAL ) )
         {
@@ -513,20 +495,23 @@ guPlayerPanel::~guPlayerPanel()
         Config->WriteANum( CONFIG_KEY_EQUALIZER_BAND, Equalizer, CONFIG_PATH_EQUALIZER );
 
         Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_REV_TIME, m_ShowRevTime, CONFIG_PATH_GENERAL );
+        Config->WriteBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, m_ForceGapless, CONFIG_PATH_CROSSFADER );
     }
 
     // Unbind Events
     m_PrevTrackButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnPrevTrackButtonClick, this );
     m_NextTrackButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnNextTrackButtonClick, this );
     m_PlayButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnPlayButtonClick, this );
-    //m_StopButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
+    m_StopButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
     m_RecordButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRecordButtonClick, this );
+    m_ForceGaplessButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnForceGaplessClick, this );
     m_VolumeButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnVolumenButtonClick, this );
     m_VolumeButton->Unbind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumenMouseWheel, this );
-    m_SmartPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
+    //m_SmartPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
     m_RandomPlayButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
-    m_RepeatPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
+    //m_RepeatPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
     m_EqualizerButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnEqualizerButtonClicked, this );
+    m_PlayModeButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnPlayModeButtonClicked, this );
 
     Unbind( wxEVT_MENU, &guPlayerPanel::OnRandomPlayButtonClick, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
 
@@ -803,7 +788,7 @@ void guPlayerPanel::SetPlayList( const guTrackArray &SongList )
     LoadMedia( ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_PLAYTYPE_CROSSFADE : guFADERPLAYBIN_PLAYTYPE_REPLACE );
     TrackListChanged();
 
-    if( m_PlaySmart )
+    if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
     {
         if( m_SmartAddTracksThread )
         {
@@ -861,7 +846,7 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
         TrackListChanged();
 
         // Add the added track to the smart cache
-        if( m_PlaySmart )
+        if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
         {
             if( m_SmartAddTracksThread )
             {
@@ -914,7 +899,7 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
 
         TrackListChanged();
 
-        if( m_PlaySmart )
+        if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
         {
             int Count;
             int Index;
@@ -955,7 +940,7 @@ void guPlayerPanel::AddToPlayList( const wxString &FileName, const int aftercurr
     m_PlayListCtrl->ReloadItems();
     TrackListChanged();
     // Add the added track to the smart cache
-    if( m_PlaySmart )
+    if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
     {
         int Count = m_PlayListCtrl->GetCount();
 
@@ -999,7 +984,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const int aftercu
     TrackListChanged();
 
     // Add the added track to the smart cache
-    if( m_PlaySmart )
+    if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
     {
         Count = m_PlayListCtrl->GetItemCount();
         // We only insert the last CACHEITEMS as the rest should be forgiven
@@ -1047,7 +1032,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowp
     TrackListChanged();
 
     // Add the added track to the smart cache
-    if( m_PlaySmart )
+    if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
     {
         Count = m_PlayListCtrl->GetItemCount();
         // We only insert the last CACHEITEMS as the rest should be forgiven
@@ -1113,7 +1098,8 @@ void guPlayerPanel::OnPlayListUpdated( wxCommandEvent &event )
             OnPlayListDClick( event );
         }
     }
-    if( ( event.GetExtraLong() || event.GetInt() ) && m_PlaySmart )
+    if( ( event.GetExtraLong() || event.GetInt() ) &&
+        ( m_PlayMode == guPLAYER_PLAYMODE_SMART ) )
     {
         if( m_SmartAddTracksThread )
         {
@@ -1241,7 +1227,7 @@ void guPlayerPanel::SetNextTrack( const guTrack * Song )
 void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 {
     int item = event.GetInt();
-    m_PlayListCtrl->SetCurrent( item, m_DelTracksPlayed && !m_PlayLoop );
+    m_PlayListCtrl->SetCurrent( item, m_DelTracksPlayed && !GetPlayLoop() );
 
     SetNextTrack( m_PlayListCtrl->GetCurrent() );
     //wxLogMessage( wxT( "Selected %i : %s - %s" ), m_MediaSong.SongId, m_MediaSong.ArtistName.c_str(), m_MediaSong.SongName.c_str() );
@@ -1898,7 +1884,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
     UpdateCover();
 
     // Check if Smart is enabled
-    if( m_PlaySmart &&
+    if( ( m_PlayMode == guPLAYER_PLAYMODE_SMART ) &&
         ( ( m_MediaSong.m_Type != guTRACK_TYPE_RADIOSTATION ) || ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) ) &&
         ( !m_SmartPlayMinTracksToPlay || ( ( m_PlayListCtrl->GetCurItem() + m_SmartPlayMinTracksToPlay ) >= m_PlayListCtrl->GetCount() ) ) )
     {
@@ -2080,7 +2066,7 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
         return;
     }
 
-    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayLoop );
+    guTrack * NextItem = m_PlayListCtrl->GetNext( m_PlayMode );
     if( NextItem )
     {
         //m_MediaSong = * NextItem;
@@ -2094,8 +2080,8 @@ void guPlayerPanel::OnMediaFinished( guMediaEvent &event )
         if( m_PlayRandom )
         {
             // If Repeat was enabled disable it
-            if( m_PlayLoop )
-                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
+            if( GetPlayLoop() )
+                SetPlayMode( guPLAYER_PLAYMODE_NONE );
 
             //guLogDebug( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -2140,94 +2126,38 @@ const guMediaState guPlayerPanel::GetState( void )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::CheckFiltersEnable( void )
 {
-    bool IsEnable = m_PlaySmart || ( !m_PlayLoop && m_PlayRandom );
-    m_PlayerFilters->EnableFilters( IsEnable );
-}
-
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetPlaySmart( bool playsmart )
-{
-    m_PlaySmart = playsmart;
-    m_SmartPlayButton->SetValue( m_PlaySmart );
-    if( m_PlaySmart && GetPlayLoop() )
-    {
-        SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
-    }
-    CheckFiltersEnable();
-
-    // Send a notification
-    wxString TipText = _( "Smart Play: " );
-    if( !playsmart )
-    {
-        TipText += _( "Disabled" );
-    }
-    else
-    {
-        TipText += _( "Enabled" );
-    }
-    m_SmartPlayButton->SetToolTip( TipText );
-
-    // Send Notification for the mpris interface
-    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STATUSCHANGED );
-    wxPostEvent( m_MainFrame, event );
+    bool IsEnabled = ( m_PlayMode == guPLAYER_PLAYMODE_SMART ) ||
+            ( ( m_PlayMode == guPLAYER_PLAYMODE_NONE ) && m_PlayRandom );
+    m_PlayerFilters->EnableFilters( IsEnabled );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guPlayerPanel::GetPlaySmart()
 {
-    return m_PlaySmart;
+    return ( m_PlayMode == guPLAYER_PLAYMODE_SMART );
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetPlayLoop( int playloop )
+int guPlayerPanel::GetPlayMode()
 {
-    m_PlayLoop = playloop;
-
-    m_RepeatPlayButton->SetBitmapLabel( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_player_normal_repeat ) :
-        guImage( guIMAGE_INDEX_player_normal_repeat_single ) );
-
-    m_RepeatPlayButton->SetBitmapDisabled( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_player_light_repeat ) :
-        guImage( guIMAGE_INDEX_player_light_repeat_single ) );
-
-    m_RepeatPlayButton->SetBitmapHover( m_PlayLoop < guPLAYER_PLAYLOOP_TRACK ?
-        guImage( guIMAGE_INDEX_player_highlight_repeat ) :
-        guImage( guIMAGE_INDEX_player_highlight_repeat_single ) );
-
-    m_RepeatPlayButton->SetValue( m_PlayLoop );
-    if( m_PlayLoop && GetPlaySmart() )
-    {
-        SetPlaySmart( false );
-    }
-
-    CheckFiltersEnable();
-
-    // Send a notification
-    wxString TipText = _( "Repeat Mode: " );
-    if( !m_PlayLoop )
-    {
-        TipText += _( "Off" );
-    }
-    else if( m_PlayLoop == guPLAYER_PLAYLOOP_TRACK )
-    {
-        TipText += _( "Track" );
-    }
-    else
-    {
-        TipText += _( "Playlist" );
-    }
-    m_RepeatPlayButton->SetToolTip( TipText );
-
-    // Send Notification for the mpris interface
-    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STATUSCHANGED );
-    wxPostEvent( m_MainFrame, event );
+    return m_PlayMode;
 }
 
 // -------------------------------------------------------------------------------- //
-int guPlayerPanel::GetPlayLoop()
+void guPlayerPanel::SetPlayMode( int playmode )
 {
-    return m_PlayLoop;
+    if( m_PlayMode != playmode )
+    {
+        m_PlayMode = playmode;
+
+        PlayModeChanged();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+bool guPlayerPanel::GetPlayLoop()
+{
+    return ( m_PlayMode >= guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2256,7 +2186,7 @@ void guPlayerPanel::OnPrevTrackButtonClick( wxCommandEvent& event )
         return;
     }
 
-    PrevItem = m_PlayListCtrl->GetPrev( m_PlayLoop, ForceSkip );
+    PrevItem = m_PlayListCtrl->GetPrev( m_PlayMode, ForceSkip );
     if( PrevItem )
     {
         SetNextTrack( PrevItem );
@@ -2325,7 +2255,7 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
     guMediaState State;
     guTrack * NextItem;
 
-    NextItem = m_PlayListCtrl->GetNext( m_PlayLoop, ForceSkip );
+    NextItem = m_PlayListCtrl->GetNext( m_PlayMode, ForceSkip );
     if( NextItem )
     {
         State = m_MediaCtrl->GetState();
@@ -2401,8 +2331,8 @@ void guPlayerPanel::OnNextTrackButtonClick( wxCommandEvent& event )
         if( m_PlayRandom )
         {
             // If Repeat was enabled disable it
-            if( m_PlayLoop )
-                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
+            if( GetPlayLoop() )
+                SetPlayMode( guPLAYER_PLAYMODE_NONE );
 
             //guLogDebug( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -2435,7 +2365,7 @@ void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
     guLogDebug( wxT( "OnNextAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
     guMediaState State;
 
-    guTrack * NextAlbumTrack = m_PlayListCtrl->GetNextAlbum( m_PlayLoop, true );
+    guTrack * NextAlbumTrack = m_PlayListCtrl->GetNextAlbum( m_PlayMode, true );
     if( NextAlbumTrack )
     {
         State = m_MediaCtrl->GetState();
@@ -2463,8 +2393,8 @@ void guPlayerPanel::OnNextAlbumButtonClick( wxCommandEvent& event )
         if( m_PlayRandom )
         {
             // If Repeat was enabled disable it
-            if( m_PlayLoop )
-                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
+            if( GetPlayLoop() )
+                SetPlayMode( guPLAYER_PLAYMODE_NONE );
 
             //guLogDebug( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -2486,7 +2416,7 @@ void guPlayerPanel::OnPrevAlbumButtonClick( wxCommandEvent& event )
     //guLogDebug( wxT( "OnPrevAlbumButtonClick Cur: %i    %li" ), m_PlayListCtrl->GetCurItem(), m_NextTrackId );
     guMediaState State;
 
-    guTrack * NextAlbumTrack = m_PlayListCtrl->GetPrevAlbum( m_PlayLoop, true );
+    guTrack * NextAlbumTrack = m_PlayListCtrl->GetPrevAlbum( m_PlayMode, true );
     if( NextAlbumTrack )
     {
         State = m_MediaCtrl->GetState();
@@ -2525,7 +2455,7 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
     if( !m_MediaSong.m_Loaded && m_PlayListCtrl->GetCount() )
     {
         if( m_PlayListCtrl->GetCurItem() == wxNOT_FOUND )
-            m_PlayListCtrl->SetCurrent( 0, m_DelTracksPlayed && !m_PlayLoop );
+            m_PlayListCtrl->SetCurrent( 0, m_DelTracksPlayed && !GetPlayLoop() );
         //m_MediaSong = * m_PlayListCtrl->GetCurrent();
         SetNextTrack( m_PlayListCtrl->GetCurrent() );
 
@@ -2568,8 +2498,8 @@ void guPlayerPanel::OnPlayButtonClick( wxCommandEvent& event )
         if( m_PlayRandom )
         {
             // If Repeat was enabled disable it
-            if( m_PlayLoop )
-                SetPlayLoop( guPLAYER_PLAYLOOP_NONE );
+            if( GetPlayLoop() )
+                SetPlayMode( guPLAYER_PLAYMODE_NONE );
 
             //guLogDebug( wxT( "Getting Random Tracks..." ) );
             guTrackArray Tracks;
@@ -2648,12 +2578,6 @@ void guPlayerPanel::OnVolumenButtonClick( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnSmartPlayButtonClick( wxCommandEvent &event )
-{
-    SetPlaySmart( !GetPlaySmart() );
-}
-
-// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 {
     m_PlayListCtrl->Randomize( ( GetState() == guMEDIASTATE_PLAYING ) );
@@ -2662,12 +2586,62 @@ void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnRepeatPlayButtonClick( wxCommandEvent &event )
+void guPlayerPanel::OnPlayModeButtonClicked( wxCommandEvent &event )
 {
-    m_PlayLoop++;
-    if( m_PlayLoop > guPLAYER_PLAYLOOP_TRACK )
-        m_PlayLoop = guPLAYER_PLAYLOOP_NONE;
-    SetPlayLoop( m_PlayLoop );
+    m_PlayMode++;
+    if( m_PlayMode > guPLAYER_PLAYMODE_REPEAT_TRACK )
+        m_PlayMode = guPLAYER_PLAYMODE_NONE;
+
+    PlayModeChanged();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::PlayModeChanged()
+{
+    CheckFiltersEnable();
+    UpdatePlayModeButton();
+
+    // Send Notification for the mpris interface
+    wxCommandEvent CmdEvent( wxEVT_MENU, ID_PLAYERPANEL_STATUSCHANGED );
+    wxPostEvent( m_MainFrame, CmdEvent );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::UpdatePlayModeButton()
+{
+    guIMAGE_INDEX NormalImage;
+    guIMAGE_INDEX HighlightImage;
+    wxString Tooltip;
+    switch( m_PlayMode )
+    {
+        case guPLAYER_PLAYMODE_SMART :
+            NormalImage = guIMAGE_INDEX_player_normal_smart;
+            HighlightImage = guIMAGE_INDEX_player_highlight_smart;
+            Tooltip = _( "Smart mode enabled" );
+            break;
+
+        case guPLAYER_PLAYMODE_REPEAT_PLAYLIST :
+            NormalImage = guIMAGE_INDEX_player_normal_repeat;
+            HighlightImage = guIMAGE_INDEX_player_highlight_repeat;
+            Tooltip = _( "Repeat all" );
+            break;
+        case guPLAYER_PLAYMODE_REPEAT_TRACK :
+            NormalImage = guIMAGE_INDEX_player_normal_repeat_single;
+            HighlightImage = guIMAGE_INDEX_player_highlight_repeat_single;
+            Tooltip = _( "Repeat one" );
+            break;
+
+        //case guPLAYER_PLAYMODE_NONE :
+        default :
+            NormalImage = guIMAGE_INDEX_player_light_smart;
+            HighlightImage = guIMAGE_INDEX_player_light_smart;
+            Tooltip = _( "Smart mode disabled" );
+            break;
+    }
+
+    m_PlayModeButton->SetBitmapLabel( guImage( NormalImage ) );
+    m_PlayModeButton->SetBitmapHover( guImage( HighlightImage ) );
+    m_PlayModeButton->SetToolTip( Tooltip );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3054,6 +3028,16 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetForceGapless( const bool forcegapless )
+{
+    if( m_ForceGapless != forcegapless )
+    {
+        wxCommandEvent event;
+        OnForceGaplessClick( event );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
 {
     int Rotation = ( event.GetWheelRotation() / event.GetWheelDelta() ) * ( event.ShiftDown() ? 1 : 4 );
@@ -3083,13 +3067,13 @@ void guPlayerPanel::OnRemoveTrack( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRepeat( wxCommandEvent &event )
 {
-    OnRepeatPlayButtonClick( event );
+    OnPlayModeButtonClicked( event );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnLoop( wxCommandEvent &event )
 {
-    SetPlayLoop( event.GetInt() );
+    SetPlayMode( event.GetInt() );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -3102,6 +3086,18 @@ void guPlayerPanel::OnRandom( wxCommandEvent &event )
 void guPlayerPanel::OnSetVolume( wxCommandEvent &event )
 {
     SetVolume( event.GetInt() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnForceGaplessClick( wxCommandEvent &event )
+{
+    guLogMessage( wxT( "ForceGapless clicked...." ) );
+    m_ForceGapless = !m_ForceGapless;
+    m_MediaCtrl->ForceGapless( m_ForceGapless );
+
+    m_ForceGaplessButton->SetBitmapLabel( guImage( m_ForceGapless ? guIMAGE_INDEX_player_normal_gapless : guIMAGE_INDEX_player_normal_crossfading ) );
+    m_ForceGaplessButton->SetBitmapHover( guImage( m_ForceGapless ? guIMAGE_INDEX_player_highlight_gapless : guIMAGE_INDEX_player_highlight_crossfading ) );
+    m_ForceGaplessButton->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
 }
 
 // -------------------------------------------------------------------------------- //

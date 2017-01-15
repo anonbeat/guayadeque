@@ -66,9 +66,7 @@ class guStatusBar : public wxStatusBar
   private:
     guGaugeArray        m_Gauges;
     wxStaticBitmap *    m_ASBitmap;
-    wxStaticBitmap *    m_PlayMode;
     wxStaticText *      m_SelInfo;
-    bool                m_ForceGapless;
 
     int                 m_LastClickAction;
     wxTimer             m_ClickTimer;
@@ -79,14 +77,10 @@ class guStatusBar : public wxStatusBar
 
     void                OnAudioScrobbleClicked( void );
     void                OnAudioScrobbleDClicked( void );
-    void                OnPlayModeClicked( void );
-    void                OnPlayModeDClicked( void );
 
     void                OnButtonClick( wxMouseEvent &event );
     void                OnButtonDClick( wxMouseEvent &event );
     void                OnTimerEvent( wxTimerEvent &event );
-
-    void                OnConfigUpdated( wxCommandEvent &event );
 
   public:
                         guStatusBar( wxWindow * parent );
@@ -101,7 +95,6 @@ class guStatusBar : public wxStatusBar
 
     void                SetSelInfo( const wxString &label );
 
-    void                SetPlayMode( const bool forcegapless );
     void                SetAudioScrobble( const bool audioscrobble );
 
     virtual void        DrawField( wxDC &dc, int i, int textHeight );

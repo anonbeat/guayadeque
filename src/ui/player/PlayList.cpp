@@ -766,7 +766,7 @@ guTrack * guPlayList::GetCurrent( void )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetNext( const int playloop, const bool forceskip )
+guTrack * guPlayList::GetNext( const int playmode, const bool forceskip )
 {
     if( m_Items.Count() )
     {
@@ -775,13 +775,13 @@ guTrack * guPlayList::GetNext( const int playloop, const bool forceskip )
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
         }
-        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+        else if( !forceskip && playmode == guPLAYER_PLAYMODE_REPEAT_TRACK )
         {
             return &m_Items[ m_CurItem ];
         }
         else if( ( m_CurItem < ( ( int ) m_Items.Count() - 1 ) ) )
         {
-            if( m_DelTracksPLayed && !playloop )
+            if( m_DelTracksPLayed && !playmode )
             {
                 m_TotalLen -= m_Items[ m_CurItem ].m_Length;
                 m_Items.RemoveAt( m_CurItem );
@@ -793,7 +793,7 @@ guTrack * guPlayList::GetNext( const int playloop, const bool forceskip )
             return &m_Items[ m_CurItem ];
 
         }
-        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
+        else if( playmode == guPLAYER_PLAYMODE_REPEAT_PLAYLIST )
         {
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
@@ -803,7 +803,7 @@ guTrack * guPlayList::GetNext( const int playloop, const bool forceskip )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
+guTrack * guPlayList::GetPrev( const int playmode, const bool forceskip )
 {
     if( m_Items.Count() )
     {
@@ -812,13 +812,13 @@ guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
         }
-        else if( !forceskip && playloop == guPLAYER_PLAYLOOP_TRACK )
+        else if( !forceskip && playmode == guPLAYER_PLAYMODE_REPEAT_TRACK )
         {
             return &m_Items[ m_CurItem ];
         }
         else if( m_CurItem > 0 )
         {
-            if( m_DelTracksPLayed && !playloop )
+            if( m_DelTracksPLayed && !playmode )
             {
                 m_TotalLen -= m_Items[ m_CurItem ].m_Length;
                 m_Items.RemoveAt( m_CurItem );
@@ -827,7 +827,7 @@ guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
             m_CurItem--;
             return &m_Items[ m_CurItem ];
         }
-        else if( playloop == guPLAYER_PLAYLOOP_PLAYLIST )
+        else if( playmode == guPLAYER_PLAYMODE_REPEAT_PLAYLIST )
         {
             m_CurItem = m_Items.Count() - 1;
             return &m_Items[ m_CurItem ];
@@ -837,7 +837,7 @@ guTrack * guPlayList::GetPrev( const int playloop, const bool forceskip )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetNextAlbum( const int playloop, const bool forceskip )
+guTrack * guPlayList::GetNextAlbum( const int playmode, const bool forceskip )
 {
     int SaveCurItem = m_CurItem;
     if( m_Items.Count() )
@@ -857,7 +857,7 @@ guTrack * guPlayList::GetNextAlbum( const int playloop, const bool forceskip )
 
             while( ( size_t ) m_CurItem < ( m_Items.Count() - 1 ) )
             {
-                if( m_DelTracksPLayed && !playloop )
+                if( m_DelTracksPLayed && !playmode )
                 {
                     m_TotalLen -= m_Items[ m_CurItem ].m_Length;
                     m_Items.RemoveAt( m_CurItem );
@@ -884,7 +884,7 @@ guTrack * guPlayList::GetNextAlbum( const int playloop, const bool forceskip )
 }
 
 // -------------------------------------------------------------------------------- //
-guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
+guTrack * guPlayList::GetPrevAlbum( const int playmode, const bool forceskip )
 {
     int SaveCurItem = m_CurItem;
     if( m_Items.Count() )
@@ -906,7 +906,7 @@ guTrack * guPlayList::GetPrevAlbum( const int playloop, const bool forceskip )
             //guLogMessage( wxT( "CurrentAlbum: %i" ), CurAlbumId );
             while( m_CurItem > 0 )
             {
-                if( m_DelTracksPLayed && !playloop )
+                if( m_DelTracksPLayed && !playmode )
                 {
                     m_TotalLen -= m_Items[ m_CurItem ].m_Length;
                     m_Items.RemoveAt( m_CurItem );

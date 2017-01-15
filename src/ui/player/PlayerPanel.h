@@ -66,10 +66,11 @@ enum guSongCoverType {
 };
 
 // -------------------------------------------------------------------------------- //
-enum guPlayLoopMode {
-    guPLAYER_PLAYLOOP_NONE = 0,
-    guPLAYER_PLAYLOOP_PLAYLIST,
-    guPLAYER_PLAYLOOP_TRACK
+enum guPlayMode {
+    guPLAYER_PLAYMODE_NONE = 0,
+    guPLAYER_PLAYMODE_SMART,
+    guPLAYER_PLAYMODE_REPEAT_PLAYLIST,
+    guPLAYER_PLAYMODE_REPEAT_TRACK
 };
 
 // -------------------------------------------------------------------------------- //
@@ -216,19 +217,23 @@ class guUpdatePlayerCoverThread;
 // -------------------------------------------------------------------------------- //
 class guPlayerPanel : public wxPanel
 {
-  private:
+  private :
 	guRoundButton *             m_PrevTrackButton;
 	guRoundButton *             m_NextTrackButton;
 	guRoundButton *             m_PlayButton;
+    guRoundButton *             m_StopButton;
 	guToggleRoundButton *       m_RecordButton;
-	guRoundButton *             m_VolumeButton;
 	//
-	guToggleRoundButton *       m_SmartPlayButton;
-	guRoundButton *             m_RandomPlayButton;
-	guToggleRoundButton *       m_RepeatPlayButton;
-	guRoundButton *             m_EqualizerButton;
-	//
-	wxStaticBitmap *            m_PlayerCoverBitmap;
+    guRoundButton *             m_ForceGaplessButton;
+    //guToggleRoundButton *       m_SmartPlayButton;
+    //guToggleRoundButton *       m_RepeatPlayButton;
+    guRoundButton *             m_PlayModeButton;
+    guRoundButton *             m_RandomPlayButton;
+    //
+    guRoundButton *             m_EqualizerButton;
+    guRoundButton *             m_VolumeButton;
+    //
+    wxStaticBitmap *            m_PlayerCoverBitmap;
 	guAutoScrollText *          m_TitleLabel;
 	guAutoScrollText *          m_AlbumLabel;
 	guAutoScrollText *          m_ArtistLabel;
@@ -259,8 +264,9 @@ class guPlayerPanel : public wxPanel
 	int                         m_ShowNotificationsTime;
 
 	double                      m_CurVolume;
-	int                         m_PlayLoop;
-	bool                        m_PlaySmart;
+    //int                         m_PlayLoop;
+    //bool                        m_PlaySmart;
+    int                         m_PlayMode;
 	bool                        m_PlayRandom;
 	int                         m_PlayRandomMode;
 	bool                        m_SliderIsDragged;
@@ -372,7 +378,10 @@ class guPlayerPanel : public wxPanel
     void                        OnRandom( wxCommandEvent &event );
     void                        OnSetVolume( wxCommandEvent &event );
 
-  public:
+    void                        PlayModeChanged();
+    void                        UpdatePlayModeButton();
+
+  public :
     guPlayerPanel( wxWindow * parent, guDbLibrary * db,
                    guPlayList * playlist, guPlayerFilters * filters );
     virtual ~guPlayerPanel();
@@ -399,10 +408,11 @@ class guPlayerPanel : public wxPanel
     const guTrack *             GetTrack( int index );
     void                        RemoveItem( int itemnum );
 
-    int                         GetPlayLoop();
-    void                        SetPlayLoop( int playloop );
+    bool                        GetPlayLoop();
     bool                        GetPlaySmart();
-    void                        SetPlaySmart( bool playsmart );
+    int                         GetPlayMode();
+    void                        SetPlayMode( const int playmode );
+
     void                        UpdatePlayListFilters( void );
 
     void                        SetCurrentCoverImage( wxImage * coverimage, const guSongCoverType CoverType, const wxString &CoverPath = wxEmptyString );
@@ -420,11 +430,14 @@ class guPlayerPanel : public wxPanel
     void                        OnStopButtonClick( wxCommandEvent &event );
     void                        OnStopAtEnd( wxCommandEvent &event );
     void                        OnRecordButtonClick( wxCommandEvent &event );
-	void                        OnSmartPlayButtonClick( wxCommandEvent &event );
+    //void                        OnSmartPlayButtonClick( wxCommandEvent &event );
 	void                        OnRandomPlayButtonClick( wxCommandEvent &event );
-	void                        OnRepeatPlayButtonClick( wxCommandEvent &event );
+    //void                        OnRepeatPlayButtonClick( wxCommandEvent &event );
 	void                        OnLoveBanButtonClick( wxCommandEvent &event );
 	void                        OnEqualizerButtonClicked( wxCommandEvent &event );
+    void                        OnForceGaplessClick( wxCommandEvent &event );
+    void                        OnPlayModeButtonClicked( wxCommandEvent &event );
+
 
     void                        SetArtistLabel( const wxString &artistname );
     void                        SetAlbumLabel( const wxString &albumname );
@@ -447,7 +460,7 @@ class guPlayerPanel : public wxPanel
     void                        SetNotifySrv( guDBusNotify * notify ) { m_NotifySrv = notify; }
     void                        SendNotifyInfo( wxImage * image );
 
-    void                        SetForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; m_MediaCtrl->ForceGapless( forcegapless ); }
+    void                        SetForceGapless( const bool forcegapless );
     bool                        GetForceGapless( void ) { return m_ForceGapless; }
 
     bool                        GetAudioScrobbleEnabled( void ) { return m_AudioScrobbleEnabled; }
