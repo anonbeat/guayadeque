@@ -11,7 +11,7 @@ LIST( REMOVE_DUPLICATES Guayadeque_INCLUDE_DIRS )
 
 INCLUDE_DIRECTORIES( ${Guayadeque_INCLUDE_DIRS} )
 
-ADD_EXECUTABLE( guayadeque ${Guayadeque_SOURCES} )
+ADD_EXECUTABLE( guayadeque ${Guayadeque_SOURCES} ${Guayadeque_HEADERS} )
 
 TARGET_LINK_LIBRARIES( guayadeque
         ${wxWidgets_LIBRARIES}

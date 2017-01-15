@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2017 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -132,6 +132,8 @@ namespace Guayadeque {
 #include "./images/player_highlight_vol_mid.h"
 #include "./images/player_highlight_love.h"
 #include "./images/player_highlight_ban.h"
+#include "./images/player_highlight_crossfading.h"
+#include "./images/player_highlight_gapless.h"
 #include "./images/player_light_equalizer.h"
 #include "./images/player_light_muted.h"
 #include "./images/player_light_next.h"
@@ -151,6 +153,8 @@ namespace Guayadeque {
 #include "./images/player_light_vol_mid.h"
 #include "./images/player_light_love.h"
 #include "./images/player_light_ban.h"
+#include "./images/player_light_crossfading.h"
+#include "./images/player_light_gapless.h"
 #include "./images/player_normal_equalizer.h"
 #include "./images/player_normal_muted.h"
 #include "./images/player_normal_next.h"
@@ -170,6 +174,8 @@ namespace Guayadeque {
 #include "./images/player_normal_vol_mid.h"
 #include "./images/player_normal_love.h"
 #include "./images/player_normal_ban.h"
+#include "./images/player_normal_crossfading.h"
+#include "./images/player_normal_gapless.h"
 #include "./images/player_tiny_light_play.h"
 #include "./images/player_tiny_light_stop.h"
 #include "./images/player_tiny_red_stop.h"
@@ -180,9 +186,6 @@ namespace Guayadeque {
 #include "./images/star_highlight_tiny.h"
 #include "./images/star_highlight_mid.h"
 #include "./images/star_highlight_big.h"
-//
-#include "./images/tiny_crossfade.h"
-#include "./images/tiny_gapless.h"
 //
 #include "./images/tiny_mv_library.h"
 #include "./images/tiny_mv_albumbrowser.h"
@@ -306,6 +309,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_highlight_vol_mid,      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_love,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_highlight_ban,          wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_highlight_crossfading,  wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_highlight_gapless,      wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_equalizer,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_muted,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_next,             wxBITMAP_TYPE_PNG ),
@@ -325,6 +330,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_light_vol_mid,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_love,             wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_light_ban,              wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_light_crossfading,      wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_light_gapless,          wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_equalizer,       wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_muted,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_next,            wxBITMAP_TYPE_PNG ),
@@ -344,6 +351,8 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_player_normal_vol_mid,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_love,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_normal_ban,             wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_normal_crossfading,     wxBITMAP_TYPE_PNG ),
+    GUIMAGE( guImage_player_normal_gapless,         wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_tiny_light_play,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_tiny_light_stop,        wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_player_tiny_red_stop,          wxBITMAP_TYPE_PNG ),
@@ -354,9 +363,6 @@ guImage_Item guImage_Items[] = {
     GUIMAGE( guImage_star_highlight_tiny,           wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_star_highlight_mid,            wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_star_highlight_big,            wxBITMAP_TYPE_PNG ),
-    //
-    GUIMAGE( guImage_tiny_crossfade,                wxBITMAP_TYPE_PNG ),
-    GUIMAGE( guImage_tiny_gapless,                  wxBITMAP_TYPE_PNG ),
     //
     GUIMAGE( guImage_tiny_mv_library,               wxBITMAP_TYPE_PNG ),
     GUIMAGE( guImage_tiny_mv_albumbrowser,          wxBITMAP_TYPE_PNG ),

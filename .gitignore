@@ -7,5 +7,6 @@ cmake_uninstall.cmake
 install_manifest.txt
 po/*/*.mo
 src/guayadeque
-src/Version.h
+Version.h
+CMakeLists.txt.user
 

@@ -491,8 +491,8 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         PlayStatus = 1;
                     else if( State == guMEDIASTATE_PLAYING )
                         PlayStatus = 0;
-                    int PlaySingle = ( m_PlayerPanel->GetPlayLoop() == 2 );
-                    int PlayLoop = ( m_PlayerPanel->GetPlayLoop() == 1 );
+                    int PlaySingle = ( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_TRACK );
+                    int PlayLoop = ( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
 
                     DBusMessageIter status;
                     DBusMessageIter args;
@@ -890,8 +890,8 @@ void guMPRIS::OnPlayerStatusChange()
             PlayStatus = 1;
         else if( State == guMEDIASTATE_PLAYING )
             PlayStatus = 0;
-        int PlaySingle = ( m_PlayerPanel->GetPlayLoop() == 2 );
-        int PlayLoop = ( m_PlayerPanel->GetPlayLoop() == 1 );
+        int PlaySingle = ( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_TRACK );
+        int PlayLoop = ( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
 
         guLogMessage( wxT( "StatusChanged( %i, %i, %i, %i )" ), PlayStatus, Dummy, Dummy, PlayLoop );
 

@@ -32,12 +32,10 @@ namespace Guayadeque {
 
 #define guTRACKCOUNT_PANEL_SIZE         300
 #define guAUDIOSCROBBLE_PANEL_SIZE      40
-#define guFORCEGAPLESS_PANEL_SIZE       24
 
 enum guStatusBarClickAction {
     guSTATUSBAR_CLICK_ACTION_NONE = -1,
-    guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE,
-    guSTATUSBAR_CLICK_ACTION_FORCEGAPLESS
+    guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE
 };
 
 #define guSTATUSBAR_CLICK_TIMEOUT   250
@@ -156,23 +154,14 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
 {
     m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
 
-    int FieldWidths[] = { -1, guTRACKCOUNT_PANEL_SIZE, guFORCEGAPLESS_PANEL_SIZE, guAUDIOSCROBBLE_PANEL_SIZE };
-    SetFieldsCount( 4 );
-    SetStatusWidths( 4, FieldWidths );
-    int FieldStyles[] = { wxSB_FLAT, wxSB_FLAT, wxSB_FLAT, wxSB_FLAT };
-    SetStatusStyles( 4, FieldStyles );
-
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->RegisterObject( this );
-
-    int FadeOutTime = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
-    m_ForceGapless = ( !FadeOutTime || Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) );
+    int FieldWidths[] = { -1, guTRACKCOUNT_PANEL_SIZE, guAUDIOSCROBBLE_PANEL_SIZE };
+    SetFieldsCount( 3 );
+    SetStatusWidths( 3, FieldWidths );
+    int FieldStyles[] = { wxSB_FLAT, wxSB_FLAT, wxSB_FLAT };
+    SetStatusStyles( 3, FieldStyles );
 
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Enable audioscrobbling" ) );
-
-    m_PlayMode = new wxStaticBitmap( this, wxID_ANY, guImage( m_ForceGapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
-    m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
 
     m_SelInfo = new wxStaticText( this, wxID_ANY, wxEmptyString );
     m_SelInfo->SetToolTip( _( "Shows information about the selected items" ) );
@@ -181,17 +170,8 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
 
     Bind( wxEVT_SIZE, &guStatusBar::OnSize, this );
 
-//	m_ASBitmap->Bind( wxEVT_LEFT_DOWN, &guStatusBar::OnAudioScrobbleLClicked, this );
-//	m_ASBitmap->Bind( wxEVT_RIGHT_DOWN, &guStatusBar::OnAudioScrobbleRClicked, this );
-//
-//	m_PlayMode->Bind( wxEVT_LEFT_DOWN, &guStatusBar::OnPlayModeLClicked, this );
-//	m_PlayMode->Bind( wxEVT_RIGHT_DOWN, &guStatusBar::OnPlayModeRClicked, this );
 	m_ASBitmap->Bind( wxEVT_LEFT_DOWN, &guStatusBar::OnButtonClick, this );
 	m_ASBitmap->Bind( wxEVT_LEFT_DCLICK, &guStatusBar::OnButtonDClick, this );
-	m_PlayMode->Bind( wxEVT_LEFT_DOWN, &guStatusBar::OnButtonClick, this );
-	m_PlayMode->Bind( wxEVT_LEFT_DCLICK, &guStatusBar::OnButtonDClick, this );
-
-    Bind( guConfigUpdatedEvent, &guStatusBar::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     Bind( wxEVT_TIMER, &guStatusBar::OnTimerEvent, this );
 }
@@ -199,45 +179,15 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
 // -------------------------------------------------------------------------------- //
 guStatusBar::~guStatusBar()
 {
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->UnRegisterObject( this );
-
     Unbind( wxEVT_SIZE, &guStatusBar::OnSize, this );
 
-//  m_ASBitmap->Unbind( wxEVT_LEFT_DOWN, &guStatusBar::OnAudioScrobbleLClicked, this );
-//  m_ASBitmap->Unbind( wxEVT_RIGHT_DOWN, &guStatusBar::OnAudioScrobbleRClicked, this );
-//
-//  m_PlayMode->Unbind( wxEVT_LEFT_DOWN, &guStatusBar::OnPlayModeLClicked, this );
-//  m_PlayMode->Unbind( wxEVT_RIGHT_DOWN, &guStatusBar::OnPlayModeRClicked, this );
     m_ASBitmap->Unbind( wxEVT_LEFT_DOWN, &guStatusBar::OnButtonClick, this );
     m_ASBitmap->Unbind( wxEVT_LEFT_DCLICK, &guStatusBar::OnButtonDClick, this );
-    m_PlayMode->Unbind( wxEVT_LEFT_DOWN, &guStatusBar::OnButtonClick, this );
-    m_PlayMode->Unbind( wxEVT_LEFT_DCLICK, &guStatusBar::OnButtonDClick, this );
-
-    Unbind( guConfigUpdatedEvent, &guStatusBar::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     Unbind( wxEVT_TIMER, &guStatusBar::OnTimerEvent, this );
 
     if( m_ASBitmap )
         delete m_ASBitmap;
-
-    if( m_PlayMode )
-        delete m_PlayMode;
-}
-
-// -------------------------------------------------------------------------------- //
-void guStatusBar::OnConfigUpdated( wxCommandEvent &event )
-{
-    int Flags = event.GetInt();
-    if( Flags & guPREFERENCE_PAGE_FLAG_CROSSFADER )
-    {
-        //guLogMessage( wxT( "guSTatusBar::OnConfigUPdated..." ) );
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        Config->RegisterObject( this );
-
-        int FadeOutTime = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
-        SetPlayMode( !FadeOutTime || m_ForceGapless );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -255,17 +205,9 @@ void guStatusBar::OnSize( wxSizeEvent &event )
                         rect.y + 2 );
     }
 
-    if( m_PlayMode )
-    {
-        //size = ASBitmap->GetSize();
-        GetFieldRect( GetFieldsCount() - 2, rect );
-        m_PlayMode->Move( rect.x + 1,
-                        rect.y + 3 );
-    }
-
     if( m_SelInfo )
     {
-        GetFieldRect( GetFieldsCount() - 3, rect );
+        GetFieldRect( GetFieldsCount() - 2, rect );
         m_SelInfo->Move( rect.x + 1, rect.y + 3 );
     }
 
@@ -284,24 +226,6 @@ void guStatusBar::UpdateAudioScrobbleIcon( bool Enabled )
 }
 
 // -------------------------------------------------------------------------------- //
-void guStatusBar::SetPlayMode( const bool forcegapless )
-{
-    if( m_ForceGapless != forcegapless )
-    {
-        m_ForceGapless = forcegapless;
-        guConfig * Config = ( guConfig * ) guConfig::Get();
-        Config->WriteBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, m_ForceGapless, CONFIG_PATH_CROSSFADER );
-        Config->Flush();
-        if( m_PlayMode )
-        {
-            m_PlayMode->SetBitmap( guImage( forcegapless ? guIMAGE_INDEX_tiny_gapless : guIMAGE_INDEX_tiny_crossfade ) );
-            m_PlayMode->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
-            m_PlayMode->Refresh();
-        }
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guStatusBar::SetAudioScrobble( const bool audioscrobble )
 {
     OnAudioScrobbleClicked();
@@ -315,10 +239,6 @@ void guStatusBar::OnButtonClick( wxMouseEvent &event )
     if( event.GetEventObject() == m_ASBitmap )
     {
         m_LastClickAction = guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE;
-    }
-    else if( event.GetEventObject() == m_PlayMode )
-    {
-        m_LastClickAction = guSTATUSBAR_CLICK_ACTION_FORCEGAPLESS;
     }
 
     if( m_ClickTimer.IsRunning() )
@@ -337,10 +257,6 @@ void guStatusBar::OnButtonDClick( wxMouseEvent &event )
     {
         OnAudioScrobbleDClicked();
     }
-    else if( event.GetEventObject() == m_PlayMode )
-    {
-        OnPlayModeDClicked();
-    }
 
     m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
 }
@@ -350,8 +266,6 @@ void guStatusBar::OnTimerEvent( wxTimerEvent &event )
 {
     if( m_LastClickAction == guSTATUSBAR_CLICK_ACTION_AUDIOSCROBBLE )
         OnAudioScrobbleClicked();
-    else if( m_LastClickAction == guSTATUSBAR_CLICK_ACTION_FORCEGAPLESS )
-        OnPlayModeClicked();
     m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
 }
 
@@ -397,6 +311,7 @@ void guStatusBar::OnAudioScrobbleDClicked( void )
     wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
 
+/*
 // -------------------------------------------------------------------------------- //
 void guStatusBar::OnPlayModeClicked( void )
 {
@@ -420,6 +335,7 @@ void guStatusBar::OnPlayModeDClicked( void )
     CmdEvent.SetInt( guPREFERENCE_PAGE_CROSSFADER );
     wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
+*/
 
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetSizes( int FieldCnt )
@@ -434,8 +350,10 @@ void guStatusBar::SetSizes( int FieldCnt )
                 FieldWidths[ index ] = -1;
             else if( index == ( FieldCnt - 1 ) )
                 FieldWidths[ index ] = guAUDIOSCROBBLE_PANEL_SIZE;
+            /*
             else if( index == ( FieldCnt - 2 ) )
                 FieldWidths[ index ] = guFORCEGAPLESS_PANEL_SIZE;
+            */
             else if( index == ( FieldCnt - 3 ) )
                 FieldWidths[ index ] = guTRACKCOUNT_PANEL_SIZE;
             else

@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2016 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2017 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -134,6 +134,8 @@ typedef enum {
     guIMAGE_INDEX_player_highlight_vol_mid,
     guIMAGE_INDEX_player_highlight_love,
     guIMAGE_INDEX_player_highlight_ban,
+    guIMAGE_INDEX_player_highlight_crossfading,
+    guIMAGE_INDEX_player_highlight_gapless,
     guIMAGE_INDEX_player_light_equalizer,
     guIMAGE_INDEX_player_light_muted,
     guIMAGE_INDEX_player_light_next,
@@ -153,6 +155,8 @@ typedef enum {
     guIMAGE_INDEX_player_light_vol_mid,
     guIMAGE_INDEX_player_light_love,
     guIMAGE_INDEX_player_light_ban,
+    guIMAGE_INDEX_player_light_crossfading,
+    guIMAGE_INDEX_player_light_gapless,
     guIMAGE_INDEX_player_normal_equalizer,
     guIMAGE_INDEX_player_normal_muted,
     guIMAGE_INDEX_player_normal_next,
@@ -172,6 +176,8 @@ typedef enum {
     guIMAGE_INDEX_player_normal_vol_mid,
     guIMAGE_INDEX_player_normal_love,
     guIMAGE_INDEX_player_normal_ban,
+    guIMAGE_INDEX_player_normal_crossfading,
+    guIMAGE_INDEX_player_normal_gapless,
     guIMAGE_INDEX_player_tiny_light_play,
     guIMAGE_INDEX_player_tiny_light_stop,
     guIMAGE_INDEX_player_tiny_red_stop,
@@ -181,9 +187,6 @@ typedef enum {
     guIMAGE_INDEX_star_highlight_tiny,
     guIMAGE_INDEX_star_highlight_mid,
     guIMAGE_INDEX_star_highlight_big,
-    //
-    guIMAGE_INDEX_tiny_crossfade,
-    guIMAGE_INDEX_tiny_gapless,
     //
     guIMAGE_INDEX_tiny_mv_library,
     guIMAGE_INDEX_tiny_mv_albumbrowser,

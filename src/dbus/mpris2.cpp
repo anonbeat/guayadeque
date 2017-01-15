@@ -512,13 +512,13 @@ void guMPRIS2::OnPlayerTrackChange( void )
         FillMetadataDetails( &dict, "PlaybackStatus", PlaybackStatus );
 
         const char * LoopStatus;
-        int PlayLoop = m_PlayerPanel->GetPlayLoop();
-        if( PlayLoop == guPLAYER_PLAYLOOP_NONE )
-            LoopStatus = "None";
-        else if( PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+        int PlayLoop = m_PlayerPanel->GetPlayMode();
+        if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_TRACK )
             LoopStatus = "Track";
-        else //if( PlayLoop == guPLAYER_PLAYLOOP_PLAYLIST )
+        else if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_PLAYLIST )
             LoopStatus = "Playlist";
+        else //if( PlayLoop == guPLAYER_PLAYMODE_NONE )
+            LoopStatus = "None";
 
         FillMetadataDetails( &dict, "LoopStatus", LoopStatus );
 
@@ -586,13 +586,13 @@ void guMPRIS2::OnPlayerStatusChange( void )
         FillMetadataDetails( &dict, "PlaybackStatus", PlaybackStatus );
 
         const char * LoopStatus;
-        int PlayLoop = m_PlayerPanel->GetPlayLoop();
-        if( PlayLoop == guPLAYER_PLAYLOOP_NONE )
-            LoopStatus = "None";
-        else if( PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+        int PlayLoop = m_PlayerPanel->GetPlayMode();
+        if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_TRACK )
             LoopStatus = "Track";
-        else //if( PlayLoop == guPLAYER_PLAYLOOP_PLAYLIST )
+        else if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_PLAYLIST )
             LoopStatus = "Playlist";
+        else //if( PlayLoop == guPLAYER_PLAYMODE_NONE )
+            LoopStatus = "None";
 
         FillMetadataDetails( &dict, "LoopStatus", LoopStatus );
 
@@ -958,13 +958,13 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
 
                             ////////////////////////////////////////////////////////////////////////
                             const char * LoopStatus;
-                            int PlayLoop = m_PlayerPanel->GetPlayLoop();
-                            if( PlayLoop == guPLAYER_PLAYLOOP_NONE )
-                                LoopStatus = "None";
-                            else if( PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+                            int PlayLoop = m_PlayerPanel->GetPlayMode();
+                            if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_TRACK )
                                 LoopStatus = "Track";
-                            else //if( PlayLoop == guPLAYER_PLAYLOOP_PLAYLIST )
+                            else if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_PLAYLIST )
                                 LoopStatus = "Playlist";
+                            else //if( PlayLoop == guPLAYER_PLAYMODE_NONE )
+                                LoopStatus = "None";
 
                             FillMetadataDetails( &dict, "LoopStatus", LoopStatus );
 
@@ -1236,9 +1236,9 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 {
                                     const char * LoopStatus;
                                     int PlayLoop = m_PlayerPanel->GetPlayLoop();
-                                    if( PlayLoop == guPLAYER_PLAYLOOP_NONE )
+                                    if( PlayLoop == guPLAYER_PLAYMODE_NONE )
                                         LoopStatus = "None";
-                                    else if( PlayLoop == guPLAYER_PLAYLOOP_TRACK )
+                                    else if( PlayLoop == guPLAYER_PLAYMODE_REPEAT_TRACK )
                                         LoopStatus = "Track";
                                     else //if( PlayLoop == guPLAYER_PLAYLOOP_PLAYLIST )
                                         LoopStatus = "Playlist";
@@ -1441,15 +1441,15 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                         int PlayLoop;
                                         if( !strcmp( LoopStatus, "None" ) )
                                         {
-                                            PlayLoop = guPLAYER_PLAYLOOP_NONE;
+                                            PlayLoop = guPLAYER_PLAYMODE_NONE;
                                         }
                                         else if( !strcmp( LoopStatus, "Track" ) )
                                         {
-                                            PlayLoop = guPLAYER_PLAYLOOP_TRACK;
+                                            PlayLoop = guPLAYER_PLAYMODE_REPEAT_TRACK;
                                         }
                                         else //if( !strcmp( LoopStatus, "Playlist" ) )
                                         {
-                                            PlayLoop = guPLAYER_PLAYLOOP_PLAYLIST;
+                                            PlayLoop = guPLAYER_PLAYMODE_REPEAT_PLAYLIST;
                                         }
 
                                         wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_SETLOOP );

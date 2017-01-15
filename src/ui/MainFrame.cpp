@@ -514,10 +514,10 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
     Bind( wxEVT_MENU, &guMainFrame::OnPrevTrack, this, ID_PLAYERPANEL_PREVTRACK );
     Bind( wxEVT_MENU, &guMainFrame::OnNextAlbum, this, ID_PLAYERPANEL_NEXTALBUM );
     Bind( wxEVT_MENU, &guMainFrame::OnPrevAlbum, this, ID_PLAYERPANEL_PREVALBUM );
-    Bind( wxEVT_MENU, &guMainFrame::OnSmartPlay, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayMode, this, ID_PLAYER_PLAYMODE_SMART );
     Bind( wxEVT_MENU, &guMainFrame::OnRandomize, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
-    Bind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
-    Bind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayMode, this, ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST );
+    Bind( wxEVT_MENU, &guMainFrame::OnPlayMode, this, ID_PLAYER_PLAYMODE_REPEAT_TRACK );
     Bind( wxEVT_MENU, &guMainFrame::OnPlayerPlayListUpdateTitle, this, ID_PLAYER_PLAYLIST_UPDATETITLE );
     Bind( wxEVT_MENU, &guMainFrame::OnAbout, this, ID_MENU_ABOUT );
     Bind( wxEVT_MENU, &guMainFrame::OnHelp, this, ID_MENU_HELP );
@@ -760,10 +760,10 @@ guMainFrame::~guMainFrame()
     Unbind( wxEVT_MENU, &guMainFrame::OnPrevTrack, this, ID_PLAYERPANEL_PREVTRACK );
     Unbind( wxEVT_MENU, &guMainFrame::OnNextAlbum, this, ID_PLAYERPANEL_NEXTALBUM );
     Unbind( wxEVT_MENU, &guMainFrame::OnPrevAlbum, this, ID_PLAYERPANEL_PREVALBUM );
-    Unbind( wxEVT_MENU, &guMainFrame::OnSmartPlay, this, ID_PLAYER_PLAYLIST_SMARTPLAY );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayMode, this, ID_PLAYER_PLAYMODE_SMART );
     Unbind( wxEVT_MENU, &guMainFrame::OnRandomize, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
-    Unbind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATPLAYLIST );
-    Unbind( wxEVT_MENU, &guMainFrame::OnRepeat, this, ID_PLAYER_PLAYLIST_REPEATTRACK );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayMode, this, ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST );
+    Unbind( wxEVT_MENU, &guMainFrame::OnPlayMode, this, ID_PLAYER_PLAYMODE_REPEAT_TRACK );
     Unbind( wxEVT_MENU, &guMainFrame::OnPlayerPlayListUpdateTitle, this, ID_PLAYER_PLAYLIST_UPDATETITLE );
     Unbind( wxEVT_MENU, &guMainFrame::OnAbout, this, ID_MENU_ABOUT );
     Unbind( wxEVT_MENU, &guMainFrame::OnHelp, this, ID_MENU_HELP );
@@ -1608,8 +1608,8 @@ void guMainFrame::CreateControlsMenu( wxMenu * menu )
 
     menu->AppendSeparator();
 
-    m_MenuPlaySmart = new wxMenuItem( menu, ID_PLAYER_PLAYLIST_SMARTPLAY,
-                                wxString( _( "Smart Play" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_SMARTPLAY ),
+    m_MenuPlaySmart = new wxMenuItem( menu, ID_PLAYER_PLAYMODE_SMART,
+                                wxString( _( "Smart Play" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYMODE_SMART ),
                                 _( "Update playlist based on Last.fm statics" ), wxITEM_CHECK );
     menu->Append( m_MenuPlaySmart );
     m_MenuPlaySmart->Check( m_PlayerPanel->GetPlaySmart() );
@@ -1618,17 +1618,17 @@ void guMainFrame::CreateControlsMenu( wxMenu * menu )
                               wxString( _( "Randomize" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_RANDOMPLAY ),
                               _( "Randomize the playlist" ), wxITEM_NORMAL );
     menu->Append( MenuItem );
-    m_MenuLoopPlayList = new wxMenuItem( menu, ID_PLAYER_PLAYLIST_REPEATPLAYLIST,
-                                wxString( _( "Repeat Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_REPEATPLAYLIST ),
+    m_MenuLoopPlayList = new wxMenuItem( menu, ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST,
+                                wxString( _( "Repeat Playlist" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST ),
                                 _( "Repeat the tracks in the playlist" ), wxITEM_CHECK );
     menu->Append( m_MenuLoopPlayList );
-    m_MenuLoopPlayList->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
+    m_MenuLoopPlayList->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
 
-    m_MenuLoopTrack = new wxMenuItem( menu, ID_PLAYER_PLAYLIST_REPEATTRACK,
-                                wxString( _( "Repeat Track" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYLIST_REPEATTRACK ),
+    m_MenuLoopTrack = new wxMenuItem( menu, ID_PLAYER_PLAYMODE_REPEAT_TRACK,
+                                wxString( _( "Repeat Track" ) ) + guAccelGetCommandKeyCodeString( ID_PLAYER_PLAYMODE_REPEAT_TRACK ),
                                 _( "Repeat the current track in the playlist" ), wxITEM_CHECK );
     menu->Append( m_MenuLoopTrack );
-    m_MenuLoopTrack->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
+    m_MenuLoopTrack->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_TRACK );
 
     menu->AppendSeparator();
 
@@ -1930,8 +1930,8 @@ void guMainFrame::OnPlayerStatusChanged( wxCommandEvent &event )
     if( m_PlayerPanel )
     {
         m_MenuPlaySmart->Check( m_PlayerPanel->GetPlaySmart() );
-        m_MenuLoopPlayList->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
-        m_MenuLoopTrack->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
+        m_MenuLoopPlayList->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
+        m_MenuLoopTrack->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_TRACK );
     }
 }
 
@@ -2128,14 +2128,28 @@ void guMainFrame::OnPrevAlbum( wxCommandEvent &event )
 }
 
 // ---------------------------------------------------------------------- //
-void guMainFrame::OnSmartPlay( wxCommandEvent &event )
+void guMainFrame::OnPlayMode( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
     {
-        m_PlayerPanel->OnSmartPlayButtonClick( event );
+        int PlayMode = guPLAYER_PLAYMODE_NONE;
+        switch( event.GetId() )
+        {
+            case ID_PLAYER_PLAYMODE_SMART :
+                PlayMode = guPLAYER_PLAYMODE_SMART;
+                break;
+            case ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST :
+                PlayMode = guPLAYER_PLAYMODE_REPEAT_PLAYLIST;
+                break;
+            case ID_PLAYER_PLAYMODE_REPEAT_TRACK :
+                PlayMode = guPLAYER_PLAYMODE_REPEAT_TRACK;
+                break;
+        }
+
+        m_PlayerPanel->SetPlayMode( PlayMode );
         m_MenuPlaySmart->Check( m_PlayerPanel->GetPlaySmart() );
-        m_MenuLoopPlayList->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_PLAYLIST );
-        m_MenuLoopTrack->Check( m_PlayerPanel->GetPlayLoop() == guPLAYER_PLAYLOOP_TRACK );
+        m_MenuLoopPlayList->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_PLAYLIST );
+        m_MenuLoopTrack->Check( m_PlayerPanel->GetPlayMode() == guPLAYER_PLAYMODE_REPEAT_TRACK );
     }
 }
 
@@ -2144,36 +2158,6 @@ void guMainFrame::OnRandomize( wxCommandEvent &event )
 {
     if( m_PlayerPanel )
         m_PlayerPanel->OnRandomPlayButtonClick( event );
-}
-
-// ---------------------------------------------------------------------- //
-void guMainFrame::OnRepeat( wxCommandEvent &event )
-{
-    if( m_PlayerPanel )
-    {
-        int RepeatMode = m_PlayerPanel->GetPlayLoop();
-        if( event.GetId() == ID_PLAYER_PLAYLIST_REPEATPLAYLIST )
-        {
-            if( RepeatMode != guPLAYER_PLAYLOOP_PLAYLIST )
-                RepeatMode = guPLAYER_PLAYLOOP_PLAYLIST;
-            else
-                RepeatMode = guPLAYER_PLAYLOOP_NONE;
-        }
-        else if( event.GetId() == ID_PLAYER_PLAYLIST_REPEATTRACK )
-        {
-            if( RepeatMode != guPLAYER_PLAYLOOP_TRACK )
-                RepeatMode = guPLAYER_PLAYLOOP_TRACK;
-            else
-                RepeatMode = guPLAYER_PLAYLOOP_NONE;
-        }
-
-        m_PlayerPanel->SetPlayLoop( RepeatMode );
-
-        //m_PlayerPanel->OnRepeatPlayButtonClick( event );
-        m_MenuPlaySmart->Check( m_PlayerPanel->GetPlaySmart() );
-        m_MenuLoopPlayList->Check( RepeatMode == guPLAYER_PLAYLOOP_PLAYLIST );
-        m_MenuLoopTrack->Check( RepeatMode == guPLAYER_PLAYLOOP_TRACK );
-    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4657,6 +4641,7 @@ void guMainFrame::CopyToThreadFinished( void )
     }
 }
 
+
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSetForceGapless( wxCommandEvent &event )
 {
@@ -4666,11 +4651,14 @@ void guMainFrame::OnSetForceGapless( wxCommandEvent &event )
 
     m_PlayerPanel->SetForceGapless( IsEnable );
 
+    /*
     if( m_MainStatusBar )
     {
         m_MainStatusBar->SetPlayMode( IsEnable );
     }
+    */
 }
+
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnSetAudioScrobble( wxCommandEvent &event )
