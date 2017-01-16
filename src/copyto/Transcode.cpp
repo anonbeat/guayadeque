@@ -474,6 +474,8 @@ void guTranscodeThread::BuildPipeline( void )
               }
           }
 
+          Location.Replace( " ", "%20", true );
+
           guLogMessage( wxT( "Transode source location: '%s'" ), Location.c_str() );
           g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
       }
@@ -627,7 +629,11 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
         }
 
         //gst_element_set_state( m_Pipeline, GST_STATE_PLAYING );
+        SetStateAndWait( m_Pipeline, GST_STATE_READY );
+        Sleep( 200 );
+
         SetStateAndWait( m_Pipeline, GST_STATE_PLAYING );
+        Sleep( 200 );
 
         m_Running = true;
         while( !TestDestroy() && m_Running )
@@ -643,7 +649,7 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
                 }
             }
 
-            Sleep( 100 );
+            Sleep( 200 );
         }
 
         if( !TestDestroy() )

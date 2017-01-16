@@ -311,32 +311,6 @@ void guStatusBar::OnAudioScrobbleDClicked( void )
     wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
 }
 
-/*
-// -------------------------------------------------------------------------------- //
-void guStatusBar::OnPlayModeClicked( void )
-{
-    //guLogMessage( wxT( "StatusBar::OnPlayModeClicked..." ) );
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    int FadeOutTime = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
-    if( FadeOutTime )
-    {
-        SetPlayMode( !m_ForceGapless );
-
-        wxCommandEvent CmdEvent( wxEVT_MENU, ID_MAINFRAME_SETFORCEGAPLESS );
-        CmdEvent.SetInt( m_ForceGapless );
-        wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
-    }
-}
-
-// -------------------------------------------------------------------------------- //
-void guStatusBar::OnPlayModeDClicked( void )
-{
-    wxCommandEvent CmdEvent( wxEVT_MENU, ID_MENU_PREFERENCES );
-    CmdEvent.SetInt( guPREFERENCE_PAGE_CROSSFADER );
-    wxPostEvent( guMainFrame::GetMainFrame(), CmdEvent );
-}
-*/
-
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetSizes( int FieldCnt )
 {
@@ -350,11 +324,7 @@ void guStatusBar::SetSizes( int FieldCnt )
                 FieldWidths[ index ] = -1;
             else if( index == ( FieldCnt - 1 ) )
                 FieldWidths[ index ] = guAUDIOSCROBBLE_PANEL_SIZE;
-            /*
             else if( index == ( FieldCnt - 2 ) )
-                FieldWidths[ index ] = guFORCEGAPLESS_PANEL_SIZE;
-            */
-            else if( index == ( FieldCnt - 3 ) )
                 FieldWidths[ index ] = guTRACKCOUNT_PANEL_SIZE;
             else
                 FieldWidths[ index ] = 200;
