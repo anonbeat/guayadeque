@@ -2210,12 +2210,6 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
         {
             m_CopyToThreadMutex.Lock();
 
-            if( !m_CopyToThread )
-            {
-                int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ), false );
-                m_CopyToThread = new guCopyToThread( this, GaugeId );
-            }
-
             guConfig * Config = ( guConfig * ) guConfig::Get();
             wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
             wxArrayString SelCopyTo = wxStringTokenize( CopyToOptions[ event.GetInt() ], wxT( ":") );
@@ -2241,6 +2235,12 @@ void guMainFrame::OnCopyTracksTo( wxCommandEvent &event )
 
             if( !DestDir.IsEmpty() )
             {
+                if( !m_CopyToThread )
+                {
+                    int GaugeId = m_MainStatusBar->AddGauge( _( "Copy To..." ), false );
+                    m_CopyToThread = new guCopyToThread( this, GaugeId );
+                }
+
                 guMediaViewer * MediaViewer = Tracks->Item( 0 ).m_MediaViewer;
                 m_CopyToThread->AddAction( Tracks, MediaViewer, DestDir,
                             unescape_configlist_str( SelCopyTo[ 1 ] ),
