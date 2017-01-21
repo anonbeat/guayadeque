@@ -775,13 +775,13 @@ guTrack * guPlayList::GetNext( const int playmode, const bool forceskip )
             m_CurItem = 0;
             return &m_Items[ m_CurItem ];
         }
-        else if( !forceskip && playmode == guPLAYER_PLAYMODE_REPEAT_TRACK )
+        else if( !forceskip && ( playmode == guPLAYER_PLAYMODE_REPEAT_TRACK ) )
         {
             return &m_Items[ m_CurItem ];
         }
         else if( ( m_CurItem < ( ( int ) m_Items.Count() - 1 ) ) )
         {
-            if( m_DelTracksPLayed && !playmode )
+            if( m_DelTracksPLayed && ( playmode <= guPLAYER_PLAYMODE_SMART ) )
             {
                 m_TotalLen -= m_Items[ m_CurItem ].m_Length;
                 m_Items.RemoveAt( m_CurItem );
