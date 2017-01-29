@@ -2136,7 +2136,7 @@ void guMainFrame::OnPlayMode( wxCommandEvent &event )
         switch( event.GetId() )
         {
             case ID_PLAYER_PLAYMODE_SMART :
-                PlayMode = guPLAYER_PLAYMODE_SMART;
+                PlayMode = m_PlayerPanel->GetPlaySmart() ? guPLAYER_PLAYMODE_NONE : guPLAYER_PLAYMODE_SMART;
                 break;
             case ID_PLAYER_PLAYMODE_REPEAT_PLAYLIST :
                 PlayMode = guPLAYER_PLAYMODE_REPEAT_PLAYLIST;
