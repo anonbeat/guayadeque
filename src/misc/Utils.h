@@ -43,7 +43,7 @@ namespace Guayadeque {
 #define guRandomInit() (srand( time( NULL ) ))
 #define guRandom(x) (rand() % x)
 
-#define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/49.0.2623.108 Chrome/49.0.2623.108 Safari/537.36" )
+#define guDEFAULT_BROWSER_USER_AGENT    wxT( "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/55.0.2883.87 Chrome/55.0.2883.87 Safari/537.36" )
 
 class guTrackArray;
 class guMediaViewer;

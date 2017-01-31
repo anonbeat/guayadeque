@@ -246,6 +246,12 @@ class guPrefDialog : public wxDialog
     wxListBox *                 m_OnlineFiltersListBox;
     wxBitmapButton *            m_OnlineAddBtn;
     wxBitmapButton *            m_OnlineDelBtn;
+    // Proxy
+    wxCheckBox *                m_OnlineProxyEnableChkBox;
+    wxTextCtrl *                m_OnlineProxyHostTextCtrl;
+    wxTextCtrl *                m_OnlineProxyPortTextCtrl;
+    wxTextCtrl *                m_OnlineProxyUserTextCtrl;
+    wxTextCtrl *                m_OnlineProxyPasswdTextCtrl;
 
     wxScrolledWindow *          m_LinksPanel;
     wxListBox *                 m_LinksListBox;
@@ -435,6 +441,7 @@ class guPrefDialog : public wxDialog
 	void OnOnlineDelBtnClick( wxCommandEvent &event );
 	void OnOnlineListBoxDClicked( wxCommandEvent &event );
 	void OnOnlineMinBitRateChanged( wxScrollEvent &event );
+    void OnOnlineProxyEnabledChanged( wxCommandEvent &event );
 
     void OnJamendoSelectAll( wxCommandEvent &event );
     void OnJamendoSelectNone( wxCommandEvent &event );

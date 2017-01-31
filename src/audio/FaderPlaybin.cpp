@@ -26,6 +26,7 @@
 #include "RadioTagInfo.h"
 
 #include <wx/wx.h>
+#include <wx/url.h>
 
 namespace Guayadeque {
 
@@ -47,6 +48,10 @@ typedef enum {
 
 // -------------------------------------------------------------------------------- //
 extern "C" {
+
+static char ProxyServer[ 200 ] = "";
+static char ProxyUser[ 200 ] = "";
+static char ProxyPass[ 200 ] = "";
 
 // -------------------------------------------------------------------------------- //
 static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFaderPlaybin * ctrl )
@@ -327,6 +332,32 @@ static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin * ctrl )
 static void gst_audio_changed( GstElement * playbin, guFaderPlaybin * ctrl )
 {
     ctrl->AudioChanged();
+}
+
+// -------------------------------------------------------------------------------- //
+void gst_source_setup( GstElement * playbin, GstElement * source, guMediaCtrl * ctrl )
+{
+    if( ctrl && ctrl->ProxyEnabled() )
+    {
+        if( g_object_class_find_property( G_OBJECT_GET_CLASS( source ), "proxy" ) )
+        {
+            //guLogMessage( wxT( "Found proxy property... '%s'" ), ctrl->ProxyServer().c_str() );
+            strncpy( ProxyServer, ctrl->ProxyServer().char_str(), sizeof( ProxyServer ) - 1 );
+            g_object_set( source,
+                          "proxy", ProxyServer,
+                          NULL );
+
+            if( !ctrl->ProxyUser().IsEmpty() )
+            {
+                strncpy( ProxyUser, ctrl->ProxyUser().char_str(), sizeof( ProxyUser ) - 1 );
+                strncpy( ProxyPass, ctrl->ProxyPass().char_str(), sizeof( ProxyPass ) - 1 );
+                g_object_set( source,
+                          "proxy-id", ProxyUser,
+                          "proxy-pw", ProxyPass,
+                          NULL );
+            }
+        }
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -637,6 +668,9 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
                                             //
                                             g_signal_connect( G_OBJECT( m_Playbin ), "audio-changed",
                                                 G_CALLBACK( gst_audio_changed ), ( void * ) this );
+
+                                            g_signal_connect( G_OBJECT( m_Playbin ), "source-setup",
+                                                G_CALLBACK( gst_source_setup ), ( void * ) m_Player );
 
                                             gst_bus_add_watch( gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) ),
                                                 GstBusFunc( gst_bus_async_callback ), this );

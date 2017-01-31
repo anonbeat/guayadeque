@@ -776,6 +776,13 @@ void guMediaCtrl::UpdatedConfig( void )
     m_ReplayGainPreAmp      = double( Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, 6, CONFIG_PATH_GENERAL ) );
     m_OutputDevice          = Config->ReadNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, guOUTPUT_DEVICE_AUTOMATIC, CONFIG_PATH_PLAYBACK );
     m_OutputDeviceName      = Config->ReadStr( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE_NAME, wxEmptyString, CONFIG_PATH_PLAYBACK );
+    m_ProxyEnabled          = Config->ReadBool( CONFIG_KEY_PROXY_ENABLED, false, CONFIG_PATH_PROXY );
+    m_ProxyHost             = Config->ReadStr( CONFIG_KEY_PROXY_HOSTNAME, wxEmptyString, CONFIG_PATH_PROXY );
+    m_ProxyPort             = Config->ReadNum( CONFIG_KEY_PROXY_PORT, 8080, CONFIG_PATH_PROXY );
+    m_ProxyUser             = Config->ReadStr( CONFIG_KEY_PROXY_USERNAME, wxEmptyString, CONFIG_PATH_PROXY );
+    m_ProxyPass             = Config->ReadStr( CONFIG_KEY_PROXY_PASSWORD, wxEmptyString, CONFIG_PATH_PROXY );
+
+    m_ProxyServer = wxString::Format( wxT( "%s:%d" ), m_ProxyHost, m_ProxyPort );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1001,6 +1008,42 @@ bool guMediaCtrl::Init()
 #endif
 
     return bInited;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::ProxyEnabled() const
+{
+    return m_ProxyEnabled;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaCtrl::ProxyHost() const
+{
+    return m_ProxyHost;
+}
+
+// -------------------------------------------------------------------------------- //
+int guMediaCtrl::ProxyPort() const
+{
+    return m_ProxyPort;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaCtrl::ProxyUser() const
+{
+    return m_ProxyUser;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaCtrl::ProxyPass() const
+{
+    return m_ProxyPass;
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guMediaCtrl::ProxyServer() const
+{
+    return m_ProxyServer;
 }
 
 }

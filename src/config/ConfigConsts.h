@@ -326,6 +326,13 @@ namespace Guayadeque {
 #define CONFIG_KEY_SEARCHLINKS_LINK                      "Link"
 #define CONFIG_KEY_SEARCHLINKS_NAME                      "Name"
 
+// Proxy
+#define CONFIG_PATH_PROXY                               "proxy"
+#define CONFIG_KEY_PROXY_ENABLED                        "enabled"
+#define CONFIG_KEY_PROXY_HOSTNAME                       "hostname"
+#define CONFIG_KEY_PROXY_PORT                           "port"
+#define CONFIG_KEY_PROXY_USERNAME                       "username"
+#define CONFIG_KEY_PROXY_PASSWORD                       "password"
 
 }
 

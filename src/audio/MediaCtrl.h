@@ -76,6 +76,14 @@ class guMediaCtrl : public wxEvtHandler
     double                  m_ReplayGainPreAmp;
     //double                  m_ReplayGainFallback;
 
+    bool                    m_ProxyEnabled;
+    wxString                m_ProxyHost;
+    int                     m_ProxyPort;
+    wxString                m_ProxyUser;
+    wxString                m_ProxyPass;
+    wxString                m_ProxyServer;
+
+
     void                    CleanUp( void );
     bool                    RemovePlayBin( guFaderPlaybin * playbin );
 
@@ -141,6 +149,13 @@ class guMediaCtrl : public wxEvtHandler
 
     int             OutputDevice( void ) { return m_OutputDevice; }
     wxString        OutputDeviceName( void ) { return m_OutputDeviceName; }
+
+    bool            ProxyEnabled() const;
+    wxString        ProxyHost() const;
+    int             ProxyPort() const;
+    wxString        ProxyUser() const;
+    wxString        ProxyPass() const;
+    wxString        ProxyServer() const;
 
     friend class guFaderPlaybin;
 };
