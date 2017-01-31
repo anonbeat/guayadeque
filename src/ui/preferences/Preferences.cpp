@@ -1242,21 +1242,21 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	UserNameStaticText->Wrap( -1 );
 	ASLoginSizer->Add( UserNameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_LastFMUserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+    m_LastFMUserNameTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
     m_LastFMUserNameTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_LASTFM_USERNAME, wxEmptyString, CONFIG_PATH_LASTFM ) );
-	ASLoginSizer->Add( m_LastFMUserNameTextCtrl, 0, wxALL, 5 );
+    ASLoginSizer->Add( m_LastFMUserNameTextCtrl, 0, wxALL, 5 );
 
 	wxStaticText * PasswdStaticText = new wxStaticText( m_LastFMPanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
 	PasswdStaticText->Wrap( -1 );
 	ASLoginSizer->Add( PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
-	m_LastFMPasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
+    m_LastFMPasswdTextCtrl = new wxTextCtrl( m_LastFMPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
     m_LastFMPasswdTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_LASTFM_PASSWORD, wxEmptyString, CONFIG_PATH_LASTFM ).IsEmpty() ? wxEmptyString : wxT( "******" ) );
 	// Password is saved in md5 form so we cant load it back
-	ASLoginSizer->Add( m_LastFMPasswdTextCtrl, 0, wxALL, 5 );
+    ASLoginSizer->Add( m_LastFMPasswdTextCtrl, 0, wxALL, 5 );
 
-	if( m_LastFMPasswdTextCtrl->IsEmpty() ||
-	    m_LastFMUserNameTextCtrl->IsEmpty() )
+    if( m_LastFMPasswdTextCtrl->IsEmpty() ||
+        m_LastFMUserNameTextCtrl->IsEmpty() )
         m_LastFMASEnableChkBox->Disable();
 
 	LastFMASSizer->Add( ASLoginSizer, 1, wxEXPAND, 5 );
@@ -1480,9 +1480,66 @@ void guPrefDialog::BuildOnlinePage( void )
     //
     wxBoxSizer * OnlineMainSizer = new wxBoxSizer( wxVERTICAL );
 
+    // Proxy
+    wxStaticBoxSizer * OnlineProxyMainSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Proxy ") ), wxVERTICAL );
+
+    m_OnlineProxyEnableChkBox = new wxCheckBox( m_OnlinePanel, wxID_ANY, _("Proxy Enabled"), wxDefaultPosition, wxDefaultSize, 0 );
+    bool ProxyEnabled = m_Config->ReadBool( CONFIG_KEY_PROXY_ENABLED, false, CONFIG_PATH_PROXY );
+    m_OnlineProxyEnableChkBox->SetValue( ProxyEnabled );
+    OnlineProxyMainSizer->Add( m_OnlineProxyEnableChkBox, 0, wxALL, 2 );
+
+    wxFlexGridSizer * OnlineProxySizer = new wxFlexGridSizer( 2, 0, 0 );
+    OnlineProxySizer->SetFlexibleDirection( wxBOTH );
+    OnlineProxySizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+
+    wxStaticText * ProxyHostnameStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _( "Hostname:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    ProxyHostnameStaticText->Wrap( -1 );
+    OnlineProxySizer->Add( ProxyHostnameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+    wxBoxSizer * ProxyHostPortSizer = new wxBoxSizer( wxHORIZONTAL );
+
+    m_OnlineProxyHostTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 250, -1 ), 0 );
+    m_OnlineProxyHostTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_HOSTNAME, wxEmptyString, CONFIG_PATH_PROXY ) );
+    m_OnlineProxyHostTextCtrl->Enable( ProxyEnabled );
+    ProxyHostPortSizer->Add( m_OnlineProxyHostTextCtrl, 0, wxALL, 2 );
+
+    wxStaticText * ProxyPortStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _( "Port:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    ProxyPortStaticText->Wrap( -1 );
+    ProxyHostPortSizer->Add( ProxyPortStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+    m_OnlineProxyPortTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50, -1 ), 0 );
+    m_OnlineProxyPortTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_PORT, wxEmptyString, CONFIG_PATH_PROXY ) );
+    m_OnlineProxyPortTextCtrl->Enable( ProxyEnabled );
+    ProxyHostPortSizer->Add( m_OnlineProxyPortTextCtrl, 0, wxALL, 2 );
+
+    OnlineProxySizer->Add( ProxyHostPortSizer );
+
+    wxStaticText * ProxyUsernameStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Username:"), wxDefaultPosition, wxDefaultSize, 0 );
+    ProxyUsernameStaticText->Wrap( -1 );
+    OnlineProxySizer->Add( ProxyUsernameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+    m_OnlineProxyUserTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
+    m_OnlineProxyUserTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_USERNAME, wxEmptyString, CONFIG_PATH_PROXY ) );
+    m_OnlineProxyUserTextCtrl->Enable( ProxyEnabled );
+    OnlineProxySizer->Add( m_OnlineProxyUserTextCtrl, 0, wxALL, 2 );
+
+    wxStaticText * PasswdStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
+    PasswdStaticText->Wrap( -1 );
+    OnlineProxySizer->Add( PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+
+    m_OnlineProxyPasswdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
+    m_OnlineProxyPasswdTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_PASSWORD, wxEmptyString, CONFIG_PATH_PROXY ) );
+    m_OnlineProxyPasswdTextCtrl->Enable( ProxyEnabled );
+    OnlineProxySizer->Add( m_OnlineProxyPasswdTextCtrl, 0, wxALL, 2 );
+
+    OnlineProxyMainSizer->Add( OnlineProxySizer, 1, wxEXPAND, 2 );
+
+    OnlineMainSizer->Add( OnlineProxyMainSizer, 0, wxEXPAND|wxALL, 5 );
+
+
     wxStaticBoxSizer * OnlineFiltersSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _(" Filters ") ), wxHORIZONTAL );
 
-    m_OnlineFiltersListBox = new wxListBox( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
+    m_OnlineFiltersListBox = new wxListBox( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxSize( -1, 100 ), 0, NULL, 0 );
     m_OnlineFiltersListBox->Append( m_Config->ReadAStr( CONFIG_KEY_SEARCH_FILTERS_FILTER, wxEmptyString, CONFIG_PATH_SEARCH_FILTERS ) );
     OnlineFiltersSizer->Add( m_OnlineFiltersListBox, 1, wxALL|wxEXPAND, 5 );
 
@@ -1497,8 +1554,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     OnlineFiltersSizer->Add( OnlineBtnSizer, 0, wxEXPAND, 5 );
 
-    OnlineMainSizer->Add( OnlineFiltersSizer, 1, wxEXPAND|wxALL, 5 );
-
+    OnlineMainSizer->Add( OnlineFiltersSizer, 0, wxEXPAND|wxALL, 5 );
     wxStaticBoxSizer * OnlineLangSizer = new wxStaticBoxSizer( new wxStaticBox( m_OnlinePanel, wxID_ANY, _( " Language " ) ), wxHORIZONTAL );
 
     m_LangStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1545,6 +1601,7 @@ void guPrefDialog::BuildOnlinePage( void )
     //
     //
     //
+    m_OnlineProxyEnableChkBox->Bind( wxEVT_CHECKBOX, &guPrefDialog::OnOnlineProxyEnabledChanged, this );
     m_OnlineFiltersListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnFiltersListBoxSelected, this );
     m_OnlineAddBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnOnlineAddBtnClick, this );
     m_OnlineDelBtn->Bind( wxEVT_BUTTON, &guPrefDialog::OnOnlineDelBtnClick, this );
@@ -2508,6 +2565,12 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteStr( CONFIG_KEY_GENERAL_BROWSER_COMMAND, m_BrowserCmdTextCtrl->GetValue(), CONFIG_PATH_GENERAL );
         m_Config->WriteNum( CONFIG_KEY_RADIOS_MIN_BITRATE, m_RadioMinBitRateSlider->GetValue(), CONFIG_PATH_RADIOS );
         m_Config->WriteNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, m_BufferSizeSlider->GetValue(), CONFIG_PATH_GENERAL );
+
+        m_Config->WriteBool( CONFIG_KEY_PROXY_ENABLED, m_OnlineProxyEnableChkBox->GetValue(), CONFIG_PATH_PROXY );
+        m_Config->WriteStr( CONFIG_KEY_PROXY_HOSTNAME, m_OnlineProxyHostTextCtrl->GetValue(), CONFIG_PATH_PROXY );
+        m_Config->WriteStr( CONFIG_KEY_PROXY_PORT, m_OnlineProxyPortTextCtrl->GetValue(), CONFIG_PATH_PROXY );
+        m_Config->WriteStr( CONFIG_KEY_PROXY_USERNAME, m_OnlineProxyUserTextCtrl->GetValue(), CONFIG_PATH_PROXY );
+        m_Config->WriteStr( CONFIG_KEY_PROXY_PASSWORD, m_OnlineProxyPasswdTextCtrl->GetValue(), CONFIG_PATH_PROXY );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_RECORD )
@@ -3601,6 +3664,16 @@ void guPrefDialog::OnOnlineMinBitRateChanged( wxScrollEvent &event )
 
         m_RadioMinBitRateSlider->SetValue( CurPosition );
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnOnlineProxyEnabledChanged( wxCommandEvent &event )
+{
+    bool Enabled = event.IsChecked();
+    m_OnlineProxyHostTextCtrl->Enable( Enabled );
+    m_OnlineProxyPortTextCtrl->Enable( Enabled );;
+    m_OnlineProxyUserTextCtrl->Enable( Enabled );;
+    m_OnlineProxyPasswdTextCtrl->Enable( Enabled );;
 }
 
 // -------------------------------------------------------------------------------- //

@@ -403,7 +403,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
     Http.AddHeader( wxT( "Accept" ), wxT( "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8" ) );
     if( gzipped )
     {
-        Http.AddHeader( wxT( "Accept Encoding" ), wxT( "gzip,deflate" ) );
+        Http.AddHeader( wxT( "Accept-Encoding" ), wxT( "gzip, deflate" ) );
     }
     Http.AddHeader( wxT( "Accept-Charset" ), wxT( "utf-8" ) );
     if( !referer.IsEmpty() )
@@ -447,7 +447,7 @@ wxString GetUrlContent( const wxString &url, const wxString &referer, bool gzipp
             return wxEmptyString;
 
         wxString ResponseHeaders = Http.GetResHeader();
-        //guLogMessage( wxT( "Response %u:\n%s\n%s" ), http.GetResponseCode(), http.GetResponseHeader().c_str(), http.GetResponseBody().c_str() );
+        //guLogMessage( wxT( "Response %u:\n%s\n%s" ), Http.GetResponseCode(), Http.GetResponseHeader().c_str(), Http.GetResponseBody().c_str() );
 
         if( ResponseHeaders.Lower().Find( wxT( "content-encoding: gzip" ) ) != wxNOT_FOUND )
         {

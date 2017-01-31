@@ -1,3 +1,7 @@
+  * Added proxy support. Configure it from Preferences->Online
+
+2016-11-17 0.4.3
+
   * Added audio cd support
   * Reduced the tabs height
   * Moved from Connect to Bind event

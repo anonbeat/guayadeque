@@ -21,6 +21,8 @@
 // -------------------------------------------------------------------------------- //
 #include "Curl.h"
 
+#include "Config.h"
+
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
@@ -103,8 +105,14 @@ guCurl::guCurl( const wxString &url )
     m_Port = 0;
     m_ResCode = -1;
     m_CurlHeaders = NULL;
-    m_UseProxy = false;
-    m_ProxyPort = 0;
+
+    guConfig * Config = guConfig::Get();
+
+    m_UseProxy = Config->ReadBool( CONFIG_KEY_PROXY_ENABLED, false, CONFIG_PATH_PROXY );
+    m_ProxyHost = Config->ReadStr( CONFIG_KEY_PROXY_HOSTNAME, wxEmptyString, CONFIG_PATH_PROXY ).ToAscii();
+    m_ProxyPort = Config->ReadNum( CONFIG_KEY_PROXY_PORT, 8080, CONFIG_PATH_PROXY );
+    m_ProxyUser = Config->ReadStr( CONFIG_KEY_PROXY_USERNAME, wxEmptyString, CONFIG_PATH_PROXY ).ToAscii();
+    m_ProxyPassword = Config->ReadStr( CONFIG_KEY_PROXY_PASSWORD, wxEmptyString, CONFIG_PATH_PROXY ).ToAscii();
 
     m_ErrorBuffer[ 0 ] = 0;
 }
