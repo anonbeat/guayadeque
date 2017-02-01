@@ -570,37 +570,35 @@ int guListView::GetDragFiles( guDataObjectComposite * files )
 void guListView::OnDragOver( wxCoord x, wxCoord y )
 {
     //guLogMessage( wxT( ">>guListView::OnDragOver( %u, %u )" ), x, y );
-    // TODO Change this for the m_Header size
-    int w, h, d;
-    int wherey;
+    int HeaderHeight = 0;
     if( m_Header )
     {
-        GetTextExtent( wxT("Hg"), &w, &h, &d );
-        h += d + 4;
-        wherey = y - h;
-    }
-    else
-    {
-        wherey = y;
+        HeaderHeight = m_Header->GetSize().GetHeight();
     }
 
+    y -= HeaderHeight;
 
-    m_DragOverItem = HitTest( x, wherey );
+    m_DragOverItem = HitTest( x, y );
 
     if( ( int ) m_DragOverItem != wxNOT_FOUND )
     {
         int ItemHeight = m_ListBox->OnMeasureItem( m_DragOverItem );
-        m_DragOverAfter = ( wherey > ( int ) ( ( ( ( int ) m_DragOverItem - GetVisibleRowsBegin() + 1 ) * ItemHeight   ) - ( ItemHeight / 2 ) ) );
+        m_DragOverAfter = ( y % ItemHeight ) > ( ItemHeight / 2 );
     }
 
-    if( ( m_DragOverItem != m_LastDragOverItem ) || ( m_DragOverAfter != m_LastDragOverAfter ) )
+    //guLogMessage( wxT( "Current: %i   Last: %i" ), m_DragOverItem, m_LastDragOverItem );
+
+    if( ( m_DragOverItem != m_LastDragOverItem ) )
     {
-        //guLogMessage( wxT( "%u -> %u" ), m_DragOverItem, m_LastDragOverItem );
-        if( m_LastDragOverAfter && ( m_DragOverItem != wxNOT_FOUND ) )
-            RefreshRows( wxMax( ( int ) m_LastDragOverItem, 0 ), wxMin( ( ( int ) m_LastDragOverItem ), GetItemCount() ) );
         if( m_DragOverItem != wxNOT_FOUND )
             RefreshRows( m_DragOverItem, m_DragOverItem );
+        if( m_LastDragOverItem != wxNOT_FOUND )
+            RefreshRows( m_LastDragOverItem, m_LastDragOverItem );
         m_LastDragOverItem = m_DragOverItem;
+    }
+    else if( m_DragOverAfter != m_LastDragOverAfter )
+    {
+        RefreshRows( m_DragOverItem, m_DragOverItem );
         m_LastDragOverAfter = m_DragOverAfter;
     }
 
@@ -609,20 +607,24 @@ void guListView::OnDragOver( wxCoord x, wxCoord y )
     int Width;
     int Height;
     GetSize( &Width, &Height );
-    if( m_Header )
-        Height -= h;
+    Height -= HeaderHeight;
 
-    if( ( wherey > ( Height - 10 ) ) && ( int ) GetVisibleRowsEnd() != GetItemCount() )
+    int Rows = 0;
+    if( ( y > ( Height - 10 ) ) && ( int ) GetVisibleRowsEnd() != GetItemCount() )
     {
-        ScrollLines( 1 );
+        Rows = 1;
     }
     else
     {
-        if( ( wherey < 10 ) && GetVisibleRowsBegin() > 0 )
+        if( ( y < 10 ) && ( GetVisibleRowsBegin() > 0 ) )
         {
-            ScrollLines( -1 );
+            Rows = -1;
         }
     }
+    //guLogMessage( wxT( "ScrollLines %i, %i, %i" ), Height, (int) y, Rows );
+    //guLogMessage( wxT( "End: %li  Items:%i" ), GetVisibleRowsEnd(), GetItemCount() );
+    if( Rows )
+        ScrollRows( Rows );
 }
 
 // -------------------------------------------------------------------------------- //

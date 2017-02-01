@@ -335,7 +335,7 @@ class guListView : public wxScrolledWindow
     size_t                  GetVisibleEnd( void ) const { return m_ListBox->GetVisibleEnd(); }
     size_t                  GetVisibleRowsBegin() const { return m_ListBox->GetVisibleRowsBegin(); }
     size_t                  GetVisibleRowsEnd() const { return m_ListBox->GetVisibleRowsEnd(); }
-    bool                    ScrollLines( int lines ) { return m_ListBox->wxWindow::ScrollLines( lines ); }
+    bool                    ScrollRows( int rows ) { return m_ListBox->ScrollRows( rows ); }
 
     bool                    ScrollToRow( size_t line ) { return m_ListBox->ScrollToRow( line ); }
 
