@@ -482,7 +482,7 @@ class guMainFrame : public wxFrame
 
     void                            AddPendingUpdateTrack( const guTrack &track, const wxImage * image, const wxString &lyric, const int changedflags );
     void                            AddPendingUpdateTrack( const wxString &filename, const wxImage * image, const wxString &lyric, const int changedflags );
-    void                            CheckPendingUpdates( const guTrack * track );
+    void                            CheckPendingUpdates( const guTrack * track, const bool forcesave = false );
 
 };
 

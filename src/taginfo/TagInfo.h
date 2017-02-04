@@ -328,13 +328,13 @@ class guImagePtrArray;
 
 // -------------------------------------------------------------------------------- //
 wxImage *   guTagGetPicture( const wxString &filename );
-bool        guTagSetPicture( const wxString &filename, wxImage * picture );
-bool        guTagSetPicture( const wxString &filename, const wxString &imagefile );
+bool        guTagSetPicture( const wxString &filename, wxImage * picture, const bool forcesave = false );
+bool        guTagSetPicture( const wxString &filename, const wxString &imagefile, const bool forcesave = false );
 wxString    guTagGetLyrics( const wxString &filename );
-bool        guTagSetLyrics( const wxString &filename, const wxString &lyrics );
+bool        guTagSetLyrics( const wxString &filename, const wxString &lyrics, const bool forcesave = false );
 //void        guUpdateTrack( const guTrack &track, const wxImage * image, const wxString &lyrics, const int &changedflags );
 void        guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
-                    const wxArrayString &lyrics, const wxArrayInt &changedflags );
+                    const wxArrayString &lyrics, const wxArrayInt &changedflags, const bool forcesave = false );
 void        guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags );
 void        guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, const wxArrayInt &changedflags );
 bool        guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal );

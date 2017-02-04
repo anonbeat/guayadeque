@@ -2399,12 +2399,12 @@ wxImage * guTagGetPicture( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagSetPicture( const wxString &filename, wxImage * picture )
+bool guTagSetPicture( const wxString &filename, wxImage * picture, const bool forcesave )
 {
     guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
 
     const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
-    if( CurrentTrack && CurrentTrack->m_Loaded )
+    if( !forcesave && CurrentTrack && CurrentTrack->m_Loaded )
     {
         if( CurrentTrack->m_FileName == filename )
         {
@@ -2428,12 +2428,12 @@ bool guTagSetPicture( const wxString &filename, wxImage * picture )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagSetPicture( const wxString &filename, const wxString &imagefile )
+bool guTagSetPicture( const wxString &filename, const wxString &imagefile, const bool forcesave )
 {
     wxImage Image( imagefile );
     if( Image.IsOk() )
     {
-        return guTagSetPicture( filename, &Image );
+        return guTagSetPicture( filename, &Image, forcesave );
     }
     return false;
 }
@@ -2455,12 +2455,12 @@ wxString guTagGetLyrics( const wxString &filename )
 }
 
 // -------------------------------------------------------------------------------- //
-bool guTagSetLyrics( const wxString &filename, const wxString &lyrics )
+bool guTagSetLyrics( const wxString &filename, const wxString &lyrics, const bool forcesave )
 {
     guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
 
     const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
-    if( CurrentTrack && CurrentTrack->m_Loaded )
+    if( !forcesave && CurrentTrack && CurrentTrack->m_Loaded )
     {
         if( CurrentTrack->m_FileName == filename )
         {
@@ -2485,7 +2485,7 @@ bool guTagSetLyrics( const wxString &filename, const wxString &lyrics )
 
 // -------------------------------------------------------------------------------- //
 void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
-                    const wxArrayString &lyrics, const wxArrayInt &changedflags )
+                    const wxArrayString &lyrics, const wxArrayInt &changedflags, const bool forcesave )
 {
     int Index;
     int Count = tracks.Count();
@@ -2510,7 +2510,7 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
         {
             // Prevent write to the current playing file in order to avoid segfaults specially with flac and wma files
             const guCurrentTrack * CurrentTrack = MainFrame->GetCurrentTrack();
-            if( CurrentTrack && CurrentTrack->m_Loaded )
+            if( !forcesave && CurrentTrack && CurrentTrack->m_Loaded )
             {
                 if( CurrentTrack->m_FileName == Track.m_FileName )
                 {
