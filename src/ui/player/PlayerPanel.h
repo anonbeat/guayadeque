@@ -335,7 +335,7 @@ class guPlayerPanel : public wxPanel
     void                        LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forceskip = false );
     void                        OnMediaLoaded( guMediaEvent &event );
     void                        OnMediaPlayStarted( void );
-    void                        SavePlayedTrack( void );
+    void                        SavePlayedTrack( const bool forcesave = false );
     void                        OnMediaFinished( guMediaEvent &event );
     void                        OnMediaFadeOutFinished( guMediaEvent &event );
     void                        OnMediaFadeInStarted( guMediaEvent &event );

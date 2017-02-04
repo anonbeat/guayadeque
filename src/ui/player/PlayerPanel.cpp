@@ -1973,10 +1973,8 @@ void guPlayerPanel::OnCoverUpdated( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SavePlayedTrack( void )
+void guPlayerPanel::SavePlayedTrack( const bool forcesave )
 {
-    guLogDebug( wxT( "SavePlayedTrack %i     %li" ), m_SavedPlayedTrack, m_NextTrackId );
-
     if( m_SavedPlayedTrack )
         return;
 
@@ -2051,7 +2049,7 @@ void guPlayerPanel::SavePlayedTrack( void )
         }
     }
 
-    m_MainFrame->CheckPendingUpdates( &m_MediaSong );
+    m_MainFrame->CheckPendingUpdates( &m_MediaSong, forcesave );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2537,7 +2535,7 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
 //    m_PlayerPositionSlider->SetValue( 0 );
 //    ResetVumeterLevel();
     //}
-    SavePlayedTrack();
+    SavePlayedTrack( true );
 }
 
 // -------------------------------------------------------------------------------- //

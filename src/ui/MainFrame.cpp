@@ -1994,6 +1994,7 @@ void guMainFrame::OnAudioScrobbleUpdate( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnQuit( wxCommandEvent &event )
 {
+    CheckPendingUpdates( m_PlayerPanel->GetCurrentTrack(), true );
     Close( true );
 }
 
@@ -4945,7 +4946,7 @@ void guMainFrame::AddPendingUpdateTrack( const guTrack &track, const wxImage * i
 // -------------------------------------------------------------------------------- //
 void guMainFrame::AddPendingUpdateTrack( const wxString &filename, const wxImage * image, const wxString &lyric, const int changedflags )
 {
-    guLogMessage( wxT( "Adding pending update track '%s'" ), filename.c_str() );
+    guLogMessage( wxT( "Adding pending update file '%s'" ), filename.c_str() );
     wxMutexLocker Lock( m_PendingUpdateMutex );
     m_PendingUpdateTracks.Insert( NULL, 0 );
     m_PendingUpdateFiles.Insert( filename, 0 );
@@ -4955,7 +4956,7 @@ void guMainFrame::AddPendingUpdateTrack( const wxString &filename, const wxImage
 }
 
 // -------------------------------------------------------------------------------- //
-void guMainFrame::CheckPendingUpdates( const guTrack * track )
+void guMainFrame::CheckPendingUpdates( const guTrack * track, const bool forcesave )
 {
     wxMutexLocker Lock( m_PendingUpdateMutex );
     int Count = m_PendingUpdateTracks.Count();
@@ -4968,7 +4969,7 @@ void guMainFrame::CheckPendingUpdates( const guTrack * track )
             if( CurFile.IsEmpty() )
             {
                 CurFile = m_PendingUpdateTracks[ Index ].m_FileName;
-                if( CurFile != track->m_FileName )
+                if( forcesave || ( CurFile != track->m_FileName ) )
                 {
                     guTrackArray Tracks;
                     Tracks.Add( m_PendingUpdateTracks[ Index ] );
@@ -4978,22 +4979,22 @@ void guMainFrame::CheckPendingUpdates( const guTrack * track )
                     Lyrics.Add( m_PendingUpdateLyrics[ Index ] );
                     wxArrayInt ChangedFlags;
                     ChangedFlags.Add( m_PendingUpdateFlags[ Index ] );
-                    guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags );
+                    guUpdateTracks( Tracks, Images, Lyrics, ChangedFlags, forcesave );
                     RemoveTrack = true;
                 }
             }
             else
             {
-                if( CurFile != track->m_FileName )
+                if( forcesave || ( CurFile != track->m_FileName ) )
                 {
                     int ChangedFlags = m_PendingUpdateFlags[ Index ];
                     if( ChangedFlags == guTRACK_CHANGED_DATA_LYRICS )
                     {
-                        guTagSetLyrics( CurFile, m_PendingUpdateLyrics[ Index ] );
+                        guTagSetLyrics( CurFile, m_PendingUpdateLyrics[ Index ], forcesave );
                     }
                     else
                     {
-                        guTagSetPicture( CurFile, m_PendingUpdateImages[ Index ] );
+                        guTagSetPicture( CurFile, m_PendingUpdateImages[ Index ], forcesave );
                     }
                     RemoveTrack = true;
                 }
