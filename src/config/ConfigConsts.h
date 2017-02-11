@@ -112,6 +112,7 @@ namespace Guayadeque {
 //#define CONFIG_KEY_GENERAL_PLAYER_SMART                  "PlayerSmart"
 #define CONFIG_KEY_GENERAL_PLAYER_PLAYMODE               "PlayerPlayMode"
 #define CONFIG_KEY_GENERAL_PLAYER_VOLUME                 "PlayerCurVol"
+#define CONFIG_KEY_GENERAL_PLAYER_VOLUME_VISIBLE         "PlayerVolumeVisible"
 #define CONFIG_KEY_GENERAL_RANDOM_MODE_ON_EMPTY_PLAYLIST "RndModeOnEmptyPlayList"
 #define CONFIG_KEY_GENERAL_RANDOM_PLAY_ON_EMPTY_PLAYLIST "RndPlayOnEmptyPlayList"
 #define CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE              "ReplayGainMode"
