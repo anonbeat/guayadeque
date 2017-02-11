@@ -35,7 +35,6 @@
 #include "TagInfo.h"
 #include "TrackEdit.h"
 #include "Utils.h"
-#include "VolumeFrame.h"
 
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
@@ -52,8 +51,8 @@ namespace Guayadeque {
 #define guPLAYER_SMART_CACHEITEMS       100
 #define guPLAYER_SMART_CACHEARTISTS     20
 
-#define guPLAYER_ICONS_SEPARATOR        3
-#define guPLAYER_ICONS_GROUPSEPARATOR   5
+#define guPLAYER_ICONS_SEPARATOR        2
+#define guPLAYER_ICONS_GROUPSEPARATOR   4
 
 #define guPLAYER_FONTSIZE_TRACKNAME     12
 #define guPLAYER_FONTSIZE_ALBUMNAME     11
@@ -223,20 +222,27 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     //m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
     m_EqualizerButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_equalizer ), guImage( guIMAGE_INDEX_player_highlight_equalizer ) );
     m_EqualizerButton->SetToolTip( _( "Show the equalizer" ) );
-    PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
+    PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
     //m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
     m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
     PlayerBtnSizer->Add( m_VolumeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
+    m_VolumeBar = new wxSlider( this, wxID_ANY, SavedVol, 0, 100, wxDefaultPosition, wxSize( 100, -1 ) );
+    m_VolumeBar->SetMinSize( wxSize( 100, 20 ) );
+    PlayerBtnSizer->Add( m_VolumeBar, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
+    if( Config->ReadBool( CONFIG_KEY_GENERAL_PLAYER_VOLUME_VISIBLE, true, CONFIG_PATH_GENERAL ) )
+        m_VolumeBar->Show();
+    else
+        m_VolumeBar->Hide();
     PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
 
 
     wxBoxSizer * PlayerDetailsSizer;
 	PlayerDetailsSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100,100 ), 0 );
+    m_PlayerCoverBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_no_cover ), wxDefaultPosition, wxSize( 100, 100 ), 0 );
 	//m_PlayerCoverBitmap->SetToolTip( _( "Shows the current track album cover if available" ) );
 	PlayerDetailsSizer->Add( m_PlayerCoverBitmap, 0, wxALL, 2 );
 
@@ -312,7 +318,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
 
-	m_PlayerPositionSlider = new wxSlider( this, wxID_ANY, 0, 0, 1000, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
+    m_PlayerPositionSlider = new wxSlider( this, wxID_ANY, 0, 0, 1000 );
 	PlayerMainSizer->Add( m_PlayerPositionSlider, 0, wxALL|wxEXPAND, 0 );
 
 
@@ -376,8 +382,10 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_StopButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
     m_RecordButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRecordButtonClick, this );
     m_ForceGaplessButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnForceGaplessClick, this );
-    m_VolumeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnVolumenButtonClick, this );
-	m_VolumeButton->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumenMouseWheel, this );
+    m_VolumeButton->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );
+    m_VolumeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnVolumeClicked, this );
+    m_VolumeBar->Bind( wxEVT_SCROLL_CHANGED	, &guPlayerPanel::OnVolumeChanged, this );
+    m_VolumeBar->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );
     //m_SmartPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
     m_RandomPlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
     //m_RepeatPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
@@ -468,6 +476,7 @@ guPlayerPanel::~guPlayerPanel()
         //printf( "guPlayerPanel::guConfig Save\n" );
         //Config->WriteBool( wxT( "PlayerStopped" ), m_MediaCtrl->GetState() != guMEDIASTATE_PLAYING, CONFIG_PATH_GENERAL );
         Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_VOLUME, m_CurVolume, CONFIG_PATH_GENERAL );
+        Config->WriteBool( CONFIG_KEY_GENERAL_PLAYER_VOLUME_VISIBLE, m_VolumeBar->IsShown(), CONFIG_PATH_GENERAL );
         //Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_LOOP, m_PlayLoop, CONFIG_PATH_GENERAL );
         //Config->WriteBool( CONFIG_KEY_GENERAL_PLAYER_SMART, m_PlaySmart, CONFIG_PATH_GENERAL );
         Config->WriteNum( CONFIG_KEY_GENERAL_PLAYER_PLAYMODE, m_PlayMode, CONFIG_PATH_GENERAL );
@@ -505,8 +514,7 @@ guPlayerPanel::~guPlayerPanel()
     m_StopButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnStopButtonClick, this );
     m_RecordButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRecordButtonClick, this );
     m_ForceGaplessButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnForceGaplessClick, this );
-    m_VolumeButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnVolumenButtonClick, this );
-    m_VolumeButton->Unbind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumenMouseWheel, this );
+    m_VolumeButton->Unbind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );
     //m_SmartPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
     m_RandomPlayButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
     //m_RepeatPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
@@ -2560,22 +2568,6 @@ void guPlayerPanel::OnRecordButtonClick( wxCommandEvent& event )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnVolumenButtonClick( wxCommandEvent& event )
-{
-    //wxMessageBox( wxT("OnVolumenButtonClick"), wxT("Event") );
-    wxPoint Pos;
-    //Pos = VolumenButton->GetPosition();
-    Pos = ClientToScreen( m_VolumeButton->GetPosition() );
-    Pos.x += 1;
-    guVolumeFrame * VolFrame = new guVolumeFrame( this, this, wxID_ANY, wxEmptyString, Pos );
-    //
-    if( VolFrame )
-    {
-        VolFrame->Show();
-    }
-}
-
-// -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnRandomPlayButtonClick( wxCommandEvent &event )
 {
     m_PlayListCtrl->Randomize( ( GetState() == guMEDIASTATE_PLAYING ) );
@@ -2804,6 +2796,7 @@ void guPlayerPanel::SetVolume( double volume )
 
     m_MediaCtrl->SetVolume(  volume / ( double ) 100.0 );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %u%%" ), ( int ) volume ) );
+    m_VolumeBar->SetValue( m_CurVolume );
 
     wxCommandEvent evt( wxEVT_MENU, ID_PLAYERPANEL_VOLUMECHANGED );
     wxPostEvent( m_MainFrame, evt );
@@ -3036,11 +3029,27 @@ void guPlayerPanel::SetForceGapless( const bool forcegapless )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnVolumenMouseWheel( wxMouseEvent &event )
+void guPlayerPanel::OnVolumeMouseWheel( wxMouseEvent &event )
 {
     int Rotation = ( event.GetWheelRotation() / event.GetWheelDelta() ) * ( event.ShiftDown() ? 1 : 4 );
     //guLogDebug( wxT( "CurVol: %u  Rotations:%i" ), m_CurVolume, Rotation );
     SetVolume( m_CurVolume + Rotation );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnVolumeChanged( wxScrollEvent &event )
+{
+    SetVolume( event.GetPosition() );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnVolumeClicked( wxCommandEvent &event )
+{
+    if( m_VolumeBar->IsShown() )
+        m_VolumeBar->Hide();
+    else
+        m_VolumeBar->Show();
+    Layout();
 }
 
 // -------------------------------------------------------------------------------- //
