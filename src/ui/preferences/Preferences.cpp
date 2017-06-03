@@ -4317,10 +4317,12 @@ void guPrefDialog::OnAccelKeyDown( wxKeyEvent &event )
                     break;
             }
 
+            /*
             if( wxIsalnum( KeyCode ) || wxIsprint( KeyCode ) )
             {
                 return;
             }
+            */
         }
 
         int AccelCurKey = ( Modifiers << 16 ) | KeyCode;
