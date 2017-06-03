@@ -184,8 +184,8 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 131199 );
     accelkeys.Add( 131159 );
     accelkeys.Add( 262484 );
-    accelkeys.Add( 131148 );
-    accelkeys.Add( 131141 );
+    accelkeys.Add( 65612 );
+    accelkeys.Add( 65605 );
     accelkeys.Add( 131085 );
     accelkeys.Add( 393229 );
     accelkeys.Add( 65549 );
@@ -196,18 +196,18 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 340 );
     accelkeys.Add( 13 );
     accelkeys.Add( 196621 );
-    accelkeys.Add( 131104 );
+    accelkeys.Add( 65616 );
     accelkeys.Add( 131151 );
-    accelkeys.Add( 131421 );
+    accelkeys.Add( 344 );
     accelkeys.Add( 131153 );
     //
-    accelkeys.Add( 131154 );
-    accelkeys.Add( 131120 );
-    accelkeys.Add( 131121 );
-    accelkeys.Add( 131122 );
-    accelkeys.Add( 131123 );
-    accelkeys.Add( 131124 );
-    accelkeys.Add( 131125 );
+    accelkeys.Add( 196690 );
+    accelkeys.Add( 65584 );
+    accelkeys.Add( 65585 );
+    accelkeys.Add( 65586 );
+    accelkeys.Add( 65587 );
+    accelkeys.Add( 65588 );
+    accelkeys.Add( 65589 );
     accelkeys.Add( 342 );
     accelkeys.Add( 262486 );
     accelkeys.Add( 343 );
@@ -229,20 +229,20 @@ int guAccelGetDefaultKeys( wxArrayInt &accelkeys )
     accelkeys.Add( 0 );
     accelkeys.Add( 351 );
     accelkeys.Add( 0 );
-    accelkeys.Add( 131388 );
-    accelkeys.Add( 393532 );
-    accelkeys.Add( 131386 );
-    accelkeys.Add( 393530 );
+    accelkeys.Add( 347 );
+    accelkeys.Add( 262491 );
+    accelkeys.Add( 346 );
+    accelkeys.Add( 262490 );
     //
     accelkeys.Add( 341 );
-    accelkeys.Add( 196640 );
-    accelkeys.Add( 393248 );
-    accelkeys.Add( 131139 );
-    accelkeys.Add( 131157 );
-    accelkeys.Add( 393301 );
+    accelkeys.Add( 65619 );
+    accelkeys.Add( 327763 );
+    accelkeys.Add( 65603 );
+    accelkeys.Add( 196693 );
+    accelkeys.Add( 458837 );
     accelkeys.Add( 131152 );
-    accelkeys.Add( 131389 );
-    accelkeys.Add( 131387 );
+    accelkeys.Add( 65604 );
+    accelkeys.Add( 65621 );
 
     return accelkeys.Count();
 }
