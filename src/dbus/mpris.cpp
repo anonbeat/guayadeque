@@ -64,6 +64,10 @@ const char * Introspection_XML_Data_Player =
 "    </method>\n"
 "    <method name=\"Prev\">\n"
 "    </method>\n"
+"    <method name=\"NextAlbum\">\n" // Non-standard
+"    </method>\n"
+"    <method name=\"PrevAlbum\">\n" // Non-standard
+"    </method>\n"
 "    <method name=\"Pause\">\n"
 "    </method>\n"
 "    <method name=\"Stop\">\n"
@@ -429,6 +433,22 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 else if( !strcmp( Member, "Prev" ) )
                 {
                     wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PREVTRACK );
+                    wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "NextAlbum" ) )
+                {
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_NEXTALBUM );
+                    wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "PrevAlbum" ) )
+                {
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PREVALBUM );
                     wxPostEvent( m_PlayerPanel, event );
                     Send( reply );
                     Flush();
