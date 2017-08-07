@@ -58,7 +58,9 @@ const char * guMPRIS2_INTROSPECTION_XML =
 	"  </interface>\n"
 	"  <interface name='org.mpris.MediaPlayer2.Player'>\n"
 	"    <method name='Next'/>\n"
+	"    <method name='NextAlbum'/>\n" // Non-standard
 	"    <method name='Previous'/>\n"
+	"    <method name='PreviousAlbum'/>\n" // Non-standard
 	"    <method name='Pause'/>\n"
 	"    <method name='PlayPause'/>\n"
 	"    <method name='Stop'/>\n"
@@ -1535,6 +1537,22 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                 else if( !strcmp( Member, "Previous" ) )
                 {
                     wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PREVTRACK );
+                    wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "NextAlbum" ) )
+                {
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_NEXTALBUM );
+                    wxPostEvent( m_PlayerPanel, event );
+                    Send( reply );
+                    Flush();
+                    RetVal = DBUS_HANDLER_RESULT_HANDLED;
+                }
+                else if( !strcmp( Member, "PreviousAlbum" ) )
+                {
+                    wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PREVALBUM );
                     wxPostEvent( m_PlayerPanel, event );
                     Send( reply );
                     Flush();
