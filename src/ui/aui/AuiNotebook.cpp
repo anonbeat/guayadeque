@@ -95,9 +95,7 @@ static void inline IndentPressedBitmap( wxRect * rect, int button_state )
 // -------------------------------------------------------------------------------- //
 guAuiTabArt::guAuiTabArt() : wxAuiDefaultTabArt()
 {
-    wxVisualAttributes VisualAttributes = wxStaticText::GetClassDefaultAttributes();
-
-    m_BgColor = VisualAttributes.colBg; //wxSystemSettings::GetColour( wxSYS_COLOUR_BACKGROUND );
+    m_BgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_BACKGROUND );
     m_SelBgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT );
     m_TextFgColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
     m_SelTextFgColour = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
