@@ -145,11 +145,11 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
 
 	//m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_LyricAlign|wxTE_WORDWRAP|wxTE_MULTILINE|wxNO_BORDER );
-	m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_LISTBOXTEXT ); //m_LyricText->GetForegroundColour();
-	m_EditModeBGColor = m_LyricText->GetBackgroundColour();
+	m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+	m_EditModeBGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
 
-	m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() ); //wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
-	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
+	m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
+	m_LyricText->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
 	m_LyricText->SetFont( CurrentFont );
 
     CurrentFont.SetPointSize( CurrentFont.GetPointSize() + 2 );
@@ -510,8 +510,8 @@ void guLyricsPanel::OnSaveBtnClick( wxCommandEvent& event )
     m_EditButton->Enable( true );
 
     m_LyricText->SetEditable( false );
-	m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() );
-	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
+    m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
+    m_LyricText->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
 
     SetText( m_CurrentLyricText );
 }
@@ -554,8 +554,8 @@ void guLyricsPanel::SetTrack( const guTrackChangeInfo * trackchangeinfo, const b
     wxString Track = RemoveSearchFilters( trackchangeinfo->m_TrackName );
 
     m_LyricText->SetEditable( false );
-    m_LyricText->SetBackgroundColour( m_LyricTitle->GetBackgroundColour() );
-	m_LyricText->SetForegroundColour( m_LyricTitle->GetForegroundColour() );
+    m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
+    m_LyricText->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
 
     SetTitle( Track + wxT( " / " ) + Artist );
     SetText( _( "Searching..." ) );

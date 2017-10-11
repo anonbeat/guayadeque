@@ -189,11 +189,9 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
                            wxAUI_MGR_TRANSPARENT_DRAG |
                            wxAUI_MGR_TRANSPARENT_HINT );
 
-    wxVisualAttributes VisualAttributes = wxStaticText::GetClassDefaultAttributes();
-
     wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
 
-    wxColour BaseColor = VisualAttributes.colBg; //wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
+    wxColour BaseColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
 
     AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
             wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
