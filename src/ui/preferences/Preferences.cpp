@@ -1255,9 +1255,10 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	// Password is saved in md5 form so we cant load it back
     ASLoginSizer->Add( m_LastFMPasswdTextCtrl, 0, wxALL, 5 );
 
-    if( m_LastFMPasswdTextCtrl->IsEmpty() ||
-        m_LastFMUserNameTextCtrl->IsEmpty() )
+    if( m_LastFMPasswdTextCtrl->IsEmpty() || m_LastFMUserNameTextCtrl->IsEmpty() )
+    {
         m_LastFMASEnableChkBox->Disable();
+    }
 
 	LastFMASSizer->Add( ASLoginSizer, 1, wxEXPAND, 5 );
 
@@ -1290,9 +1291,10 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 	// Password is saved in md5 form so we cant load it back
 	LibreFMASLoginSizer->Add( m_LibreFMPasswdTextCtrl, 0, wxALL, 5 );
 
-	if( m_LibreFMPasswdTextCtrl->IsEmpty() ||
-	    m_LibreFMUserNameTextCtrl->IsEmpty() )
+	if( m_LibreFMPasswdTextCtrl->IsEmpty() || m_LibreFMUserNameTextCtrl->IsEmpty() )
+    {
         m_LibreFMASEnableChkBox->Disable();
+    }
 
 	LibreFMASSizer->Add( LibreFMASLoginSizer, 0, wxEXPAND, 5 );
 
@@ -2486,7 +2488,7 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteBool( CONFIG_KEY_GENERAL_INSTANT_TEXT_SEARCH, m_InstantSearchChkBox->GetValue(), CONFIG_PATH_GENERAL );
         m_Config->WriteBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, m_EnterSearchChkBox->GetValue(), CONFIG_PATH_GENERAL );
         m_Config->WriteNum( CONFIG_KEY_GENERAL_COVER_FRAME, m_ShowCDFrameChkBox->GetValue(), CONFIG_PATH_GENERAL );
-        m_Config->WriteBool( wxT( "SaveOnClose" ), m_SavePlayListChkBox->GetValue(), wxT( "playlist" ) );
+        m_Config->WriteBool( CONFIG_KEY_PLAYLIST_SAVE_ON_CLOSE, m_SavePlayListChkBox->GetValue(), CONFIG_PATH_PLAYLIST );
         m_Config->WriteBool( CONFIG_KEY_GENERAL_SAVE_CURRENT_TRACK_POSITION, m_SavePosCheckBox->GetValue(), CONFIG_PATH_GENERAL );
         m_Config->WriteNum( CONFIG_KEY_GENERAL_MIN_SAVE_PLAYL_POST_LENGTH, m_MinLenSpinCtrl->GetValue(), CONFIG_PATH_GENERAL );
         m_Config->WriteBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM, m_ExitConfirmChkBox->GetValue(), CONFIG_PATH_GENERAL );
@@ -2546,12 +2548,12 @@ void guPrefDialog::SaveSettings( void )
             //guLogMessage( wxT( "Pass: %s" ), PasswdTextCtrl->GetValue().c_str() );
             //guLogMessage( wxT( "MD5 : %s" ), MD5.MD5( PasswdTextCtrl->GetValue() ).c_str() );
         }
-        m_Config->WriteBool( wxT( "SubmitEnabled" ), m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), CONFIG_PATH_LIBREFM );
-        m_Config->WriteStr( wxT( "UserName" ), m_LibreFMUserNameTextCtrl->GetValue(), CONFIG_PATH_LIBREFM );
+        m_Config->WriteBool( CONFIG_KEY_LIBREFM_ENABLED, m_LibreFMASEnableChkBox->IsEnabled() && m_LibreFMASEnableChkBox->GetValue(), CONFIG_PATH_LIBREFM );
+        m_Config->WriteStr( CONFIG_KEY_LIBREFM_USERNAME, m_LibreFMUserNameTextCtrl->GetValue(), CONFIG_PATH_LIBREFM );
         if( !m_LibreFMPasswdTextCtrl->IsEmpty() && m_LibreFMPasswdTextCtrl->GetValue() != wxT( "******" ) )
         {
             guMD5 MD5;
-            m_Config->WriteStr( wxT( "Password" ), MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), CONFIG_PATH_LIBREFM );
+            m_Config->WriteStr( CONFIG_KEY_LIBREFM_PASSWORD, MD5.MD5( m_LibreFMPasswdTextCtrl->GetValue() ), CONFIG_PATH_LIBREFM );
         }
     }
 
