@@ -22,6 +22,7 @@
 #include "AuiNotebook.h"
 
 #include "Images.h"
+#include "Settings.h"
 #include "Utils.h"
 
 #include <wx/dc.h>
@@ -373,36 +374,20 @@ guAuiNotebook::guAuiNotebook( wxWindow * parent, wxWindowID id, const wxPoint &p
 
     wxAuiDockArt * AuiDockArt = m_mgr.GetArtProvider();
 
-    wxColour BaseColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
+    wxColour BaseColor = guCOLOR_BASE;
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,      guCOLOR_CAPTION_TEXT_INACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,        guCOLOR_CAPTION_TEXT_ACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,             guCOLOR_CAPTION_ACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,    guCOLOR_CAPTION_ACTIVE_GRADIENT );
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,           guCOLOR_CAPTION_INACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,  guCOLOR_CAPTION_INACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR,                       guCOLOR_SASH );
 
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE,                      guSIZE_CAPTION );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE,                  guSIZE_BORDER );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE,                         guSIZE_SASH );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,                     guGRADIENT_TYPE );
 
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( BaseColor, 93 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-            wxAuiStepColour( BaseColor, 140 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( BaseColor, 93 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-                          BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_BORDER_COLOUR, BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, wxAuiStepColour( BaseColor, 98 ) );
-
-    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 22 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 0 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 5 );
-
-    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -149,6 +149,23 @@ namespace Guayadeque {
 #define guSPLASH_HOMEPAGE                   wxT( "http://guayadeque.org" )
 #define guSPLASH_DONATION_LINK              wxT( "https://www.paypal.com/cgi-bin/webscr?cmd=_donations&business=RRUNTVSQ5C3D2&lc=ES&item_name=Guayadeque%20Music%20Player&currency_code=EUR&bn=PP%2dDonationsBF%3abtn_donateCC_LG%2egif%3aNonHosted" )
 
+// -------------------------------------------------------------------------------- //
+// Colors
+// -------------------------------------------------------------------------------- //
+#define guCOLOR_BASE                        wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE )
+#define guCOLOR_CAPTION_INACTIVE            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTION )
+#define guCOLOR_CAPTION_ACTIVE              wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION )
+#define guCOLOR_CAPTION_INACTIVE_GRADIENT   wxAuiStepColour( guCOLOR_CAPTION_INACTIVE, 90 )
+#define guCOLOR_CAPTION_ACTIVE_GRADIENT     wxAuiStepColour( guCOLOR_CAPTION_ACTIVE, 90 )
+#define guCOLOR_CAPTION_TEXT_INACTIVE       wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT )
+#define guCOLOR_CAPTION_TEXT_ACTIVE         wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT )
+#define guCOLOR_SASH                        wxAuiStepColour( guCOLOR_BASE, 90 )
+
+#define guSIZE_CAPTION                      22
+#define guSIZE_BORDER                       0
+#define guSIZE_SASH                         5
+#define guGRADIENT_TYPE                     wxAUI_GRADIENT_VERTICAL
+
 }
 
 #endif
