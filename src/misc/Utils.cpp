@@ -38,6 +38,13 @@
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
+bool IsColorDark( const wxColour &color )
+{
+    double darkness = 1 - ( 0.299 * color.Red() + 0.587 * color.Green() + 0.114 * color.Blue() ) / 255;
+    return darkness >= 0.5;
+}
+
+// -------------------------------------------------------------------------------- //
 wxString LenToString( wxUint64 len )
 {
     wxString LenStr;

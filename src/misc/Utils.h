@@ -84,6 +84,7 @@ bool inline         IsFileSymbolicLink( const wxString &filename )
 class guTrack;
 
 // -------------------------------------------------------------------------------- //
+bool                IsColorDark( const wxColour &color );
 wxString            LenToString( wxUint64 len );
 wxString            SizeToString( wxFileOffset size );
 wxArrayString       guSplitWords( const wxString &InputStr );
