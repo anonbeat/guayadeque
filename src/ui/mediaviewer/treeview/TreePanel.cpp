@@ -58,7 +58,7 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guTreeViewTreeCtrl::guTreeViewTreeCtrl( wxWindow * parent, guDbLibrary * db, guTreeViewPanel * treeviewpanel ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE|wxTR_TWIST_BUTTONS )
+        wxTR_DEFAULT_STYLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxTR_MULTIPLE|wxTR_TWIST_BUTTONS|wxNO_BORDER )
 {
     m_Db = db;
     m_TreeViewPanel = treeviewpanel;
