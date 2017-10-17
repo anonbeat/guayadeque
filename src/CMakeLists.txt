@@ -1,4 +1,5 @@
-FILE( GLOB_RECURSE Guayadeque_SOURCES "*.c*" )
+FILE( GLOB_RECURSE Guayadeque_SOURCES_CPP "*.cpp" )
+FILE( GLOB_RECURSE Guayadeque_SOURCES_C "*.c" )
 FILE( GLOB_RECURSE Guayadeque_HEADERS "*.h" )
 
 
@@ -11,7 +12,7 @@ LIST( REMOVE_DUPLICATES Guayadeque_INCLUDE_DIRS )
 
 INCLUDE_DIRECTORIES( ${Guayadeque_INCLUDE_DIRS} )
 
-ADD_EXECUTABLE( guayadeque ${Guayadeque_SOURCES} ${Guayadeque_HEADERS} )
+ADD_EXECUTABLE( guayadeque ${Guayadeque_SOURCES_CPP} ${Guayadeque_SOURCES_C} ${Guayadeque_HEADERS} )
 
 TARGET_LINK_LIBRARIES( guayadeque
         ${wxWidgets_LIBRARIES}
