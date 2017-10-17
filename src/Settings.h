@@ -152,18 +152,18 @@ namespace Guayadeque {
 // -------------------------------------------------------------------------------- //
 // Colors
 // -------------------------------------------------------------------------------- //
-#define guCOLOR_BASE                        wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE )
+#define guCOLOR_BASE                        wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW )
 #define guCOLOR_CAPTION_INACTIVE            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTION )
 #define guCOLOR_CAPTION_ACTIVE              wxSystemSettings::GetColour( wxSYS_COLOUR_ACTIVECAPTION )
-#define guCOLOR_CAPTION_INACTIVE_GRADIENT   wxAuiStepColour( guCOLOR_CAPTION_INACTIVE, 90 )
-#define guCOLOR_CAPTION_ACTIVE_GRADIENT     wxAuiStepColour( guCOLOR_CAPTION_ACTIVE, 90 )
+#define guCOLOR_CAPTION_GRADIENT_INACTIVE   wxSystemSettings::GetColour( wxSYS_COLOUR_GRADIENTINACTIVECAPTION )
+#define guCOLOR_CAPTION_GRADIENT_ACTIVE     wxSystemSettings::GetColour( wxSYS_COLOUR_GRADIENTACTIVECAPTION )
 #define guCOLOR_CAPTION_TEXT_INACTIVE       wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT )
 #define guCOLOR_CAPTION_TEXT_ACTIVE         wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT )
-#define guCOLOR_SASH                        wxAuiStepColour( guCOLOR_BASE, 90 )
+#define guCOLOR_SASH                        wxAuiStepColour( guCOLOR_BASE, 85 )
 
 #define guSIZE_CAPTION                      22
 #define guSIZE_BORDER                       0
-#define guSIZE_SASH                         5
+#define guSIZE_SASH                         3
 #define guGRADIENT_TYPE                     wxAUI_GRADIENT_VERTICAL
 
 }
