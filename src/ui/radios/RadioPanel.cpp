@@ -93,7 +93,7 @@ class guRadioStationListBox : public guListView
 // -------------------------------------------------------------------------------- //
 guRadioGenreTreeCtrl::guRadioGenreTreeCtrl( wxWindow * parent, guRadioPanel * radiopanel ) :
     wxTreeCtrl( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-        wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT )
+        wxTR_DEFAULT_STYLE|wxTR_SINGLE|wxTR_HIDE_ROOT|wxTR_FULL_ROW_HIGHLIGHT|wxNO_BORDER )
 {
     m_RadioPanel = radiopanel;
 
