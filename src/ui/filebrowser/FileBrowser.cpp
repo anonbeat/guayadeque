@@ -80,7 +80,7 @@ wxEND_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guGenericDirCtrl::guGenericDirCtrl( wxWindow * parent, guMainFrame * mainframe, const int showpaths  ) :
               wxGenericDirCtrl( parent, wxID_ANY, wxDirDialogDefaultFolderStr,
-                wxDefaultPosition, wxDefaultSize, wxDIRCTRL_SELECT_FIRST|wxDIRCTRL_DIR_ONLY|wxDIRCTRL_3D_INTERNAL|wxNO_BORDER|wxDIRCTRL_EDIT_LABELS ,
+                wxDefaultPosition, wxDefaultSize, wxDIRCTRL_SELECT_FIRST|wxDIRCTRL_DIR_ONLY|wxNO_BORDER|wxDIRCTRL_EDIT_LABELS ,
                 wxEmptyString, 0, wxTreeCtrlNameStr )
 {
     m_MainFrame = mainframe;
