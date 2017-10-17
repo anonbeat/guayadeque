@@ -191,33 +191,19 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 
     wxAuiDockArt * AuiDockArt = m_AuiManager.GetArtProvider();
 
-    wxColour BaseColor = wxSystemSettings::GetColour( wxSYS_COLOUR_3DFACE );
+    wxColour BaseColor = guCOLOR_BASE;
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,      guCOLOR_CAPTION_TEXT_INACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,        guCOLOR_CAPTION_TEXT_ACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,             guCOLOR_CAPTION_ACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,    guCOLOR_CAPTION_ACTIVE_GRADIENT );
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,           guCOLOR_CAPTION_INACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,  guCOLOR_CAPTION_INACTIVE );
+    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR,                       guCOLOR_SASH );
 
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_INACTIVECAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR,
-            wxSystemSettings::GetColour( wxSYS_COLOUR_CAPTIONTEXT ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( BaseColor, 93 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-                          BaseColor );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR,
-            wxAuiStepColour( BaseColor, 93 ) );
-
-    AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, wxAuiStepColour( BaseColor, 98 ) );
-
-    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 22 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 0 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 5 );
-
-    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,
-            wxAUI_GRADIENT_VERTICAL );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE,                      guSIZE_CAPTION );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE,                  guSIZE_BORDER );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE,                         guSIZE_SASH );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE,                     guGRADIENT_TYPE );
 
     if( Config->ReadBool( CONFIG_KEY_GENERAL_LOAD_DEFAULT_LAYOUTS, false, CONFIG_PATH_GENERAL ) )
     {
