@@ -719,7 +719,7 @@ END_EVENT_TABLE()
 // -------------------------------------------------------------------------------- //
 guListViewClient::guListViewClient( wxWindow * parent, const int flags,
                             guListViewColumnArray * columns, guListViewAttr * attr ) :
-    wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, flags|wxHSCROLL|wxVSCROLL )
+    wxVListBox( parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, flags|wxHSCROLL|wxVSCROLL|wxNO_BORDER )
 {
     m_Owner = ( guListView * ) parent;
     m_SearchStrTimer = new guListViewClientTimer( this );

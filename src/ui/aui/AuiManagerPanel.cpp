@@ -66,10 +66,9 @@ guAuiManagerPanel::guAuiManagerPanel( wxWindow * parent ) :
 
     AuiDockArt->SetColour( wxAUI_DOCKART_SASH_COLOUR, wxAuiStepColour( BaseColor, 98 ) );
 
-    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 0 );
+    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );
     //AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BUTTON_SIZE, 16 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_CAPTION_SIZE, 22 );
-    AuiDockArt->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, 1 );
     AuiDockArt->SetMetric( wxAUI_DOCKART_SASH_SIZE, 5 );
 
     AuiDockArt->SetMetric( wxAUI_DOCKART_GRADIENT_TYPE, wxAUI_GRADIENT_VERTICAL );
