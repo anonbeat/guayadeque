@@ -792,6 +792,7 @@ bool guConfig::SavePlaylistTracks( const guTrackArray &tracks, const int current
     {
         WriteTrack( XmlNode, tracks[ Index ] );
     }
+    Flush();
     return true;
 }
 

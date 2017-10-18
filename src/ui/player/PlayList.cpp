@@ -42,6 +42,8 @@
 #include <wx/uri.h>
 #include <wx/busyinfo.h>
 
+#define SAVE_PLAYLIST_TIMEOUT   60000
+
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
@@ -84,6 +86,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     m_TotalLen = 0;
     m_CurItem = wxNOT_FOUND;
     m_StartPlaying = false;
+    m_SavePlaylistTimer = NULL;
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -127,6 +130,8 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
 
     Bind( wxEVT_MENU, &guPlayList::OnCreateSmartPlaylist, this, ID_PLAYLIST_SMART_PLAYLIST );
 
+    Bind( wxEVT_TIMER, &guPlayList::OnSavePlaylistTimer, this );
+
     CreateAcceleratorTable();
 
     ReloadItems();
@@ -140,6 +145,9 @@ guPlayList::~guPlayList()
     Config->UnRegisterObject( this );
 
     SavePlaylistTracks();
+
+    if( m_SavePlaylistTimer )
+        delete m_SavePlaylistTimer;
 
     if( m_PlayBitmap )
       delete m_PlayBitmap;
@@ -182,6 +190,8 @@ guPlayList::~guPlayList()
     Unbind( wxEVT_MENU, &guPlayList::OnSetRating, this, ID_PLAYERPANEL_SETRATING_0, ID_PLAYERPANEL_SETRATING_5 );
 
     Unbind( wxEVT_MENU, &guPlayList::OnCreateSmartPlaylist, this, ID_PLAYLIST_SMART_PLAYLIST );
+
+    Unbind( wxEVT_TIMER, &guPlayList::OnSavePlaylistTimer, this );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -749,6 +759,8 @@ void guPlayList::SetCurrent( int curitem, bool delold )
         m_CurItem = curitem;
     else
         m_CurItem = wxNOT_FOUND;
+
+    StartSavePlaylistTimer();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -983,6 +995,8 @@ void guPlayList::ClearItems()
     event.SetInt( 0 );
     event.SetExtraLong( 0 );
     wxPostEvent( this, event );
+
+    StartSavePlaylistTimer();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1026,6 +1040,8 @@ void guPlayList::Randomize( const bool isplaying )
         }
         ClearSelectedItems();
         Refresh( m_CurItem );
+
+        StartSavePlaylistTimer();
     }
 }
 
@@ -1152,6 +1168,8 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold,
         m_CurItem--;
     }
     ReloadItems();
+
+    StartSavePlaylistTimer();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1450,6 +1468,8 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
         Track.m_Rating   = wxNOT_FOUND;
         AddItem( Track, InsertPosition + wxMax( 0, pos ) );
     }
+
+    StartSavePlaylistTimer();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1669,6 +1689,8 @@ void guPlayList::OnRemoveClicked( wxCommandEvent &event )
     CmdEvent.SetInt( 0 );
     CmdEvent.SetExtraLong( 0 );
     wxPostEvent( this, CmdEvent );
+
+    StartSavePlaylistTimer();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1805,6 +1827,8 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
 
             ClearSelectedItems();
             ReloadItems();
+
+            StartSavePlaylistTimer();
         }
     }
 }
@@ -1891,6 +1915,8 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
 
             ClearSelectedItems();
             ReloadItems();
+
+            StartSavePlaylistTimer();
         }
     }
 }
@@ -2409,6 +2435,8 @@ void guPlayList::UpdatedTracks( const guTrackArray * tracks )
     if( found )
     {
         RefreshAll();
+
+        StartSavePlaylistTimer();
     }
 }
 
@@ -2434,6 +2462,8 @@ void guPlayList::UpdatedTrack( const guTrack * track )
     if( found )
     {
         RefreshAll();
+
+        StartSavePlaylistTimer();
     }
 }
 
@@ -2761,6 +2791,23 @@ void guPlayList::LoadPlaylistTracks( void )
     wxCommandEvent event( wxEVT_MENU, ID_PLAYER_PLAYLIST_UPDATELIST );
     event.SetInt( 1 );
     wxPostEvent( this, event );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::StartSavePlaylistTimer()
+{
+    if( !m_SavePlaylistTimer )
+    {
+        m_SavePlaylistTimer = new wxTimer( this );
+    }
+
+    m_SavePlaylistTimer->Start( SAVE_PLAYLIST_TIMEOUT, wxTIMER_ONE_SHOT );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayList::OnSavePlaylistTimer( wxTimerEvent & )
+{
+    SavePlaylistTracks();
 }
 
 }
