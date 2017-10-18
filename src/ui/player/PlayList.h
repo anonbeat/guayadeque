@@ -32,6 +32,7 @@
 #include <wx/dir.h>
 #include <wx/arrimpl.cpp>
 #include <wx/thread.h>
+#include <wx/timer.h>
 #include <wx/string.h>
 
 namespace Guayadeque {
@@ -63,6 +64,8 @@ class guPlayList : public guListView
     wxBitmap *      m_NormalStar;
     wxBitmap *      m_SelectStar;
     wxCoord         m_SecondLineOffset;
+
+    wxTimer *       m_SavePlaylistTimer;
 
     wxArrayString   m_PendingLoadIds;
 
@@ -127,6 +130,9 @@ class guPlayList : public guListView
     void                        CheckPendingLoadItems( const wxString &uniqueid, guMediaViewer * mediaviewer );
 
     void                        OnCreateSmartPlaylist( wxCommandEvent &event );
+
+    void                        StartSavePlaylistTimer();
+    void                        OnSavePlaylistTimer( wxTimerEvent & );
 
   public :
     guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * playerpanel = NULL, guMainFrame * mainframe = NULL );
