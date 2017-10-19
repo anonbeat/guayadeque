@@ -619,7 +619,7 @@ void guFileBrowserDirCtrl::CollectionsUpdated( void )
 // -------------------------------------------------------------------------------- //
 void guFileBrowserDirCtrl::SetPath( const wxString &path, guMediaViewer * mediaviewer )
 {
-    guLogMessage( wxT( "guFileBrowserDirCtrl::SetPath( %s )" ), path.c_str() );
+    //guLogMessage( wxT( "guFileBrowserDirCtrl::SetPath( %s )" ), path.c_str() );
     m_MediaViewer = mediaviewer;
     m_Db = mediaviewer ? mediaviewer->GetDb() : NULL;
     m_DirCtrl->SetPath( path );
@@ -1415,7 +1415,7 @@ int guFilesListBox::GetDragFiles( guDataObjectComposite * files )
 // -------------------------------------------------------------------------------- //
 void guFilesListBox::SetPath( const wxString &path, guMediaViewer * mediaviewer )
 {
-    guLogMessage( wxT( "guFilesListBox::SetPath( %s )" ), path.c_str() );
+    //guLogMessage( wxT( "guFilesListBox::SetPath( %s )" ), path.c_str() );
     m_CurDir = path;
     if( !m_CurDir.EndsWith( wxT( "/" ) ) )
         m_CurDir += wxT( "/" );
@@ -2006,7 +2006,6 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderUpdate( wxCommandEvent &event )
 {
-    guLogMessage( "OnFolderUpdate %08x", m_MediaViewer );
     if( m_MediaViewer )
     {
         m_MediaViewer->UpdateLibrary( m_DirCtrl->GetPath() );
