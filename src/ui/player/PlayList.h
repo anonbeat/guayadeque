@@ -131,7 +131,7 @@ class guPlayList : public guListView
 
     void                        OnCreateSmartPlaylist( wxCommandEvent &event );
 
-    void                        StartSavePlaylistTimer();
+    void                        StartSavePlaylistTimer( wxCommandEvent &event );
     void                        OnSavePlaylistTimer( wxTimerEvent & );
 
   public :
