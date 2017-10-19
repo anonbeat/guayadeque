@@ -240,8 +240,8 @@ class guMediaViewer : public wxPanel
     virtual int             GetLastUpdate( void ) { return m_MediaCollection->m_LastUpdate; }
     virtual void            SetLastUpdate( void );
 
-    virtual void            UpdateLibrary( void );
     virtual void            UpgradeLibrary( void );
+    virtual void            UpdateLibrary( const wxString &path = wxEmptyString );
     virtual void            UpdateFinished( void );
     virtual void            CleanLibrary( void );
     virtual void            CleanFinished( void );

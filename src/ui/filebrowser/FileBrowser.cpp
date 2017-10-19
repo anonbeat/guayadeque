@@ -417,6 +417,15 @@ void guFileBrowserDirCtrl::OnContextMenu( wxTreeEvent &event )
         wxTheClipboard->Close();
     }
 
+    if( m_DirCtrl->GetShowPaths() & guFILEBROWSER_SHOWPATH_LOCATIONS )
+    {
+        MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_UPDATE,
+                                   _( "Update" ),
+                                   _( "Update the selected folder" ) );
+        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_reload ) );
+        Menu.Append( MenuItem );
+    }
+
     Menu.AppendSeparator();
 
     MenuItem = new wxMenuItem( &Menu, ID_FILESYSTEM_FOLDER_NEW, _( "New Folder" ), _( "Create a new folder" ) );
@@ -1585,6 +1594,7 @@ guFileBrowser::guFileBrowser( wxWindow * parent, guMainFrame * mainframe, guDbLi
     Bind( wxEVT_MENU, &guFileBrowser::OnFolderPaste, this, ID_FILESYSTEM_FOLDER_PASTE );
     Bind( wxEVT_MENU, &guFileBrowser::OnFolderEditTracks, this, ID_FILESYSTEM_FOLDER_EDITTRACKS );
     Bind( wxEVT_MENU, &guFileBrowser::OnFolderSaveToPlayList, this, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST );
+    Bind( wxEVT_MENU, &guFileBrowser::OnFolderUpdate, this, ID_FILESYSTEM_FOLDER_UPDATE );
     m_DirCtrl->Bind( wxEVT_MENU, &guFileBrowser::OnFolderCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
     m_DirCtrl->Bind( wxEVT_MENU, &guFileBrowser::OnFolderCommand, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
@@ -1623,6 +1633,7 @@ guFileBrowser::~guFileBrowser()
     Unbind( wxEVT_MENU, &guFileBrowser::OnFolderPaste, this, ID_FILESYSTEM_FOLDER_PASTE );
     Unbind( wxEVT_MENU, &guFileBrowser::OnFolderEditTracks, this, ID_FILESYSTEM_FOLDER_EDITTRACKS );
     Unbind( wxEVT_MENU, &guFileBrowser::OnFolderSaveToPlayList, this, ID_FILESYSTEM_FOLDER_SAVEPLAYLIST );
+    Unbind( wxEVT_MENU, &guFileBrowser::OnFolderUpdate, this, ID_FILESYSTEM_FOLDER_UPDATE );
     m_DirCtrl->Unbind( wxEVT_MENU, &guFileBrowser::OnFolderCopyTo, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
 
     m_DirCtrl->Unbind( wxEVT_MENU, &guFileBrowser::OnFolderCommand, this, ID_COMMANDS_BASE, ID_COMMANDS_BASE + guCOMMANDS_MAXCOUNT );
@@ -1989,6 +2000,16 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
         }
 
         PlayListAppendDlg->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guFileBrowser::OnFolderUpdate( wxCommandEvent &event )
+{
+    guLogMessage( "OnFolderUpdate %08x", m_MediaViewer );
+    if( m_MediaViewer )
+    {
+        m_MediaViewer->UpdateLibrary( m_DirCtrl->GetPath() );
     }
 }
 

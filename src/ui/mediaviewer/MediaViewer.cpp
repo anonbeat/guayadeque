@@ -1055,7 +1055,7 @@ void guMediaViewer::UpgradeLibrary( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guMediaViewer::UpdateLibrary( void )
+void guMediaViewer::UpdateLibrary( const wxString &path )
 {
     int GaugeId;
     GaugeId = m_MainFrame->AddGauge( m_MediaCollection->m_Name, false );
@@ -1066,7 +1066,7 @@ void guMediaViewer::UpdateLibrary( void )
         m_UpdateThread->Delete();
     }
 
-    m_UpdateThread = new guLibUpdateThread( this, GaugeId );
+    m_UpdateThread = new guLibUpdateThread( this, GaugeId, path );
 }
 
 // -------------------------------------------------------------------------------- //
