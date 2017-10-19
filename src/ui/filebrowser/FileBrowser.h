@@ -282,6 +282,7 @@ class guFileBrowser : public guAuiManagerPanel
     void                    OnFolderPaste( wxCommandEvent &event );
     void                    OnFolderEditTracks( wxCommandEvent &event );
     void                    OnFolderSaveToPlayList( wxCommandEvent &event );
+    void                    OnFolderUpdate( wxCommandEvent &event );
     void                    OnFolderCopyTo( wxCommandEvent &event );
     void                    OnFolderCommand( wxCommandEvent &event );
 
