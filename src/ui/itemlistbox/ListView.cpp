@@ -1760,8 +1760,6 @@ guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
     //
     m_ListView->m_DragOverItem = wxNOT_FOUND;
 
-    m_ListView->RefreshAll();
-
     return 0;
 }
 
