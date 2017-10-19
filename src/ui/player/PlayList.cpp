@@ -1250,8 +1250,7 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
         }
     }
 
-    guLogMessage( wxT( "Loading %i %i => %i '%s'" ), aftercurrent, pos, InsertPosition, filename.c_str() );
-
+    //guLogMessage( wxT( "Loading %i %i => %i '%s'" ), aftercurrent, pos, InsertPosition, filename.c_str() );
 
     if( guCuePlaylistFile::IsValidFile( Uri.GetPath() ) )   // If its a cue playlist
     {
