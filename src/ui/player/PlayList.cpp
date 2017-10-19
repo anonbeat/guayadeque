@@ -2025,8 +2025,6 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
     wxArrayString Lyrics;
     wxArrayInt ChangedFlags;
 
-    guListItems Labels;
-    wxArrayInt SongIds;
     //
     guTrack * Track;
     wxArrayInt SelectedItems = GetSelectedItems( false );
