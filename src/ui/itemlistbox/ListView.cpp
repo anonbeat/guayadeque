@@ -54,6 +54,9 @@ namespace Guayadeque {
 
 #define guLISTVIEW_TIMER_TIMEOUT    1000
 #define guLISTVIEW_MIN_COL_SIZE     20
+#define guLISTVIEWHEADER_IMAGE_WIDTH  18
+
+
 
 wxDEFINE_EVENT( guEVT_LISTBOX_ITEM_COL_CLICKED, wxListEvent );
 wxDEFINE_EVENT( guEVT_LISTBOX_ITEM_COL_RCLICKED, wxListEvent );
@@ -1264,16 +1267,15 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
             wxRendererNative::Get().DrawHeaderButton( this, dc, cRect, flags );
 
             if( CurCol->m_ImageIndex >= 0 )
-                cRect.width -= 18;
+                cRect.width -= guLISTVIEWHEADER_IMAGE_WIDTH;
             dc.SetClippingRegion( cRect );
-            dc.DrawText( CurCol->m_Label, cRect.x + 2, hLabel );
+
+            dc.DrawText( CurCol->m_Label, cRect.x + 4, hLabel );
             dc.DestroyClippingRegion();
-            dc.SetPen( wxPen( wxSystemSettings::GetColour( wxSYS_COLOUR_3DLIGHT ), 1, wxSOLID ) );
-            dc.DrawLine( cRect.x + cRect.width - 1, 4, cRect.x + cRect.width - 1, cRect.height - 4 );
 
             if( CurCol->m_ImageIndex >= 0 )
             {
-                dc.DrawBitmap( m_ImageList->GetBitmap( CurCol->m_ImageIndex ), cRect.x + cRect.width + 1, (cRect.height/2)-8, true );
+                dc.DrawBitmap( m_ImageList->GetBitmap( CurCol->m_ImageIndex ), cRect.x + cRect.width + 1, ( cRect.height / 2 ) - 8, true );
             }
 
             StartOfs += CurCol->m_Width;
