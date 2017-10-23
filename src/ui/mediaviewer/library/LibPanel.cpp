@@ -1620,6 +1620,9 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
             case guSONGS_COLUMN_YEAR :
                 Value = ( long ) Track->m_Year;
                 break;
+
+            case guSONGS_COLUMN_PLAYCOUNT :
+                Value = ( long ) Track->m_PlayCount;
         }
         if( Items.Index( Value.GetString() ) == wxNOT_FOUND )
             Items.Add( Value.GetString() );
@@ -1680,6 +1683,9 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
                     case guSONGS_COLUMN_YEAR :
                         Track->m_Year = DefValue.GetLong();
                         break;
+
+                    case guSONGS_COLUMN_PLAYCOUNT :
+                        Track->m_PlayCount = DefValue.GetLong();
                 }
             }
 
