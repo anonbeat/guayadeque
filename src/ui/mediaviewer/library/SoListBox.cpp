@@ -484,7 +484,6 @@ void guSoListBox::AppendFastEditMenu( wxMenu * menu, const int selcount ) const
         ColumnId == guSONGS_COLUMN_OFFSET ||
         ColumnId == guSONGS_COLUMN_LENGTH ||
         ColumnId == guSONGS_COLUMN_BITRATE ||
-        ColumnId == guSONGS_COLUMN_PLAYCOUNT ||
         ColumnId == guSONGS_COLUMN_LASTPLAY ||
         ColumnId == guSONGS_COLUMN_ADDEDDATE ||
         ColumnId == guSONGS_COLUMN_FORMAT ||
