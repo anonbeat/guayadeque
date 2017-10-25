@@ -347,6 +347,9 @@ void guShoutcastRadioProvider::OnGenreEdit( wxCommandEvent &event )
             {
                 m_Db->SetRadioGenre( RadioGenreData->GetId(), EntryDialog->GetValue() );
 
+                guRadioGenreTreeCtrl * RadioTreeCtrl = m_RadioPanel->GetTreeCtrl();
+                RadioTreeCtrl->SelectItem( m_ShoutcastGenreId );
+
                 m_RadioPanel->ReloadStations();
             }
 
