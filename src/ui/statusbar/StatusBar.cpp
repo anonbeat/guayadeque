@@ -30,7 +30,6 @@
 
 namespace Guayadeque {
 
-#define guTRACKCOUNT_PANEL_SIZE         300
 #define guAUDIOSCROBBLE_PANEL_SIZE      40
 
 enum guStatusBarClickAction {
@@ -154,9 +153,6 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
 {
     m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
 
-    int FieldWidths[] = { -1, guTRACKCOUNT_PANEL_SIZE, guAUDIOSCROBBLE_PANEL_SIZE };
-    SetFieldsCount( 3 );
-    SetStatusWidths( 3, FieldWidths );
     int FieldStyles[] = { wxSB_FLAT, wxSB_FLAT, wxSB_FLAT };
     SetStatusStyles( 3, FieldStyles );
 
@@ -174,6 +170,8 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
 	m_ASBitmap->Bind( wxEVT_LEFT_DCLICK, &guStatusBar::OnButtonDClick, this );
 
     Bind( wxEVT_TIMER, &guStatusBar::OnTimerEvent, this );
+
+    SetSizes( 2 );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -201,8 +199,7 @@ void guStatusBar::OnSize( wxSizeEvent &event )
     {
         //size = ASBitmap->GetSize();
         GetFieldRect( GetFieldsCount() - 1, rect );
-        m_ASBitmap->Move( rect.x + 1,
-                        rect.y + 2 );
+        m_ASBitmap->Move( rect.x + 1, rect.y + 2 );
     }
 
     if( m_SelInfo )
@@ -324,8 +321,13 @@ void guStatusBar::SetSizes( int FieldCnt )
                 FieldWidths[ index ] = -1;
             else if( index == ( FieldCnt - 1 ) )
                 FieldWidths[ index ] = guAUDIOSCROBBLE_PANEL_SIZE;
-            else if( index == ( FieldCnt - 2 ) )
-                FieldWidths[ index ] = guTRACKCOUNT_PANEL_SIZE;
+            else if( ( index == ( FieldCnt - 2 ) ) && !m_SelInfo->GetLabel().IsEmpty() )
+            {
+                int Width;
+                int Height;
+                GetTextExtent( m_SelInfo->GetLabel(), &Width, &Height );
+                FieldWidths[ index ] = Width + 10;
+            }
             else
                 FieldWidths[ index ] = 200;
             //printf( "Width: %i\n", FieldWidths[ index ] );
@@ -404,7 +406,31 @@ int guStatusBar::RemoveGauge( int gaugeid )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetSelInfo( const wxString &label )
 {
+    bool PrevState = !m_SelInfo->GetLabel().IsEmpty();
+    bool NextState = !label.IsEmpty();
     m_SelInfo->SetLabel( label );
+
+    int FieldCount = GetFieldsCount();
+    if( PrevState != NextState )
+    {
+        if( NextState )
+        {
+            FieldCount++;
+        }
+        else
+        {
+            FieldCount--;
+        }
+    }
+
+    SetSizes( FieldCount );
+
+    if( NextState )
+    {
+        wxRect rect;
+        GetFieldRect( GetFieldsCount() - 2, rect );
+        m_SelInfo->Move( rect.x + 1, rect.y + 3 );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -415,9 +441,9 @@ void guStatusBar::DrawField( wxDC &dc, int i, int textHeight )
     if( i < ( GetFieldsCount() - 1 ) )
     {
         dc.SetPen( m_mediumShadowPen );
-        dc.DrawLine( rect.x + rect.width - 1, rect.y + 1, rect.x + rect.width - 1, rect.y + rect.height - 1 );
-        dc.SetPen( m_hilightPen );
         dc.DrawLine( rect.x + rect.width, rect.y + 1, rect.x + rect.width, rect.y + rect.height - 1 );
+        //dc.SetPen( m_hilightPen );
+        //dc.DrawLine( rect.x + rect.width, rect.y + 1, rect.x + rect.width, rect.y + rect.height - 1 );
     }
 
     DrawFieldText( dc, rect, i, textHeight );
