@@ -431,6 +431,8 @@ void guStatusBar::SetSelInfo( const wxString &label )
         GetFieldRect( GetFieldsCount() - 2, rect );
         m_SelInfo->Move( rect.x + 1, rect.y + 3 );
     }
+
+    UpdateGauges();
 }
 
 // -------------------------------------------------------------------------------- //
