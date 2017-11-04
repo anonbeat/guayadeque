@@ -153,9 +153,6 @@ guStatusBar::guStatusBar( wxWindow * parent ) :
 {
     m_LastClickAction = guSTATUSBAR_CLICK_ACTION_NONE;
 
-    int FieldStyles[] = { wxSB_FLAT, wxSB_FLAT, wxSB_FLAT };
-    SetStatusStyles( 3, FieldStyles );
-
     m_ASBitmap = new wxStaticBitmap( this, wxID_ANY, guImage( guIMAGE_INDEX_lastfm_as_off ) );
     m_ASBitmap->SetToolTip( _( "Enable audioscrobbling" ) );
 
@@ -338,6 +335,9 @@ void guStatusBar::SetSizes( int FieldCnt )
 
         //Refresh();
     }
+
+    //int FieldStyles[] = { wxSB_FLAT, wxSB_FLAT, wxSB_FLAT };
+    //SetStatusStyles( 3, FieldStyles );
 }
 
 // -------------------------------------------------------------------------------- //
