@@ -320,9 +320,9 @@ bool guMainApp::OnInit()
 
         if( m_SingleInstanceChecker->IsAnotherRunning() )
         {
+            int RetryCnt = 0;
             if( argc > 1 )
             {
-                int RetryCnt = 0;
                 while( RetryCnt++ < 25 )
                 {
                     if( SendFilesByMPRIS( argc, argv ) )
@@ -333,7 +333,8 @@ bool guMainApp::OnInit()
                 }
             }
 
-            MakeWindowVisible();
+            if( ( RetryCnt < 25 ) && MakeWindowVisible() )
+                return false;
 
             //guLogMessage( wxT( "Another program instance is already running, aborting." ) );
             if( wxMessageBox( _( "Another program instance is already running." ) + "\n" + _( "Do you want to continue with the program?" ),
