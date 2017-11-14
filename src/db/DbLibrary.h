@@ -230,13 +230,6 @@ class guAlbumItem : public guListItem
 };
 WX_DECLARE_OBJARRAY(guAlbumItem,guAlbumItems);
 
-enum guRadioSource {
-    guRADIO_SOURCE_SHOUTCAST_GENRE = 0,
-    guRADIO_SOURCE_USER,
-    guRADIO_SOURCE_SHOUTCAST_SEARCH,
-    guRADIO_SOURCE_TUNEIN
-};
-
 enum guTRACKS_ORDER {
     guTRACKS_ORDER_NUMBER,
     guTRACKS_ORDER_TITLE,

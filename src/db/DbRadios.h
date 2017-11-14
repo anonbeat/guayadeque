@@ -46,6 +46,13 @@ class guRadioStation
 };
 WX_DECLARE_OBJARRAY(guRadioStation,guRadioStations);
 
+enum guRadioSource {
+    guRADIO_SOURCE_SHOUTCAST_GENRE = 0,
+    guRADIO_SOURCE_USER,
+    guRADIO_SOURCE_SHOUTCAST_SEARCH,
+    guRADIO_SOURCE_TUNEIN
+};
+
 enum guRADIOSTATION_ORDER {
     guRADIOSTATIONS_ORDER_NAME = 0,
     guRADIOSTATIONS_ORDER_BITRATE,
