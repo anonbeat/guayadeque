@@ -385,6 +385,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_VolumeButton->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );
     m_VolumeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnVolumeClicked, this );
     m_VolumeBar->Bind( wxEVT_SCROLL_CHANGED	, &guPlayerPanel::OnVolumeChanged, this );
+    m_VolumeBar->Bind( wxEVT_SCROLL_THUMBTRACK, &guPlayerPanel::OnVolumeChanged, this );
     m_VolumeBar->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );
     //m_SmartPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
     m_RandomPlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );

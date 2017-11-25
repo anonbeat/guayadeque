@@ -262,7 +262,7 @@ wxFileOffset guMediaCtrl::Length( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetVolume( double volume )
 {
-    //guLogDebug( wxT( "Volume: %0.5f" ), volume );
+    guLogDebug( wxT( "MediaCtrl::SetVolume( %0.5f )" ), volume );
     m_Volume = volume;
     Lock();
     int Index;

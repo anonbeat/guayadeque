@@ -640,6 +640,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
                                     {
                                         //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
                                         //g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
+                                        g_object_set( queue, "max-size-time", 1 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, "silent", true, NULL );
 
                                         if( m_ReplayGain )
                                         {
@@ -920,7 +921,7 @@ void guFaderPlaybin::SetBuffering( const bool isbuffering )
 bool guFaderPlaybin::SetVolume( double volume )
 {
     guLogDebug( wxT( "guFaderPlayBin::SetVolume (%li)  %0.2f" ), m_Id, volume );
-    g_object_set( m_Volume, "volume", gdouble( volume ), NULL );
+    g_object_set( m_Volume, "volume", gdouble( wxMax( 0.00001, volume ) ), NULL );
     return true;
 }
 
