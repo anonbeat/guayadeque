@@ -640,7 +640,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
                                     {
                                         //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
                                         //g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
-                                        g_object_set( queue, "max-size-time", 1 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, "silent", true, NULL );
+                                        g_object_set( queue, "max-size-time", guint64( 250000000 ), "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                                         if( m_ReplayGain )
                                         {
@@ -815,7 +815,7 @@ bool guFaderPlaybin::BuildRecordBin( const wxString &path, GstElement * encoder,
                     // The bin contains elements that change state asynchronously and not as part of a state change in the entire pipeline.
                     g_object_set( m_RecordBin, "async-handling", gboolean( true ), NULL );
 
-                    g_object_set( queue, "max-size-buffers", guint( 3 ), NULL );
+                    g_object_set( queue, "max-size-buffers", guint( 3 ), "max-size-time", 0, "max-size-bytes", 0, NULL );
                     //g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
 
                     if( muxer )
@@ -921,7 +921,7 @@ void guFaderPlaybin::SetBuffering( const bool isbuffering )
 bool guFaderPlaybin::SetVolume( double volume )
 {
     guLogDebug( wxT( "guFaderPlayBin::SetVolume (%li)  %0.2f" ), m_Id, volume );
-    g_object_set( m_Volume, "volume", gdouble( wxMax( 0.00001, volume ) ), NULL );
+    g_object_set( m_Volume, "volume", gdouble( wxMax( 0.0001, volume ) ), NULL );
     return true;
 }
 
