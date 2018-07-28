@@ -1969,14 +1969,29 @@ bool guMp4TagInfo::CanHandleLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxString guMp4TagInfo::GetLyrics( void )
 {
-    //TagLib::MP4::File tagfile( m_FileName.mb_str( wxConvFile ) );
-    return GetMp4Lyrics( ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag() );
+    if( m_TagFile )
+    {
+        TagLib::MP4::File * TagFile = ( TagLib::MP4::File * ) m_TagFile->file();
+        if( TagFile )
+        {
+            return GetMp4Lyrics( TagFile->tag() );
+        }
+    }
+    return wxEmptyString;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guMp4TagInfo::SetLyrics( const wxString &lyrics )
 {
-    return SetMp4Lyrics( ( ( TagLib::MP4::File * ) m_TagFile->file() )->tag(), lyrics );
+    if( m_TagFile )
+    {
+        TagLib::MP4::File * TagFile = ( TagLib::MP4::File * ) m_TagFile->file();
+        if( TagFile )
+        {
+            return SetMp4Lyrics( TagFile->tag(), lyrics );
+        }
+    }
+    return false;
 }
 
 
