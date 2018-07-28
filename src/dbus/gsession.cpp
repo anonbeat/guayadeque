@@ -65,7 +65,7 @@ guGSession::guGSession( guDBusServer * server ) : guDBusClient( server )
 // -------------------------------------------------------------------------------- //
 guGSession::~guGSession()
 {
-    if( !m_ObjectPath.IsEmpty() )
+    if( !m_ObjectPath.IsEmpty() && m_Status == guGSESSION_STATUS_INITIALIZED )
     {
         guDBusMethodCall * Msg = new guDBusMethodCall( "org.gnome.SessionManager",
 			"/org/gnome/SessionManager",
