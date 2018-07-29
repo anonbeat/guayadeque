@@ -47,7 +47,7 @@ guMainApp::guMainApp() : wxApp()
 {
 //    m_Db = NULL;
     m_DbCache = NULL;
-    m_SingleInstanceChecker = nullptr;
+    m_SingleInstanceChecker = NULL;
 
 #if wxUSE_ON_FATAL_EXCEPTION    // Thanks TheBigRed
         wxHandleFatalExceptions();
