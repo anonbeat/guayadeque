@@ -2025,6 +2025,7 @@ void guPlayerPanel::SavePlayedTrack( const bool forcesave )
             if( m_MediaSong.m_PlayTime >= ( m_MediaSong.m_Length / 2 ) )  // If have played at least the half
             {
                 m_MediaSong.m_PlayCount++;
+                m_MediaSong.m_LastPlay = wxDateTime::GetTimeNow();
                 guLogDebug( wxT( "Increased PlayCount to %i" ), m_MediaSong.m_PlayCount );
 
                 if( !m_MediaSong.m_Offset && m_MediaSong.m_MediaViewer && m_MediaSong.m_MediaViewer->GetEmbeddMetadata() )
