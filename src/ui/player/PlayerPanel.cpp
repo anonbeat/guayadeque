@@ -39,7 +39,6 @@
 #include <wx/gdicmn.h>
 #include <wx/regex.h>
 #include <wx/utils.h>
-#include <algorithm> // std::max
 
 namespace Guayadeque {
 
@@ -1991,15 +1990,14 @@ void guPlayerPanel::SavePlayedTrack( const bool forcesave )
     m_SavedPlayedTrack = true;
 
     // If have played 'enough' of the song. At least half or >= 4 min.
-    bool heard_enough = m_MediaSong.m_PlayTime >= std::min( guAS_MIN_PLAYTIME * 1000, m_MediaSong.m_Length / 2 );
+    bool HeardEnought = m_MediaSong.m_PlayTime >= wxMin( guAS_MIN_PLAYTIME * 1000, m_MediaSong.m_Length / 2 );
 
     // Check if the Current Song have played more than the half or >= 4 min and if so add it to
     // The CachedPlayedSong database to be submitted to LastFM AudioScrobbling
-    //if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type < guTRACK_TYPE_RADIOSTATION ) ) // If its not a radiostation
     if( m_AudioScrobbleEnabled && ( m_MediaSong.m_Type != guTRACK_TYPE_PODCAST ) ) // If its not a podcast
     {
         guLogDebug( wxT( "PlayTime: %u Length: %u" ), m_MediaSong.m_PlayTime, m_MediaSong.m_Length );
-        if( heard_enough && // >= 4min || >= half-of-length
+        if( HeardEnought && 						   // >= 4min || >= half-of-length
             ( m_MediaSong.m_PlayTime > ( guAS_MIN_TRACKLEN * 1000 ) ) )    // If the Length is more than 30 secs
         {
             if( !m_MediaSong.m_SongName.IsEmpty() &&    // Check if we have no missing data
@@ -2025,7 +2023,7 @@ void guPlayerPanel::SavePlayedTrack( const bool forcesave )
 
         if( SupportedPlayCountTypes.Index( m_MediaSong.m_Type ) != wxNOT_FOUND )
         {
-            if( heard_enough )
+            if( HeardEnought )
             {
                 m_MediaSong.m_PlayCount++;
                 m_MediaSong.m_LastPlay = wxDateTime::GetTimeNow();
