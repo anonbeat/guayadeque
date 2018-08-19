@@ -1685,6 +1685,7 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
                         break;
 
                     case guSONGS_COLUMN_PLAYCOUNT :
+                        ChangedFlags[ Index ] = guTRACK_CHANGED_DATA_RATING;
                         Track->m_PlayCount = DefValue.GetLong();
                 }
             }
