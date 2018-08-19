@@ -1965,44 +1965,10 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
   // Process each Track
   for( index = 0; index < count; index++ )
   {
-    if( !( changedflags[ index ] & guTRACK_CHANGED_DATA_TAGS ) )
-        continue;
+        if( !( changedflags[ index ] & ( guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_RATING ) ) )
+            continue;
 
-    Song = &( * Songs )[ index ];
-
-//    if( wxFileExists( Song->m_FileName ) )
-//    {
-//        //MainFrame->SetStatusText( wxString::Format( _( "Updating track %s" ), Song->m_FileName.c_str() ) );
-//
-//        //guLogMessage( wxT( "Updating FileName '%s'" ), Song->FileName.c_str() );
-//
-//        //
-//        // Update the File Tags
-//        //
-//        guTagInfo * TagInfo = guGetTagInfoHandler( Song->m_FileName );
-//
-//        if( !TagInfo )
-//        {
-//            guLogError( wxT( "There is no handler for the file '%s'" ), Song->m_FileName.c_str() );
-//            continue;
-//        }
-//
-//        TagInfo->m_TrackName = Song->m_SongName;
-//        TagInfo->m_AlbumArtist = Song->m_AlbumArtist;
-//        TagInfo->m_ArtistName = Song->m_ArtistName;
-//        TagInfo->m_AlbumName = Song->m_AlbumName;
-//        TagInfo->m_GenreName = Song->m_GenreName;
-//        TagInfo->m_Track = Song->m_Number;
-//        TagInfo->m_Year = Song->m_Year;
-//        TagInfo->m_Composer = Song->m_Composer;
-//        TagInfo->m_Comments = Song->m_Comments;
-//        TagInfo->m_Disk = Song->m_Disk;
-//
-//        TagInfo->Write();
-//
-//        delete TagInfo;
-//        //TagInfo = NULL;
-
+        Song = &( * Songs )[ index ];
 
         if( Song->m_Type == guTRACK_TYPE_DB )
         {
@@ -2062,12 +2028,6 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
             //CurSong.Length,
             UpdateSong( CurTrack, true );
         }
-//    }
-//    else
-//    {
-//        guLogMessage( wxT( "The file %s was not found for edition." ), Song->m_FileName.c_str() );
-//    }
-//    //wxSafeYield();
   }
 
   // We added in PanelPtr all panels we are updating tracks
