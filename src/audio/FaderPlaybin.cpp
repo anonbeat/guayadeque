@@ -1533,7 +1533,7 @@ void guFaderPlaybin::DisableRecord( void )
     if( NeedBlock )
     {
         //gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( remove_record_element ), this );
-        gst_pad_add_probe( BlockPad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
+        gst_pad_add_probe( BlockPad, GST_PAD_PROBE_TYPE_BLOCK_UPSTREAM,
             GstPadProbeCallback( remove_record_element ), this, NULL );
     }
     else
