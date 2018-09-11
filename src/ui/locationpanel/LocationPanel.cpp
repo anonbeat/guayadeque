@@ -567,6 +567,7 @@ void guLocationTreeCtrl::OnContextMenu( wxTreeEvent &event )
             case ID_MENU_VIEW_LASTFM :
             case ID_MENU_VIEW_LYRICS :
             case ID_MENU_VIEW_FILEBROWSER :
+            case ID_MENU_VIEW_AUDIOCD :
             {
                 return;
             }

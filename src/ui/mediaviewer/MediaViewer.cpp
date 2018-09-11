@@ -255,7 +255,7 @@ void guMediaViewer::CreateControls( void )
     m_PlaylistsSelButton->SetToolTip( _( "Playlists" ) );
     TopSizer->Add( m_PlaylistsSelButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-    m_SearchTextCtrl = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
+    m_SearchTextCtrl = new wxSearchCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1, 28 ), wxTE_PROCESS_ENTER );
     //m_SearchTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize,  wxTE_PROCESS_ENTER );
     TopSizer->Add( m_SearchTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
