@@ -925,7 +925,7 @@ void guAudioCdPanel::OnAudioCdTrackPlay( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAudioCdPanel::OnAudioCdTrackEnqueue( wxCommandEvent &event )
 {
-    OnSelectAudioCdTracks( true, event.GetId() - ID_PODCASTS_ITEM_ENQUEUE_AFTER_ALL );
+    OnSelectAudioCdTracks( true, event.GetId() - ID_AUDIOCD_ITEM_ENQUEUE_AFTER_ALL );
 }
 
 // -------------------------------------------------------------------------------- //

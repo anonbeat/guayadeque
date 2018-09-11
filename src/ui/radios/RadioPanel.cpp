@@ -570,8 +570,8 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     wxPanel * SearchPanel;
 	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
-    m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER, 5 );
+    m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1, 28 ), wxTE_PROCESS_ENTER );
+    SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxTOP|wxBOTTOM, 5 );
 
     SearchPanel->SetSizer( SearchSizer );
     SearchPanel->Layout();
