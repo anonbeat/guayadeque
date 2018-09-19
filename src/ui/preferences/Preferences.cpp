@@ -1300,14 +1300,6 @@ void guPrefDialog::BuildAudioScrobblePage( void )
 
 	ASMainSizer->Add( LibreFMASSizer, 0, wxEXPAND|wxALL, 5 );
 
-
-	ASMainSizer->Add( 0, 0, 1, wxEXPAND, 5 );
-
-	wxHyperlinkCtrl * m_UserGroupLink = new wxHyperlinkCtrl( m_LastFMPanel, wxID_ANY,
-        _( "Join the Guayadeque Last.fm users group" ), wxT("http://www.last.fm/group/Guayadeque"),
-        wxDefaultPosition, wxDefaultSize, wxHL_DEFAULT_STYLE );
-	ASMainSizer->Add( m_UserGroupLink, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, 5 );
-
 	m_LastFMPanel->SetSizer( ASMainSizer );
 	m_LastFMPanel->Layout();
 	ASMainSizer->FitInside( m_LastFMPanel );
