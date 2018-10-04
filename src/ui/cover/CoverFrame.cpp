@@ -30,7 +30,7 @@ namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 guCoverFrame::guCoverFrame( wxWindow * parent, wxWindowID id, const wxString & title, const wxPoint & pos, const wxSize & size, long style ) :
-     wxFrame( parent, id, title, pos, size, style | wxFRAME_NO_TASKBAR )
+     wxFrame( parent, id, title, pos, size, style | wxNO_BORDER | wxFRAME_NO_TASKBAR )
 {
     m_CapturedMouse = false;
     m_AutoCloseTimer = new wxTimer( this );
@@ -181,6 +181,7 @@ void guCoverFrame::CoverFrameActivate( wxActivateEvent &event )
 // -------------------------------------------------------------------------------- //
 void guCoverFrame::OnCaptureLost( wxMouseCaptureLostEvent &event )
 {
+    m_CapturedMouse = false;
     Close();
 }
 
