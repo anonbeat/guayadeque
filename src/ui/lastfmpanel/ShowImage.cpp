@@ -27,7 +27,7 @@ namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 guShowImage::guShowImage( wxWindow * parent, wxImage * image, const wxPoint &pos ) :
-    wxFrame( parent, wxID_ANY, wxEmptyString, pos, wxSize( image->GetWidth(), image->GetHeight() ), wxFRAME_NO_TASKBAR | wxTAB_TRAVERSAL )
+    wxFrame( parent, wxID_ANY, wxEmptyString, pos, wxSize( image->GetWidth(), image->GetHeight() ), wxNO_BORDER | wxFRAME_NO_TASKBAR | wxTAB_TRAVERSAL )
 {
     m_CapturedMouse = false;
 
@@ -84,6 +84,7 @@ void guShowImage::OnClick( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guShowImage::OnCaptureLost( wxMouseCaptureLostEvent &event )
 {
+    m_CapturedMouse = false;
     Close();
 }
 
