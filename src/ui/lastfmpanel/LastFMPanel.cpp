@@ -590,11 +590,13 @@ void guArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
         Menu->Append( wxID_ANY, _( "Enqueue After" ), EnqueueMenu );
 
         Menu->AppendSeparator();
-
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
-        Menu->AppendSeparator();
+        if( m_MediaViewer )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
+            Menu->AppendSeparator();
+        }
     }
 
     if( !GetSearchText().IsEmpty() )
@@ -712,11 +714,14 @@ int guArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
-    evt.SetInt( m_Info->m_ArtistId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
+        evt.SetInt( m_Info->m_ArtistId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -857,10 +862,13 @@ void guAlbumInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECTNAME, _( "Search Album" ), _( "Search the album in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
-        Menu->AppendSeparator();
+        if( m_MediaViewer )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_ALBUM_SELECTNAME, _( "Search Album" ), _( "Search the album in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
+            Menu->AppendSeparator();
+        }
     }
 
     if( !GetSearchText().IsEmpty() )
@@ -909,11 +917,14 @@ int guAlbumInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guAlbumInfoCtrl::OnAlbumSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ALBUM );
-    evt.SetInt( m_Info->m_AlbumId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ALBUM );
+        evt.SetInt( m_Info->m_AlbumId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1051,10 +1062,13 @@ void guSimilarArtistInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
-        Menu->AppendSeparator();
+        if( m_MediaViewer )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
+            Menu->AppendSeparator();
+        }
     }
 
     if( !GetSearchText().IsEmpty() )
@@ -1104,11 +1118,14 @@ int guSimilarArtistInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guSimilarArtistInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
-    evt.SetInt( m_Info->m_ArtistId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
+        evt.SetInt( m_Info->m_ArtistId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1251,14 +1268,17 @@ void guTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_TRACKS_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
+        if( m_MediaViewer )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_TRACKS_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
-        Menu->AppendSeparator();
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
+            Menu->AppendSeparator();
+        }
     }
 
     if( !GetSearchText().IsEmpty() )
@@ -1310,21 +1330,27 @@ int guTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guTrackInfoCtrl::OnSongSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
-    evt.SetInt( m_Info->m_TrackId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
+        evt.SetInt( m_Info->m_TrackId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
-    evt.SetInt( m_Info->m_ArtistId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
+        evt.SetInt( m_Info->m_ArtistId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1459,14 +1485,17 @@ void guTopTrackInfoCtrl::CreateContextMenu( wxMenu * Menu )
 
         Menu->AppendSeparator();
 
-        MenuItem = new wxMenuItem( Menu, ID_TRACKS_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
+        if( m_MediaViewer )
+        {
+            MenuItem = new wxMenuItem( Menu, ID_TRACKS_SELECTNAME, _( "Search Track" ), _( "Search the track in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
 
-        MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
-        MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
-        Menu->Append( MenuItem );
-        Menu->AppendSeparator();
+            MenuItem = new wxMenuItem( Menu, ID_ARTIST_SELECTNAME, _( "Search Artist" ), _( "Search the artist in the library" ) );
+            MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_search ) );
+            Menu->Append( MenuItem );
+            Menu->AppendSeparator();
+        }
     }
 
     if( !GetSearchText().IsEmpty() )
@@ -1515,21 +1544,27 @@ int guTopTrackInfoCtrl::GetSelectedTracks( guTrackArray * tracks )
 // -------------------------------------------------------------------------------- //
 void guTopTrackInfoCtrl::OnSongSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
-    evt.SetInt( m_Info->m_TrackId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_TRACK );
+        evt.SetInt( m_Info->m_TrackId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guTopTrackInfoCtrl::OnArtistSelectName( wxCommandEvent &event )
 {
-    wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
-    evt.SetInt( m_Info->m_ArtistId );
-    evt.SetExtraLong( guTRACK_TYPE_DB );
-    evt.SetClientData( m_MediaViewer );
-    wxPostEvent( m_MediaViewer, evt );
+    if( m_MediaViewer )
+    {
+        wxCommandEvent evt( wxEVT_MENU, ID_MAINFRAME_SELECT_ARTIST );
+        evt.SetInt( m_Info->m_ArtistId );
+        evt.SetExtraLong( guTRACK_TYPE_DB );
+        evt.SetClientData( m_MediaViewer );
+        wxPostEvent( m_MediaViewer, evt );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
