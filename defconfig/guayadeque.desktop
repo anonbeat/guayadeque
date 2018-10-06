@@ -1,7 +1,9 @@
 [Desktop Entry]
 Version=1.0
 Name=Guayadeque Music Player
+Name[lt]=Guayadeque muzikos grotuvas
 Comment=Play and organize your music, listen to radios, podcasts and more ...
+Comment[lt]=Groti ir tvarkyti savo muziką, klausytis radijų, tinklalaidžių ir daugiau ...
 Exec=guayadeque %U
 Terminal=false
 Type=Application
