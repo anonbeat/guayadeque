@@ -305,9 +305,15 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 2 );
 
-	m_BitRateLabel = new wxStaticText( this, wxID_ANY, wxT( "[kbps]" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_FormatLabel = new wxStaticText( this, wxID_ANY, "[]", wxDefaultPosition, wxDefaultSize, 0 );
+    m_FormatLabel->SetToolTip( _( "Show the file format of the current track" ) );
+    CurrentFont.SetPointSize( 8 );
+    m_FormatLabel->SetFont( CurrentFont );
+
+    m_BitRateSizer->Add( m_FormatLabel, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
+
+    m_BitRateLabel = new wxStaticText( this, wxID_ANY, "[kbps]", wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bit rate of the current track" ) );
-	CurrentFont.SetPointSize( 8 );
 	m_BitRateLabel->SetFont( CurrentFont );
 
     m_BitRateSizer->Add( m_BitRateLabel, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
@@ -744,6 +750,14 @@ void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
     m_PositionLabel->SetLabel( Label );
 
     m_PosLabelSizer->Layout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetFormatLabel( const wxString &format )
+{
+    //guLogDebug( wxT( "SetFormatLabel( %s )" ), format.c_str() );
+    m_FormatLabel->SetLabel( wxString::Format( wxT( "[%s]" ), format.c_str() ) );
+    m_BitRateSizer->Layout();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2961,6 +2975,7 @@ void guPlayerPanel::UpdateLabels( void )
     else
         m_YearLabel->SetLabel( wxEmptyString );
 
+    SetFormatLabel( m_MediaSong.m_Format );
     SetBitRateLabel( m_MediaSong.m_Bitrate );
 }
 
