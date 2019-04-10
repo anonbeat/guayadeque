@@ -116,6 +116,7 @@ class guCurrentTrack : public guTrack
         m_Year = Src.m_Year;
         m_Offset = Src.m_Offset;
         m_Length = Src.m_Length;
+        m_Format = Src.m_Format;
         m_Bitrate = Src.m_Bitrate;
         m_PlayCount = Src.m_PlayCount;
         m_Rating = Src.m_Rating;
@@ -183,6 +184,7 @@ class guCurrentTrack : public guTrack
         m_Year = track.m_Year;
         m_Offset = track.m_Offset;
         m_Length = track.m_Length;
+        m_Format = track.m_Format;
         m_Bitrate = track.m_Bitrate;
         m_PlayCount = track.m_PlayCount;
         m_Rating = track.m_Rating;
@@ -243,6 +245,7 @@ class guPlayerPanel : public wxPanel
     guToggleRoundButton *       m_LoveBanButton;
     wxBoxSizer *                m_BitRateSizer;
 	wxStaticText *              m_BitRateLabel;
+    wxStaticText *              m_FormatLabel;
 	wxBoxSizer *                m_PosLabelSizer;
 	wxStaticText *              m_PositionLabel;
 	wxSlider *                  m_PlayerPositionSlider;
@@ -448,6 +451,7 @@ class guPlayerPanel : public wxPanel
     int                         GetRating( void ) { return m_MediaSong.m_Rating; }
     void                        SetRating( const int rating );
     void                        UpdatePositionLabel( const unsigned int curpos );
+    void                        SetFormatLabel( const wxString &format );
     void                        SetBitRateLabel( const int bitrate );
     void                        SetBitRate( int bitrate );
 
