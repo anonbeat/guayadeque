@@ -126,6 +126,7 @@ class guCurrentTrack : public guTrack
         m_Comments = Src.m_Comments;
         m_ComposerId = Src.m_ComposerId;
         m_Composer = Src.m_Composer;
+        m_Format = Src.m_Format;
         m_PlayTime = 0;
         m_ASRating = guAS_RATING_NONE;
         m_MediaViewer = Src.m_MediaViewer;
@@ -194,6 +195,7 @@ class guCurrentTrack : public guTrack
         m_ComposerId = track.m_ComposerId;
         m_Composer = track.m_Composer;
         m_MediaViewer = track.m_MediaViewer;
+        m_Format = track.m_Format;
         if( m_CoverImage )
         {
             delete m_CoverImage;
@@ -242,6 +244,7 @@ class guPlayerPanel : public wxPanel
     guRating *                  m_Rating;
     guToggleRoundButton *       m_LoveBanButton;
     wxBoxSizer *                m_BitRateSizer;
+    wxStaticText *              m_FormatLabel;
 	wxStaticText *              m_BitRateLabel;
 	wxBoxSizer *                m_PosLabelSizer;
 	wxStaticText *              m_PositionLabel;
@@ -448,6 +451,7 @@ class guPlayerPanel : public wxPanel
     int                         GetRating( void ) { return m_MediaSong.m_Rating; }
     void                        SetRating( const int rating );
     void                        UpdatePositionLabel( const unsigned int curpos );
+    void                        SetFormatLabel( const wxString& format );
     void                        SetBitRateLabel( const int bitrate );
     void                        SetBitRate( int bitrate );
 
