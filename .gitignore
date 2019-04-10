@@ -9,4 +9,4 @@ po/*/*.mo
 src/guayadeque
 Version.h
 CMakeLists.txt.user
-
+.vscode/
