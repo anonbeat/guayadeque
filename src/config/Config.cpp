@@ -692,6 +692,7 @@ void WriteTrack( wxXmlNode * xmlnode, const guTrack &track )
     WriteStr( XmlNode, wxT( "Album" ), track.m_AlbumName );
     WriteStr( XmlNode, wxT( "Path" ), track.m_Path );
     WriteStr( XmlNode, wxT( "FileName" ), track.m_FileName );
+    WriteStr( XmlNode, wxT( "Format" ), track.m_Format );
     WriteStr( XmlNode, wxT( "Number" ), wxString::Format( wxT( "%i" ), track.m_Number ) );
     WriteStr( XmlNode, wxT( "Rating" ), wxString::Format( wxT( "%i" ), track.m_Rating ) );
     WriteStr( XmlNode, wxT( "Offset" ), wxString::Format( wxT( "%u" ), track.m_Offset ) );
@@ -750,6 +751,10 @@ void ReadTrack( wxXmlNode * xmlnode, guTrack &track )
         else if( Name == wxT( "FileName" ) )
         {
             xmlnode->GetAttribute( wxT( "value" ), &track.m_FileName );
+        }
+        else if( Name == wxT( "Format" ) )
+        {
+            xmlnode->GetAttribute( wxT( "value" ), &track.m_Format );
         }
         else if( Name == wxT( "Number" ) )
         {

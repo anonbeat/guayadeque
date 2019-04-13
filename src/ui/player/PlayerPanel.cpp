@@ -756,7 +756,13 @@ void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
 void guPlayerPanel::SetFormatLabel( const wxString &format )
 {
     //guLogDebug( wxT( "SetFormatLabel( %s )" ), format.c_str() );
-    m_FormatLabel->SetLabel( wxString::Format( wxT( "[%s]" ), format.c_str() ) );
+    if (m_MediaSong.m_Format.Length() > 0 )
+    {
+        m_FormatLabel->Show();
+        m_FormatLabel->SetLabel( wxString::Format( wxT( "[%s]" ), format.c_str() ) );
+    }
+    else
+        m_FormatLabel->Hide();
     m_BitRateSizer->Layout();
 }
 
