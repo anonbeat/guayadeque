@@ -245,7 +245,7 @@ class guPlayerPanel : public wxPanel
     guToggleRoundButton *       m_LoveBanButton;
     wxBoxSizer *                m_BitRateSizer;
 	wxStaticText *              m_BitRateLabel;
-    wxStaticText *              m_FormatLabel;
+    wxStaticText *              m_CodecLabel;
 	wxBoxSizer *                m_PosLabelSizer;
 	wxStaticText *              m_PositionLabel;
 	wxSlider *                  m_PlayerPositionSlider;
@@ -346,6 +346,7 @@ class guPlayerPanel : public wxPanel
     void                        OnMediaFadeInStarted( guMediaEvent &event );
     void                        OnMediaTags( guMediaEvent &event );
     void                        OnMediaBitrate( guMediaEvent &event );
+    void                        OnMediaCodec( guMediaEvent &event );
     void                        OnMediaBuffering( guMediaEvent &event );
     void                        OnMediaLevel( guMediaEvent &event );
     void                        OnMediaError( guMediaEvent &event );
@@ -451,9 +452,10 @@ class guPlayerPanel : public wxPanel
     int                         GetRating( void ) { return m_MediaSong.m_Rating; }
     void                        SetRating( const int rating );
     void                        UpdatePositionLabel( const unsigned int curpos );
-    void                        SetFormatLabel( const wxString &format );
+    void                        SetCodecLabel( const wxString &codec, const wxString &tooltip );
     void                        SetBitRateLabel( const int bitrate );
     void                        SetBitRate( int bitrate );
+    void                        SetCodec( const wxString &codec );
 
     void                        UpdatedTracks( const guTrackArray * tracks );
     void                        UpdatedTrack( const guTrack * track );

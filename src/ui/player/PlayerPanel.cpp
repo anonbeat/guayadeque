@@ -305,12 +305,12 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	m_BitRateSizer->Add( 0, 0, 1, wxALL, 2 );
 
-    m_FormatLabel = new wxStaticText( this, wxID_ANY, "[]", wxDefaultPosition, wxDefaultSize, 0 );
-    m_FormatLabel->SetToolTip( _( "Show the file format of the current track" ) );
+    m_CodecLabel = new wxStaticText( this, wxID_ANY, "[]", wxDefaultPosition, wxDefaultSize, 0 );
+    m_CodecLabel->SetToolTip( _( "Show the file format of the current track" ) );
     CurrentFont.SetPointSize( 8 );
-    m_FormatLabel->SetFont( CurrentFont );
+    m_CodecLabel->SetFont( CurrentFont );
 
-    m_BitRateSizer->Add( m_FormatLabel, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
+    m_BitRateSizer->Add( m_CodecLabel, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );
 
     m_BitRateLabel = new wxStaticText( this, wxID_ANY, "[kbps]", wxDefaultPosition, wxDefaultSize, 0 );
 	m_BitRateLabel->SetToolTip( _( "Show the bit rate of the current track" ) );
@@ -425,6 +425,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Bind( guEVT_MEDIA_FADEIN_STARTED, &guPlayerPanel::OnMediaFadeInStarted, this );
     Bind( guEVT_MEDIA_TAGINFO, &guPlayerPanel::OnMediaTags, this );
     Bind( guEVT_MEDIA_CHANGED_BITRATE, &guPlayerPanel::OnMediaBitrate, this );
+    Bind( guEVT_MEDIA_CHANGED_CODEC, &guPlayerPanel::OnMediaCodec, this );
     Bind( guEVT_MEDIA_BUFFERING, &guPlayerPanel::OnMediaBuffering, this );
     Bind( guEVT_MEDIA_LEVELINFO, &guPlayerPanel::OnMediaLevel, this );
     Bind( guEVT_MEDIA_ERROR, &guPlayerPanel::OnMediaError, this );
@@ -554,6 +555,7 @@ guPlayerPanel::~guPlayerPanel()
     Unbind( guEVT_MEDIA_FADEIN_STARTED, &guPlayerPanel::OnMediaFadeInStarted, this );
     Unbind( guEVT_MEDIA_TAGINFO, &guPlayerPanel::OnMediaTags, this );
     Unbind( guEVT_MEDIA_CHANGED_BITRATE, &guPlayerPanel::OnMediaBitrate, this );
+    Unbind( guEVT_MEDIA_CHANGED_CODEC, &guPlayerPanel::OnMediaCodec, this );
     Unbind( guEVT_MEDIA_BUFFERING, &guPlayerPanel::OnMediaBuffering, this );
     Unbind( guEVT_MEDIA_LEVELINFO, &guPlayerPanel::OnMediaLevel, this );
     Unbind( guEVT_MEDIA_ERROR, &guPlayerPanel::OnMediaError, this );
@@ -753,10 +755,11 @@ void guPlayerPanel::UpdatePositionLabel( const unsigned int curpos )
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::SetFormatLabel( const wxString &format )
+void guPlayerPanel::SetCodecLabel( const wxString &codec, const wxString &tooltip )
 {
-    //guLogDebug( wxT( "SetFormatLabel( %s )" ), format.c_str() );
-    m_FormatLabel->SetLabel( wxString::Format( wxT( "[%s]" ), format.c_str() ) );
+    //guLogDebug( wxT( "SetFormatLabel( %s )" ), codec.c_str() );
+    m_CodecLabel->SetLabel( wxString::Format( wxT( "[%s]" ), codec.c_str() ) );
+    m_CodecLabel->SetToolTip( tooltip );
     m_BitRateSizer->Layout();
 }
 
@@ -798,6 +801,35 @@ void guPlayerPanel::SetBitRate( int bitrate )
     else
         m_BitRateLabel->SetLabel( wxT( "[kbps]" ) );
     m_BitRateSizer->Layout();
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::SetCodec( const wxString &codec )
+{
+    wxString Tooltip = codec.Lower();
+    wxString AudioCodec = "other";
+    if( Tooltip.Contains( "mp3" ) )
+    {
+        AudioCodec = "mp3";
+    }
+    else if( Tooltip.Contains( "aac" ) )
+    {
+        AudioCodec = "aac";
+    }
+    else if( Tooltip.Contains( "vorbis" ) )
+    {
+        AudioCodec = "ogg";
+    }
+    else if( Tooltip.Contains( "wma" ) )
+    {
+        AudioCodec = "wma";
+    }
+    else if( Tooltip.Contains( "flac" ) )
+    {
+        AudioCodec = "flac";
+    }
+
+    SetCodecLabel( AudioCodec, Tooltip );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1828,6 +1860,17 @@ void guPlayerPanel::OnMediaBitrate( guMediaEvent &event )
         }
     }
 
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnMediaCodec( guMediaEvent &event )
+{
+    if( event.GetExtraLong() == m_CurTrackId )
+    {
+        //SetC( event.GetInt() );
+        guLogDebug( wxT( "OnMedaCodec Cur: %li %s" ), event.GetExtraLong(), event.GetString().c_str() );
+        SetCodec( event.GetString() );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2975,7 +3018,6 @@ void guPlayerPanel::UpdateLabels( void )
     else
         m_YearLabel->SetLabel( wxEmptyString );
 
-    SetFormatLabel( m_MediaSong.m_Format );
     SetBitRateLabel( m_MediaSong.m_Bitrate );
 }
 

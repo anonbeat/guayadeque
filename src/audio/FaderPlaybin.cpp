@@ -144,6 +144,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             // The stream discovered new tags.
             GstTagList * tags;
             //gchar * title = NULL;
+            gchar * audio_codec = NULL;
             unsigned int bitrate = 0;
             // Extract from the message the GstTagList.
             //This generates a copy, so we must remember to free it.
@@ -172,6 +173,18 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             else
             {
                 delete RadioTagInfo;
+            }
+
+            if( gst_tag_list_get_string( tags, GST_TAG_AUDIO_CODEC, &audio_codec ) )
+            {
+                if( audio_codec )
+                {
+                    guMediaEvent event( guEVT_MEDIA_CHANGED_CODEC );
+                    event.SetString( wxString::FromUTF8( audio_codec ) );
+                    event.SetExtraLong( ctrl->GetId() );
+                    ctrl->SendEvent( event );
+                    g_free( audio_codec );
+                }
             }
 
             gst_tag_list_get_uint( tags, GST_TAG_BITRATE, &bitrate );
