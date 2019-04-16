@@ -832,6 +832,14 @@ void guPlayerPanel::SetCodec( const wxString &codec )
     {
         AudioCodec = "ape";
     }
+    else if( Tooltip.Contains( "apple lossless" ) )
+    {
+        AudioCodec = "m4a";
+    }
+    else if( Tooltip.Contains( "musepack" ) )
+    {
+        AudioCodec = "mpc";
+    }
 
     SetCodecLabel( AudioCodec, Tooltip );
 }
