@@ -828,6 +828,10 @@ void guPlayerPanel::SetCodec( const wxString &codec )
     {
         AudioCodec = "flac";
     }
+    else if( Tooltip.Contains( "monkey" ) )
+    {
+        AudioCodec = "ape";
+    }
 
     SetCodecLabel( AudioCodec, Tooltip );
 }
