@@ -567,6 +567,7 @@ void guPrefDialog::BuildGeneralPage( void )
 
 	m_ExitConfirmChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _("Ask confirmation on exit"), wxDefaultPosition, wxDefaultSize, 0 );
     m_ExitConfirmChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM, true, CONFIG_PATH_GENERAL ) );
+    m_ExitConfirmChkBox->Enable( !m_SoundMenuChkBox->IsEnabled() || !m_SoundMenuChkBox->IsChecked() );
 	OnCloseSizer->Add( m_ExitConfirmChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
 	GenMainSizer->Add( OnCloseSizer, 0, wxEXPAND|wxALL, 5 );
@@ -2743,12 +2744,14 @@ void guPrefDialog::OnActivateTaskBarIcon( wxCommandEvent& event )
     if( m_SoundMenuChkBox )
         m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
     m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && ( !m_SoundMenuChkBox || !m_SoundMenuChkBox->IsChecked() ) );
+    m_ExitConfirmChkBox->Enable( !m_SoundMenuChkBox->IsEnabled() || !m_SoundMenuChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnActivateSoundMenuIntegration( wxCommandEvent& event )
 {
     m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && !m_SoundMenuChkBox->IsChecked() );
+    m_ExitConfirmChkBox->Enable( !m_SoundMenuChkBox->IsEnabled() || !m_SoundMenuChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
