@@ -450,7 +450,8 @@ void guListView::SetSelectedIndexs( const wxArrayInt &selection )
 {
     // TODO Need to speed up this
     ClearSelectedItems();
-    if( GetItemCount() )
+    int ItemCount = GetItemCount();
+    if( ItemCount )
     {
         int Count;
         if( ( Count = selection.Count() ) )
@@ -458,10 +459,13 @@ void guListView::SetSelectedIndexs( const wxArrayInt &selection )
             bool IsMultiple = m_ListBox->HasMultipleSelection();
             for( int Index = 0; Index < Count; Index++ )
             {
-                if( IsMultiple )
-                    Select( selection[ Index ] );
-                else
-                    SetSelection( selection[ Index ] );
+                if( selection[ Index ] < ItemCount )
+                {
+                    if( IsMultiple )
+                        Select( selection[ Index ] );
+                    else
+                        SetSelection( selection[ Index ] );
+                }
             }
             wxCommandEvent event( wxEVT_LISTBOX, m_ListBox->GetId() );
             event.SetEventObject( m_ListBox );

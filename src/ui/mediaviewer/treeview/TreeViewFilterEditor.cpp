@@ -62,7 +62,7 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
     {
         FilterItemNames.Add( wxT( "Dummy" ) );
         //FilterItemNames.Add( wxT( "Text" ) );
-        FilterItemNames.Add( wxT( "Labels" ) );
+        FilterItemNames.Add( _( "Labels" ) );
         FilterItemNames.Add( _( "Genre" ) );
         FilterItemNames.Add( _( "Artist" ) );
         FilterItemNames.Add( _( "Composer" ) );
