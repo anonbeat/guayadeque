@@ -69,6 +69,8 @@ class guPlayList : public guListView
 
     wxArrayString   m_PendingLoadIds;
 
+    int             m_SysFontPointSize;
+
     virtual wxCoord             OnMeasureItem( size_t row ) const;
 
     virtual int                 GetSelectedSongs( guTrackArray * Songs, const bool isdrag = false ) const;

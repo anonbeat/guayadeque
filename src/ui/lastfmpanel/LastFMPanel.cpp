@@ -434,7 +434,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_Text = new wxStaticText( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_Text->Wrap( -1 );
 	wxFont CurrentFont = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT );
-	CurrentFont.SetPointSize( 12 );
+    CurrentFont.SetPointSize( CurrentFont.GetPointSize() + 2 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_Text->SetFont( CurrentFont );
 
@@ -456,7 +456,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 
 	m_ArtistDetails = new guHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
 	m_ArtistDetails->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
-	CurrentFont.SetPointSize( 10 );
+    CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 2 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	m_ArtistDetails->SetFonts( CurrentFont.GetFaceName(), wxEmptyString );
 

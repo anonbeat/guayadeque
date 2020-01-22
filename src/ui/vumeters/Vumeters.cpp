@@ -404,7 +404,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	m_HVumFlexSizer->SetFlexibleDirection( wxBOTH );
 	m_HVumFlexSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	CurrentFont.SetPointSize( 7 );
+    CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 3 );
 
 	wxStaticText * HVumLeftLabel = new wxStaticText( this, wxID_ANY, wxT("L:"), wxDefaultPosition, wxDefaultSize, 0 );
 	HVumLeftLabel->Wrap( -1 );

@@ -48,6 +48,7 @@ guAlListBox::guAlListBox( wxWindow * parent, guLibPanel * libpanel, guDbLibrary 
     m_Db = db;
     m_Items = new guAlbumItems();
     m_LibPanel = libpanel;
+    m_SysFontPointSize = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ).GetPointSize();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -151,7 +152,7 @@ bool guAlListBox::SelectAlbumName( const wxString &AlbumName )
 // -------------------------------------------------------------------------------- //
 void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const int col ) const
 {
-    m_Attr.m_Font->SetPointSize( 10 );
+    m_Attr.m_Font->SetPointSize( m_SysFontPointSize );
 
     guAlbumItem * Item = &( * ( guAlbumItems * ) m_Items )[ row ];
 
@@ -167,7 +168,7 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
         int Pos;
         dc.GetTextExtent( Item->m_Name, &Pos, NULL );
         Pos += rect.x + 45;
-        m_Attr.m_Font->SetPointSize( 7 );
+        m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 3 );
         dc.SetFont( * m_Attr.m_Font );
         dc.DrawText( wxString::Format( wxT( " (%4u)" ), Item->m_Year ), Pos, rect.y + 7 );
     }
@@ -175,7 +176,7 @@ void guAlListBox::DrawItem( wxDC &dc, const wxRect &rect, const int row, const i
 
     if( !Item->m_ArtistName.IsEmpty() )
     {
-        m_Attr.m_Font->SetPointSize( 8 );
+        m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 2 );
         dc.SetFont( * m_Attr.m_Font );
         dc.DrawText( _( "by " ) + Item->m_ArtistName, rect.x + 45, rect.y + 22 );
     }

@@ -38,6 +38,7 @@ class guAlListBox : public  guListView
     guLibPanel *        m_LibPanel;
     int                 m_AlbumsOrder;
     wxString            m_ConfigPath;
+    int                 m_SysFontPointSize;
 
     void                OnAlbumListActivated( wxListEvent &event );
     void                OnAlbumListSelected( wxListEvent &event );

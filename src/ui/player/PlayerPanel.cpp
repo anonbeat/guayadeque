@@ -54,10 +54,6 @@ namespace Guayadeque {
 #define guPLAYER_ICONS_SEPARATOR        2
 #define guPLAYER_ICONS_GROUPSEPARATOR   4
 
-#define guPLAYER_FONTSIZE_TRACKNAME     12
-#define guPLAYER_FONTSIZE_ALBUMNAME     11
-#define guPLAYER_FONTSIZE_ARTISTNAME    11
-
 wxArrayInt SupportedPlayCountTypes;
 
 // -------------------------------------------------------------------------------- //
@@ -253,7 +249,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_TitleLabel = new guAutoScrollText( this, wxEmptyString );
 	m_TitleLabel->SetToolTip( _( "Show the name of the current track" ) );
 	//m_TitleLabel->Wrap( -1 );
-	CurrentFont.SetPointSize( guPLAYER_FONTSIZE_TRACKNAME );
 	CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
 	m_TitleLabel->SetFont( CurrentFont );
 
@@ -263,7 +258,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_AlbumLabel = new guAutoScrollText( this, wxEmptyString );
 	m_AlbumLabel->SetToolTip( _( "Show the album name of the current track" ) );
 	//m_AlbumLabel->Wrap( -1 );
-	CurrentFont.SetPointSize( guPLAYER_FONTSIZE_ALBUMNAME );
+    CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
 	CurrentFont.SetWeight( wxFONTWEIGHT_NORMAL );
 	CurrentFont.SetStyle( wxFONTSTYLE_ITALIC );
 	m_AlbumLabel->SetFont( CurrentFont );
@@ -274,7 +269,6 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	m_ArtistLabel = new guAutoScrollText( this, wxEmptyString );
 	m_ArtistLabel->SetToolTip( _( "Show the artist name of the current track" ) );
 	//m_ArtistLabel->Wrap( -1 );
-	CurrentFont.SetPointSize( guPLAYER_FONTSIZE_ARTISTNAME );
 	CurrentFont.SetStyle( wxFONTSTYLE_NORMAL );
 	m_ArtistLabel->SetFont( CurrentFont );
 
@@ -307,7 +301,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
     m_CodecLabel = new wxStaticText( this, wxID_ANY, "[]", wxDefaultPosition, wxDefaultSize, 0 );
     m_CodecLabel->SetToolTip( _( "Show the file format of the current track" ) );
-    CurrentFont.SetPointSize( 8 );
+    CurrentFont.SetPointSize( CurrentFont.GetPointSize() - 1 );
     m_CodecLabel->SetFont( CurrentFont );
 
     m_BitRateSizer->Add( m_CodecLabel, 0, wxRIGHT|wxLEFT|wxALIGN_CENTER_VERTICAL, 2 );

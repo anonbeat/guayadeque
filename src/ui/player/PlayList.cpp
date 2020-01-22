@@ -60,6 +60,7 @@ guPlayerPlayList::guPlayerPlayList( wxWindow * parent, guDbLibrary * db, wxAuiMa
 	SetSizer( MainSizer );
 	Layout();
 	MainSizer->Fit( this );
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -87,6 +88,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     m_CurItem = wxNOT_FOUND;
     m_StartPlaying = false;
     m_SavePlaylistTimer = NULL;
+    m_SysFontPointSize = wxSystemSettings::GetFont( wxSYS_SYSTEM_FONT ).GetPointSize();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->RegisterObject( this );
@@ -480,7 +482,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 //    wxArrayInt Selection;
 
     Item = m_Items[ row ];
-    m_Attr.m_Font->SetPointSize( 8 );
+    m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 2 );
     m_Attr.m_Font->SetStyle( wxFONTSTYLE_NORMAL );
     m_Attr.m_Font->SetWeight( wxFONTWEIGHT_BOLD );
 
@@ -523,7 +525,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
         //                  wxT( "" ) ) + Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
         dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
 
-        //m_Attr.m_Font->SetPointSize( 7 );
+        //m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 3 );
         //m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
         m_Attr.m_Font->SetWeight( wxFONTWEIGHT_NORMAL );
         dc.SetFont( * m_Attr.m_Font );
@@ -539,7 +541,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         dc.SetClippingRegion( CutRect );
 
-        //m_Attr.m_Font->SetPointSize( 8 );
+        //m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 2 );
         //m_Attr.m_Font->SetStyle( wxFONTSTYLE_NORMAL );
         //dc.SetFont( * m_Attr.m_Font );
 
@@ -636,7 +638,7 @@ wxCoord guPlayList::OnMeasureItem( size_t n ) const
 
     wxClientDC dc( self );
     wxFont Font = GetFont();
-    Font.SetPointSize( 8 );
+    Font.SetPointSize( m_SysFontPointSize - 2 );
     dc.SetFont( Font );
 
     wxCoord y;
@@ -644,7 +646,7 @@ wxCoord guPlayList::OnMeasureItem( size_t n ) const
     Height += y + 2;
     self->m_SecondLineOffset = Height;
 
-//    Font.SetPointSize( 7 );
+//    Font.SetPointSize( m_SysFontPointSize - 3 );
 //    dc.SetFont( Font );
 //    dc.GetTextExtent( wxT( "Hg" ), NULL, &y );
     Height += y + 4;
