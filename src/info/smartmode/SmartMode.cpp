@@ -391,7 +391,7 @@ guSmartModeThread::ExitCode guSmartModeThread::Entry()
 // guGenSmartPlaylist
 // -------------------------------------------------------------------------------- //
 guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * mediaviewer, const wxString &playlistname ) :
-    wxDialog( parent, wxID_ANY, _( "Generate Smart Playlist" ), wxDefaultPosition, wxSize( 424, 244 ), wxDEFAULT_DIALOG_STYLE )
+    wxDialog( parent, wxID_ANY, _( "Generate Smart Playlist" ), wxDefaultPosition, wxSize( 500, 250 ), wxDEFAULT_DIALOG_STYLE )
 {
     m_MediaViewer = mediaviewer;
     m_Db = mediaviewer->GetDb();
@@ -492,6 +492,7 @@ guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * media
 
 	this->SetSizer( MainSizer );
 	this->Layout();
+    this->Fit();
 }
 
 // -------------------------------------------------------------------------------- //
