@@ -62,9 +62,9 @@ class guSmartModeThread : public wxThread
     int             m_MaxSmartTracksList;
     int             m_MaxSmartArtistsList;
 
-    wxLongLong      m_TrackLimit;
+    u_int64_t       m_TrackLimit;
     int             m_LimitType;
-    wxLongLong      m_LimitCounter;
+    u_int64_t       m_LimitCounter;
     bool            m_LimitReached;
 
     int             m_GaugeId;
@@ -80,7 +80,7 @@ class guSmartModeThread : public wxThread
             const wxString &artistname, const wxString &trackname,
              wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
              const int maxtracks, const int maxartists,
-             const double tracklimit, const int limittype = guSMARTMODE_TRACK_LIMIT_TRACKS,
+             const uint tracklimit, const int limittype = guSMARTMODE_TRACK_LIMIT_TRACKS,
              const int filterallow = guSMARTMODE_FILTER_ALLOW_ALL, const int filterdeny = guSMARTMODE_FILTER_DENY_NONE,
              const int gaugeid = wxNOT_FOUND );
 

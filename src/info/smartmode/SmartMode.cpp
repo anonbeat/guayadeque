@@ -36,7 +36,7 @@ guSmartModeThread::guSmartModeThread( guDbLibrary * db, wxEvtHandler * owner,
             const wxString &artistname, const wxString &trackname,
              wxArrayInt * smartaddedtracks, wxArrayString * smartaddedartists,
              const int maxtracks, const int maxartists,
-             const double tracklimit, const int limittype,
+             const uint tracklimit, const int limittype,
              const int filterallow, const int filterdeny,
              const int gaugeid )  :
     wxThread()
@@ -58,24 +58,24 @@ guSmartModeThread::guSmartModeThread( guDbLibrary * db, wxEvtHandler * owner,
     switch( limittype )
     {
         case guSMARTMODE_TRACK_LIMIT_TIME_MINUTES :
-            m_TrackLimit.Assign( tracklimit * 60000 );
+            m_TrackLimit = tracklimit * 60000;
             break;
 
         case guSMARTMODE_TRACK_LIMIT_TIME_HOURS :
-            m_TrackLimit.Assign( tracklimit * 60 * 60000 );
+            m_TrackLimit = ( tracklimit * 60 * 60000 );
             break;
 
         case guSMARTMODE_TRACK_LIMIT_SIZE_MB :
-            m_TrackLimit.Assign( tracklimit * 1024 * 1024 );
+            m_TrackLimit = ( tracklimit * 1024 * 1024 );
             break;
 
         case guSMARTMODE_TRACK_LIMIT_SIZE_GB :
-            m_TrackLimit.Assign( tracklimit * 1024 * 1024 * 1024 );
+            m_TrackLimit = ( tracklimit * 1024 * 1024 * 1024 );
             break;
 
         //case guSMARTMODE_TRACK_LIMIT_TRACKS :
         default :
-            m_TrackLimit.Assign( tracklimit );
+            m_TrackLimit = tracklimit;
             m_LimitType = guSMARTMODE_TRACK_LIMIT_TRACKS;
             break;
     }
@@ -86,7 +86,7 @@ guSmartModeThread::guSmartModeThread( guDbLibrary * db, wxEvtHandler * owner,
     {
         wxCommandEvent Event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
         Event.SetInt( m_GaugeId );
-        Event.SetExtraLong( m_TrackLimit.GetLo() );
+        Event.SetExtraLong( 100 );
         wxPostEvent( guMainFrame::GetMainFrame(), Event );
     }
 
@@ -185,7 +185,7 @@ bool guSmartModeThread::CheckLimit( const guTrack * track )
     {
         wxCommandEvent Event( wxEVT_MENU, ID_STATUSBAR_GAUGE_UPDATE );
         Event.SetInt( m_GaugeId );
-        Event.SetExtraLong( m_LimitCounter.GetLo() );
+        Event.SetExtraLong( long( ( m_LimitCounter * 100 ) / m_TrackLimit ) );
         wxPostEvent( guMainFrame::GetMainFrame(), Event );
     }
 
