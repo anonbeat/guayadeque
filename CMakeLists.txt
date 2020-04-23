@@ -30,9 +30,7 @@ SET( SEARCH_LIBS
         /usr/lib
         /usr/local/lib )
 
-SET( wxWidgets_USE_LIBS base core adv net html xml aui qa )
-
-FIND_PACKAGE( wxWidgets )
+FIND_PACKAGE( wxWidgets COMPONENTS base core adv net html xml aui qa )
 
 IF( NOT wxWidgets_FOUND)
     MESSAGE( FATAL_ERROR "wxWidgets not found!" )
