@@ -2744,7 +2744,7 @@ void guPrefDialog::OnActivateTaskBarIcon( wxCommandEvent& event )
     if( m_SoundMenuChkBox )
         m_SoundMenuChkBox->Enable( m_TaskIconChkBox->IsChecked() );
     m_CloseTaskBarChkBox->Enable( m_TaskIconChkBox->IsChecked() && ( !m_SoundMenuChkBox || !m_SoundMenuChkBox->IsChecked() ) );
-    m_ExitConfirmChkBox->Enable( !m_SoundMenuChkBox->IsEnabled() || !m_SoundMenuChkBox->IsChecked() );
+    m_ExitConfirmChkBox->Enable( !m_SoundMenuChkBox || !m_SoundMenuChkBox->IsEnabled() || !m_SoundMenuChkBox->IsChecked() );
 }
 
 // -------------------------------------------------------------------------------- //
