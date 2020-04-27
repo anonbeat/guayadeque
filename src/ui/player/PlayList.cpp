@@ -482,7 +482,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 //    wxArrayInt Selection;
 
     Item = m_Items[ row ];
-    m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 2 );
+    m_Attr.m_Font->SetPointSize( m_SysFontPointSize );
     m_Attr.m_Font->SetStyle( wxFONTSTYLE_NORMAL );
     m_Attr.m_Font->SetWeight( wxFONTWEIGHT_BOLD );
 
@@ -523,7 +523,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 
         //dc.DrawText( ( Item.m_Number ? wxString::Format( wxT( "%02u - " ), Item.m_Number ) :
         //                  wxT( "" ) ) + Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
-        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 4 );
+        dc.DrawText( Item.m_SongName, CutRect.x + 4, CutRect.y + 2 );
 
         //m_Attr.m_Font->SetPointSize( m_SysFontPointSize - 3 );
         //m_Attr.m_Font->SetStyle( wxFONTSTYLE_ITALIC );
@@ -572,7 +572,7 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
             for( index = 0; index < 5; index++ )
             {
                dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_NormalStar : * m_SelectStar,
-                              CutRect.x + ( 11 * index ), CutRect.y + m_SecondLineOffset, true );
+                              CutRect.x + ( 11 * index ), CutRect.y + m_SecondLineOffset + 2, true );
             }
 //        }
     }
@@ -598,7 +598,7 @@ void guPlayList::OnMouse( wxMouseEvent &event )
                ( m_Items[ Item ].m_Type != guTRACK_TYPE_PODCAST ) &&
                ( m_Items[ Item ].m_Type != guTRACK_TYPE_RADIOSTATION ) )
             {
-                if( ( size_t ) y > ( ( Item - GetVisibleRowsBegin() ) * m_ItemHeight ) + m_SecondLineOffset )
+                if( ( size_t ) y > ( ( Item - GetVisibleRowsBegin() ) * m_ItemHeight ) + m_SecondLineOffset + 2 )
                 {
                     if( event.LeftDown() )
                     {
@@ -643,13 +643,13 @@ wxCoord guPlayList::OnMeasureItem( size_t n ) const
 
     wxCoord y;
     dc.GetTextExtent( wxT( "Hg" ), NULL, &y );
-    Height += y + 2;
+    Height += y;
     self->m_SecondLineOffset = Height;
 
 //    Font.SetPointSize( m_SysFontPointSize - 3 );
 //    dc.SetFont( Font );
 //    dc.GetTextExtent( wxT( "Hg" ), NULL, &y );
-    Height += y + 4;
+    Height += y + 6;
 
     self->SetItemHeight( Height );
     self->m_ItemHeight = Height;
