@@ -225,8 +225,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
     PlayerBtnSizer->Add( m_VolumeButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
-    m_VolumeBar = new wxSlider( this, wxID_ANY, SavedVol, 0, 100, wxDefaultPosition, wxSize( 100, -1 ) );
-    m_VolumeBar->SetMinSize( wxSize( 100, 20 ) );
+    m_VolumeBar = new wxSlider( this, wxID_ANY, SavedVol, 0, 100 );
+    m_VolumeBar->SetMinSize( wxSize( 100, 40 ) );
     PlayerBtnSizer->Add( m_VolumeBar, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
     if( Config->ReadBool( CONFIG_KEY_GENERAL_PLAYER_VOLUME_VISIBLE, true, CONFIG_PATH_GENERAL ) )
         m_VolumeBar->Show();
@@ -319,6 +319,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 	PlayerMainSizer->Add( PlayerDetailsSizer, 0, wxEXPAND, 5 );
 
     m_PlayerPositionSlider = new wxSlider( this, wxID_ANY, 0, 0, 1000 );
+    m_PlayerPositionSlider->SetMinSize( wxSize( 100, 40 ) );
 	PlayerMainSizer->Add( m_PlayerPositionSlider, 0, wxALL|wxEXPAND, 0 );
 
 
@@ -352,8 +353,8 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	SetSizer( PlayerMainSizer );
 	Layout();
-	PlayerMainSizer->Fit( this );
-    PlayerMainSizer->SetSizeHints( this );
+	PlayerMainSizer->FitInside( this );
+    //PlayerMainSizer->SetSizeHints( this );
 	//PlayerPanel->Layout();
 
 
