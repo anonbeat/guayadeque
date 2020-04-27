@@ -469,9 +469,8 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	m_HVumFlexSizer->Add( HVumRightLabel, 0, wxALIGN_CENTER_HORIZONTAL|wxALIGN_CENTER_VERTICAL|wxBOTTOM, 5 );
 
 	m_HVumRight = new guVumeter( this, wxID_ANY ); //, 100, wxDefaultPosition, wxSize( -1,-1 ), wxGA_HORIZONTAL );
-	//m_HVumRight->SetValue( 0 );
-
 	m_HVumFlexSizer->Add( m_HVumRight, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+
 	m_VumMainSizer->Add( m_HVumFlexSizer, 1, wxEXPAND, 5 );
 
 
@@ -560,6 +559,7 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 
 	this->SetSizer( m_VumMainSizer );
 	this->Layout();
+    m_VumMainSizer->Fit( this );
 
 
     Bind( wxEVT_SIZE, &guPlayerVumeters::OnChangedSize, this );
