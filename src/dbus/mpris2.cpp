@@ -901,7 +901,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             FillMetadataDetails( &dict, "Identity", AppName );
                             const char * DesktopPath = "guayadeque";
                             FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
-                            const char * SupportedUriSchemes[] = { "file", "http", "smb", "sftp", "cdda", NULL };
+                            const char * SupportedUriSchemes[] = { "file", "http", "https", "smb", "sftp", "cdda", NULL };
                             FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
                             const char * SupportedMimeTypes[] = {
                                "application/ogg",

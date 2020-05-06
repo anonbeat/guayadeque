@@ -2419,6 +2419,7 @@ void guMainFrame::RemoveTabPanel( wxPanel * panel )
     {
         if( m_MainNotebook->GetPageCount() > 1 )
         {
+            panel->Hide();
             m_MainNotebook->RemovePage( PageIndex );
         }
         else

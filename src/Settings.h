@@ -163,7 +163,7 @@ namespace Guayadeque {
 
 #define guSIZE_CAPTION                      22
 #define guSIZE_BORDER                       0
-#define guSIZE_SASH                         3
+#define guSIZE_SASH                         5
 #define guGRADIENT_TYPE                     wxAUI_GRADIENT_VERTICAL
 
 }

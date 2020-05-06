@@ -127,17 +127,17 @@ class guShoutcastSearch : public wxDialog
 {
   protected:
     guRadioItemData *   m_ItemData;
-	wxTextCtrl *            m_SearchTextCtrl;
+    wxTextCtrl *            m_SearchTextCtrl;
     wxCheckBox *            m_SearchPlayChkBox;
-	wxCheckBox *            m_SearchGenreChkBox;
-	wxCheckBox *            m_SearchNameChkBox;
-	wxCheckBox *            m_AllGenresChkBox;
+    wxCheckBox *            m_SearchGenreChkBox;
+    wxCheckBox *            m_SearchNameChkBox;
+    wxCheckBox *            m_AllGenresChkBox;
 
     void                    OnOkButton( wxCommandEvent &event );
 
   public:
     guShoutcastSearch( wxWindow * parent, guRadioItemData * itemdata );
-	~guShoutcastSearch();
+    ~guShoutcastSearch();
 
 };
 
@@ -201,8 +201,8 @@ class guRadioPanel : public guAuiManagerPanel
 {
   private:
     guDbRadios *                    m_Db;
-	guPlayerPanel *                 m_PlayerPanel;
-	guTrackArray                    m_StationPlayListTracks;
+    guPlayerPanel *                 m_PlayerPanel;
+    guTrackArray                    m_StationPlayListTracks;
     guRadioProviderArray *          m_RadioProviders;
     long                            m_MinBitRate;
     wxTimer                         m_GenreSelectTimer;
@@ -220,17 +220,17 @@ class guRadioPanel : public guAuiManagerPanel
 
 
     void OnRadioUpdateEnd( wxCommandEvent &event );
-	void OnRadioUpdate( wxCommandEvent &Event );
-	void OnRadioUpdated( wxCommandEvent &Event );
-	void OnRadioGenreListSelected( wxTreeEvent &Event );
+    void OnRadioUpdate( wxCommandEvent &Event );
+    void OnRadioUpdated( wxCommandEvent &Event );
+    void OnRadioGenreListSelected( wxTreeEvent &Event );
     void OnStationListActivated( wxCommandEvent &event );
     void OnStationListBoxColClick( wxListEvent &event );
     void OnSearchActivated( wxCommandEvent &event );
     void OnSearchSelected( wxCommandEvent &event );
     void OnSearchCancelled( wxCommandEvent &event );
-	void OnRadioStationsPlay( wxCommandEvent &event );
-	void OnRadioStationsEnqueue( wxCommandEvent &event );
-	void OnSelectStations( bool enqueue = false, const int aftercurrent = 0 );
+    void OnRadioStationsPlay( wxCommandEvent &event );
+    void OnRadioStationsEnqueue( wxCommandEvent &event );
+    void OnSelectStations( bool enqueue = false, const int aftercurrent = 0 );
     void OnLoadStationsFinished( wxCommandEvent &event );
     void OnRadioStationsAddToUser( wxCommandEvent &event );
 
@@ -248,18 +248,18 @@ class guRadioPanel : public guAuiManagerPanel
 
   protected:
     wxSearchCtrl *          m_InputTextCtrl;
-	guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
-	guRadioLabelListBox *   m_LabelsListBox;
-	guRadioStationListBox * m_StationsListBox;
+    guRadioGenreTreeCtrl *  m_GenresTreeCtrl;
+    guRadioLabelListBox *   m_LabelsListBox;
+    guRadioStationListBox * m_StationsListBox;
 
-    void                    OnConfigUpdated( wxCommandEvent &event );
+    void                        OnConfigUpdated( wxCommandEvent &event );
 
   public:
-	guRadioPanel( wxWindow * parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel );
-	~guRadioPanel();
+    guRadioPanel( wxWindow * parent, guDbLibrary * Db, guPlayerPanel * NewPlayerPanel );
+    ~guRadioPanel();
 
-    guDbRadios *                 GetDbRadios( void ) { return m_Db; }
-    virtual void               InitPanelData( void );
+    guDbRadios *                GetDbRadios( void ) { return m_Db; }
+    virtual void                InitPanelData( void );
     void                        RegisterRadioProvider( guRadioProvider * provider, const bool reload = false );
     void                        UnRegisterRadioProvider( guRadioProvider * provider, const bool reload = false );
     void                        ReloadProviders( void );
@@ -273,7 +273,7 @@ class guRadioPanel : public guAuiManagerPanel
     int                         GetProviderStations( guRadioStations * stations );
     void                        RefreshStations( void );
     bool                        GetSelectedStation( guRadioStation * station );
-    wxTreeItemId                 GetSelectedGenre( void );
+    wxTreeItemId                GetSelectedGenre( void );
     guRadioItemData *           GetSelectedData( const wxTreeItemId &itemid );
     guRadioItemData *           GetSelectedData( void );
     wxTreeItemId                GetItemParent( const wxTreeItemId &item ) const;

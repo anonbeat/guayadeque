@@ -565,17 +565,15 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
     m_EnterSelectSearchEnabled = !Config->ReadBool( CONFIG_KEY_GENERAL_TEXT_SEARCH_ENTER, false, CONFIG_PATH_GENERAL );
 
 
-	wxBoxSizer * SearchSizer;
-	SearchSizer = new wxBoxSizer( wxHORIZONTAL );
-    wxPanel * SearchPanel;
-	SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * SearchSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxPanel * SearchPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
 
     m_InputTextCtrl = new wxSearchCtrl( SearchPanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1, 28 ), wxTE_PROCESS_ENTER );
     SearchSizer->Add( m_InputTextCtrl, 1, wxALIGN_CENTER|wxTOP|wxBOTTOM, 5 );
 
     SearchPanel->SetSizer( SearchSizer );
-    SearchPanel->Layout();
-	SearchSizer->Fit( SearchPanel );
+    //SearchPanel->Layout();
+	//SearchSizer->Fit( SearchPanel );
 
     m_AuiManager.AddPane( SearchPanel,
             wxAuiPaneInfo().Name( wxT( "RadioTextSearch" ) ).Caption( _( "Text Search" ) ).
@@ -583,17 +581,15 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
             CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
             Dockable( true ).Top() );
 
-    wxPanel * GenrePanel;
-	GenrePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-	wxBoxSizer * GenreSizer;
-	GenreSizer = new wxBoxSizer( wxVERTICAL );
+    wxPanel * GenrePanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * GenreSizer = new wxBoxSizer( wxVERTICAL );
 
     m_GenresTreeCtrl = new guRadioGenreTreeCtrl( GenrePanel, this );
 	GenreSizer->Add( m_GenresTreeCtrl, 1, wxEXPAND, 5 );
 
 	GenrePanel->SetSizer( GenreSizer );
-	GenrePanel->Layout();
-	GenreSizer->Fit( GenrePanel );
+	//GenrePanel->Layout();
+	//GenreSizer->Fit( GenrePanel );
 
 	m_AuiManager.AddPane( GenrePanel,
             wxAuiPaneInfo().Name( wxT( "RadioGenres" ) ).Caption( _( "Genre" ) ).
@@ -601,19 +597,16 @@ guRadioPanel::guRadioPanel( wxWindow * parent, guDbLibrary * db, guPlayerPanel *
             CloseButton( Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON, true, CONFIG_PATH_GENERAL ) ).
             Dockable( true ).Left() );
 
-    wxPanel * StationsPanel;
-	StationsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
-
-	wxBoxSizer * StationsSizer;
-	StationsSizer = new wxBoxSizer( wxVERTICAL );
+    wxPanel * StationsPanel = new wxPanel( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL );
+	wxBoxSizer * StationsSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_StationsListBox = new guRadioStationListBox( StationsPanel, this );
 
 	StationsSizer->Add( m_StationsListBox, 1, wxEXPAND, 5 );
 
 	StationsPanel->SetSizer( StationsSizer );
-	StationsPanel->Layout();
-	StationsSizer->Fit( StationsPanel );
+	//StationsPanel->Layout();
+	//StationsSizer->Fit( StationsPanel );
 
     m_AuiManager.AddPane( StationsPanel, wxAuiPaneInfo().Name( wxT( "RadioStations" ) ).Caption( _( "Stations" ) ).
             MinSize( 50, 50 ).
