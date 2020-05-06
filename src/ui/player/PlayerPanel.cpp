@@ -2599,17 +2599,39 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
         return;
     }
 
-    //guMediaState State;
-    //State = m_MediaCtrl->GetState();
-    //guLogDebug( wxT( "State: %i" ), State );
-    //if( State != guMEDIASTATE_STOPPED )
-    //{
-    m_MediaCtrl->Stop();
-        //UpdatePositionLabel( 0 );
-//        if( m_MediaSong.m_Length )
-//    m_PlayerPositionSlider->SetValue( 0 );
-//    ResetVumeterLevel();
-    //}
+    guMediaState State = m_MediaCtrl->GetState();
+    // guLogDebug( wxT( "State: %i" ), State );
+    if( State != guMEDIASTATE_STOPPED )
+    {
+        m_MediaCtrl->Stop();
+         //UpdatePositionLabel( 0 );
+ //        if( m_MediaSong.m_Length )
+ //    m_PlayerPositionSlider->SetValue( 0 );
+ //    ResetVumeterLevel();
+    } 
+    else 
+    {
+        m_MediaSong.m_Loaded = false;
+        m_MediaSong.m_Type = guTRACK_TYPE_NOTDB;
+        m_MediaSong.m_SongId = 0;
+        m_MediaSong.m_Length = 0;
+        m_LastLength = 0;
+        m_MediaSong.SetCoverImage( new wxImage( guImage( guIMAGE_INDEX_no_cover ) ) );
+        m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
+        m_MediaSong.m_CoverPath = wxEmptyString;
+
+        SetTitleLabel( wxEmptyString );
+        SetAlbumLabel( wxEmptyString );
+        SetArtistLabel( wxEmptyString );
+        SetRatingLabel( 0 );
+        SetBitRateLabel( 0 );
+        UpdatePositionLabel(0);
+        SetCodecLabel( * wxEmptyString, * wxEmptyString);
+        m_YearLabel->SetLabel( wxEmptyString );
+        UpdateCover(false, false);
+        UpdateCoverImage(false);
+        m_PlayListCtrl->ClearItems();
+    }    
     SavePlayedTrack( true );
 }
 
