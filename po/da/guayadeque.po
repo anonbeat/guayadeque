@@ -3,41 +3,38 @@
 # This file is distributed under the same license as the PACKAGE package.
 # 
 # Translators:
-# abc Def <hdogan1974@gmail.com>, 2020
-# Ayca Çelik <aycacelik3@hotmail.com>, 2018
-# Irmak Bıçakçıgil <red.nihi@gmail.com>, 2012
-# Irmak Bıçakçıgil <red.nihi@gmail.com>, 2012-2013
+# Joe Hansen <joedalton2@yahoo.dk>, 2015,2017
 msgid ""
 msgstr ""
 "Project-Id-Version: Guayadeque\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-01-20 20:54+0000\n"
-"PO-Revision-Date: 2020-03-29 15:40+0000\n"
-"Last-Translator: abc Def <hdogan1974@gmail.com>\n"
-"Language-Team: Turkish (Turkey) (http://www.transifex.com/anonbeat/guayadeque/language/tr_TR/)\n"
+"PO-Revision-Date: 2017-09-23 15:55+0000\n"
+"Last-Translator: Joe Hansen <joedalton2@yahoo.dk>\n"
+"Language-Team: Danish (http://www.transifex.com/anonbeat/guayadeque/language/da/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr_TR\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: da\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: AAListBox.cpp:129 Accelerators.cpp:127 AlListBox.cpp:246 ArListBox.cpp:131
 #: FileBrowser.cpp:324 FileBrowser.cpp:1097 MainFrame.cpp:1452
 #: MainFrame.cpp:4519 OnlineLinks.cpp:69 PlayList.cpp:1509 Preferences.cpp:130
 #: SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Preferences"
-msgstr "Tercihler"
+msgstr "Præferencer"
 
 #: AAListBox.cpp:129 AlListBox.cpp:246 ArListBox.cpp:131 FileBrowser.cpp:324
 #: FileBrowser.cpp:1097 PlayList.cpp:1509 SoListBox.cpp:461 TreePanel.cpp:342
 msgid "Add commands in preferences"
-msgstr "Tercihlere komutlar ekle"
+msgstr "Tilføj kommandoer i præferencer"
 
 #: AAListBox.cpp:132 AlListBox.cpp:249 ArListBox.cpp:134 FileBrowser.cpp:327
 #: FileBrowser.cpp:1100 PlayList.cpp:1512 Preferences.cpp:279
 #: SoListBox.cpp:464 TreePanel.cpp:346
 msgid "Commands"
-msgstr "Komutlar"
+msgstr "Kommandoer"
 
 #: AAListBox.cpp:145 Accelerators.cpp:123 AlbumBrowser.cpp:303
 #: AlbumBrowser.cpp:1842 AlbumBrowser.cpp:1977 AlListBox.cpp:263
@@ -49,11 +46,11 @@ msgstr "Komutlar"
 #: RadioPanel.cpp:423 RaListBox.cpp:143 SoListBox.cpp:525 TaListBox.cpp:123
 #: TaskBar.cpp:112 TreePanel.cpp:388 YeListBox.cpp:103
 msgid "Play"
-msgstr "Çal"
+msgstr "Afspil"
 
 #: AAListBox.cpp:146
 msgid "Play current selected album artist"
-msgstr "Seçili albüm sanatçısını çal"
+msgstr "Afspil valgt albumkunstner"
 
 #: AAListBox.cpp:152 Accelerators.cpp:115 AlbumBrowser.cpp:307
 #: AlbumBrowser.cpp:1846 AlbumBrowser.cpp:1981 AlListBox.cpp:269
@@ -65,12 +62,12 @@ msgstr "Seçili albüm sanatçısını çal"
 #: RaListBox.cpp:150 SoListBox.cpp:532 TaListBox.cpp:130 TreePanel.cpp:393
 #: YeListBox.cpp:110
 msgid "Enqueue"
-msgstr "Kuyruğa ekle"
+msgstr "Sæt i kø"
 
 #: AAListBox.cpp:153 CoListBox.cpp:111 PcListBox.cpp:119 RaListBox.cpp:151
 #: YeListBox.cpp:111
 msgid "Add current selected tracks to playlist"
-msgstr "Seçili parçaları çalma istesine ekle"
+msgstr "Tilføj valgte numre til afspilningslisten"
 
 #: AAListBox.cpp:161 AlbumBrowser.cpp:314 AlbumBrowser.cpp:1853
 #: AlbumBrowser.cpp:1988 AlListBox.cpp:277 ArListBox.cpp:163 CoListBox.cpp:119
@@ -81,7 +78,7 @@ msgstr "Seçili parçaları çalma istesine ekle"
 #: RadioPanel.cpp:437 RaListBox.cpp:159 SoListBox.cpp:541 TaListBox.cpp:139
 #: TreePanel.cpp:401 YeListBox.cpp:119
 msgid "Current Track"
-msgstr "Geçerli Parça"
+msgstr "Nuværende nummer"
 
 #: AAListBox.cpp:162 AlbumBrowser.cpp:315 AlbumBrowser.cpp:1854
 #: AlbumBrowser.cpp:1989 ArListBox.cpp:164 FileBrowser.cpp:354
@@ -92,7 +89,7 @@ msgstr "Geçerli Parça"
 #: RaListBox.cpp:160 SoListBox.cpp:542 TaListBox.cpp:140 TreePanel.cpp:402
 #: YeListBox.cpp:120
 msgid "Add current selected tracks to playlist after the current track"
-msgstr "Seçili parçaları çalınan parçadan sonra çalma listesine ekle"
+msgstr "Tilføj valgte numre til afspilningslisten efter nuværende nummer"
 
 #: AAListBox.cpp:168 AlbumBrowser.cpp:320 AlbumBrowser.cpp:1859
 #: AlbumBrowser.cpp:1994 AlListBox.cpp:283 ArListBox.cpp:170 CoListBox.cpp:126
@@ -103,7 +100,7 @@ msgstr "Seçili parçaları çalınan parçadan sonra çalma listesine ekle"
 #: RadioPanel.cpp:444 RaListBox.cpp:166 SoListBox.cpp:548 TaListBox.cpp:146
 #: TreePanel.cpp:407 YeListBox.cpp:126
 msgid "Current Album"
-msgstr "Geçerli Albüm"
+msgstr "Nuværende album"
 
 #: AAListBox.cpp:169 AlbumBrowser.cpp:321 AlbumBrowser.cpp:1860
 #: AlbumBrowser.cpp:1995 ArListBox.cpp:171 FileBrowser.cpp:360
@@ -114,7 +111,7 @@ msgstr "Geçerli Albüm"
 #: RaListBox.cpp:167 SoListBox.cpp:549 TaListBox.cpp:147 TreePanel.cpp:408
 #: YeListBox.cpp:127
 msgid "Add current selected tracks to playlist after the current album"
-msgstr "Seçili parçaları çalınan albümden sonra çalma listesine ekle"
+msgstr "Tilføj valgte numre til afspilningslisten efter det nuværende album"
 
 #: AAListBox.cpp:175 AlbumBrowser.cpp:326 AlbumBrowser.cpp:1865
 #: AlbumBrowser.cpp:2000 AlListBox.cpp:289 ArListBox.cpp:177 CoListBox.cpp:133
@@ -125,7 +122,7 @@ msgstr "Seçili parçaları çalınan albümden sonra çalma listesine ekle"
 #: RadioPanel.cpp:451 RaListBox.cpp:173 SoListBox.cpp:555 TaListBox.cpp:153
 #: TreePanel.cpp:413 YeListBox.cpp:133
 msgid "Current Artist"
-msgstr "Geçerli Sanatçı"
+msgstr "Nuværende kunstner"
 
 #: AAListBox.cpp:176 AlbumBrowser.cpp:327 AlbumBrowser.cpp:1866
 #: AlbumBrowser.cpp:2001 ArListBox.cpp:178 FileBrowser.cpp:366
@@ -136,7 +133,7 @@ msgstr "Geçerli Sanatçı"
 #: RaListBox.cpp:174 SoListBox.cpp:556 TaListBox.cpp:154 TreePanel.cpp:414
 #: YeListBox.cpp:134
 msgid "Add current selected tracks to playlist after the current artist"
-msgstr "Geçerli sanatçıdan sonra seçili geçerli parçaları çalma listesine ekle"
+msgstr "Tilføj valgte numre til afspilningslisten efter den nuværende kunstner"
 
 #: AAListBox.cpp:181 AlbumBrowser.cpp:331 AlbumBrowser.cpp:1870
 #: AlbumBrowser.cpp:2005 AlListBox.cpp:294 ArListBox.cpp:183 CoListBox.cpp:139
@@ -147,19 +144,19 @@ msgstr "Geçerli sanatçıdan sonra seçili geçerli parçaları çalma listesin
 #: RadioPanel.cpp:457 RaListBox.cpp:179 SoListBox.cpp:561 TaListBox.cpp:159
 #: TreePanel.cpp:418 YeListBox.cpp:139
 msgid "Enqueue After"
-msgstr "Ardından kuyruğa ekle"
+msgstr "Sæt i kø efter"
 
 #: AAListBox.cpp:190 AlbumBrowser.cpp:341 AlbumBrowser.cpp:1880
 #: AlbumBrowser.cpp:2015 AlListBox.cpp:307 ArListBox.cpp:198 PcListBox.cpp:156
 #: PlayList.cpp:1538 RaListBox.cpp:188 SoListBox.cpp:576 TreePanel.cpp:440
 #: YeListBox.cpp:148
 msgid "Edit Songs"
-msgstr "Şarkıları Düzenle"
+msgstr "Rediger sange"
 
 #: AAListBox.cpp:191 CoListBox.cpp:149 PcListBox.cpp:157 RaListBox.cpp:189
 #: TreePanel.cpp:441 YeListBox.cpp:149
 msgid "Edit the selected tracks"
-msgstr "Seçili parçaları düzenle"
+msgstr "Rediger de valgte numre"
 
 #: AAListBox.cpp:199 Accelerators.cpp:141 AlbumBrowser.cpp:2023
 #: AlListBox.cpp:335 ArListBox.cpp:207 CoListBox.cpp:157 FileBrowser.cpp:383
@@ -168,86 +165,86 @@ msgstr "Seçili parçaları düzenle"
 #: PlayListPanel.cpp:286 RaListBox.cpp:197 SoListBox.cpp:623 TaListBox.cpp:166
 #: TreePanel.cpp:449 YeListBox.cpp:157
 msgid "Save to Playlist"
-msgstr "Çalma Listesine Kaydet"
+msgstr "Gem til afspilningsliste"
 
 #: AAListBox.cpp:200 AlListBox.cpp:336 YeListBox.cpp:158
 msgid "Save the selected tracks to Playlist"
-msgstr "Seçili parçaları Çalma Listesi'ne kaydet"
+msgstr "Gem de valgte numre til afspilningsliste"
 
 #: Accelerators.cpp:108
 msgid "Add Folder"
-msgstr "Klasör Ekle"
+msgstr "Tilføj mappe"
 
 #: Accelerators.cpp:109
 msgid "Audio Scrobbling"
-msgstr "Müzik Skroplama"
+msgstr "Lydscrobbling"
 
 #: Accelerators.cpp:110 MainFrame.cpp:1511 PlayList.cpp:1606
 msgid "Clear Playlist"
-msgstr "Çalma Listesini Temizle"
+msgstr "Ryd afspilningsliste"
 
 #: Accelerators.cpp:111
 msgid "Close Window"
-msgstr "Pencereyi Kapat"
+msgstr "Luk vindue"
 
 #: Accelerators.cpp:112
 msgid "Community Forums"
-msgstr "Topluluk Forumları"
+msgstr "Fællesskabsforummer"
 
 #: Accelerators.cpp:113 AlbumBrowser.cpp:335 AlbumBrowser.cpp:1874
 #: AlbumBrowser.cpp:2009 AlListBox.cpp:299 ArListBox.cpp:190 PlayList.cpp:1532
 #: SoListBox.cpp:568 TreePanel.cpp:430
 msgid "Edit Labels"
-msgstr "Etiketleri Düzenle"
+msgstr "Rediger etiketter"
 
 #: Accelerators.cpp:114 FileBrowser.cpp:375 FileBrowser.cpp:1154
 msgid "Edit Tracks"
-msgstr "Parçaları Düzenle"
+msgstr "Rediger numre"
 
 #: Accelerators.cpp:116
 msgid "Enqueue After Track"
-msgstr "Parçadan sonra kuyruğa ekle"
+msgstr "Sæt i kø efter nummer"
 
 #: Accelerators.cpp:117
 msgid "Enqueue After Album"
-msgstr "Albümden sonra kuyruğa ekle"
+msgstr "Sæt i kø efter album"
 
 #: Accelerators.cpp:119
 msgid "Enqueue After Artist"
-msgstr "Sanatçıdan sonra kuyruğa ekle"
+msgstr "Sæt i kø efter kunstner"
 
 #: Accelerators.cpp:120 MainFrame.cpp:1423
 msgid "Full Screen"
-msgstr "Tam Ekran"
+msgstr "Fuldskærm"
 
 #: Accelerators.cpp:121
 msgid "Gapless/Crossfading"
-msgstr "Boşluksuz mod/Çapraz Geçiş"
+msgstr "Uden mellemrum/glidende overgang"
 
 #: Accelerators.cpp:122 Accelerators.cpp:411 MainFrame.cpp:1614
 #: MainFrame.cpp:1669
 msgid "Help"
-msgstr "Yardım"
+msgstr "Hjælp"
 
 #: Accelerators.cpp:124
 msgid "Play All"
-msgstr "Tümünü Çal"
+msgstr "Afspil alle"
 
 #: Accelerators.cpp:125
 msgid "Play/Pause"
-msgstr "Çal/Duraklat"
+msgstr "Afspil/pause"
 
 #: Accelerators.cpp:126 MainFrame.cpp:1100 MainFrame.cpp:1997
 msgid "Play Stream"
-msgstr "Akışı Çal"
+msgstr "Afspil strøm"
 
 #: Accelerators.cpp:128 MainFrame.cpp:1154
 msgid "Quit"
-msgstr "Çıkış"
+msgstr "Afslut"
 
 #: Accelerators.cpp:130 PlayList.cpp:1601 PLSoListBox.cpp:160
 msgid "Randomize Playlist"
-msgstr "Karışık Çalma Listesi"
+msgstr "Vilkårlig afspilningsliste"
 
 #: Accelerators.cpp:131 Accelerators.cpp:132 Accelerators.cpp:133
 #: Accelerators.cpp:134 Accelerators.cpp:135 Accelerators.cpp:136
@@ -255,138 +252,138 @@ msgstr "Karışık Çalma Listesi"
 #: SoListBox.cpp:419 TaskBar.cpp:162 TreeViewFilterEditor.cpp:69
 #: TreeViewFilterEditor.cpp:123
 msgid "Rating"
-msgstr "Derecelendirme"
+msgstr "Bedømmelse"
 
 #: Accelerators.cpp:137
 msgid "Repeat All Tracks"
-msgstr "Tüm Parçaları Yeniden Çal"
+msgstr "Gentag alle numre"
 
 #: Accelerators.cpp:138
 msgid "Repeat Current Track"
-msgstr "Çalınan Parçayı Tekrarla"
+msgstr "Gentag nuværende nummer"
 
 #: Accelerators.cpp:139 MainFrame.cpp:1351 MainFrame.cpp:3807
 msgid "Save Layout"
-msgstr "Düzeni Kaydet"
+msgstr "Gem layout"
 
 #: Accelerators.cpp:142 PlayList.cpp:1573
 msgid "Search"
-msgstr "Arama"
+msgstr "Søg"
 
 #: Accelerators.cpp:143
 msgid "Show Browser"
-msgstr "Tarayıcıyı Göster"
+msgstr "Vis browser"
 
 #: Accelerators.cpp:144
 msgid "Show Covers"
-msgstr "Albüm Kapaklarını Göster"
+msgstr "Vis omslag"
 
 #: Accelerators.cpp:145
 msgid "Show Playlist"
-msgstr "Çalma Listesini Göster"
+msgstr "Vis afspilningsliste"
 
 #: Accelerators.cpp:146
 msgid "Show Files"
-msgstr "Dosyaları Göster"
+msgstr "Vis filer"
 
 #: Accelerators.cpp:147
 msgid "Show Filters"
-msgstr "Filtreleri Göster"
+msgstr "Vis filtre"
 
 #: Accelerators.cpp:148
 msgid "Show Last.fm"
-msgstr "Last.fm'i Göster"
+msgstr "Vis Last.fm"
 
 #: Accelerators.cpp:149
 msgid "Show Library"
-msgstr "Kütüphaneyi Göster"
+msgstr "Vis bibliotek"
 
 #: Accelerators.cpp:150
 msgid "Show Lyrics"
-msgstr "Şarkı Sözlerini Göster"
+msgstr "Vis sangtekster"
 
 #: Accelerators.cpp:152
 msgid "Show Radio"
-msgstr "Radyoyu Göster"
+msgstr "Vis radio"
 
 #: Accelerators.cpp:153
 msgid "Show Playlists"
-msgstr "Çalma Listesi'ni Göster"
+msgstr "Vis afspilningslister"
 
 #: Accelerators.cpp:154
 msgid "Show Podcasts"
-msgstr "Podcast'leri Göster"
+msgstr "Vis podcaster"
 
 #: Accelerators.cpp:155
 msgid "Show Sources"
-msgstr "Kaynakları Göster"
+msgstr "Vis kilder"
 
 #: Accelerators.cpp:156
 msgid "Show Status Bar"
-msgstr "Durum Çubuğu'nu Göster"
+msgstr "Vis statuslinje"
 
 #: Accelerators.cpp:157
 msgid "Show VU Meters"
-msgstr "VU Metre'yi göster"
+msgstr "Vis VU-metre"
 
 #: Accelerators.cpp:158
 msgid "Skip Next"
-msgstr "Sonrakine Geç"
+msgstr "Udelad næste"
 
 #: Accelerators.cpp:159
 msgid "Skip Next Album"
-msgstr "Sonraki Albüme Geç"
+msgstr "Udelad næste album"
 
 #: Accelerators.cpp:160
 msgid "Skip Previous"
-msgstr "Öncekine Geç"
+msgstr "Udelad forrige"
 
 #: Accelerators.cpp:161
 msgid "Skip Previous Album"
-msgstr "Önceki Albüme Geç"
+msgstr "Udelad forrige album"
 
 #: Accelerators.cpp:163 MainFrame.cpp:1555
 msgid "Smart Play"
-msgstr "Akıllı Çalma"
+msgstr "Smart afspilning"
 
 #: Accelerators.cpp:164 MainFrame.cpp:1499 TaskBar.cpp:116
 msgid "Stop"
-msgstr "Durdur"
+msgstr "Stop"
 
 #: Accelerators.cpp:165 MainFrame.cpp:1504
 msgid "Stop at End"
-msgstr "Sonunda durdur"
+msgstr "Stop ved slut"
 
 #: Accelerators.cpp:166
 msgid "Update Covers"
-msgstr "Albüm Kapaklarını Güncelle"
+msgstr "Opdater omslag"
 
 #: Accelerators.cpp:167 iPodMedia.cpp:1682 Jamendo.cpp:1128
 #: LocationPanel.cpp:336 LocationPanel.cpp:374 LocationPanel.cpp:509
 #: Magnatune.cpp:1023 MainFrame.cpp:1035 MainFrame.cpp:1073 MainFrame.cpp:1307
 #: MediaViewer.cpp:952 PodcastsPanel.cpp:1757 PortableMedia.cpp:1889
 msgid "Update"
-msgstr "Güncelle"
+msgstr "Opdater"
 
 #: Accelerators.cpp:168
 msgid "Update (Forced)"
-msgstr "Güncelle (Zorlayarak)"
+msgstr "Opdater (tvungen)"
 
 #: Accelerators.cpp:169
 msgid "Update Podcasts"
-msgstr "Podcast'leri Güncelle"
+msgstr "Opdate podcaster"
 
 #: Accelerators.cpp:170 MainFrame.cpp:1584
 msgid "Volume Down"
-msgstr "Sesi Azalt"
+msgstr "Lydstyrke ned"
 
 #: Accelerators.cpp:171 MainFrame.cpp:1579
 msgid "Volume Up"
-msgstr "Sesi Arttır"
+msgstr "Lydstyrke op"
 
 #: Accelerators.cpp:274
 msgid "Shift"
-msgstr "Shift"
+msgstr "Skift"
 
 #: Accelerators.cpp:278
 msgid "Ctrl"
@@ -402,7 +399,7 @@ msgstr "Meta"
 
 #: Accelerators.cpp:303 AlbumBrowser.cpp:840
 msgid "Back"
-msgstr "Geri"
+msgstr "Tilbage"
 
 #: Accelerators.cpp:305
 msgid "Escape"
@@ -410,516 +407,516 @@ msgstr "Escape"
 
 #: Accelerators.cpp:308
 msgid "Space"
-msgstr "Space"
+msgstr "Mellemrum"
 
 #: Accelerators.cpp:311
 msgid "Tab"
-msgstr "Tab"
+msgstr "Tabulator"
 
 #: Accelerators.cpp:313
 msgid "Return"
-msgstr "Geri Dön"
+msgstr "Retur"
 
 #: Accelerators.cpp:315
 msgid "Enter"
-msgstr "Enter"
+msgstr "Retur"
 
 #: Accelerators.cpp:348 Preferences.cpp:1570
 msgid "Left"
-msgstr "Sol"
+msgstr "Venstre"
 
 #: Accelerators.cpp:351
 msgid "Up"
-msgstr "Yukarı"
+msgstr "Op"
 
 #: Accelerators.cpp:354 Preferences.cpp:1572
 msgid "Right"
-msgstr "Sağ"
+msgstr "Højre"
 
 #: Accelerators.cpp:357
 msgid "Down"
-msgstr "Aşağı"
+msgstr "Ned"
 
 #: Accelerators.cpp:359 Accelerators.cpp:415
 msgid "Home"
-msgstr "Home"
+msgstr "Hjem"
 
 #: Accelerators.cpp:362 Accelerators.cpp:369
 msgid "Page Up"
-msgstr "Page Up"
+msgstr "Side op"
 
 #: Accelerators.cpp:365 Accelerators.cpp:372
 msgid "Page Down"
-msgstr "Page Down"
+msgstr "Side ned"
 
 #: Accelerators.cpp:375 PlayListAppend.cpp:69
 msgid "End"
-msgstr "End"
+msgstr "Ned"
 
 #: Accelerators.cpp:377
 msgid "Begin"
-msgstr "Başla"
+msgstr "Begynd"
 
 #: Accelerators.cpp:379 Accelerators.cpp:410
 msgid "Insert"
-msgstr "Insert"
+msgstr "Indsæt"
 
 #: Accelerators.cpp:382 PlayListPanel.cpp:296 PodcastsPanel.cpp:1751
 #: PodcastsPanel.cpp:2085 TaListBox.cpp:115 TreePanel.cpp:375
 msgid "Delete"
-msgstr "Sil"
+msgstr "Slet"
 
 #: Accelerators.cpp:393
 msgid "Separator"
-msgstr "Seperator"
+msgstr "Separator"
 
 #: Accelerators.cpp:406 PlayList.cpp:1662 SoListBox.cpp:667
 msgid "Select"
-msgstr "Seç"
+msgstr "Vælg"
 
 #: Accelerators.cpp:407 LyricsPanel.cpp:308
 msgid "Print"
-msgstr "Yazdır"
+msgstr "Udskriv"
 
 #: Accelerators.cpp:408
 msgid "Execute"
-msgstr "Sergile"
+msgstr "Kør"
 
 #: Accelerators.cpp:409
 msgid "Snapshot"
-msgstr "Ekran görüntüsü"
+msgstr "Øjebliksbillede"
 
 #: Accelerators.cpp:412
 msgid "Cancel"
-msgstr "İptal"
+msgstr "Afbryd"
 
 #: Accelerators.cpp:413
 msgid "Menu"
-msgstr "Menü"
+msgstr "Menu"
 
 #: Accelerators.cpp:414
 msgid "Capital"
-msgstr "Baş"
+msgstr "Versal"
 
 #: AlbumBrowser.cpp:265 AlbumBrowser.cpp:1630 AlbumBrowser.cpp:2459
 #: DynamicPlayList.cpp:118 LibPanel.cpp:395 LibPanel.cpp:540 SmartMode.cpp:467
 msgid "Tracks"
-msgstr "Parçalar"
+msgstr "Numre"
 
 #: AlbumBrowser.cpp:303 AlbumBrowser.cpp:1842 AlbumBrowser.cpp:1977
 #: LastFMPanel.cpp:819
 msgid "Play the album tracks"
-msgstr "Albümdeki parçaları çal"
+msgstr "Afspil albummets numre"
 
 #: AlbumBrowser.cpp:307 AlbumBrowser.cpp:1846 AlbumBrowser.cpp:1981
 #: LastFMPanel.cpp:823
 msgid "Enqueue the album tracks to the playlist"
-msgstr "Albüm parçalarını çalma listesinde kuyruğa ekle"
+msgstr "Sæt albummets numre i kø i afspilningslisten"
 
 #: AlbumBrowser.cpp:335 AlbumBrowser.cpp:1874 AlbumBrowser.cpp:2009
 #: AlListBox.cpp:300
 msgid "Edit the labels assigned to the selected albums"
-msgstr "Seçili albümlere atanmış etiketleri düzenle"
+msgstr "Rediger etiketterne tildelt de valgte album"
 
 #: AlbumBrowser.cpp:341 AlbumBrowser.cpp:1880 AlbumBrowser.cpp:2015
 #: AlListBox.cpp:308
 msgid "Edit the selected songs"
-msgstr "Seçili parçaları düzenle"
+msgstr "Rediger de valge sange"
 
 #: AlbumBrowser.cpp:348 AlbumBrowser.cpp:1887 LastFMPanel.cpp:851
 msgid "Search Album"
-msgstr "Albüm Ara"
+msgstr "Søg efter album"
 
 #: AlbumBrowser.cpp:348 AlbumBrowser.cpp:1887 LastFMPanel.cpp:851
 msgid "Search the album in the library"
-msgstr "Kütüphanede albüm ara"
+msgstr "Søg efter album i biblioteket"
 
 #: AlbumBrowser.cpp:352 AlbumBrowser.cpp:1891 LastFMPanel.cpp:589
 #: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
 msgid "Search Artist"
-msgstr "Sanatçı ara"
+msgstr "Søg kunstner"
 
 #: AlbumBrowser.cpp:352 AlbumBrowser.cpp:1891 LastFMPanel.cpp:589
 #: LastFMPanel.cpp:1045 LastFMPanel.cpp:1249 LastFMPanel.cpp:1457
 msgid "Search the artist in the library"
-msgstr "Kütüphanede sanatçı ara"
+msgstr "Søg efter kunstneren i biblioteket"
 
 #: AlbumBrowser.cpp:360 AlbumBrowser.cpp:1899 AlListBox.cpp:344
 msgid "Download Cover"
-msgstr "Albüm Kapaklarını İndir"
+msgstr "Hent omslag"
 
 #: AlbumBrowser.cpp:360 AlbumBrowser.cpp:1899 AlListBox.cpp:344
 msgid "Download cover for the current selected album"
-msgstr "Seçili albüm için albüm kapağını indir"
+msgstr "Hent omslaget for det valgte album"
 
 #: AlbumBrowser.cpp:364 AlbumBrowser.cpp:1903 AlListBox.cpp:348
 msgid "Select Cover"
-msgstr "Albüm kapağı seç"
+msgstr "Vælg omslag"
 
 #: AlbumBrowser.cpp:364 AlbumBrowser.cpp:1903 AlListBox.cpp:348
 msgid "Select the cover image file from disk"
-msgstr "Bilgisayardan albüm kapağı için görüntü seç"
+msgstr "Vælg omslagets billedfil fra disken"
 
 #: AlbumBrowser.cpp:368 AlbumBrowser.cpp:1907 AlListBox.cpp:352
 msgid "Delete Cover"
-msgstr "Albüm kapağını sil"
+msgstr "Slet omslag"
 
 #: AlbumBrowser.cpp:368 AlbumBrowser.cpp:1907 AlListBox.cpp:352
 msgid "Delete the cover for the selected album"
-msgstr "Seçili albümün albüm kapağını sil"
+msgstr "Slet omslaget for det valgte album"
 
 #: AlbumBrowser.cpp:375 AlbumBrowser.cpp:1914 AlListBox.cpp:359
 msgid "Embed Cover"
-msgstr "Eşleştirilmiş Albüm Kapağı"
+msgstr "Indlejr omslag"
 
 #: AlbumBrowser.cpp:375 AlbumBrowser.cpp:1914
 msgid "Embed the cover to the selected album tracks"
-msgstr "Albüm kapağını seçili albüm parçalarıyla eşleştir"
+msgstr "Indlejr omslaget for de valgte albumnumre"
 
 #: AlbumBrowser.cpp:386 AlListBox.cpp:318 FileBrowser.cpp:763
 #: RadioPanel.cpp:329
 msgid "Name"
-msgstr "İsim"
+msgstr "Navne"
 
 #: AlbumBrowser.cpp:386
 msgid "Sort albums by name"
-msgstr "Albümleri isme göre sırala"
+msgstr "Sorter album efter navn"
 
 #: AlbumBrowser.cpp:390 AlListBox.cpp:319 DynamicPlayList.cpp:55
 #: DynamicPlayList.cpp:133 PlayList.cpp:1656 SoListBox.cpp:417
 #: TreeViewFilterEditor.cpp:68 TreeViewFilterEditor.cpp:123
 msgid "Year"
-msgstr "Yıl"
+msgstr "År"
 
 #: AlbumBrowser.cpp:390
 msgid "Sort albums by year"
-msgstr "Albümleri yıla göre sırala"
+msgstr "Sorter album efter år"
 
 #: AlbumBrowser.cpp:394 AlListBox.cpp:320
 msgid "Year Descending"
-msgstr "Yılları geriye doğru sırala"
+msgstr "År faldende"
 
 #: AlbumBrowser.cpp:394 AlbumBrowser.cpp:410
 msgid "Sort albums by year descendant"
-msgstr "Albümleri azalan yıla göre sırala"
+msgstr "Sorter album efter år faldende"
 
 #: AlbumBrowser.cpp:398
 msgid "Artist Name"
-msgstr "Sanatçı İsmi"
+msgstr "Navn på kunster"
 
 #: AlbumBrowser.cpp:398
 msgid "Sort albums by artist name"
-msgstr "Albümleri sanatçı ismine göre sırala"
+msgstr "Sorter album efter navnet på kunstneren"
 
 #: AlbumBrowser.cpp:402 AlListBox.cpp:322
 msgid "Artist, Year"
-msgstr "Sanatçı, Yıl"
+msgstr "Kunstner, år"
 
 #: AlbumBrowser.cpp:402
 msgid "Sort albums by artist, year"
-msgstr "Albümleri sanatçı, yıl şeklinde sırala"
+msgstr "Sorter album efter kunstner, år"
 
 #: AlbumBrowser.cpp:406 AlListBox.cpp:323
 msgid "Artist, Year Descending"
-msgstr "Sanatçı, Yıl Azalan"
+msgstr "Kunster, år faldende"
 
 #: AlbumBrowser.cpp:406
 msgid "Sort albums by artist, year descendant"
-msgstr "Albümleri sanaçlılara göre düzenle, yıl azalan"
+msgstr "Sorter album efter kunster, år faldende"
 
 #: AlbumBrowser.cpp:410 DynamicPlayList.cpp:60 DynamicPlayList.cpp:138
 #: PodcastsPanel.cpp:1810 SoListBox.cpp:422
 msgid "Added"
-msgstr "Eklendi"
+msgstr "Tilføjet"
 
 #: AlbumBrowser.cpp:414 AlListBox.cpp:328
 msgid "Sort By"
-msgstr "Göre Sırala"
+msgstr "Sorter efter"
 
 #: AlbumBrowser.cpp:414
 msgid "Set the albums sorting"
-msgstr "Albüm sıralamasını ayarla"
+msgstr "Angiv hvordan album sorteres"
 
 #: AlbumBrowser.cpp:418 AlbumBrowser.cpp:1921 LastFMPanel.cpp:597
 #: LastFMPanel.cpp:859 LastFMPanel.cpp:1055 LastFMPanel.cpp:1260
 #: LastFMPanel.cpp:1465 LastFMPanel.cpp:1590 LyricsPanel.cpp:287
 msgid "Copy to Clipboard"
-msgstr "Panoya kopyala"
+msgstr "Kopier til udklipsholderen"
 
 #: AlbumBrowser.cpp:418 AlbumBrowser.cpp:1921 LastFMPanel.cpp:859
 msgid "Copy the album info to clipboard"
-msgstr "Albüm bilgisini panoya kopyala"
+msgstr "Kopier albuminformation til udklipsholderen"
 
 #: AlbumBrowser.cpp:1361 LibPanel.cpp:1149 TreePanel.cpp:1059
 msgid "Albums Labels Editor"
-msgstr "Albüm Etiket Düzenleyicisi"
+msgstr "Redigeringsprogram for albumetiketter"
 
 #: AlbumBrowser.cpp:1604 AlListBox.cpp:486 ItemListBox.cpp:64
 #: PlayerFilters.cpp:107 Preferences.cpp:1819 Preferences.cpp:1916
 #: SmartMode.cpp:396
 msgid "All"
-msgstr "Tümü"
+msgstr "Alle"
 
 #: AlbumBrowser.cpp:1672
 msgid "Page"
-msgstr "Sayfa"
+msgstr "Side"
 
 #: AlbumBrowser.cpp:2024 ArListBox.cpp:208 CoListBox.cpp:158 GeListBox.cpp:136
 #: LastFMPanel.cpp:3196 PcListBox.cpp:166 PlayList.cpp:1590 RaListBox.cpp:198
 #: TaListBox.cpp:167 TreePanel.cpp:450
 msgid "Save the selected tracks to playlist"
-msgstr "Seçili parçaları çalma listesine kaydet"
+msgstr "Gem de valgte numre i afspilningslisten"
 
 #: AlbumBrowser.cpp:2028 PlayList.cpp:1596 SoListBox.cpp:630
 msgid "Create Smart Playlist"
-msgstr "Akıllı Çalma Listesi oluştur"
+msgstr "Opret smart afspilningsliste"
 
 #: AlbumBrowser.cpp:2028 PlayList.cpp:1596 SoListBox.cpp:630
 msgid "Create a smart playlist from this track"
-msgstr "Bu parça için akıllı çalma listesi oluştur"
+msgstr "Opret en smart afspilningsliste fra dette nummer"
 
 #: AlbumBrowser.cpp:2094 LibPanel.cpp:1359 PlayList.cpp:2128
 #: PlayListPanel.cpp:1388 TreePanel.cpp:1323
 msgid "Tracks Labels Editor"
-msgstr "Parça Etiket Düzenleyicisi"
+msgstr "Redigeringsprogram for numres etiketter"
 
 #: AlbumBrowser.cpp:2416 FileBrowser.cpp:1961 FileBrowser.cpp:2098
 #: LibPanel.cpp:1432 PlayList.cpp:1978 PlayListPanel.cpp:1497
 #: TreePanel.cpp:1158 TreePanel.cpp:1430
 msgid "UnNamed"
-msgstr "lendirilmemiş"
+msgstr "Unavngivet"
 
 #: AlbumBrowser.cpp:2465 LibPanel.cpp:272 LibPanel.cpp:279 LibPanel.cpp:528
 #: LocationPanel.cpp:446 MainFrame.cpp:1244
 msgid "Albums"
-msgstr "Albümler"
+msgstr "Album"
 
 #: AlbumBrowser.cpp:2466 SoListBox.cpp:505
 msgid "to"
-msgstr "'a"
+msgstr "til"
 
 #: AlbumBrowser.cpp:2467
 msgid "of"
-msgstr "'in"
+msgstr "af"
 
 #: AlListBox.cpp:177
 msgid "by "
-msgstr "'den"
+msgstr "af "
 
 #: AlListBox.cpp:264
 msgid "Play current selected albums"
-msgstr "Seçili geçerli albümleri çal"
+msgstr "Afspil valgte album"
 
 #: AlListBox.cpp:270
 msgid "Add current selected albums to the Playlist"
-msgstr "Seçili geçerli albümleri Çalma Listesi'ne ekle"
+msgstr "Tilføj valgte album til afspilningslisten"
 
 #: AlListBox.cpp:278 AlListBox.cpp:284 AlListBox.cpp:290 CoListBox.cpp:120
 #: CoListBox.cpp:127 CoListBox.cpp:134
 msgid "Add current selected albums to the Playlist as Next Tracks"
-msgstr "Seçili geçerli albümleri Çalma Listesi'ne Sonraki Parçalar olarak ekle"
+msgstr "Tilføj valgte album til afspilningslisten som næste numre"
 
 #: AlListBox.cpp:294 CoListBox.cpp:139
 msgid "Add the selected albums after"
-msgstr "Seçili albümleri ardından ekle"
+msgstr "Tilføj de valgte album efter"
 
 #: AlListBox.cpp:318
 msgid "Albums are sorted by name"
-msgstr "Albümleri isme göre sırala"
+msgstr "Album sorteres efter navn"
 
 #: AlListBox.cpp:319
 msgid "Albums are sorted by year"
-msgstr "Albümleri yıla göre sırala"
+msgstr "Album sorteres efter år"
 
 #: AlListBox.cpp:320
 msgid "Albums are sorted by year descending"
-msgstr "Albümleri azalan yıla göre sırala"
+msgstr "Album sorteres efter år faldende"
 
 #: AlListBox.cpp:321
 msgid "Artist, Name"
-msgstr "Sanatçı, İsim"
+msgstr "Kunstner, navn"
 
 #: AlListBox.cpp:321
 msgid "Albums are sorted by artist and album name"
-msgstr "Albümleri sanatçı ve albüm ismine göre"
+msgstr "Album sorteres efter kunstner og albumnavn"
 
 #: AlListBox.cpp:322
 msgid "Albums are sorted by artist and year"
-msgstr "Albümleri sanatçı ve yıla göre sırala"
+msgstr "Album sorteres efter kunstner og år"
 
 #: AlListBox.cpp:323
 msgid "Albums are sorted by artist and year descending"
-msgstr "Albümleri sanatçı ve azalan yıla göre sırala"
+msgstr "Album sorteres efter kunstner og år faldende"
 
 #: AlListBox.cpp:328
 msgid "Sets the albums order"
-msgstr "Albüm sıralamasını düzenle"
+msgstr "Sætter albumrækkefølgen"
 
 #: AlListBox.cpp:359
 msgid "Embed the current cover to the album files"
-msgstr "Geçerli albüm kapağını albüm dosyalarıyla eşleştir"
+msgstr "Indlejr det nuværende omslag til albumfilerne"
 
 #: ArListBox.cpp:148 YeListBox.cpp:104
 msgid "Play current selected artists"
-msgstr "Seçili geçerli sanatçıları çal"
+msgstr "Afspil valgte kunstnere"
 
 #: ArListBox.cpp:155
 msgid "Add current selected artists to playlist"
-msgstr "Seçili geçerli sanatçıları çalma listesine ekle"
+msgstr "Tilføj valgte kunstnere til afspilningslisten"
 
 #: ArListBox.cpp:191
 msgid "Edit the labels assigned to the selected artists"
-msgstr "Seçili sanatçıya atanmış etiketleri düzenle"
+msgstr "Rediger etiketterne tildelt til de valgte kunstnere"
 
 #: ArListBox.cpp:199
 msgid "Edit the songs from the selected artists"
-msgstr "Seçili sanatçının şarkılarını düzenle"
+msgstr "Redigere sangene fra de valgte kunstnere"
 
 #: ChannelEditor.cpp:36
 msgid "Podcast Channel Editor"
-msgstr "Podcast Kanal Düzenleyicisi"
+msgstr "Redigeringsprogram for podcastkanal"
 
 #: ChannelEditor.cpp:57
 msgid " Podcast Channel "
-msgstr " Podcast Kanalı "
+msgstr " Podcastkanal "
 
 #: ChannelEditor.cpp:99 PodcastsPanel.cpp:948
 msgid "Description:"
-msgstr "Tanım:"
+msgstr "Beskrivelse:"
 
 #: ChannelEditor.cpp:111 PodcastsPanel.cpp:958
 msgid "Author:"
-msgstr "Yazar:"
+msgstr "Forfatter:"
 
 #: ChannelEditor.cpp:121 PodcastsPanel.cpp:968
 msgid "Owner:"
-msgstr "Sahibi:"
+msgstr "Ejer:"
 
 #: ChannelEditor.cpp:132
 msgid "Download:"
-msgstr "İndir:"
+msgstr "Hent:"
 
 #: ChannelEditor.cpp:139
 msgid "Manually"
-msgstr "El ile"
+msgstr "Manuelt"
 
 #: ChannelEditor.cpp:139
 msgid "Only if contains"
-msgstr "Sadece içeriyorsa"
+msgstr "Kun med indholdet"
 
 #: ChannelEditor.cpp:139
 msgid "Everything"
-msgstr "Her şey"
+msgstr "Alt"
 
 #: ChannelEditor.cpp:152
 msgid "Delete:"
-msgstr "Sil:"
+msgstr "Slet:"
 
 #: ChannelEditor.cpp:156
 msgid "Allow delete old items"
-msgstr "Eski öğelerin silinmesine izin ver"
+msgstr "Tillad sletning af gamle elementer"
 
 #: CoListBox.cpp:104
 msgid "Play current selected composer"
-msgstr "Seçili geçerli besteciyi çal"
+msgstr "Afspil valgt komponist"
 
 #: CoListBox.cpp:148
 msgid "Edit songs"
-msgstr "Şarkıları düzenle"
+msgstr "Rediger sange"
 
 #: Config.cpp:1364 MainFrame.cpp:90
 msgid "My Music"
-msgstr "Müziğim"
+msgstr "Min musik"
 
 #: ConfirmExit.cpp:26
 msgid "Please confirm"
-msgstr "Lütfen doğrulayın"
+msgstr "Bekræft venligst"
 
 #: ConfirmExit.cpp:39
 msgid "Are you sure you want to exit the application?"
-msgstr "Uygulamadan çıkmak istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at afslutte programmet?"
 
 #: ConfirmExit.cpp:45
 msgid "Don't ask again"
-msgstr "Tekrar sorma"
+msgstr "Spørg ikke igen"
 
 #: CopyTo.cpp:885
 #, c-format
 msgid ""
 "Copied %u files (%s)\n"
 "in %s seconds"
-msgstr "%u dosyaları kopyalandı (%s)\n%s saniyede"
+msgstr "Kopierede %u filer (%s)\ni %s sekunder"
 
 #: CopyTo.cpp:890
 msgid "Finished copying files"
-msgstr "Dosyaların kopyalanması tamamlandı"
+msgstr "Færdig med at kopier filer"
 
 #: CoverEdit.cpp:54
 msgid "Cover Editor"
-msgstr "Albüm Kapağı Düzenleyicisi"
+msgstr "Redigeringsprogram for omslag"
 
 #: CoverEdit.cpp:71 LastFMPanel.cpp:1682 LyricsPanel.cpp:111 TrackEdit.cpp:148
 #: TrackEdit.cpp:373 TrackEdit.cpp:415 TrackEdit.cpp:474
 msgid "Artist:"
-msgstr "Sanatçı:"
+msgstr "Kunstner:"
 
 #: CoverEdit.cpp:78 TrackEdit.cpp:172 TrackEdit.cpp:440 TrackEdit.cpp:496
 msgid "Album:"
-msgstr "Albüm:"
+msgstr "Album:"
 
 #: CoverEdit.cpp:85
 msgid "From:"
-msgstr "Kimden:"
+msgstr "Fra:"
 
 #: CoverEdit.cpp:150 SelCoverFile.cpp:67
 msgid "Embed into tracks"
-msgstr "Parçalarla eşleştir"
+msgstr "Indlejr i numre"
 
 #: DbLibrary.cpp:289 DbLibrary.cpp:301 DbLibrary.cpp:1777 DbLibrary.cpp:1789
 #: DbLibrary.cpp:1862 DbLibrary.cpp:1874 Jamendo.cpp:642 PlayerPanel.cpp:1453
 msgid "Unknown"
-msgstr "Bilinmeyen"
+msgstr "Ukendt"
 
 #: DbLibrary.cpp:643
 msgid "Recently added tracks"
-msgstr "Yeni eklenen parçalar"
+msgstr "Seneste tilføjede numre"
 
 #: DbLibrary.cpp:651
 msgid "Last played tracks"
-msgstr "Son çalınan parçalar"
+msgstr "Sidst afspillede numre"
 
 #: DbLibrary.cpp:658
 msgid "Best rated tracks"
-msgstr "En iyi derecelendirilmiş parçalar"
+msgstr "Bedst bedømte numre"
 
 #: DynamicPlayList.cpp:46 DynamicPlayList.cpp:126 PodcastsPanel.cpp:1802
 #: SoListBox.cpp:409
 msgid "Title"
-msgstr "Başlık"
+msgstr "Titel"
 
 #: DynamicPlayList.cpp:47 DynamicPlayList.cpp:127 PlayList.cpp:1644
 #: SoListBox.cpp:410 SoListBox.cpp:655 TreeViewFilterEditor.cpp:64
 #: TreeViewFilterEditor.cpp:123
 msgid "Artist"
-msgstr "Sanatçı"
+msgstr "Kunstner"
 
 #: DynamicPlayList.cpp:48 DynamicPlayList.cpp:128 LibPanel.cpp:368
 #: LibPanel.cpp:375 PlayList.cpp:1647 SoListBox.cpp:411 SoListBox.cpp:658
 #: TreeViewFilterEditor.cpp:66 TreeViewFilterEditor.cpp:123
 msgid "Album Artist"
-msgstr "Albüm Sanatçısı"
+msgstr "Albummets kunstner"
 
 #: DynamicPlayList.cpp:49 DynamicPlayList.cpp:129 PlayList.cpp:1653
 #: Preferences.cpp:975 SoListBox.cpp:412 SoListBox.cpp:664
 #: TreeViewFilterEditor.cpp:67 TreeViewFilterEditor.cpp:123
 msgid "Album"
-msgstr "Albüm"
+msgstr "Album"
 
 #: DynamicPlayList.cpp:50 DynamicPlayList.cpp:130 PlayList.cpp:1659
 #: RadioPanel.cpp:589 ShoutcastRadio.cpp:140 SoListBox.cpp:413
 #: SoListBox.cpp:652 TreeViewFilterEditor.cpp:63
 msgid "Genre"
-msgstr "Tür"
+msgstr "Genre"
 
 #: DynamicPlayList.cpp:51 DynamicPlayList.cpp:131
 msgid "Label"
@@ -929,43 +926,43 @@ msgstr "Etiket"
 #: SoListBox.cpp:414 SoListBox.cpp:661 TreeViewFilterEditor.cpp:65
 #: TreeViewFilterEditor.cpp:123
 msgid "Composer"
-msgstr "Besteleyen"
+msgstr "Komponist"
 
 #: DynamicPlayList.cpp:53
 msgid "Comment"
-msgstr "Yorum"
+msgstr "Kommentar"
 
 #: DynamicPlayList.cpp:54 SoListBox.cpp:424
 msgid "Path"
-msgstr "Dizin"
+msgstr "Sti"
 
 #: DynamicPlayList.cpp:57 DynamicPlayList.cpp:135 PodcastsPanel.cpp:1806
 #: SoListBox.cpp:416
 msgid "Length"
-msgstr "Uzunluk"
+msgstr "Længde"
 
 #: DynamicPlayList.cpp:58 DynamicPlayList.cpp:136 LibPanel.cpp:330
 #: LibPanel.cpp:337 LibPanel.cpp:534 MainFrame.cpp:1259 PodcastsPanel.cpp:1808
 #: SoListBox.cpp:420
 msgid "Plays"
-msgstr "Çalma"
+msgstr "Afspilninger"
 
 #: DynamicPlayList.cpp:59 DynamicPlayList.cpp:137 PodcastsPanel.cpp:1809
 #: SoListBox.cpp:421
 msgid "Last Played"
-msgstr "Son Çalınan"
+msgstr "Sidst afspillet"
 
 #: DynamicPlayList.cpp:61
 msgid "Track Number"
-msgstr "Numarası"
+msgstr "Nummer i rækkefølgen"
 
 #: DynamicPlayList.cpp:62 SoListBox.cpp:418
 msgid "Bit Rate"
-msgstr "Bit Rate"
+msgstr "Bithastighed"
 
 #: DynamicPlayList.cpp:63 FileBrowser.cpp:764
 msgid "Size"
-msgstr "Boyut"
+msgstr "Størrelse"
 
 #: DynamicPlayList.cpp:64 SoListBox.cpp:415
 msgid "Disc"
@@ -973,296 +970,296 @@ msgstr "Disk"
 
 #: DynamicPlayList.cpp:65
 msgid "Has Cover"
-msgstr "Albüm Kapağı var"
+msgstr "Har omslag"
 
 #: DynamicPlayList.cpp:70 DynamicPlayList.cpp:80
 msgid "contains"
-msgstr "içerir"
+msgstr "indeholder"
 
 #: DynamicPlayList.cpp:71 DynamicPlayList.cpp:81
 msgid "does not contain"
-msgstr "içermez"
+msgstr "indeholder ikke"
 
 #: DynamicPlayList.cpp:72 DynamicPlayList.cpp:82 DynamicPlayList.cpp:91
 #: DynamicPlayList.cpp:99
 msgid "is"
-msgstr "'dir"
+msgstr "er"
 
 #: DynamicPlayList.cpp:73 DynamicPlayList.cpp:83 DynamicPlayList.cpp:92
 #: DynamicPlayList.cpp:100
 msgid "is not"
-msgstr "değil"
+msgstr "er ikke"
 
 #: DynamicPlayList.cpp:74 DynamicPlayList.cpp:84
 msgid "begins with"
-msgstr "ile başlıyor"
+msgstr "begynder med"
 
 #: DynamicPlayList.cpp:75 DynamicPlayList.cpp:85
 msgid "ends with"
-msgstr "ile bitiyor"
+msgstr "slutter med"
 
 #: DynamicPlayList.cpp:86
 msgid "not set"
-msgstr "ayarlanmamış"
+msgstr "ikke angivet"
 
 #: DynamicPlayList.cpp:93
 msgid "at least"
-msgstr "en az"
+msgstr "mindst"
 
 #: DynamicPlayList.cpp:94
 msgid "at most"
-msgstr "en çok"
+msgstr "højst"
 
 #: DynamicPlayList.cpp:101
 msgid "after"
-msgstr "sonra"
+msgstr "efter"
 
 #: DynamicPlayList.cpp:102
 msgid "before"
-msgstr "önce"
+msgstr "før"
 
 #: DynamicPlayList.cpp:107
 msgid "in the last"
-msgstr "son olarak"
+msgstr "til sidst"
 
 #: DynamicPlayList.cpp:108
 msgid "before the last"
-msgstr "sonuncudan önce"
+msgstr "før sidst"
 
 #: DynamicPlayList.cpp:113
 msgid "false"
-msgstr "yanlış"
+msgstr "falsk"
 
 #: DynamicPlayList.cpp:114
 msgid "true"
-msgstr "doğru"
+msgstr "sand"
 
 #: DynamicPlayList.cpp:119 SmartMode.cpp:468
 msgid "Minutes"
-msgstr "Dakika"
+msgstr "Minutter"
 
 #: DynamicPlayList.cpp:139
 msgid "Random"
-msgstr "Karışık"
+msgstr "Vilkårlig"
 
 #: DynamicPlayList.cpp:144 Preferences.cpp:629
 msgid "minutes"
-msgstr "dakika"
+msgstr "minutter"
 
 #: DynamicPlayList.cpp:145
 msgid "hours"
-msgstr "saat"
+msgstr "timer"
 
 #: DynamicPlayList.cpp:146
 msgid "days"
-msgstr "gün"
+msgstr "dage"
 
 #: DynamicPlayList.cpp:147
 msgid "weeks"
-msgstr "hafta"
+msgstr "uger"
 
 #: DynamicPlayList.cpp:148
 msgid "months"
-msgstr "ay"
+msgstr "måneder"
 
 #: DynamicPlayList.cpp:439
 msgid "Filter Album Browser"
-msgstr "Dosya Tarayıcı Filtresi"
+msgstr "Filteralbumbrowser"
 
 #: DynamicPlayList.cpp:440
 msgid "Dynamic Playlist Editor"
-msgstr "Dinamik Çalma Listesi Düzenleyicisi"
+msgstr "Redigeringsprogram for dynamisk afspilningsliste"
 
 #: DynamicPlayList.cpp:458 FileRenamer.cpp:67 LyricsPanel.cpp:2102
 #: PortableMedia.cpp:998 Preferences.cpp:2105 Preferences.cpp:2226
 #: Preferences.cpp:2351 RadioEditor.cpp:44 TreeViewFilterEditor.cpp:45
 msgid "Name:"
-msgstr "İsim:"
+msgstr "Navn:"
 
 #: DynamicPlayList.cpp:467
 msgid " Current Filters "
-msgstr " Geçerli Filtreler "
+msgstr " Nuværende filtre "
 
 #: DynamicPlayList.cpp:548
 msgid " Result "
-msgstr " Sonuç "
+msgstr " Resultat "
 
 #: DynamicPlayList.cpp:553 SmartMode.cpp:456
 msgid "Limit to"
-msgstr "Sınırı"
+msgstr "Begræns til"
 
 #: DynamicPlayList.cpp:573
 msgid "Any filter selects tracks"
-msgstr "Herhangi bir filtre parçaları seçer"
+msgstr "Ethvert filter vælger numre"
 
 #: DynamicPlayList.cpp:584
 msgid "Sort by"
-msgstr "-e göre sırala"
+msgstr "Sorter efter"
 
 #: DynamicPlayList.cpp:594
 msgid "Descending"
-msgstr "Azalan"
+msgstr "Faldende"
 
 #: DynamicPlayList.cpp:612
 msgid "Add tracks on any criteria"
-msgstr "Parçaları herhangi bir kritere göre ekle"
+msgstr "Tilføj numre ved alle kriterier"
 
 #: Equalizer.cpp:70
 msgid "Equalizer"
-msgstr "Ekolayzer"
+msgstr "Equalizer"
 
 #: Equalizer.cpp:112
 msgid "Preset:"
-msgstr "Ön Seçim:"
+msgstr "Nulstilling:"
 
 #: FileBrowser.cpp:226 FileBrowser.cpp:586
 msgid "See used locations"
-msgstr "Kullanılan konumlara bak"
+msgstr "Se anvendte placeringer"
 
 #: FileBrowser.cpp:227 FileBrowser.cpp:587
 msgid "See system files"
-msgstr "Sistem dosyalarına bak"
+msgstr "Se systemfiler"
 
 #: FileBrowser.cpp:340
 msgid "Play the selected folder"
-msgstr "Seçili klasörü çal"
+msgstr "Afspil den valgte mappe"
 
 #: FileBrowser.cpp:346
 msgid "Add the selected folder to playlist"
-msgstr "Seçili klasörleri çalma listesine ekle"
+msgstr "Tilføj den valgte mappe til afspilningslisten"
 
 #: FileBrowser.cpp:376
 msgid "Edit the tracks in the selected folder"
-msgstr "Seçili klasördeki parçaları düzenle"
+msgstr "Rediger numrene i den valge mappe"
 
 #: FileBrowser.cpp:384
 msgid "Add the tracks in the selected folder to a playlist"
-msgstr "Seçili klasördeki parçaları çalma listesine ekle"
+msgstr "Tilføj numrene i den valgte mappe til en afspilningsliste"
 
 #: FileBrowser.cpp:391 FileBrowser.cpp:1170
 msgid "Copy"
-msgstr "Kopyala"
+msgstr "Kopier"
 
 #: FileBrowser.cpp:392 FileBrowser.cpp:1170
 msgid "Copy the selected folder to clipboard"
-msgstr "Seçili klasörü panoya kopyala"
+msgstr "Kopier den valgte mappe til udklipsholderen"
 
 #: FileBrowser.cpp:398 FileBrowser.cpp:1174 LyricsPanel.cpp:299
 msgid "Paste"
-msgstr "Yapıştır"
+msgstr "Indsæt"
 
 #: FileBrowser.cpp:399
 msgid "Paste to the selected folder"
-msgstr "Seçili klasöre yapıştır"
+msgstr "Indsæt i den valgte mappe"
 
 #: FileBrowser.cpp:414 FileBrowser.cpp:471 FileBrowser.cpp:475
 msgid "New Folder"
-msgstr "Yeni klasör"
+msgstr "Ny mappe"
 
 #: FileBrowser.cpp:414
 msgid "Create a new folder"
-msgstr "Yeni klasör oluştur"
+msgstr "Opret en ny mappe"
 
 #: FileBrowser.cpp:417 PlayListPanel.cpp:291 TaListBox.cpp:111
 msgid "Rename"
-msgstr "Yeniden isimlendir"
+msgstr "Omdøb"
 
 #: FileBrowser.cpp:417
 msgid "Rename the selected folder"
-msgstr "Seçili klasörü yeniden isimlendir"
+msgstr "Omdøb den valgte mappe"
 
 #: FileBrowser.cpp:421 FileBrowser.cpp:1195
 msgid "Remove"
-msgstr "Kaldır"
+msgstr "Fjern"
 
 #: FileBrowser.cpp:421
 msgid "Remove the selected folder"
-msgstr "Seçili klasörü kaldır"
+msgstr "Fjern den valge mappe"
 
 #: FileBrowser.cpp:552
 msgid "Are you sure to delete the selected path ?"
-msgstr "Seçili dizinin silinmesini istediğinizden emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette den valgte sti?"
 
 #: FileBrowser.cpp:553 FileBrowser.cpp:2204 LabelEditor.cpp:310
 #: LibPanel.cpp:1227 PlayListPanel.cpp:1116 PodcastsPanel.cpp:1237
 #: PodcastsPanel.cpp:1623 ShoutcastRadio.cpp:368 ShoutcastRadio.cpp:448
 #: TaListBox.cpp:203 TreePanel.cpp:1232
 msgid "Confirm"
-msgstr "Onayla"
+msgstr "Bekræft"
 
 #: FileBrowser.cpp:563
 msgid "Error deleting the folder "
-msgstr "Klasör silinirken hata meydana geldi "
+msgstr "Fejl ved slenting af mappen "
 
 #: FileBrowser.cpp:564 MediaViewer.cpp:1461 SelCoverFile.cpp:40
 msgid "Error"
-msgstr "Hata"
+msgstr "Fejl"
 
 #: FileBrowser.cpp:765
 msgid "Modified"
-msgstr "Değiştirildi"
+msgstr "Ændret"
 
 #: FileBrowser.cpp:1113
 msgid "Play current selected files"
-msgstr "Seçili dosyaları çal"
+msgstr "Afspil valgte filer"
 
 #: FileBrowser.cpp:1119
 msgid "Add current selected files to playlist"
-msgstr "Seçili geçerli dosyaları çalma listesine ekle"
+msgstr "Tilføj valgte filer til afspilningslisten"
 
 #: FileBrowser.cpp:1155
 msgid "Edit the current selected files"
-msgstr "Seçili geçerli dosyaları düzenle"
+msgstr "Rediger de valgte filer"
 
 #: FileBrowser.cpp:1163
 msgid "Add the current selected tracks to a playlist"
-msgstr "Seçili geçerli parçaları çalma listesine ekle"
+msgstr "Tilføj de valgte numre til en afspilningsliste"
 
 #: FileBrowser.cpp:1174
 msgid "Paste to the selected dir"
-msgstr "Seçili dizine yapıştır"
+msgstr "Indsæt i den valgte mappe"
 
 #: FileBrowser.cpp:1191 FileRenamer.cpp:47
 msgid "Rename Files"
-msgstr "Dosyaları yeniden isimlendir"
+msgstr "Omdøb filer"
 
 #: FileBrowser.cpp:1191
 msgid "Rename the current selected file"
-msgstr "Seçili geçerli dosyaları yeniden isimlendir"
+msgstr "Omdøb de valgte filer"
 
 #: FileBrowser.cpp:1195
 msgid "Delete the selected files"
-msgstr "Seçili dosyaları sil"
+msgstr "Slet de valgte filer"
 
 #: FileBrowser.cpp:1544 FileBrowser.cpp:1560
 msgid "Directories"
-msgstr "Dizinler"
+msgstr "Mapper"
 
 #: FileBrowser.cpp:2203
 msgid "Are you sure to delete the selected files ?"
-msgstr "Seçili dosyaları silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette de valgte filer?"
 
 #: FileBrowser.cpp:2221
 msgid "There was an error deleting "
-msgstr "Silinirken bir hata meydana geldi "
+msgstr "Der opstod en fejl under sletning "
 
 #: FileBrowser.cpp:2222
 msgid ""
 "\n"
 "Continue deleting?"
-msgstr "\nSilmeye devam edilsin mi?"
+msgstr "\nFortsæt sletning?"
 
 #: FileBrowser.cpp:2223
 msgid "Continue"
-msgstr "Devam et"
+msgstr "Fortsæt"
 
 #: FileRenamer.cpp:55
 msgid " Names Preview "
-msgstr " İsim Önizleme "
+msgstr " Navneforhåndsvisning "
 
 #: FileRenamer.cpp:74 Preferences.cpp:2358
 msgid "Pattern:"
-msgstr "Şablon:"
+msgstr "Mønster:"
 
 #: FileRenamer.cpp:82
 msgid ""
@@ -1276,788 +1273,788 @@ msgid ""
 "{n} : Number\n"
 "{y} : Year\n"
 "{d} : Disk"
-msgstr "Şablon kısaltmaları:\n{g} : Tür\n{a} : Sanatçı\n{aa}: Albüm Sanatçısı\n{A} : {aa} ya da {a}⏎\n{b} : albüm\n{t} : Başlık\n{n} : Numara\n{y} : Yıl\n{d} : Disk"
+msgstr "Mønsterflag:\n{g} : Genre\n{a} : Kunstner\n{aa}: Albummets kunstner\n{A} : {aa} eller {a}\n{b} : Album\n{t} : Titel\n{n} : Nummer i rækkefølgen\n{y} : År\n{d} : Disk"
 
 #: GeListBox.cpp:93
 msgid "Play current selected genres"
-msgstr "Seçili geçerli türleri çal"
+msgstr "Afspil valgte genre"
 
 #: GeListBox.cpp:100
 msgid "Add current selected genres to playlist"
-msgstr "Seçili geçerli türleri çalma listesine ekle"
+msgstr "Tilføj valgte genre til afspilningsliste"
 
 #: ImportFiles.cpp:47 LocationPanel.cpp:501 MainFrame.cpp:1299
 #: MediaViewer.cpp:946
 msgid "Import Files"
-msgstr "Dosyaları İçe Aktar"
+msgstr "Importer filer"
 
 #: ImportFiles.cpp:82
 msgid "Copy to Option:"
-msgstr "Seçime Kopyala:"
+msgstr "Kopier til indstilling:"
 
 #: ImportFiles.cpp:111
 msgid "Destination Folder:"
-msgstr "Hedef Klasör:"
+msgstr "Destinationsmappe:"
 
 #: ImportFiles.cpp:115 Preferences.cpp:1264
 msgid "Select a folder"
-msgstr "Bir klasör seç"
+msgstr "Vælg en mappe"
 
 #: ImportFiles.cpp:121
 msgid " Files "
-msgstr " Dosyalar "
+msgstr " Filer "
 
 #: ImportFiles.cpp:228
 msgid "Select files"
-msgstr "Dosyaları seç"
+msgstr "Vælg filer"
 
 #: ImportFiles.cpp:229
 msgid "Audio files"
-msgstr "Ses dosyaları"
+msgstr "Lydfiler"
 
 #: ImportFiles.cpp:230
 msgid "mp3 files"
-msgstr "mp3 dosyaları"
+msgstr "mp3-filer"
 
 #: ImportFiles.cpp:231
 msgid "ogg files"
-msgstr "ogg dosyaları"
+msgstr "ogg-filer"
 
 #: ImportFiles.cpp:232
 msgid "flac files"
-msgstr "flac dosyaları"
+msgstr "flac-filer"
 
 #: ImportFiles.cpp:233
 msgid "mp4 files"
-msgstr "mp4 dosyaları"
+msgstr "mp4-filer"
 
 #: ImportFiles.cpp:234
 msgid "wma files"
-msgstr "wma dosyaları"
+msgstr "wma-filer"
 
 #: ImportFiles.cpp:235
 msgid "ape files"
-msgstr "ape dosyaları"
+msgstr "ape-filer"
 
 #: ImportFiles.cpp:236
 msgid "waf files"
-msgstr "waf dosyaları"
+msgstr "waf-filer"
 
 #: ImportFiles.cpp:237
 msgid "aif files"
-msgstr "aif dosyaları"
+msgstr "aif-filer"
 
 #: ImportFiles.cpp:238
 msgid "wv files"
-msgstr "ww dosyaları"
+msgstr "wv-filer"
 
 #: ImportFiles.cpp:239
 msgid "tta files"
-msgstr "tta dosyaları"
+msgstr "tta-filer"
 
 #: ImportFiles.cpp:240
 msgid "mpc files"
-msgstr "mpc dosyaları"
+msgstr "mpc-filer"
 
 #: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
 #: MediaViewer.cpp:1397 Preferences.cpp:947
 msgid "track"
-msgstr "parça"
+msgstr "nummer"
 
 #: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
 #: MediaViewer.cpp:1397 Preferences.cpp:1052
 msgid "tracks"
-msgstr "parçayı tekrarlama"
+msgstr "numre"
 
 #: ImportFiles.cpp:327
 msgid "No files added"
-msgstr "Hiç dosya eklenmedi"
+msgstr "Ingen filer tilføjet"
 
 #: iPodMedia.cpp:1682 Jamendo.cpp:1128 LocationPanel.cpp:510
 #: Magnatune.cpp:1023 MainFrame.cpp:1308 MediaViewer.cpp:952
 #: PortableMedia.cpp:1889
 msgid "Update the collection library"
-msgstr "Koleksiyon kütüphanesini güncelle"
+msgstr "Opdater bibliotekssamlingen"
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:515
 #: Magnatune.cpp:1026 MainFrame.cpp:1313 MediaViewer.cpp:955
 #: PortableMedia.cpp:1892
 msgid "Rescan"
-msgstr "Yeniden Tara"
+msgstr "Skan igen"
 
 #: iPodMedia.cpp:1685 Jamendo.cpp:1131 LocationPanel.cpp:516
 #: Magnatune.cpp:1026 MainFrame.cpp:1314 MediaViewer.cpp:955
 #: PortableMedia.cpp:1892
 msgid "Rescan the collection library"
-msgstr "Koleksiyon kütüphanesini tekrar tara"
+msgstr "Skan bibliotekssamlingen igen"
 
 #: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:521
 #: Magnatune.cpp:1029 MainFrame.cpp:1319 MediaViewer.cpp:958
 #: PortableMedia.cpp:1895
 msgid "Search Covers"
-msgstr "Albüm kapaklarını ara"
+msgstr "Søg efter omslag"
 
 #: iPodMedia.cpp:1688 Jamendo.cpp:1134 LocationPanel.cpp:522
 #: Magnatune.cpp:1029 MainFrame.cpp:1320 MediaViewer.cpp:958
 #: PortableMedia.cpp:1895
 msgid "Search the collection missing covers"
-msgstr "Koleksiyondaki eksik albüm kapaklarını ara"
+msgstr "Søg efter samlingens manglende omslag"
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1328
 #: PortableMedia.cpp:1900
 msgid "Unmount"
-msgstr "Bağlantıyı Kes"
+msgstr "Afmonter"
 
 #: iPodMedia.cpp:1693 LocationPanel.cpp:530 MainFrame.cpp:1328
 #: PortableMedia.cpp:1900
 msgid "Unmount the device"
-msgstr "Aygıtı çıkar"
+msgstr "Afmonter enheden"
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:343
 #: LocationPanel.cpp:382 LocationPanel.cpp:537 Magnatune.cpp:1034
 #: MainFrame.cpp:1042 MainFrame.cpp:1081 MainFrame.cpp:1335
 #: MediaViewer.cpp:963 PodcastsPanel.cpp:1763 PortableMedia.cpp:1905
 msgid "Properties"
-msgstr "Özellikler"
+msgstr "Egenskaber"
 
 #: iPodMedia.cpp:1698 Jamendo.cpp:1139 LocationPanel.cpp:537
 #: Magnatune.cpp:1034 MainFrame.cpp:1335 MediaViewer.cpp:963
 #: PortableMedia.cpp:1905
 msgid "Show collection properties"
-msgstr "Koleksiyon özelliklerini göster"
+msgstr "Vis samlingens egenskaber"
 
 #: Jamendo.cpp:1109 Jamendo.cpp:1119 Magnatune.cpp:1009 Magnatune.cpp:1016
 msgid "Download Albums"
-msgstr "Albümleri İndir"
+msgstr "Hent album"
 
 #: Jamendo.cpp:1109 Jamendo.cpp:1112 Jamendo.cpp:1119 Jamendo.cpp:1122
 #: Magnatune.cpp:1009 Magnatune.cpp:1016
 msgid "Download the current selected album"
-msgstr "Seçili geçerli albümleri indir"
+msgstr "Hent det valgte album"
 
 #: Jamendo.cpp:1112 Jamendo.cpp:1122
 msgid "Download Albums torrents"
-msgstr "Albüm torrentlerini indir"
+msgstr "Hent albumtorrenter"
 
 #: LabelEditor.cpp:70
 msgid " Items "
-msgstr " Öğeler "
+msgstr " Elementer "
 
 #: LabelEditor.cpp:91
 msgid " Labels "
-msgstr " Etiketler "
+msgstr " Etiketter "
 
 #: LabelEditor.cpp:119
 msgid "Add a new label"
-msgstr "Yeni etiket ekle"
+msgstr "Tilføj en ny etiket"
 
 #: LabelEditor.cpp:125
 msgid "Delete the current selected label"
-msgstr "Seçili geçerli etiketi sil"
+msgstr "Slet den valgte etiket"
 
 #: LabelEditor.cpp:131
 msgid "Copy the label selection to all the items"
-msgstr "Tüm öğelerin etiket bilgisini kopyala"
+msgstr "Kopier etiketvalget til alle elementer"
 
 #: LabelEditor.cpp:286 TaListBox.cpp:185 TaListBox.cpp:226
 msgid "Label Name: "
-msgstr "Etiket İsmi: "
+msgstr "Etiketnavn: "
 
 #: LabelEditor.cpp:286 TaListBox.cpp:185
 msgid "Please enter the label name"
-msgstr "Lütfen etiket ismini girin"
+msgstr "Indtast venligst etiketnavnet"
 
 #: LabelEditor.cpp:309 TaListBox.cpp:202
 msgid "Are you sure to delete the selected labels?"
-msgstr "Seçili etiketleri silmek istediğinizden emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette de valgte etiketter?"
 
 #: LastFMPanel.cpp:440 LastFMPanel.cpp:675
 msgid "Less..."
-msgstr "Daha az.."
+msgstr "Mindre ..."
 
 #: LastFMPanel.cpp:440 LastFMPanel.cpp:675
 msgid "More..."
-msgstr "Daha fazla..."
+msgstr "Mere ..."
 
 #: LastFMPanel.cpp:557 LastFMPanel.cpp:1013 LastFMPanel.cpp:1213
 #: LastFMPanel.cpp:1421 LastFMPanel.cpp:3164
 msgid "Play the artist tracks"
-msgstr "Sanatçının parçalarını çal"
+msgstr "Afspil kunstnerens numre"
 
 #: LastFMPanel.cpp:561 LastFMPanel.cpp:1017 LastFMPanel.cpp:1217
 #: LastFMPanel.cpp:1425 LastFMPanel.cpp:3168
 msgid "Enqueue the artist tracks to the playlist"
-msgstr "Sanatçının parçalarını çalma listesi kuyruğuna ekle"
+msgstr "Sæt kunstnerens numre i kø i afspilningslisten"
 
 #: LastFMPanel.cpp:597
 msgid "Copy the artist name to clipboard"
-msgstr "Sanatçı ismini panoya kopyala"
+msgstr "Kopier kunstnernavnet til udklipsholderen"
 
 #: LastFMPanel.cpp:605 LastFMPanel.cpp:867 LastFMPanel.cpp:1063
 #: LastFMPanel.cpp:1268 LastFMPanel.cpp:1473 LastFMPanel.cpp:1598
 msgid "Visit last.fm page for this item"
-msgstr "Bu öğe için Last.fm sayfasını ziyaret et"
+msgstr "Besøg last.fm-siden for dette element"
 
 #: LastFMPanel.cpp:630
 msgid "There is no information available for this artist."
-msgstr "Bu sanatçı hakkında bilgi bulunamıyor."
+msgstr "Der er ingen information tilgængelig for denne kunstner."
 
 #: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
 msgid "Show Artist Info"
-msgstr "Sanatçı Bilgisini Göster"
+msgstr "Vis information om kunstner"
 
 #: LastFMPanel.cpp:1053 LastFMPanel.cpp:1257
 msgid "Update the information with the current selected artist"
-msgstr "Seçili geçerli sanatçının bilgisini güncelle"
+msgstr "Opdater informationen med den valgte kunstner"
 
 #: LastFMPanel.cpp:1055
 msgid "Copy the artist info to clipboard"
-msgstr "Sanatçı bilgisini panoya kopyala"
+msgstr "Kopier information om kunstneren til udklipsholderen"
 
 #: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
 msgid "Search Track"
-msgstr "Parça Ara"
+msgstr "Søg efter nummer"
 
 #: LastFMPanel.cpp:1245 LastFMPanel.cpp:1453
 msgid "Search the track in the library"
-msgstr "Parçayı kütüphanede ara"
+msgstr "Søg efter nummeret i biblioteket"
 
 #: LastFMPanel.cpp:1260 LastFMPanel.cpp:1465
 msgid "Copy the track info to clipboard"
-msgstr "Parça bilgisini panoya kopyala"
+msgstr "Kopier information om nummeret til udklipsholderen"
 
 #: LastFMPanel.cpp:1359
 #, c-format
 msgid ""
 "%s\n"
 "%i plays by %u users"
-msgstr "%s\n%u kullanıcısı tarafından %i çalma"
+msgstr "%s\n%i afspilninger af %u brugere"
 
 #: LastFMPanel.cpp:1590
 msgid "Copy the event info to clipboard"
-msgstr "Etkinlik bilgisini panoya kopyala"
+msgstr "Kopier information om hændelsen til udklipsholderen"
 
 #: LastFMPanel.cpp:1665 LyricsPanel.cpp:81
 msgid "Follow player"
-msgstr "Aşağıda oynat"
+msgstr "Følg afspiller"
 
 #: LastFMPanel.cpp:1691 LyricsPanel.cpp:121 TrackEdit.cpp:380
 msgid "Track:"
-msgstr "Parça:"
+msgstr "Nummer:"
 
 #: LastFMPanel.cpp:1711
 msgid "Artist Info"
-msgstr "Albüm Bilgisi"
+msgstr "Kunstnerinfo"
 
 #: LastFMPanel.cpp:1746
 msgid "Top Albums"
-msgstr "En İyi Albümler"
+msgstr "Bedste album"
 
 #: LastFMPanel.cpp:1788
 msgid "Top Tracks"
-msgstr "En İyi Parçalar"
+msgstr "Bedste numre"
 
 #: LastFMPanel.cpp:1829
 msgid "Similar Artists"
-msgstr "Benzer Sanatçılar"
+msgstr "Lignende kunstnere"
 
 #: LastFMPanel.cpp:1870
 msgid "Similar Tracks"
-msgstr "Benzer Parçalar"
+msgstr "Lignende numre"
 
 #: LastFMPanel.cpp:1911
 msgid "Events"
-msgstr "Etkinlikler"
+msgstr "Hændelser"
 
 #: LastFMPanel.cpp:3340
 msgid "Unnamed"
-msgstr "İsimlendirilmemiş"
+msgstr "Unavngivet"
 
 #: LibPanel.cpp:219 LibPanel.cpp:226 LibPanel.cpp:522 LocationPanel.cpp:329
 #: LocationPanel.cpp:426 MainFrame.cpp:1028 MainFrame.cpp:1224
 #: RadioPanel.cpp:620 TreeViewFilterEditor.cpp:123
 msgid "Genres"
-msgstr "Türler"
+msgstr "Genre"
 
 #: LibPanel.cpp:237 LibPanel.cpp:244 LibPanel.cpp:524 LocationPanel.cpp:421
 #: MainFrame.cpp:1219
 msgid "Labels"
-msgstr "Etiketler"
+msgstr "Etiketter"
 
 #: LibPanel.cpp:255 LibPanel.cpp:262 LibPanel.cpp:526 LocationPanel.cpp:431
 #: MainFrame.cpp:1229
 msgid "Artists"
-msgstr "Sanatçılar"
+msgstr "Kunstnere"
 
 #: LibPanel.cpp:292 LibPanel.cpp:299 LibPanel.cpp:530 LocationPanel.cpp:451
 #: MainFrame.cpp:1249
 msgid "Years"
-msgstr "Yıllar"
+msgstr "År"
 
 #: LibPanel.cpp:311 LibPanel.cpp:318 LibPanel.cpp:532 LocationPanel.cpp:456
 #: MainFrame.cpp:1254
 msgid "Ratings"
-msgstr "Derecelendirmeler"
+msgstr "Bedømmelser"
 
 #: LibPanel.cpp:349 LibPanel.cpp:356 LibPanel.cpp:536 LocationPanel.cpp:436
 #: MainFrame.cpp:1234
 msgid "Composers"
-msgstr "Besteciler"
+msgstr "Komponistere"
 
 #: LibPanel.cpp:538 LocationPanel.cpp:441 MainFrame.cpp:1239
 msgid "Album Artists"
-msgstr "Albüm Sanatçıları"
+msgstr "Albumkunstnere"
 
 #: LibPanel.cpp:958 TreePanel.cpp:1059
 msgid "Artist Labels Editor"
-msgstr "Sanatçı Etiket Düzenleyicisi"
+msgstr "Redigeringsprogram for kunstneretiketter"
 
 #: LibPanel.cpp:1226
 msgid "Are you sure to delete the selected album cover?"
-msgstr "Seçili albüm kapağını silmek istediğinizden emin misiniz?"
+msgstr "Er du sikker på, at du vil slette det valgte albums omslag?"
 
 #: LibPanel.cpp:1635 PlayListPanel.cpp:1666 TreePanel.cpp:1599
 msgid "Field Editor"
-msgstr "Alan Editörü"
+msgstr "Redigeringsprogram for felt"
 
 #: LibPanel.cpp:2774
 msgid ""
 "Are you sure to delete the selected tracks from your drive?\n"
 "This will permanently erase the selected tracks."
-msgstr "Seçili parçaları silmek istediğinizden emin misiniz?\nBu işlem parçaların diskinizden kalıcı olarak silinmesine neden olacak."
+msgstr "Er du sikker på, at du ønsker at slette de valgte numre fra dit drev?\nDette vil permanenet slette de valgte numre."
 
 #: LibPanel.cpp:2775
 msgid "Remove tracks from drive"
-msgstr "Parçaları sürücüden sil"
+msgstr "Fjern numre fra drev"
 
 #: ListView.cpp:1478
 msgid "Select Columns"
-msgstr "Kolonları sil"
+msgstr "Vælg kolonner"
 
 #: ListView.cpp:1490
 msgid " Columns "
-msgstr " Kolonlar "
+msgstr " Kolonner "
 
 #: LocationPanel.cpp:97
 msgid "Local Music"
-msgstr "Yerel Müzik"
+msgstr "Lokal musik"
 
 #: LocationPanel.cpp:99
 msgid "Online Music"
-msgstr "Çevrimiçi Müzik"
+msgstr "Internetmusik"
 
 #: LocationPanel.cpp:101
 msgid "Portable Devices"
-msgstr "Taşınabilir Cihazlar"
+msgstr "Eksterne enheder"
 
 #: LocationPanel.cpp:103
 msgid "Context"
-msgstr "Kaynak"
+msgstr "Kontekst"
 
 #: LocationPanel.cpp:210 ShoutcastRadio.cpp:273
 msgid "Radios"
-msgstr "Radyolar"
+msgstr "Radioer"
 
 #: LocationPanel.cpp:215 MainFrame.cpp:1085 MainFrame.cpp:2798
 #: MainFrame.cpp:3531 PodcastsPanel.cpp:916 Preferences.cpp:259
 msgid "Podcasts"
-msgstr "Podcast'ler"
+msgstr "Podcaster"
 
 #: LocationPanel.cpp:279 MainFrame.cpp:994 MainFrame.cpp:2835
 msgid "File Browser"
-msgstr "Dosya Tarayıcısı"
+msgstr "Filbrowser"
 
 #: LocationPanel.cpp:291 MainFrame.cpp:1413 MainFrame.cpp:2769
 #: Preferences.cpp:249 TrackEdit.cpp:400
 msgid "Lyrics"
-msgstr "Şarkı Sözleri"
+msgstr "Sangtekster"
 
 #: LocationPanel.cpp:312 LocationPanel.cpp:354 LocationPanel.cpp:401
 #: LocationPanel.cpp:414 MainFrame.cpp:1011 MainFrame.cpp:1053
 #: MainFrame.cpp:1199 MainFrame.cpp:1212
 msgid "Show"
-msgstr "Göster"
+msgstr "Vis"
 
 #: LocationPanel.cpp:313 MainFrame.cpp:1012
 msgid "Show/Hide the radio panel"
-msgstr "Radyo panelini göster/gizle"
+msgstr "Vis/skjul radiopanelet"
 
 #: LocationPanel.cpp:319 MainFrame.cpp:1018 RadioPanel.cpp:571
 #: RadioPanel.cpp:618
 msgid "Text Search"
-msgstr "Metin Arama"
+msgstr "Tekstsøgning"
 
 #: LocationPanel.cpp:319 MainFrame.cpp:1018
 msgid "Show/Hide the radio text search"
-msgstr "Radyo metin aramasını Göster/Gizle"
+msgstr "Vis/skjul radiotekstsøgningen"
 
 #: LocationPanel.cpp:329 MainFrame.cpp:1028
 msgid "Show/Hide the radio genres"
-msgstr "Radyo türlerini göster/gizle"
+msgstr "Vis/skjul radiogenrene"
 
 #: LocationPanel.cpp:336 ShoutcastRadio.cpp:120
 msgid "Update the radio station lists"
-msgstr "Radyo istasyonu listesini güncelle"
+msgstr "Opdater radiostationslisterne"
 
 #: LocationPanel.cpp:344 MainFrame.cpp:1043
 msgid "Set the radio preferences"
-msgstr "Radyo tercihlerini ayarla"
+msgstr "Sæt radiopræferencerne"
 
 #: LocationPanel.cpp:355 MainFrame.cpp:1054
 msgid "Show/Hide the podcasts panel"
-msgstr "Podcast panelini Göster/Gizle"
+msgstr "Vis/skjul podcastpanelerne"
 
 #: LocationPanel.cpp:361 MainFrame.cpp:1060 PodcastsPanel.cpp:890
 #: PodcastsPanel.cpp:898 PodcastsPanel.cpp:1055
 msgid "Channels"
-msgstr "Kanallar"
+msgstr "Kanaler"
 
 #: LocationPanel.cpp:361 MainFrame.cpp:1060
 msgid "Show/Hide the podcasts channels"
-msgstr "Podcast kanallarını Göster/Gizle"
+msgstr "Vis/skjul podcastkanalerne"
 
 #: LocationPanel.cpp:366 MainFrame.cpp:1065 PodcastsPanel.cpp:1058
 #: TrackEdit.cpp:310
 msgid "Details"
-msgstr "Detaylar"
+msgstr "Detaljer"
 
 #: LocationPanel.cpp:366 MainFrame.cpp:1065
 msgid "Show/Hide the podcasts details"
-msgstr "Podcast detaylarını Göster/Gizle"
+msgstr "Vis/skjul podcastdetaljerne"
 
 #: LocationPanel.cpp:375 MainFrame.cpp:1074
 msgid "Update the podcasts added"
-msgstr "Eklenen podcastleri güncelle"
+msgstr "Opdater de tilføjede podcaster"
 
 #: LocationPanel.cpp:383 MainFrame.cpp:1082
 msgid "Set the podcasts preferences"
-msgstr "Podcast tercihlerini ayarla"
+msgstr "Angiv præferencer for podcaster"
 
 #: LocationPanel.cpp:401 MainFrame.cpp:1199
 msgid "Open the music collection"
-msgstr "Müzik koleksiyonunu aç"
+msgstr "Åbn musiksamlingen"
 
 #: LocationPanel.cpp:414 LocationPanel.cpp:470 MainFrame.cpp:1212
 #: MainFrame.cpp:1268
 msgid "View the collection library"
-msgstr "Koleksiyon kütüphanesine bak"
+msgstr "Vis samlingsbiblioteket"
 
 #: LocationPanel.cpp:421 MainFrame.cpp:1219
 msgid "View the library labels"
-msgstr "Kütüphane etiketlerine bak"
+msgstr "Vis bibliotekets tiketter"
 
 #: LocationPanel.cpp:426 MainFrame.cpp:1224
 msgid "View the library genres"
-msgstr "Kütüphane türlerine bak"
+msgstr "Vis the bibliotekets genre"
 
 #: LocationPanel.cpp:431 MainFrame.cpp:1229
 msgid "View the library artists"
-msgstr "Kütüphane sanatçılarına bak"
+msgstr "Vis bibliotekets kunstnere"
 
 #: LocationPanel.cpp:436 MainFrame.cpp:1234
 msgid "View the library composers"
-msgstr "Kütüphane bestecilerine bak"
+msgstr "Vis bibliotekets komponister"
 
 #: LocationPanel.cpp:441 MainFrame.cpp:1239
 msgid "View the library album artists"
-msgstr "Kütüphane albüm sanatçılarına bak"
+msgstr "Vis bibliotekets albumkunstnere"
 
 #: LocationPanel.cpp:446 MainFrame.cpp:1244
 msgid "View the library albums"
-msgstr "Kütüphane albümlerine bak"
+msgstr "Vis bibliotekets album"
 
 #: LocationPanel.cpp:451 MainFrame.cpp:1249
 msgid "View the library years"
-msgstr "Kütüphanedeki yılları göster"
+msgstr "Vis bibliotekets år"
 
 #: LocationPanel.cpp:456 MainFrame.cpp:1254
 msgid "View the library ratings"
-msgstr "Kütüphane derecelendirmesini göster"
+msgstr "Vis bibliotekets bedømmelser"
 
 #: LocationPanel.cpp:461
 msgid "Play Counts"
-msgstr "Çalma Sayacı"
+msgstr "Antal afspilninger"
 
 #: LocationPanel.cpp:461 MainFrame.cpp:1259
 msgid "View the library play counts"
-msgstr "Kütüphanedeki çalma sayısını göster"
+msgstr "Vis bibliotekets antal afspilninger"
 
 #: LocationPanel.cpp:466 LocationPanel.cpp:470 MainFrame.cpp:1264
 #: MainFrame.cpp:1268 TreePanel.cpp:89
 msgid "Library"
-msgstr "Kütüphane"
+msgstr "Bibliotek"
 
 #: LocationPanel.cpp:476 MainFrame.cpp:1274
 msgid "Album Browser"
-msgstr "Albüm Tarayıcısı"
+msgstr "Albumbrowser"
 
 #: LocationPanel.cpp:476 MainFrame.cpp:1274
 msgid "View the collection album browser"
-msgstr "Koleksiyon albüm tarayıcısını göster"
+msgstr "Vis samlingens albumbrowser"
 
 #: LocationPanel.cpp:481 MainFrame.cpp:1279 TreePanel.cpp:828
 #: TreePanel.cpp:853
 msgid "Tree"
-msgstr "Ağaç Görünümü"
+msgstr "Træ"
 
 #: LocationPanel.cpp:481 MainFrame.cpp:1279
 msgid "View the collection tree view"
-msgstr "Koleksiyonu ağaç görünümünde göster"
+msgstr "Vis samlingens trævisning"
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1284 MediaViewer.cpp:235
 #: PlayListPanel.cpp:809 PlayListPanel.cpp:835 PortableMedia.cpp:1168
 msgid "Playlists"
-msgstr "Çalma Listesi"
+msgstr "Afspilningslister"
 
 #: LocationPanel.cpp:486 MainFrame.cpp:1284
 msgid "View the collection playlists"
-msgstr "Kolleksiyonun çalma listesini göster"
+msgstr "Vis samlingens afspilningslister"
 
 #: LocationPanel.cpp:497 MainFrame.cpp:1295 MediaViewer.cpp:943
 msgid "Add Path"
-msgstr "Yol Ekle"
+msgstr "Tilføj sti"
 
 #: LocationPanel.cpp:497 MainFrame.cpp:1295 MediaViewer.cpp:943
 msgid "Add path to the collection"
-msgstr "Yolu koleksiyona ekle"
+msgstr "Tilføj sti til samlingen"
 
 #: LocationPanel.cpp:501 MainFrame.cpp:1299 MediaViewer.cpp:946
 msgid "Import files into the collection"
-msgstr "Dosyaları koleksiyona aktar"
+msgstr "Importer filer til samlingen"
 
 #: LyricsPanel.cpp:82
 msgid "Search the lyrics for the current playing track"
-msgstr "Seçili çalan parça için şarkı sözlerini ara"
+msgstr "Søg i sangteksterne for nummeret der afspilles"
 
 #: LyricsPanel.cpp:88
 msgid "Configure lyrics preferences"
-msgstr "Şarkı sözü tercihlerini yapılandır"
+msgstr "Konfigurer præferencer for sangtekster"
 
 #: LyricsPanel.cpp:92 TrackEdit.cpp:388
 msgid "Search for lyrics"
-msgstr "Şarkı sözü ara"
+msgstr "Søg efter sangtekster"
 
 #: LyricsPanel.cpp:97
 msgid "Edit the lyrics"
-msgstr "Şarkı sözlerini düzenle"
+msgstr "Rediger sangteksterne"
 
 #: LyricsPanel.cpp:103
 msgid "Save the lyrics"
-msgstr "Şarkı sözlerini kaydet"
+msgstr "Gem sangteksterne"
 
 #: LyricsPanel.cpp:108
 msgid "Search the lyrics on the web"
-msgstr "İnternette şarkı sözü ara"
+msgstr "Søg i sangteksterne på internettet"
 
 #: LyricsPanel.cpp:287
 msgid "Copy the content of the lyric to clipboard"
-msgstr "Şarkı sözü içeriğini panoya kopyala"
+msgstr "Kopier indholdet af sangteksten til udklipsholderen"
 
 #: LyricsPanel.cpp:299
 msgid "Paste the content of the lyric from clipboard"
-msgstr "Şarkı sözü içeriğini panoya yapıştır"
+msgstr "Indsæt indholdet af sangteksten fra udklipsholderen"
 
 #: LyricsPanel.cpp:308
 msgid "Print the content of the lyrics"
-msgstr "Şarkı sözü içeriğini yazdır"
+msgstr "Udskriv indholdet af sangteksterne"
 
 #: LyricsPanel.cpp:442 LyricsPanel.cpp:561 LyricsPanel.cpp:844
 #: LyricsPanel.cpp:846
 msgid "Searching..."
-msgstr "Aranıyor..."
+msgstr "Søger ..."
 
 #: LyricsPanel.cpp:757 LyricsPanel.cpp:850
 msgid "No lyrics found"
-msgstr "Şarkı sözü bulunamadı"
+msgstr "Ingen sangtekster fundet"
 
 #: LyricsPanel.cpp:842
 msgid "Lyrics from "
-msgstr "Şarkı yazarı"
+msgstr "Sangtekster fra "
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Target Editor"
-msgstr "Şarkı Sözleri Hedef Düzenleyicisi"
+msgstr "Redigeringsprogram for sangteksters mål"
 
 #: LyricsPanel.cpp:2078
 msgid "Lyrics Source Editor"
-msgstr "Şarkı sözü kaynak editörü"
+msgstr "Redigeringsprogram for sangeteksters kilde"
 
 #: LyricsPanel.cpp:2111
 msgid "Type:"
-msgstr "Tip:"
+msgstr "Type:"
 
 #: LyricsPanel.cpp:2116
 msgid "Embedded"
-msgstr "Eşleştirildi"
+msgstr "Indlejret"
 
 #: LyricsPanel.cpp:2117
 msgid "File"
-msgstr "Dosya"
+msgstr "Fil"
 
 #: LyricsPanel.cpp:2118
 msgid "Command"
-msgstr "Konut"
+msgstr "Kommando"
 
 #: LyricsPanel.cpp:2120 PodcastsPanel.cpp:2091
 msgid "Download"
-msgstr "İndir"
+msgstr "Hent"
 
 #: LyricsPanel.cpp:2127
 msgid "Source:"
-msgstr "Kaynak:"
+msgstr "Kilde:"
 
 #: LyricsPanel.cpp:2135 LyricsPanel.cpp:2541
 msgid "Replace:"
-msgstr "Yenile:"
+msgstr "Erstat:"
 
 #: LyricsPanel.cpp:2170
 msgid "Extract:"
-msgstr "Çıkart:"
+msgstr "Udtræk:"
 
 #: LyricsPanel.cpp:2200
 msgid "Exclude:"
-msgstr "Dahil etme:"
+msgstr "Ekskluder:"
 
 #: LyricsPanel.cpp:2230
 msgid "Not Found:"
-msgstr "Bulunamadı:"
+msgstr "Ikke fundet:"
 
 #: LyricsPanel.cpp:2539
 msgid "Replace option editor"
-msgstr "Seçenek düzenleyicisini değiştir"
+msgstr "Erstat redigeringsprogram for indstillinger"
 
 #: LyricsPanel.cpp:2540 RadioPanel.cpp:1173
 msgid "Search:"
-msgstr "Arama:"
+msgstr "Søg:"
 
 #: LyricsPanel.cpp:2545
 msgid "Extract option editor"
-msgstr "Seçenek editörünü çıkart"
+msgstr "Udtræk redigeringsprogram for indstilling"
 
 #: LyricsPanel.cpp:2546 LyricsPanel.cpp:2552
 msgid "Begin:"
-msgstr "Başlangıç:"
+msgstr "Begyndt:"
 
 #: LyricsPanel.cpp:2547 LyricsPanel.cpp:2553
 msgid "End:"
-msgstr "Bitiş:"
+msgstr "Slut:"
 
 #: LyricsPanel.cpp:2551
 msgid "Exclude option editor"
-msgstr "Seçenek editörünü dahil etme"
+msgstr "Ekskluder redigeringsprogram for indstilling"
 
 #: LyricsPanel.cpp:2557
 msgid "Not Found option editor"
-msgstr "Seçenek düzenleyicisi bulunamadı"
+msgstr "Fandt ikke et redigeringsprogram for indstilling"
 
 #: LyricsPanel.cpp:2558 LyricsPanel.cpp:2559
 msgid "Tag:"
-msgstr "Etiket:"
+msgstr "Mærke:"
 
 #: MainFrame.cpp:248
 msgid "Welcome to Guayadeque "
-msgstr "Guayadeque'e hoşgeldiniz "
+msgstr "Velkommen til Guayadeque "
 
 #: MainFrame.cpp:263 MainFrame.cpp:357 TreeViewFilterEditor.cpp:54
 msgid "Filters"
-msgstr "Filtreler"
+msgstr "Filtre"
 
 #: MainFrame.cpp:355 MainFrame.cpp:1386 MainFrame.cpp:4307
 msgid "VU Meters"
-msgstr "VU Metre"
+msgstr "VU-metre"
 
 #: MainFrame.cpp:359 MainFrame.cpp:723 MainFrame.cpp:2153 MainFrame.cpp:2897
 #: MainFrame.cpp:2914 PlayList.cpp:76 RadioPanel.cpp:333
 msgid "Now Playing"
-msgstr "Şu Anda Çalınıyor"
+msgstr "Afspiller nu"
 
 #: MainFrame.cpp:974
 msgid "New Collection"
-msgstr "Yeni Koleksiyon"
+msgstr "Ny samling"
 
 #: MainFrame.cpp:974
 msgid "Create a new collection"
-msgstr "Yeni koleksiyon oluştur"
+msgstr "Opret en ny samling"
 
 #: MainFrame.cpp:995
 msgid "Show/Hide the file browser panel"
-msgstr "Dosya tarayıcı panelini Göster/Gizle"
+msgstr "Vis/skul filbrowserens panel"
 
 #: MainFrame.cpp:1035
 msgid "Update the radio stations"
-msgstr "Radyo istasyonlarını güncelle"
+msgstr "Opdater radiostationerne"
 
 #: MainFrame.cpp:1046 MainFrame.cpp:2635
 msgid "Radio"
-msgstr "Radyo"
+msgstr "Radio"
 
 #: MainFrame.cpp:1046
 msgid "Set the radio visible panels"
-msgstr "Görünür radyo panellerini ayarla"
+msgstr "Sæt radioens synlige paneler"
 
 #: MainFrame.cpp:1085
 msgid "Set the podcasts visible panels"
-msgstr "Podcastlerin görünür panellerini ayarla"
+msgstr "Sæt podcasternes synlige paneler"
 
 #: MainFrame.cpp:1101
 msgid "Play a online music stream"
-msgstr "Çevrimiçi bir müzik akışını çal"
+msgstr "Afspil en musikstrøm fra internettet"
 
 #: MainFrame.cpp:1138
 msgid "Show the selected portable devices"
-msgstr "Seçili taşınabilir aygıtları göster"
+msgstr "Vis de valgte eksterne enheder"
 
 #: MainFrame.cpp:1145
 msgid "No Device Found"
-msgstr "Aygıt bulunamadı"
+msgstr "Ingen enhed fundet"
 
 #: MainFrame.cpp:1145
 msgid "No portable device was detected"
-msgstr "Hiç taşınabilir aygıt bulunamadı"
+msgstr "Ingen ekstern enhed blev detekteret"
 
 #: MainFrame.cpp:1155
 msgid "Exits the application"
-msgstr "Uygulamadan çık"
+msgstr "Afslutter programmet"
 
 #: MainFrame.cpp:1352
 msgid "Saves the current layout"
-msgstr "Geçerli düzeni kaydet"
+msgstr "Gemmer det nuværende layout"
 
 #: MainFrame.cpp:1362
 msgid "Player Playlist"
-msgstr "Player Çalma Listesi"
+msgstr "Afspillerafspilningsliste"
 
 #: MainFrame.cpp:1363
 msgid "Show/Hide the player playlist panel"
-msgstr "Oynatıcının çalma listesi panelini Göster/Gizle"
+msgstr "Vis/skjul afspillerens afspilningslistepanel"
 
 #: MainFrame.cpp:1370 MainFrame.cpp:1645 MainFrame.cpp:4325
 msgid "Sources"
-msgstr "Kaynaklar"
+msgstr "Kilder"
 
 #: MainFrame.cpp:1371
 msgid "Show/Hide the locatons"
-msgstr "Konumları göster/gizle"
+msgstr "Vis/skjul placeringerne"
 
 #: MainFrame.cpp:1378
 msgid "Player Filters"
-msgstr "Oynatıcı Filtreleri"
+msgstr "Afspillerfiltre"
 
 #: MainFrame.cpp:1379
 msgid "Show/Hide the player filters panel"
-msgstr "Player filtre panelini göster/gizle"
+msgstr "Vis/skjul afspillerens filterpanel"
 
 #: MainFrame.cpp:1387
 msgid "Show/Hide the player vumeter"
-msgstr "Oynatıcının VU Metre'sini Göster/Gizle"
+msgstr "Vis/skjul afspilleres vumeter"
 
 #: MainFrame.cpp:1394 MainFrame.cpp:4341
 msgid "Cover"
-msgstr "Albüm kapağı"
+msgstr "Omslag"
 
 #: MainFrame.cpp:1395
 msgid "Show/Hide the cover"
-msgstr "Albüm kapağını Göster/Gizle"
+msgstr "Vis/skjul omslaget"
 
 #: MainFrame.cpp:1405 MainFrame.cpp:2737
 msgid "Last.fm"
@@ -2065,215 +2062,215 @@ msgstr "Last.fm"
 
 #: MainFrame.cpp:1406
 msgid "Show/Hide the Last.fm panel"
-msgstr "Last.fm panelini Göster/Gizle"
+msgstr "Vis/skul Last.fm-panelet"
 
 #: MainFrame.cpp:1414
 msgid "Show/Hide the lyrics panel"
-msgstr "Şarkı sözü panelini Göster/Gizle"
+msgstr "Vis/skjul sangteksternes panel"
 
 #: MainFrame.cpp:1424
 msgid "Show/Restore the main window in full screen"
-msgstr "Ana pencereyi tam ekran olarak Göster/Yenile"
+msgstr "Vis/gendan hovedvinduet i fuldskærm"
 
 #: MainFrame.cpp:1429
 msgid "Statusbar"
-msgstr "Durum Çubuğu"
+msgstr "Statuslinje"
 
 #: MainFrame.cpp:1430
 msgid "Show/Hide the statusbar"
-msgstr "Durum çubuğunu Göster/Gizle"
+msgstr "Vis/skjul statuslinjen"
 
 #: MainFrame.cpp:1435
 msgid "Show Captions"
-msgstr "Başlıkları Göster"
+msgstr "Vis billedtekster"
 
 #: MainFrame.cpp:1436
 msgid "Show/Hide the windows caption"
-msgstr "Windows başlığını göster/gizle"
+msgstr "Vis/skjul vinduernes billedtekst"
 
 #: MainFrame.cpp:1443
 msgid "Close Current Tab"
-msgstr "Geçerli Sekmeyi Kapat"
+msgstr "Luk nuværende faneblad"
 
 #: MainFrame.cpp:1444
 msgid "Close the current selected tab"
-msgstr "Geçerli seçili sekmeyi kapat"
+msgstr "Luk det valgte faneblad"
 
 #: MainFrame.cpp:1453
 msgid "View the preferences"
-msgstr "Tercihleri göster"
+msgstr "Vis præferencerne"
 
 #: MainFrame.cpp:1464
 msgid "Load Layout"
-msgstr "Düzeni Yükle"
+msgstr "Indlæs layout"
 
 #: MainFrame.cpp:1464
 msgid "Set current view from a user defined layout"
-msgstr "Geçerli görünümü kullanıcı tanımlı düzen olarak ayarla"
+msgstr "Sæt nuværende visning fra et brugerdefineret layout"
 
 #: MainFrame.cpp:1465
 msgid "Delete Layout"
-msgstr "Düzeni Sil"
+msgstr "Slet layout"
 
 #: MainFrame.cpp:1465
 msgid "Delete a user defined layout"
-msgstr "Kullanımlı tanımlı düzeni sil"
+msgstr "Slet et brugerdefineret layout"
 
 #: MainFrame.cpp:1474 TaskBar.cpp:122
 msgid "Next Track"
-msgstr "Sonraki Parça"
+msgstr "Næste nummer"
 
 #: MainFrame.cpp:1475
 msgid "Play the next track in the playlist"
-msgstr "Çalma Listesi'ndeki bir sonraki parçayı çal"
+msgstr "Afspil det næste nummer i afspilningslisten"
 
 #: MainFrame.cpp:1478
 msgid "Prev. Track"
-msgstr "Önceki Parça"
+msgstr "For. nummer"
 
 #: MainFrame.cpp:1479
 msgid "Play the previous track in the playlist"
-msgstr "Çalma listesindeki önceki parçayı çal"
+msgstr "Afspil det forrige nummer i afspilningslisten"
 
 #: MainFrame.cpp:1483 TaskBar.cpp:126
 msgid "Next Album"
-msgstr "Sonraki Albüm"
+msgstr "Næste album"
 
 #: MainFrame.cpp:1484
 msgid "Play the next album in the playlist"
-msgstr "Çalma listesindeki sonraki albümü çal"
+msgstr "Afspil det næste album i afspilningslisten"
 
 #: MainFrame.cpp:1488
 msgid "Prev. Album"
-msgstr "Önceki Albüm"
+msgstr "For. album"
 
 #: MainFrame.cpp:1489
 msgid "Play the previous album in the playlist"
-msgstr "Çalma listesindeki önceki albümü çal"
+msgstr "Afspil det forrige album i afspilningslisten"
 
 #: MainFrame.cpp:1496
 msgid "Play or Pause the current track in the playlist"
-msgstr "Çalma listesindeki geçerli parçayı Çal ya da Durdur"
+msgstr "Afspil eller sæt det nuværende nummer på pause i afspilningslisten"
 
 #: MainFrame.cpp:1500
 msgid "Stop the current played track"
-msgstr "Şu an çalınan parçayı durdur"
+msgstr "Stop nummeret der afspilles"
 
 #: MainFrame.cpp:1505
 msgid "Stop after current playing or selected track"
-msgstr "Şu an çalınan ya da seçilen parçadan sonra durdur"
+msgstr "Stop after nuværende nummer eller valgt nummer"
 
 #: MainFrame.cpp:1512
 msgid "Clear the now playing playlist"
-msgstr "Şu an çalınan çalma listesini temizle"
+msgstr "Ryd den aktive afspilningsliste"
 
 #: MainFrame.cpp:1522 PlayList.cpp:1554 SoListBox.cpp:589 TaskBar.cpp:143
 msgid "Set the rating to 0"
-msgstr "Derecelendirmeyi 0 olarak ayarla"
+msgstr "Sæt bedømmelsen til 0"
 
 #: MainFrame.cpp:1527 PlayList.cpp:1556 SoListBox.cpp:594 TaskBar.cpp:146
 msgid "Set the rating to 1"
-msgstr "Derecelendirmeyi 1 olarak ayarla"
+msgstr "Sæt bedømmelsen til 1"
 
 #: MainFrame.cpp:1532 PlayList.cpp:1558 SoListBox.cpp:599 TaskBar.cpp:149
 msgid "Set the rating to 2"
-msgstr "Derecelendirmeyi 2 olarak ayarla"
+msgstr "Sæt bedømmelsen til 2"
 
 #: MainFrame.cpp:1537 PlayList.cpp:1560 SoListBox.cpp:604 TaskBar.cpp:152
 msgid "Set the rating to 3"
-msgstr "Derecelendirmeyi 3 olarak ayarla"
+msgstr "Sæt bedømmelsen til 3"
 
 #: MainFrame.cpp:1542 PlayList.cpp:1562 SoListBox.cpp:609 TaskBar.cpp:155
 msgid "Set the rating to 4"
-msgstr "Derecelendirmeyi 4 olarak ayarla"
+msgstr "Sæt bedømmelsen til 4"
 
 #: MainFrame.cpp:1547 PlayList.cpp:1564 SoListBox.cpp:614 TaskBar.cpp:158
 msgid "Set the rating to 5"
-msgstr "Derecelendirmeyi 5 olarak ayarla"
+msgstr "Sæt bedømmelsen til 5"
 
 #: MainFrame.cpp:1550 SoListBox.cpp:617
 msgid "Set Rating"
-msgstr "Derecelendirmeyi ayarla"
+msgstr "Lav bedømmelse"
 
 #: MainFrame.cpp:1550
 msgid "Set the rating of the current track"
-msgstr "Geçerli parça için derecelendirme ayarla"
+msgstr "Lav en bedømmelse af nummeret"
 
 #: MainFrame.cpp:1556 TaskBar.cpp:165
 msgid "Update playlist based on Last.fm statics"
-msgstr "Çalma Listes'ni Last.fm istatistiklerini baz alarak güncelle"
+msgstr "Opdater afspilningsliste baseret på Last.fm-statistik"
 
 #: MainFrame.cpp:1561
 msgid "Randomize"
-msgstr "Karıştır"
+msgstr "Vilkårlig sangvalg"
 
 #: MainFrame.cpp:1562 TaskBar.cpp:177
 msgid "Randomize the playlist"
-msgstr "Çalma Listesi'ni karıştır"
+msgstr "Vilkårlig rækkefølge i afspilningsliste"
 
 #: MainFrame.cpp:1565
 msgid "Repeat Playlist"
-msgstr "Çalma Listesi'ni tekrarla"
+msgstr "Gentag afspilningsliste"
 
 #: MainFrame.cpp:1566 TaskBar.cpp:169
 msgid "Repeat the tracks in the playlist"
-msgstr "Çalma Listesi'ndeki parçaları tekrarla"
+msgstr "Gentag numrene i afspilningslisten"
 
 #: MainFrame.cpp:1571
 msgid "Repeat Track"
-msgstr "Parçayı Tekrarla"
+msgstr "Gentag nummer"
 
 #: MainFrame.cpp:1572 TaskBar.cpp:173
 msgid "Repeat the current track in the playlist"
-msgstr "Çalma Listesi'ndeki geçerli parçayı tekrarla"
+msgstr "Gentag nummeret i afspilningslisten"
 
 #: MainFrame.cpp:1580
 msgid "Increment the volume level"
-msgstr "Ses seviyesini arttır"
+msgstr "Øg lydstyrken"
 
 #: MainFrame.cpp:1585
 msgid "Decrement the volume level"
-msgstr "Ses seviyesini azalt"
+msgstr "Sænk lydstyrken"
 
 #: MainFrame.cpp:1591 TaskBar.cpp:183
 msgid "Force Gapless Mode"
-msgstr "Boşluksuz moda zorla"
+msgstr "Fremtving tilstand uden huller"
 
 #: MainFrame.cpp:1592 TaskBar.cpp:183
 msgid "Set playback in gapless mode"
-msgstr "Çalmayı boşluksuz moda ayarla"
+msgstr "Sæt afspiling i en tilstand uden huller"
 
 #: MainFrame.cpp:1597 Preferences.cpp:244
 msgid "Audioscrobble"
-msgstr "Müzik Skroplama"
+msgstr "Audioscrobble"
 
 #: MainFrame.cpp:1598 TaskBar.cpp:187
 msgid "Send played tracks information"
-msgstr "Çalınan parçaların bilgilerini gönder"
+msgstr "Send information om afspillede numre"
 
 #: MainFrame.cpp:1615
 msgid "Get help using guayadeque"
-msgstr "Guayadeque kullanımıyla ilgili yardım al"
+msgstr "Få hjælp i brugen af Guayadeque"
 
 #: MainFrame.cpp:1619
 msgid "Community"
-msgstr "Topluluk"
+msgstr "Fællesskab"
 
 #: MainFrame.cpp:1620
 msgid "Get guayadeque support from guayadeque.org"
-msgstr "guayadeque.org adresinden Guayadeque için destek alın"
+msgstr "Få Guayadequeunderstøttelse fra guayadeque.org"
 
 #: MainFrame.cpp:1625
 msgid "About"
-msgstr "Hakkında"
+msgstr "Om"
 
 #: MainFrame.cpp:1626
 msgid "Show information about guayadeque music player"
-msgstr "Guayadeque Müzik Oynatıcısı hakkında bilgileri göster"
+msgstr "Vis informaton om musikafspillerne Guayadeque"
 
 #: MainFrame.cpp:1653
 msgid "View"
-msgstr "Görünüm"
+msgstr "Vis"
 
 #: MainFrame.cpp:1661
 msgid "Controls"
@@ -2281,24 +2278,24 @@ msgstr "Kontroller"
 
 #: MainFrame.cpp:1996
 msgid "Stream:"
-msgstr "Akış:"
+msgstr "Strøm:"
 
 #: MainFrame.cpp:2174 MainFrame.cpp:2244 MainFrame.cpp:2293 MainFrame.cpp:2330
 #: MainFrame.cpp:4522
 msgid "Copy To..."
-msgstr "-e Kopyala..."
+msgstr "Kopier til ..."
 
 #: MainFrame.cpp:2190
 msgid "Select destination directory"
-msgstr "Hedef dizin seç"
+msgstr "Vælg destinationsmappe"
 
 #: MainFrame.cpp:3246
 msgid "station"
-msgstr "istasyon"
+msgstr "station"
 
 #: MainFrame.cpp:3246
 msgid "stations"
-msgstr "istasyonlar"
+msgstr "stationer"
 
 #: MainFrame.cpp:3255
 msgid "podcast"
@@ -2306,565 +2303,565 @@ msgstr "podcast"
 
 #: MainFrame.cpp:3255
 msgid "podcasts"
-msgstr "podcastler"
+msgstr "podcaster"
 
 #: MainFrame.cpp:3270
 msgid "dir"
-msgstr "dizin"
+msgstr "mappe"
 
 #: MainFrame.cpp:3270
 msgid "dirs"
-msgstr "dizinler"
+msgstr "mapper"
 
 #: MainFrame.cpp:3272
 msgid "file"
-msgstr "dosya"
+msgstr "fil"
 
 #: MainFrame.cpp:3272
 msgid "files"
-msgstr "dosyalar"
+msgstr "filer"
 
 #: MainFrame.cpp:3694 MainFrame.cpp:3700 MainFrame.cpp:3703
 msgid "Load this user defined layout"
-msgstr "Kullanıcı tanımlı bu düzeni yükle"
+msgstr "Indlæs dette brugerdefineret layout"
 
 #: MainFrame.cpp:3695
 msgid "Delete this user defined layout"
-msgstr "Kullanıcı tanımlı bu şdüzeni sil"
+msgstr "Slet dette brugerdefineret layout"
 
 #: MainFrame.cpp:3700 MainFrame.cpp:3703
 msgid "No Layouts Defined"
-msgstr "Kullanıcı tanımlı düzen yok"
+msgstr "Ingen layout defineret"
 
 #: MainFrame.cpp:3807
 msgid "Layout:"
-msgstr "Düzen:"
+msgstr "Layout:"
 
 #: MainFrame.cpp:3807
 #, c-format
 msgid "Layout %u"
-msgstr "Düzen %u"
+msgstr "Layout %u"
 
 #: MainFrame.cpp:4487 MainFrame.cpp:4508
 msgid "Copy the current selected songs to a directory or device"
-msgstr "Seçili geçerli şarkıları bir konuma ya da aygıta kopyala"
+msgstr "Kopier valgte sange til en mappe eller enhed"
 
 #: MainFrame.cpp:4519
 msgid "Add Copy To patterns in preferences"
-msgstr "Tercihlere kopyalama yolu ekle"
+msgstr "Tilføj Kopier til mønstre i præferencer"
 
 #: MainFrame.cpp:4522
 msgid "Copy the selected tracks to a folder or device"
-msgstr "Seçili parçaları bir klasöre ya da aygıta kopyala"
+msgstr "Kopier de valgte numre til en mappe eller en enhed"
 
 #: MediaViewer.cpp:213
 msgid "All Albums"
-msgstr "Tüm Albümler"
+msgstr "Alle album"
 
 #: MediaViewer.cpp:223
 msgid "Library view"
-msgstr "Kütüphane görünümü"
+msgstr "Biblioteksvisning"
 
 #: MediaViewer.cpp:227
 msgid "Album Browser view"
-msgstr "Albüm Tarayıcı görünümü"
+msgstr "Albumbrowservising"
 
 #: MediaViewer.cpp:231
 msgid "Tree view"
-msgstr "Ağaç Görünümü"
+msgstr "Trævisning"
 
 #: MediaViewer.cpp:246
 msgid "View the current defined filters"
-msgstr "Kullanıcı tanımlı filtreleri göster"
+msgstr "Vis de definerede filtre"
 
 #: MediaViewer.cpp:251
 msgid "Add a new album browser filter"
-msgstr "Yeni bir albüm tarayıcı filtresi ekle"
+msgstr "Tilføj et nyt albumbrowserfilter"
 
 #: MediaViewer.cpp:255
 msgid "Delete the current selected filter"
-msgstr "Seçili geçerli filtreyi sil"
+msgstr "Slet det valgte filter"
 
 #: MediaViewer.cpp:260
 msgid "Edit the current selected filter"
-msgstr "Seçili geçerli filtreyi düzenle"
+msgstr "Rediger det valgte filter"
 
 #: MediaViewer.cpp:836 TreePanel.cpp:1189
 msgid "New Filter"
-msgstr "Yeni Filtre"
+msgstr "Nyt filter"
 
 #: MediaViewer.cpp:967
 msgid "Collection"
-msgstr "Koleksiyon"
+msgstr "Samling"
 
 #: MediaViewer.cpp:1140 Preferences.cpp:3083
 msgid "Select library path"
-msgstr "Kütüphane yolunu seç"
+msgstr "Vælg bibliotekssti"
 
 #: MediaViewer.cpp:1170
 msgid "This Path is already in the library"
-msgstr "Bu yol zaten kütüphanede bulunuyor."
+msgstr "Denne sti er allerede i biblioteket"
 
 #: MediaViewer.cpp:1171
 msgid "Adding path error"
-msgstr "Yol eklenirken hata oluştu"
+msgstr "Tilføjer stifejl"
 
 #: MediaViewer.cpp:1460 SelCoverFile.cpp:39
 msgid ""
 "Could not find the Album in the songs library.\n"
 "You should update the library."
-msgstr "Albüm, şarkı kütüphanesinde bulunamadı.\nKütüphaneyi güncellemeniz gerekmektedir."
+msgstr "Kunne ikke finde albumet i sangbiblioteket.\nDu bør opdatere biblioteket."
 
 #: MediaViewer.cpp:2160
 msgid " smart playlist"
-msgstr " akıllı çalma listesi"
+msgstr " smart afspilningsliste"
 
 #: MediaViewer.cpp:2169 PlayerPanel.cpp:245 PlayerPanel.cpp:2238
 msgid "Playlist"
-msgstr "Çalma Listesi"
+msgstr "Afspilningsliste"
 
 #: NewChannel.cpp:87
 msgid "New Podcast Channel"
-msgstr "Yeni Podcast Kanalı"
+msgstr "Ny podcastkanal"
 
 #: NewChannel.cpp:100
 msgid " Digital Podcast Directory "
-msgstr " Dijital Podcast Konumu "
+msgstr " Digital podcastmappe "
 
 #: NewChannel.cpp:111
 msgid "Search in the podcast directory"
-msgstr "Podcast konumunda ara"
+msgstr "Søg i podcastmappen"
 
 #: NewChannel.cpp:115
 msgid "Refresh the podcast directory list"
-msgstr "Podcast konum listesini yenile"
+msgstr "Opdater podcastmappelisten"
 
 #: NewChannel.cpp:227
 msgid "Filtered channels"
-msgstr "Filtrelenmiş kanallar"
+msgstr "Filtrerede kanaler"
 
 #: NewChannel.cpp:301
 #, c-format
 msgid "%u Channels"
-msgstr "%u Kanallar"
+msgstr "%u kanaler"
 
 #: NewChannel.cpp:306
 #, c-format
 msgid "%u Categories, %u Channels"
-msgstr "%u Kategori, %u Kanal"
+msgstr "%u kategorier, %u kanaler"
 
 #: NewChannel.cpp:374
 msgid "Filter Text: "
-msgstr "Filtre Metini: "
+msgstr "Filtertekst: "
 
 #: NewChannel.cpp:374
 msgid "Enter the text to filter podcasts channels"
-msgstr "Podcast kanallarını filtrelemek için bir metin girin"
+msgstr "Indtast teksten til at filtrer podcastkanaler"
 
 #: OnlineLinks.cpp:69
 msgid "Add search links in preferences"
-msgstr "Tercihlere arama bağlantısı ekle"
+msgstr "Tilføj søgeadresser i præferencer"
 
 #: OnlineLinks.cpp:72 Preferences.cpp:274
 msgid "Links"
-msgstr "Bağlantılar"
+msgstr "Adresser"
 
 #: PcListBox.cpp:112
 msgid "Play current selected tracks"
-msgstr "Seçili geçerli parçaları çal"
+msgstr "Afspil valgte numre"
 
 #: PlayerFilters.cpp:42
 msgid "Allow:"
-msgstr "İzin Ver:"
+msgstr "Tillad:"
 
 #: PlayerFilters.cpp:51
 msgid "Deny:"
-msgstr "Reddet:"
+msgstr "Nægt:"
 
 #: PlayerFilters.cpp:123 Preferences.cpp:867 Preferences.cpp:1822
 #: Preferences.cpp:1919 Preferences.cpp:1942 SmartMode.cpp:450
 msgid "None"
-msgstr "Hiç biri"
+msgstr "Ingen"
 
 #: PlayerPanel.cpp:177
 msgid "Go to the playlist previous track"
-msgstr "Çalma listesindeki önceki parçaya git"
+msgstr "Gå til afspilningslisten forrige nummer"
 
 #: PlayerPanel.cpp:182
 msgid "Play or pause the current track"
-msgstr "Geçerli parçayı çal "
+msgstr "Afspil eller sæt nummeret på pause"
 
 #: PlayerPanel.cpp:187
 msgid "Go to the playlist next track"
-msgstr "Çalma listesindeki bir sonraki parçaya git"
+msgstr "Gå til afspilningslistens næste nummer"
 
 #: PlayerPanel.cpp:192
 msgid "Stop playing"
-msgstr "Çalmayı durdur"
+msgstr "Stop afspilning"
 
 #: PlayerPanel.cpp:196
 msgid "Record to file"
-msgstr "Dosyaya kaydet"
+msgstr "Optag en fil"
 
 #: PlayerPanel.cpp:205 PlayerPanel.cpp:2872
 msgid "Volume"
-msgstr "Ses Yüksekliği"
+msgstr "Lydstyrke"
 
 #: PlayerPanel.cpp:210
 msgid "Show the equalizer"
-msgstr "Ekolayzeri göster"
+msgstr "Vis equalizeren"
 
 #: PlayerPanel.cpp:218 PlayerPanel.cpp:2179
 msgid "Smart Play: "
-msgstr "Akıllı Çalma: "
+msgstr "Smartafspilning: "
 
 #: PlayerPanel.cpp:221 PlayerPanel.cpp:237 PlayerPanel.cpp:2182
 #: Preferences.cpp:975
 msgid "Disabled"
-msgstr "Devre Dışı"
+msgstr "Deaktiveret"
 
 #: PlayerPanel.cpp:225 PlayerPanel.cpp:2186 Preferences.cpp:1363
 #: Preferences.cpp:1398
 msgid "Enabled"
-msgstr "Etkin"
+msgstr "Aktiveret"
 
 #: PlayerPanel.cpp:234
 msgid "Repeat: "
-msgstr "Tekrarla: "
+msgstr "Gentag: "
 
 #: PlayerPanel.cpp:241 PlayerPanel.cpp:2234 PlayList.cpp:1641
 #: Preferences.cpp:975
 msgid "Track"
-msgstr "Parça"
+msgstr "Nummer"
 
 #: PlayerPanel.cpp:253
 msgid "Randomize the tracks in playlist"
-msgstr "Çalma listesindeki parçaları karıştır"
+msgstr "Vilkårlig rækkefølge for numrene i afspilningslisten"
 
 #: PlayerPanel.cpp:271
 msgid "Show the name of the current track"
-msgstr "Geçerli parçanın ismini göster"
+msgstr "Vis navnet på nummeret"
 
 #: PlayerPanel.cpp:281
 msgid "Show the album name of the current track"
-msgstr "Geçerli parçanın albüm ismini göster"
+msgstr "Vis albumnavnet for nummeret"
 
 #: PlayerPanel.cpp:292
 msgid "Show the artist name of the current track"
-msgstr "Geçerli parçanın sanatçı ismini göster"
+msgstr "Vis kunstnernavnet for nummeret"
 
 #: PlayerPanel.cpp:303
 msgid "Show the year of the current track"
-msgstr "Geçerli parçanın yılını göster"
+msgstr "Vis året for nummeret"
 
 #: PlayerPanel.cpp:306
 msgid "00:00 of 00:00"
-msgstr "00.00'da 00.00"
+msgstr "00:00 af 00:00"
 
 #: PlayerPanel.cpp:307
 msgid "Show the current position and song length of the current track"
-msgstr "Geçerli parçanın şu anki pozisyonunu ve şarkı uzunluğunu göster"
+msgstr "Vis positionen og sanglænden for nummeret"
 
 #: PlayerPanel.cpp:326
 msgid "Show the bit rate of the current track"
-msgstr "Geçerli parçanın bit rate değerini göster"
+msgstr "Vis bithastigheden for nummeret"
 
 #: PlayerPanel.cpp:1365
 msgid "Buffering..."
-msgstr "Yükleniyor..."
+msgstr "Mellemlagrer ..."
 
 #: PlayerPanel.cpp:2227
 msgid "Repeat Mode: "
-msgstr "Tekrarlama Biçimi:"
+msgstr "Gentagtilstand: "
 
 #: PlayerPanel.cpp:2230
 msgid "Off"
-msgstr "Kapalı"
+msgstr "Slukket"
 
 #: PlayListAppend.cpp:49
 msgid "Playlist:"
-msgstr "Çalma Listesi:"
+msgstr "Afspilningsliste:"
 
 #: PlayListAppend.cpp:61
 msgid "New playlist"
-msgstr "Yeni çalma listesi"
+msgstr "Ny afspilningsliste"
 
 #: PlayListAppend.cpp:65
 msgid "Where:"
-msgstr "Nerede:"
+msgstr "Hvor:"
 
 #: PlayListAppend.cpp:69
 msgid "Beginning"
-msgstr "Başlangıç"
+msgstr "Begyndende"
 
 #: PlayListAppend.cpp:75
 msgid "Tracks:"
-msgstr "Parçalar:"
+msgstr "Numre:"
 
 #: PlayList.cpp:1523
 msgid "Empty Playlist"
-msgstr "Boş Çalma Listesi"
+msgstr "Tom afspilningsliste"
 
 #: PlayList.cpp:1523
 msgid "The playlist is empty"
-msgstr "Çalma Listesi boş"
+msgstr "Afspilningslisten er tom"
 
 #: PlayList.cpp:1533
 msgid "Edit the current selected tracks labels"
-msgstr "Seçili geçerli parça etiketlerini düzenle"
+msgstr "Rediger de valgte numres etiketter"
 
 #: PlayList.cpp:1539
 msgid "Edit the current selected songs"
-msgstr "Seçili geçerli parçaları düzenle"
+msgstr "Rediger de valgte sange"
 
 #: PlayList.cpp:1548
 msgid "Set as Next Track"
-msgstr "Sonraki Parça olarak ayarla"
+msgstr "Sæt som næste nummer"
 
 #: PlayList.cpp:1549
 msgid "Move the selected tracks to be played next"
-msgstr "Seçili parçayı bir sonra çalınacak şekilde taşı"
+msgstr "Flyt de valgte numre så de afspilles nu"
 
 #: PlayList.cpp:1567
 msgid "Set the current selected tracks rating"
-msgstr "Seçili geçerli parçaların derecelendirmesini ayarla"
+msgstr "Sæt de valgte numres bedømmelse"
 
 #: PlayList.cpp:1574
 msgid "Search a track in the playlist by name"
-msgstr "Çalma listesinde, ismine göre bir şarkı ara"
+msgstr "Søg efter et nummer i afspilningslisten efter dets navn"
 
 #: PlayList.cpp:1602 PLSoListBox.cpp:161
 msgid "Randomize the songs in the playlist"
-msgstr "Çalma listesindeki şarkıları karıştır"
+msgstr "Vilkårlig sangrækkefølge i afspilningslisten"
 
 #: PlayList.cpp:1607
 msgid "Remove all tracks from playlist"
-msgstr "Tüm parçaları çalma listesinden çıkar"
+msgstr "Fjern alle numre fra afspilningslisten"
 
 #: PlayList.cpp:1614 PLSoListBox.cpp:168
 msgid "Remove from Playlist"
-msgstr "Çalma Listesi'nden çıkar"
+msgstr "Fjern fra afspilningsliste"
 
 #: PlayList.cpp:1615
 msgid "Remove the selected tracks from playlist"
-msgstr "Seçili parçaları çalma listesinden kaldır"
+msgstr "Fjern de valgte numre fra afspilningslisten"
 
 #: PlayList.cpp:1622 SoListBox.cpp:638
 msgid "Remove from Library"
-msgstr "Kütüphaneden çıkar"
+msgstr "Fjerne fra bibliotek"
 
 #: PlayList.cpp:1623
 msgid "Remove the selected tracks from library"
-msgstr "Seçili parçalar kütüphaneden kaldır"
+msgstr "Fjern de valgte numre fra biblioteket"
 
 #: PlayList.cpp:1628 SoListBox.cpp:643
 msgid "Delete from Drive"
-msgstr "Sürücüden çıkar"
+msgstr "Slet fra drev"
 
 #: PlayList.cpp:1629
 msgid "Remove the selected tracks from drive"
-msgstr "Seçili parçaları sürücüden çıkar"
+msgstr "Fjern de valgte numre fra drev"
 
 #: PlayList.cpp:1641
 msgid "Selects the current selected track in the library"
-msgstr "Seçili geçerli parçaları kütüphaneden seç"
+msgstr "Vælg det valgte nummer i biblioteket"
 
 #: PlayList.cpp:1644 SoListBox.cpp:655
 msgid "Selects the artist of the current song"
-msgstr "Geçerli şarkının sanatçısını seç"
+msgstr "Vælger kunstneren fra sangen"
 
 #: PlayList.cpp:1647
 msgid "Select the album artist of the current song"
-msgstr "Geçerli şarkının albüm sanatçısını seç"
+msgstr "Vælg albummets kunstner fra sangen"
 
 #: PlayList.cpp:1650
 msgid "Select the composer of the current song"
-msgstr "Geçerli şarkının bestecisini seç"
+msgstr "Vælg komponisten fra sangen"
 
 #: PlayList.cpp:1653 SoListBox.cpp:664
 msgid "Select the album of the current song"
-msgstr "Geçerli şarkının albümünü seç"
+msgstr "Vælg albummet fra sangen"
 
 #: PlayList.cpp:1656
 msgid "Select the year of the current song"
-msgstr "Geçerli parça için yılı seç"
+msgstr "Vælg året fra sangen"
 
 #: PlayList.cpp:1659
 msgid "Select the genre of the current song"
-msgstr "Geçerli şarkının türünü seç"
+msgstr "Vælg genren fra sangen"
 
 #: PlayList.cpp:1662 SoListBox.cpp:667
 msgid "Search in the library"
-msgstr "Kütüphanede ara"
+msgstr "Søg i biblioteket"
 
 #: PlayList.cpp:2158
 msgid "Search: "
-msgstr "Arama: "
+msgstr "Søg: "
 
 #: PlayList.cpp:2158
 msgid "Please enter the search term"
-msgstr "Lütfen arama terimini girin"
+msgstr "Indtast venligst søgestrengen"
 
 #: PlayList.cpp:2738
 msgid "Loading tracks. Please wait"
-msgstr "Parçalar yükleniyor. Lütfen bekleyin"
+msgstr "Indlæser numre. Vent venligst"
 
 #: PlayListPanel.cpp:83
 msgid "Static playlists"
-msgstr "Statik çalma listeleri"
+msgstr "Statiske afspilningslister"
 
 #: PlayListPanel.cpp:84
 msgid "Dynamic playlists"
-msgstr "Dinamik çalma listeleri"
+msgstr "Dynamiske afspilningslister"
 
 #: PlayListPanel.cpp:224 PodcastsPanel.cpp:2051 RadioPanel.cpp:424
 #: SoListBox.cpp:526 TreePanel.cpp:388
 msgid "Play current selected songs"
-msgstr "Geçerli seçili şarkıları çal"
+msgstr "Afspil valgte sange"
 
 #: PlayListPanel.cpp:230 SoListBox.cpp:533 TreePanel.cpp:394
 msgid "Add current selected songs to the playlist"
-msgstr "Geçerli seçili şarkıları çalma listesine ekle"
+msgstr "Tilføj valgte sange til afspilningslisten"
 
 #: PlayListPanel.cpp:260
 msgid "New Dynamic Playlist"
-msgstr "Yeni dinamik çalma listesi"
+msgstr "Ny dynamisk afspilningsliste"
 
 #: PlayListPanel.cpp:260
 msgid "Create a new dynamic playlist"
-msgstr "Yeni dinamik çalma listesi oluştur"
+msgstr "Opret en ny dynamisk afspilningsliste"
 
 #: PlayListPanel.cpp:266 UserRadio.cpp:74
 msgid "Import"
-msgstr "İçe Aktar"
+msgstr "Import"
 
 #: PlayListPanel.cpp:266
 msgid "Import a playlist"
-msgstr "Çalma listesini içe aktar"
+msgstr "Importer en afspilningsliste"
 
 #: PlayListPanel.cpp:272 UserRadio.cpp:78
 msgid "Export"
-msgstr "Dışa aktar"
+msgstr "Eksportr"
 
 #: PlayListPanel.cpp:272
 msgid "Export the playlist"
-msgstr "Çalma listesini dışa aktar"
+msgstr "Eksport af afspilningslisten"
 
 #: PlayListPanel.cpp:282 SoListBox.cpp:494 TreePanel.cpp:371
 msgid "Edit"
-msgstr "Düzenle"
+msgstr "Rediger"
 
 #: PlayListPanel.cpp:282
 msgid "Edit the selected playlist"
-msgstr "Seçili çalma listesini düzenle"
+msgstr "Rediger den valgte afspilningsliste"
 
 #: PlayListPanel.cpp:286
 msgid "Save the selected playlist as a Static Playlist"
-msgstr "Seçili çalma listesini Statik Çalma Listesi olarak kaydet"
+msgstr "Gem den valgte afspilningsliste som en statisk afspilningsliste"
 
 #: PlayListPanel.cpp:291
 msgid "Change the name of the selected playlist"
-msgstr "Seçili çalma listesinin ismini değiştir"
+msgstr "Ændr navnet for den valgte afspilningsliste"
 
 #: PlayListPanel.cpp:296 PlayListPanel.cpp:306
 msgid "Delete the selected playlist"
-msgstr "Seçili çalma listesini sil"
+msgstr "Slet den valgte afspilningsliste"
 
 #: PlayListPanel.cpp:302
 msgid "Set as Allow Filter"
-msgstr "Filtrelere İzin Vermeye Ayarla"
+msgstr "Sæt som Tillad-filter"
 
 #: PlayListPanel.cpp:302
 msgid "Set this playlist as the allow filter"
-msgstr "bu çalma listesini izin verilenler filtresi için ayarla"
+msgstr "Sæt denne afspilningsliste som tillad-filter"
 
 #: PlayListPanel.cpp:306
 msgid "Set as Deny Filter"
-msgstr "Filtreleri Reddetmeye Ayarla"
+msgstr "Sæt som nægt-filter"
 
 #: PlayListPanel.cpp:1074 PlayListPanel.cpp:1215
 msgid "Playlist Name: "
-msgstr "Çalma Listesi İsmi: "
+msgstr "Afspilingslistenavn: "
 
 #: PlayListPanel.cpp:1075 PlayListPanel.cpp:1216
 msgid "Enter the new playlist name"
-msgstr "Yeni çalma listesi ismi gir"
+msgstr "Indtast den nye afspilningslistes navn"
 
 #: PlayListPanel.cpp:1115
 msgid "Are you sure to delete the selected Playlist?"
-msgstr "Seçili Çalma Listesi'ni silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette den valgte afspilningsliste?"
 
 #: PlayListPanel.cpp:1200 PlayListPanel.cpp:1275
 msgid "Select the playlist file"
-msgstr "Çalma listesi dosyasını seç"
+msgstr "Vælg afspilningslistens fil"
 
 #: PlayListPanel.cpp:1227
 msgid "New Playlist"
-msgstr "Yeni Çalma Listesi"
+msgstr "Ny afspilningsliste"
 
 #: PLSoListBox.cpp:168
 msgid "Delete the current selected tracks"
-msgstr "Seçili geçerli parçaları sil"
+msgstr "Slet de valgte numre"
 
 #: PodcastsPanel.cpp:928 TrackEdit.cpp:466
 msgid " Details "
-msgstr " Detaylar "
+msgstr " Detaljer "
 
 #: PodcastsPanel.cpp:979 RadioEditor.cpp:52
 msgid "Link:"
-msgstr "Bağlantı:"
+msgstr "Adresse:"
 
 #: PodcastsPanel.cpp:994 TrackEdit.cpp:183 TrackEdit.cpp:423 TrackEdit.cpp:520
 msgid "Title:"
-msgstr "Başlık:"
+msgstr "Titel:"
 
 #: PodcastsPanel.cpp:1004
 msgid "Sumary:"
-msgstr "Özet:"
+msgstr "Resume:"
 
 #: PodcastsPanel.cpp:1014 TrackEdit.cpp:507
 msgid "Date:"
-msgstr "Tarih:"
+msgstr "Dato:"
 
 #: PodcastsPanel.cpp:1024 TrackEdit.cpp:531
 msgid "Length:"
-msgstr "Uzunluk:"
+msgstr "Længde:"
 
 #: PodcastsPanel.cpp:1045
 msgid "Podcast Details"
-msgstr "Podcast Detayları"
+msgstr "Podcast-detaljer"
 
 #: PodcastsPanel.cpp:1236
 msgid "Are you sure to delete the selected podcast channel?"
-msgstr "Seçili podcast kanalını silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette den valgte podcastkanal?"
 
 #: PodcastsPanel.cpp:1622
 msgid "Are you sure to delete the selected podcast item?"
-msgstr "Seçili podcast öğesini silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette det valgte podcastelement?"
 
 #: PodcastsPanel.cpp:1745
 msgid "New Channel"
-msgstr "Yeni Kanal"
+msgstr "Ny kanal"
 
 #: PodcastsPanel.cpp:1745
 msgid "Add a new podcast channel"
-msgstr "Yeni bir podcast kanalı ekle"
+msgstr "Tilføj en ny podcastkanal"
 
 #: PodcastsPanel.cpp:1751
 msgid "delete this podcast channels and all its items"
-msgstr "Bu podcast kanalını ve tüm öğelerini sil"
+msgstr "slet disse podcastkanaler og alle deres elementer"
 
 #: PodcastsPanel.cpp:1757
 msgid "Update the podcast items of the selected channels"
-msgstr "Seçili kanallar için podcast öğelerini güncelle"
+msgstr "Opdater podcastelementerne for de valgte kanaler"
 
 #: PodcastsPanel.cpp:1763
 msgid "Edit the podcast channel"
-msgstr "Podcast kanalını düzenle"
+msgstr "Rediger podcastkanalen"
 
 #: PodcastsPanel.cpp:1801
 msgid "Status"
-msgstr "Durum"
+msgstr "Status"
 
 #: PodcastsPanel.cpp:1803
 msgid "Channel"
@@ -2876,64 +2873,64 @@ msgstr "Kategori"
 
 #: PodcastsPanel.cpp:1805
 msgid "Date"
-msgstr "Tarih"
+msgstr "Dato"
 
 #: PodcastsPanel.cpp:1807
 msgid "Author"
-msgstr "Yazar"
+msgstr "Forfatter"
 
 #: PodcastsPanel.cpp:1978 SoListBox.cpp:246
 msgid "Never"
-msgstr "Hiçbir zaman"
+msgstr "Aldrig"
 
 #: PodcastsPanel.cpp:2057 RadioPanel.cpp:430
 msgid "Add current selected songs to playlist"
-msgstr "Seçili geçerli parçaları çalma listesine ekle"
+msgstr "Tilføj nuværende valgte sange til afspilningsliste"
 
 #: PodcastsPanel.cpp:2085
 msgid "Delete the current selected podcasts"
-msgstr "Seçili geçerli podcastleri sil"
+msgstr "Slet de valgte podcaster"
 
 #: PodcastsPanel.cpp:2091
 msgid "Download the current selected podcasts"
-msgstr "Seçili geçerli podcastleri indir"
+msgstr "Hent de valgte podcaster"
 
 #: PodcastsPanel.cpp:2103
 msgid "No selected items..."
-msgstr "Seçili öğe yok..."
+msgstr "Ingen valgte elementer ..."
 
 #: PodcastsPanel.cpp:2103
 msgid "Copy the current selected podcasts to a directory or device"
-msgstr "Mevcut seçilmiş Podcast'i bir konuma ya da cihaza kopyala"
+msgstr "Kopier de valgte podcaster til en mappe eller enhed"
 
 #: PortableMedia.cpp:473 PortableMedia.cpp:1477
 msgid "embedded"
-msgstr "eşleştirildi"
+msgstr "indlejret"
 
 #: PortableMedia.cpp:985
 msgid "Portable Media Properties"
-msgstr "Taşınabilir Medya Tercihleri"
+msgstr "Portable Media-egenskaber"
 
 #: PortableMedia.cpp:991 Preferences.cpp:1271
 msgid " Properties "
-msgstr " Tercihler "
+msgstr " Egenskaber "
 
 #: PortableMedia.cpp:1007 Preferences.cpp:2383
 msgid "Path:"
-msgstr "Yol."
+msgstr "Sti:"
 
 #: PortableMedia.cpp:1016
 msgid "Used:"
-msgstr "Kullanılan:"
+msgstr "Brugt:"
 
 #: PortableMedia.cpp:1027
 #, c-format
 msgid "%s free of %s"
-msgstr "%sücretsiz%s"
+msgstr "%s ledig af %s"
 
 #: PortableMedia.cpp:1048
 msgid "Name Pattern:"
-msgstr "İsim şablonu:"
+msgstr "Navnemønster:"
 
 #: PortableMedia.cpp:1053
 msgid ""
@@ -2942,359 +2939,359 @@ msgid ""
 "{f}\t: Filename\t\t{g}\t : Genre\n"
 "{n}\t: Number\t\t\t{t}\t : Title\n"
 "{y}\t: Year"
-msgstr "{a}\t: Sanatçı\t\t\t{aa} : Albüm Sanatçısı\n{b}\t: Albüm\t\t\t{d} : \tDisk\n{f}\t: Dosya adı\t\t{g} \t: Tarz\n{n}\t: Sayı\t\t\t{t} \t: Başlık\n{y}\t: Yıl"
+msgstr "{a}\t: Kunstner\t\t\t{aa} : Albumkunster\n{b}\t: Album\t\t\t{d}\t   : Disk\n{f}\t: Filnavn\t\t{g}\t   : Genre\n{n}\t: Nummer\t\t\t{t}\t  : Titel\n{y}\t: År"
 
 #: PortableMedia.cpp:1058
 msgid "Audio Folders:"
-msgstr "Ses Klasörleri:"
+msgstr "Lydmapper:"
 
 #: PortableMedia.cpp:1069
 msgid "Audio Formats:"
-msgstr "Ses Formatları:"
+msgstr "Lydformater:"
 
 #: PortableMedia.cpp:1080
 msgid "Transcode to:"
-msgstr "Kod dönüştür:"
+msgstr "Transkode til:"
 
 #: PortableMedia.cpp:1101
 msgid "Unsupported formats only"
-msgstr "Sadece desteklenmeyen biçimler"
+msgstr "Kun ej understøttede formater"
 
 #: PortableMedia.cpp:1101
 msgid "always"
-msgstr "her zaman"
+msgstr "altid"
 
 #: PortableMedia.cpp:1114 Preferences.cpp:1290
 msgid "Quality:"
-msgstr "Kalite:"
+msgstr "Kvalitet:"
 
 #: PortableMedia.cpp:1132
 msgid "Audio"
-msgstr "Ses"
+msgstr "Lyd"
 
 #: PortableMedia.cpp:1144
 msgid "Playlist Folders:"
-msgstr "Çalma Listesi Klasörleri"
+msgstr "Afspilningslistemapper:"
 
 #: PortableMedia.cpp:1154
 msgid "Playlist Format:"
-msgstr "Çalma Listesi Biçimi:"
+msgstr "Afspilningslisteformater:"
 
 #: PortableMedia.cpp:1178
 msgid "Cover Format:"
-msgstr "Albüm Kapağı Biçimi:"
+msgstr "Omslagsformat:"
 
 #: PortableMedia.cpp:1191
 msgid "Cover Name:"
-msgstr "Albüm Kapağı İsmi:"
+msgstr "Omslagsnavn:"
 
 #: PortableMedia.cpp:1202
 msgid "Covers Size (pixels):"
-msgstr "Albüm Kapağı Boyutu (piksel):"
+msgstr "Omslagsstørrelse (billedpunkter):"
 
 #: PortableMedia.cpp:1212
 msgid "Covers"
-msgstr "Albüm Kapakları"
+msgstr "Omslag"
 
 #: PortableMedia.cpp:1310 PortableMedia.cpp:1405
 msgid "Select audio folder"
-msgstr "Ses klasörü seç"
+msgstr "Vælg lydmappe"
 
 #: PortableMedia.cpp:1379
 msgid "Audio format"
-msgstr "Ses biçimi"
+msgstr "Lydformat"
 
 #: PortableMedia.cpp:1454
 msgid "Playlist format"
-msgstr "Çalma Listesi Biçimi"
+msgstr "Afspilningslisteformat"
 
 #: PortableMedia.cpp:1506
 msgid "Cover format"
-msgstr "Albüm Kapağı Biçimi"
+msgstr "Omslagsformat"
 
 #: Preferences.cpp:133 Preferences.cpp:185 Preferences.cpp:2536
 msgid "Default"
-msgstr "Varsayılan"
+msgstr "Standard"
 
 #: Preferences.cpp:134
 msgid "Czech"
-msgstr "Çekçe"
+msgstr "Tjekkisk"
 
 #: Preferences.cpp:135
 msgid "Dutch"
-msgstr "Flemenkçe"
+msgstr "Hollandsk"
 
 #: Preferences.cpp:136 Preferences.cpp:186
 msgid "English"
-msgstr "İngilizce"
+msgstr "Engelsk"
 
 #: Preferences.cpp:137 Preferences.cpp:187
 msgid "French"
-msgstr "Fransızca"
+msgstr "Fransk"
 
 #: Preferences.cpp:138 Preferences.cpp:188
 msgid "German"
-msgstr "Almanca"
+msgstr "Tysk"
 
 #: Preferences.cpp:139
 msgid "Greek"
-msgstr "Yunanca"
+msgstr "Græsk"
 
 #: Preferences.cpp:140
 msgid "Hungarian"
-msgstr "Macarca"
+msgstr "Ungarsk"
 
 #: Preferences.cpp:141
 msgid "Icelandic"
-msgstr "İzlandaca"
+msgstr "Islandisk"
 
 #: Preferences.cpp:142 Preferences.cpp:189
 msgid "Italian"
-msgstr "İtalyanca"
+msgstr "Italiensk"
 
 #: Preferences.cpp:143
 msgid "Japanese"
-msgstr "Japonca"
+msgstr "Japansk"
 
 #: Preferences.cpp:144
 msgid "Norwegian Bokmal"
-msgstr "Norveççe"
+msgstr "Norsk bokmål"
 
 #: Preferences.cpp:145
 msgid "Polish"
-msgstr "Lehçe"
+msgstr "Polsk"
 
 #: Preferences.cpp:146 Preferences.cpp:190
 msgid "Portuguese"
-msgstr "Portekizce"
+msgstr "Portugisisk"
 
 #: Preferences.cpp:147
 msgid "Portuguese-Brazilian"
-msgstr "Brezilya Portekizcesi"
+msgstr "Portugisisk-brasiliansk"
 
 #: Preferences.cpp:148
 msgid "Russian"
-msgstr "Rusça"
+msgstr "Russisk"
 
 #: Preferences.cpp:149
 msgid "Slovak"
-msgstr "Slovakça"
+msgstr "Slovakisk"
 
 #: Preferences.cpp:150 Preferences.cpp:191
 msgid "Spanish"
-msgstr "İspanyolca"
+msgstr "Spansk"
 
 #: Preferences.cpp:151
 msgid "Swedish"
-msgstr "İsveççe"
+msgstr "Svensk"
 
 #: Preferences.cpp:152
 msgid "Thai"
-msgstr "Tai Dili"
+msgstr "Thai"
 
 #: Preferences.cpp:153
 msgid "Turkish"
-msgstr "Türkçe"
+msgstr "Tyrkisk"
 
 #: Preferences.cpp:154
 msgid "Ukrainian"
-msgstr "Ukraynaca"
+msgstr "Ukrainsk"
 
 #: Preferences.cpp:155
 msgid "Bulgarian"
-msgstr "Bulgarca"
+msgstr "Bulgarsk"
 
 #: Preferences.cpp:156
 msgid "Catalan"
-msgstr "Katalonya lehçesi"
+msgstr "Catalansk"
 
 #: Preferences.cpp:157
 msgid "Serbian"
-msgstr "Sırpça"
+msgstr "Serbisk"
 
 #: Preferences.cpp:220
 msgid "General"
-msgstr "Genel"
+msgstr "Generelt"
 
 #: Preferences.cpp:224
 msgid "Collections"
-msgstr "Koleksiyonlar"
+msgstr "Samlinger"
 
 #: Preferences.cpp:229
 msgid "Playback"
-msgstr "Playback"
+msgstr "Afspilning"
 
 #: Preferences.cpp:234
 msgid "Crossfader"
-msgstr "Çapraz Geçiş"
+msgstr "Glidende overgang"
 
 #: Preferences.cpp:239
 msgid "Record"
-msgstr "Kayıt"
+msgstr "Optag"
 
 #: Preferences.cpp:254
 msgid "Online"
-msgstr "Çevrimiçi"
+msgstr "Internettet"
 
 #: Preferences.cpp:284
 msgid "Copy to"
-msgstr "Kopyala"
+msgstr "Kopier til"
 
 #: Preferences.cpp:289
 msgid "Shortcuts"
-msgstr "Kısayollar"
+msgstr "Genveje"
 
 #: Preferences.cpp:371
 msgid " Accept "
-msgstr " Uygula "
+msgstr " Accepter "
 
 #: Preferences.cpp:373
 msgid " Cancel "
-msgstr " İptal "
+msgstr " Afbryd "
 
 #: Preferences.cpp:587
 msgid " On Start "
-msgstr " Başlangıçta "
+msgstr " Ved opstart "
 
 #: Preferences.cpp:591 Preferences.cpp:1634
 msgid "Language:"
-msgstr "Dil:"
+msgstr "Sprog:"
 
 #: Preferences.cpp:602
 msgid "(Needs restart)"
-msgstr "(Yeniden başlatma gerekli)"
+msgstr "(Kræver genstart)"
 
 #: Preferences.cpp:608
 msgid "Show splash screen"
-msgstr "Açılış ekranını göster"
+msgstr "Vis opstartsbillede"
 
 #: Preferences.cpp:612
 msgid "Start minimized"
-msgstr "Görev çubuğunda başlat"
+msgstr "Start minimeret"
 
 #: Preferences.cpp:618
 msgid "Restore position for tracks longer than"
-msgstr "'dan ucun parçaların konumunu koru"
+msgstr "Gendan position for numre længere end"
 
 #: Preferences.cpp:625
 msgid "set the minimun length in minutes to save track position"
-msgstr "Parça konumunu kaydetmek için minimum süre dakikasını ayarla"
+msgstr "sæt minimumslængden i minutter for at gemme nummerposition"
 
 #: Preferences.cpp:635
 msgid "Load default layout"
-msgstr "Varsayılan düzeni yükle"
+msgstr "Indlæs standardlayout"
 
 #: Preferences.cpp:641
 msgid " Behaviour "
-msgstr " Eylemler "
+msgstr " Opførsel "
 
 #: Preferences.cpp:643
 msgid "Activate task bar icon"
-msgstr "Görev çubuğu simgesini etkinleştir"
+msgstr "Aktiver opgavebjælkeikon"
 
 #: Preferences.cpp:658
 msgid "Integrate into SoundMenu"
-msgstr "Ses Menüsüne ilave et"
+msgstr "Integrer i SoundMenu"
 
 #: Preferences.cpp:664
 msgid "Enqueue as default action"
-msgstr "Varsayılan eylem olarak kuyruğa ekle"
+msgstr "Sæt i kø som standardhandling"
 
 #: Preferences.cpp:668
 msgid "Drop files clear playlist"
-msgstr "Dosyaları sürükle çalma listesini temizle"
+msgstr "Drop filer rydder afspilningsliste"
 
 #: Preferences.cpp:672
 msgid "Instant text search"
-msgstr "Anlık metin arama"
+msgstr "Øjeblikkelig tekstsøgning"
 
 #: Preferences.cpp:676
 msgid "When searching, pressing enter queues the result"
-msgstr "Arama yaparken, sonuçları kuyruğa eklemesi için enter tuşuna bas"
+msgstr "Under søgning, tryk på retur sætter resultatet i kø"
 
 #: Preferences.cpp:681
 msgid "Show CD cover frame in player"
-msgstr "Albüm kapağı çerçevesini göster"
+msgstr "Vis cd-omslagsramme i afspiller"
 
 #: Preferences.cpp:687
 msgid " On Close "
-msgstr " Kapanışta "
+msgstr " Ved lukning "
 
 #: Preferences.cpp:689
 msgid "Save playlist on close"
-msgstr "Çalma listesini kapatılırken kaydet"
+msgstr "Gem afspilningsliste ved lukning"
 
 #: Preferences.cpp:693
 msgid "Close to task bar icon"
-msgstr "Görev çubuğuna küçült"
+msgstr "Luk til opgavebjælkeikon"
 
 #: Preferences.cpp:698
 msgid "Ask confirmation on exit"
-msgstr "Çıkışta onay iste"
+msgstr "Bed om bekræftelse ved afslut"
 
 #: Preferences.cpp:740
 msgid " Collections "
-msgstr " Koleksiyonlar "
+msgstr " Samlinger "
 
 #: Preferences.cpp:788
 msgid " Paths "
-msgstr " Yollar "
+msgstr " Stier "
 
 #: Preferences.cpp:808
 msgid " Words to detect covers "
-msgstr " Albüm kapağı aranırken bakılacak kelimeler "
+msgstr " Ord til at detektere omslag "
 
 #: Preferences.cpp:836 Preferences.cpp:2344
 msgid " Options "
-msgstr " Seçenekler "
+msgstr " Indstillinger "
 
 #: Preferences.cpp:838
 msgid "Update when opened "
-msgstr "Açılışta güncelle "
+msgstr "Opdater når åbnet "
 
 #: Preferences.cpp:842
 msgid "Create playlists on scan"
-msgstr "Tarama sırasında çalma listesi oluştur"
+msgstr "Opret afspilningslister ved skan"
 
 #: Preferences.cpp:847
 msgid "Follow symbolic links on scan"
-msgstr "Verileri alırken sembolik bağlantıları izle"
+msgstr "Følg symbolske henvisninger ved skan"
 
 #: Preferences.cpp:851
 msgid "Scan embedded covers in audio files"
-msgstr "Ses dosyalarındaki eşleştirilmiş albüm kapaklarını ara"
+msgstr "Skan indlejrede omslag i lydfiler"
 
 #: Preferences.cpp:856
 msgid "Embed rating, play count and labels"
-msgstr "Derecelendirmeyi,çalma sayısını ve etiketleri eşleştir"
+msgstr "Indlejr bedømmelse, antal afspilninger og etiketter"
 
 #: Preferences.cpp:862
 msgid "Default copy action"
-msgstr "Varsayılan kopyalama eylemi"
+msgstr "Standardkopieringshandling"
 
 #: Preferences.cpp:943
 msgid "Play random"
-msgstr "Çalma listesi boşsa"
+msgstr "Afspil vilkårlig"
 
 #: Preferences.cpp:947
 msgid "album"
-msgstr "lbüm"
+msgstr "album"
 
 #: Preferences.cpp:955
 msgid "when playlist is empty"
-msgstr "karışık çal"
+msgstr "når afspilningsliste er tom"
 
 #: Preferences.cpp:961
 msgid "Delete played tracks from playlist"
-msgstr "Çalınan parçaları çalma listesinden sil"
+msgstr "Slet afspillede numre fra afspilningslisten"
 
 #: Preferences.cpp:965
 msgid "Show notifications"
-msgstr "Bildirimleri göster"
+msgstr "Vis påmindelser"
 
 #: Preferences.cpp:971
 msgid "ReplayGain mode:"
-msgstr "ReplayGain modu:"
+msgstr "ReplayGain-tilstand:"
 
 #: Preferences.cpp:982
 msgid "PreAmp:"
@@ -3302,115 +3299,115 @@ msgstr "PreAmp:"
 
 #: Preferences.cpp:1001
 msgid " Random / Smart play modes "
-msgstr " Karışık/Akıllı Çalma Modları "
+msgstr " Vilkårlig og smart afspilningstilstand "
 
 #: Preferences.cpp:1011
 msgid "Tracks left to start search"
-msgstr "Yeni arama için kalan parça sayısı"
+msgstr "Numre tilbage for at starte søgning"
 
 #: Preferences.cpp:1019
 msgid "Tracks added each time"
-msgstr "Her seferinde eklenecek parça sayısı"
+msgstr "Numre tilføjet hver gang"
 
 #: Preferences.cpp:1028
 msgid "Max played tracks kept in playlist"
-msgstr "Çalma listesinde kalacak, en çok çalınan şarkı sayısı"
+msgstr "Maks. afspillede numre i afspilningslisten"
 
 #: Preferences.cpp:1036
 msgid "Don't repeat last"
-msgstr "En son"
+msgstr "Gentag ikke sidste"
 
 #: Preferences.cpp:1044
 msgid "artists or"
-msgstr "sanatçıyı veya"
+msgstr "kunstnere eller"
 
 #: Preferences.cpp:1060
 msgid " Silence detector "
-msgstr "Sessizlik detektörü"
+msgstr " Stilhedsdetektor "
 
 #: Preferences.cpp:1065
 msgid "Skip at"
-msgstr "Atla"
+msgstr "Udelad ved"
 
 #: Preferences.cpp:1084
 msgid "In the last"
-msgstr "En son"
+msgstr "I de sidste"
 
 #: Preferences.cpp:1094 Preferences.cpp:1328
 msgid "seconds"
-msgstr "saniye"
+msgstr "sekunder"
 
 #: Preferences.cpp:1102
 msgid " Output device "
-msgstr "Çıktı aygıtı"
+msgstr " Udgangsenhed "
 
 #: Preferences.cpp:1105
 msgid "Automatic"
-msgstr "Otomatik"
+msgstr "Automatisk"
 
 #: Preferences.cpp:1106
 msgid "GConf Defined"
-msgstr " GConf Tanımlandı"
+msgstr "GConf-defineret"
 
 #: Preferences.cpp:1156
 msgid " Crossfader "
-msgstr " Çapraz Geçiş "
+msgstr " Glidende overgang "
 
 #: Preferences.cpp:1163
 msgid "Fade-out length:"
-msgstr "Fade-out uzunluğu:"
+msgstr "Varighed ved nummerslut:"
 
 #: Preferences.cpp:1172
 msgid "Select the length of the fade out. 0 for gapless playback"
-msgstr "Kaybolma süresini ayarla. Boşluksuz mod için 0."
+msgstr "Vælg varighedslængden ved numreskift. 0 for afspilning uden huller"
 
 #: Preferences.cpp:1175
 msgid "Fade-in length:"
-msgstr "Fade-in uzunluğu:"
+msgstr "Varighed ved nummerstart:"
 
 #: Preferences.cpp:1184
 msgid "Select the length of the fade in"
-msgstr "Sesin açılma uzunluğunu seçin"
+msgstr "Vælg længden for varighed ved nummerstart"
 
 #: Preferences.cpp:1187
 msgid "Fade-in volume:"
-msgstr "Fade-in ses yüksekliği:"
+msgstr "Lydstyrke ved nummerstart:"
 
 #: Preferences.cpp:1196
 msgid "Select the initial volume of the fade in"
-msgstr "Açılma noktasının başlangıç ses kuvvetini seçin."
+msgstr "Vælg den oprindelige lydstyrke for nummerstart"
 
 #: Preferences.cpp:1199
 msgid "Fade-in start:"
-msgstr "Fade-in başlangıcı:"
+msgstr "Nummerstart:"
 
 #: Preferences.cpp:1208
 msgid "Select at which volume of the fade out the fade in starts"
-msgstr "Başlarken ses kuvvetinin hangisinde  olduğunu açılması kapatılmasında seçin"
+msgstr "Vælg hvilken lydstyrke for nummerslut som nummerstarten begynder med"
 
 #: Preferences.cpp:1252
 msgid " Record "
-msgstr " Kayıt "
+msgstr " Optag "
 
 #: Preferences.cpp:1254
 msgid "Enable recording"
-msgstr "Kaydetmeyi etkinleştir"
+msgstr "Aktier optagelse"
 
 #: Preferences.cpp:1260
 msgid "Save to:"
-msgstr "Kaydet:"
+msgstr "Gemt til:"
 
 #: Preferences.cpp:1278 Preferences.cpp:2365
 msgid "Format:"
-msgstr "Biçim:"
+msgstr "Format:"
 
 #: Preferences.cpp:1295 Transcode.cpp:343
 msgid "Very High"
-msgstr "Çok Yüksek"
+msgstr "Meget høj"
 
 #: Preferences.cpp:1296 Transcode.cpp:344
 msgid "High"
-msgstr "Yüksek"
+msgstr "Høj"
 
 #: Preferences.cpp:1297 Transcode.cpp:347
 msgid "Normal"
@@ -3418,232 +3415,232 @@ msgstr "Normal"
 
 #: Preferences.cpp:1298 Transcode.cpp:348
 msgid "Low"
-msgstr "Düşük"
+msgstr "Lav"
 
 #: Preferences.cpp:1299 Transcode.cpp:349
 msgid "Very Low"
-msgstr "Çok Düşük"
+msgstr "Meget lav"
 
 #: Preferences.cpp:1311
 msgid "Split tracks"
-msgstr "Parçaları böl"
+msgstr "Opdel numre"
 
 #: Preferences.cpp:1318
 msgid "Delete tracks shorter than"
-msgstr "'dan kısa parçayı sil"
+msgstr "Slet numre kortere end"
 
 #: Preferences.cpp:1361
 msgid " Last.fm audioscrobble "
-msgstr " Last.fm Müzik Skroplama "
+msgstr " Last.fm audioscrobble "
 
 #: Preferences.cpp:1371 Preferences.cpp:1406
 msgid "Username:"
-msgstr "Kullanıcı İsmi:"
+msgstr "Brugernavn:"
 
 #: Preferences.cpp:1379 Preferences.cpp:1414
 msgid "Password:"
-msgstr "Parola:"
+msgstr "Adgangskode:"
 
 #: Preferences.cpp:1396
 msgid " Libre.fm audioscrobble "
-msgstr " Libre.fm Müzik Skroplama "
+msgstr " Libre.fm audioscrobble "
 
 #: Preferences.cpp:1435
 msgid "Join the Guayadeque Last.fm users group"
-msgstr "Guayadeque Last.fm kullanıcı gruplarına katıl"
+msgstr "Slut dig til Guayadeque Last.fm-brugergruppen"
 
 #: Preferences.cpp:1467
 msgid " Sources "
-msgstr " Kaynaklar "
+msgstr " Kilder "
 
 #: Preferences.cpp:1511
 msgid " Targets "
-msgstr " Hedefler "
+msgstr " Mål "
 
 #: Preferences.cpp:1551
 msgid " Font "
-msgstr " Yazı Tipi "
+msgstr " Skrifttype "
 
 #: Preferences.cpp:1553
 msgid "Font:"
-msgstr "Yazı Tipi:"
+msgstr "Skrifttype:"
 
 #: Preferences.cpp:1565
 msgid "Align:"
-msgstr "Hizala:"
+msgstr "Juster:"
 
 #: Preferences.cpp:1571
 msgid "Center"
-msgstr "Ortala"
+msgstr "Centrer"
 
 #: Preferences.cpp:1613
 msgid " Filters "
-msgstr " Filtreler "
+msgstr " Filtre "
 
 #: Preferences.cpp:1632
 msgid " Language "
-msgstr " Dil "
+msgstr " Sprog "
 
 #: Preferences.cpp:1648
 msgid " Browser command "
-msgstr " Tarayıcı komutu "
+msgstr " Browserkommando "
 
 #: Preferences.cpp:1669
 msgid " Minimum radio allowed bit rate "
-msgstr " Radyo için izin verilen en düşük bit oranı"
+msgstr " Minimum radiotilladt bithastighed "
 
 #: Preferences.cpp:1677
 msgid " Player online buffer size "
-msgstr "Player online yüklenme boyutu"
+msgstr " Spillers mellemlagerstørrelse på nettet "
 
 #: Preferences.cpp:1713
 msgid " Podcasts "
-msgstr " Podcastler "
+msgstr " Podcaster "
 
 #: Preferences.cpp:1717
 msgid "Destination directory:"
-msgstr "Hedef konumu:"
+msgstr "Destinationsmappe:"
 
 #: Preferences.cpp:1721
 msgid "Select podcasts folder"
-msgstr "Podcast klasörünü seç"
+msgstr "Vælg podcastmappe"
 
 #: Preferences.cpp:1729
 msgid "Check every"
-msgstr "Denetle"
+msgstr "Kontroller hver"
 
 #: Preferences.cpp:1734
 msgid "Hour"
-msgstr "Saat"
+msgstr "Time"
 
 #: Preferences.cpp:1734
 msgid "Day"
-msgstr "Gün"
+msgstr "Dag"
 
 #: Preferences.cpp:1734
 msgid "Week"
-msgstr "Hafta"
+msgstr "Uge"
 
 #: Preferences.cpp:1734
 msgid "Month"
-msgstr "Ay"
+msgstr "Måned"
 
 #: Preferences.cpp:1745
 msgid "Delete after"
-msgstr "Ardından sil"
+msgstr "Slet efter"
 
 #: Preferences.cpp:1754
 msgid "Days"
-msgstr "Günde"
+msgstr "Date"
 
 #: Preferences.cpp:1754
 msgid "Weeks"
-msgstr "Haftada"
+msgstr "Uger"
 
 #: Preferences.cpp:1754
 msgid "Months"
-msgstr "Ayda"
+msgstr "Måneder"
 
 #: Preferences.cpp:1763
 msgid "Only if played"
-msgstr "Sadece çalındıysa"
+msgstr "Kun hvis afspillet"
 
 #: Preferences.cpp:1791 Preferences.cpp:1884 RadioGenreEditor.cpp:37
 msgid " Genres "
-msgstr " Türler "
+msgstr " Genre "
 
 #: Preferences.cpp:1825 Preferences.cpp:1922
 msgid "Invert"
-msgstr "Tersi"
+msgstr "Vend om"
 
 #: Preferences.cpp:1839
 msgid "Audio format:"
-msgstr "Ses biçimi:"
+msgstr "Lydformat:"
 
 #: Preferences.cpp:1850
 msgid "Torrent command:"
-msgstr "Torrent komutu:"
+msgstr "Torrentkommando:"
 
 #: Preferences.cpp:1936
 msgid "Membership :"
-msgstr "Üyelik:"
+msgstr "Medlemskab:"
 
 #: Preferences.cpp:1943
 msgid "Streaming"
-msgstr "Akış"
+msgstr "Udsendelse"
 
 #: Preferences.cpp:1944
 msgid "Downloading"
-msgstr "İndirme"
+msgstr "Hent"
 
 #: Preferences.cpp:1958
 msgid "Username :"
-msgstr "Kullanıcı Adı:"
+msgstr "Brugernavn:"
 
 #: Preferences.cpp:1966
 msgid "Password :"
-msgstr "Parola:"
+msgstr "Adgangskode:"
 
 #: Preferences.cpp:1984
 msgid "Stream as :"
-msgstr "Akış biçimi:"
+msgstr "Udsend som:"
 
 #: Preferences.cpp:1998
 msgid "Download as :"
-msgstr "İndirme biçimi:"
+msgstr "Hent som:"
 
 #: Preferences.cpp:2002
 msgid "Download Page"
-msgstr "İndirme Sayfası"
+msgstr "Hent her"
 
 #: Preferences.cpp:2043
 msgid " Links "
-msgstr " Bağlantılar "
+msgstr " Adresser "
 
 #: Preferences.cpp:2098
 msgid "URL:"
-msgstr "URL:"
+msgstr "Adresse:"
 
 #: Preferences.cpp:2123
 msgid " Define URLs using "
-msgstr " Kullanılacak URL'leri tanımla "
+msgstr " Definer adreser med "
 
 #: Preferences.cpp:2129
 msgid ""
 "2 letters language code\n"
 "Text to search"
-msgstr "2 harfli dil kodu\nArama metni"
+msgstr "2-bogstavs sprogkoder\nTekst at søge"
 
 #: Preferences.cpp:2166
 msgid " Commands "
-msgstr " Komutlar "
+msgstr " Kommandoer "
 
 #: Preferences.cpp:2219
 msgid "Command:"
-msgstr "Komut:"
+msgstr "Kommando:"
 
 #: Preferences.cpp:2244
 msgid " Define commands using "
-msgstr " Kullanılacak komutları tanımla "
+msgstr " Definer kommandoer med "
 
 #: Preferences.cpp:2250
 msgid ""
 "Album path\n"
 "Album cover file path\n"
 "Track path"
-msgstr "Albüm yolu\nAlbüm kapağı dosyası yolu\nParça yolu"
+msgstr "Albumsti\nAlbumomslags filsti\nNummersti"
 
 #: Preferences.cpp:2287
 msgid " Patterns "
-msgstr "Şablonlar"
+msgstr " Mønstre "
 
 #: Preferences.cpp:2399
 msgid "Remove source files"
-msgstr "Kaynak dosyalarını kaldır"
+msgstr "Fjern kildefiler"
 
 #: Preferences.cpp:2416
 msgid " Define patterns using "
-msgstr " Kullanılacak şablonları tanımla "
+msgstr " Definer mønstre med "
 
 #: Preferences.cpp:2422
 msgid ""
@@ -3651,7 +3648,7 @@ msgid ""
 "Album Artist\n"
 "{aa} or {a}\n"
 "Album"
-msgstr "Sanatçı\nAlbüm Sanatçısı\n{aa} ya da {a}\nAlbüm"
+msgstr "Kunstner\nAlbumkunstner\n{aa} eller {a}\nAlbum"
 
 #: Preferences.cpp:2430
 msgid ""
@@ -3659,7 +3656,7 @@ msgid ""
 "Disk\n"
 "Filename\n"
 "Genre"
-msgstr "Besteci\nDisk\nDosyaadı\nTür"
+msgstr "Komponist\nDisk\nFilnavn\nGenre"
 
 #: Preferences.cpp:2438
 msgid ""
@@ -3667,211 +3664,211 @@ msgid ""
 "Number\n"
 "Title\n"
 "Year"
-msgstr "İçerik\nNumara\nBaşlık\nYıl"
+msgstr "Indeks\nNummer\nTitel\nÅr"
 
 #: Preferences.cpp:2494
 msgid " Accelerators "
-msgstr "Hızlandırıcılar"
+msgstr " Acceleratorer "
 
 #: Preferences.cpp:2499
 msgid "Action"
-msgstr "Eylem"
+msgstr "Handling"
 
 #: Preferences.cpp:2503
 msgid "Key"
-msgstr "Anahtar"
+msgstr "Tast"
 
 #: Preferences.cpp:2935 Preferences.cpp:2955
 msgid "Collection: "
-msgstr "Koleksiyon "
+msgstr "Samling: "
 
 #: Preferences.cpp:2935 Preferences.cpp:2955
 msgid "Enter the collection name"
-msgstr "Koleksiyon ismi girin"
+msgstr "Indtast samlingens navn"
 
 #: Preferences.cpp:3061
 msgid "Change library path"
-msgstr "Kütüphane yolunu değiştirin"
+msgstr "Ændr bibliotekssti"
 
 #: Preferences.cpp:3139 Preferences.cpp:3159
 msgid "Word: "
-msgstr "Kelime:"
+msgstr "Ord: "
 
 #: Preferences.cpp:3139 Preferences.cpp:3159
 msgid "Enter the text to find covers"
-msgstr "Albüm kapaklarını bulmak için metin girin"
+msgstr "Indtast teksten for at finde omslag"
 
 #: Preferences.cpp:3648 Preferences.cpp:3678
 msgid "Filter: "
-msgstr "Filtre "
+msgstr "Filter: "
 
 #: Preferences.cpp:3648
 msgid "Enter the text to filter"
-msgstr "Filtrelemek için metin girin"
+msgstr "Indtast filterteksten"
 
 #: Preferences.cpp:3678
 msgid "Edit the text to filter"
-msgstr "Düzenlemek için metin girin"
+msgstr "Rediger filterteksten"
 
 #: Preferences.cpp:4191
 msgid "Select path"
-msgstr "Yol seç"
+msgstr "Vælg sti"
 
 #: Preferences.cpp:4389
 msgid "Key used by '"
-msgstr "tarafından kullanılmış anahtar"
+msgstr "Tast brugt af '"
 
 #: RadioGenreEditor.cpp:27
 msgid "Radio Genre Editor"
-msgstr "Radyo Türü Düzenleyicisi"
+msgstr "Redigeringsprogram for radiogenre"
 
 #: RadioGenreEditor.cpp:48
 msgid "Other:"
-msgstr "Diğer:"
+msgstr "Anden:"
 
 #: RadioPanel.cpp:330
 msgid "BitRate"
-msgstr "BitRate"
+msgstr "BitHastighed"
 
 #: RadioPanel.cpp:331
 msgid "Listeners"
-msgstr "Dinleyiciler"
+msgstr "Lyttere"
 
 #: RadioPanel.cpp:332 SoListBox.cpp:423
 msgid "Format"
-msgstr "Biçim"
+msgstr "Format"
 
 #: RadioPanel.cpp:608 RadioPanel.cpp:622
 msgid "Stations"
-msgstr "İstasyonlar"
+msgstr "Stationer"
 
 #: RadioPanel.cpp:1118
 msgid "There are not entries for this Radio Station"
-msgstr "Bu Radyo İstasyonu için kayıt bulunmuyor"
+msgstr "Der er ingen beskeder for denne radiostation"
 
 #: RadioPanel.cpp:1168
 msgid " Radio Search "
-msgstr " Radyo Arama "
+msgstr " Radiosøgning "
 
 #: RadioPanel.cpp:1183
 msgid "Search in now playing info"
-msgstr "Şu an çalınan bilgisinde ara"
+msgstr "Søg i afspiller nu-informationen"
 
 #: RadioPanel.cpp:1187
 msgid "Search in genre names"
-msgstr "Tür isimleri içerisinde ara"
+msgstr "Søg i genrenavne"
 
 #: RadioPanel.cpp:1191
 msgid "Search in station names"
-msgstr "İstasyon isimleri içerisinde ara"
+msgstr "Søg i stationsnavne"
 
 #: RadioPanel.cpp:1195
 msgid "Include results from all genres"
-msgstr "Tüm türler dahil sonuçlar"
+msgstr "Inkluder resultater fra alle genre"
 
 #: RaListBox.cpp:144
 msgid "Play the selected tracks"
-msgstr "Seçili parçaları çal"
+msgstr "Afspil de valgte numre"
 
 #: SelCoverFile.cpp:30
 msgid "Select Cover File"
-msgstr "Albüm kapağı dosyasını seç"
+msgstr "Vælg omslagsfil"
 
 #: SelCoverFile.cpp:55
 msgid "Cover:"
-msgstr "Albüm Kapağı:"
+msgstr "Omslag:"
 
 #: SelCoverFile.cpp:114
 msgid "Select the cover filename"
-msgstr "Albüm kapağı dosya ismini seç"
+msgstr "Vælg omslagets filnavn"
 
 #: ShoutcastRadio.cpp:70
 msgid "Add Genre"
-msgstr "Tür Ekle"
+msgstr "Tilføj genre"
 
 #: ShoutcastRadio.cpp:70
 msgid "Create a new genre"
-msgstr "Yeni bir tür ekle"
+msgstr "Opret en ny gener"
 
 #: ShoutcastRadio.cpp:76
 msgid "Edit genre"
-msgstr "Türü düzenle"
+msgstr "Rediger genre"
 
 #: ShoutcastRadio.cpp:76
 msgid "Change the selected genre"
-msgstr "Seçili türü değiştir"
+msgstr "Ændr den valgte genre"
 
 #: ShoutcastRadio.cpp:80
 msgid "Delete genre"
-msgstr "Türü sil"
+msgstr "Slet genre"
 
 #: ShoutcastRadio.cpp:80 ShoutcastRadio.cpp:105
 msgid "Delete the selected search"
-msgstr "Seçili aramayı sil"
+msgstr "Slet den valgte søgning"
 
 #: ShoutcastRadio.cpp:95
 msgid "Add Search"
-msgstr "Arama Ekle"
+msgstr "Tilføj søgning"
 
 #: ShoutcastRadio.cpp:95
 msgid "Create a new search"
-msgstr "Yeni arama oluştur"
+msgstr "Opret en ny søgning"
 
 #: ShoutcastRadio.cpp:101
 msgid "Edit search"
-msgstr "Aramayı düzenle"
+msgstr "Rediger søgning"
 
 #: ShoutcastRadio.cpp:101
 msgid "Change the selected search"
-msgstr "Seçili aramayı değiştir"
+msgstr "Ændr den valgte søgning"
 
 #: ShoutcastRadio.cpp:105
 msgid "Delete search"
-msgstr "Aramayı sil"
+msgstr "Slet søgning"
 
 #: ShoutcastRadio.cpp:120
 msgid "Update Radio Stations"
-msgstr "Radyo İstasyonlarını Güncelle"
+msgstr "Opdater radiostationer"
 
 #: ShoutcastRadio.cpp:141
 msgid "Searches"
-msgstr "Aramalar"
+msgstr "Søgninger"
 
 #: ShoutcastRadio.cpp:343
 msgid "Genre Name: "
-msgstr "Tür İsmi: "
+msgstr "Genrenavn: "
 
 #: ShoutcastRadio.cpp:343
 msgid "Enter the new Genre Name"
-msgstr "Yeni Tür İsmi gir"
+msgstr "Indtast det nye genrenavn"
 
 #: ShoutcastRadio.cpp:367
 msgid "Are you sure to delete the selected radio genres?"
-msgstr "Seçili radyo türlerini silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette de valgte radiogenre?"
 
 #: ShoutcastRadio.cpp:447
 msgid "Are you sure to delete the selected radio searches?"
-msgstr "Seçili radyo aramalarını silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette de valgte radiosøgninger?"
 
 #: SmartMode.cpp:391
 msgid "Generate Smart Playlist"
-msgstr "Akıllı Çalma Listesi oluştur"
+msgstr "Opret smart afspilningsliste"
 
 #: SmartMode.cpp:411
 msgid "Save to"
-msgstr "Buraya Kaydet"
+msgstr "Gem til"
 
 #: SmartMode.cpp:431
 msgid "Allow"
-msgstr "İzin Ver"
+msgstr "Tillad"
 
 #: SmartMode.cpp:446
 msgid "Deny"
-msgstr "Reddet"
+msgstr "Nægt"
 
 #: SmartMode.cpp:469
 msgid "Hours"
-msgstr "Saatler"
+msgstr "Timer"
 
 #: SmartMode.cpp:470
 msgid "MiBytes"
@@ -3883,55 +3880,55 @@ msgstr "GiByte"
 
 #: SoListBox.cpp:425
 msgid "Offset"
-msgstr "Başlangıç noktası"
+msgstr "Forskydning"
 
 #: SoListBox.cpp:497
 msgid "Edit the clicked column for the selected tracks"
-msgstr "Seçili parçalar için tıklanan sütunu düzenle"
+msgstr "Rediger den valgte kolonne for de valgte numre"
 
 #: SoListBox.cpp:503
 msgid "Set"
-msgstr "Ayarla"
+msgstr "Sæt"
 
 #: SoListBox.cpp:510
 msgid "Set the clicked column for the selected tracks"
-msgstr "Seçili parçalar için tıklanan sütunu ayarla"
+msgstr "Sæt den valgte kolonne for de valgte numre"
 
 #: SoListBox.cpp:569
 msgid "Edit the labels assigned to the selected songs"
-msgstr "Seçili şarkılara atanmış etiketleri düzenle"
+msgstr "Redigere etiketterne tildelt de valgte sange"
 
 #: SoListBox.cpp:577
 msgid "Edit the songs selected"
-msgstr "Seçili parçaları düzenle"
+msgstr "Rediger de valgte sange"
 
 #: SoListBox.cpp:617 TaskBar.cpp:162
 msgid "Set the current track rating"
-msgstr "Geçerli parçanın derecelendirmesini ayarla"
+msgstr "Sæt nummerets bedømmelse"
 
 #: SoListBox.cpp:624
 msgid "Save all selected tracks as a playlist"
-msgstr "Tüm seçili parçaları çalma listesi olarak kaydet"
+msgstr "Gem alle valgte numre som en afspilningsliste"
 
 #: SoListBox.cpp:638
 msgid "Remove the current selected tracks from library"
-msgstr "Seçili geçerli parçaları kütüphaneden kaldır"
+msgstr "Fjern de valgte numre fra biblioteket"
 
 #: SoListBox.cpp:643
 msgid "Remove the current selected tracks from drive"
-msgstr "Seçili geçerli parçaları aygıttan kaldır"
+msgstr "Fjern de valgte numre fra drevet"
 
 #: SoListBox.cpp:652
 msgid "Selects the genre of the current song"
-msgstr "Geçerli şarkı için türleri seç"
+msgstr "Vælger genren for sangen"
 
 #: SoListBox.cpp:658
 msgid "Selects the album artist of the current song"
-msgstr "Geçerli şarkı için albüm sanatçısını seç"
+msgstr "Vælger albumkunstneren for sangen"
 
 #: SoListBox.cpp:661
 msgid "Selects the composer of the current song"
-msgstr "Geçerli şarkı için besteciyi seç"
+msgstr "Vælger komponisten for sangen"
 
 #: SplashWin.cpp:62
 msgid "guayadeque.org"
@@ -3939,187 +3936,187 @@ msgstr "guayadeque.org"
 
 #: SplashWin.cpp:69
 msgid "Please Donate!"
-msgstr "Desteklemek ister misiniz?"
+msgstr "Doner venligst!"
 
 #: StatusBar.cpp:168 StatusBar.cpp:270
 msgid "Enable audioscrobbling"
-msgstr "Müzik Skroplamayı etkinleştir"
+msgstr "Aktiver audioscrobbling"
 
 #: StatusBar.cpp:171 StatusBar.cpp:287
 msgid "Enable crossfading"
-msgstr "Çapraz geçişi etkinleştir"
+msgstr "Aktiver glidende overgang"
 
 #: StatusBar.cpp:171 StatusBar.cpp:287
 msgid "Disable crossfading"
-msgstr "Çapraz geçişi devre dışı bırak"
+msgstr "Deaktiver glidende overgang"
 
 #: StatusBar.cpp:174
 msgid "Shows information about the selected items"
-msgstr "Seçili öğeler için bilgileri göster"
+msgstr "Vis information om de valgte elementer"
 
 #: StatusBar.cpp:270
 msgid "Disable audioscrobbling"
-msgstr "Müzik Skroplamayı devre dışı bırak"
+msgstr "Deaktiver audioscrobbling"
 
 #: TaListBox.cpp:104 TreePanel.cpp:367
 msgid "Create"
-msgstr "Oluştur"
+msgstr "Opret"
 
 #: TaListBox.cpp:104
 msgid "Create a new label"
-msgstr "Yeni etiket oluştur"
+msgstr "Opret et nyt label"
 
 #: TaListBox.cpp:111
 msgid "Change selected label"
-msgstr "Seçili etiketi değiştir"
+msgstr "Ændr valgt label"
 
 #: TaListBox.cpp:115
 msgid "Delete selected labels"
-msgstr "Seçili etiketleri sil"
+msgstr "Slet valgte labler"
 
 #: TaListBox.cpp:124
 msgid "Play current selected labels"
-msgstr "Seçili geçerli etiketleri çal"
+msgstr "Afspil valgte labler"
 
 #: TaListBox.cpp:131
 msgid "Add current selected labels to playlist"
-msgstr "Seçili geçerli etiketleri çalma listesine ekle"
+msgstr "Tilføj valgte labler til afspilningslisten"
 
 #: TaListBox.cpp:227
 msgid "Enter the new label name"
-msgstr "yeni etiket ismi gir"
+msgstr "Indtast det nye labelnavn"
 
 #: TaskBar.cpp:112
 msgid "Pause"
-msgstr "Duraklat"
+msgstr "Pause"
 
 #: TaskBar.cpp:112 TaskBar.cpp:116
 msgid "Play current playlist"
-msgstr "Geçerli çalma listesini oynat"
+msgstr "Afspil afspilningsliste"
 
 #: TaskBar.cpp:122
 msgid "Skip to next track in current playlist"
-msgstr "Geçerli çalma listesindeki bir sonraki parçaya atla"
+msgstr "Gå til næste nummer i afspilningslisten"
 
 #: TaskBar.cpp:126
 msgid "Skip to next album track in current playlist"
-msgstr "Geçerli çalma listesindeki bir sonraki albüm parçasına atla"
+msgstr "Gå til næste albumnummer i afspilningslisten"
 
 #: TaskBar.cpp:130
 msgid "Prev Track"
-msgstr "Önceki Parça"
+msgstr "For. nummer"
 
 #: TaskBar.cpp:130
 msgid "Skip to previous track in current playlist"
-msgstr "Geçerli çalma listesindeki bir önceki parçaya atla"
+msgstr "Gå til næste numer i nuværende afspilningsliste"
 
 #: TaskBar.cpp:134
 msgid "Prev Album"
-msgstr "Önceki Albüm"
+msgstr "For. album"
 
 #: TaskBar.cpp:134
 msgid "Skip to previous album track in current playlist"
-msgstr "Geçerli çalma listesindeki bir önceki albüm parçasına atla"
+msgstr "Gå til forrige albumnummer i afspilningslisten"
 
 #: TaskBar.cpp:165
 msgid "&Smart Play"
-msgstr "&Akıllı Çalma"
+msgstr "&Smart afspilning"
 
 #: TaskBar.cpp:169
 msgid "&Repeat Playlist"
-msgstr "&Çalma Listesini Tekrarla"
+msgstr "&Gentag afspilningsliste"
 
 #: TaskBar.cpp:173
 msgid "&Repeat Track"
-msgstr "&Parçayı Tekrarla"
+msgstr "&Gentag nummer"
 
 #: TaskBar.cpp:177
 msgid "R&andomize"
-msgstr "&Karıştır"
+msgstr "&Vilkårligt valg"
 
 #: TaskBar.cpp:187
 msgid "Audioscrobbling"
-msgstr "Müzik Skroplama"
+msgstr "Audioscrobbling"
 
 #: TaskBar.cpp:193
 msgid "Exit"
-msgstr "Çıkış"
+msgstr "Afslut"
 
 #: TaskBar.cpp:193
 msgid "Exit this program"
-msgstr "Programdan çık"
+msgstr "Afslut dette program"
 
 #: TrackEdit.cpp:89
 msgid "Songs Editor"
-msgstr "Şarkı Düzenleyicisi"
+msgstr "Redigeringsprogram for sange"
 
 #: TrackEdit.cpp:102
 msgid " Songs "
-msgstr " Şarkılar "
+msgstr " Sange "
 
 #: TrackEdit.cpp:110
 msgid "Move the track to the previous position"
-msgstr "Parçayı önceki pozisyona taşı"
+msgstr "Flyt nummeret til den forrige position"
 
 #: TrackEdit.cpp:116
 msgid "Move the track to the next position"
-msgstr "Parçayı sonraki pozisyona taşı"
+msgstr "Flyt nummere til den næste position"
 
 #: TrackEdit.cpp:145
 msgid "Copy the artist name to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçalardaki sanatçı isimlerini kopyala"
+msgstr "Kopier kunstnernavet til alle numrene du redigerer"
 
 #: TrackEdit.cpp:157
 msgid "Copy the album artist name to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçalardaki albüm sanatçı isimlerini kopyala"
+msgstr "Kopier albumkunstnerens navn til alle numrene du redigerer"
 
 #: TrackEdit.cpp:160 TrackEdit.cpp:485
 msgid "A. Artist:"
-msgstr "A.Sanatçısı:"
+msgstr "A. Kunstner:"
 
 #: TrackEdit.cpp:161
 msgid "shows the album artist of the track"
-msgstr "parçanın albüm sanatçısını gösterir"
+msgstr "viser albumkunstneren for nummeret"
 
 #: TrackEdit.cpp:169
 msgid "Copy the album name to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçalardaki albüm isimlerini kopyala"
+msgstr "Kopier albumnavnet til alle numrene du redigerer"
 
 #: TrackEdit.cpp:180
 msgid "Copy the title to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçalardaki başlıkları kopyala"
+msgstr "Kopier titlen til alle numrene du redigerer"
 
 #: TrackEdit.cpp:191
 msgid "Copy the composer to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçalardaki besteci isimlerini kopyala"
+msgstr "Kopier komponisten til alle numrene du redigerer"
 
 #: TrackEdit.cpp:195
 msgid "Composer:"
-msgstr "Besteci:"
+msgstr "Komponist:"
 
 #: TrackEdit.cpp:203
 msgid "Copy the comment to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçalardaki yorumları kopyala"
+msgstr "Kopier kommentaren til alle numrene du redigerer"
 
 #: TrackEdit.cpp:207
 msgid "Comment:"
-msgstr "Yorum:"
+msgstr "Kommentar:"
 
 #: TrackEdit.cpp:216
 msgid "Copy the number to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçaların numarasını kopyala"
+msgstr "Kopier nummeret til alle numrene du redigerer"
 
 #: TrackEdit.cpp:219 TrackEdit.cpp:543
 msgid "Number:"
-msgstr "Numara:"
+msgstr "Nummer:"
 
 #: TrackEdit.cpp:233
 msgid "Enumerate the tracks in the order they were added for editing"
-msgstr "Parçaları düzenlenmek için eklendikleri sırayla numaralandır"
+msgstr "Opregn numrene i den rækkefølge de blev tilføjet til redigering"
 
 #: TrackEdit.cpp:239
 msgid "Copy the disk to all the tracks you are editing"
-msgstr "Düzenlenen tüm parçaları diske kopyala"
+msgstr "Kopier disken til alle numrene du redigerer"
 
 #: TrackEdit.cpp:243
 msgid "Disk:"
@@ -4127,217 +4124,217 @@ msgstr "Disk:"
 
 #: TrackEdit.cpp:253
 msgid "Copy the genre name to all songs you are editing"
-msgstr "Düzenlenen tüm parçalardaki tür isimlerini kopyala"
+msgstr "Kopier genrenavnet til alle sange du redigerer"
 
 #: TrackEdit.cpp:256
 msgid "Genre:"
-msgstr "Tür:"
+msgstr "Genre:"
 
 #: TrackEdit.cpp:264
 msgid "Copy the year to all songs you are editing"
-msgstr "Düzenlenen tüm parçalardaki tarihi kopyala"
+msgstr "Kopier året til alle sange du redigerer"
 
 #: TrackEdit.cpp:267
 msgid "Year:"
-msgstr "Yıl:"
+msgstr "År:"
 
 #: TrackEdit.cpp:283
 msgid "Rating:"
-msgstr "Derecelendirme:"
+msgstr "Bedømmelse:"
 
 #: TrackEdit.cpp:332
 msgid "Add a picture from file to the current track"
-msgstr "Geçerli parçaya dosyadan bir resim ekle"
+msgstr "Tilføj et billede fra fil til nummeret"
 
 #: TrackEdit.cpp:336
 msgid "Delete the picture from the current track"
-msgstr "Geçerli parçanın resmini sil"
+msgstr "Slet billedet fra nummeret"
 
 #: TrackEdit.cpp:340
 msgid "Save the current picture to file"
-msgstr "Geçerli resmi dosyaya kaydet"
+msgstr "Gem billedet til fil"
 
 #: TrackEdit.cpp:344
 msgid "Search the album cover"
-msgstr "Albüm kapağını ara"
+msgstr "Søg efter albumomslag"
 
 #: TrackEdit.cpp:353
 msgid "Copy the current picture to all the tracks you are editing"
-msgstr "Geçerli görüntüyü düzenlediğiniz tüm parçalara kopyalar"
+msgstr "Kopier billedet til alle numre du redigerer"
 
 #: TrackEdit.cpp:361
 msgid "Pictures"
-msgstr "Resimler"
+msgstr "Billeder"
 
 #: TrackEdit.cpp:420
 msgid "Type the artist name to search in musicbrainz"
-msgstr "Musicbrainz'de aramak için sanatçı ismini yaz"
+msgstr "Indtast kunstnernavnet der skal søges efter i musicbrainz"
 
 #: TrackEdit.cpp:428
 msgid "Type the album name to search in musicbrainz"
-msgstr "Musicbrainz'de aramak için albüm ismini yaz"
+msgstr "Indtast albumnavnet der skal søges efter i musicbrainz"
 
 #: TrackEdit.cpp:432
 msgid "Clear the search fields so it search using the music fingerprint"
-msgstr "Aramanın müzik parmak izine göre yapılması için arama alanlarını temizle"
+msgstr "Ryd søgefelterne så der søges via musikfingeraftrykket"
 
 #: TrackEdit.cpp:446
 msgid "Select the album found in musicbrainz"
-msgstr "Musicbrainz'de bulunan albümleri seç"
+msgstr "Vælg albummet fundet i musicbrainz"
 
 #: TrackEdit.cpp:452
 msgid "Search albums in musicbrainz"
-msgstr "Musicbrainz'de albüm ara"
+msgstr "Søg efter album i musicbrainz"
 
 #: TrackEdit.cpp:458
 msgid "Copy the content of the album to the edited tracks"
-msgstr "Albüm içeriğini düzenlenen parçalara kopyala"
+msgstr "Kopier indholdet af albummet til de redigerede numre"
 
 #: TrackEdit.cpp:482
 msgid "Copy the artist to the edited tracks"
-msgstr "Sanatçıyı düzenlenen parçalara kopyala"
+msgstr "Kopier kunstneren til de redigerede numre"
 
 #: TrackEdit.cpp:493
 msgid "Copy the album artist to the edited tracks"
-msgstr "Albüm sanatçısını düzenlenen parçalara kopyala"
+msgstr "Kopier albumkunstneren til de redigerede numre"
 
 #: TrackEdit.cpp:504
 msgid "Copy the album to the edited tracks"
-msgstr "Albümü düzenlenen parçalara kopyala"
+msgstr "Kopier albummet til de redigerede numre"
 
 #: TrackEdit.cpp:517
 msgid "Copy the date to the edited tracks"
-msgstr "Düzenlenen parçanın tarihini kopyala"
+msgstr "Kopier datoen til de redigerede numre"
 
 #: TrackEdit.cpp:528
 msgid "Copy the song names to the edited tracks"
-msgstr "Düzenlenen parçanın şarkı isimlerini kopyala"
+msgstr "Kopier sangnavnene til de redigerede numre"
 
 #: TrackEdit.cpp:553
 msgid "Copy the number to the edited tracks"
-msgstr "Düzenlenen parçanın numarasını kopyala"
+msgstr "Kopier rækkefølgenummeret til de redigerede numre"
 
 #: TrackEdit.cpp:919
 #, c-format
 msgid ""
 "File Type\t: %s\n"
 "Length\t: %s"
-msgstr "Dosya Türü»: %s\nUzunluk»: %s"
+msgstr "Filtype\t: %s\nLængde\t: %s"
 
 #: TrackEdit.cpp:923
 #, c-format
 msgid ""
 "BitRate\t: %u Kbps\n"
 "File Size\t: %s"
-msgstr "BitRate»: %u Kbps⏎\nDosya Boyutu»: %s"
+msgstr "BitHastighed\t: %u Kbps\nFilstørrelse\t: %s"
 
 #: TrackEdit.cpp:1673
 #, c-format
 msgid "Error: The album have %u tracks and you are editing %u"
-msgstr "Hata: Albümde %u parça var ve siz %u düzenliyorsunuz"
+msgstr "Fejl: Albummet har %u numre og du redigerer %u"
 
 #: TrackEdit.cpp:1678
 msgid ""
 "\n"
 "Warning: The length of some edited tracks don't match"
-msgstr "\nHata: Düzenlenen bazı parçaların uzunlukları uyuşmuyor"
+msgstr "\nAdvarsel: Længden for nogle redigerede numre matcher ikke"
 
 #: Transcode.cpp:319
 msgid "Keep Format"
-msgstr "Biçimi Koru"
+msgstr "Bevar format"
 
 #: Transcode.cpp:342
 msgid "Keep Quality"
-msgstr "Kaliteyi Koru"
+msgstr "Bevar kvalitet"
 
 #: Transcode.cpp:345
 msgid "Very Good"
-msgstr "Çok İyi"
+msgstr "Meget god"
 
 #: Transcode.cpp:346
 msgid "Good"
-msgstr "İyi"
+msgstr "God"
 
 #: TreePanel.cpp:72
 msgid "Genres,Artists,Albums"
-msgstr "Türler,Sanatçılar,Albümler"
+msgstr "Genrer,kunstnere,album"
 
 #: TreePanel.cpp:73
 msgid "Genres,Year,Artists,Albums"
-msgstr "Türler,Yıllar,Sanatçılar,Albümler"
+msgstr "Genrer,år,kunstnere,album"
 
 #: TreePanel.cpp:88
 msgid "Sortings"
-msgstr "Sıralamalar"
+msgstr "Sortering"
 
 #: TreePanel.cpp:367
 msgid "Create a new filter"
-msgstr "yeni filtre oluştur"
+msgstr "Opret et nyt filter"
 
 #: TreePanel.cpp:371
 msgid "Edit the selected filter"
-msgstr "Seçili filtreyi düzenle"
+msgstr "Rediger det valgte filter"
 
 #: TreePanel.cpp:375
 msgid "Delete the selected filter"
-msgstr "Seçili filtreyi sil"
+msgstr "Slet det valgte filter"
 
 #: TreePanel.cpp:431
 msgid "Edit the labels assigned to the selected items"
-msgstr "Seçili öğelere atanan etiketleri düzenle"
+msgstr "Rediger etiketterne tildelt til de valgte elementer"
 
 #: TreePanel.cpp:1231
 msgid "Are you sure to delete the selected filter?"
-msgstr "Seçili filtreyi silmek istediğinize emin misiniz?"
+msgstr "Er du sikker på, at du ønsker at slette det valgte filter?"
 
 #: TreeViewFilterEditor.cpp:33
 msgid "Filter Editor"
-msgstr "Filtre Düzenleyicisi"
+msgstr "Redigeringsprogram for filtre"
 
 #: TreeViewFilterEditor.cpp:70
 msgid "Play Count"
-msgstr "Çalma Sayısı"
+msgstr "Antal afspilninger"
 
 #: TreeViewFilterEditor.cpp:119
 msgid "Filter:"
-msgstr "Filtre:"
+msgstr "Filter:"
 
 #: TreeViewFilterEditor.cpp:123
 msgid "PlayCount"
-msgstr "ÇalmaSayısı"
+msgstr "AntalAfspilninger"
 
 #: UserRadio.cpp:55
 msgid "Add Radio"
-msgstr "Radyo ekle"
+msgstr "Tilføj radio"
 
 #: UserRadio.cpp:55
 msgid "Create a new radio"
-msgstr "Yeni radyo oluştur"
+msgstr "Opret en ny radio"
 
 #: UserRadio.cpp:62 UserRadio.cpp:122 UserRadio.cpp:152
 msgid "Edit Radio"
-msgstr "Radyoyu Düzenle"
+msgstr "Rediger radio"
 
 #: UserRadio.cpp:63
 msgid "Change the selected radio"
-msgstr "Seçili radyoyu değiştir"
+msgstr "Ændr den valgte radio"
 
 #: UserRadio.cpp:67
 msgid "Delete Radio"
-msgstr "Radyoyu Sil"
+msgstr "Slet radio"
 
 #: UserRadio.cpp:67
 msgid "Delete the selected radio"
-msgstr "Seçili radyoyu sil"
+msgstr "Slet den valgte radio"
 
 #: UserRadio.cpp:74
 msgid "Import the radio stations"
-msgstr "Radyo istasyonlarını içe aktar"
+msgstr "Importer radiostationerne"
 
 #: UserRadio.cpp:78
 msgid "Export all the radio stations"
-msgstr "Radyo istasyonlarını dışa aktar"
+msgstr "Eksporter alle radiostationerne"
 
 #: UserRadio.cpp:105
 msgid "User Defined"
-msgstr "Kullanıcı Tanımlı"
+msgstr "Brugerdefineret"
