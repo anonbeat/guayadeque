@@ -135,6 +135,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     //
     m_MainLangChoices.Add( _( "Default" ) );
     m_MainLangChoices.Add( _( "Czech" ) );
+    m_MainLangChoices.Add( _( "Danish" ) );
     m_MainLangChoices.Add( _( "Dutch" ) );
     m_MainLangChoices.Add( _( "English" ) );
     m_MainLangChoices.Add( _( "French" ) );
@@ -144,6 +145,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangChoices.Add( _( "Icelandic" ) );
     m_MainLangChoices.Add( _( "Italian" ) );
     m_MainLangChoices.Add( _( "Japanese" ) );
+    m_MainLangChoices.Add( _( "Lithuanian" ) );
+    m_MainLangChoices.Add( _( "Malay (Malaysia)" ) );
     m_MainLangChoices.Add( _( "Norwegian Bokmal" ) );
     m_MainLangChoices.Add( _( "Polish" ) );
     m_MainLangChoices.Add( _( "Portuguese" ) );
@@ -161,6 +164,7 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
 
     m_MainLangCodes.Add( wxLANGUAGE_DEFAULT );
     m_MainLangCodes.Add( wxLANGUAGE_CZECH );
+    m_MainLangCodes.Add( wxLANGUAGE_DANISH );
     m_MainLangCodes.Add( wxLANGUAGE_DUTCH );
     m_MainLangCodes.Add( wxLANGUAGE_ENGLISH );
     m_MainLangCodes.Add( wxLANGUAGE_FRENCH );
@@ -170,6 +174,8 @@ guPrefDialog::guPrefDialog( wxWindow* parent, guDbLibrary * db, int pagenum )
     m_MainLangCodes.Add( wxLANGUAGE_ICELANDIC );
     m_MainLangCodes.Add( wxLANGUAGE_ITALIAN );
     m_MainLangCodes.Add( wxLANGUAGE_JAPANESE );
+    m_MainLangCodes.Add( wxLANGUAGE_LITHUANIAN );
+    m_MainLangCodes.Add( wxLANGUAGE_MALAY_MALAYSIA );
     m_MainLangCodes.Add( wxLANGUAGE_NORWEGIAN_BOKMAL );
     m_MainLangCodes.Add( wxLANGUAGE_POLISH );
     m_MainLangCodes.Add( wxLANGUAGE_PORTUGUESE );
