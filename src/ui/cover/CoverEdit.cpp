@@ -46,7 +46,7 @@ enum guCOVER_SEARCH_ENGINE {
 //    guCOVER_SEARCH_ENGINE_GOOGLE = 0,
 //    guCOVER_SEARCH_ENGINE_AMAZON,
     guCOVER_SEARCH_ENGINE_APPLE,
-//    guCOVER_SEARCH_ENGINE_LASTFM,
+    guCOVER_SEARCH_ENGINE_LASTFM,
 //    guCOVER_SEARCH_ENGINE_DISCOGS
 //    guCOVER_SEARCH_ENGINE_YAHOO
 };
@@ -94,7 +94,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
         //wxT( "Google" ),
         //wxT( "Amazon" ),
         wxT( "Apple" ),
-        //wxT("Last.fm"),
+        wxT("Last.fm"),
         //wxT( "Discogs" )
         //wxT( "Yahoo" )
         };
@@ -583,10 +583,10 @@ guFetchCoverLinksThread::guFetchCoverLinksThread( guCoverEditor * owner,
     {
         m_CoverFetcher = ( guCoverFetcher * ) new guAppleCoverFetcher( this, &m_CoverLinks, artist, album );
     }
-    // else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_LASTFM )
-    // {
-    //     m_CoverFetcher = ( guCoverFetcher * ) new guLastFMCoverFetcher( this, &m_CoverLinks, artist, album );
-    // }
+    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_LASTFM )
+    {
+        m_CoverFetcher = ( guCoverFetcher * ) new guLastFMCoverFetcher( this, &m_CoverLinks, artist, album );
+    }
 //    else if( m_EngineIndex == guCOVER_SEARCH_ENGINE_DISCOGS )
 //    {
 //        m_CoverFetcher = ( guCoverFetcher * ) new guDiscogsCoverFetcher( this, &m_CoverLinks, artist, album );
