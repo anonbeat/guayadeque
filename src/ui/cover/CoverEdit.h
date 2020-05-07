@@ -81,8 +81,8 @@ class guFetchCoverLinksThread : public wxThread
   private:
     guCoverEditor *     m_CoverEditor;
     guCoverFetcher *    m_CoverFetcher;
-	guArrayStringArray  m_CoverLinks;
-	int                 m_CurrentPage;
+    guArrayStringArray  m_CoverLinks;
+    int                 m_CurrentPage;
     int                 m_LastDownload;
     wxString            m_Artist;
     wxString            m_Album;
@@ -122,47 +122,47 @@ class guCoverEditor : public wxDialog
     wxTextCtrl *                m_AlbumTextCtrl;
     wxChoice *                  m_EngineChoice;
 
-	wxStaticBitmap *            m_CoverBitmap;
-	wxBitmapButton *            m_PrevButton;
-	wxBitmapButton *            m_NextButton;
-	wxButton *                  m_ButtonsSizerOK;
-	wxButton *                  m_ButtonsSizerCancel;
-	wxBoxSizer *                m_SizeSizer;
-	wxStaticText *              m_SizeStaticText;
+    wxStaticBitmap *            m_CoverBitmap;
+    wxBitmapButton *            m_PrevButton;
+    wxBitmapButton *            m_NextButton;
+    wxButton *                  m_ButtonsSizerOK;
+    wxButton *                  m_ButtonsSizerCancel;
+    wxBoxSizer *                m_SizeSizer;
+    wxStaticText *              m_SizeStaticText;
 
-	wxMutex                     m_DownloadThreadMutex;
-	wxMutex                     m_DownloadEventsMutex;
+    wxMutex                     m_DownloadThreadMutex;
+    wxMutex                     m_DownloadEventsMutex;
 
     guAutoPulseGauge *          m_Gauge;
     wxStaticText *              m_InfoTextCtrl;
 
     wxCheckBox *                m_EmbedToFilesChkBox;
 
-	guCoverImageArray           m_AlbumCovers;
-	guFetchCoverLinksThread *   m_DownloadCoversThread;
-	guThreadArray               m_DownloadThreads;
-	int                         m_CurrentImage;
+    guCoverImageArray           m_AlbumCovers;
+    guFetchCoverLinksThread *   m_DownloadCoversThread;
+    guThreadArray               m_DownloadThreads;
+    int                         m_CurrentImage;
     int                         m_EngineIndex;
 
 
-	void OnInitDialog( wxInitDialogEvent& event );
-	void OnTextCtrlEnter( wxCommandEvent& event );
+    void OnInitDialog( wxInitDialogEvent& event );
+    void OnTextCtrlEnter( wxCommandEvent& event );
     void OnEngineChanged( wxCommandEvent& event );
-	void OnCoverLeftDClick( wxMouseEvent& event );
-	void OnCoverLeftClick( wxMouseEvent& event );
-	void OnPrevButtonClick( wxCommandEvent& event );
-	void OnNextButtonClick( wxCommandEvent& event );
-	void OnAddCoverImage( wxCommandEvent &event );
-	void UpdateCoverBitmap();
-	void EndDownloadLinksThread();
-	void EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread );
-	void OnDownloadedLinks( wxCommandEvent &event );
+    void OnCoverLeftDClick( wxMouseEvent& event );
+    void OnCoverLeftClick( wxMouseEvent& event );
+    void OnPrevButtonClick( wxCommandEvent& event );
+    void OnNextButtonClick( wxCommandEvent& event );
+    void OnAddCoverImage( wxCommandEvent &event );
+    void UpdateCoverBitmap();
+    void EndDownloadLinksThread();
+    void EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread );
+    void OnDownloadedLinks( wxCommandEvent &event );
 
-	void OnMouseWheel( wxMouseEvent &event );
+    void OnMouseWheel( wxMouseEvent &event );
 
   public:
-	guCoverEditor( wxWindow * parent, const wxString &Artist, const wxString &Album );// wxWindowID id = wxID_ANY, const wxString& title = wxT("Cover Editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
-	~guCoverEditor();
+    guCoverEditor( wxWindow * parent, const wxString &Artist, const wxString &Album );// wxWindowID id = wxID_ANY, const wxString& title = wxT("Cover Editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+    ~guCoverEditor();
     wxString    GetSelectedCoverUrl( void );
     wxImage *   GetSelectedCoverImage( void );
     bool        EmbedToFiles( void ) { return m_EmbedToFilesChkBox->IsChecked(); }

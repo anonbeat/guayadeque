@@ -38,6 +38,8 @@ class guCoverFetcher
     wxString                    m_Artist;
     wxString                    m_Album;
 
+    bool                        CoverLinkExist( const wxString &coverlink );
+
   public :
     guCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
                                     const wxChar * artist, const wxChar * album );

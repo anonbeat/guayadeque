@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-06 14:34+0100\n"
+"POT-Creation-Date: 2020-05-07 10:55+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,7 +51,7 @@ msgstr ""
 msgid "Add search links in preferences"
 msgstr ""
 
-#: onlinelinks/OnlineLinks.cpp:74 ui/preferences/Preferences.cpp:277
+#: onlinelinks/OnlineLinks.cpp:74 ui/preferences/Preferences.cpp:283
 msgid "Links"
 msgstr ""
 
@@ -74,11 +74,11 @@ msgstr ""
 msgid "Keep Quality"
 msgstr ""
 
-#: copyto/Transcode.cpp:321 ui/preferences/Preferences.cpp:1166
+#: copyto/Transcode.cpp:321 ui/preferences/Preferences.cpp:1172
 msgid "Very High"
 msgstr ""
 
-#: copyto/Transcode.cpp:322 ui/preferences/Preferences.cpp:1167
+#: copyto/Transcode.cpp:322 ui/preferences/Preferences.cpp:1173
 msgid "High"
 msgstr ""
 
@@ -90,15 +90,15 @@ msgstr ""
 msgid "Good"
 msgstr ""
 
-#: copyto/Transcode.cpp:325 ui/preferences/Preferences.cpp:1168
+#: copyto/Transcode.cpp:325 ui/preferences/Preferences.cpp:1174
 msgid "Normal"
 msgstr ""
 
-#: copyto/Transcode.cpp:326 ui/preferences/Preferences.cpp:1169
+#: copyto/Transcode.cpp:326 ui/preferences/Preferences.cpp:1175
 msgid "Low"
 msgstr ""
 
-#: copyto/Transcode.cpp:327 ui/preferences/Preferences.cpp:1170
+#: copyto/Transcode.cpp:327 ui/preferences/Preferences.cpp:1176
 msgid "Very Low"
 msgstr ""
 
@@ -106,8 +106,8 @@ msgstr ""
 msgid "Generate Smart Playlist"
 msgstr ""
 
-#: info/smartmode/SmartMode.cpp:399 ui/preferences/Preferences.cpp:1727
-#: ui/preferences/Preferences.cpp:1823 ui/itemlistbox/ItemListBox.cpp:67
+#: info/smartmode/SmartMode.cpp:399 ui/preferences/Preferences.cpp:1733
+#: ui/preferences/Preferences.cpp:1829 ui/itemlistbox/ItemListBox.cpp:67
 #: ui/mediaviewer/albumbrowser/AlbumBrowser.cpp:1714
 #: ui/mediaviewer/library/AlListBox.cpp:490 ui/player/PlayerFilters.cpp:110
 msgid "All"
@@ -125,9 +125,9 @@ msgstr ""
 msgid "Deny"
 msgstr ""
 
-#: info/smartmode/SmartMode.cpp:453 ui/preferences/Preferences.cpp:738
-#: ui/preferences/Preferences.cpp:1730 ui/preferences/Preferences.cpp:1826
-#: ui/preferences/Preferences.cpp:1849 ui/player/PlayerFilters.cpp:126
+#: info/smartmode/SmartMode.cpp:453 ui/preferences/Preferences.cpp:744
+#: ui/preferences/Preferences.cpp:1736 ui/preferences/Preferences.cpp:1832
+#: ui/preferences/Preferences.cpp:1855 ui/player/PlayerFilters.cpp:126
 msgid "None"
 msgstr ""
 
@@ -513,7 +513,7 @@ msgstr ""
 msgid "Enter"
 msgstr ""
 
-#: misc/Accelerators.cpp:351 ui/preferences/Preferences.cpp:1435
+#: misc/Accelerators.cpp:351 ui/preferences/Preferences.cpp:1441
 msgid "Left"
 msgstr ""
 
@@ -521,7 +521,7 @@ msgstr ""
 msgid "Up"
 msgstr ""
 
-#: misc/Accelerators.cpp:357 ui/preferences/Preferences.cpp:1437
+#: misc/Accelerators.cpp:357 ui/preferences/Preferences.cpp:1443
 msgid "Right"
 msgstr ""
 
@@ -772,7 +772,7 @@ msgid "Set the podcasts preferences"
 msgstr ""
 
 #: ui/MainFrame.cpp:1127 ui/MainFrame.cpp:2855 ui/MainFrame.cpp:3615
-#: ui/locationpanel/LocationPanel.cpp:211 ui/preferences/Preferences.cpp:262
+#: ui/locationpanel/LocationPanel.cpp:211 ui/preferences/Preferences.cpp:268
 #: ui/podcasts/PodcastsPanel.cpp:921
 msgid "Podcasts"
 msgstr ""
@@ -1081,7 +1081,7 @@ msgid "Show/Hide the Last.fm panel"
 msgstr ""
 
 #: ui/MainFrame.cpp:1454 ui/MainFrame.cpp:2826 ui/trackedit/TrackEdit.cpp:416
-#: ui/locationpanel/LocationPanel.cpp:290 ui/preferences/Preferences.cpp:252
+#: ui/locationpanel/LocationPanel.cpp:290 ui/preferences/Preferences.cpp:258
 msgid "Lyrics"
 msgstr ""
 
@@ -1267,7 +1267,7 @@ msgstr ""
 msgid "Set playback in gapless mode"
 msgstr ""
 
-#: ui/MainFrame.cpp:1638 ui/preferences/Preferences.cpp:247
+#: ui/MainFrame.cpp:1638 ui/preferences/Preferences.cpp:253
 msgid "Audioscrobble"
 msgstr ""
 
@@ -1348,14 +1348,14 @@ msgstr ""
 msgid "files"
 msgstr ""
 
-#: ui/MainFrame.cpp:3356 ui/preferences/Preferences.cpp:818
+#: ui/MainFrame.cpp:3356 ui/preferences/Preferences.cpp:824
 #: ui/mediaviewer/importfiles/ImportFiles.cpp:327
 #: ui/mediaviewer/MediaViewer.cpp:1382 ui/mediaviewer/MediaViewer.cpp:1401
 #: ui/mediaviewer/MediaViewer.cpp:1416
 msgid "track"
 msgstr ""
 
-#: ui/MainFrame.cpp:3356 ui/preferences/Preferences.cpp:923
+#: ui/MainFrame.cpp:3356 ui/preferences/Preferences.cpp:929
 #: ui/mediaviewer/importfiles/ImportFiles.cpp:327
 #: ui/mediaviewer/MediaViewer.cpp:1382 ui/mediaviewer/MediaViewer.cpp:1401
 #: ui/mediaviewer/MediaViewer.cpp:1416
@@ -1747,8 +1747,8 @@ msgstr ""
 msgid "Lyrics Source Editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2098 ui/preferences/Preferences.cpp:2011
-#: ui/preferences/Preferences.cpp:2132 ui/preferences/Preferences.cpp:2257
+#: ui/lyrics/LyricsPanel.cpp:2098 ui/preferences/Preferences.cpp:2017
+#: ui/preferences/Preferences.cpp:2138 ui/preferences/Preferences.cpp:2263
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:461
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:701
 #: ui/mediaviewer/treeview/TreeViewFilterEditor.cpp:48
@@ -1828,8 +1828,8 @@ msgstr ""
 msgid "Tag:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:136 ui/preferences/Preferences.cpp:188
-#: ui/preferences/Preferences.cpp:2442
+#: ui/preferences/Preferences.cpp:136 ui/preferences/Preferences.cpp:194
+#: ui/preferences/Preferences.cpp:2448
 msgid "Default"
 msgstr ""
 
@@ -1838,122 +1838,134 @@ msgid "Czech"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:138
+msgid "Danish"
+msgstr ""
+
+#: ui/preferences/Preferences.cpp:139
 msgid "Dutch"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:139 ui/preferences/Preferences.cpp:189
+#: ui/preferences/Preferences.cpp:140 ui/preferences/Preferences.cpp:195
 msgid "English"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:140 ui/preferences/Preferences.cpp:190
+#: ui/preferences/Preferences.cpp:141 ui/preferences/Preferences.cpp:196
 msgid "French"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:141 ui/preferences/Preferences.cpp:191
+#: ui/preferences/Preferences.cpp:142 ui/preferences/Preferences.cpp:197
 msgid "German"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:142
+#: ui/preferences/Preferences.cpp:143
 msgid "Greek"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:143
+#: ui/preferences/Preferences.cpp:144
 msgid "Hungarian"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:144
+#: ui/preferences/Preferences.cpp:145
 msgid "Icelandic"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:145 ui/preferences/Preferences.cpp:192
+#: ui/preferences/Preferences.cpp:146 ui/preferences/Preferences.cpp:198
 msgid "Italian"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:146
+#: ui/preferences/Preferences.cpp:147
 msgid "Japanese"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:147
-msgid "Norwegian Bokmal"
-msgstr ""
-
 #: ui/preferences/Preferences.cpp:148
-msgid "Polish"
+msgid "Lithuanian"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:149 ui/preferences/Preferences.cpp:193
-msgid "Portuguese"
+#: ui/preferences/Preferences.cpp:149
+msgid "Malay (Malaysia)"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:150
-msgid "Portuguese-Brazilian"
+msgid "Norwegian Bokmal"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:151
-msgid "Russian"
+msgid "Polish"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:152
-msgid "Slovak"
+#: ui/preferences/Preferences.cpp:152 ui/preferences/Preferences.cpp:199
+msgid "Portuguese"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:153 ui/preferences/Preferences.cpp:194
-msgid "Spanish"
+#: ui/preferences/Preferences.cpp:153
+msgid "Portuguese-Brazilian"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:154
-msgid "Swedish"
+msgid "Russian"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:155
-msgid "Thai"
+msgid "Slovak"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:156
-msgid "Turkish"
+#: ui/preferences/Preferences.cpp:156 ui/preferences/Preferences.cpp:200
+msgid "Spanish"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:157
-msgid "Ukrainian"
+msgid "Swedish"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:158
-msgid "Bulgarian"
+msgid "Thai"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:159
-msgid "Catalan"
+msgid "Turkish"
 msgstr ""
 
 #: ui/preferences/Preferences.cpp:160
+msgid "Ukrainian"
+msgstr ""
+
+#: ui/preferences/Preferences.cpp:161
+msgid "Bulgarian"
+msgstr ""
+
+#: ui/preferences/Preferences.cpp:162
+msgid "Catalan"
+msgstr ""
+
+#: ui/preferences/Preferences.cpp:163
 msgid "Serbian"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:223
+#: ui/preferences/Preferences.cpp:229
 msgid "General"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:227
+#: ui/preferences/Preferences.cpp:233
 msgid "Collections"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:232
+#: ui/preferences/Preferences.cpp:238
 msgid "Playback"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:237
+#: ui/preferences/Preferences.cpp:243
 msgid "Crossfader"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:242
+#: ui/preferences/Preferences.cpp:248
 msgid "Record"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:257
+#: ui/preferences/Preferences.cpp:263
 msgid "Online"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:282 ui/mediaviewer/library/ArListBox.cpp:138
+#: ui/preferences/Preferences.cpp:288 ui/mediaviewer/library/ArListBox.cpp:138
 #: ui/mediaviewer/library/SoListBox.cpp:466
 #: ui/mediaviewer/library/AAListBox.cpp:135
 #: ui/mediaviewer/library/AlListBox.cpp:253
@@ -1962,180 +1974,180 @@ msgstr ""
 msgid "Commands"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:287
+#: ui/preferences/Preferences.cpp:293
 msgid "Copy to"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:292
+#: ui/preferences/Preferences.cpp:298
 msgid "Shortcuts"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:374
+#: ui/preferences/Preferences.cpp:380
 msgid " Accept "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:376
+#: ui/preferences/Preferences.cpp:382
 msgid " Cancel "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:457
+#: ui/preferences/Preferences.cpp:463
 msgid " On Start "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:461 ui/preferences/Preferences.cpp:1555
+#: ui/preferences/Preferences.cpp:467 ui/preferences/Preferences.cpp:1561
 msgid "Language:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:472
+#: ui/preferences/Preferences.cpp:478
 msgid "(Needs restart)"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:478
+#: ui/preferences/Preferences.cpp:484
 msgid "Show splash screen"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:482
+#: ui/preferences/Preferences.cpp:488
 msgid "Start minimized"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:488
+#: ui/preferences/Preferences.cpp:494
 msgid "Restore position for tracks longer than"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:495
+#: ui/preferences/Preferences.cpp:501
 msgid "set the minimun length in minutes to save track position"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:499
+#: ui/preferences/Preferences.cpp:505
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:147
 msgid "minutes"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:505
+#: ui/preferences/Preferences.cpp:511
 msgid "Load default layout"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:511
+#: ui/preferences/Preferences.cpp:517
 msgid " Behaviour "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:513
+#: ui/preferences/Preferences.cpp:519
 msgid "Activate task bar icon"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:528
+#: ui/preferences/Preferences.cpp:534
 msgid "Integrate into SoundMenu"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:534
+#: ui/preferences/Preferences.cpp:540
 msgid "Enqueue as default action"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:538
+#: ui/preferences/Preferences.cpp:544
 msgid "Drop files clear playlist"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:542
+#: ui/preferences/Preferences.cpp:548
 msgid "Instant text search"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:546
+#: ui/preferences/Preferences.cpp:552
 msgid "When searching, pressing enter queues the result"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:551
+#: ui/preferences/Preferences.cpp:557
 msgid "Show CD cover frame in player"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:557
+#: ui/preferences/Preferences.cpp:563
 msgid " On Close "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:559
+#: ui/preferences/Preferences.cpp:565
 msgid "Save playlist on close"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:563
+#: ui/preferences/Preferences.cpp:569
 msgid "Close to task bar icon"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:568
+#: ui/preferences/Preferences.cpp:574
 msgid "Ask confirmation on exit"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:611
+#: ui/preferences/Preferences.cpp:617
 msgid " Collections "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:659
+#: ui/preferences/Preferences.cpp:665
 msgid " Paths "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:679
+#: ui/preferences/Preferences.cpp:685
 msgid " Words to detect covers "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:707 ui/preferences/Preferences.cpp:2250
+#: ui/preferences/Preferences.cpp:713 ui/preferences/Preferences.cpp:2256
 msgid " Options "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:709
+#: ui/preferences/Preferences.cpp:715
 msgid "Update when opened "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:713
+#: ui/preferences/Preferences.cpp:719
 msgid "Create playlists on scan"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:718
+#: ui/preferences/Preferences.cpp:724
 msgid "Follow symbolic links on scan"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:722
+#: ui/preferences/Preferences.cpp:728
 msgid "Scan embedded covers in audio files"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:727
+#: ui/preferences/Preferences.cpp:733
 msgid "Embed rating, play count and labels"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:733
+#: ui/preferences/Preferences.cpp:739
 msgid "Default copy action"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:814
+#: ui/preferences/Preferences.cpp:820
 msgid "Play random"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:818
+#: ui/preferences/Preferences.cpp:824
 msgid "album"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:826
+#: ui/preferences/Preferences.cpp:832
 msgid "when playlist is empty"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:832
+#: ui/preferences/Preferences.cpp:838
 msgid "Delete played tracks from playlist"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:836
+#: ui/preferences/Preferences.cpp:842
 msgid "Show notifications"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:842
+#: ui/preferences/Preferences.cpp:848
 msgid "ReplayGain mode:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:846
+#: ui/preferences/Preferences.cpp:852
 msgid "Disabled"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:846 ui/player/PlayList.cpp:1648
+#: ui/preferences/Preferences.cpp:852 ui/player/PlayList.cpp:1648
 msgid "Track"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:846
+#: ui/preferences/Preferences.cpp:852
 #: ui/mediaviewer/audiocd/AudioCdPanel.cpp:360
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:52
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:132
@@ -2147,379 +2159,379 @@ msgstr ""
 msgid "Album"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:853
+#: ui/preferences/Preferences.cpp:859
 msgid "PreAmp:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:872
+#: ui/preferences/Preferences.cpp:878
 msgid " Random / Smart play modes "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:882
+#: ui/preferences/Preferences.cpp:888
 msgid "Tracks left to start search"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:890
+#: ui/preferences/Preferences.cpp:896
 msgid "Tracks added each time"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:899
+#: ui/preferences/Preferences.cpp:905
 msgid "Max played tracks kept in playlist"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:907
+#: ui/preferences/Preferences.cpp:913
 msgid "Don't repeat last"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:915
+#: ui/preferences/Preferences.cpp:921
 msgid "artists or"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:931
+#: ui/preferences/Preferences.cpp:937
 msgid " Silence detector "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:936
+#: ui/preferences/Preferences.cpp:942
 msgid "Skip at"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:955
+#: ui/preferences/Preferences.cpp:961
 msgid "In the last"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:965 ui/preferences/Preferences.cpp:1199
+#: ui/preferences/Preferences.cpp:971 ui/preferences/Preferences.cpp:1205
 msgid "seconds"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:973
+#: ui/preferences/Preferences.cpp:979
 msgid " Output device "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:976
+#: ui/preferences/Preferences.cpp:982
 msgid "Automatic"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:977
+#: ui/preferences/Preferences.cpp:983
 msgid "GConf Defined"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1027
+#: ui/preferences/Preferences.cpp:1033
 msgid " Crossfader "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1034
+#: ui/preferences/Preferences.cpp:1040
 msgid "Fade-out length:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1043
+#: ui/preferences/Preferences.cpp:1049
 msgid "Select the length of the fade out. 0 for gapless playback"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1046
+#: ui/preferences/Preferences.cpp:1052
 msgid "Fade-in length:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1055
+#: ui/preferences/Preferences.cpp:1061
 msgid "Select the length of the fade in"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1058
+#: ui/preferences/Preferences.cpp:1064
 msgid "Fade-in volume:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1067
+#: ui/preferences/Preferences.cpp:1073
 msgid "Select the initial volume of the fade in"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1070
+#: ui/preferences/Preferences.cpp:1076
 msgid "Fade-in start:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1079
+#: ui/preferences/Preferences.cpp:1085
 msgid "Select at which volume of the fade out the fade in starts"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1123
+#: ui/preferences/Preferences.cpp:1129
 msgid " Record "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1125
+#: ui/preferences/Preferences.cpp:1131
 msgid "Enable recording"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1131
+#: ui/preferences/Preferences.cpp:1137
 msgid "Save to:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1135
+#: ui/preferences/Preferences.cpp:1141
 #: ui/mediaviewer/importfiles/ImportFiles.cpp:125
 msgid "Select a folder"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1142
+#: ui/preferences/Preferences.cpp:1148
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:694
 msgid " Properties "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1149 ui/preferences/Preferences.cpp:2271
+#: ui/preferences/Preferences.cpp:1155 ui/preferences/Preferences.cpp:2277
 msgid "Format:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1161
+#: ui/preferences/Preferences.cpp:1167
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:817
 msgid "Quality:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1182
+#: ui/preferences/Preferences.cpp:1188
 msgid "Split tracks"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1189
+#: ui/preferences/Preferences.cpp:1195
 msgid "Delete tracks shorter than"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1232
+#: ui/preferences/Preferences.cpp:1238
 msgid " Last.fm audioscrobble "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1234 ui/preferences/Preferences.cpp:1270
+#: ui/preferences/Preferences.cpp:1240 ui/preferences/Preferences.cpp:1276
 msgid "Enabled"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1242 ui/preferences/Preferences.cpp:1278
-#: ui/preferences/Preferences.cpp:1512
+#: ui/preferences/Preferences.cpp:1248 ui/preferences/Preferences.cpp:1284
+#: ui/preferences/Preferences.cpp:1518
 msgid "Username:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1250 ui/preferences/Preferences.cpp:1286
-#: ui/preferences/Preferences.cpp:1521
+#: ui/preferences/Preferences.cpp:1256 ui/preferences/Preferences.cpp:1292
+#: ui/preferences/Preferences.cpp:1527
 msgid "Password:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1268
+#: ui/preferences/Preferences.cpp:1274
 msgid " Libre.fm audioscrobble "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1332
+#: ui/preferences/Preferences.cpp:1338
 msgid " Sources "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1376
+#: ui/preferences/Preferences.cpp:1382
 msgid " Targets "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1416
+#: ui/preferences/Preferences.cpp:1422
 msgid " Font "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1418
+#: ui/preferences/Preferences.cpp:1424
 msgid "Font:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1430
+#: ui/preferences/Preferences.cpp:1436
 msgid "Align:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1436
+#: ui/preferences/Preferences.cpp:1442
 msgid "Center"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1479
+#: ui/preferences/Preferences.cpp:1485
 msgid " Proxy "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1481
+#: ui/preferences/Preferences.cpp:1487
 msgid "Proxy Enabled"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1490
+#: ui/preferences/Preferences.cpp:1496
 msgid "Hostname:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1501
+#: ui/preferences/Preferences.cpp:1507
 msgid "Port:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1535
+#: ui/preferences/Preferences.cpp:1541
 msgid " Filters "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1553
+#: ui/preferences/Preferences.cpp:1559
 msgid " Language "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1570
+#: ui/preferences/Preferences.cpp:1576
 msgid " Browser command "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1578
+#: ui/preferences/Preferences.cpp:1584
 msgid " Minimum radio allowed bit rate "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1585
+#: ui/preferences/Preferences.cpp:1591
 msgid " Player online buffer size "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1622
+#: ui/preferences/Preferences.cpp:1628
 msgid " Podcasts "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1626
+#: ui/preferences/Preferences.cpp:1632
 msgid "Destination directory:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1630
+#: ui/preferences/Preferences.cpp:1636
 msgid "Select podcasts folder"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1638
+#: ui/preferences/Preferences.cpp:1644
 msgid "Check every"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1643
+#: ui/preferences/Preferences.cpp:1649
 msgid "Hour"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1643
+#: ui/preferences/Preferences.cpp:1649
 msgid "Day"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1643
+#: ui/preferences/Preferences.cpp:1649
 msgid "Week"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1643
+#: ui/preferences/Preferences.cpp:1649
 msgid "Month"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1654
+#: ui/preferences/Preferences.cpp:1660
 msgid "Delete after"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1663
+#: ui/preferences/Preferences.cpp:1669
 msgid "Days"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1663
+#: ui/preferences/Preferences.cpp:1669
 msgid "Weeks"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1663
+#: ui/preferences/Preferences.cpp:1669
 msgid "Months"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1672
+#: ui/preferences/Preferences.cpp:1678
 msgid "Only if played"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1699 ui/preferences/Preferences.cpp:1791
+#: ui/preferences/Preferences.cpp:1705 ui/preferences/Preferences.cpp:1797
 #: ui/radios/RadioGenreEditor.cpp:40
 msgid " Genres "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1733 ui/preferences/Preferences.cpp:1829
+#: ui/preferences/Preferences.cpp:1739 ui/preferences/Preferences.cpp:1835
 msgid "Invert"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1747
+#: ui/preferences/Preferences.cpp:1753
 msgid "Audio format:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1758
+#: ui/preferences/Preferences.cpp:1764
 msgid "Torrent command:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1843
+#: ui/preferences/Preferences.cpp:1849
 msgid "Membership :"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1850
+#: ui/preferences/Preferences.cpp:1856
 msgid "Streaming"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1851
+#: ui/preferences/Preferences.cpp:1857
 msgid "Downloading"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1864
+#: ui/preferences/Preferences.cpp:1870
 msgid "Username :"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1872
+#: ui/preferences/Preferences.cpp:1878
 msgid "Password :"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1890
+#: ui/preferences/Preferences.cpp:1896
 msgid "Stream as :"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1904
+#: ui/preferences/Preferences.cpp:1910
 msgid "Download as :"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1908
+#: ui/preferences/Preferences.cpp:1914
 msgid "Download Page"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:1949
+#: ui/preferences/Preferences.cpp:1955
 msgid " Links "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2004
+#: ui/preferences/Preferences.cpp:2010
 msgid "URL:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2029
+#: ui/preferences/Preferences.cpp:2035
 msgid " Define URLs using "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2035
+#: ui/preferences/Preferences.cpp:2041
 msgid ""
 "2 letters language code\n"
 "Text to search"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2072
+#: ui/preferences/Preferences.cpp:2078
 msgid " Commands "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2125
+#: ui/preferences/Preferences.cpp:2131
 msgid "Command:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2150
+#: ui/preferences/Preferences.cpp:2156
 msgid " Define commands using "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2156
+#: ui/preferences/Preferences.cpp:2162
 msgid ""
 "Album path\n"
 "Album cover file path\n"
 "Track path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2193
+#: ui/preferences/Preferences.cpp:2199
 msgid " Patterns "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2264 ui/filebrowser/FileRenamer.cpp:77
+#: ui/preferences/Preferences.cpp:2270 ui/filebrowser/FileRenamer.cpp:77
 msgid "Pattern:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2289
+#: ui/preferences/Preferences.cpp:2295
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:710
 msgid "Path:"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2305
+#: ui/preferences/Preferences.cpp:2311
 msgid "Remove source files"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2322
+#: ui/preferences/Preferences.cpp:2328
 msgid " Define patterns using "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2328
+#: ui/preferences/Preferences.cpp:2334
 msgid ""
 "Artist\n"
 "Album Artist\n"
@@ -2527,7 +2539,7 @@ msgid ""
 "Album"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2336
+#: ui/preferences/Preferences.cpp:2342
 msgid ""
 "Composer\n"
 "Disk\n"
@@ -2535,7 +2547,7 @@ msgid ""
 "Genre"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2344
+#: ui/preferences/Preferences.cpp:2350
 msgid ""
 "Index\n"
 "Number\n"
@@ -2543,59 +2555,59 @@ msgid ""
 "Year"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2400
+#: ui/preferences/Preferences.cpp:2406
 msgid " Accelerators "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2405
+#: ui/preferences/Preferences.cpp:2411
 msgid "Action"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2409
+#: ui/preferences/Preferences.cpp:2415
 msgid "Key"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2848 ui/preferences/Preferences.cpp:2868
+#: ui/preferences/Preferences.cpp:2854 ui/preferences/Preferences.cpp:2874
 msgid "Collection: "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2848 ui/preferences/Preferences.cpp:2868
+#: ui/preferences/Preferences.cpp:2854 ui/preferences/Preferences.cpp:2874
 msgid "Enter the collection name"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2974
+#: ui/preferences/Preferences.cpp:2980
 msgid "Change library path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2996 ui/mediaviewer/MediaViewer.cpp:1159
+#: ui/preferences/Preferences.cpp:3002 ui/mediaviewer/MediaViewer.cpp:1159
 msgid "Select library path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3052 ui/preferences/Preferences.cpp:3072
+#: ui/preferences/Preferences.cpp:3058 ui/preferences/Preferences.cpp:3078
 msgid "Word: "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3052 ui/preferences/Preferences.cpp:3072
+#: ui/preferences/Preferences.cpp:3058 ui/preferences/Preferences.cpp:3078
 msgid "Enter the text to find covers"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3563 ui/preferences/Preferences.cpp:3593
+#: ui/preferences/Preferences.cpp:3569 ui/preferences/Preferences.cpp:3599
 msgid "Filter: "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3563
+#: ui/preferences/Preferences.cpp:3569
 msgid "Enter the text to filter"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3593
+#: ui/preferences/Preferences.cpp:3599
 msgid "Edit the text to filter"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:4141
+#: ui/preferences/Preferences.cpp:4147
 msgid "Select path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:4341
+#: ui/preferences/Preferences.cpp:4347
 msgid "Key used by '"
 msgstr ""
 

@@ -19,41 +19,31 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
+#ifndef __APPLE_H__
+#define __APPLE_H__
+
+#include "ArrayStringArray.h"
 #include "CoverFetcher.h"
+
+#include <wx/xml/xml.h>
 
 namespace Guayadeque {
 
+class guFetchCoverLinksThread;
+
 // -------------------------------------------------------------------------------- //
-// guCoverFetcher
-// -------------------------------------------------------------------------------- //
-guCoverFetcher::guCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
-                                      const wxChar * artist, const wxChar * album )
+class guAppleCoverFetcher : public guCoverFetcher
 {
-    m_MainThread = mainthread;
-    m_CoverLinks = coverlinks;
-    m_Artist = wxString( artist );
-    m_Album = wxString( album );
-}
+  private :
+    int             ExtractImagesInfo( wxString &content );
 
-// -------------------------------------------------------------------------------- //
-guCoverFetcher::~guCoverFetcher()
-{
-}
-
-// -------------------------------------------------------------------------------- //
-bool guCoverFetcher::CoverLinkExist( const wxString &coverlink )
-{
-    int Count = m_CoverLinks->Count();
-    for( int Index = 0; Index < Count; Index++ )
-    {
-        const wxArrayString Cover = m_CoverLinks->Item( Index );
-        if( Cover[ 0 ] == coverlink )
-            return true;
-    }
-    return false;
-}
-
+  public :
+    guAppleCoverFetcher( guFetchCoverLinksThread * mainthread, guArrayStringArray * coverlinks,
+                                    const wxChar * artist, const wxChar * album );
+    virtual int   AddCoverLinks( int pagenum );
+};
 
 }
 
+#endif
 // -------------------------------------------------------------------------------- //
