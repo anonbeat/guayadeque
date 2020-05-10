@@ -353,7 +353,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
 
 	SetSizer( PlayerMainSizer );
 	Layout();
-	PlayerMainSizer->FitInside( this );
+	PlayerMainSizer->Fit( this );
     //PlayerMainSizer->SetSizeHints( this );
 	//PlayerPanel->Layout();
 
