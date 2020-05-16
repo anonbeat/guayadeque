@@ -1483,7 +1483,7 @@ void guMediaViewer::DownloadAlbumCover( const int albumid )
 
     AlbumName = RemoveSearchFilters( AlbumName );
 
-    guCoverEditor * CoverEditor = new guCoverEditor( this, ArtistName, AlbumName );
+    guCoverEditor * CoverEditor = new guCoverEditor( this, ArtistName, AlbumName, AlbumPath );
     if( CoverEditor )
     {
         if( CoverEditor->ShowModal() == wxID_OK )

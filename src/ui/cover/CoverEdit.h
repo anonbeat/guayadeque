@@ -118,9 +118,15 @@ class guCoverFetcher;
 class guCoverEditor : public wxDialog
 {
   private:
+    wxString                    m_AlbumPath;
+
     wxTextCtrl *                m_ArtistTextCtrl;
     wxTextCtrl *                m_AlbumTextCtrl;
     wxChoice *                  m_EngineChoice;
+
+    wxCheckBox *                m_EmbedToFilesChkBox;
+    wxBitmapButton *            m_CoverSelectButton;
+    wxBitmapButton *            m_CoverDownloadButton;
 
     wxStaticBitmap *            m_CoverBitmap;
     wxBitmapButton *            m_PrevButton;
@@ -135,8 +141,6 @@ class guCoverEditor : public wxDialog
 
     guAutoPulseGauge *          m_Gauge;
     wxStaticText *              m_InfoTextCtrl;
-
-    wxCheckBox *                m_EmbedToFilesChkBox;
 
     guCoverImageArray           m_AlbumCovers;
     guFetchCoverLinksThread *   m_DownloadCoversThread;
@@ -158,10 +162,13 @@ class guCoverEditor : public wxDialog
     void EndDownloadCoverThread( guDownloadCoverThread * DownloadCoverThread );
     void OnDownloadedLinks( wxCommandEvent &event );
 
+    void OnCoverSelectClick( wxCommandEvent &event );
+    void OnCoverDownloadClick( wxCommandEvent &event );
+
     void OnMouseWheel( wxMouseEvent &event );
 
   public:
-    guCoverEditor( wxWindow * parent, const wxString &Artist, const wxString &Album );// wxWindowID id = wxID_ANY, const wxString& title = wxT("Cover Editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
+    guCoverEditor( wxWindow * parent, const wxString &Artist, const wxString &Album, const wxString &albumpath = wxEmptyString );// wxWindowID id = wxID_ANY, const wxString& title = wxT("Cover Editor"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( -1,-1 ), long style = wxDEFAULT_DIALOG_STYLE );
     ~guCoverEditor();
     wxString    GetSelectedCoverUrl( void );
     wxImage *   GetSelectedCoverImage( void );
