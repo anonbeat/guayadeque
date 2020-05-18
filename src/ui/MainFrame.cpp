@@ -93,6 +93,7 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
         MediaCollection->m_Paths.Add( wxGetHomeDir() + wxT( "/Music" ) );
         MediaCollection->m_CoverWords.Add( wxT( "cover" ) );
         MediaCollection->m_CoverWords.Add( wxT( "front" ) );
+        MediaCollection->m_CoverWords.Add( wxT( "folder" ) );
         m_Collections.Add( MediaCollection );
         NeedSaveCollections = true;
     }
