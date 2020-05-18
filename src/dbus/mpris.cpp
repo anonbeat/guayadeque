@@ -475,18 +475,18 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                 }
                 else if( !strcmp( Member, "Play" ) )
                 {
-                    if( m_PlayerPanel->GetState() == guMEDIASTATE_PAUSED )
-                    {
+                    // if( m_PlayerPanel->GetState() <= guMEDIASTATE_PAUSED )
+                    // {
                         wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_PLAY );
                         wxPostEvent( m_PlayerPanel, event );
-                    }
-                    else
-                    {
-                        wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STOP );
-                        wxPostEvent( m_PlayerPanel, event );
-                        event.SetId( ID_PLAYERPANEL_PLAY );
-                        wxPostEvent( m_PlayerPanel, event );
-                    }
+                    // }
+                    // else
+                    // {
+                    //     wxCommandEvent event( wxEVT_MENU, ID_PLAYERPANEL_STOP );
+                    //     wxPostEvent( m_PlayerPanel, event );
+                    //     event.SetId( ID_PLAYERPANEL_PLAY );
+                    //     wxPostEvent( m_PlayerPanel, event );
+                    // }
                     Send( reply );
                     Flush();
                     RetVal = DBUS_HANDLER_RESULT_HANDLED;

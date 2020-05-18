@@ -118,8 +118,10 @@ void guCoverPanel::UpdateImage( void )
             break;
     }
 
-    if( !CoverImage )
+    if( !CoverImage || !CoverImage->IsOk() )
     {
+        if( CoverImage )
+            delete CoverImage;
         CoverImage = new wxImage( guImage( guIMAGE_INDEX_no_cover ) );
     }
 
