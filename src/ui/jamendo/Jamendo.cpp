@@ -505,7 +505,7 @@ guJamendoUpdateThread::~guJamendoUpdateThread()
         <Albums>
             <album>
                 <id>19831</id>
-                <name>!Ya Estoy Harto de Mis Profesores¡¡¡¡¡¡¡(DEMO VERSION)</name>
+                <name>!Ya Estoy Harto de Mis Profesores(DEMO VERSION)</name>
                 <url>http://www.jamendo.com/album/19831</url>
                 <releasedate>2008-02-29T15:29:52+01:00</releasedate>
                 <filename>0 20 - !Ya Estoy Harto de Mis Profesores DEMO VERSION</filename>
