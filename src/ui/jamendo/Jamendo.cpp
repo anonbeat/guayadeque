@@ -487,7 +487,7 @@ guJamendoUpdateThread::~guJamendoUpdateThread()
     }
 }
 
-#if 0
+/*
 <JamendoData epoch="1282819258" documentation="http://developer.jamendo.com/en/wiki/DatabaseDumps" type="artistalbumtrack">
 <Artists>
     <artist>
@@ -538,8 +538,7 @@ guJamendoUpdateThread::~guJamendoUpdateThread()
     </artist>
 ...
 </Artists>
-#endif
-
+*/
 
 // -------------------------------------------------------------------------------- //
 void ReadJamendoXmlTrack( wxXmlNode * xmlnode, guJamendoUpdateThread * thread, guTrack * track )

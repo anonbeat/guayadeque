@@ -1193,7 +1193,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
         wxSetCursor( * wxHOURGLASS_CURSOR );
         wxTheApp->Yield();
 
-        wxString PodcastUrl = NewPodcastChannel->GetValue().Trim( wxString::both );
+        wxString PodcastUrl = NewPodcastChannel->GetValue().Trim( false ).Trim( true );
         if( !PodcastUrl.IsEmpty() )
         {
             // If we find an itunes link we replace the itpc to the standard http
