@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-18 12:56+0100\n"
+"POT-Creation-Date: 2020-05-22 11:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -165,7 +165,7 @@ msgstr ""
 
 #: db/DbLibrary.cpp:292 db/DbLibrary.cpp:304 db/DbLibrary.cpp:1782
 #: db/DbLibrary.cpp:1794 db/DbLibrary.cpp:1867 db/DbLibrary.cpp:1879
-#: ui/jamendo/Jamendo.cpp:649 ui/player/PlayerPanel.cpp:1484
+#: ui/jamendo/Jamendo.cpp:648 ui/player/PlayerPanel.cpp:1484
 msgid "Unknown"
 msgstr ""
 
@@ -451,7 +451,7 @@ msgstr ""
 #: ui/locationpanel/LocationPanel.cpp:373
 #: ui/locationpanel/LocationPanel.cpp:508 ui/mediaviewer/MediaViewer.cpp:971
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1622
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1456 ui/jamendo/Jamendo.cpp:1145
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1456 ui/jamendo/Jamendo.cpp:1144
 #: ui/magnatune/Magnatune.cpp:1032 ui/filebrowser/FileBrowser.cpp:423
 #: ui/podcasts/PodcastsPanel.cpp:1770
 msgid "Update"
@@ -723,7 +723,7 @@ msgstr ""
 #: ui/locationpanel/LocationPanel.cpp:381
 #: ui/locationpanel/LocationPanel.cpp:536 ui/mediaviewer/MediaViewer.cpp:982
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1638
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1472 ui/jamendo/Jamendo.cpp:1156
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1472 ui/jamendo/Jamendo.cpp:1155
 #: ui/magnatune/Magnatune.cpp:1043 ui/podcasts/PodcastsPanel.cpp:1776
 msgid "Properties"
 msgstr ""
@@ -975,7 +975,7 @@ msgstr ""
 #: ui/MainFrame.cpp:1350 ui/locationpanel/LocationPanel.cpp:509
 #: ui/mediaviewer/MediaViewer.cpp:971
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1622
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1456 ui/jamendo/Jamendo.cpp:1145
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1456 ui/jamendo/Jamendo.cpp:1144
 #: ui/magnatune/Magnatune.cpp:1032
 msgid "Update the collection library"
 msgstr ""
@@ -983,7 +983,7 @@ msgstr ""
 #: ui/MainFrame.cpp:1355 ui/locationpanel/LocationPanel.cpp:514
 #: ui/mediaviewer/MediaViewer.cpp:974
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1625
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1459 ui/jamendo/Jamendo.cpp:1148
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1459 ui/jamendo/Jamendo.cpp:1147
 #: ui/magnatune/Magnatune.cpp:1035
 msgid "Rescan"
 msgstr ""
@@ -991,7 +991,7 @@ msgstr ""
 #: ui/MainFrame.cpp:1356 ui/locationpanel/LocationPanel.cpp:515
 #: ui/mediaviewer/MediaViewer.cpp:974
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1625
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1459 ui/jamendo/Jamendo.cpp:1148
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1459 ui/jamendo/Jamendo.cpp:1147
 #: ui/magnatune/Magnatune.cpp:1035
 msgid "Rescan the collection library"
 msgstr ""
@@ -999,7 +999,7 @@ msgstr ""
 #: ui/MainFrame.cpp:1361 ui/locationpanel/LocationPanel.cpp:520
 #: ui/mediaviewer/MediaViewer.cpp:977
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1628
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1462 ui/jamendo/Jamendo.cpp:1151
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1462 ui/jamendo/Jamendo.cpp:1150
 #: ui/magnatune/Magnatune.cpp:1038
 msgid "Search Covers"
 msgstr ""
@@ -1007,7 +1007,7 @@ msgstr ""
 #: ui/MainFrame.cpp:1362 ui/locationpanel/LocationPanel.cpp:521
 #: ui/mediaviewer/MediaViewer.cpp:977
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1628
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1462 ui/jamendo/Jamendo.cpp:1151
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1462 ui/jamendo/Jamendo.cpp:1150
 #: ui/magnatune/Magnatune.cpp:1038
 msgid "Search the collection missing covers"
 msgstr ""
@@ -1027,7 +1027,7 @@ msgstr ""
 #: ui/MainFrame.cpp:1377 ui/locationpanel/LocationPanel.cpp:536
 #: ui/mediaviewer/MediaViewer.cpp:982
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1638
-#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1472 ui/jamendo/Jamendo.cpp:1156
+#: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1472 ui/jamendo/Jamendo.cpp:1155
 #: ui/magnatune/Magnatune.cpp:1043
 msgid "Show collection properties"
 msgstr ""
@@ -4048,18 +4048,18 @@ msgstr ""
 msgid "Exit this program"
 msgstr ""
 
-#: ui/jamendo/Jamendo.cpp:1126 ui/jamendo/Jamendo.cpp:1136
+#: ui/jamendo/Jamendo.cpp:1125 ui/jamendo/Jamendo.cpp:1135
 #: ui/magnatune/Magnatune.cpp:1018 ui/magnatune/Magnatune.cpp:1025
 msgid "Download Albums"
 msgstr ""
 
-#: ui/jamendo/Jamendo.cpp:1126 ui/jamendo/Jamendo.cpp:1129
-#: ui/jamendo/Jamendo.cpp:1136 ui/jamendo/Jamendo.cpp:1139
+#: ui/jamendo/Jamendo.cpp:1125 ui/jamendo/Jamendo.cpp:1128
+#: ui/jamendo/Jamendo.cpp:1135 ui/jamendo/Jamendo.cpp:1138
 #: ui/magnatune/Magnatune.cpp:1018 ui/magnatune/Magnatune.cpp:1025
 msgid "Download the current selected album"
 msgstr ""
 
-#: ui/jamendo/Jamendo.cpp:1129 ui/jamendo/Jamendo.cpp:1139
+#: ui/jamendo/Jamendo.cpp:1128 ui/jamendo/Jamendo.cpp:1138
 msgid "Download Albums torrents"
 msgstr ""
 
@@ -4364,11 +4364,11 @@ msgstr ""
 msgid "Randomize the tracks in playlist"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3196
+#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3197
 msgid "Enable crossfading"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3196
+#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3197
 msgid "Disable crossfading"
 msgstr ""
 
@@ -4376,7 +4376,7 @@ msgstr ""
 msgid "Show the equalizer"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:225 ui/player/PlayerPanel.cpp:2887
+#: ui/player/PlayerPanel.cpp:225 ui/player/PlayerPanel.cpp:2888
 msgid "Volume"
 msgstr ""
 
@@ -4416,19 +4416,19 @@ msgstr ""
 msgid "Buffering..."
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2699
+#: ui/player/PlayerPanel.cpp:2700
 msgid "Smart mode enabled"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2705
+#: ui/player/PlayerPanel.cpp:2706
 msgid "Repeat all"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2710
+#: ui/player/PlayerPanel.cpp:2711
 msgid "Repeat one"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2717
+#: ui/player/PlayerPanel.cpp:2718
 msgid "Smart mode disabled"
 msgstr ""
 

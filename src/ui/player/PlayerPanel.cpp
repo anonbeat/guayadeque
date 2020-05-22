@@ -2611,14 +2611,8 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
     } 
     else 
     {
-        m_MediaSong.m_Loaded = false;
-        m_MediaSong.m_Type = guTRACK_TYPE_NOTDB;
-        m_MediaSong.m_SongId = 0;
-        m_MediaSong.m_Length = 0;
-        m_LastLength = 0;
+        m_MediaSong = guCurrentTrack();
         m_MediaSong.SetCoverImage( new wxImage( guImage( guIMAGE_INDEX_no_cover ) ) );
-        m_MediaSong.m_CoverType = GU_SONGCOVER_NONE;
-        m_MediaSong.m_CoverPath = wxEmptyString;
 
         SetTitleLabel( wxEmptyString );
         SetAlbumLabel( wxEmptyString );
