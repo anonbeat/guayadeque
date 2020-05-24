@@ -30,6 +30,9 @@ SET( SEARCH_LIBS
         /usr/lib
         /usr/local/lib )
 
+# [sl 2020-05-23] according to https://cmake.org/cmake/help/v3.0/module/FindwxWidgets.html
+SET(wxWidgets_CONFIG_OPTIONS --toolkit=gtk3)
+
 FIND_PACKAGE( wxWidgets COMPONENTS base core adv net html xml aui qa )
 
 IF( NOT wxWidgets_FOUND)
