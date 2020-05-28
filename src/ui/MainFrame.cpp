@@ -2159,13 +2159,13 @@ void guMainFrame::OnAbout( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnHelp( wxCommandEvent &event )
 {
-    guWebExecute( wxT( "http://guayadeque.org/index.php?p=/page/manual#TableOfContents" ) );
+    guWebExecute( wxT( "https://github.com/anonbeat/guayadeque/wiki" ) );
 }
 
 // -------------------------------------------------------------------------------- //
 void guMainFrame::OnCommunity( wxCommandEvent &event )
 {
-    guWebExecute( wxT( "http://guayadeque.org/index.php?p=/discussions" ) );
+    guWebExecute( wxT( "http://guayadeque.org" ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -4714,7 +4714,7 @@ void guMainFrame::OnLyricExecCommand( wxCommandEvent &event )
     wxString * CommandText = ( wxString * ) event.GetClientData();
     guLogMessage( wxT( "OnLyricExecCommand: '%s'" ), CommandText->c_str() );
 
-    if( CommandText && !CommandText->IsEmpty() LyricSearchThread )
+    if( CommandText && !CommandText->IsEmpty() && LyricSearchThread )
     {
         guLyricExecCommandTerminate * LyricExecCommandTerminate = new guLyricExecCommandTerminate( LyricSearchThread, event.GetInt() );
         if( LyricExecCommandTerminate )
