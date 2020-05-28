@@ -903,7 +903,7 @@ void guAlbumBrowser::CreateControls( void )
 	BigCoverCenterSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
 	m_BigCoverTracksListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
-	m_BigCoverTracksListBox->SetBackgroundColour( m_BigCoverDetailsLabel->GetBackgroundColour() );
+	//m_BigCoverTracksListBox->SetBackgroundColour( m_BigCoverDetailsLabel->GetBackgroundColour() );
 	m_BigCoverTracksListBox->SetMaxSize( wxSize( 450, -1 ) );
 
 	BigCoverCenterSizer->Add( m_BigCoverTracksListBox, 1, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxRIGHT, 5 );

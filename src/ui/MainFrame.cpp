@@ -4714,7 +4714,7 @@ void guMainFrame::OnLyricExecCommand( wxCommandEvent &event )
     wxString * CommandText = ( wxString * ) event.GetClientData();
     guLogMessage( wxT( "OnLyricExecCommand: '%s'" ), CommandText->c_str() );
 
-    if( CommandText && LyricSearchThread )
+    if( CommandText && !CommandText->IsEmpty() LyricSearchThread )
     {
         guLyricExecCommandTerminate * LyricExecCommandTerminate = new guLyricExecCommandTerminate( LyricSearchThread, event.GetInt() );
         if( LyricExecCommandTerminate )

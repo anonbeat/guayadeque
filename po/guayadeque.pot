@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-22 11:49+0100\n"
+"POT-Creation-Date: 2020-05-23 23:24+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -4364,11 +4364,11 @@ msgstr ""
 msgid "Randomize the tracks in playlist"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3197
+#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3190
 msgid "Enable crossfading"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3197
+#: ui/player/PlayerPanel.cpp:213 ui/player/PlayerPanel.cpp:3190
 msgid "Disable crossfading"
 msgstr ""
 
@@ -4376,7 +4376,7 @@ msgstr ""
 msgid "Show the equalizer"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:225 ui/player/PlayerPanel.cpp:2888
+#: ui/player/PlayerPanel.cpp:225 ui/player/PlayerPanel.cpp:2881
 msgid "Volume"
 msgstr ""
 
@@ -4416,19 +4416,19 @@ msgstr ""
 msgid "Buffering..."
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2700
+#: ui/player/PlayerPanel.cpp:2693
 msgid "Smart mode enabled"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2706
+#: ui/player/PlayerPanel.cpp:2699
 msgid "Repeat all"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2711
+#: ui/player/PlayerPanel.cpp:2704
 msgid "Repeat one"
 msgstr ""
 
-#: ui/player/PlayerPanel.cpp:2718
+#: ui/player/PlayerPanel.cpp:2711
 msgid "Smart mode disabled"
 msgstr ""
 
