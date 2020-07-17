@@ -56,7 +56,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guTr
             break;
         }
 
-        case GST_MESSAGE_STATE_CHANGED:
+//        case GST_MESSAGE_STATE_CHANGED:
 //        {
 //            //  GST_STATE_VOID_PENDING        = 0,
 //            //  GST_STATE_NULL                = 1,

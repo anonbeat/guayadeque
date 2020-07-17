@@ -2957,7 +2957,12 @@ void guPrefDialog::OnLibDelCollectClick( wxCommandEvent& event )
             guLogMessage( wxT( "Could not delete the collection folder '%s'" ), m_Collections[ m_CollectSelected ].m_UniqueId.c_str() );
         m_Collections.RemoveAt( m_CollectSelected );
         m_LibCollectListBox->Delete( m_CollectSelected );
-        //m_CollectSelected = wxNOT_FOUND;
+        
+        m_CollectSelected = wxNOT_FOUND;
+        m_LibCollectListBox->SetSelection( m_CollectSelected );
+
+        event.SetInt( m_CollectSelected );
+        OnLibCollectSelected( event );
     }
 }
 
