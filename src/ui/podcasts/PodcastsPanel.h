@@ -201,9 +201,9 @@ class guPodcastPanel : public guAuiManagerPanel
     int                         m_LastChannelInfoId;
     int                         m_LastPodcastInfoId;
 
-	guChannelsListBox *         m_ChannelsListBox;
+    guChannelsListBox *         m_ChannelsListBox;
     guPodcastListBox *          m_PodcastsListBox;
-	wxBoxSizer *                m_DetailMainSizer;
+    wxBoxSizer *                m_DetailMainSizer;
     wxStaticBitmap *            m_DetailImage;
     wxStaticText *              m_DetailChannelTitle;
     wxStaticText *              m_DetailDescText;
@@ -216,7 +216,7 @@ class guPodcastPanel : public guAuiManagerPanel
     wxStaticText *              m_DetailItemDateText;
     wxStaticText *              m_DetailItemLengthText;
     wxScrolledWindow *          m_DetailScrolledWindow;
-	wxFlexGridSizer *           m_DetailFlexGridSizer;
+    wxFlexGridSizer *           m_DetailFlexGridSizer;
 
     void ProcessChannel( guPodcastChannel * channel );
 
@@ -247,6 +247,7 @@ public:
     virtual bool                GetListViewColumnData( const int id, int * index, int * width, bool * enabled ) { return m_PodcastsListBox->GetColumnData( id, index, width, enabled ); }
     virtual bool                SetListViewColumnData( const int id, const int index, const int width, const bool enabled, const bool refresh = false ) { return m_PodcastsListBox->SetColumnData( id, index, width, enabled, refresh ); }
 
+    void                        UpdateTrack(  const guTrack * track );
 
     friend class guPodcastDownloadQueueThread;
 };

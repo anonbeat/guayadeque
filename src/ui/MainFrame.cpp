@@ -4523,6 +4523,10 @@ void guMainFrame::UpdatedTrack( int updatedby, const guTrack * track )
     {
         track->m_MediaViewer->UpdatedTrack( updatedby, track );
     }
+    else if( track->m_Type == guTRACK_TYPE_PODCAST )
+    {
+        m_PodcastsPanel->UpdateTrack( track );
+    }
 
 //    if( m_LibPanel && ( updatedby != guUPDATED_TRACKS_LIBRARY ) )
 //    {

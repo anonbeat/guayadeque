@@ -1708,6 +1708,12 @@ void guPodcastPanel::SetSelection( const int type, const int id )
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guPodcastPanel::UpdateTrack( const guTrack * )
+{
+    if( m_PodcastsListBox )
+        m_PodcastsListBox->ReloadItems( false );
+}
 
 
 // -------------------------------------------------------------------------------- //

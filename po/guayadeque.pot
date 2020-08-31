@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-05-23 23:24+0100\n"
+"POT-Creation-Date: 2020-08-31 11:29+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -37,7 +37,7 @@ msgid "Confirm"
 msgstr ""
 
 #: onlinelinks/OnlineLinks.cpp:71 misc/Accelerators.cpp:130
-#: ui/MainFrame.cpp:1494 ui/MainFrame.cpp:4614
+#: ui/MainFrame.cpp:1494 ui/MainFrame.cpp:4618
 #: ui/preferences/Preferences.cpp:133 ui/mediaviewer/library/ArListBox.cpp:135
 #: ui/mediaviewer/library/SoListBox.cpp:463
 #: ui/mediaviewer/library/AAListBox.cpp:132
@@ -236,7 +236,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:566 ui/lastfmpanel/LastFMPanel.cpp:837
 #: ui/lastfmpanel/LastFMPanel.cpp:1037 ui/lastfmpanel/LastFMPanel.cpp:1243
 #: ui/lastfmpanel/LastFMPanel.cpp:1460 ui/lastfmpanel/LastFMPanel.cpp:3247
-#: ui/podcasts/PodcastsPanel.cpp:2069
+#: ui/podcasts/PodcastsPanel.cpp:2075
 msgid "Enqueue"
 msgstr ""
 
@@ -286,7 +286,7 @@ msgstr ""
 #: ui/filebrowser/FileBrowser.cpp:1127 ui/lastfmpanel/LastFMPanel.cpp:562
 #: ui/lastfmpanel/LastFMPanel.cpp:833 ui/lastfmpanel/LastFMPanel.cpp:1033
 #: ui/lastfmpanel/LastFMPanel.cpp:1239 ui/lastfmpanel/LastFMPanel.cpp:1456
-#: ui/lastfmpanel/LastFMPanel.cpp:3243 ui/podcasts/PodcastsPanel.cpp:2063
+#: ui/lastfmpanel/LastFMPanel.cpp:3243 ui/podcasts/PodcastsPanel.cpp:2069
 msgid "Play"
 msgstr ""
 
@@ -453,7 +453,7 @@ msgstr ""
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1622
 #: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1456 ui/jamendo/Jamendo.cpp:1144
 #: ui/magnatune/Magnatune.cpp:1032 ui/filebrowser/FileBrowser.cpp:423
-#: ui/podcasts/PodcastsPanel.cpp:1770
+#: ui/podcasts/PodcastsPanel.cpp:1776
 msgid "Update"
 msgstr ""
 
@@ -555,8 +555,8 @@ msgstr ""
 
 #: misc/Accelerators.cpp:385 ui/mediaviewer/playlists/PlayListPanel.cpp:299
 #: ui/mediaviewer/library/TaListBox.cpp:118
-#: ui/mediaviewer/treeview/TreePanel.cpp:380 ui/podcasts/PodcastsPanel.cpp:1764
-#: ui/podcasts/PodcastsPanel.cpp:2098
+#: ui/mediaviewer/treeview/TreePanel.cpp:380 ui/podcasts/PodcastsPanel.cpp:1770
+#: ui/podcasts/PodcastsPanel.cpp:2104
 msgid "Delete"
 msgstr ""
 
@@ -724,7 +724,7 @@ msgstr ""
 #: ui/locationpanel/LocationPanel.cpp:536 ui/mediaviewer/MediaViewer.cpp:982
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:1638
 #: ui/mediaviewer/ipodmedia/iPodMedia.cpp:1472 ui/jamendo/Jamendo.cpp:1155
-#: ui/magnatune/Magnatune.cpp:1043 ui/podcasts/PodcastsPanel.cpp:1776
+#: ui/magnatune/Magnatune.cpp:1043 ui/podcasts/PodcastsPanel.cpp:1782
 msgid "Properties"
 msgstr ""
 
@@ -906,7 +906,7 @@ msgstr ""
 #: ui/mediaviewer/library/SoListBox.cpp:72
 #: ui/mediaviewer/library/LibPanel.cpp:326
 #: ui/mediaviewer/library/LibPanel.cpp:333
-#: ui/mediaviewer/library/LibPanel.cpp:528 ui/podcasts/PodcastsPanel.cpp:1821
+#: ui/mediaviewer/library/LibPanel.cpp:528 ui/podcasts/PodcastsPanel.cpp:1827
 msgid "Plays"
 msgstr ""
 
@@ -1312,7 +1312,7 @@ msgid "Select destination directory"
 msgstr ""
 
 #: ui/MainFrame.cpp:2226 ui/MainFrame.cpp:2271 ui/MainFrame.cpp:2319
-#: ui/MainFrame.cpp:2356 ui/MainFrame.cpp:4617
+#: ui/MainFrame.cpp:2356 ui/MainFrame.cpp:4621
 msgid "Copy To..."
 msgstr ""
 
@@ -1383,15 +1383,15 @@ msgstr ""
 msgid "Layout %lu"
 msgstr ""
 
-#: ui/MainFrame.cpp:4582 ui/MainFrame.cpp:4603
+#: ui/MainFrame.cpp:4586 ui/MainFrame.cpp:4607
 msgid "Copy the current selected songs to a directory or device"
 msgstr ""
 
-#: ui/MainFrame.cpp:4614
+#: ui/MainFrame.cpp:4618
 msgid "Add Copy To patterns in preferences"
 msgstr ""
 
-#: ui/MainFrame.cpp:4617
+#: ui/MainFrame.cpp:4621
 msgid "Copy the selected tracks to a folder or device"
 msgstr ""
 
@@ -1772,7 +1772,7 @@ msgstr ""
 msgid "Command"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2116 ui/podcasts/PodcastsPanel.cpp:2104
+#: ui/lyrics/LyricsPanel.cpp:2116 ui/podcasts/PodcastsPanel.cpp:2110
 msgid "Download"
 msgstr ""
 
@@ -2575,39 +2575,39 @@ msgstr ""
 msgid "Enter the collection name"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:2980
+#: ui/preferences/Preferences.cpp:2985
 msgid "Change library path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3002 ui/mediaviewer/MediaViewer.cpp:1159
+#: ui/preferences/Preferences.cpp:3007 ui/mediaviewer/MediaViewer.cpp:1159
 msgid "Select library path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3058 ui/preferences/Preferences.cpp:3078
+#: ui/preferences/Preferences.cpp:3063 ui/preferences/Preferences.cpp:3083
 msgid "Word: "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3058 ui/preferences/Preferences.cpp:3078
+#: ui/preferences/Preferences.cpp:3063 ui/preferences/Preferences.cpp:3083
 msgid "Enter the text to find covers"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3569 ui/preferences/Preferences.cpp:3599
+#: ui/preferences/Preferences.cpp:3574 ui/preferences/Preferences.cpp:3604
 msgid "Filter: "
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3569
+#: ui/preferences/Preferences.cpp:3574
 msgid "Enter the text to filter"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:3599
+#: ui/preferences/Preferences.cpp:3604
 msgid "Edit the text to filter"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:4147
+#: ui/preferences/Preferences.cpp:4152
 msgid "Select path"
 msgstr ""
 
-#: ui/preferences/Preferences.cpp:4347
+#: ui/preferences/Preferences.cpp:4352
 msgid "Key used by '"
 msgstr ""
 
@@ -2653,7 +2653,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:573 ui/lastfmpanel/LastFMPanel.cpp:844
 #: ui/lastfmpanel/LastFMPanel.cpp:1044 ui/lastfmpanel/LastFMPanel.cpp:1250
 #: ui/lastfmpanel/LastFMPanel.cpp:1467 ui/lastfmpanel/LastFMPanel.cpp:3254
-#: ui/podcasts/PodcastsPanel.cpp:2077
+#: ui/podcasts/PodcastsPanel.cpp:2083
 msgid "Current Track"
 msgstr ""
 
@@ -2675,7 +2675,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:574 ui/lastfmpanel/LastFMPanel.cpp:845
 #: ui/lastfmpanel/LastFMPanel.cpp:1045 ui/lastfmpanel/LastFMPanel.cpp:1251
 #: ui/lastfmpanel/LastFMPanel.cpp:1468 ui/lastfmpanel/LastFMPanel.cpp:3255
-#: ui/podcasts/PodcastsPanel.cpp:2078
+#: ui/podcasts/PodcastsPanel.cpp:2084
 msgid "Add current selected tracks to playlist after the current track"
 msgstr ""
 
@@ -2699,7 +2699,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:579 ui/lastfmpanel/LastFMPanel.cpp:850
 #: ui/lastfmpanel/LastFMPanel.cpp:1050 ui/lastfmpanel/LastFMPanel.cpp:1256
 #: ui/lastfmpanel/LastFMPanel.cpp:1473 ui/lastfmpanel/LastFMPanel.cpp:3260
-#: ui/podcasts/PodcastsPanel.cpp:2083
+#: ui/podcasts/PodcastsPanel.cpp:2089
 msgid "Current Album"
 msgstr ""
 
@@ -2721,7 +2721,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:580 ui/lastfmpanel/LastFMPanel.cpp:851
 #: ui/lastfmpanel/LastFMPanel.cpp:1051 ui/lastfmpanel/LastFMPanel.cpp:1257
 #: ui/lastfmpanel/LastFMPanel.cpp:1474 ui/lastfmpanel/LastFMPanel.cpp:3261
-#: ui/podcasts/PodcastsPanel.cpp:2084
+#: ui/podcasts/PodcastsPanel.cpp:2090
 msgid "Add current selected tracks to playlist after the current album"
 msgstr ""
 
@@ -2745,7 +2745,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:585 ui/lastfmpanel/LastFMPanel.cpp:856
 #: ui/lastfmpanel/LastFMPanel.cpp:1056 ui/lastfmpanel/LastFMPanel.cpp:1262
 #: ui/lastfmpanel/LastFMPanel.cpp:1479 ui/lastfmpanel/LastFMPanel.cpp:3266
-#: ui/podcasts/PodcastsPanel.cpp:2089
+#: ui/podcasts/PodcastsPanel.cpp:2095
 msgid "Current Artist"
 msgstr ""
 
@@ -2767,7 +2767,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:586 ui/lastfmpanel/LastFMPanel.cpp:857
 #: ui/lastfmpanel/LastFMPanel.cpp:1057 ui/lastfmpanel/LastFMPanel.cpp:1263
 #: ui/lastfmpanel/LastFMPanel.cpp:1480 ui/lastfmpanel/LastFMPanel.cpp:3267
-#: ui/podcasts/PodcastsPanel.cpp:2090
+#: ui/podcasts/PodcastsPanel.cpp:2096
 msgid "Add current selected tracks to playlist after the current artist"
 msgstr ""
 
@@ -2791,7 +2791,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:590 ui/lastfmpanel/LastFMPanel.cpp:861
 #: ui/lastfmpanel/LastFMPanel.cpp:1061 ui/lastfmpanel/LastFMPanel.cpp:1267
 #: ui/lastfmpanel/LastFMPanel.cpp:1484 ui/lastfmpanel/LastFMPanel.cpp:3271
-#: ui/podcasts/PodcastsPanel.cpp:2094
+#: ui/podcasts/PodcastsPanel.cpp:2100
 msgid "Enqueue After"
 msgstr ""
 
@@ -2961,7 +2961,7 @@ msgstr ""
 #: ui/mediaviewer/albumbrowser/AlbumBrowser.cpp:449
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:63
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:141
-#: ui/mediaviewer/library/SoListBox.cpp:74 ui/podcasts/PodcastsPanel.cpp:1823
+#: ui/mediaviewer/library/SoListBox.cpp:74 ui/podcasts/PodcastsPanel.cpp:1829
 msgid "Added"
 msgstr ""
 
@@ -3177,7 +3177,7 @@ msgstr ""
 #: ui/mediaviewer/audiocd/AudioCdPanel.cpp:357
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:49
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:129
-#: ui/mediaviewer/library/SoListBox.cpp:61 ui/podcasts/PodcastsPanel.cpp:1815
+#: ui/mediaviewer/library/SoListBox.cpp:61 ui/podcasts/PodcastsPanel.cpp:1821
 msgid "Title"
 msgstr ""
 
@@ -3234,7 +3234,7 @@ msgstr ""
 #: ui/mediaviewer/audiocd/AudioCdPanel.cpp:364
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:60
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:138
-#: ui/mediaviewer/library/SoListBox.cpp:68 ui/podcasts/PodcastsPanel.cpp:1819
+#: ui/mediaviewer/library/SoListBox.cpp:68 ui/podcasts/PodcastsPanel.cpp:1825
 msgid "Length"
 msgstr ""
 
@@ -3266,7 +3266,7 @@ msgid "Play current selected tracks"
 msgstr ""
 
 #: ui/mediaviewer/audiocd/AudioCdPanel.cpp:650 ui/radios/RadioPanel.cpp:432
-#: ui/podcasts/PodcastsPanel.cpp:2070
+#: ui/podcasts/PodcastsPanel.cpp:2076
 msgid "Add current selected songs to playlist"
 msgstr ""
 
@@ -3279,7 +3279,7 @@ msgid "Search again for cd metadata"
 msgstr ""
 
 #: ui/mediaviewer/audiocd/AudioCdPanel.cpp:694
-#: ui/podcasts/PodcastsPanel.cpp:2116
+#: ui/podcasts/PodcastsPanel.cpp:2122
 msgid "No selected items..."
 msgstr ""
 
@@ -3337,7 +3337,7 @@ msgstr ""
 #: ui/mediaviewer/playlists/PlayListPanel.cpp:227
 #: ui/mediaviewer/library/SoListBox.cpp:525
 #: ui/mediaviewer/treeview/TreePanel.cpp:393 ui/radios/RadioPanel.cpp:426
-#: ui/podcasts/PodcastsPanel.cpp:2064
+#: ui/podcasts/PodcastsPanel.cpp:2070
 msgid "Play current selected songs"
 msgstr ""
 
@@ -3444,7 +3444,7 @@ msgstr ""
 
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:62
 #: ui/mediaviewer/playlists/DynamicPlayList.cpp:140
-#: ui/mediaviewer/library/SoListBox.cpp:73 ui/podcasts/PodcastsPanel.cpp:1822
+#: ui/mediaviewer/library/SoListBox.cpp:73 ui/podcasts/PodcastsPanel.cpp:1828
 msgid "Last Played"
 msgstr ""
 
@@ -3635,7 +3635,7 @@ msgstr ""
 msgid "Offset"
 msgstr ""
 
-#: ui/mediaviewer/library/SoListBox.cpp:267 ui/podcasts/PodcastsPanel.cpp:1991
+#: ui/mediaviewer/library/SoListBox.cpp:267 ui/podcasts/PodcastsPanel.cpp:1997
 msgid "Never"
 msgstr ""
 
@@ -4776,54 +4776,54 @@ msgstr ""
 msgid "Are you sure to delete the selected podcast item?"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1758
+#: ui/podcasts/PodcastsPanel.cpp:1764
 msgid "New Channel"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1758
+#: ui/podcasts/PodcastsPanel.cpp:1764
 msgid "Add a new podcast channel"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1764
+#: ui/podcasts/PodcastsPanel.cpp:1770
 msgid "delete this podcast channels and all its items"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1770
+#: ui/podcasts/PodcastsPanel.cpp:1776
 msgid "Update the podcast items of the selected channels"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1776
+#: ui/podcasts/PodcastsPanel.cpp:1782
 msgid "Edit the podcast channel"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1814
+#: ui/podcasts/PodcastsPanel.cpp:1820
 msgid "Status"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1816
+#: ui/podcasts/PodcastsPanel.cpp:1822
 msgid "Channel"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1817
+#: ui/podcasts/PodcastsPanel.cpp:1823
 msgid "Category"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1818
+#: ui/podcasts/PodcastsPanel.cpp:1824
 msgid "Date"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:1820
+#: ui/podcasts/PodcastsPanel.cpp:1826
 msgid "Author"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:2098
+#: ui/podcasts/PodcastsPanel.cpp:2104
 msgid "Delete the current selected podcasts"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:2104
+#: ui/podcasts/PodcastsPanel.cpp:2110
 msgid "Download the current selected podcasts"
 msgstr ""
 
-#: ui/podcasts/PodcastsPanel.cpp:2116
+#: ui/podcasts/PodcastsPanel.cpp:2122
 msgid "Copy the current selected podcasts to a directory or device"
 msgstr ""
