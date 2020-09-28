@@ -75,6 +75,7 @@ bool guPlaylistFile::IsValidPlayList( const wxString &uri )
 
     return  PLPath.EndsWith( wxT( ".pls" ) ) ||
             PLPath.EndsWith( wxT( ".m3u" ) ) ||
+            PLPath.EndsWith( wxT( ".m3u8" ) ) ||
             PLPath.EndsWith( wxT( ".xspf" ) ) ||
             PLPath.EndsWith( wxT( ".asx" ) );
 }
@@ -103,7 +104,7 @@ bool guPlaylistFile::Load( const wxString &uri )
         {
             return ReadPlsFile( FileName );
         }
-        else if( LowerPath.EndsWith( wxT( ".m3u" ) ) )
+        else if( LowerPath.EndsWith( wxT( ".m3u" ) ) || LowerPath.EndsWith( wxT( ".m3u8" ) ) )
         {
             return ReadM3uFile( FileName );
         }
@@ -147,7 +148,7 @@ bool guPlaylistFile::Load( const wxString &uri )
                 {
                     return ReadPlsStream( Ins );
                 }
-                else if( LowerPath.EndsWith( wxT( ".m3u" ) ) )
+                else if( LowerPath.EndsWith( wxT( ".m3u" ) ) || LowerPath.EndsWith( wxT( ".m3u8" ) ) )
                 {
                     return ReadM3uStream( Ins );
                 }
