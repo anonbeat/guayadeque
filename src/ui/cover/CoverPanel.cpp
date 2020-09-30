@@ -59,10 +59,12 @@ void guCoverPanel::OnPaint( wxPaintEvent &event )
 	wxCoord Width;
 	wxCoord Height;
 	GetClientSize( &Width, &Height );
-
-    wxMutexLocker Lock( m_CoverImageMutex );
-    wxPaintDC dc( this );
-    dc.DrawBitmap( m_CoverImage, ( Width - m_LastSize ) / 2, ( Height - m_LastSize ) / 2, false );
+    if( Width && Height )
+    {
+        wxMutexLocker Lock( m_CoverImageMutex );
+        wxPaintDC dc( this );
+        dc.DrawBitmap( m_CoverImage, ( Width - m_LastSize ) / 2, ( Height - m_LastSize ) / 2, false );
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -127,7 +129,8 @@ void guCoverPanel::UpdateImage( void )
 
     if( CoverImage )
     {
-        CoverImage->Rescale( m_LastSize, m_LastSize, wxIMAGE_QUALITY_HIGH );
+        if( m_LastSize > 0 )
+            CoverImage->Rescale( m_LastSize, m_LastSize, wxIMAGE_QUALITY_HIGH );
         wxMutexLocker Lock( m_CoverImageMutex );
         m_CoverImage = wxBitmap( * CoverImage );
         //Update();
