@@ -300,7 +300,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
 
             Struct = gst_message_get_structure( message );
             Name = gst_structure_get_name( Struct );
-            guLogDebug( wxT( "Got Application Message %s" ), GST_TO_WXSTRING( Name ).c_str() );
+            // guLogDebug( wxT( "Got Application Message %s" ), GST_TO_WXSTRING( Name ).c_str() );
 
             if( !strcmp( Name, guFADERPLAYBIN_MESSAGE_FADEIN_START ) )
             {
@@ -498,6 +498,11 @@ guFaderPlaybin::~guFaderPlaybin()
         {
             gst_element_get_state( m_Playbin, NULL, NULL, GST_CLOCK_TIME_NONE );
         }
+        // guLogDebug( "mPlaybin refcount: %i", GST_OBJECT_REFCOUNT( m_Playbin ) );
+        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
+        gst_bus_remove_watch( bus );
+        // guLogDebug( "mPlaybin bus refcount: %i", GST_OBJECT_REFCOUNT( bus ) - 1 );
+        gst_object_unref( bus );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
     }
 
@@ -686,8 +691,9 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
                                             g_signal_connect( G_OBJECT( m_Playbin ), "source-setup",
                                                 G_CALLBACK( gst_source_setup ), ( void * ) m_Player );
 
-                                            gst_bus_add_watch( gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) ),
-                                                GstBusFunc( gst_bus_async_callback ), this );
+                                            GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
+                                            gst_bus_add_watch( bus, GstBusFunc( gst_bus_async_callback ), this );
+                                            gst_object_unref( bus );
 
                                             return true;
                                         }
