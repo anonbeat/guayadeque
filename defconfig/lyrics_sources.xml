@@ -1,310 +1,207 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <lyricengine>
-  <lyricsources>
-    <lyricsource type="embedded" enabled="true" name="Embedded" source=""/>
-    <lyricsource type="file" enabled="false" name="From file" source="~/.guayadeque/lyrics/{a}/{t}.lyric">
-      <replace>
-        <item replace=" &lt;&gt;:&quot;\/|?*" with="_"/>
-      </replace>
-    </lyricsource>
-    <lyricsource type="command" enabled="false" name="Command" source=""/>
-    <lyricsource type="download" enabled="true" name="lyrics.wikia.com" source="http://lyrics.wikia.com/{a}:{t}">
-      <replace>
-        <item replace=" @;\&quot;" with="_"/>
-        <item replace="?" with="%3F"/>
-      </replace>
-      <extract>
-        <item begin="&lt;div class='lyricbox'&gt;" end="&lt;!--"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;div class='rtMatcher'&gt;"/>
-        <item tag="&lt;span style=&quot;padding:1em&quot;&gt;"/>
-        <item tag="&lt;script&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="Unfortunately, we are not licensed"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="azlyrics.com" source="http://www.azlyrics.com/lyrics/{al}/{tl}.html">
-      <replace>
-        <item replace=" ._@,;&amp;\/'&quot;-" with=""/>
-      </replace>
-      <extract>
-        <item begin="Sorry about that. --&gt;" end="&lt;/div&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;B&gt;"/>
-        <item begin="&lt;i&gt;[" end="]&lt;/i&gt;"/>
-        <item begin="[" end="]"/>
-      </exclude>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="coveralia.com" source="http://www.coveralia.com/letras/{tl}-{al}.php">
-      <replace>
-        <item replace="áäå" with="a"/>
-        <item replace="éë" with="e"/>
-        <item replace="í" with="i"/>
-        <item replace="óö" with="o"/>
-        <item replace="úü" with="u"/>
-        <item replace=" /¿?.'" with="-"/>
-        <item replace="ñÑ" with="n"/>
-        <item replace="çÇ" with="c"/>
-      </replace>
-      <extract>
-        <item tag="&lt;p class=&quot;alincentro margen5&quot;&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="directlyrics.com" source="http://www.directlyrics.com/{al}-{tl}-lyrics.html">
-      <replace>
-        <item replace=" _@,;&amp;\/'&quot;" with="-"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id=&quot;lyricsContent&quot;&gt;"/>
-        <item tag="&lt;p&gt;"/>
-      </extract>
-      <exclude>
-        <item begin="&lt;b&gt;" end="&lt;/b&gt;"/>
-      </exclude>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="elyrics.net" source="http://www.elyrics.net/read/{a1}/{al}-lyrics/{tl}-lyrics.html">
-      <replace>
-        <item replace=" _@;&amp;\/&quot;" with="-"/>
-        <item replace="'" with="_"/>
-      </replace>
-      <extract>
-        <item tag="&lt;div class='ly' style='font-size:12px;'&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;strong&gt;"/>
-        <item tag="&lt;em&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="Page not Found"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="false" name="letras.mus.br" source="http://letras.terra.com.br/winamp.php?musica={tl}&amp;artista={al}">
-      <replace>
-        <item replace="_@,;&amp;\/&quot;" with="_"/>
-        <item replace=" " with="+"/>
-      </replace>
-      <extract>
-        <item begin="&lt;p&gt;" end="&lt;/p&gt;"/>
-      </extract>
-      <notfound>
-        <item tag="Verifique se o nome do seu arquivo e sua"/>
-        <item tag="Não encontramos"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="loudson.gs" source="http://www.loudson.gs/{a1}/{al}/{bl}/{tl}">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="-"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div class=&quot;middle_col_TracksLyrics &quot;&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyrics.com" source="http://www.lyrics.com/lyrics/{al}/{tl}.html">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="-"/>
-        <item replace="'." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id=&quot;lyrics&quot; class=&quot;SCREENONLY&quot;&gt;"/>
-      </extract>
-      <exclude>
-        <item begin="&lt;!--" end="--&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="we do not have the lyric for this song"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyrics007.com" source="http://www.lyrics007.com/{a}+Lyrics/{t}+Lyrics.html">
-      <extract>
-        <item begin="&lt;/script&gt;&lt;br&gt;&lt;br&gt;&lt;br&gt;" end="&lt;br&gt;&lt;script"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;script type=&quot;text/javascript&quot;&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="Sorry, this song or the artist is deleted."/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricsbay.com" source="http://www.lyricsbay.com/{tl}_lyrics-{al}.html">
-      <replace>
-        <item replace=" _@,;&amp;\/'&quot;" with="_"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id=EchoTopic&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;textarea name=&quot;songscpy&quot; id=&quot;songscpyid&quot; onclick=&quot;callselect('songscpyid','selectswf')&quot; rows=&quot;3&quot; cols=&quot;45&quot; READONLY&gt;"/>
-      </exclude>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricsdownload.com" source="http://www.lyricsdownload.com/{al}-{tl}-lyrics.html">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="-"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id=&quot;div_customCSS&quot;&gt;"/>
-      </extract>
-      <notfound>
-        <item tag="We haven't lyrics of this song"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricsmania.com" source="http://www.lyricsmania.com/{tl}_lyrics_{al}.html">
-      <replace>
-        <item replace=" _@;&amp;\/&quot;'." with="_"/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id='songlyrics_h' class='dn'&gt;"/>
-      </extract>
-      <notfound>
-        <item tag="The lyrics you requested is not in our archive yet,"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricsmode.com" source="http://www.lyricsmode.com/lyrics/{a1}/{al}/{tl}.html">
-      <replace>
-        <item replace=" ._@,;&amp;\/&quot;" with="_"/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id='songlyrics_h' class='dn'&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricsreg.com" source="http://www.lyricsreg.com/lyrics/{al}/{tl}/">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="+"/>
-        <item replace="'." with=""/>
-      </replace>
-      <extract>
-        <item begin="&lt;div class=&quot;lyrics_above_ad&quot;&gt;" end="&lt;div class=&quot;lyrics_below_ad2&quot;&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;script&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="Page not Found"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricstime.com" source="http://www.lyricstime.com/{al}-{tl}-lyrics.html">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;'" with="-"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id=&quot;songlyrics&quot; &gt;"/>
-        <item tag="&lt;p&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyricsvip.com" source="www.lyricsvip.com/{a}/{t}-Lyrics.html">
-      <replace>
-        <item replace=" " with="-"/>
-      </replace>
-      <extract>
-        <item tag="&lt;table class=&quot;tbl0&quot;&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;h1&gt;"/>
-        <item tag="&lt;h2&gt;"/>
-      </exclude>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="lyriki.com" source="http://www.lyriki.com/{al}:{tl}">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="_"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item begin="&lt;/table&gt;" end="&lt;div class=&quot;printfooter&quot;&gt;"/>
-        <item tag="&lt;p&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="metrolyrics.com" source="http://www.metrolyrics.com/{tl}-lyrics-{al}.html">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="-"/>
-        <item replace="'." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;span id=&quot;lyrics&quot;&gt;"/>
-        <item tag="&lt;div id=&quot;lyrics&quot;&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;h5&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="These lyrics are missing"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="mp3lyrics.org" source="http://www.mp3lyrics.org/{a1}/{al}/{tl}/">
-      <replace>
-        <item replace=" _@,;&amp;\/&quot;" with="-"/>
-        <item replace="'." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;span id=gn_lyricsB&gt;"/>
-        <item tag="&lt;div class=&quot;KonaBody&quot; id=&quot;EchoTopic&quot;&gt;"/>
-      </extract>
-      <exclude>
-        <item tag="&lt;font size=2&gt;"/>
-        <item begin="&lt;b&gt;&lt;i&gt;" end="&lt;/u&gt;&lt;/b&gt;:"/>
-        <item begin="&lt;b&gt;Lyrics" end="&lt;/b&gt;"/>
-      </exclude>
-      <notfound>
-        <item tag="Something went wrong"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="seeklyrics.com" source="http://www.seeklyrics.com/lyrics/{a}/{t}.html">
-      <replace>
-        <item replace=" _@,;&amp;\/'&quot;" with="-"/>
-        <item replace="." with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div id=&quot;songlyrics&quot;&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="songlyrics.com" source="http://www.songlyrics.com/{al}/{tl}-lyrics/">
-      <replace>
-        <item replace=" ._@,;&amp;\/&quot;" with="-"/>
-        <item replace="'" with="_"/>
-      </replace>
-      <extract>
-        <item tag="&lt;p id=&quot;songLyricsDiv&quot; ondragstart=&quot;return false;&quot; onselectstart=&quot;return false;&quot; oncontextmenu=&quot;return false;&quot; class=&quot;songLyricsV14&quot; style=&quot;font-size: 14px;z-index: 9999;position: absolute;left: -6000px;&quot;&gt;"/>
-      </extract>
-      <exclude>
-        <item begin="[ " end=" ]"/>
-      </exclude>
-      <notfound>
-        <item tag="Sorry, we have no"/>
-        <item tag="This is an upcoming album and we do not have the"/>
-      </notfound>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="vagalume.com.br" source="http://vagalume.com.br/{al}/{tl}.html">
-      <replace>
-        <item replace=" _@,;&amp;\/'&quot;." with="-"/>
-        <item replace="!" with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div itemprop=description&gt;"/>
-      </extract>
-    </lyricsource>
-    <lyricsource type="download" enabled="true" name="vagalume.com.br (Portuguese translations)" source="http://vagalume.com.br/{al}/{tl}-traducao.html">
-      <replace>
-        <item replace=" _@,;&amp;\/'&quot;." with="-"/>
-        <item replace="!" with=""/>
-      </replace>
-      <extract>
-        <item tag="&lt;div itemprop=description&gt;"/>
-      </extract>
-    </lyricsource>
-  </lyricsources>
-  <lyrictargets>
-    <lyrictarget type="embedded" enabled="false" name="Embedded" source=""/>
-    <lyrictarget type="file" enabled="false" name="To file" source="~/.guayadeque/lyrics/{a}/{t}.lyric">
-      <replace>
-        <item replace=" &lt;&gt;:&quot;\/|?*" with="_"/>
-      </replace>
-    </lyrictarget>
-    <lyrictarget type="command" enabled="false" name="Command" source=""/>
-  </lyrictargets>
+    <lyricsources>
+        <lyricsource type="embedded" enabled="false" name="Embedded" source=""/>
+        <lyricsource type="file" enabled="false" name="From file" source="~/.guayadeque/lyrics/{a}/{t}.lyric">
+            <replace>
+                <item replace=" &lt;&gt;:&quot;\/|?*" with="_"/>
+            </replace>
+        </lyricsource>
+        <lyricsource type="command" enabled="false" name="Command" source=""/>
+        <lyricsource type="download" enabled="true" name="azlyrics.com" source="http://www.azlyrics.com/lyrics/{al}/{tl}.html">
+            <replace>
+                <item replace="- _\\.@,;&amp;\\/'&quot;" with=""/>
+            </replace>
+            <extract>
+                <item begin="Sorry about that. --&gt;" end="&lt;/div&gt;"/>
+            </extract>
+            <exclude>
+                <item tag="&lt;B&gt;"/>
+                <item begin="&lt;i&gt;[" end="]&lt;/i&gt;"/>
+                <item begin="[" end="]"/>
+            </exclude>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="coveralia.com" source="http://www.coveralia.com/letras/{tl}-{al}.php">
+            <replace>
+                <item replace="áäå" with="a"/>
+                <item replace="éë" with="e"/>
+                <item replace="í" with="i"/>
+                <item replace="óö" with="o"/>
+                <item replace="úü" with="u"/>
+                <item replace=" /¿?.'" with="-"/>
+                <item replace="ñÑ" with="n"/>
+                <item replace="çÇ" with="c"/>
+            </replace>
+            <extract>
+                <item tag="&lt;div class=&quot;alincentro margen5&quot; style=&quot;min-height:200px;font-size:12px;&quot;&gt;"/>
+            </extract>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="elyrics.net" source="http://www.elyrics.net/read/{a1}/{al}-lyrics/{tl}-lyrics.html">
+            <replace>
+                <item replace=" _@;&amp;\/&quot;" with="-"/>
+                <item replace="'" with="_"/>
+            </replace>
+            <extract>
+                <item begin="&lt;div id='inlyr'&gt;" end="&lt;/div&gt;&lt;br&gt;"/>
+            </extract>
+            <exclude>
+                <item tag="&lt;strong&gt;"/>
+                <item tag="&lt;em&gt;"/>
+                <item begin="&lt;div class='my-2'" end="&lt;/div&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="Page not Found"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="letras.mus.br" source="http://letras.terra.com.br/winamp.php?musica={tl}&amp;artista={al}">
+            <replace>
+                <item replace="_@,;&amp;\/&quot;" with="_"/>
+                <item replace=" " with="+"/>
+            </replace>
+            <extract>
+                <item tag="&lt;div id=&quot;letra-cnt&quot;&gt;"/>
+            </extract>
+            <exclude>
+                <item begin="&lt;p" end="&gt;"/>
+                <item begin="&lt;/p" end="&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="Verifique se o nome do seu arquivo e sua"/>
+                <item tag="Não encontramos"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="lyrics.com" source="http://www.lyrics.com/lyrics/{al}/{tl}.html">
+            <replace>
+                <item replace=" _@,;&amp;\/&quot;" with="-"/>
+                <item replace="'." with=""/>
+            </replace>
+            <extract>
+                <item tag="&lt;div id=&quot;lyrics&quot; class=&quot;SCREENONLY&quot;&gt;"/>
+            </extract>
+            <exclude>
+                <item begin="&lt;!--" end="--&gt;"/>
+                <item begin="&lt;a " end="&lt;/a&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="we do not have the lyric for this song"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="lyrics007.com" source="http://www.lyrics007.com/{a}+Lyrics/{t}+Lyrics.html">
+            <extract>
+                <item tag="&lt;div class=&quot;lyrics&quot;&gt;"/>
+            </extract>
+            <exclude>
+                <item tag="&lt;script type=&quot;text/javascript&quot;&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="Sorry, this song or the artist is deleted."/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="lyricsmania.com" source="http://www.lyricsmania.com/{tl}_lyrics_{al}.html">
+            <replace>
+                <item replace=" _@;&amp;\/&quot;'." with="_"/>
+            </replace>
+            <extract>
+                <item begin="&lt;div class=&quot;lyrics-body&quot;&gt;" end="&lt;/div&gt; &lt;div"/>
+            </extract>
+            <exclude>
+                <item tag="&lt;div id=&quot;video-musictory&quot;&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="The lyrics you requested is not in our archive yet,"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="lyricsmode.com" source="http://www.lyricsmode.com/lyrics/{al1}/{al}/{tl}.html">
+            <replace>
+                <item replace=" ._@,;&amp;\/&quot;" with="_"/>
+            </replace>
+            <extract>
+                <item begin="&lt;div id=&quot;lyrics_text&quot; class=&quot;js-new-text-select&quot; style=&quot;position: relative;&quot;&gt;" end="&lt;div class"/>
+            </extract>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="lyricsreg.com" source="http://www.lyricsreg.com/lyrics/{al}/{tl}/">
+            <replace>
+                <item replace=" _@,;&amp;\/&quot;" with="+"/>
+                <item replace="'." with=""/>
+            </replace>
+            <extract>
+                <item begin="&lt;div class=&quot;lyrics_above_ad&quot;&gt;" end="&lt;div class=&quot;lyrics_below_ad2&quot;&gt;"/>
+            </extract>
+            <exclude>
+                <item tag="&lt;script&gt;"/>
+                <item begin="[Thanks to" end="these lyrics]"/>
+            </exclude>
+            <notfound>
+                <item tag="Page not Found"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="lyriki.com" source="http://www.lyriki.com/{a}:{t}">
+            <replace>
+                <item replace=" _@,;&amp;\/&quot;" with="_"/>
+                <item replace="." with=""/>
+            </replace>
+            <extract>
+                <item begin="&lt;/table&gt;" end="&lt;div class=&quot;printfooter&quot;&gt;"/>
+                <item tag="&lt;p&gt;"/>
+            </extract>
+            <notfound>
+                <item tag="There is currently no text in this page."/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="metrolyrics.com" source="http://www.metrolyrics.com/{tl}-lyrics-{al}.html">
+            <replace>
+                <item replace=" _@,;&amp;\/&quot;" with="-"/>
+                <item replace="'." with=""/>
+            </replace>
+            <extract>
+                <item begin="class=&quot;js-lyric-text&quot;&gt;" end="&lt;div class=&quot;bottom-mpu&quot;"/>
+            </extract>
+            <exclude>
+                <item begin="&lt;!--" end="--&gt;"/>
+                <item begin="&lt;p class=&quot;verse&quot;" end="&gt;"/>
+                <item begin="&lt;/p" end="&gt;"/>
+                <item tag="&lt;ul&gt;"/>
+                <item begin="&lt;div class" end="&lt;/div&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="These lyrics are missing"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="songlyrics.com" source="http://www.songlyrics.com/{al}/{tl}-lyrics/">
+            <replace>
+                <item replace=" ._@,;&amp;\/&quot;" with="-"/>
+                <item replace="'" with="_"/>
+            </replace>
+            <extract>
+                <item tag="&lt;div id=&quot;songLyricsDiv-outer&quot;&gt;"/>
+            </extract>
+            <exclude>
+                <item begin="[ " end=" ]"/>
+                <item begin="&lt;p" end="&gt;"/>
+                <item begin="&lt;/p" end="&gt;"/>
+            </exclude>
+            <notfound>
+                <item tag="Sorry, we have no"/>
+                <item tag="This is an upcoming album and we do not have the"/>
+            </notfound>
+        </lyricsource>
+        <lyricsource type="download" enabled="true" name="vagalume.com.br" source="http://vagalume.com.br/{al}/{tl}.html">
+            <replace>
+                <item replace=" _@,;&amp;\/'&quot;." with="-"/>
+                <item replace="!" with=""/>
+            </replace>
+            <extract>
+                <item tag="&lt;div id=lyrics&gt;"/>
+            </extract>
+        </lyricsource>
+    </lyricsources>
+    <lyrictargets>
+        <lyrictarget type="embedded" enabled="false" name="Embedded" source=""/>
+        <lyrictarget type="file" enabled="false" name="To file" source="~/.guayadeque/lyrics/{a}/{t}.lyric">
+            <replace>
+                <item replace=" &lt;&gt;:&quot;\/|?*" with="_"/>
+            </replace>
+        </lyrictarget>
+        <lyrictarget type="command" enabled="false" name="Command" source=""/>
+    </lyrictargets>
 </lyricengine>
