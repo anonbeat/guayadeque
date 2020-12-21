@@ -135,7 +135,7 @@ guFileRenamer::~guFileRenamer()
     Config->WriteNum( CONFIG_KEY_FILE_RENAMER_SIZE_WIDTH, WindowSize.x, CONFIG_PATH_FILE_RENAMER );
     Config->WriteNum( CONFIG_KEY_FILE_RENAMER_SIZE_HEIGHT, WindowSize.y, CONFIG_PATH_FILE_RENAMER );
 
-    Config->WriteStr( CONFIG_KEY_FILE_RENAMER_PATTERN, m_PatTextCtrl->GetLineText( 0 ), CONFIG_PATH_FILE_RENAMER );
+    Config->WriteStr( CONFIG_KEY_FILE_RENAMER_PATTERN, m_PatTextCtrl->GetValue(), CONFIG_PATH_FILE_RENAMER );
 
     Unbind( wxEVT_BUTTON, &guFileRenamer::OnOKButton, this, wxID_OK );
 
@@ -152,7 +152,7 @@ void guFileRenamer::OnOKButton( wxCommandEvent& event )
     {
         if( m_NameTextCtrl->IsModified() )
         {
-            m_FilesListBox->SetString( m_CurFile, m_NameTextCtrl->GetLineText( 0 ) );
+            m_FilesListBox->SetString( m_CurFile, m_NameTextCtrl->GetValue() );
         }
     }
     event.Skip();
@@ -168,7 +168,7 @@ void guFileRenamer::OnFileSelected( wxCommandEvent& event )
     {
         if( m_NameTextCtrl->IsModified() )
         {
-            m_FilesListBox->SetString( m_CurFile, m_NameTextCtrl->GetLineText( 0 ) );
+            m_FilesListBox->SetString( m_CurFile, m_NameTextCtrl->GetValue() );
         }
     }
 
@@ -255,14 +255,14 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
                         }
                     }
 
-                    if( !m_PatTextCtrl->GetLineText( 0 ).StartsWith( wxT( "/" ) ) )
+                    if( !m_PatTextCtrl->GetValue().StartsWith( wxT( "/" ) ) )
                     {
-                        FileName = wxPathOnly( FileName ) + wxT( "/" ) + m_PatTextCtrl->GetLineText( 0 ) +
+                        FileName = wxPathOnly( FileName ) + wxT( "/" ) + m_PatTextCtrl->GetValue() +
                                     wxT( '.' ) + FileName.AfterLast( wxT( '.' ) );
                     }
                     else
                     {
-                        FileName = m_PatTextCtrl->GetLineText( 0 ) +
+                        FileName = m_PatTextCtrl->GetValue() +
                                     wxT( '.' ) + FileName.AfterLast( wxT( '.' ) );
                     }
 

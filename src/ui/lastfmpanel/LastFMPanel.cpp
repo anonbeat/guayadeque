@@ -177,7 +177,7 @@ void guLastFMInfoCtrl::CreateControls( wxWindow * parent )
 	m_Text->Wrap( -1 );
 	//Text->SetCursor( wxCursor( wxCURSOR_HAND ) );
 	//m_Text->SetMaxSize( wxSize( 250, -1 ) );
-	MainSizer->Add( m_Text, 1, wxALL|wxEXPAND|wxALIGN_CENTER_VERTICAL, 2 );
+	MainSizer->Add( m_Text, 1, wxALL|wxEXPAND, 2 );
 
 
 	SetSizer( MainSizer );
@@ -448,7 +448,7 @@ void guArtistInfoCtrl::CreateControls( wxWindow * parent )
 	m_ShowMoreHyperLink->SetHoverColour( wxSystemSettings::GetColour( wxSYS_COLOUR_HIGHLIGHT ) );
 	//m_DetailSizer->Add( m_ShowMoreHyperLink, 0, wxALL|wxALIGN_RIGHT, 5 );
 
-	TopSizer->Add( m_ShowMoreHyperLink, 0, wxALIGN_RIGHT|wxTOP|wxRIGHT|wxLEFT, 5 );
+	TopSizer->Add( m_ShowMoreHyperLink, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
 
 
 	//m_DetailSizer->Add( m_Text, 0, wxTOP|wxRIGHT|wxLEFT, 5 );
@@ -1708,7 +1708,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
-	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxTOP|wxLEFT, 5 );
 
 	m_PrevButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_left ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	m_PrevButton->Enable( false );
@@ -1727,7 +1727,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 	ArtistStaticText->Wrap( -1 );
 	EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
-	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
 	m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
 	EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
@@ -1737,7 +1737,7 @@ guLastFMPanel::guLastFMPanel( wxWindow * Parent, guDbLibrary * db,
 
 	EditorSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
-	m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+	m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
 	m_TrackTextCtrl->Enable( false );
 	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 

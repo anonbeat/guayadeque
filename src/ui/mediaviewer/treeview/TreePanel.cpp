@@ -918,7 +918,7 @@ bool guTreeViewPanel::DoTextSearch( const wxString &textsearch )
 {
     if( m_LastSearchString != textsearch )
     {
-        m_LastSearchString = textsearch; //m_InputTextCtrl->GetLineText( 0 );
+        m_LastSearchString = textsearch; //m_InputTextCtrl->GetValue();
         if( !m_LastSearchString.IsEmpty() )
         {
             if( m_LastSearchString.Length() > 0 )

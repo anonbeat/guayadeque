@@ -135,7 +135,7 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 
 	ButtonsSizer->Add( m_CopyButton, 0, wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
-	LabelsMainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+	LabelsMainSizer->Add( ButtonsSizer, 0, wxEXPAND, 5 );
 
 	m_LabelsPanel->SetSizer( LabelsMainSizer );
 	m_LabelsPanel->Layout();

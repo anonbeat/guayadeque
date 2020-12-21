@@ -878,7 +878,7 @@ void guRadioPanel::OnSearchCancelled( wxCommandEvent &event ) // CLEAN SEARCH ST
 // -------------------------------------------------------------------------------- //
 bool guRadioPanel::DoTextSearch( void )
 {
-    wxString SearchString = m_InputTextCtrl->GetLineText( 0 );
+    wxString SearchString = m_InputTextCtrl->GetValue();
     guLogMessage( wxT( "Should do the search now: '%s'" ), SearchString.c_str() );
     if( !SearchString.IsEmpty() )
     {

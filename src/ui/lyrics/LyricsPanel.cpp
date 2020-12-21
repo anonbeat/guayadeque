@@ -85,7 +85,7 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
 	m_UpdateCheckBox->SetToolTip( _( "Search the lyrics for the current playing track" ) );
 	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
 
-	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT|wxLEFT, 5 );
+	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
 	m_SetupButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_SetupButton->SetToolTip( _( "Configure lyrics preferences" ) );
@@ -2126,7 +2126,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
 	m_SourceTextCtrl = new wxTextCtrl( this, wxID_ANY, lyricsource->Source(), wxDefaultPosition, wxDefaultSize, 0 );
 	m_SourceTextCtrl->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
-	OptionsSizer->Add( m_SourceTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	OptionsSizer->Add( m_SourceTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * ReplaceLabel = new wxStaticText( this, wxID_ANY, _( "Replace:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	ReplaceLabel->Wrap( -1 );
@@ -2604,9 +2604,9 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 	m_ReplaceTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_ReplaceTextCtrl->SetValue( sourceoption->Text2() );
 	m_ReplaceTextCtrl->Enable( optiontype != guLYRIC_SOURCE_OPTION_TYPE_NOTFOUND );
-	OptionsSizer->Add( m_ReplaceTextCtrl, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	OptionsSizer->Add( m_ReplaceTextCtrl, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-    MainSizer->Add( OptionsSizer, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL, 5 );
+    MainSizer->Add( OptionsSizer, 1, wxEXPAND, 5 );
 
 	wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
 	wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );

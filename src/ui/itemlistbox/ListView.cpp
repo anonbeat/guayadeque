@@ -1512,7 +1512,7 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
     }
 
 	m_ColumnsListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_ItemsText, wxLB_SINGLE );
-	ColumnsSizer->Add( m_ColumnsListBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	ColumnsSizer->Add( m_ColumnsListBox, 1, wxEXPAND|wxALL, 5 );
 
 	wxBoxSizer * BtnsSizer;
 	BtnsSizer = new wxBoxSizer( wxVERTICAL );
@@ -1525,7 +1525,7 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	m_DownBitmapBtn->Enable( false );
 	BtnsSizer->Add( m_DownBitmapBtn, 0, wxTOP|wxBOTTOM, 5 );
 
-	ColumnsSizer->Add( BtnsSizer, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	ColumnsSizer->Add( BtnsSizer, 0, wxEXPAND, 5 );
 
     wxStdDialogButtonSizer * StdBtnSizer;
     wxButton * StdBtnSizerOK;

@@ -722,7 +722,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 	m_UsedGauge = new wxGauge( this, wxID_ANY, 100, wxDefaultPosition, wxSize( -1, 17 ), wxGA_HORIZONTAL );
 	m_UsedGauge->SetValue( ( m_PortableDevice->DiskSize() - m_PortableDevice->DiskFree() ) * double( 100 ) / m_PortableDevice->DiskSize() );
-	PMFlexSizer->Add( m_UsedGauge, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	PMFlexSizer->Add( m_UsedGauge, 1, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 	//guLogMessage( wxT( "Disk %.0f free of %.0f" ), m_PortableDevice->DiskFree(), m_PortableDevice->DiskSize() );
 
 	PMFlexSizer->Add( 0, 0, 1, wxEXPAND, 5 );
@@ -754,7 +754,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
         m_NamePatternText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->Pattern(), wxDefaultPosition, wxDefaultSize, 0 );
         m_NamePatternText->SetToolTip( _("{a}\t: Artist\t\t\t{aa} : Album Artist\n{b}\t: Album\t\t\t{d}\t : Disk\n{f}\t: Filename\t\t{g}\t : Genre\n{n}\t: Number\t\t\t{t}\t : Title\n{y}\t: Year") );
-        PMFlexSizer->Add( m_NamePatternText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+        PMFlexSizer->Add( m_NamePatternText, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
         PMFlexSizer->Add( 0, 0, 0, wxEXPAND, 5 );
 
@@ -763,7 +763,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
         PMFlexSizer->Add( AudioFolderLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxALL, 5 );
 
         m_AudioFolderText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->AudioFolders(), wxDefaultPosition, wxDefaultSize, 0 );
-        PMFlexSizer->Add( m_AudioFolderText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM, 5 );
+        PMFlexSizer->Add( m_AudioFolderText, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
         m_AudioFolderBtn = new wxButton( PMAudioPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
         PMFlexSizer->Add( m_AudioFolderBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -775,7 +775,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
 	m_AudioFormats = mediadevice->AudioFormats();
 	m_AudioFormatText = new wxTextCtrl( PMAudioPanel, wxID_ANY, mediadevice->AudioFormatsStr(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	PMFlexSizer->Add( m_AudioFormatText, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	PMFlexSizer->Add( m_AudioFormatText, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
 	m_AudioFormatBtn = new wxButton( PMAudioPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
 	PMFlexSizer->Add( m_AudioFormatBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
@@ -884,7 +884,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
 
     m_CoverFormats = mediadevice->CoverFormats();
 	m_CoverFormatText = new wxTextCtrl( PMCoversPanel, wxID_ANY, mediadevice->CoverFormatsStr(), wxDefaultPosition, wxDefaultSize, wxTE_READONLY );
-	PMFlexSizer->Add( m_CoverFormatText, 0, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM, 5 );
+	PMFlexSizer->Add( m_CoverFormatText, 0, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
 	m_CoverFormatBtn = new wxButton( PMCoversPanel, wxID_ANY, wxT("..."), wxDefaultPosition, wxSize( 28,-1 ), 0 );
 	PMFlexSizer->Add( m_CoverFormatBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );

@@ -80,14 +80,14 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     EditsSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
     m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    EditsSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    EditsSizer->Add( m_ArtistTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
     AlbumStaticText = new wxStaticText( this, wxID_ANY, _( "Album:" ), wxDefaultPosition, wxDefaultSize, 0 );
     AlbumStaticText->Wrap( -1 );
     EditsSizer->Add( AlbumStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
     m_AlbumTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER );
-    EditsSizer->Add( m_AlbumTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    EditsSizer->Add( m_AlbumTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
     FromStaticText = new wxStaticText( this, wxID_ANY, _( "From:" ), wxDefaultPosition, wxDefaultSize, 0 );
     FromStaticText->Wrap( -1 );

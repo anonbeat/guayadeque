@@ -617,7 +617,7 @@ bool guLibPanel::DoTextSearch( const wxString &searchtext )
         return true;
     }
 
-    m_LastTextFilter = searchtext; //m_InputTextCtrl->GetLineText( 0 );
+    m_LastTextFilter = searchtext; //m_InputTextCtrl->GetValue();
     if( !m_LastTextFilter.IsEmpty() )
     {
         if( m_LastTextFilter.Length() > 0 )

@@ -958,7 +958,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	m_DetailDescText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxST_NO_AUTORESIZE );
 	//m_DetailDescText->Wrap( 445 );
-	m_DetailFlexGridSizer->Add( m_DetailDescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailDescText, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailAuthorLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailAuthorLabel->Wrap( -1 );
@@ -968,7 +968,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	m_DetailAuthorText = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailAuthorText->Wrap( -1 );
-	m_DetailFlexGridSizer->Add( m_DetailAuthorText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	m_DetailFlexGridSizer->Add( m_DetailAuthorText, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	DetailOwnerLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailOwnerLabel->Wrap( -1 );

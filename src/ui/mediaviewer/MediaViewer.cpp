@@ -732,7 +732,7 @@ void guMediaViewer::OnSearchSelected( wxCommandEvent& event )
     if( m_TextChangedTimer.IsRunning() )
         m_TextChangedTimer.Stop();
 
-    m_SearchText = m_SearchTextCtrl->GetLineText( 0 );
+    m_SearchText = m_SearchTextCtrl->GetValue();
 
     if( !DoTextSearch() || m_EnterSelectSearchEnabled || !m_InstantSearchEnabled )
         return;
@@ -766,7 +766,7 @@ void guMediaViewer::GoToSearch( void )
 void guMediaViewer::OnTextChangedTimer( wxTimerEvent &event )
 {
     guLogMessage( wxT( "OnTextChangedTimer..." ) );
-    m_SearchText = m_SearchTextCtrl->GetLineText( 0 );
+    m_SearchText = m_SearchTextCtrl->GetValue();
     DoTextSearch();
 }
 

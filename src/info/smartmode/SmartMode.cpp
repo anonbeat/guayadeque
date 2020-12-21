@@ -416,7 +416,7 @@ guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * media
 	FlexGridSizer->Add( SaveToLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
 	m_SaveToComboBox = new wxComboBox( this, wxID_ANY, playlistname, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	FlexGridSizer->Add( m_SaveToComboBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+	FlexGridSizer->Add( m_SaveToComboBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
 	int Index;
 	int Count = m_Playlists.Count();
@@ -444,7 +444,7 @@ guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * media
 
 	m_FilterAlowChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, FilterChoices, 0 );
 	m_FilterAlowChoice->SetSelection( 0 );
-	FlexGridSizer->Add( m_FilterAlowChoice, 1, wxALIGN_CENTER_VERTICAL|wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
+	FlexGridSizer->Add( m_FilterAlowChoice, 1, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	wxStaticText * DenyLabel = new wxStaticText( this, wxID_ANY, _( "Deny" ), wxDefaultPosition, wxDefaultSize, 0 );
 	DenyLabel->Wrap( -1 );

@@ -31,6 +31,8 @@
 
 namespace Guayadeque {
 
+#undef wxUSE_MDI
+
 // CODE FROM auibook.cpp
 extern wxColour wxAuiStepColour( const wxColour &c, int percent );
 

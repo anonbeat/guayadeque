@@ -63,7 +63,7 @@ guPlayListAppend::guPlayListAppend( wxWindow * parent, guDbLibrary * db, const w
     }
     m_PlayListComboBox->SetValue( _( "New playlist" ) );
 
-    FieldsSizer->Add( m_PlayListComboBox, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    FieldsSizer->Add( m_PlayListComboBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
     PosLabel = new wxStaticText( this, wxID_ANY, _( "Where:" ), wxDefaultPosition, wxDefaultSize, 0 );
     PosLabel->Wrap( -1 );

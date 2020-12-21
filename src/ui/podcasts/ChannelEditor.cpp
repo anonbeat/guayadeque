@@ -97,7 +97,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
     }
 
 	m_Title = new wxStaticText( this, wxID_ANY, channel->m_Title, wxDefaultPosition, wxDefaultSize, 0 );
-	FlexGridSizer->Add( m_Title, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL, 5 );
+	FlexGridSizer->Add( m_Title, 1, wxEXPAND, 5 );
 
 	DescLabel = new wxStaticText( this, wxID_ANY, _( "Description:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	DescLabel->Wrap( -1 );
@@ -109,7 +109,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
                         channel->m_Description.Mid( 0, 200 ) + wxT( " ..." ) :
                         channel->m_Description ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_DescText->Wrap( 450 );
-	FlexGridSizer->Add( m_DescText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	FlexGridSizer->Add( m_DescText, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	AuthorLabel = new wxStaticText( this, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	AuthorLabel->Wrap( -1 );
@@ -119,7 +119,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	m_AuthorText = new wxStaticText( this, wxID_ANY, channel->m_Author, wxDefaultPosition, wxDefaultSize, 0 );
 	m_AuthorText->Wrap( -1 );
-	FlexGridSizer->Add( m_AuthorText, 0, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
+	FlexGridSizer->Add( m_AuthorText, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
 	OwnerLabel = new wxStaticText( this, wxID_ANY, _("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	OwnerLabel->Wrap( -1 );
@@ -148,7 +148,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 	m_DownloadText = new wxTextCtrl( this, wxID_ANY, channel->m_DownloadText, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DownloadText->Enable( ( channel->m_DownloadType == guPODCAST_DOWNLOAD_FILTER ) );
 
-	DownloadSizer->Add( m_DownloadText, 1, wxEXPAND|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
+	DownloadSizer->Add( m_DownloadText, 1, wxEXPAND|wxALL, 5 );
 
 	FlexGridSizer->Add( DownloadSizer, 1, wxEXPAND, 5 );
 

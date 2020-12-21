@@ -854,7 +854,7 @@ void guAlbumBrowser::CreateControls( void )
 
 	m_NavSlider = new wxSlider( this, wxID_ANY, 0, 0, 1, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	m_NavSlider->SetFocus();
-	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxALIGN_CENTER_HORIZONTAL|wxRIGHT|wxLEFT, 5 );
+	NavigatorSizer->Add( m_NavSlider, 1, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
 	m_AlbumBrowserSizer->Add( NavigatorSizer, 0, wxEXPAND, 5 );
 
@@ -906,11 +906,11 @@ void guAlbumBrowser::CreateControls( void )
 	//m_BigCoverTracksListBox->SetBackgroundColour( m_BigCoverDetailsLabel->GetBackgroundColour() );
 	m_BigCoverTracksListBox->SetMaxSize( wxSize( 450, -1 ) );
 
-	BigCoverCenterSizer->Add( m_BigCoverTracksListBox, 1, wxALIGN_CENTER_HORIZONTAL|wxEXPAND|wxRIGHT, 5 );
+	BigCoverCenterSizer->Add( m_BigCoverTracksListBox, 1, wxEXPAND|wxRIGHT, 5 );
 
 	BigCoverCenterSizer->Add( 0, 0, 2, wxEXPAND, 5 );
 
-	m_BigCoverSizer->Add( BigCoverCenterSizer, 0, wxALIGN_CENTER_HORIZONTAL|wxEXPAND, 5 );
+	m_BigCoverSizer->Add( BigCoverCenterSizer, 0, wxEXPAND, 5 );
 
 	m_BigCoverSizer->Add( 0, 0, 1, wxEXPAND, 5 );
 
@@ -1145,7 +1145,7 @@ bool guAlbumBrowser::DoTextSearch( const wxString &searchtext )
 {
     if( m_LastSearchString != searchtext )
     {
-        m_LastSearchString = searchtext; //m_SearchTextCtrl->GetLineText( 0 );
+        m_LastSearchString = searchtext; //m_SearchTextCtrl->GetValue();
         if( !m_LastSearchString.IsEmpty() )
         {
             if( m_LastSearchString.Length() > 0 )
