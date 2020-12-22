@@ -2595,7 +2595,7 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 
 	m_SearchTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_SearchTextCtrl->SetValue( sourceoption->Text1() );
-	OptionsSizer->Add( m_SearchTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+	OptionsSizer->Add( m_SearchTextCtrl, 1, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
 	m_ReplaceLabel = new wxStaticText( this, wxID_ANY, Label2, wxDefaultPosition, wxDefaultSize, 0 );
 	m_ReplaceLabel->Wrap( -1 );

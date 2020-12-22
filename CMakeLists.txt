@@ -5,7 +5,7 @@ IF(POLICY CMP0005)
 ENDIF(POLICY CMP0005)
 
 IF(POLICY CMP0037)
-  cmake_policy(SET CMP0037 OLD)   # cmake warns about sr@latin target
+   cmake_policy(SET CMP0037 OLD)   # cmake warns about sr@latin target
 ENDIF(POLICY CMP0037)
  
 project( Guayadeque )

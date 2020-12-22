@@ -72,7 +72,7 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
 	EditSizer->Add( NameStaticText, 0, wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	m_NameTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	EditSizer->Add( m_NameTextCtrl, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+	EditSizer->Add( m_NameTextCtrl, 0, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
 	wxStaticText * PatternStaticText = new wxStaticText( this, wxID_ANY, _("Pattern:"), wxDefaultPosition, wxDefaultSize, 0 );
 	PatternStaticText->Wrap( -1 );

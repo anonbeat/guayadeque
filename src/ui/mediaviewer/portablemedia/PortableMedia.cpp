@@ -799,7 +799,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
         m_TransFormatChoice->SetSelection( mediadevice->TranscodeFormat() );
 	}
 
-	TranscodeSizer->Add( m_TransFormatChoice, 1, wxEXPAND|wxTOP|wxBOTTOM|wxALIGN_CENTER_VERTICAL, 5 );
+	TranscodeSizer->Add( m_TransFormatChoice, 1, wxEXPAND|wxTOP|wxBOTTOM, 5 );
 
 	wxString m_TransScopeChoiceChoices[] = { _( "Unsupported formats only" ), _( "always" ) };
 	int m_TransScopeChoiceNChoices = sizeof( m_TransScopeChoiceChoices ) / sizeof( wxString );

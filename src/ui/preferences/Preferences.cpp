@@ -510,7 +510,7 @@ void guPrefDialog::BuildGeneralPage( void )
 
     m_IgnoreLayoutsChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Load default layout" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_IgnoreLayoutsChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_LOAD_DEFAULT_LAYOUTS, false, CONFIG_PATH_GENERAL ) );
-	StartSizer->Add( m_IgnoreLayoutsChkBox, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
+	StartSizer->Add( m_IgnoreLayoutsChkBox, 0, wxRIGHT|wxLEFT, 5 );
 
 	GenMainSizer->Add( StartSizer, 0, wxEXPAND|wxALL, 5 );
 
@@ -868,7 +868,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 
 	m_PlayPreAmpLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, ReplayGainPreAmpVal, -20, 20, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	m_PlayPreAmpLevelSlider->Enable( ReplayGainModeVal );
-	PlayReplaySizer->Add( m_PlayPreAmpLevelSlider, 1, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxEXPAND, 5 );
+	PlayReplaySizer->Add( m_PlayPreAmpLevelSlider, 1, wxRIGHT|wxEXPAND, 5 );
 
 	PlayGenSizer->Add( PlayReplaySizer, 1, wxEXPAND, 5 );
 
@@ -947,7 +947,7 @@ void guPrefDialog::BuildPlaybackPage( void )
 	m_PlayLevelVal = new wxStaticText( m_PlayPanel, wxID_ANY, wxString::Format( wxT("%02idb"), PlayLevelValue ), wxDefaultPosition, wxDefaultSize, 0 );
 	m_PlayLevelVal->Wrap( -1 );
 	m_PlayLevelVal->Enable( IsPlayLevelEnabled );
-	PlayLevelSizer->Add( m_PlayLevelVal, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxBOTTOM|wxRIGHT, 5 );
+	PlayLevelSizer->Add( m_PlayLevelVal, 0, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT, 5 );
 
 	m_PlayLevelSlider = new wxSlider( m_PlayPanel, wxID_ANY, PlayLevelValue, -65, 0, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL );
 	m_PlayLevelSlider->Enable( IsPlayLevelEnabled );
@@ -1423,7 +1423,7 @@ void guPrefDialog::BuildLyricsPage( void )
 
 	wxStaticText * LyricsFontLabel = new wxStaticText( m_LyricsPanel, wxID_ANY, _( "Font:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	LyricsFontLabel->Wrap( -1 );
-	LyricsFontSizer->Add( LyricsFontLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
+	LyricsFontSizer->Add( LyricsFontLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	wxFont LyricFont;
     LyricFont.SetNativeFontInfo( m_Config->ReadStr( CONFIG_KEY_LYRICS_FONT, wxEmptyString, CONFIG_PATH_LYRICS ) );
@@ -1435,7 +1435,7 @@ void guPrefDialog::BuildLyricsPage( void )
 
 	wxStaticText * LyricsAlignLabel = new wxStaticText( m_LyricsPanel, wxID_ANY, _( "Align:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	LyricsAlignLabel->Wrap( -1 );
-	LyricsFontSizer->Add( LyricsAlignLabel, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxRIGHT|wxLEFT, 5 );
+	LyricsFontSizer->Add( LyricsAlignLabel, 0, wxALIGN_CENTER_VERTICAL|wxRIGHT|wxLEFT, 5 );
 
 	wxArrayString LyricsAlignChoices;
 	LyricsAlignChoices.Add( _( "Left" ) );
@@ -1506,7 +1506,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     wxStaticText * ProxyPortStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _( "Port:" ), wxDefaultPosition, wxDefaultSize, 0 );
     ProxyPortStaticText->Wrap( -1 );
-    ProxyHostPortSizer->Add( ProxyPortStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    ProxyHostPortSizer->Add( ProxyPortStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
     m_OnlineProxyPortTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 50, -1 ), 0 );
     m_OnlineProxyPortTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_PORT, wxEmptyString, CONFIG_PATH_PROXY ) );
@@ -1517,7 +1517,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     wxStaticText * ProxyUsernameStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Username:"), wxDefaultPosition, wxDefaultSize, 0 );
     ProxyUsernameStaticText->Wrap( -1 );
-    OnlineProxySizer->Add( ProxyUsernameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    OnlineProxySizer->Add( ProxyUsernameStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
     m_OnlineProxyUserTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), 0 );
     m_OnlineProxyUserTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_USERNAME, wxEmptyString, CONFIG_PATH_PROXY ) );
@@ -1526,7 +1526,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     wxStaticText * PasswdStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Password:"), wxDefaultPosition, wxDefaultSize, 0 );
     PasswdStaticText->Wrap( -1 );
-    OnlineProxySizer->Add( PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    OnlineProxySizer->Add( PasswdStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
     m_OnlineProxyPasswdTextCtrl = new wxTextCtrl( m_OnlinePanel, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( 200,-1 ), wxTE_PASSWORD );
     m_OnlineProxyPasswdTextCtrl->SetValue( m_Config->ReadStr( CONFIG_KEY_PROXY_PASSWORD, wxEmptyString, CONFIG_PATH_PROXY ) );
@@ -1560,7 +1560,7 @@ void guPrefDialog::BuildOnlinePage( void )
 
     m_LangStaticText = new wxStaticText( m_OnlinePanel, wxID_ANY, _("Language:"), wxDefaultPosition, wxDefaultSize, 0 );
     m_LangStaticText->Wrap( -1 );
-    OnlineLangSizer->Add( m_LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT|wxTOP|wxBOTTOM|wxLEFT, 5 );
+    OnlineLangSizer->Add( m_LangStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT, 5 );
 
     m_LangChoice = new wxChoice( m_OnlinePanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, m_LFMLangNames, 0 );
 
@@ -1905,7 +1905,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     m_MagFormatChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_MAGNATUNE_AUDIO_FORMAT, 1, CONFIG_PATH_MAGNATUNE ) );
     m_MagFormatChoice->SetMinSize( wxSize( 100,-1 ) );
 
-    FormatSizer->Add( m_MagFormatChoice, 1, wxALIGN_CENTER_VERTICAL|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+    FormatSizer->Add( m_MagFormatChoice, 1, wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
     wxStaticText * MagDownLabel = new wxStaticText( m_MagnatunePanel, wxID_ANY, _("Download as :"), wxDefaultPosition, wxDefaultSize, 0 );
     MagDownLabel->Wrap( -1 );

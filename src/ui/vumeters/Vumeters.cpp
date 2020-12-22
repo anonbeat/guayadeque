@@ -317,6 +317,11 @@ void guVumeter::RefreshBitmaps( void )
     wxCoord Height;
     GetClientSize( &Width, &Height );
 
+    if( !Width )
+        Width = 10;
+    if( !Height )
+        Height = 10;
+
     //guLogMessage( wxT( "RefreshBitmaps %i  %i " ), Width, Height );
 
     if( m_Style == guVU_HORIZONTAL )
@@ -493,42 +498,42 @@ guPlayerVumeters::guPlayerVumeters( wxWindow * parent ) :
 	wxStaticText * VClipLabel = new wxStaticText( this, wxID_ANY, wxT("0"), wxDefaultPosition, wxDefaultSize, 0 );
 	VClipLabel->Wrap( -1 );
 	VClipLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VClipLabel, 8, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
+	VLabelsSizer->Add( VClipLabel, 8, wxALIGN_CENTER_HORIZONTAL|wxTOP, 5 );
 
 	wxStaticText * VRedLabel = new wxStaticText( this, wxID_ANY, wxT("-3"), wxDefaultPosition, wxDefaultSize, 0 );
 	VRedLabel->Wrap( -1 );
 	VRedLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VRedLabel, 8, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VRedLabel, 8, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VOrangeLabel = new wxStaticText( this, wxID_ANY, wxT("-6"), wxDefaultPosition, wxDefaultSize, 0 );
 	VOrangeLabel->Wrap( -1 );
 	VOrangeLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VOrangeLabel, 12, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VOrangeLabel, 12, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VTenLabel = new wxStaticText( this, wxID_ANY, wxT("-10"), wxDefaultPosition, wxDefaultSize, 0 );
 	VTenLabel->Wrap( -1 );
 	VTenLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VTenLabel, 27, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VTenLabel, 27, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VTwentyLabel = new wxStaticText( this, wxID_ANY, wxT("-20"), wxDefaultPosition, wxDefaultSize, 0 );
 	VTwentyLabel->Wrap( -1 );
 	VTwentyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VTwentyLabel, 23, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VTwentyLabel, 23, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VThirtyLabel = new wxStaticText( this, wxID_ANY, wxT("-30"), wxDefaultPosition, wxDefaultSize, 0 );
 	VThirtyLabel->Wrap( -1 );
 	VThirtyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VThirtyLabel, 17, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VThirtyLabel, 17, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VFortyLabel = new wxStaticText( this, wxID_ANY, wxT("-40"), wxDefaultPosition, wxDefaultSize, 0 );
 	VFortyLabel->Wrap( -1 );
 	VFortyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VFortyLabel, 15, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VFortyLabel, 15, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	wxStaticText * VSixtyLabel = new wxStaticText( this, wxID_ANY, wxT("-60"), wxDefaultPosition, wxDefaultSize, 0 );
 	VSixtyLabel->Wrap( -1 );
 	VSixtyLabel->SetFont( CurrentFont );
-	VLabelsSizer->Add( VSixtyLabel, 0, wxALIGN_BOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+	VLabelsSizer->Add( VSixtyLabel, 0, wxALIGN_CENTER_HORIZONTAL, 5 );
 
 	m_VVumFlexSizer->Add( VLabelsSizer, 0, wxEXPAND, 5 );
 

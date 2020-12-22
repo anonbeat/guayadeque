@@ -111,7 +111,7 @@ void guImportFiles::CreateControls( void )
 
 	m_CopyToChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, CopyToOptions, 0 );
 	m_CopyToChoice->SetSelection( CopyToIndex );
-	CopyToChoiceSIzer->Add( m_CopyToChoice, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxEXPAND, 5 );
+	CopyToChoiceSIzer->Add( m_CopyToChoice, 1, wxTOP|wxBOTTOM|wxEXPAND, 5 );
 
 	m_CopyToSetupBtn = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
 	CopyToChoiceSIzer->Add( m_CopyToSetupBtn, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
