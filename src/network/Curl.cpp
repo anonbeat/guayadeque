@@ -46,20 +46,12 @@ size_t string_read_callback( void * buffer, size_t size, size_t nitems, wxCharBu
     size_t Retval = 0;
     if( instring )
     {
-        size_t Size = size * nitems;
-        size_t InLen = strlen( * instring );
-        if( InLen >= Size )
-        {
-            strncpy( ( char * ) buffer, ( const char * )( * instring ), Size );
-            Retval = Size;
-        }
-        else
-        {
-            strncpy( ( char * ) buffer, ( const char * ) ( * instring ), InLen );
-            Retval = InLen;
-        }
+        size_t BufLen = size * nitems;
+        size_t InLen = instring->length();
+        Retval = InLen > BufLen ? BufLen : InLen;
+        memcpy( ( char * ) buffer, instring->data(), Retval );
 
-        wxString remaining = wxString( * instring, wxConvLibc ).Right( InLen - Retval );
+        wxString remaining = wxString( instring->data(), wxConvLibc ).Right( InLen - Retval );
         * instring = remaining.ToAscii();
     }
 
