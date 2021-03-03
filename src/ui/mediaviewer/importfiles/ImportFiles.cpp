@@ -236,7 +236,7 @@ void guImportFiles::OnFileSelected( wxCommandEvent &event )
 void guImportFiles::OnAddFilesClicked( wxCommandEvent &event )
 {
     wxFileDialog * FileDialog = new wxFileDialog( this, _( "Select files" ), wxGetHomeDir(), wxEmptyString,
-                wxString( _( "Audio files" ) ) + wxT( "|*.mp3;*.ogg;*.oga;*.flac;*.mp4;*.m4a;*.m4b;*.m4p;*.aac;*.wma;*.asf;*.ape;*.wav;*.aif;*.wv;*.tta;*.mpc|" ) +
+                wxString( _( "Audio files" ) ) + wxT( "|*.mp3;*.ogg;*.oga;*.flac;*.mp4;*.m4a;*.m4b;*.m4p;*.aac;*.wma;*.asf;*.ape;*.wav;*.aif;*.wv;*.tta;*.mpc;*.dsf|" ) +
                 wxString( _( "mp3 files" ) ) + wxT( " (*.mp3)|*.mp3|" ) +
                 wxString( _( "ogg files" ) ) + wxT( " (*.ogg;*.oga)|*.ogg;*.oga|" ) +
                 wxString( _( "flac files" ) ) + wxT( " (*.flac)|*.flac|" ) +
@@ -247,7 +247,8 @@ void guImportFiles::OnAddFilesClicked( wxCommandEvent &event )
                 wxString( _( "aif files" ) ) + wxT( " (*.aif)|*.aif|" ) +
                 wxString( _( "wv files" ) ) + wxT( " (*.wv)|*.wv|" ) +
                 wxString( _( "tta files" ) ) + wxT( " (*.tta)|*.tta|" ) +
-                wxString( _( "mpc files" ) ) + wxT( " (*.mpc)|*.mpc" ),
+                wxString( _( "mpc files" ) ) + wxT( " (*.mpc)|*.mpc" ) +
+                wxString( _( "dsd files" ) ) + wxT( " (*.dsf)|*.dsf" ),
                 wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE|wxFD_PREVIEW );
     if( FileDialog )
     {

@@ -1360,6 +1360,10 @@ msgstr "pliki tta"
 msgid "mpc files"
 msgstr "pliki mpc"
 
+#: ImportFiles.cpp:241
+msgid "dsd files"
+msgstr "pliki dsd"
+
 #: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
 #: MediaViewer.cpp:1397 Preferences.cpp:947
 msgid "track"

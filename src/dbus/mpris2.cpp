@@ -905,6 +905,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
                             const char * SupportedMimeTypes[] = {
                                "application/ogg",
+                               "application/x-gst-av-dsf",
                                "application/x-ogg",
                                "application/x-ogm-audio",
                                "audio/aac",
@@ -1178,6 +1179,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 {
                                     const char * SupportedMimeTypes[] = {
                                        "application/ogg",
+                                       "application/x-gst-av-dsf",
                                        "application/x-ogg",
                                        "application/x-ogm-audio",
                                        "audio/aac",

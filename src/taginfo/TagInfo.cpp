@@ -74,6 +74,7 @@ bool guIsValidAudioFile( const wxString &filename )
         //
         //guSupportedFormats.Add( wxT( "rmj"  ) );
         guSupportedFormats.Add( wxT( "opus"  ) );
+        guSupportedFormats.Add( wxT( "dsf"  ) );
     }
 
     int Position = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
@@ -113,6 +114,7 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 #endif
 
         case 12 :
+        case 18 :
         case 13 : return new guTagInfo( filename );
 
         case 14 : return new guWavPackTagInfo( filename );
