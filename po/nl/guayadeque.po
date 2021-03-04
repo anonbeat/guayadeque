@@ -1357,6 +1357,10 @@ msgstr "TTA-bestanden"
 msgid "mpc files"
 msgstr "MPC-bestanden"
 
+#: ImportFiles.cpp:241
+msgid "dsd files"
+msgstr "DSD-bestanden"
+
 #: ImportFiles.cpp:317 MediaViewer.cpp:1363 MediaViewer.cpp:1382
 #: MediaViewer.cpp:1397 Preferences.cpp:947
 msgid "track"
