@@ -236,7 +236,7 @@ void guImportFiles::OnFileSelected( wxCommandEvent &event )
 void guImportFiles::OnAddFilesClicked( wxCommandEvent &event )
 {
     wxFileDialog * FileDialog = new wxFileDialog( this, _( "Select files" ), wxGetHomeDir(), wxEmptyString,
-                wxString( _( "Audio files" ) ) + wxT( "|*.mp3;*.ogg;*.oga;*.flac;*.mp4;*.m4a;*.m4b;*.m4p;*.aac;*.wma;*.asf;*.ape;*.wav;*.aif;*.wv;*.tta;*.mpc;*.dsf|" ) +
+                wxString( _( "Audio files" ) ) + wxT( "|*.mp3;*.ogg;*.oga;*.flac;*.mp4;*.m4a;*.m4b;*.m4p;*.aac;*.wma;*.asf;*.ape;*.wav;*.aif;*.wv;*.tta;*.mpc;*.dsf;*.3gp;*.webm;*.ra;*.8svx;*.ac3;*.dts;*.maud;*.mp2;*.snd;*.voc;*.mpg;*.mov;*.avi;*.mkv;*.mka;*.mid;*.au;*.amr;*.aiff;*.flv|" ) +
                 wxString( _( "mp3 files" ) ) + wxT( " (*.mp3)|*.mp3|" ) +
                 wxString( _( "ogg files" ) ) + wxT( " (*.ogg;*.oga)|*.ogg;*.oga|" ) +
                 wxString( _( "flac files" ) ) + wxT( " (*.flac)|*.flac|" ) +
@@ -248,6 +248,26 @@ void guImportFiles::OnAddFilesClicked( wxCommandEvent &event )
                 wxString( _( "wv files" ) ) + wxT( " (*.wv)|*.wv|" ) +
                 wxString( _( "tta files" ) ) + wxT( " (*.tta)|*.tta|" ) +
                 wxString( _( "mpc files" ) ) + wxT( " (*.mpc)|*.mpc" ) +
+                wxString( _( "3gp files" ) ) + wxT( " (*.3gp)|*.3gp" ) +
+                wxString( _( "webm files" ) ) + wxT( " (*.webm)|*.webm" ) +
+                wxString( _( "ra files" ) ) + wxT( " (*.ra)|*.ra" ) +
+                wxString( _( "8svx files" ) ) + wxT( " (*.8svx)|*.8svx" ) +
+                wxString( _( "ac3 files" ) ) + wxT( " (*.ac3)|*.ac3" ) +
+                wxString( _( "dts files" ) ) + wxT( " (*.dts)|*.dts" ) +
+                wxString( _( "maud files" ) ) + wxT( " (*.maud)|*.maud" ) +
+                wxString( _( "mp2 files" ) ) + wxT( " (*.mp2)|*.mp2" ) +
+                wxString( _( "snd files" ) ) + wxT( " (*.snd)|*.snd" ) +
+                wxString( _( "voc files" ) ) + wxT( " (*.voc)|*.voc" ) +
+                wxString( _( "mpg files" ) ) + wxT( " (*.mpg)|*.mpg" ) +
+                wxString( _( "mov files" ) ) + wxT( " (*.mov)|*.mov" ) +
+                wxString( _( "avi files" ) ) + wxT( " (*.avi)|*.avi" ) +
+                wxString( _( "mkv files" ) ) + wxT( " (*.mkv)|*.mkv" ) +
+                wxString( _( "mka files" ) ) + wxT( " (*.mka)|*.mka" ) +
+                wxString( _( "mid files" ) ) + wxT( " (*.mid)|*.mid" ) +
+                wxString( _( "au files" ) ) + wxT( " (*.au)|*.au" ) +
+                wxString( _( "amr files" ) ) + wxT( " (*.amr)|*.amr" ) +
+                wxString( _( "aiff files" ) ) + wxT( " (*.aiff)|*.aiff" ) +
+                wxString( _( "flv files" ) ) + wxT( " (*.flv)|*.flv" ) +
                 wxString( _( "dsd files" ) ) + wxT( " (*.dsf)|*.dsf" ),
                 wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE|wxFD_PREVIEW );
     if( FileDialog )

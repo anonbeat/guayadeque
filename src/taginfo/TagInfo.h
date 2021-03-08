@@ -55,6 +55,8 @@
 #include <wx/arrstr.h>
 #include <wx/image.h>
 
+#include <gst/gst.h>
+
 namespace Guayadeque {
 
 using namespace TagLib;
@@ -323,6 +325,27 @@ class guASFTagInfo : public guTagInfo
     virtual bool        SetLyrics( const wxString &lyrics );
 };
 
+// -------------------------------------------------------------------------------- //
+class guGStreamerTagInfo : public guTagInfo
+{
+
+  protected :
+    const GstTagList *        m_GstTagList = NULL;
+
+  public :
+    guGStreamerTagInfo( const wxString &filename = wxEmptyString );
+    ~guGStreamerTagInfo();
+
+    virtual bool        Read( void );
+    virtual wxString    GetLyrics( void );
+
+    virtual bool        ReadGStreamerTags( const wxString &filename = wxEmptyString );
+    virtual wxString    GetGstStrTag( const gchar * tag );
+    virtual int         GetGstIntTag( const gchar * tag );
+    virtual bool        GetGstBoolTag( const gchar * tag );
+    virtual GDateTime * GetGstTimeTag( const gchar * tag );
+
+};
 
 class guImagePtrArray;
 
