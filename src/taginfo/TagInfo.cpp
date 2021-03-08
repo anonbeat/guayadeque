@@ -34,6 +34,9 @@
 #include <popularimeterframe.h>
 #include <id3v1tag.h>
 
+#include <gst/gst.h>
+#include <gst/pbutils/pbutils.h>
+
 namespace Guayadeque {
 
 wxArrayString guSupportedFormats;
@@ -74,7 +77,28 @@ bool guIsValidAudioFile( const wxString &filename )
         //
         //guSupportedFormats.Add( wxT( "rmj"  ) );
         guSupportedFormats.Add( wxT( "opus"  ) );
+        //
         guSupportedFormats.Add( wxT( "dsf"  ) );
+        guSupportedFormats.Add( wxT( "3gp"  ) );
+        guSupportedFormats.Add( wxT( "webm"  ) );
+        guSupportedFormats.Add( wxT( "ra"  ) );
+        guSupportedFormats.Add( wxT( "8svx"  ) );
+        guSupportedFormats.Add( wxT( "ac3"  ) );
+        guSupportedFormats.Add( wxT( "dts"  ) );
+        guSupportedFormats.Add( wxT( "maud"  ) );
+        guSupportedFormats.Add( wxT( "mp2"  ) );
+        guSupportedFormats.Add( wxT( "snd"  ) );
+        guSupportedFormats.Add( wxT( "voc"  ) );
+        guSupportedFormats.Add( wxT( "mpg"  ) );
+        guSupportedFormats.Add( wxT( "mov"  ) );
+        guSupportedFormats.Add( wxT( "avi"  ) );
+        guSupportedFormats.Add( wxT( "mkv"  ) );
+        guSupportedFormats.Add( wxT( "mka"  ) );
+        guSupportedFormats.Add( wxT( "mid"  ) );
+        guSupportedFormats.Add( wxT( "au"  ) );
+        guSupportedFormats.Add( wxT( "amr"  ) );
+        guSupportedFormats.Add( wxT( "aiff"  ) );
+        guSupportedFormats.Add( wxT( "flv"  ) );
     }
 
     int Position = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
@@ -114,7 +138,6 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 #endif
 
         case 12 :
-        case 18 :
         case 13 : return new guTagInfo( filename );
 
         case 14 : return new guWavPackTagInfo( filename );
@@ -124,6 +147,28 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
         case 16 : return new guMpcTagInfo( filename );
 
         //case 17 :
+
+        case 18 : 
+        case 19 :
+        case 20 :
+        case 21 :
+        case 22 :
+        case 23 :
+        case 24 :
+        case 25 :
+        case 26 :
+        case 27 :
+        case 28 :
+        case 29 :
+        case 30 :
+        case 31 : 
+        case 32 : 
+        case 33 : 
+        case 34 : 
+        case 35 : 
+        case 36 : 
+        case 37 : 
+        case 38 : return new guGStreamerTagInfo( filename );
 
         default :
             break;
@@ -2394,6 +2439,181 @@ bool guASFTagInfo::SetLyrics( const wxString &lyrics )
     return false;
 }
 
+
+// -------------------------------------------------------------------------------- //
+// guGStreamerTagInfo
+// -------------------------------------------------------------------------------- //
+guGStreamerTagInfo::guGStreamerTagInfo( const wxString &filename ) : guTagInfo( filename )
+{
+    guLogMessage("guGStreamerTagInfo::guGStreamerTagInfo");
+    if( m_TagFile && !m_TagFile->isNull() )
+        ReadGStreamerTags( m_TagFile->file()->name() );
+    else
+        ReadGStreamerTags( filename );
+}
+
+// -------------------------------------------------------------------------------- //
+guGStreamerTagInfo::~guGStreamerTagInfo()
+{
+    guLogMessage("guGStreamerTagInfo::~guGStreamerTagInfo");
+    if ( m_GstTagList )
+        gst_tag_list_unref( (GstTagList *)m_GstTagList );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString guGStreamerTagInfo::GetGstStrTag( const gchar * tag )
+{
+    gchar * gc_val;
+    if( gst_tag_list_get_string( m_GstTagList, tag, &gc_val ) ) {
+        wxString res = wxString::FromUTF8(gc_val);
+        g_free(gc_val);
+        return res;
+    }
+    else
+        return wxEmptyString;
+}
+
+// -------------------------------------------------------------------------------- //
+int guGStreamerTagInfo::GetGstIntTag( const gchar * tag )
+{
+    gint gc_val;
+    if( gst_tag_list_get_int( m_GstTagList, tag, &gc_val ) ) {
+        return gc_val;
+    }
+    else
+        return 0;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guGStreamerTagInfo::GetGstBoolTag( const gchar * tag )
+{
+    gboolean gc_val;
+    if( gst_tag_list_get_boolean( m_GstTagList, tag, &gc_val ) ) {
+        return gc_val;
+    }
+    else
+        return false;
+}
+
+// -------------------------------------------------------------------------------- //
+GDateTime * guGStreamerTagInfo::GetGstTimeTag( const gchar * tag )
+{
+    GstDateTime *dt;
+    GDateTime *res = NULL;
+    GDate *gd;
+    if( gst_tag_list_get_date_time( m_GstTagList, tag, &dt ) ) {
+        res = gst_date_time_to_g_date_time(dt);
+        gst_date_time_unref(dt);
+    }
+    else if( gst_tag_list_get_date( m_GstTagList, tag, &gd ) )
+    {
+        res = g_date_time_new_local( gd->year, gd->month, gd->day, 0, 0, 0 );
+        g_free(gd);
+    }
+    return res;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guGStreamerTagInfo::Read( void )
+{
+    guLogMessage("guGStreamerTagInfo::Read");
+
+    if( ReadGStreamerTags(m_FileName) )
+    {
+        m_TrackName = GetGstStrTag( GST_TAG_TITLE );
+        m_ArtistName = GetGstStrTag( GST_TAG_ARTIST );
+        m_AlbumName = GetGstStrTag( GST_TAG_ALBUM );
+        m_GenreName = GetGstStrTag( GST_TAG_GENRE );
+        m_Comments = GetGstStrTag( GST_TAG_COMMENT );
+        m_Track = GetGstIntTag( GST_TAG_TRACK_NUMBER );
+        m_AlbumArtist = GetGstStrTag( GST_TAG_ALBUM_ARTIST );
+        m_Composer = GetGstStrTag( GST_TAG_COMPOSER );
+        GDateTime * gd = GetGstTimeTag( GST_TAG_DATE );
+        if( !gd )
+            gd = GetGstTimeTag( GST_TAG_DATE_TIME );
+        if( !gd )
+        {
+            m_Year = g_date_time_get_year( gd );
+            g_date_time_unref( gd );
+        }
+        m_Rating = GetGstIntTag( GST_TAG_USER_RATING );
+        return true;
+    }
+    return false;
+}
+
+// -------------------------------------------------------------------------------- //
+bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
+{
+    guLogMessage("guGStreamerTagInfo::ReadGStreamerTags");
+
+    gchar *uri;
+    if( gst_uri_is_valid ( filename.c_str() ) )
+    {
+        uri = g_strdup( filename.c_str() );
+    } 
+    else
+    {
+        uri = gst_filename_to_uri( filename.c_str(), NULL );
+    }
+
+    GError * err = NULL;
+    GstDiscoverer * dis = NULL;
+    GstDiscovererInfo * info = NULL;
+
+    dis = gst_discoverer_new( 10 * GST_SECOND, &err );
+
+    if( !dis )
+    {
+        guLogWarning( wxT("gst_discoverer_new error: %s"), err->message );
+        g_free(uri);
+        return false;
+    }
+
+    info = gst_discoverer_discover_uri( dis, uri, &err );
+    if( !info )
+    {
+        guLogWarning( wxT("gst_discoverer_discover_uri error: %s"), err->message );
+        g_free(uri);
+        return false;
+    }
+
+    m_Length = gst_discoverer_info_get_duration( info ) / 1000000;
+    guLogMessage("guGStreamerTagInfo::ReadGStreamerTags length: %u", m_Length);
+
+    GList *l, *slist = gst_discoverer_info_get_streams( info, g_type_from_name( "GstDiscovererAudioInfo" ) );
+    for( l = slist; l != NULL; l = l->next ) 
+    {
+        m_Bitrate = gst_discoverer_audio_info_get_bitrate((const GstDiscovererAudioInfo*)l->data);
+        if ( !m_Bitrate )
+            m_Bitrate = gst_discoverer_audio_info_get_max_bitrate((const GstDiscovererAudioInfo*)l->data);
+        guLogMessage("guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate);
+    }
+    gst_discoverer_stream_info_list_free(slist);
+
+    if ( m_GstTagList )
+        gst_tag_list_unref  ( (GstTagList *)m_GstTagList );
+
+    m_GstTagList = gst_discoverer_info_get_tags( info );
+
+    g_free( uri );
+
+    gchar * str_tags = gst_tag_list_to_string( m_GstTagList );
+    guLogMessage( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
+    g_free( str_tags );
+
+    return !gst_tag_list_is_empty( m_GstTagList );
+}
+
+// -------------------------------------------------------------------------------- //
+wxString    guGStreamerTagInfo::GetLyrics( void )
+{
+    if( m_GstTagList )
+    {
+        return GetGstStrTag( GST_TAG_LYRICS  );
+    }
+    return wxEmptyString;   
+}
 
 
 

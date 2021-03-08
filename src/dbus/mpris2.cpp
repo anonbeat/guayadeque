@@ -39,6 +39,55 @@ namespace Guayadeque {
 #define GUAYADEQUE_MPRIS2_INTERFACE_TRACKLIST   "org.mpris.MediaPlayer2.TrackList"
 #define GUAYADEQUE_MPRIS2_INTERFACE_PLAYLISTS   "org.mpris.MediaPlayer2.Playlists"
 
+const char * GUAYADEQUE_SUPPORTED_MIME_TYPES[] = {
+   "application/ogg",
+   "application/vnd.rn-realmedia",
+   "application/x-3gp",
+   "application/x-gst-av-dsf",
+   "application/x-gst-av-iff",
+   "application/x-ogg",
+   "application/x-ogm-audio",
+   "audio/aac",
+   "audio/ape",
+   "audio/midi",
+   "audio/mp4",
+   "audio/mpc",
+   "audio/mpeg",
+   "audio/mpegurl",
+   "audio/ogg",
+   "audio/vnd.rn-realaudio",
+   "audio/vorbis",
+   "audio/x-ac3",
+   "audio/x-aiff",
+   "audio/x-amr-wb-sh",
+   "audio/x-au",
+   "audio/x-flac",
+   "audio/x-dts",
+   "audio/x-m4a",
+   "audio/x-matroska",
+   "audio/x-mp3",
+   "audio/x-mpeg",
+   "audio/x-mpegurl",
+   "audio/x-ms-wma",
+   "audio/x-musepack",
+   "audio/x-oggflac",
+   "audio/x-pn-realaudio",
+   "audio/x-scpls",
+   "audio/x-speex",
+   "audio/x-svx",
+   "audio/x-voc",
+   "audio/x-vorbis",
+   "audio/x-vorbis+ogg",
+   "audio/x-wav",
+   "video/quicktime",
+   "video/mpeg",
+   "video/webm",
+   "video/x-flv",
+   "video/x-ms-asf",
+   "video/x-msvideo",
+   "x-content/audio-player",
+   NULL };
+
 const char * guMPRIS2_INTROSPECTION_XML =
     "<!DOCTYPE node PUBLIC \"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN\"\n"
     "\"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd\">\n"
@@ -903,37 +952,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
                             const char * SupportedUriSchemes[] = { "file", "http", "https", "smb", "sftp", "cdda", NULL };
                             FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
-                            const char * SupportedMimeTypes[] = {
-                               "application/ogg",
-                               "application/x-gst-av-dsf",
-                               "application/x-ogg",
-                               "application/x-ogm-audio",
-                               "audio/aac",
-                               "audio/ape",
-                               "audio/mp4",
-                               "audio/mpc",
-                               "audio/mpeg",
-                               "audio/mpegurl",
-                               "audio/ogg",
-                               "audio/vnd.rn-realaudio",
-                               "audio/vorbis",
-                               "audio/x-flac",
-                               "audio/x-mp3",
-                               "audio/x-mpeg",
-                               "audio/x-mpegurl",
-                               "audio/x-ms-wma",
-                               "audio/x-musepack",
-                               "audio/x-oggflac",
-                               "audio/x-pn-realaudio",
-                               "audio/x-scpls",
-                               "audio/x-speex",
-                               "audio/x-vorbis",
-                               "audio/x-vorbis+ogg",
-                               "audio/x-wav",
-                               "video/x-ms-asf",
-                               "x-content/audio-player",
-                               NULL };
-                            FillMetadataDetails( &dict, "SupportedMimeTypes", SupportedMimeTypes );
+                            FillMetadataDetails( &dict, "SupportedMimeTypes", GUAYADEQUE_SUPPORTED_MIME_TYPES );
 
                             dbus_message_iter_close_container( &args, &dict );
 
@@ -1177,37 +1196,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "SupportedMimeTypes" ) )
                                 {
-                                    const char * SupportedMimeTypes[] = {
-                                       "application/ogg",
-                                       "application/x-gst-av-dsf",
-                                       "application/x-ogg",
-                                       "application/x-ogm-audio",
-                                       "audio/aac",
-                                       "audio/ape",
-                                       "audio/mp4",
-                                       "audio/mpc",
-                                       "audio/mpeg",
-                                       "audio/mpegurl",
-                                       "audio/ogg",
-                                       "audio/vnd.rn-realaudio",
-                                       "audio/vorbis",
-                                       "audio/x-flac",
-                                       "audio/x-mp3",
-                                       "audio/x-mpeg",
-                                       "audio/x-mpegurl",
-                                       "audio/x-ms-wma",
-                                       "audio/x-musepack",
-                                       "audio/x-oggflac",
-                                       "audio/x-pn-realaudio",
-                                       "audio/x-scpls",
-                                       "audio/x-speex",
-                                       "audio/x-vorbis",
-                                       "audio/x-vorbis+ogg",
-                                       "audio/x-wav",
-                                       "video/x-ms-asf",
-                                       "x-content/audio-player",
-                                       NULL };
-                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_ARRAY, &SupportedMimeTypes ) )
+                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_ARRAY, &GUAYADEQUE_SUPPORTED_MIME_TYPES ) )
                                     {
                                         Send( reply );
                                         Flush();

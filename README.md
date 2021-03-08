@@ -12,9 +12,9 @@ for the icon and splash designed for guayadeque.
 
 ---
 
-# DSF audio playback support
+# Extra audio playback support
 
-DSF format support is in development at the moment and requires ``gstreamer1.0-libav`` package:
+Various formats support (like `DSD/DSF`) requires ``gstreamer1.0-libav`` package:
 
 ```bash
 sudo apt install gstreamer1.0-libav
