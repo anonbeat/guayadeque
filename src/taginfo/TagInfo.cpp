@@ -2448,15 +2448,13 @@ guGStreamerTagInfo::guGStreamerTagInfo( const wxString &filename ) : guTagInfo( 
     guLogMessage("guGStreamerTagInfo::guGStreamerTagInfo");
     if( m_TagFile && !m_TagFile->isNull() )
         ReadGStreamerTags( m_TagFile->file()->name() );
-    else
-        ReadGStreamerTags( filename );
 }
 
 // -------------------------------------------------------------------------------- //
 guGStreamerTagInfo::~guGStreamerTagInfo()
 {
     guLogMessage("guGStreamerTagInfo::~guGStreamerTagInfo");
-    if ( m_GstTagList )
+    if ( m_GstTagList != NULL )
         gst_tag_list_unref( (GstTagList *)m_GstTagList );
 }
 
@@ -2464,7 +2462,7 @@ guGStreamerTagInfo::~guGStreamerTagInfo()
 wxString guGStreamerTagInfo::GetGstStrTag( const gchar * tag )
 {
     gchar * gc_val;
-    if( gst_tag_list_get_string( m_GstTagList, tag, &gc_val ) ) {
+    if( (m_GstTagList != NULL) && gst_tag_list_get_string( m_GstTagList, tag, &gc_val ) ) {
         wxString res = wxString::FromUTF8(gc_val);
         g_free(gc_val);
         return res;
@@ -2477,7 +2475,7 @@ wxString guGStreamerTagInfo::GetGstStrTag( const gchar * tag )
 int guGStreamerTagInfo::GetGstIntTag( const gchar * tag )
 {
     gint gc_val;
-    if( gst_tag_list_get_int( m_GstTagList, tag, &gc_val ) ) {
+    if( (m_GstTagList != NULL) && gst_tag_list_get_int( m_GstTagList, tag, &gc_val ) ) {
         return gc_val;
     }
     else
@@ -2488,7 +2486,7 @@ int guGStreamerTagInfo::GetGstIntTag( const gchar * tag )
 bool guGStreamerTagInfo::GetGstBoolTag( const gchar * tag )
 {
     gboolean gc_val;
-    if( gst_tag_list_get_boolean( m_GstTagList, tag, &gc_val ) ) {
+    if( (m_GstTagList != NULL) && gst_tag_list_get_boolean( m_GstTagList, tag, &gc_val ) ) {
         return gc_val;
     }
     else
@@ -2498,6 +2496,9 @@ bool guGStreamerTagInfo::GetGstBoolTag( const gchar * tag )
 // -------------------------------------------------------------------------------- //
 GDateTime * guGStreamerTagInfo::GetGstTimeTag( const gchar * tag )
 {
+    if( m_GstTagList == NULL )
+        return NULL;
+    
     GstDateTime *dt;
     GDateTime *res = NULL;
     GDate *gd;
@@ -2529,9 +2530,9 @@ bool guGStreamerTagInfo::Read( void )
         m_AlbumArtist = GetGstStrTag( GST_TAG_ALBUM_ARTIST );
         m_Composer = GetGstStrTag( GST_TAG_COMPOSER );
         GDateTime * gd = GetGstTimeTag( GST_TAG_DATE );
-        if( !gd )
+        if( gd != NULL )
             gd = GetGstTimeTag( GST_TAG_DATE_TIME );
-        if( !gd )
+        if( gd != NULL )
         {
             m_Year = g_date_time_get_year( gd );
             g_date_time_unref( gd );
@@ -2563,7 +2564,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
 
     dis = gst_discoverer_new( 10 * GST_SECOND, &err );
 
-    if( !dis )
+    if( dis == NULL )
     {
         guLogWarning( wxT("gst_discoverer_new error: %s"), err->message );
         g_free(uri);
@@ -2571,10 +2572,11 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     }
 
     info = gst_discoverer_discover_uri( dis, uri, &err );
-    if( !info )
+    g_free(uri);
+
+    if( info == NULL )
     {
         guLogWarning( wxT("gst_discoverer_discover_uri error: %s"), err->message );
-        g_free(uri);
         return false;
     }
 
@@ -2584,35 +2586,36 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     GList *l, *slist = gst_discoverer_info_get_streams( info, g_type_from_name( "GstDiscovererAudioInfo" ) );
     for( l = slist; l != NULL; l = l->next ) 
     {
-        m_Bitrate = gst_discoverer_audio_info_get_bitrate((const GstDiscovererAudioInfo*)l->data);
+        if ( !m_Bitrate )
+            m_Bitrate = gst_discoverer_audio_info_get_bitrate((const GstDiscovererAudioInfo*)l->data);
         if ( !m_Bitrate )
             m_Bitrate = gst_discoverer_audio_info_get_max_bitrate((const GstDiscovererAudioInfo*)l->data);
-        guLogMessage("guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate);
+        guLogMessage( "guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate );
     }
     gst_discoverer_stream_info_list_free(slist);
 
-    if ( m_GstTagList )
+    if ( m_GstTagList != NULL )
         gst_tag_list_unref  ( (GstTagList *)m_GstTagList );
 
     m_GstTagList = gst_discoverer_info_get_tags( info );
 
-    g_free( uri );
+    if ( m_GstTagList != NULL )
+    {
+        gchar * str_tags = gst_tag_list_to_string( m_GstTagList );
+        guLogMessage( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
+        g_free( str_tags );
+        return !( gst_tag_list_is_empty( m_GstTagList ) );
+    }
+    else
+        guLogMessage( "guGStreamerTagInfo::ReadGStreamerTags tags not found" );
 
-    gchar * str_tags = gst_tag_list_to_string( m_GstTagList );
-    guLogMessage( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
-    g_free( str_tags );
-
-    return !gst_tag_list_is_empty( m_GstTagList );
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 wxString    guGStreamerTagInfo::GetLyrics( void )
 {
-    if( m_GstTagList )
-    {
-        return GetGstStrTag( GST_TAG_LYRICS  );
-    }
-    return wxEmptyString;   
+    return GetGstStrTag( GST_TAG_LYRICS  );
 }
 
 
