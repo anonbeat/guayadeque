@@ -6,6 +6,7 @@ cmake_install.cmake
 cmake_uninstall.cmake
 install_manifest.txt
 po/*/*.mo
+po/*.pot
 src/guayadeque
 Version.h
 CMakeLists.txt.user
