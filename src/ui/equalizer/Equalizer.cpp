@@ -69,7 +69,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     WindowSize.x = Config->ReadNum( CONFIG_KEY_EQUALIZER_WIDTH, 400, CONFIG_PATH_EQUALIZER );
     WindowSize.y = Config->ReadNum( CONFIG_KEY_EQUALIZER_HEIGHT, 250, CONFIG_PATH_EQUALIZER );
 
-    Create( parent, wxID_ANY, _( "Equalizer" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+    Create( parent, wxID_ANY, _( "Equalizer" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX );
 
     wxFileConfig * EqConfig = new wxFileConfig( wxEmptyString, wxEmptyString, guPATH_EQUALIZERS_FILENAME );
     if( EqConfig )

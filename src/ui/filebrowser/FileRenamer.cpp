@@ -47,7 +47,7 @@ guFileRenamer::guFileRenamer( wxWindow * parent, guDbLibrary * db, const wxArray
     WindowSize.x = Config->ReadNum( CONFIG_KEY_FILE_RENAMER_SIZE_WIDTH, 500, CONFIG_PATH_FILE_RENAMER );
     WindowSize.y = Config->ReadNum( CONFIG_KEY_FILE_RENAMER_SIZE_HEIGHT, 320, CONFIG_PATH_FILE_RENAMER );
 
-    Create( parent, wxID_ANY, _( "Rename Files" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER );
+    Create( parent, wxID_ANY, _( "Rename Files" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER | wxMAXIMIZE_BOX );
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 

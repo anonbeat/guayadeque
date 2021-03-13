@@ -48,7 +48,7 @@ guImportFiles::guImportFiles( wxWindow * parent, guMediaViewer * mediaviewer, gu
     WindowSize.x = Config->ReadNum( CONFIG_KEY_IMPORT_FILES_WIDTH, 480, CONFIG_PATH_IMPORT_FILES_POSITION );
     WindowSize.y = Config->ReadNum( CONFIG_KEY_IMPORT_FILES_HEIGHT, 340, CONFIG_PATH_IMPORT_FILES_POSITION );
 
-    Create( parent, wxID_ANY, _( "Import Files" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+    Create( parent, wxID_ANY, _( "Import Files" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX );
 
     CreateControls();
 }
@@ -255,7 +255,6 @@ void guImportFiles::OnAddFilesClicked( wxCommandEvent &event )
                 wxString( _( "wv files" ) ) + wxT( " (*.wv)|*.wv|" ) +
                 wxString( _( "tta files" ) ) + wxT( " (*.tta)|*.tta|" ) +
                 wxString( _( "mpc files" ) ) + wxT( " (*.mpc)|*.mpc|" ) +
-                wxString( _( "dsd files" ) ) + wxT( " (*.dsf)|*.dsf|" ) +
                 wxString( _( "other files" ) ) + "|" + gst_ext_str,
                 wxFD_OPEN|wxFD_FILE_MUST_EXIST|wxFD_MULTIPLE|wxFD_PREVIEW );
     if( FileDialog )

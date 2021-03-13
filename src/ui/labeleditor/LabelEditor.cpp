@@ -55,7 +55,7 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
     WindowSize.y = Config->ReadNum( CONFIG_KEY_POSITIONS_LABELEDIT_HEIGHT, 300, CONFIG_PATH_POSITIONS );
 
     //wxDialog( parent, wxID_ANY, _( "Songs Editor" ), wxDefaultPosition, wxSize( 625, 440 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
-    Create( parent, wxID_ANY, title, WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+    Create( parent, wxID_ANY, title, WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER  | wxMAXIMIZE_BOX );
 
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
