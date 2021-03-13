@@ -42,7 +42,6 @@ namespace Guayadeque {
 
 const char * GUAYADEQUE_SUPPORTED_MIME_TYPES[] = {
     "application/ogg",
-    "application/x-gst-av-dsf",
     "application/x-ogg",
     "application/x-ogm-audio",
     "audio/aac",
