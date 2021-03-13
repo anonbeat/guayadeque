@@ -63,8 +63,8 @@ bool guGstTypeFinder::FetchMedia( void )
             const gchar *const *extensions;
             factory = GST_TYPE_FIND_FACTORY( p_feature );
             wxArrayString t_value;
-                    extensions = gst_type_find_factory_get_extensions( factory );
-                    if( extensions != NULL )
+            extensions = gst_type_find_factory_get_extensions( factory );
+            if( extensions != NULL )
                 for( guint i = 0; extensions[i]; i++ )
                 {
                     wxString ext = extensions[i];
