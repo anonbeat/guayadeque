@@ -685,7 +685,7 @@ guPortableMediaProperties::guPortableMediaProperties( wxWindow * parent, guPorta
     WindowSize.x = Config->ReadNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_WIDTH, 570, CONFIG_PATH_POSITIONS );
     WindowSize.y = Config->ReadNum( CONFIG_KEY_POSITIONS_PMPROPERTIES_HEIGHT, 420, CONFIG_PATH_POSITIONS );
 
-    Create( parent, wxID_ANY, _( "Portable Media Properties" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER );
+    Create( parent, wxID_ANY, _( "Portable Media Properties" ), WindowPos, WindowSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER  | wxMAXIMIZE_BOX );
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 

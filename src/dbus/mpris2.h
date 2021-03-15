@@ -60,6 +60,8 @@ class guMPRIS2 : public guDBusClient
     static void                 Set( guMPRIS2 * object ) { m_MPRIS2 = object; }
     static guMPRIS2 *           Get( void ) { return m_MPRIS2; }
 
+    const char **               GetSupportedMimeTypes( void );
+
 };
 
 }

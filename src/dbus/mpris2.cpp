@@ -22,6 +22,7 @@
 #include "mpris2.h"
 
 #include "EventCommandIds.h"
+#include "GstTypeFinder.h"
 #include "mpris.h"
 #include "Utils.h"
 #include "MainFrame.h"
@@ -40,52 +41,33 @@ namespace Guayadeque {
 #define GUAYADEQUE_MPRIS2_INTERFACE_PLAYLISTS   "org.mpris.MediaPlayer2.Playlists"
 
 const char * GUAYADEQUE_SUPPORTED_MIME_TYPES[] = {
-   "application/ogg",
-   "application/vnd.rn-realmedia",
-   "application/x-3gp",
-   "application/x-gst-av-dsf",
-   "application/x-gst-av-iff",
-   "application/x-ogg",
-   "application/x-ogm-audio",
-   "audio/aac",
-   "audio/ape",
-   "audio/midi",
-   "audio/mp4",
-   "audio/mpc",
-   "audio/mpeg",
-   "audio/mpegurl",
-   "audio/ogg",
-   "audio/vnd.rn-realaudio",
-   "audio/vorbis",
-   "audio/x-ac3",
-   "audio/x-aiff",
-   "audio/x-amr-wb-sh",
-   "audio/x-au",
-   "audio/x-flac",
-   "audio/x-dts",
-   "audio/x-m4a",
-   "audio/x-matroska",
-   "audio/x-mp3",
-   "audio/x-mpeg",
-   "audio/x-mpegurl",
-   "audio/x-ms-wma",
-   "audio/x-musepack",
-   "audio/x-oggflac",
-   "audio/x-pn-realaudio",
-   "audio/x-scpls",
-   "audio/x-speex",
-   "audio/x-svx",
-   "audio/x-voc",
-   "audio/x-vorbis",
-   "audio/x-vorbis+ogg",
-   "audio/x-wav",
-   "video/quicktime",
-   "video/mpeg",
-   "video/webm",
-   "video/x-flv",
-   "video/x-ms-asf",
-   "video/x-msvideo",
-   "x-content/audio-player",
+    "application/ogg",
+    "application/x-ogg",
+    "application/x-ogm-audio",
+    "audio/aac",
+    "audio/ape",
+    "audio/mp4",
+    "audio/mpc",
+    "audio/mpeg",
+    "audio/mpegurl",
+    "audio/ogg",
+    "audio/vnd.rn-realaudio",
+    "audio/vorbis",
+    "audio/x-flac",
+    "audio/x-mp3",
+    "audio/x-mpeg",
+    "audio/x-mpegurl",
+    "audio/x-ms-wma",
+    "audio/x-musepack",
+    "audio/x-oggflac",
+    "audio/x-pn-realaudio",
+    "audio/x-scpls",
+    "audio/x-speex",
+    "audio/x-vorbis",
+    "audio/x-vorbis+ogg",
+    "audio/x-wav",
+    "video/x-ms-asf",
+    "x-content/audio-player",
    NULL };
 
 const char * guMPRIS2_INTROSPECTION_XML =
@@ -198,6 +180,54 @@ const char * guMPRIS2_INTROSPECTION_XML =
 	"</node>\n";
 
 guMPRIS2 * guMPRIS2::m_MPRIS2 = NULL;
+
+char ** GUAYADEQUE_SUPPORTED_MIME_TYPES_WITH_GST = NULL;
+
+// -------------------------------------------------------------------------------- //
+const char ** guMPRIS2::GetSupportedMimeTypes( void )
+{
+
+    if( GUAYADEQUE_SUPPORTED_MIME_TYPES_WITH_GST != NULL )
+        return (const char**)GUAYADEQUE_SUPPORTED_MIME_TYPES_WITH_GST;
+
+    if( !guGstTypeFinder::getGTF().HasPrefixes() )
+        return GUAYADEQUE_SUPPORTED_MIME_TYPES;
+
+    static wxMutex mf_mutex;
+
+    mf_mutex.Lock();
+
+    int gsmt_count = 0;
+    while( GUAYADEQUE_SUPPORTED_MIME_TYPES[gsmt_count] != NULL )
+        gsmt_count++;
+
+    wxArrayString arr = guGstTypeFinder::getGTF().GetMediaTypes();
+
+    long unsigned int mime_ptr_size = 
+      sizeof(char*) * arr.Count() +
+      sizeof(char*) * gsmt_count + 
+      sizeof(char*);
+
+    char ** all_media = (char **) malloc( mime_ptr_size );
+
+    for( size_t i = 0; i < arr.Count(); ++i )
+    {
+        const char * mbstr = arr[i].mb_str();
+        all_media[i] = strdup(mbstr);
+    }
+
+    for( int i = 0; i < gsmt_count; ++i )
+    {
+        const char * etstr = GUAYADEQUE_SUPPORTED_MIME_TYPES[i];
+        all_media[ arr.Count() + i ] = strdup( etstr );
+    }
+
+    all_media[arr.Count() + gsmt_count] = NULL;
+
+    GUAYADEQUE_SUPPORTED_MIME_TYPES_WITH_GST = all_media;
+    mf_mutex.Unlock();
+    return (const char**)all_media;
+}
 
 // -------------------------------------------------------------------------------- //
 guMPRIS2::guMPRIS2( guDBusServer * server, guPlayerPanel * playerpanel, guDbLibrary * db ) : guDBusClient( server )
@@ -952,7 +982,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                             FillMetadataDetails( &dict, "DesktopEntry", DesktopPath );
                             const char * SupportedUriSchemes[] = { "file", "http", "https", "smb", "sftp", "cdda", NULL };
                             FillMetadataDetails( &dict, "SupportedUriSchemes", SupportedUriSchemes );
-                            FillMetadataDetails( &dict, "SupportedMimeTypes", GUAYADEQUE_SUPPORTED_MIME_TYPES );
+                            FillMetadataDetails( &dict, "SupportedMimeTypes", GetSupportedMimeTypes() );
 
                             dbus_message_iter_close_container( &args, &dict );
 
@@ -1196,7 +1226,7 @@ DBusHandlerResult guMPRIS2::HandleMessages( guDBusMessage * msg, guDBusMessage *
                                 }
                                 else if( !strcmp( QueryProperty, "SupportedMimeTypes" ) )
                                 {
-                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_ARRAY, &GUAYADEQUE_SUPPORTED_MIME_TYPES ) )
+                                    if( AddVariant( reply->GetMessage(), DBUS_TYPE_ARRAY, GetSupportedMimeTypes() ) )
                                     {
                                         Send( reply );
                                         Flush();

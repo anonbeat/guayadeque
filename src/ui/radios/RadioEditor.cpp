@@ -25,7 +25,7 @@ namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
 guRadioEditor::guRadioEditor( wxWindow* parent, const wxString& title, const wxString &name, const wxString &link ) :
-    wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 400,150 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER )
+    wxDialog( parent, wxID_ANY, title, wxDefaultPosition, wxSize( 400,150 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX )
 {
     this->SetSizeHints( wxDefaultSize, wxDefaultSize );
 

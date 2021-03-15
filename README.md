@@ -12,7 +12,7 @@ for the icon and splash designed for guayadeque.
 
 ---
 
-# Extra audio playback support
+## Extra audio playback support
 
 Various formats support (like `DSD/DSF`) requires ``gstreamer1.0-libav`` package:
 

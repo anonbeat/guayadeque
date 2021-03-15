@@ -22,6 +22,7 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+#include "GstTypeFinder.h"
 #include "MainFrame.h"
 #include "TrackEdit.h"
 
@@ -34,13 +35,19 @@
 #include <popularimeterframe.h>
 #include <id3v1tag.h>
 
-#include <gst/gst.h>
 #include <gst/pbutils/pbutils.h>
 
 namespace Guayadeque {
 
 wxArrayString guSupportedFormats;
 wxMutex       guSupportedFormatsMutex;
+
+
+// -------------------------------------------------------------------------------- //
+bool guIsGStreamerExt( const wxString &ext )
+{
+    return guGstTypeFinder::getGTF().GetExtensions().Index( ext ) != wxNOT_FOUND;
+}
 
 // -------------------------------------------------------------------------------- //
 bool guIsValidAudioFile( const wxString &filename )
@@ -77,31 +84,14 @@ bool guIsValidAudioFile( const wxString &filename )
         //
         //guSupportedFormats.Add( wxT( "rmj"  ) );
         guSupportedFormats.Add( wxT( "opus"  ) );
-        //
-        guSupportedFormats.Add( wxT( "dsf"  ) );
-        guSupportedFormats.Add( wxT( "3gp"  ) );
-        guSupportedFormats.Add( wxT( "webm"  ) );
-        guSupportedFormats.Add( wxT( "ra"  ) );
-        guSupportedFormats.Add( wxT( "8svx"  ) );
-        guSupportedFormats.Add( wxT( "ac3"  ) );
-        guSupportedFormats.Add( wxT( "dts"  ) );
-        guSupportedFormats.Add( wxT( "maud"  ) );
-        guSupportedFormats.Add( wxT( "mp2"  ) );
-        guSupportedFormats.Add( wxT( "snd"  ) );
-        guSupportedFormats.Add( wxT( "voc"  ) );
-        guSupportedFormats.Add( wxT( "mpg"  ) );
-        guSupportedFormats.Add( wxT( "mov"  ) );
-        guSupportedFormats.Add( wxT( "avi"  ) );
-        guSupportedFormats.Add( wxT( "mkv"  ) );
-        guSupportedFormats.Add( wxT( "mka"  ) );
-        guSupportedFormats.Add( wxT( "mid"  ) );
-        guSupportedFormats.Add( wxT( "au"  ) );
-        guSupportedFormats.Add( wxT( "amr"  ) );
-        guSupportedFormats.Add( wxT( "aiff"  ) );
-        guSupportedFormats.Add( wxT( "flv"  ) );
+
     }
 
-    int Position = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
+    wxString file_ext = filename.Lower().AfterLast( wxT( '.' ) );
+    int Position = guSupportedFormats.Index( file_ext );
+
+    if( (Position == wxNOT_FOUND) && guIsGStreamerExt( file_ext ) )
+        Position = INT_MAX;
 
     guSupportedFormatsMutex.Unlock();
 
@@ -111,8 +101,9 @@ bool guIsValidAudioFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 guTagInfo * guGetTagInfoHandler( const wxString &filename )
 {
+    wxString file_ext = filename.Lower().AfterLast( wxT( '.' ) );
     guSupportedFormatsMutex.Lock();
-    int FormatIndex = guSupportedFormats.Index( filename.Lower().AfterLast( wxT( '.' ) ) );
+    int FormatIndex = guSupportedFormats.Index( file_ext );
     guSupportedFormatsMutex.Unlock();
     switch( FormatIndex )
     {
@@ -148,31 +139,12 @@ guTagInfo * guGetTagInfoHandler( const wxString &filename )
 
         //case 17 :
 
-        case 18 : 
-        case 19 :
-        case 20 :
-        case 21 :
-        case 22 :
-        case 23 :
-        case 24 :
-        case 25 :
-        case 26 :
-        case 27 :
-        case 28 :
-        case 29 :
-        case 30 :
-        case 31 : 
-        case 32 : 
-        case 33 : 
-        case 34 : 
-        case 35 : 
-        case 36 : 
-        case 37 : 
-        case 38 : return new guGStreamerTagInfo( filename );
-
         default :
             break;
     }
+
+    if( guIsGStreamerExt( file_ext ) )
+        return new guGStreamerTagInfo( filename );
 
     return NULL;
 }
