@@ -33,8 +33,12 @@
 
 namespace Guayadeque {
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+#ifndef NDEBUG
+#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
+#else
 #define guLogDebug(...)
+#endif
+
 
 #define guEQUALIZER_BAND_COUNT  10
 
