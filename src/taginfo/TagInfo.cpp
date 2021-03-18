@@ -2604,7 +2604,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
     guLogDebug("guGStreamerTagInfo::GetImage");
 
     if( m_GStreamerImage != NULL )
-        return new wxImage(*m_GStreamerImage);
+        return m_GStreamerImage;
     
     const char *uri, *param = (const char*)m_FileName.mb_str();
 
@@ -2694,7 +2694,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
     while( msg_wref != NULL );
 
     GstSample * spl;
-    g_object_get( G_OBJECT( sink.get() ), "last-sample", &spl, NULL);
+    g_object_get( G_OBJECT( sink.get() ), "last-sample", &spl, NULL) ;
     // unref:g_object_unref( spl )
 
     if( spl != NULL )
