@@ -22,6 +22,12 @@
 #ifndef __TAGINFO_H__
 #define __TAGINFO_H__
 
+#ifdef NDEBUG
+#define guGstLogDebug(...)
+#else
+#define guGstLogDebug(...) guLogMessage(__VA_ARGS__)
+#endif
+
 #include "DbLibrary.h"
 
 

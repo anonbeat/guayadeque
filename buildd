@@ -1,7 +1,7 @@
 ./buildt
 rm CMakeCache.txt
-cmake . \
+cmake ${1} . \
  -DCMAKE_BUILD_TYPE='Debug' \
  -DCMAKE_INSTALL_PREFIX=/usr \
  -DCMAKE_CXX_STANDARD="11" \
- && make
+ && make ${2}
