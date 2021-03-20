@@ -42,11 +42,8 @@
 
 namespace Guayadeque {
 
-#ifndef NDEBUG
-#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#else
+//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
 #define guLogDebug(...)
-#endif
 
 
 #define GUPLAYER_MIN_PREVTRACK_POS      5000
