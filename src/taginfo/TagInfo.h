@@ -22,6 +22,12 @@
 #ifndef __TAGINFO_H__
 #define __TAGINFO_H__
 
+#ifdef NDEBUG
+#define guGstLogDebug(...)
+#else
+#define guGstLogDebug(...) guLogMessage(__VA_ARGS__)
+#endif
+
 #include "DbLibrary.h"
 
 
@@ -331,6 +337,7 @@ class guGStreamerTagInfo : public guTagInfo
 
   protected :
     const GstTagList *        m_GstTagList = NULL;
+    wxImage *                 m_GStreamerImage = NULL;
 
   public :
     guGStreamerTagInfo( const wxString &filename = wxEmptyString );
@@ -338,6 +345,11 @@ class guGStreamerTagInfo : public guTagInfo
 
     virtual bool        Read( void );
     virtual wxString    GetLyrics( void );
+    virtual bool        SetLyrics( const wxString &lyrics ) { return false; };
+    virtual bool        CanHandleLyrics( void ) { return true; };
+    virtual wxImage *   GetImage( void );
+    virtual bool        SetImage( const wxImage * image ) { return false; };
+    virtual bool        CanHandleImages( void );
 
     virtual bool        ReadGStreamerTags( const wxString &filename = wxEmptyString );
     virtual wxString    GetGstStrTag( const gchar * tag );
