@@ -60,7 +60,7 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
     m_IsDefault = false;
     m_CopyToPattern = NULL;
     m_UpdateCoversThread = NULL;
-    guLogMessage( wxT( "MediaViewer '%s' => '%s'" ), collection.m_Name.c_str(), collection.m_UniqueId.c_str() );
+    guLogTrace( wxT( "MediaViewer '%s' => '%s'" ), collection.m_Name.c_str(), collection.m_UniqueId.c_str() );
 
     if( !wxDirExists( guPATH_COLLECTIONS + m_MediaCollection->m_UniqueId ) )
     {
@@ -2143,7 +2143,7 @@ bool guMediaViewer::MoveFiles( void )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::OnSmartAddTracks( wxCommandEvent &event )
 {
-    guLogMessage( wxT( "guMediaViewer::OnSmartAddTracks" ) );
+    guLogTrace( wxT( "guMediaViewer::OnSmartAddTracks" ) );
     guTrackArray * Tracks = ( guTrackArray * ) event.GetClientData();
     if( Tracks )
     {

@@ -33,9 +33,6 @@
 
 namespace Guayadeque {
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#define guLogDebug(...)
-
 #define guEQUALIZER_BAND_COUNT  10
 
 #define guFADERPLAYBIN_MESSAGE_FADEOUT_DONE     "guayadeque-fade-out-done"

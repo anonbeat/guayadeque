@@ -42,10 +42,6 @@
 
 namespace Guayadeque {
 
-//#define guLogDebug(...)  guLogMessage(__VA_ARGS__)
-#define guLogDebug(...)
-
-
 #define GUPLAYER_MIN_PREVTRACK_POS      5000
 
 #define guPLAYER_SMART_CACHEITEMS       100
@@ -1550,7 +1546,7 @@ void guPlayerPanel::OnMediaState( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 {
-    //guLogDebug( wxT( "OnMediaPosition... %i / %i - %li" ), event.GetInt(), m_MediaSong.m_Offset, event.GetExtraLong() );
+    guLogDebug( wxT( "OnMediaPosition... %i / %i - %li" ), event.GetInt(), m_MediaSong.m_Offset, event.GetExtraLong() );
 
     if( ( event.GetInt() < 0 ) || ( event.GetInt() < ( int ) m_MediaSong.m_Offset ) )
         return;

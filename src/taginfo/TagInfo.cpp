@@ -2419,7 +2419,7 @@ bool guASFTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guGStreamerTagInfo::guGStreamerTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
-    guGstLogDebug("guGStreamerTagInfo::guGStreamerTagInfo");
+    guLogDebug("guGStreamerTagInfo::guGStreamerTagInfo");
     if( m_TagFile && !m_TagFile->isNull() )
         ReadGStreamerTags( m_TagFile->file()->name() );
 }
@@ -2427,7 +2427,7 @@ guGStreamerTagInfo::guGStreamerTagInfo( const wxString &filename ) : guTagInfo( 
 // -------------------------------------------------------------------------------- //
 guGStreamerTagInfo::~guGStreamerTagInfo()
 {
-    guGstLogDebug("guGStreamerTagInfo::~guGStreamerTagInfo");
+    guLogDebug("guGStreamerTagInfo::~guGStreamerTagInfo");
     if ( m_GstTagList != NULL )
         gst_tag_list_unref( (GstTagList *)m_GstTagList );
 }
@@ -2491,7 +2491,7 @@ GDateTime * guGStreamerTagInfo::GetGstTimeTag( const gchar * tag )
 // -------------------------------------------------------------------------------- //
 bool guGStreamerTagInfo::Read( void )
 {
-    guGstLogDebug("guGStreamerTagInfo::Read");
+    guLogDebug("guGStreamerTagInfo::Read");
 
     if( ReadGStreamerTags(m_FileName) )
     {
@@ -2526,7 +2526,7 @@ bool guGStreamerTagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
 {
-    guGstLogDebug("guGStreamerTagInfo::ReadGStreamerTags");
+    guLogDebug("guGStreamerTagInfo::ReadGStreamerTags");
 
     gchar *uri;
     if( gst_uri_is_valid ( filename.c_str() ) )
@@ -2561,7 +2561,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     }
 
     m_Length = gst_discoverer_info_get_duration( info ) / 1000000;
-    guGstLogDebug("guGStreamerTagInfo::ReadGStreamerTags length: %u", m_Length);
+    guLogDebug("guGStreamerTagInfo::ReadGStreamerTags length: %u", m_Length);
 
     GList *l, *slist = gst_discoverer_info_get_streams( info, g_type_from_name( "GstDiscovererAudioInfo" ) );
     for( l = slist; l != NULL; l = l->next ) 
@@ -2570,7 +2570,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
             m_Bitrate = gst_discoverer_audio_info_get_bitrate((const GstDiscovererAudioInfo*)l->data);
         if ( !m_Bitrate )
             m_Bitrate = gst_discoverer_audio_info_get_max_bitrate((const GstDiscovererAudioInfo*)l->data);
-        guGstLogDebug( "guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate );
+        guLogDebug( "guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate );
     }
     gst_discoverer_stream_info_list_free(slist);
 
@@ -2582,12 +2582,12 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     if ( m_GstTagList != NULL )
     {
         gchar * str_tags = gst_tag_list_to_string( m_GstTagList );
-        guGstLogDebug( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
+        guLogDebug( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
         g_free( str_tags );
         return !( gst_tag_list_is_empty( m_GstTagList ) );
     }
     else
-        guGstLogDebug( "guGStreamerTagInfo::ReadGStreamerTags tags not found" );
+        guLogDebug( "guGStreamerTagInfo::ReadGStreamerTags tags not found" );
 
     return false;
 }
@@ -2601,7 +2601,7 @@ wxString    guGStreamerTagInfo::GetLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxImage *   guGStreamerTagInfo::GetImage( void )
 {
-    guGstLogDebug("guGStreamerTagInfo::GetImage");
+    guLogDebug("guGStreamerTagInfo::GetImage");
 
     if( m_GStreamerImage != NULL )
         return m_GStreamerImage;
@@ -2665,14 +2665,14 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
 
         if( msg.get() != NULL )
         {
-            guGstLogDebug( "guGStreamerTagInfo::GetImage message type <%s>", GST_MESSAGE_TYPE_NAME( msg.get() ) );
+            guLogDebug( "guGStreamerTagInfo::GetImage message type <%s>", GST_MESSAGE_TYPE_NAME( msg.get() ) );
             switch( GST_MESSAGE_TYPE( msg.get() ) )
             {
                 case GST_MESSAGE_STATE_CHANGED:
-                    #ifndef NDEBUG
+                    #ifdef GU_DEBUG
                     GstState old_state, new_state, pending_state;
                     gst_message_parse_state_changed( msg.get(), &old_state, &new_state, &pending_state);
-                    guGstLogDebug( "guGStreamerTagInfo::GetImage %s state change %s -> %s:\n",
+                    guLogDebug( "guGStreamerTagInfo::GetImage %s state change %s -> %s:\n",
                         GST_OBJECT_NAME( GST_MESSAGE_SRC( msg.get() ) ),
                         gst_element_state_get_name( old_state ),
                         gst_element_state_get_name (new_state)
@@ -2685,7 +2685,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
                     msg = NULL;
                     break;
                 default:
-                    guGstLogDebug( "guGStreamerTagInfo::GetImage unknown message: %s", GST_MESSAGE_TYPE_NAME( msg.get() ) );
+                    guLogDebug( "guGStreamerTagInfo::GetImage unknown message: %s", GST_MESSAGE_TYPE_NAME( msg.get() ) );
                     break;
             }
         }
@@ -2699,16 +2699,16 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
 
     if( spl != NULL )
     {
-        guGstLogDebug( "guGStreamerTagInfo::GetImage got the last sample" );
+        guLogDebug( "guGStreamerTagInfo::GetImage got the last sample" );
         GstBuffer * buf = gst_sample_get_buffer( spl );
         if( buf != NULL )
         {
-            guGstLogDebug( "guGStreamerTagInfo::GetImage buff size: %lu",
+            guLogDebug( "guGStreamerTagInfo::GetImage buff size: %lu",
                 gst_buffer_get_size( buf ) );
             GstMapInfo gmi;
             if( gst_buffer_map( buf, &gmi, GST_MAP_READ ) )
             {
-                guGstLogDebug( "guGStreamerTagInfo::GetImage map ok" );
+                guLogDebug( "guGStreamerTagInfo::GetImage map ok" );
                 wxMemoryInputStream mis( gmi.data, gmi.size );
                 m_GStreamerImage = new wxImage( mis, wxBITMAP_TYPE_JPEG );
             }
@@ -2717,7 +2717,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
             g_object_unref( spl );
     }
 
-    guGstLogDebug( "guGStreamerTagInfo::GetImage ret" );
+    guLogDebug( "guGStreamerTagInfo::GetImage ret" );
 
     if( m_GStreamerImage != NULL)
         return m_GStreamerImage;
