@@ -24,6 +24,7 @@
 #include "LevelInfo.h"
 #include "MediaCtrl.h"
 #include "RadioTagInfo.h"
+#include "GstPipelineBuilder.h"
 
 #include <wx/wx.h>
 #include <wx/url.h>
@@ -56,6 +57,7 @@ static char ProxyPass[ 200 ] = "";
 // -------------------------------------------------------------------------------- //
 static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFaderPlaybin * ctrl )
 {
+
     switch( GST_MESSAGE_TYPE( message ) )
     {
         case GST_MESSAGE_ERROR :
@@ -87,19 +89,19 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             break;
         }
 
-//        case GST_MESSAGE_STATE_CHANGED:
-//        {
-////            GstState oldstate, newstate, pendingstate;
-////            gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
+       case GST_MESSAGE_STATE_CHANGED:
+       {
+           GstState oldstate, newstate, pendingstate;
+           gst_message_parse_state_changed( message, &oldstate, &newstate, &pendingstate );
 //
-////            //guLogMessage( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
+           guLogDebug( wxT( "State changed %u -> %u (%u)" ), oldstate, newstate, pendingstate );
 ////            if( pendingstate == GST_STATE_VOID_PENDING )
 ////            {
 ////                wxMediaEvent event( wxEVT_MEDIA_STATECHANGED );
 ////                ctrl->AddPendingEvent( event );
 ////            }
-//            break;
-//        }
+           break;
+       }
 
         case GST_MESSAGE_BUFFERING :
         {
@@ -127,6 +129,12 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
 
         case GST_MESSAGE_EOS :
         {
+            #ifdef GU_DEBUG
+            GstElement * pb = ctrl->Playbin();
+            GstState st, ps;
+            int gsr = gst_element_get_state( pb, &st, &ps, 5*GST_SECOND);
+            guLogDebug("GST_MESSAGE_EOS gst_element_get_state=%i state=%i pending=%i", gsr, st, ps);
+
             guMediaEvent event( guEVT_MEDIA_FINISHED );
             event.SetExtraLong( ctrl->GetId() );
             ctrl->SendEvent( event );
@@ -134,7 +142,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             ctrl->SetState( guFADERPLAYBIN_STATE_PENDING_REMOVE );
 
             ctrl->GetPlayer()->ScheduleCleanUp();
-
+            #endif
             guLogDebug( wxT( "***** EOS received..." ) );
           break;
         }
@@ -208,7 +216,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
                 const GstStructure * s = gst_message_get_structure( message );
                 const gchar * name = gst_structure_get_name( s );
 
-                ////guLogDebug( wxT( "MESSAGE_ELEMENT %s" ), wxString( element ).c_str() );
+                // guLogDebug( wxT( "MESSAGE_ELEMENT %s" ), wxString( name ).c_str() );
                 if( !strcmp( name, "level" ) )
                 {
                     guLevelInfo * LevelInfo = new guLevelInfo();
@@ -275,6 +283,14 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
                         LevelInfo->m_Decay_R = g_value_get_double( value );
                     }
 
+                    // current timestamp - can be used further in the event
+                    GstClockTime timestamp;
+                    if( gst_structure_get_clock_time( s, "timestamp", &timestamp) )
+                    {
+                        // guLogDebug( "GST_MESSAGE_ELEMENT timestamp: %" GST_TIME_FORMAT, GST_TIME_ARGS(timestamp) );
+                        LevelInfo->m_OutTime = timestamp / GST_MSECOND;
+                    }
+
 
     //                //guLogDebug( wxT( "    RMS: %f dB, peak: %f dB, decay: %f dB" ),
     //                    event.m_LevelInfo.m_RMS_L,
@@ -331,6 +347,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
 // -------------------------------------------------------------------------------- //
 static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin * ctrl )
 {
+    guLogDebug( "gst_about_to_finish" );
     if( !ctrl->NextUri().IsEmpty() )
     {
         ctrl->AboutToFinish();
@@ -344,12 +361,14 @@ static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin * ctrl )
 // -------------------------------------------------------------------------------- //
 static void gst_audio_changed( GstElement * playbin, guFaderPlaybin * ctrl )
 {
+    guLogDebug( "gst_audio_changed" );
     ctrl->AudioChanged();
 }
 
 // -------------------------------------------------------------------------------- //
 void gst_source_setup( GstElement * playbin, GstElement * source, guMediaCtrl * ctrl )
 {
+    guLogDebug( "gst_source_setup" );
     if( ctrl && ctrl->ProxyEnabled() )
     {
         if( g_object_class_find_property( G_OBJECT_GET_CLASS( source ), "proxy" ) )
@@ -383,6 +402,7 @@ static bool seek_timeout( guFaderPlaybin * faderplaybin )
 // -------------------------------------------------------------------------------- //
 static bool pause_timeout( GstElement * playbin )
 {
+    guLogDebug("pause_timeout: GST_STATE_PAUSED");
     gst_element_set_state( playbin, GST_STATE_PAUSED );
     return false;
 }
@@ -459,6 +479,7 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_StartOffset = startpos;
     m_SeekTimerId = 0;
     m_SettingRecordFileName = false;
+    m_PositionDelta = 0;
 
     guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%li)  %i" ), m_Id, playtype );
 
@@ -586,318 +607,153 @@ bool guFaderPlaybin::BuildOutputBin( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::BuildPlaybackBin( void )
 {
-  m_Playbin = gst_element_factory_make( "playbin", "play" );
-  if( IsValidElement( m_Playbin ) )
-  {
-    //m_Uri =
-    g_object_set( m_Playbin, "uri", ( const char * ) m_Uri.mb_str( wxConvFile ), NULL );
-    g_object_set( m_Playbin, "buffer-size", gint( m_Player->BufferSize() * 1024 ), NULL );
-    //g_object_set( m_Playbin, "volume", 1.0, NULL );
+//
+// full playback pipeline including [removable] elements:
+//      playbin > tee > queue > audioconvert > 
+//        [ equalizer-10bands ] > [ rgvolume > rglimiter ] >
+//        [ volume > fader volume ] > level > audioresample > sink
+//
+    guGstPipelineBuilder gpb( "playbackbin", &m_Playbackbin );
 
-    m_Playbackbin = gst_bin_new( "playbackbin" );
-    if( IsValidElement( m_Playbackbin ) )
+    gpb.Add( "playbin", "play", &m_Playbin, false,
+        "uri", ( const char * ) m_Uri.mb_str( wxConvFile ),
+        "buffer-size", gint( m_Player->BufferSize() * 1024 )
+        );
+    gpb.Add( "tee", "pb_tee", &m_Tee );
+
+    gpb.Add( "queue", "pb_queue", NULL, true,
+        "max-size-time", guint64( 250000000 ),
+        "max-size-buffers", 0,
+        "max-size-bytes", 0
+        );
+
+    gpb.Add( "audioconvert", "pb_audioconvert" );
+    
+    if( m_Player->m_EnableEq )
+        gpb.Add( "equalizer-10bands", "pb_equalizer", &m_Equalizer );
+    else
+        m_Equalizer = NULL;
+
+    if( m_Player->m_ReplayGainMode )
     {
-      GstElement * converter = gst_element_factory_make( "audioconvert", "pb_audioconvert" );
-      if( IsValidElement( converter ) )
-      {
-        GstElement * resample = gst_element_factory_make( "audioresample", "pb_audioresampler" );
-        if( IsValidElement( resample ) )
-        {
-          m_ReplayGain = NULL;
-          if( m_Player->m_ReplayGainMode )
-          {
-            m_ReplayGain = gst_element_factory_make( "rgvolume", "pb_rgvolume" );
-          }
+        gpb.Add( "rgvolume", "pb_rgvolume", &m_ReplayGain, true,
+            "pre-amp", gdouble( m_Player->m_ReplayGainPreAmp ),
+            "album-mode", gboolean( m_Player->m_ReplayGainMode == 2 )
+            );        
+        //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
+        gpb.Add( "rglimiter", "pb_rglimiter" );
+    }
+    else
+        m_ReplayGain = NULL;
 
-          if( !m_Player->m_ReplayGainMode || IsValidElement( m_ReplayGain ) )
-          {
-            if( m_ReplayGain )
-            {
-              g_object_set( G_OBJECT( m_ReplayGain ), "album-mode", gboolean( m_Player->m_ReplayGainMode - 1 ), NULL );
-              g_object_set( G_OBJECT( m_ReplayGain ), "pre-amp", gdouble( m_Player->m_ReplayGainPreAmp ), NULL );
-               //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
-            }
+    gpb.Add( "volume", "pb_volume", &m_Volume, m_Player->m_EnableVolCtls );
 
-            m_FaderVolume = gst_element_factory_make( "volume", "fader_volume" );
-            if( IsValidElement( m_FaderVolume ) )
-            {
-              if( m_PlayType == guFADERPLAYBIN_PLAYTYPE_CROSSFADE )
-              {
-                g_object_set( m_FaderVolume, "volume", gdouble( 0.0 ), NULL );
-              }
+    if( m_PlayType == guFADERPLAYBIN_PLAYTYPE_CROSSFADE )
+        gpb.Add( "volume", "fader_volume", &m_FaderVolume, m_Player->m_EnableVolCtls,
+            "volume", gdouble( 0.0 )
+            );
+    else
+        gpb.Add( "volume", "fader_volume", &m_FaderVolume, m_Player->m_EnableVolCtls );
 
-              GstElement * level = gst_element_factory_make( "level", "pb_level" );
-              if( IsValidElement( level ) )
-              {
-                g_object_set( level, "message", gboolean( true ), NULL );
-                g_object_set( level, "interval", guint64( 100000000 ), NULL) ;
-                g_object_set( level, "peak-falloff", gdouble( 6.0 ), NULL );
-                g_object_set( level, "peak-ttl", guint64( 3 * 300000000 ), NULL );
+    gpb.Add( "level", "pb_level", NULL, true,
+        "message", gboolean( true ),
+        "interval", guint64( 100000000 ),
+        "peak-falloff", gdouble( 6.0 ),
+        "peak-ttl", guint64( 3 * 300000000 )
+        );
 
-                m_Volume = gst_element_factory_make( "volume", "pb_volume" );
-                if( IsValidElement( m_Volume ) )
-                {
-                    m_Equalizer = gst_element_factory_make( "equalizer-10bands", "pb_equalizer" );
-                    if( IsValidElement( m_Equalizer ) )
-                    {
-                        GstElement * limiter = gst_element_factory_make( "rglimiter", "pb_rglimiter" );
-                        if( IsValidElement( limiter ) )
-                        {
-                            //g_object_set( G_OBJECT( limiter ), "enabled", TRUE, NULL );
-                          GstElement * outconverter = gst_element_factory_make( "audioconvert", "pb_audioconvert2" );
-                          if( IsValidElement( outconverter ) )
-                          {
-                             GstElement * outresample = gst_element_factory_make( "audioresample", "pb_audioresample2" );
-                             if( IsValidElement( outresample ) )
-                             {
-                                m_Tee = gst_element_factory_make( "tee", "pb_tee" );
-                                if( IsValidElement( m_Tee ) )
-                                {
-                                    GstElement * queue = gst_element_factory_make( "queue", "pb_queue" );
-                                    if( IsValidElement( queue ) )
-                                    {
-                                        //g_object_set( queue, "max-size-time", guint64( 250000000 ), NULL );
-                                        //g_object_set( queue, "max-size-time", 5 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
-                                        g_object_set( queue, "max-size-time", guint64( 250000000 ), "max-size-buffers", 0, "max-size-bytes", 0, NULL );
+    // gpb.Add( "audioconvert", "sink_audioconvert" );
+    gpb.Add( "audioresample", "sink_audioresample", NULL, true,
+        "quality", gint( 10 )
+        );
 
-                                        if( m_ReplayGain )
-                                        {
-                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, resample, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
-                                            gst_element_link_many( m_Tee, queue, converter, resample, m_FaderVolume, m_ReplayGain, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
-                                        }
-                                        else
-                                        {
-                                            gst_bin_add_many( GST_BIN( m_Playbackbin ), m_Tee, queue, converter, resample, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
-                                            gst_element_link_many( m_Tee, queue, converter, resample, m_FaderVolume, level, m_Equalizer, limiter, m_Volume, outconverter, outresample, m_OutputSink, NULL );
-                                        }
+    gpb.Link( m_OutputSink );
 
-                                        GstPad * pad = gst_element_get_static_pad( m_Tee, "sink" );
-                                        if( GST_IS_PAD( pad ) )
-                                        {
-                                            GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
-                                            gst_element_add_pad( m_Playbackbin, ghostpad );
-                                            gst_object_unref( pad );
+    if( !gpb.CanPlay() )
+        return false;
 
-                                            g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
+    guLogDebug("guFaderPlaybin::BuildPlaybackBin pipeline is built");
+    GstPad * pad = gst_element_get_static_pad( m_Tee, "sink" );
+    if( GST_IS_PAD( pad ) )
+    {
+        GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
+        gst_element_add_pad( m_Playbackbin, ghostpad );
+        gst_object_unref( pad );
 
-                                            g_object_set( G_OBJECT( m_Playbin ), "flags", GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_SOFT_VOLUME, NULL );
+        g_object_set( G_OBJECT( m_Playbin ), "audio-sink", m_Playbackbin, NULL );
 
-                                            g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
-                                                G_CALLBACK( gst_about_to_finish ), ( void * ) this );
-                                            //
-                                            g_signal_connect( G_OBJECT( m_Playbin ), "audio-changed",
-                                                G_CALLBACK( gst_audio_changed ), ( void * ) this );
+        g_object_set( G_OBJECT( m_Playbin ), "flags", GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_SOFT_VOLUME, NULL );
 
-                                            g_signal_connect( G_OBJECT( m_Playbin ), "source-setup",
-                                                G_CALLBACK( gst_source_setup ), ( void * ) m_Player );
+        g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
+            G_CALLBACK( gst_about_to_finish ), ( void * ) this );
+        //
+        g_signal_connect( G_OBJECT( m_Playbin ), "audio-changed",
+            G_CALLBACK( gst_audio_changed ), ( void * ) this );
 
-                                            GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
-                                            gst_bus_add_watch( bus, GstBusFunc( gst_bus_async_callback ), this );
-                                            gst_object_unref( bus );
+        g_signal_connect( G_OBJECT( m_Playbin ), "source-setup",
+            G_CALLBACK( gst_source_setup ), ( void * ) m_Player );
 
-                                            return true;
-                                        }
-                                        else
-                                        {
-                                            if( G_IS_OBJECT( pad ) )
-                                                gst_object_unref( pad );
-                                            guLogError( wxT( "Could not create the pad element" ) );
-                                        }
+        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
+        gst_bus_add_watch( bus, GstBusFunc( gst_bus_async_callback ), this );
+        gst_object_unref( bus );
 
-                                        g_object_unref( queue );
-                                    }
-                                    else
-                                    {
-                                        guLogError( wxT( "Could not create the playback queue object" ) );
-                                    }
+        gpb.SetCleanup( false );
 
-                                    g_object_unref( m_Tee );
-                                    m_Tee = NULL;
-                                }
-                                else
-                                {
-                                    guLogError( wxT( "Could not create the tee object" ) );
-                                }
-                                g_object_unref( outresample );
-                             }
-                             else
-                             {
-                               guLogError( wxT( "Could not create the outresample object" ) );
-                             }
-                             g_object_unref( outconverter );
-                          }
-                          else
-                          {
-                            guLogError( wxT( "Could not create the output outconvert object" ) );
-                          }
-
-                          g_object_unref( limiter );
-                        }
-                        else
-                        {
-                            guLogError( wxT( "Could not create the limiter object" ) );
-                        }
-
-                        g_object_unref( m_Equalizer );
-                        m_Equalizer = NULL;
-                    }
-                    else
-                    {
-                        guLogError( wxT( "Could not create the equalizer object" ) );
-                    }
-
-                    g_object_unref( m_Volume );
-                    m_Volume = NULL;
-                }
-                else
-                {
-                    guLogError( wxT( "Could not create the volume object" ) );
-                }
-
-                g_object_unref( level );
-              }
-              else
-              {
-                guLogError( wxT( "Could not create the level object" ) );
-              }
-
-              g_object_unref( m_FaderVolume );
-            }
-            else
-            {
-              guLogError( wxT( "Could not create the fader volume object" ) );
-            }
-            m_FaderVolume = NULL;
-
-            g_object_unref( m_ReplayGain );
-          }
-          else
-          {
-            guLogError( wxT( "Could not create the replay gain object" ) );
-          }
-          m_ReplayGain = NULL;
-
-          g_object_unref( resample );
-        }
-        else
-        {
-          guLogError( wxT( "Could not create the audioresample object" ) );
-        }
-
-        g_object_unref( converter );
-      }
-      else
-      {
-        guLogError( wxT( "Could not create the audioconvert object" ) );
-      }
-
-      g_object_unref( m_Playbackbin );
+        return true;
     }
     else
     {
-      guLogError( wxT( "Could not create the gstreamer playbackbin." ) );
+        if( G_IS_OBJECT( pad ) )
+            gst_object_unref( pad );
+        guLogError( wxT( "Could not create the pad element" ) );
     }
-    m_Playbackbin = NULL;
 
-    gst_object_unref( m_Playbin );
-  }
-  else
-  {
-    guLogError( wxT( "Could not create the gstreamer playbin." ) );
-  }
-  m_Playbin = NULL;
-
-  return false;
+    return false;
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer )
 {
     guLogDebug( wxT( "BuildRecordBin( '%s' )" ), path.c_str() );
-    m_RecordBin = gst_bin_new( "gurb_recordbin" );
-    if( IsValidElement( m_RecordBin ) )
+
+    guGstPipelineBuilder gpb( "gurb_recordbin", &m_RecordBin );
+    g_object_set( m_RecordBin, "async-handling", gboolean( true ), NULL );
+    GstElement * queue = gpb.Add( "queue", "gurb_queue", NULL, true,
+                                "max-size-buffers", guint( 3 ),
+                                "max-size-time", 0,
+                                "max-size-bytes", 0
+                                );
+    gpb.Add( "audioconvert", "gurb_audioconvert" );
+    gpb.Add( "audioresample", "gurb_audioresample" , NULL, true,
+        "quality", gint( 10 )
+        );
+    gpb.Link( encoder );
+    if( muxer )
+        gpb.Link( muxer );
+    gpb.Add( "filesink", "gurb_filesink", &m_FileSink, true,
+        "location", ( const char * ) path.mb_str( wxConvFile )
+        );
+
+    if( !gpb.CanPlay() )
+        return false;
+
+    GstPad * pad = gst_element_get_static_pad( queue, "sink" );
+    if( GST_IS_PAD( pad ) )
     {
-        GstElement * converter = gst_element_factory_make( "audioconvert", "gurb_audioconvert" );
-        if( IsValidElement( converter ) )
-        {
-          GstElement * resample = gst_element_factory_make( "audioresample", "gurb_audioresample" );
-          if( IsValidElement( resample ) )
-          {
-            m_FileSink = gst_element_factory_make( "filesink", "gurb_filesink" );
-            if( IsValidElement( m_FileSink ) )
-            {
-                g_object_set( m_FileSink, "location", ( const char * ) path.mb_str( wxConvFile ), NULL );
+        m_RecordSinkPad = gst_ghost_pad_new( "sink", pad );
+        gst_element_add_pad( m_RecordBin, m_RecordSinkPad );
+        gst_object_unref( pad );
 
-                GstElement * queue = gst_element_factory_make( "queue", "gurb_queue" );
-                if( IsValidElement( queue ) )
-                {
-                    // The bin contains elements that change state asynchronously and not as part of a state change in the entire pipeline.
-                    g_object_set( m_RecordBin, "async-handling", gboolean( true ), NULL );
+        gpb.SetCleanup( false );
 
-                    g_object_set( queue, "max-size-buffers", guint( 3 ), "max-size-time", 0, "max-size-bytes", 0, NULL );
-                    //g_object_set( queue, "max-size-time", 10 * GST_SECOND, "max-size-buffers", 0, "max-size-bytes", 0, NULL );
-
-                    if( muxer )
-                    {
-                        gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, resample, encoder, muxer, m_FileSink, NULL );
-                        gst_element_link_many( queue, converter, resample, encoder, muxer, m_FileSink, NULL );
-                    }
-                    else
-                    {
-                        gst_bin_add_many( GST_BIN( m_RecordBin ), queue, converter, resample, encoder, m_FileSink, NULL );
-                        gst_element_link_many( queue, converter, resample, encoder, m_FileSink, NULL );
-                    }
-
-                    GstPad * pad = gst_element_get_static_pad( queue, "sink" );
-                    if( GST_IS_PAD( pad ) )
-                    {
-                        m_RecordSinkPad = gst_ghost_pad_new( "sink", pad );
-                        gst_element_add_pad( m_RecordBin, m_RecordSinkPad );
-                        gst_object_unref( pad );
-
-                        return true;
-                    }
-                    else
-                    {
-                        if( G_IS_OBJECT( pad ) )
-                            gst_object_unref( pad );
-                        guLogError( wxT( "Could not create the pad element" ) );
-                    }
-
-                    g_object_unref( queue );
-                }
-                else
-                {
-                    guLogError( wxT( "Could not create the playback queue object" ) );
-                }
-
-                g_object_unref( m_FileSink );
-                m_FileSink = NULL;
-            }
-            else
-            {
-              guLogError( wxT( "Could not create the lame encoder object" ) );
-            }
-            g_object_unref( resample );
-          }
-          else
-          {
-            guLogError( wxT( "Could not create the lame resample object" ) );
-          }
-          g_object_unref( converter );
-        }
-        else
-        {
-            guLogError( wxT( "Could not create the record convert object" ) );
-        }
-
-        g_object_unref( m_RecordBin );
+        return true;
     }
     else
     {
-        guLogError( wxT( "Could not create the recordbin object" ) );
+        if( G_IS_OBJECT( pad ) )
+            gst_object_unref( pad );
+        guLogError( wxT( "Could not create the pad element" ) );
     }
-    m_RecordBin = NULL;
 
     return false;
 }
@@ -1060,14 +916,16 @@ bool guFaderPlaybin::SetEqualizer( const wxArrayInt &eqbands )
 // -------------------------------------------------------------------------------- //
 void guFaderPlaybin::SetEqualizerBand( const int band, const int value )
 {
-    g_object_set( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
-            band ).char_str(), gdouble( value / 10.0 ), NULL );
+    if( m_Equalizer != NULL )
+        g_object_set( G_OBJECT( m_Equalizer ), wxString::Format( wxT( "band%u" ),
+                band ).char_str(), gdouble( value / 10.0 ), NULL );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int startpos )
 {
     guLogDebug( wxT( "guFaderPlayBin::Load (%li) %i" ), m_Id, restart );
+    if( GST_IS_ELEMENT( m_Playbin ) )
 
     if( restart )
     {
@@ -1095,6 +953,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
             return false;
         }
     }
+    m_PositionDelta = startpos - gst_clock_get_time( gst_element_get_clock( m_Playbin ) );
 
     if( startpos )
     {
@@ -1120,7 +979,7 @@ bool guFaderPlaybin::Play( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::StartPlay( void )
 {
-    guLogDebug( wxT( "guFaderPlayBin::StartPlay (%li)" ), m_Id );
+    guLogMessage( wxT( "guFaderPlayBin::StartPlay (%li)" ), m_Id );
     bool                Ret = true;
     bool                NeedReap = false;
     bool                Playing = false;
@@ -1236,12 +1095,12 @@ bool guFaderPlaybin::StartPlay( void )
                     case guFADERPLAYBIN_STATE_PLAYING :
                     case guFADERPLAYBIN_STATE_FADEIN :
                     case guFADERPLAYBIN_STATE_FADEOUT_PAUSE :
-                        //guLogDebug( wxT( "Stream %s already playing" ), FaderPlaybin->m_Uri.c_str() );
+                        guLogDebug( wxT( "Stream %s already playing" ), FaderPlaybin->m_Uri.c_str() );
                         Playing = true;
                         break;
 
                     case guFADERPLAYBIN_STATE_PAUSED :
-                        //guLogDebug( wxT( "stream %s is paused; replacing it" ), FaderPlaybin->m_Uri.c_str() );
+                        guLogDebug( wxT( "stream %s is paused; replacing it" ), FaderPlaybin->m_Uri.c_str() );
                         FaderPlaybin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
 
                     case guFADERPLAYBIN_STATE_PENDING_REMOVE :
@@ -1296,7 +1155,7 @@ bool guFaderPlaybin::StartPlay( void )
                     case guFADERPLAYBIN_STATE_FADEIN :
                     case guFADERPLAYBIN_STATE_PENDING_REMOVE :
                         // kill this one
-                        //guLogDebug( wxT( "stopping stream %s (replaced by new stream)" ), FaderPlaybin->m_Uri.c_str() );
+                        guLogDebug( wxT( "stopping stream %s (replaced by new stream)" ), FaderPlaybin->m_Uri.c_str() );
                         FaderPlaybin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
                         NeedReap = true;
                         break;
@@ -1417,15 +1276,45 @@ bool guFaderPlaybin::Seek( wxFileOffset where, bool accurate )
     if( accurate )
         SeekFlags = GstSeekFlags( SeekFlags | GST_SEEK_FLAG_ACCURATE );
 
-    return gst_element_seek_simple( m_Playbin, GST_FORMAT_TIME, SeekFlags, where * GST_MSECOND );
+    gboolean seek_ok = gst_element_seek_simple( m_Playbin, GST_FORMAT_TIME, SeekFlags, where * GST_MSECOND );
+    if( seek_ok )
+        m_PositionDelta = where * GST_MSECOND - gst_clock_get_time( gst_element_get_clock( m_Playbin ) );
+
+    return seek_ok;
 }
 
 // -------------------------------------------------------------------------------- //
 wxFileOffset guFaderPlaybin::Position( void )
 {
-    wxFileOffset Position;
-    gst_element_query_position( m_OutputSink, GST_FORMAT_TIME, ( gint64 * ) &Position );
-    return Position;
+    wxFileOffset Position = 0;
+    // guLogDebug( "guFaderPlaybin::Position start" );
+
+    // feature R&D {
+    #ifdef GU_DEBUG
+    if( GST_IS_ELEMENT( m_Playbin ) )
+    {
+        // calculate the position from the sink total playback time
+        // to support getting position if gst_element_query_position() is tripping
+        GstClock * clock = gst_element_get_clock( m_Playbin );
+        if( clock )
+        {
+            // delta is adjusted in Seek() and reset in Load()
+            wxFileOffset dp = gst_clock_get_time( clock ) + m_PositionDelta;
+            guLogDebug( "guFaderPlaybin::Position gst_element_get_clock: %lu", dp );
+            // only logging for now
+        }
+    }
+    #endif
+    // } feature R&D
+
+    if( Position <= 0 )
+    {
+        // actual position detection 
+        gst_element_query_position( m_Playbin, GST_FORMAT_TIME, &Position );
+        guLogDebug( "guFaderPlaybin::Position gst_element_query_position: %lu", Position );
+    }
+
+    return Position < 0 ? 0 : Position;
 }
 
 // -------------------------------------------------------------------------------- //

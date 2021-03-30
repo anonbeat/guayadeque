@@ -188,6 +188,8 @@ class guPrefDialog : public wxDialog
     wxChoice *                  m_PlayOutDevChoice;
     wxTextCtrl *                m_PlayOutDevName;
     wxCheckBox *                m_NotifyChkBox;
+    wxCheckBox *                m_EqOnChkBox;
+    wxCheckBox *                m_VolOnChkBox;
     wxChoice *                  m_PlayReplayModeChoice;
     wxStaticText *              m_PlayPreAmpLevelVal;
     wxSlider *                  m_PlayPreAmpLevelSlider;

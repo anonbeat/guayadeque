@@ -24,6 +24,7 @@
 
 #include "MediaEvent.h"
 #include "FaderTimeLine.h"
+#include "Utils.h"
 
 #include <gst/gst.h>
 
@@ -103,6 +104,8 @@ class guFaderPlaybin
     long                m_NextId;
     double              m_LastFadeVolume;
 
+    wxFileOffset        m_PositionDelta;
+
     int                 m_ErrorCode;
     int                 m_State;
     gint64              m_PausePosition;
@@ -153,8 +156,8 @@ class guFaderPlaybin
     long                GetId( void ) { return m_Id; }
     void                SetId( const long id ) { m_Id = id; }
 
-    int                 GetState( void ) { return m_State; }
-    void                SetState( int state ) { m_State = state; }
+    int                 GetState( void ) { guLogDebug("guFaderPlaybin::GetState: %i", m_State); return m_State; }
+    void                SetState( int state ) { guLogDebug("guFaderPlaybin::SetState: %i -> %i", m_State, state); m_State = state; }
 
     bool                IsBuffering( void ) { return m_IsBuffering; }
     void                SetBuffering( const bool isbuffering );

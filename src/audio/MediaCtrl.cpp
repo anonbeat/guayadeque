@@ -187,14 +187,14 @@ void guMediaCtrl::UpdatePosition( void )
 	if( m_CurrentPlayBin )
 	{
 	    m_CurrentPlayBin->Lock();
-		Pos = -1;
-		gst_element_query_position( m_CurrentPlayBin->m_OutputSink, GST_FORMAT_TIME, &Pos );
 
+        Pos = m_CurrentPlayBin->Position();
+
+        Pos /= GST_MSECOND;
 
 		Duration = -1;
         gst_element_query_duration( m_CurrentPlayBin->m_OutputSink, GST_FORMAT_TIME, &Duration );
 
-        Pos = Pos / GST_MSECOND;
         if( Pos != m_LastPosition )
         {
             if( !m_CurrentPlayBin->AboutToFinishPending() || Pos < m_LastPosition )
@@ -776,6 +776,8 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInVolStart        = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, 80, CONFIG_PATH_CROSSFADER ) ) / 100.0;
     m_FadeInVolTriger       = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_TRIGER, 50, CONFIG_PATH_CROSSFADER ) ) / 100.0;
     m_BufferSize            = Config->ReadNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, 64, CONFIG_PATH_GENERAL );
+    m_EnableEq              = Config->ReadNum( CONFIG_KEY_GENERAL_EQ_ENABLED, 1, CONFIG_PATH_GENERAL );
+    m_EnableVolCtls         = Config->ReadNum( CONFIG_KEY_GENERAL_VOLUME_ENABLED, 1, CONFIG_PATH_GENERAL );
     m_ReplayGainMode        = Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE, 0, CONFIG_PATH_GENERAL );
     m_ReplayGainPreAmp      = double( Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, 6, CONFIG_PATH_GENERAL ) );
     m_OutputDevice          = Config->ReadNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, guOUTPUT_DEVICE_AUTOMATIC, CONFIG_PATH_PLAYBACK );
@@ -856,8 +858,8 @@ void guMediaCtrl::FadeOutDone( guFaderPlaybin * faderplaybin )
         case guFADERPLAYBIN_STATE_FADEOUT_PAUSE:
         {
             // try to seek back a bit to account for the fade
-            gint64 Pos = -1;
-            gst_element_query_position( faderplaybin->OutputSink(), GST_FORMAT_TIME, &Pos );
+            gint64 Pos = Position();
+
             if( Pos != -1 )
             {
                 faderplaybin->m_PausePosition = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;

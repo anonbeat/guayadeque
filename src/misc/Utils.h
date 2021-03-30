@@ -32,13 +32,13 @@ namespace Guayadeque {
 
 #ifdef NDEBUG
     #define guLogDebug(...)
-    #define guLogTrace(...) if( guDebugMode ) guLogMessage( __VA_ARGS__ )
+    #define guLogTrace(...) guLogMsgIfDebug( __VA_ARGS__ )
     #define guLogMessage    wxLogMessage
     #define guLogWarning    wxLogWarning
     #define guLogError      wxLogError
 #else
     #define GU_DEBUG
-    #define guLogDebug(...) if( guDebugMode ) guLogMessage( __VA_ARGS__ )
+    #define guLogDebug(...) guLogMsgIfDebug( __VA_ARGS__ )
     #define guLogTrace      wxLogMessage
     #define guLogMessage    wxLogMessage
     #define guLogWarning    wxLogWarning
@@ -54,6 +54,13 @@ class guTrackArray;
 class guMediaViewer;
 
 static bool guDebugMode = std::getenv( "GU_DEBUG" ) != NULL;
+
+template<typename... Args>
+static void guLogMsgIfDebug( Args... what )
+{
+    if( guDebugMode )
+        guLogMessage( what... );
+}
 
 // -------------------------------------------------------------------------------- //
 void inline         guImageResize( wxImage * image, int maxsize, bool forceresize = false )
