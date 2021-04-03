@@ -42,6 +42,7 @@
 #include <wx/regex.h>
 #include <wx/sstream.h>
 #include <wx/tokenzr.h>
+#include <exception>
 
 namespace Guayadeque {
 
@@ -2061,7 +2062,16 @@ void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
         }
     }
 
-    m_LyricSearchThread->FinishExecCommand( CommandLyric );
+    // Looks like some racing condition is occuring here from time to time causing player to crash
+    //      not sure what exactly it is yet, so quick & dirty fix
+    try
+    {
+        m_LyricSearchThread->FinishExecCommand( CommandLyric );
+    }
+    catch (std::exception& e)
+    {
+        guLogWarning( "Lyrics search exception: %s", e.what() );
+    }
 
 	delete this;
 }
