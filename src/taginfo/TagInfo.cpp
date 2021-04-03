@@ -22,6 +22,7 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+#include "GstTypes.h"
 #include "GstTypeFinder.h"
 #include "MainFrame.h"
 #include "TrackEdit.h"
@@ -36,8 +37,6 @@
 #include <id3v1tag.h>
 
 #include <gst/pbutils/pbutils.h>
-
-#include <memory>
 
 namespace Guayadeque {
 
@@ -2617,65 +2616,51 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
                       " ! jpegenc snapshot=TRUE quality=100 " +
                       " ! fakesink sync=false enable-last-sample=true name=sink";
 
-    // manual unref is a pain => using smart pointers for gstreamer stuff
-    std::shared_ptr<GstElement> pipeline(
-        gst_parse_launch( (const char *)m_line.mb_str(), NULL ), // value
-        []( GstElement *p ) // deleter lambda
-        {
-            gst_element_set_state( p, GST_STATE_NULL );
-            gst_object_unref( p );
-        }); // smart pointer end
+    guGstElementStatePtr pipeline_gp( gst_parse_launch( (const char *)m_line.mb_str(), NULL ) );
+    GstElement *pipeline = pipeline_gp.ptr;
 
-    if( pipeline.get() == NULL )
+    if( pipeline == NULL )
         return NULL;
 
     // smrt ptr
-    std::shared_ptr<GstElement> sink(
-        gst_bin_get_by_name( GST_BIN( pipeline.get() ), "sink" ),
-        gst_object_unref
-        );
+    guGstPtr<GstElement> sink_gp( gst_bin_get_by_name( GST_BIN( pipeline ), "sink" ) );
+    GstElement *sink = sink_gp.ptr;
 
-    if( sink.get() == NULL )
+    if( sink == NULL )
         return NULL;        
 
-    GstStateChangeReturn ret = gst_element_set_state( pipeline.get(), GST_STATE_PLAYING );
+    GstStateChangeReturn ret = gst_element_set_state( pipeline, GST_STATE_PLAYING );
     if( ret == GST_STATE_CHANGE_FAILURE )
         return NULL;
 
     // smrt ptr
-    std::shared_ptr<GstBus> bus(
-        gst_element_get_bus( pipeline.get() ),
-        gst_object_unref
-        );
+    guGstPtr<GstBus> bus_gp( gst_element_get_bus( pipeline ) );
+    GstBus *bus = bus_gp.ptr;
 
-    if( bus.get() == NULL )
+    if( bus == NULL )
         return NULL;
 
-    
-    // weak ref for msg smart ptr
+    // weak ref for scope-limited msg
     GstMessage * msg_wref;
     do
     {
-        // smrt ptr
-        std::shared_ptr<GstMessage> msg(
-            // no msg in 5 sec => we just fail
-            gst_bus_timed_pop( bus.get(), 5 * GST_SECOND ),
-            gst_message_unref
-            );
+        // no msg in 5 sec => we just fail
+        guGstMessagePtr msg_gp( gst_bus_timed_pop( bus, 5 * GST_SECOND ) );
+        GstMessage *msg = msg_gp.ptr;
 
-        if( msg.get() != NULL )
+        if( msg != NULL )
         {
-            guLogDebug( "guGStreamerTagInfo::GetImage message type <%s>", GST_MESSAGE_TYPE_NAME( msg.get() ) );
-            switch( GST_MESSAGE_TYPE( msg.get() ) )
+            guLogDebug( "guGStreamerTagInfo::GetImage message type <%s>", GST_MESSAGE_TYPE_NAME( msg ) );
+            switch( GST_MESSAGE_TYPE( msg ) )
             {
                 case GST_MESSAGE_STATE_CHANGED:
                     #ifdef GU_DEBUG
                     GstState old_state, new_state, pending_state;
-                    gst_message_parse_state_changed( msg.get(), &old_state, &new_state, &pending_state);
+                    gst_message_parse_state_changed( msg, &old_state, &new_state, &pending_state);
                     guLogDebug( "guGStreamerTagInfo::GetImage %s state change %s -> %s:\n",
-                        GST_OBJECT_NAME( GST_MESSAGE_SRC( msg.get() ) ),
+                        GST_OBJECT_NAME( GST_MESSAGE_SRC( msg ) ),
                         gst_element_state_get_name( old_state ),
-                        gst_element_state_get_name (new_state)
+                        gst_element_state_get_name( new_state )
                         );
                     #endif
                     break;
@@ -2685,16 +2670,16 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
                     msg = NULL;
                     break;
                 default:
-                    guLogDebug( "guGStreamerTagInfo::GetImage unknown message: %s", GST_MESSAGE_TYPE_NAME( msg.get() ) );
+                    guLogDebug( "guGStreamerTagInfo::GetImage unknown message: %s", GST_MESSAGE_TYPE_NAME( msg ) );
                     break;
             }
         }
-        msg_wref = msg.get();
+        msg_wref = msg;
     }
     while( msg_wref != NULL );
 
     GstSample * spl;
-    g_object_get( G_OBJECT( sink.get() ), "last-sample", &spl, NULL) ;
+    g_object_get( G_OBJECT( sink ), "last-sample", &spl, NULL) ;
     // unref:g_object_unref( spl )
 
     if( spl != NULL )
