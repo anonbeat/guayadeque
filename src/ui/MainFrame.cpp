@@ -4730,6 +4730,10 @@ void guMainFrame::OnLyricExecCommand( wxCommandEvent &event )
 
                 LyricSearchThread->FinishExecCommand( wxEmptyString );
             }
+            else
+            {
+                LyricSearchThread->SetNotificationPtr( LyricExecCommandTerminate->GetNotificationPtr() );
+            }
             LyricExecCommandTerminate->Redirect();
         }
     }

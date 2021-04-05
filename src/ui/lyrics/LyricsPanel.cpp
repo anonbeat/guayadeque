@@ -70,96 +70,96 @@ guLyricsPanel::guLyricsPanel( wxWindow * parent, guDbLibrary * db, guLyricSearch
     m_LyricAlign = LyricAligns[ Config->ReadNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, 1, CONFIG_PATH_LYRICS ) ];
     wxFont CurrentFont;
     CurrentFont.SetNativeFontInfo( Config->ReadStr( CONFIG_KEY_LYRICS_FONT, wxEmptyString, CONFIG_PATH_LYRICS ) );
-	if( !CurrentFont.IsOk() )
+    if( !CurrentFont.IsOk() )
         CurrentFont = GetFont();
 
-	wxBoxSizer * MainSizer;
-	MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MainSizer;
+    MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_TitleSizer = new wxBoxSizer( wxVERTICAL );
+    m_TitleSizer = new wxBoxSizer( wxVERTICAL );
 
-	wxBoxSizer * EditorSizer;
-	EditorSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * EditorSizer;
+    EditorSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
-	m_UpdateCheckBox->SetToolTip( _( "Search the lyrics for the current playing track" ) );
-	m_UpdateCheckBox->SetValue( m_UpdateEnabled );
+    m_UpdateCheckBox = new wxCheckBox( this, wxID_ANY, _( "Follow player" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_UpdateCheckBox->SetToolTip( _( "Search the lyrics for the current playing track" ) );
+    m_UpdateCheckBox->SetValue( m_UpdateEnabled );
 
-	EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
+    EditorSizer->Add( m_UpdateCheckBox, 0, wxEXPAND|wxTOP|wxRIGHT|wxLEFT, 5 );
 
-	m_SetupButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_SetupButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_engine ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_SetupButton->SetToolTip( _( "Configure lyrics preferences" ) );
-	EditorSizer->Add( m_SetupButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+    EditorSizer->Add( m_SetupButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_ReloadButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search_again ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
     m_ReloadButton->SetToolTip( _( "Search for lyrics" ) );
     m_ReloadButton->Enable( false );
-	EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+    EditorSizer->Add( m_ReloadButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_EditButton->SetToolTip( _( "Edit the lyrics" ) );
-	m_EditButton->Enable( false );
-	EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+    m_EditButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_edit ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_EditButton->SetToolTip( _( "Edit the lyrics" ) );
+    m_EditButton->Enable( false );
+    EditorSizer->Add( m_EditButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_SaveButton->Enable( false );
-	m_SaveButton->SetToolTip( _( "Save the lyrics" ) );
-	EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
+    m_SaveButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_doc_save ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_SaveButton->Enable( false );
+    m_SaveButton->SetToolTip( _( "Save the lyrics" ) );
+    EditorSizer->Add( m_SaveButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP, 5 );
 
-	m_WebSearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_WebSearchButton->Enable( false );
-	m_WebSearchButton->SetToolTip( _( "Search the lyrics on the web" ) );
-	EditorSizer->Add( m_WebSearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    m_WebSearchButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_search ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_WebSearchButton->Enable( false );
+    m_WebSearchButton->SetToolTip( _( "Search the lyrics on the web" ) );
+    EditorSizer->Add( m_WebSearchButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	wxStaticText * ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	ArtistStaticText->Wrap( -1 );
+    wxStaticText * ArtistStaticText = new wxStaticText( this, wxID_ANY, _( "Artist:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    ArtistStaticText->Wrap( -1 );
 
-	EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+    EditorSizer->Add( ArtistStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
-	m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
+    m_ArtistTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_ArtistTextCtrl->Enable( !m_UpdateEnabled );
 
-	EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    EditorSizer->Add( m_ArtistTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	wxStaticText * TrackStaticText = new wxStaticText( this, wxID_ANY, _( "Track:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	TrackStaticText->Wrap( -1 );
+    wxStaticText * TrackStaticText = new wxStaticText( this, wxID_ANY, _( "Track:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    TrackStaticText->Wrap( -1 );
 
-	EditorSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
+    EditorSizer->Add( TrackStaticText, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxLEFT, 5 );
 
-	m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_TrackTextCtrl->Enable( !m_UpdateEnabled );
+    m_TrackTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_TrackTextCtrl->Enable( !m_UpdateEnabled );
 
-	EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
+    EditorSizer->Add( m_TrackTextCtrl, 1, wxALIGN_CENTER_VERTICAL|wxTOP|wxRIGHT, 5 );
 
-	m_TitleSizer->Add( EditorSizer, 1, wxEXPAND, 5 );
+    m_TitleSizer->Add( EditorSizer, 1, wxEXPAND, 5 );
 
-	wxStaticLine * TopLine;
-	TopLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
-	m_TitleSizer->Add( TopLine, 0, wxEXPAND|wxALL, 5 );
+    wxStaticLine * TopLine;
+    TopLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
+    m_TitleSizer->Add( TopLine, 0, wxEXPAND|wxALL, 5 );
 
     m_LyricTitle = new wxStaticText( this, wxID_ANY, wxT( "/" ) );
 
-	m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
+    m_TitleSizer->Add( m_LyricTitle, 0, wxALL|m_LyricAlign, 5 );
 
-	MainSizer->Add( m_TitleSizer, 0, wxEXPAND, 5 );
+    MainSizer->Add( m_TitleSizer, 0, wxEXPAND, 5 );
 
-	//m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
-	m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_LyricAlign|wxTE_WORDWRAP|wxTE_MULTILINE|wxNO_BORDER );
-	m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
-	m_EditModeBGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
+    //m_LyricText = new wxHtmlWindow( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO );
+    m_LyricText = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, m_LyricAlign|wxTE_WORDWRAP|wxTE_MULTILINE|wxNO_BORDER );
+    m_EditModeFGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT );
+    m_EditModeBGColor = wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOW );
 
-	m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
-	m_LyricText->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
-	m_LyricText->SetFont( CurrentFont );
+    m_LyricText->SetBackgroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWFRAME ) );
+    m_LyricText->SetForegroundColour( wxSystemSettings::GetColour( wxSYS_COLOUR_WINDOWTEXT ) );
+    m_LyricText->SetFont( CurrentFont );
 
     CurrentFont.SetPointSize( CurrentFont.GetPointSize() + 2 );
     CurrentFont.SetWeight( wxFONTWEIGHT_BOLD );
-	m_LyricTitle->SetFont( CurrentFont );
+    m_LyricTitle->SetFont( CurrentFont );
 
-	MainSizer->Add( m_LyricText, 1, wxALL|wxEXPAND, 5 );
+    MainSizer->Add( m_LyricText, 1, wxALL|wxEXPAND, 5 );
 
-	this->SetSizer( MainSizer );
-	this->Layout();
+    this->SetSizer( MainSizer );
+    this->Layout();
 
     SetDropTarget( new guLyricsPanelDropTarget( this ) );
     m_LyricText->SetDropTarget( new guLyricsPanelDropTarget( this ) );
@@ -1532,6 +1532,7 @@ guLyricSearchThread::guLyricSearchThread( guLyricSearchContext * context, const 
     m_LyricText = lyrictext;
     m_ForceSaveProcess = forcesaveprocess;
     m_CommandIsExecuting = false;
+    m_NotifyHere = NULL;
 
     if( Create() == wxTHREAD_NO_ERROR )
     {
@@ -1543,10 +1544,13 @@ guLyricSearchThread::guLyricSearchThread( guLyricSearchContext * context, const 
 // -------------------------------------------------------------------------------- //
 guLyricSearchThread::~guLyricSearchThread()
 {
+    guLogDebug( "guLyricSearchThread::~guLyricSearchThread" );
     if( !TestDestroy() )
     {
         m_LyricSearchContext->m_LyricSearchEngine->SearchFinished( this );
     }
+    if( m_NotifyHere != NULL )
+        *m_NotifyHere = false;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2032,15 +2036,16 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
 guLyricExecCommandTerminate::guLyricExecCommandTerminate( guLyricSearchThread * searchthread, const bool issavecommand ) :
     wxProcess( wxPROCESS_REDIRECT )
 {
-    //guLogMessage( wxT( "guLyricExecCommandTerminate::guLyricExecCommandTerminate" ) );
+    guLogMessage( wxT( "guLyricExecCommandTerminate::guLyricExecCommandTerminate" ) );
     m_LyricSearchThread = searchthread;
     m_IsSaveCommand = issavecommand;
+    m_ThreadActive = true;
 }
 
 // -------------------------------------------------------------------------------- //
 void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
 {
-	guLogMessage( wxT( "Command with pid '%d' finished with status '%d'" ), pid, status );
+    guLogMessage( wxT( "Command with pid '%d' finished with status '%d'" ), pid, status );
 
     wxString CommandLyric;
     if( !m_IsSaveCommand && IsInputAvailable() )
@@ -2048,10 +2053,12 @@ void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
         wxInputStream * CmdOutStream = GetInputStream();
         if( CmdOutStream )
         {
+            guLogDebug( "guLyricExecCommandTerminate::OnTerminate<%i> while not eof start", pid );
             wxTextInputStream TextStream( * CmdOutStream );
             while( !CmdOutStream->Eof() )
             {
                 wxString Line = TextStream.ReadLine() + wxT( "\n" );
+                guLogDebug( "guLyricExecCommandTerminate::OnTerminate<%i> line: %s", pid, Line );
                 CommandLyric += Line;
             }
         }
@@ -2060,10 +2067,14 @@ void guLyricExecCommandTerminate::OnTerminate( int pid, int status )
             guLogMessage( wxT( "Error getting the exec command input stream" ) );
         }
     }
+    else
+        guLogDebug( "guLyricExecCommandTerminate::OnTerminate<%i> skip it", pid );
 
-    m_LyricSearchThread->FinishExecCommand( CommandLyric );
+    guLogDebug( "guLyricExecCommandTerminate::OnTerminate<%i> thread active = %i", pid, m_ThreadActive );
+    if( m_ThreadActive )
+        m_LyricSearchThread->FinishExecCommand( CommandLyric );
 
-	delete this;
+    delete this;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2080,59 +2091,59 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
     m_ExcludeItems = lyricsource->ExcludeItems();
     m_NotFoundItems = lyricsource->NotFoundItems();
 
-	SetSizeHints( wxDefaultSize, wxDefaultSize );
+    SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	MainSizer->Add( 0, 10, 0, wxEXPAND, 5 );
+    MainSizer->Add( 0, 10, 0, wxEXPAND, 5 );
 
     wxFlexGridSizer * OptionsSizer = new wxFlexGridSizer( 2, 0, 0 );
-	OptionsSizer->AddGrowableCol( 1 );
-//	OptionsSizer->AddGrowableRow( 2 );
-//	OptionsSizer->AddGrowableRow( 3 );
-//	OptionsSizer->AddGrowableRow( 4 );
-//	OptionsSizer->AddGrowableRow( 5 );
-	OptionsSizer->SetFlexibleDirection( wxBOTH );
-	OptionsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    OptionsSizer->AddGrowableCol( 1 );
+//    OptionsSizer->AddGrowableRow( 2 );
+//    OptionsSizer->AddGrowableRow( 3 );
+//    OptionsSizer->AddGrowableRow( 4 );
+//    OptionsSizer->AddGrowableRow( 5 );
+    OptionsSizer->SetFlexibleDirection( wxBOTH );
+    OptionsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	wxStaticText * NameLabel = new wxStaticText( this, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	NameLabel->Wrap( -1 );
-	OptionsSizer->Add( NameLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
+    wxStaticText * NameLabel = new wxStaticText( this, wxID_ANY, _( "Name:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    NameLabel->Wrap( -1 );
+    OptionsSizer->Add( NameLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL|wxALIGN_RIGHT, 5 );
 
-	wxBoxSizer * NameSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * NameSizer = new wxBoxSizer( wxHORIZONTAL );
 
-	m_NameTextCtrl = new wxTextCtrl( this, wxID_ANY, lyricsource->Name(), wxDefaultPosition, wxDefaultSize, 0 );
-	NameSizer->Add( m_NameTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_NameTextCtrl = new wxTextCtrl( this, wxID_ANY, lyricsource->Name(), wxDefaultPosition, wxDefaultSize, 0 );
+    NameSizer->Add( m_NameTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	wxStaticText * TypeLabel = new wxStaticText( this, wxID_ANY, _( "Type:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	TypeLabel->Wrap( -1 );
-	NameSizer->Add( TypeLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
+    wxStaticText * TypeLabel = new wxStaticText( this, wxID_ANY, _( "Type:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    TypeLabel->Wrap( -1 );
+    NameSizer->Add( TypeLabel, 0, wxALL|wxALIGN_CENTER_VERTICAL, 5 );
 
-	wxArrayString LyricSourceTypes;
-	LyricSourceTypes.Add( _( "Embedded" ) );
-	LyricSourceTypes.Add( _( "File" ) );
-	LyricSourceTypes.Add( _( "Command" ) );
-	if( !istarget )
+    wxArrayString LyricSourceTypes;
+    LyricSourceTypes.Add( _( "Embedded" ) );
+    LyricSourceTypes.Add( _( "File" ) );
+    LyricSourceTypes.Add( _( "Command" ) );
+    if( !istarget )
         LyricSourceTypes.Add( _( "Download" ) );
-	m_TypeChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricSourceTypes, 0 );
-	m_TypeChoice->SetSelection( lyricsource->Type() );
-	NameSizer->Add( m_TypeChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_TypeChoice = new wxChoice( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, LyricSourceTypes, 0 );
+    m_TypeChoice->SetSelection( lyricsource->Type() );
+    NameSizer->Add( m_TypeChoice, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	OptionsSizer->Add( NameSizer, 1, wxEXPAND, 5 );
+    OptionsSizer->Add( NameSizer, 1, wxEXPAND, 5 );
 
-	wxStaticText * SourceLabel = new wxStaticText( this, wxID_ANY, _( "Source:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	SourceLabel->Wrap( -1 );
-	OptionsSizer->Add( SourceLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+    wxStaticText * SourceLabel = new wxStaticText( this, wxID_ANY, _( "Source:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    SourceLabel->Wrap( -1 );
+    OptionsSizer->Add( SourceLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_SourceTextCtrl = new wxTextCtrl( this, wxID_ANY, lyricsource->Source(), wxDefaultPosition, wxDefaultSize, 0 );
-	m_SourceTextCtrl->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
-	OptionsSizer->Add( m_SourceTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_SourceTextCtrl = new wxTextCtrl( this, wxID_ANY, lyricsource->Source(), wxDefaultPosition, wxDefaultSize, 0 );
+    m_SourceTextCtrl->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
+    OptionsSizer->Add( m_SourceTextCtrl, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	wxStaticText * ReplaceLabel = new wxStaticText( this, wxID_ANY, _( "Replace:" ), wxDefaultPosition, wxDefaultSize, 0 );
-	ReplaceLabel->Wrap( -1 );
-	OptionsSizer->Add( ReplaceLabel, 0, wxALL|wxALIGN_RIGHT, 5 );
+    wxStaticText * ReplaceLabel = new wxStaticText( this, wxID_ANY, _( "Replace:" ), wxDefaultPosition, wxDefaultSize, 0 );
+    ReplaceLabel->Wrap( -1 );
+    OptionsSizer->Add( ReplaceLabel, 0, wxALL|wxALIGN_RIGHT, 5 );
 
-	wxBoxSizer * ReplaceListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
+    wxBoxSizer * ReplaceListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
     wxArrayString ListBoxOptions;
     int Index;
@@ -2142,24 +2153,24 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
         guLyricSourceReplace * ReplaceItem = &m_ReplaceItems[ Index ];
         ListBoxOptions.Add( ReplaceItem->ToStr() );
     }
-	m_ReplaceListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( -1, 70 ), 0, NULL, wxLB_SINGLE );
-	m_ReplaceListBox->Append( ListBoxOptions );
-	m_ReplaceListBox->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
-	ReplaceListBoxSizer->Add( m_ReplaceListBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_ReplaceListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxSize( -1, 70 ), 0, NULL, wxLB_SINGLE );
+    m_ReplaceListBox->Append( ListBoxOptions );
+    m_ReplaceListBox->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
+    ReplaceListBoxSizer->Add( m_ReplaceListBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	wxBoxSizer * ReplaceBtnSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * ReplaceBtnSizer = new wxBoxSizer( wxVERTICAL );
 
-	m_ReplaceAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_ReplaceAdd->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
-	ReplaceBtnSizer->Add( m_ReplaceAdd, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_ReplaceAdd = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_ReplaceAdd->Enable( lyricsource->Type() != guLYRIC_SOURCE_TYPE_EMBEDDED );
+    ReplaceBtnSizer->Add( m_ReplaceAdd, 0, wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	m_ReplaceDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
-	m_ReplaceDel->Enable( false );
-	ReplaceBtnSizer->Add( m_ReplaceDel, 0, wxBOTTOM|wxRIGHT, 5 );
+    m_ReplaceDel = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+    m_ReplaceDel->Enable( false );
+    ReplaceBtnSizer->Add( m_ReplaceDel, 0, wxBOTTOM|wxRIGHT, 5 );
 
-	ReplaceListBoxSizer->Add( ReplaceBtnSizer, 0, wxEXPAND, 5 );
+    ReplaceListBoxSizer->Add( ReplaceBtnSizer, 0, wxEXPAND, 5 );
 
-	OptionsSizer->Add( ReplaceListBoxSizer, 1, wxEXPAND, 5 );
+    OptionsSizer->Add( ReplaceListBoxSizer, 1, wxEXPAND, 5 );
 
     if( !istarget )
     {
@@ -2248,31 +2259,31 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
         OptionsSizer->Add( NotFoundListBoxSizer, 1, wxEXPAND, 5 );
     }
 
-	MainSizer->Add( OptionsSizer, 1, wxEXPAND, 5 );
+    MainSizer->Add( OptionsSizer, 1, wxEXPAND, 5 );
 
-	wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
-	wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( ButtonsSizerOK );
-	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( ButtonsSizerCancel );
-	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
-	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
-	ButtonsSizer->Realize();
-	MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
+    wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
+    wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
+    ButtonsSizer->AddButton( ButtonsSizerOK );
+    wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+    ButtonsSizer->AddButton( ButtonsSizerCancel );
+    ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+    ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
+    ButtonsSizer->Realize();
+    MainSizer->Add( ButtonsSizer, 0, wxEXPAND|wxALL, 5 );
 
-	SetSizer( MainSizer );
-	Layout();
+    SetSizer( MainSizer );
+    Layout();
 
-	ButtonsSizerOK->SetDefault();
+    ButtonsSizerOK->SetDefault();
 
-	// Bind Events
+    // Bind Events
     m_TypeChoice->Bind( wxEVT_CHOICE, &guLyricSourceEditor::OnTypeChanged, this );
     m_ReplaceListBox->Bind( wxEVT_LISTBOX, &guLyricSourceEditor::OnReplaceSelected, this );
     m_ReplaceListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnReplaceDClicked, this );
     m_ReplaceAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnReplaceAddClicked, this );
     m_ReplaceDel->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnReplaceDelClicked, this );
-	if( !istarget )
-	{
+    if( !istarget )
+    {
         m_ExtractListBox->Bind( wxEVT_LISTBOX, &guLyricSourceEditor::OnExtractSelected, this );
         m_ExtractListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnExtractDClicked, this );
         m_ExtractAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnExtractAddClicked, this );
@@ -2285,9 +2296,9 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
         m_NotFoundListBox->Bind( wxEVT_LISTBOX_DCLICK, &guLyricSourceEditor::OnNotFoundDClicked, this );
         m_NotFoundAdd->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnNotFoundAddClicked, this );
         m_NotFoundDel->Bind( wxEVT_BUTTON, &guLyricSourceEditor::OnNotFoundDelClicked, this );
-	}
+    }
 
-	m_NameTextCtrl->SetFocus();
+    m_NameTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2319,9 +2330,9 @@ guLyricSourceEditor::~guLyricSourceEditor()
 void guLyricSourceEditor::OnTypeChanged( wxCommandEvent &event )
 {
     bool Enabled = ( m_TypeChoice->GetSelection() != guLYRIC_SOURCE_TYPE_EMBEDDED );
-	m_SourceTextCtrl->Enable( Enabled );
-	m_ReplaceListBox->Enable( Enabled );
-	m_ReplaceAdd->Enable( Enabled );
+    m_SourceTextCtrl->Enable( Enabled );
+    m_ReplaceListBox->Enable( Enabled );
+    m_ReplaceAdd->Enable( Enabled );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -2577,53 +2588,53 @@ guLyricSourceOptionEditor::guLyricSourceOptionEditor( wxWindow * parent, guLyric
 
     Create( parent, wxID_ANY, Title, wxDefaultPosition, wxSize( 400, 150 ), wxDEFAULT_DIALOG_STYLE );
 
-	SetSizeHints( wxDefaultSize, wxDefaultSize );
+    SetSizeHints( wxDefaultSize, wxDefaultSize );
 
-	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
+    wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
-	//MainSizer->Add( 0, 10, 1, wxEXPAND, 5 );
+    //MainSizer->Add( 0, 10, 1, wxEXPAND, 5 );
 
-	wxFlexGridSizer * OptionsSizer;
+    wxFlexGridSizer * OptionsSizer;
     OptionsSizer = new wxFlexGridSizer( 2, 0, 0 );
-	OptionsSizer->AddGrowableCol( 1 );
-	OptionsSizer->SetFlexibleDirection( wxBOTH );
-	OptionsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
+    OptionsSizer->AddGrowableCol( 1 );
+    OptionsSizer->SetFlexibleDirection( wxBOTH );
+    OptionsSizer->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );
 
-	m_SearchLabel = new wxStaticText( this, wxID_ANY, Label1, wxDefaultPosition, wxDefaultSize, 0 );
-	m_SearchLabel->Wrap( -1 );
-	OptionsSizer->Add( m_SearchLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+    m_SearchLabel = new wxStaticText( this, wxID_ANY, Label1, wxDefaultPosition, wxDefaultSize, 0 );
+    m_SearchLabel->Wrap( -1 );
+    OptionsSizer->Add( m_SearchLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_SearchTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_SearchTextCtrl->SetValue( sourceoption->Text1() );
-	OptionsSizer->Add( m_SearchTextCtrl, 1, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
+    m_SearchTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_SearchTextCtrl->SetValue( sourceoption->Text1() );
+    OptionsSizer->Add( m_SearchTextCtrl, 1, wxTOP|wxBOTTOM|wxRIGHT|wxEXPAND, 5 );
 
-	m_ReplaceLabel = new wxStaticText( this, wxID_ANY, Label2, wxDefaultPosition, wxDefaultSize, 0 );
-	m_ReplaceLabel->Wrap( -1 );
-	OptionsSizer->Add( m_ReplaceLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
+    m_ReplaceLabel = new wxStaticText( this, wxID_ANY, Label2, wxDefaultPosition, wxDefaultSize, 0 );
+    m_ReplaceLabel->Wrap( -1 );
+    OptionsSizer->Add( m_ReplaceLabel, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5 );
 
-	m_ReplaceTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
-	m_ReplaceTextCtrl->SetValue( sourceoption->Text2() );
-	m_ReplaceTextCtrl->Enable( optiontype != guLYRIC_SOURCE_OPTION_TYPE_NOTFOUND );
-	OptionsSizer->Add( m_ReplaceTextCtrl, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
+    m_ReplaceTextCtrl = new wxTextCtrl( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
+    m_ReplaceTextCtrl->SetValue( sourceoption->Text2() );
+    m_ReplaceTextCtrl->Enable( optiontype != guLYRIC_SOURCE_OPTION_TYPE_NOTFOUND );
+    OptionsSizer->Add( m_ReplaceTextCtrl, 0, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
     MainSizer->Add( OptionsSizer, 1, wxEXPAND, 5 );
 
-	wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
-	wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
-	ButtonsSizer->AddButton( ButtonsSizerOK );
-	wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
-	ButtonsSizer->AddButton( ButtonsSizerCancel );
-	ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
-	ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
-	ButtonsSizer->Realize();
+    wxStdDialogButtonSizer * ButtonsSizer = new wxStdDialogButtonSizer();
+    wxButton * ButtonsSizerOK = new wxButton( this, wxID_OK );
+    ButtonsSizer->AddButton( ButtonsSizerOK );
+    wxButton * ButtonsSizerCancel = new wxButton( this, wxID_CANCEL );
+    ButtonsSizer->AddButton( ButtonsSizerCancel );
+    ButtonsSizer->SetAffirmativeButton( ButtonsSizerOK );
+    ButtonsSizer->SetCancelButton( ButtonsSizerCancel );
+    ButtonsSizer->Realize();
     MainSizer->Add( ButtonsSizer, 1, wxEXPAND|wxALL, 5 );
 
-	SetSizer( MainSizer );
-	Layout();
+    SetSizer( MainSizer );
+    Layout();
 
-	ButtonsSizerOK->SetDefault();
+    ButtonsSizerOK->SetDefault();
 
-	m_SearchTextCtrl->SetFocus();
+    m_SearchTextCtrl->SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
