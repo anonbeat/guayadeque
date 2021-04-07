@@ -134,6 +134,7 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             GstState st, ps;
             int gsr = gst_element_get_state( pb, &st, &ps, 5*GST_SECOND);
             guLogDebug("GST_MESSAGE_EOS gst_element_get_state=%i state=%i pending=%i", gsr, st, ps);
+            #endif
 
             guMediaEvent event( guEVT_MEDIA_FINISHED );
             event.SetExtraLong( ctrl->GetId() );
@@ -142,7 +143,6 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
             ctrl->SetState( guFADERPLAYBIN_STATE_PENDING_REMOVE );
 
             ctrl->GetPlayer()->ScheduleCleanUp();
-            #endif
             guLogDebug( wxT( "***** EOS received..." ) );
           break;
         }
