@@ -667,7 +667,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
         if( !Config )
             Config = ( guConfig * ) guConfig::Get();
 
-        m_ForceGapless = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
+        m_ForceGapless = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
         m_FadeOutTime = Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEOUT_TIME, 50, CONFIG_PATH_CROSSFADER ) * 100;
 
         MediaCtrlNeedUpdated = true;

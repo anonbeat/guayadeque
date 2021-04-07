@@ -132,7 +132,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     if( Init() )
     {
         guConfig * Config = guConfig::Get();
-        m_ForceGapless = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
+        m_ForceGapless = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
         UpdatedConfig();
     }
 }
