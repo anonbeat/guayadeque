@@ -18,6 +18,16 @@ bool guGstPipelineBuilder::IsValidElement( GstElement * element )
 }
 
 // -------------------------------------------------------------------------------- //
+guGstPipelineBuilder::guGstPipelineBuilder( GstElement * the_bin )
+{
+    guLogDebug( "guGstPipelineBuilder::guGstPipelineBuilder existing bin: %s", GST_ELEMENT_NAME(the_bin) );    
+    m_CanPlay = false;
+    m_Last = NULL;
+    m_Cleanup = true;
+    m_Bin = the_bin;
+}
+
+// -------------------------------------------------------------------------------- //
 guGstPipelineBuilder::guGstPipelineBuilder( const char * bin_name, GstElement ** element_ref )
 {
     
@@ -47,9 +57,9 @@ guGstPipelineBuilder::~guGstPipelineBuilder()
     if( !m_Cleanup )
         return;
 
-    while( !m_ElementStack.empty() )
+    while( !m_UnrefElementStack.empty() )
     {
-        guGstPipelineElement pe = m_ElementStack.top();
+        guGstPipelineElementPack pe = m_UnrefElementStack.top();
         if( IsValidElement( pe.element ) )
         {
             guLogDebug( "guGstPipelineBuilder::~guGstPipelineBuilder unref: %p", pe.element );
@@ -60,7 +70,7 @@ guGstPipelineBuilder::~guGstPipelineBuilder()
             guLogDebug( "guGstPipelineBuilder::~guGstPipelineBuilder nullptr: %p", pe.element_ref );
             *pe.element_ref = NULL;
         }
-        m_ElementStack.pop();
+        m_UnrefElementStack.pop();
     }
 }
 
@@ -68,10 +78,11 @@ guGstPipelineBuilder::~guGstPipelineBuilder()
 void guGstPipelineBuilder::PushElement( GstElement * element, GstElement ** element_ref )
 {
     guLogDebug( "guGstPipelineBuilder::PushElement %p (%p)", element, element_ref );
-    guGstPipelineElement e;
+    guGstPipelineElementPack e;
     e.element = element;
     e.element_ref = element_ref;
-    m_ElementStack.push( e );
+    m_UnrefElementStack.push( e );
+    m_ElementChain.push_back( element );
 }
 
 bool guGstPipelineBuilder::Link( GstElement * element )
@@ -105,4 +116,4 @@ bool guGstPipelineBuilder::Link( GstElement * element )
 }
 
 
-}
+} // namespace Guayadeque

@@ -132,7 +132,7 @@ guMediaCtrl::guMediaCtrl( guPlayerPanel * playerpanel )
     if( Init() )
     {
         guConfig * Config = guConfig::Get();
-        m_ForceGapless = Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER );
+        m_ForceGapless = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
         UpdatedConfig();
     }
 }
@@ -776,8 +776,8 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInVolStart        = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, 80, CONFIG_PATH_CROSSFADER ) ) / 100.0;
     m_FadeInVolTriger       = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_TRIGER, 50, CONFIG_PATH_CROSSFADER ) ) / 100.0;
     m_BufferSize            = Config->ReadNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, 64, CONFIG_PATH_GENERAL );
-    m_EnableEq              = Config->ReadNum( CONFIG_KEY_GENERAL_EQ_ENABLED, 1, CONFIG_PATH_GENERAL );
-    m_EnableVolCtls         = Config->ReadNum( CONFIG_KEY_GENERAL_VOLUME_ENABLED, 1, CONFIG_PATH_GENERAL );
+    m_EnableEq              = Config->ReadBool( CONFIG_KEY_GENERAL_EQ_ENABLED, true, CONFIG_PATH_GENERAL );
+    m_EnableVolCtls         = Config->ReadBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, true, CONFIG_PATH_GENERAL );
     m_ReplayGainMode        = Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE, 0, CONFIG_PATH_GENERAL );
     m_ReplayGainPreAmp      = double( Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, 6, CONFIG_PATH_GENERAL ) );
     m_OutputDevice          = Config->ReadNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, guOUTPUT_DEVICE_AUTOMATIC, CONFIG_PATH_PLAYBACK );

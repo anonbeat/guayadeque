@@ -118,7 +118,7 @@ class guMediaCtrl : public wxEvtHandler
     bool            IsRecording( void ) { return m_IsRecording; }
 
     bool            ForceGapless( void ) { return m_ForceGapless; }
-    void            ForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; }
+    void            ForceGapless( const bool forcegapless ) { m_ForceGapless = m_EnableVolCtls ? forcegapless : true; }
 
     double          GetVolume( void ) { return m_Volume; }
     bool            SetVolume( double volume );
