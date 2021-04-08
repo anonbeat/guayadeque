@@ -215,6 +215,10 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         m_ForceGaplessButton->SetToolTip( m_ForceGapless ? _( "Enable crossfading" ) : _( "Disable crossfading" ) );
         PlayerBtnSizer->Add( m_ForceGaplessButton, 0, wxALIGN_CENTER_VERTICAL|wxTOP|wxBOTTOM|wxLEFT|wxRIGHT, guPLAYER_ICONS_SEPARATOR );
     }
+    else
+    {
+        m_ForceGaplessButton = NULL;
+    }
 
     PlayerBtnSizer->Add( guPLAYER_ICONS_GROUPSEPARATOR, 0, 0, wxEXPAND, 5 );
 
