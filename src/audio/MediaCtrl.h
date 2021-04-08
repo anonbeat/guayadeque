@@ -72,7 +72,10 @@ class guMediaCtrl : public wxEvtHandler
 
     int                     m_BufferSize;
 
-    bool                    m_ReplayGainMode;
+    bool                    m_EnableEq;
+    bool                    m_EnableVolCtls;
+
+    long                    m_ReplayGainMode;
     double                  m_ReplayGainPreAmp;
     //double                  m_ReplayGainFallback;
 

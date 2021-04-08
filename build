@@ -1,3 +1,8 @@
+#!/bin/bash
+
+# avoid full rebuild if script is runs from symlinked location
+cd $(readlink -f $(dirname $0))
+
 ./buildt
 rm CMakeCache.txt
 cmake ${1} . \

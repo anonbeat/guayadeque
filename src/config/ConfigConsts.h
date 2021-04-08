@@ -121,6 +121,8 @@ namespace Guayadeque {
 #define CONFIG_KEY_GENERAL_SHOW_CLOSE_BUTTON             "ShowPaneCloseButton"
 #define CONFIG_KEY_GENERAL_SHOW_CLOSE_CONFIRM            "ShowCloseConfirm"
 #define CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS            "ShowNotifications"
+#define CONFIG_KEY_GENERAL_EQ_ENABLED                    "EqualizerEnabled"
+#define CONFIG_KEY_GENERAL_VOLUME_ENABLED                "VolumeColtrolsEnabled"
 #define CONFIG_KEY_GENERAL_SHOW_REV_TIME                 "ShowRevTime"
 #define CONFIG_KEY_GENERAL_SHOW_SPLASH_SCREEN            "ShowSplashScreen"
 #define CONFIG_KEY_GENERAL_SHOW_TASK_BAR_ICON            "ShowTaskBarIcon"

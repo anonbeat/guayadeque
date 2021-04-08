@@ -344,6 +344,7 @@ class guLyricSearchThread : public wxThread
     bool                        m_ForceSaveProcess;
     bool                        m_CommandIsExecuting;
     guLyricSearchContext *      m_LyricSearchContext;
+    bool *                      m_NotifyHere;
 
 
     void                        LyricFile( guLyricSource &lyricsource );
@@ -372,6 +373,7 @@ class guLyricSearchThread : public wxThread
     guLyricSearchContext *      LyricSearchContext( void ) { return m_LyricSearchContext; }
 
     void                        FinishExecCommand( const wxString &lyrictext );
+    void                        SetNotificationPtr(bool * ptr) { m_NotifyHere = ptr; }
 
     friend class guLyricSearchEngine;
 };
@@ -383,9 +385,13 @@ class guLyricExecCommandTerminate : public wxProcess
   protected :
     guLyricSearchThread *   m_LyricSearchThread;
     bool                    m_IsSaveCommand;
+    bool                    m_ThreadActive;
 
   public :
 	guLyricExecCommandTerminate( guLyricSearchThread * searchthread, const bool issavecommand = false );
+    ~guLyricExecCommandTerminate() { guLogDebug("guLyricExecCommandTerminate::~guLyricExecCommandTerminate"); }
+
+    bool * GetNotificationPtr() { return &m_ThreadActive; }
 
 	virtual void OnTerminate( int pid, int status );
 

@@ -22,6 +22,7 @@
 #include "TagInfo.h"
 #include "Utils.h"
 
+#include "GstTypes.h"
 #include "GstTypeFinder.h"
 #include "MainFrame.h"
 #include "TrackEdit.h"
@@ -36,8 +37,6 @@
 #include <id3v1tag.h>
 
 #include <gst/pbutils/pbutils.h>
-
-#include <memory>
 
 namespace Guayadeque {
 
@@ -2419,7 +2418,7 @@ bool guASFTagInfo::SetLyrics( const wxString &lyrics )
 // -------------------------------------------------------------------------------- //
 guGStreamerTagInfo::guGStreamerTagInfo( const wxString &filename ) : guTagInfo( filename )
 {
-    guGstLogDebug("guGStreamerTagInfo::guGStreamerTagInfo");
+    guLogDebug("guGStreamerTagInfo::guGStreamerTagInfo");
     if( m_TagFile && !m_TagFile->isNull() )
         ReadGStreamerTags( m_TagFile->file()->name() );
 }
@@ -2427,7 +2426,7 @@ guGStreamerTagInfo::guGStreamerTagInfo( const wxString &filename ) : guTagInfo( 
 // -------------------------------------------------------------------------------- //
 guGStreamerTagInfo::~guGStreamerTagInfo()
 {
-    guGstLogDebug("guGStreamerTagInfo::~guGStreamerTagInfo");
+    guLogDebug("guGStreamerTagInfo::~guGStreamerTagInfo");
     if ( m_GstTagList != NULL )
         gst_tag_list_unref( (GstTagList *)m_GstTagList );
 }
@@ -2491,7 +2490,7 @@ GDateTime * guGStreamerTagInfo::GetGstTimeTag( const gchar * tag )
 // -------------------------------------------------------------------------------- //
 bool guGStreamerTagInfo::Read( void )
 {
-    guGstLogDebug("guGStreamerTagInfo::Read");
+    guLogDebug("guGStreamerTagInfo::Read");
 
     if( ReadGStreamerTags(m_FileName) )
     {
@@ -2526,7 +2525,7 @@ bool guGStreamerTagInfo::CanHandleImages( void )
 // -------------------------------------------------------------------------------- //
 bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
 {
-    guGstLogDebug("guGStreamerTagInfo::ReadGStreamerTags");
+    guLogDebug("guGStreamerTagInfo::ReadGStreamerTags");
 
     gchar *uri;
     if( gst_uri_is_valid ( filename.c_str() ) )
@@ -2561,7 +2560,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     }
 
     m_Length = gst_discoverer_info_get_duration( info ) / 1000000;
-    guGstLogDebug("guGStreamerTagInfo::ReadGStreamerTags length: %u", m_Length);
+    guLogDebug("guGStreamerTagInfo::ReadGStreamerTags length: %u", m_Length);
 
     GList *l, *slist = gst_discoverer_info_get_streams( info, g_type_from_name( "GstDiscovererAudioInfo" ) );
     for( l = slist; l != NULL; l = l->next ) 
@@ -2570,7 +2569,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
             m_Bitrate = gst_discoverer_audio_info_get_bitrate((const GstDiscovererAudioInfo*)l->data);
         if ( !m_Bitrate )
             m_Bitrate = gst_discoverer_audio_info_get_max_bitrate((const GstDiscovererAudioInfo*)l->data);
-        guGstLogDebug( "guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate );
+        guLogDebug( "guGStreamerTagInfo::ReadGStreamerTags bitrate: %u", m_Bitrate );
     }
     gst_discoverer_stream_info_list_free(slist);
 
@@ -2582,12 +2581,12 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     if ( m_GstTagList != NULL )
     {
         gchar * str_tags = gst_tag_list_to_string( m_GstTagList );
-        guGstLogDebug( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
+        guLogDebug( "guGStreamerTagInfo::ReadGStreamerTags got tags: '%s'", str_tags );
         g_free( str_tags );
         return !( gst_tag_list_is_empty( m_GstTagList ) );
     }
     else
-        guGstLogDebug( "guGStreamerTagInfo::ReadGStreamerTags tags not found" );
+        guLogDebug( "guGStreamerTagInfo::ReadGStreamerTags tags not found" );
 
     return false;
 }
@@ -2601,7 +2600,7 @@ wxString    guGStreamerTagInfo::GetLyrics( void )
 // -------------------------------------------------------------------------------- //
 wxImage *   guGStreamerTagInfo::GetImage( void )
 {
-    guGstLogDebug("guGStreamerTagInfo::GetImage");
+    guLogDebug("guGStreamerTagInfo::GetImage");
 
     if( m_GStreamerImage != NULL )
         return m_GStreamerImage;
@@ -2617,65 +2616,51 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
                       " ! jpegenc snapshot=TRUE quality=100 " +
                       " ! fakesink sync=false enable-last-sample=true name=sink";
 
-    // manual unref is a pain => using smart pointers for gstreamer stuff
-    std::shared_ptr<GstElement> pipeline(
-        gst_parse_launch( (const char *)m_line.mb_str(), NULL ), // value
-        []( GstElement *p ) // deleter lambda
-        {
-            gst_element_set_state( p, GST_STATE_NULL );
-            gst_object_unref( p );
-        }); // smart pointer end
+    guGstElementStatePtr pipeline_gp( gst_parse_launch( (const char *)m_line.mb_str(), NULL ) );
+    GstElement *pipeline = pipeline_gp.ptr;
 
-    if( pipeline.get() == NULL )
+    if( pipeline == NULL )
         return NULL;
 
     // smrt ptr
-    std::shared_ptr<GstElement> sink(
-        gst_bin_get_by_name( GST_BIN( pipeline.get() ), "sink" ),
-        gst_object_unref
-        );
+    guGstPtr<GstElement> sink_gp( gst_bin_get_by_name( GST_BIN( pipeline ), "sink" ) );
+    GstElement *sink = sink_gp.ptr;
 
-    if( sink.get() == NULL )
+    if( sink == NULL )
         return NULL;        
 
-    GstStateChangeReturn ret = gst_element_set_state( pipeline.get(), GST_STATE_PLAYING );
+    GstStateChangeReturn ret = gst_element_set_state( pipeline, GST_STATE_PLAYING );
     if( ret == GST_STATE_CHANGE_FAILURE )
         return NULL;
 
     // smrt ptr
-    std::shared_ptr<GstBus> bus(
-        gst_element_get_bus( pipeline.get() ),
-        gst_object_unref
-        );
+    guGstPtr<GstBus> bus_gp( gst_element_get_bus( pipeline ) );
+    GstBus *bus = bus_gp.ptr;
 
-    if( bus.get() == NULL )
+    if( bus == NULL )
         return NULL;
 
-    
-    // weak ref for msg smart ptr
+    // weak ref for scope-limited msg
     GstMessage * msg_wref;
     do
     {
-        // smrt ptr
-        std::shared_ptr<GstMessage> msg(
-            // no msg in 5 sec => we just fail
-            gst_bus_timed_pop( bus.get(), 5 * GST_SECOND ),
-            gst_message_unref
-            );
+        // no msg in 5 sec => we just fail
+        guGstMessagePtr msg_gp( gst_bus_timed_pop( bus, 5 * GST_SECOND ) );
+        GstMessage *msg = msg_gp.ptr;
 
-        if( msg.get() != NULL )
+        if( msg != NULL )
         {
-            guGstLogDebug( "guGStreamerTagInfo::GetImage message type <%s>", GST_MESSAGE_TYPE_NAME( msg.get() ) );
-            switch( GST_MESSAGE_TYPE( msg.get() ) )
+            guLogDebug( "guGStreamerTagInfo::GetImage message type <%s>", GST_MESSAGE_TYPE_NAME( msg ) );
+            switch( GST_MESSAGE_TYPE( msg ) )
             {
                 case GST_MESSAGE_STATE_CHANGED:
-                    #ifndef NDEBUG
+                    #ifdef GU_DEBUG
                     GstState old_state, new_state, pending_state;
-                    gst_message_parse_state_changed( msg.get(), &old_state, &new_state, &pending_state);
-                    guGstLogDebug( "guGStreamerTagInfo::GetImage %s state change %s -> %s:\n",
-                        GST_OBJECT_NAME( GST_MESSAGE_SRC( msg.get() ) ),
+                    gst_message_parse_state_changed( msg, &old_state, &new_state, &pending_state);
+                    guLogDebug( "guGStreamerTagInfo::GetImage %s state change %s -> %s:\n",
+                        GST_OBJECT_NAME( GST_MESSAGE_SRC( msg ) ),
                         gst_element_state_get_name( old_state ),
-                        gst_element_state_get_name (new_state)
+                        gst_element_state_get_name( new_state )
                         );
                     #endif
                     break;
@@ -2685,30 +2670,30 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
                     msg = NULL;
                     break;
                 default:
-                    guGstLogDebug( "guGStreamerTagInfo::GetImage unknown message: %s", GST_MESSAGE_TYPE_NAME( msg.get() ) );
+                    guLogDebug( "guGStreamerTagInfo::GetImage unknown message: %s", GST_MESSAGE_TYPE_NAME( msg ) );
                     break;
             }
         }
-        msg_wref = msg.get();
+        msg_wref = msg;
     }
     while( msg_wref != NULL );
 
     GstSample * spl;
-    g_object_get( G_OBJECT( sink.get() ), "last-sample", &spl, NULL) ;
+    g_object_get( G_OBJECT( sink ), "last-sample", &spl, NULL) ;
     // unref:g_object_unref( spl )
 
     if( spl != NULL )
     {
-        guGstLogDebug( "guGStreamerTagInfo::GetImage got the last sample" );
+        guLogDebug( "guGStreamerTagInfo::GetImage got the last sample" );
         GstBuffer * buf = gst_sample_get_buffer( spl );
         if( buf != NULL )
         {
-            guGstLogDebug( "guGStreamerTagInfo::GetImage buff size: %lu",
+            guLogDebug( "guGStreamerTagInfo::GetImage buff size: %lu",
                 gst_buffer_get_size( buf ) );
             GstMapInfo gmi;
             if( gst_buffer_map( buf, &gmi, GST_MAP_READ ) )
             {
-                guGstLogDebug( "guGStreamerTagInfo::GetImage map ok" );
+                guLogDebug( "guGStreamerTagInfo::GetImage map ok" );
                 wxMemoryInputStream mis( gmi.data, gmi.size );
                 m_GStreamerImage = new wxImage( mis, wxBITMAP_TYPE_JPEG );
             }
@@ -2717,7 +2702,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
             g_object_unref( spl );
     }
 
-    guGstLogDebug( "guGStreamerTagInfo::GetImage ret" );
+    guLogDebug( "guGStreamerTagInfo::GetImage ret" );
 
     if( m_GStreamerImage != NULL)
         return m_GStreamerImage;

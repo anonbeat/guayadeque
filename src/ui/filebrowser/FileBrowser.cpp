@@ -1665,9 +1665,13 @@ void guFileBrowser::OnDirItemChanged( wxTreeEvent &event )
         m_MediaViewer = FindMediaViewerByPath( m_MainFrame, CurPath );
         m_Db = m_MediaViewer ? m_MediaViewer->GetDb() : NULL;
         if( m_MediaViewer )
-            guLogMessage( wxT( "'%s' ==>> '%i' '%s'" ), CurPath.c_str(), m_MediaViewer != NULL, m_MediaViewer->GetName().c_str() );
+        {
+            guLogTrace( wxT( "'%s' ==>> '%i' '%s'" ), CurPath.c_str(), m_MediaViewer != NULL, m_MediaViewer->GetName().c_str() );
+        }
         else
-            guLogMessage( wxT( "'%s' ==>> '%i' ''" ), CurPath.c_str(), m_MediaViewer != NULL );
+        {
+            guLogTrace( wxT( "'%s' ==>> '%i' ''" ), CurPath.c_str(), m_MediaViewer != NULL );
+        }
     }
     else
     {

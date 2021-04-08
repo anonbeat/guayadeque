@@ -220,12 +220,12 @@ class guUpdatePlayerCoverThread;
 class guPlayerPanel : public wxPanel
 {
   private :
-	guRoundButton *             m_PrevTrackButton;
-	guRoundButton *             m_NextTrackButton;
-	guRoundButton *             m_PlayButton;
+    guRoundButton *             m_PrevTrackButton;
+    guRoundButton *             m_NextTrackButton;
+    guRoundButton *             m_PlayButton;
     guRoundButton *             m_StopButton;
-	guToggleRoundButton *       m_RecordButton;
-	//
+    guToggleRoundButton *       m_RecordButton;
+    //
     guRoundButton *             m_ForceGaplessButton;
     //guToggleRoundButton *       m_SmartPlayButton;
     //guToggleRoundButton *       m_RepeatPlayButton;
@@ -237,54 +237,56 @@ class guPlayerPanel : public wxPanel
     wxSlider *                  m_VolumeBar;
     //
     wxStaticBitmap *            m_PlayerCoverBitmap;
-	guAutoScrollText *          m_TitleLabel;
-	guAutoScrollText *          m_AlbumLabel;
-	guAutoScrollText *          m_ArtistLabel;
-	wxStaticText *              m_YearLabel;
+    guAutoScrollText *          m_TitleLabel;
+    guAutoScrollText *          m_AlbumLabel;
+    guAutoScrollText *          m_ArtistLabel;
+    wxStaticText *              m_YearLabel;
     guRating *                  m_Rating;
     guToggleRoundButton *       m_LoveBanButton;
     wxBoxSizer *                m_BitRateSizer;
-	wxStaticText *              m_BitRateLabel;
+    wxStaticText *              m_BitRateLabel;
     wxStaticText *              m_CodecLabel;
-	wxBoxSizer *                m_PosLabelSizer;
-	wxStaticText *              m_PositionLabel;
-	wxSlider *                  m_PlayerPositionSlider;
+    wxBoxSizer *                m_PosLabelSizer;
+    wxStaticText *              m_PositionLabel;
+    wxSlider *                  m_PlayerPositionSlider;
 
     guDbLibrary *               m_Db;
     guMainFrame *               m_MainFrame;
-	guPlayList *                m_PlayListCtrl;
-	guDBusNotify *              m_NotifySrv;
-	guPlayerFilters *           m_PlayerFilters;
-	guPlayerVumeters *          m_PlayerVumeters;
-	guMediaCtrl *               m_MediaCtrl;
-	guMediaRecordCtrl *         m_MediaRecordCtrl;
+    guPlayList *                m_PlayListCtrl;
+    guDBusNotify *              m_NotifySrv;
+    guPlayerFilters *           m_PlayerFilters;
+    guPlayerVumeters *          m_PlayerVumeters;
+    guMediaCtrl *               m_MediaCtrl;
+    guMediaRecordCtrl *         m_MediaRecordCtrl;
     guCurrentTrack              m_MediaSong;
     guTrack                     m_NextSong;
-	int                         m_LastPlayState;
-	double                      m_LastVolume;
-	wxFileOffset                m_LastCurPos;
-	wxFileOffset                m_LastLength;
-	bool                        m_ShowNotifications;
-	int                         m_ShowNotificationsTime;
+    int                         m_LastPlayState;
+    double                      m_LastVolume;
+    wxFileOffset                m_LastCurPos;
+    wxFileOffset                m_LastLength;
+    bool                        m_ShowNotifications;
+    int                         m_ShowNotificationsTime;
+    bool                        m_EnableEq;
+    bool                        m_EnableVolCtls;
 
-	double                      m_CurVolume;
+    double                      m_CurVolume;
     //int                         m_PlayLoop;
     //bool                        m_PlaySmart;
     int                         m_PlayMode;
-	bool                        m_PlayRandom;
-	int                         m_PlayRandomMode;
-	bool                        m_SliderIsDragged;
-	long                        m_LastTotalLen;
+    bool                        m_PlayRandom;
+    int                         m_PlayRandomMode;
+    bool                        m_SliderIsDragged;
+    long                        m_LastTotalLen;
 
-	bool                        m_SilenceDetected;
-	bool                        m_AboutToEndDetected;
-	bool                        m_FadeInStarted;
+    bool                        m_SilenceDetected;
+    bool                        m_AboutToEndDetected;
+    bool                        m_FadeInStarted;
 
-	wxArrayInt                  m_SmartAddedTracks;
-	wxArrayString               m_SmartAddedArtists;
-	int                         m_SmartMaxTracksList;
-	int                         m_SmartMaxArtistsList;
-	bool                        m_SmartSearchEnabled;
+    wxArrayInt                  m_SmartAddedTracks;
+    wxArrayString               m_SmartAddedArtists;
+    int                         m_SmartMaxTracksList;
+    int                         m_SmartMaxArtistsList;
+    bool                        m_SmartSearchEnabled;
     int                         m_SmartPlayAddTracks;
     int                         m_SmartPlayMinTracksToPlay;
 
@@ -437,10 +439,10 @@ class guPlayerPanel : public wxPanel
     void                        OnStopAtEnd( wxCommandEvent &event );
     void                        OnRecordButtonClick( wxCommandEvent &event );
     //void                        OnSmartPlayButtonClick( wxCommandEvent &event );
-	void                        OnRandomPlayButtonClick( wxCommandEvent &event );
+    void                        OnRandomPlayButtonClick( wxCommandEvent &event );
     //void                        OnRepeatPlayButtonClick( wxCommandEvent &event );
-	void                        OnLoveBanButtonClick( wxCommandEvent &event );
-	void                        OnEqualizerButtonClicked( wxCommandEvent &event );
+    void                        OnLoveBanButtonClick( wxCommandEvent &event );
+    void                        OnEqualizerButtonClicked( wxCommandEvent &event );
     void                        OnForceGaplessClick( wxCommandEvent &event );
     void                        OnPlayModeButtonClicked( wxCommandEvent &event );
 

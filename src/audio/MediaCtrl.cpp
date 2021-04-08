@@ -39,13 +39,15 @@ namespace Guayadeque {
 
 #define GST_TO_WXSTRING( str )  ( wxString( str, wxConvUTF8 ) )
 
-//#define guSHOW_DUMPFADERPLAYBINS     1
+#ifdef GU_DEBUG
+#define guSHOW_DUMPFADERPLAYBINS     1
+#endif
 
 #ifdef guSHOW_DUMPFADERPLAYBINS
 // -------------------------------------------------------------------------------- //
-static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins, guFaderPlayBin * current )
+static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins, guFaderPlaybin * current )
 {
-    guLogMessage( wxT( "CurrentPlayBin: %li" ), current ? current->GetId() : 0l );
+    guLogDebug( wxT( "CurrentPlayBin: %li" ), current ? current->GetId() : 0l );
     if( !playbins.Count() )
     {
         guLogMessage( wxT( "The faderplaybins list is empty" ) );
@@ -57,7 +59,7 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins, guFaderPlayB
     int Count = playbins.Count();
     for( Index = 0; Index < Count; Index++ )
     {
-        guFaderPlayBin * FaderPlayBin = playbins[ Index ];
+        guFaderPlaybin * FaderPlayBin = playbins[ Index ];
 
         wxString StateName;
 
@@ -185,14 +187,14 @@ void guMediaCtrl::UpdatePosition( void )
 	if( m_CurrentPlayBin )
 	{
 	    m_CurrentPlayBin->Lock();
-		Pos = -1;
-		gst_element_query_position( m_CurrentPlayBin->m_OutputSink, GST_FORMAT_TIME, &Pos );
 
+        Pos = m_CurrentPlayBin->Position();
+
+        Pos /= GST_MSECOND;
 
 		Duration = -1;
         gst_element_query_duration( m_CurrentPlayBin->m_OutputSink, GST_FORMAT_TIME, &Duration );
 
-        Pos = Pos / GST_MSECOND;
         if( Pos != m_LastPosition )
         {
             if( !m_CurrentPlayBin->AboutToFinishPending() || Pos < m_LastPosition )
@@ -382,6 +384,7 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype, c
     {
         case guFADERPLAYBIN_PLAYTYPE_AFTER_EOS :
         {
+            guLogDebug( wxT( "guMediaCtrl::Load guFADERPLAYBIN_PLAYTYPE_AFTER_EOS..." ) );
             Lock();
             if( m_CurrentPlayBin )
             {
@@ -397,20 +400,21 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype, c
 
         case guFADERPLAYBIN_PLAYTYPE_REPLACE :
         {
-            guLogDebug( wxT( "Replacing the current track in the current playbin..." ) );
+            guLogDebug( wxT( "guMediaCtrl::Load Replacing the current track in the current playbin..." ) );
             Lock();
             if( m_CurrentPlayBin )
             {
-                guLogDebug( wxT( "Id: %li  State: %i  Error: %i" ), m_CurrentPlayBin->GetId(), m_CurrentPlayBin->GetState(), m_CurrentPlayBin->ErrorCode() );
+                guLogDebug( wxT( "guMediaCtrl::Load Id: %li  State: %i  Error: %i" ), m_CurrentPlayBin->GetId(), m_CurrentPlayBin->GetState(), m_CurrentPlayBin->ErrorCode() );
                 //if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
                 if( !m_CurrentPlayBin->IsOk() )
                 {
-                    guLogDebug( wxT( "The current playbin has error...Removing it" ) );
+                    guLogDebug( wxT( "guMediaCtrl::Load The current playbin has error...Removing it" ) );
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
                     ScheduleCleanUp();
                 }
                 else
                 {
+                    guLogDebug( wxT( "guMediaCtrl::Load The current playbin has no error...Replacing it" ) );
                     m_CurrentPlayBin->m_PlayType = guFADERPLAYBIN_PLAYTYPE_REPLACE;
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_WAITING;
                     m_CurrentPlayBin->Load( uri, true, startpos );
@@ -772,6 +776,8 @@ void guMediaCtrl::UpdatedConfig( void )
     m_FadeInVolStart        = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_START, 80, CONFIG_PATH_CROSSFADER ) ) / 100.0;
     m_FadeInVolTriger       = double( Config->ReadNum( CONFIG_KEY_CROSSFADER_FADEIN_VOL_TRIGER, 50, CONFIG_PATH_CROSSFADER ) ) / 100.0;
     m_BufferSize            = Config->ReadNum( CONFIG_KEY_GENERAL_BUFFER_SIZE, 64, CONFIG_PATH_GENERAL );
+    m_EnableEq              = Config->ReadBool( CONFIG_KEY_GENERAL_EQ_ENABLED, true, CONFIG_PATH_GENERAL );
+    m_EnableVolCtls         = Config->ReadBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, true, CONFIG_PATH_GENERAL );
     m_ReplayGainMode        = Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_MODE, 0, CONFIG_PATH_GENERAL );
     m_ReplayGainPreAmp      = double( Config->ReadNum( CONFIG_KEY_GENERAL_REPLAY_GAIN_PREAMP, 6, CONFIG_PATH_GENERAL ) );
     m_OutputDevice          = Config->ReadNum( CONFIG_KEY_PLAYBACK_OUTPUT_DEVICE, guOUTPUT_DEVICE_AUTOMATIC, CONFIG_PATH_PLAYBACK );
@@ -852,17 +858,17 @@ void guMediaCtrl::FadeOutDone( guFaderPlaybin * faderplaybin )
         case guFADERPLAYBIN_STATE_FADEOUT_PAUSE:
         {
             // try to seek back a bit to account for the fade
-            gint64 Pos = -1;
-            gst_element_query_position( faderplaybin->OutputSink(), GST_FORMAT_TIME, &Pos );
+            gint64 Pos = Position();
+
             if( Pos != -1 )
             {
                 faderplaybin->m_PausePosition = Pos > guFADERPLAYBIN_FAST_FADER_TIME ? Pos - guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
-                //guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_PAUSED [%" G_GINT64_FORMAT "]" ), FaderPlayBin->m_Uri.c_str(), FaderPlayBin->m_SeekTarget );
+                guLogDebug( wxT( "got fade-out-done for stream %s -> SEEKING_PAUSED [%" G_GINT64_FORMAT "]" ), faderplaybin->m_Uri.c_str(), faderplaybin->m_Id );
             }
             else
             {
                 faderplaybin->m_PausePosition = wxNOT_FOUND;
-                //guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ), FaderPlayBin->m_Uri.c_str() );
+                guLogDebug( wxT( "got fade-out-done for stream %s -> PAUSED (position query failed)" ), faderplaybin->m_Uri.c_str() );
             }
             faderplaybin->m_State = guFADERPLAYBIN_STATE_PAUSED;
             faderplaybin->Pause();
