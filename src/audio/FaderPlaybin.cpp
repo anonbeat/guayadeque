@@ -525,6 +525,8 @@ guFaderPlaybin::~guFaderPlaybin()
         // guLogDebug( "mPlaybin bus refcount: %i", GST_OBJECT_REFCOUNT( bus ) - 1 );
         gst_object_unref( bus );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
+        if( !m_Player->m_EnableVolCtls )
+            gst_object_unref( GST_OBJECT( m_FaderVolume ) );
     }
 
     if( m_FaderTimeLine )
