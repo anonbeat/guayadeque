@@ -1052,6 +1052,22 @@ wxString guMediaCtrl::ProxyServer() const
     return m_ProxyServer;
 }
 
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::ToggleEqualizer()
+{
+    guLogDebug("guMediaCtrl::ToggleEqualizer <<" );
+    Lock();
+    int Count = m_FaderPlayBins.Count();
+    for( int Index = 0; Index < Count; Index++ )
+    {
+        guFaderPlaybin * FaderPlaybin = m_FaderPlayBins[ Index ];
+        if( FaderPlaybin->IsOk() )
+            FaderPlaybin->ToggleEqualizer();
+    }
+    m_EnableEq = !m_EnableEq;
+    Unlock();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

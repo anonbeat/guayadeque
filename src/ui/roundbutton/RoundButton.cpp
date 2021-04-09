@@ -103,16 +103,16 @@ void guRoundButton::OnMouseEvents( wxMouseEvent &event )
         }
 
         //guLogMessage( wxT( "Event %i %i %i" ), event.LeftDown(), event.LeftIsDown(), event.LeftUp() );
-        if( m_IsClicked != event.LeftIsDown() )
+        if( m_IsClicked != event.LeftIsDown() && m_IsClicked != event.RightIsDown() )
         {
-            m_IsClicked = event.LeftIsDown();
+            m_IsClicked = event.LeftIsDown() || event.RightIsDown();
             //Refresh();
             NeedPaint = true;
         }
-        if( event.LeftUp() )
+        if( event.LeftUp() || event.RightUp() )
         {
             // Send Clicked event
-            wxCommandEvent ClickEvent( wxEVT_BUTTON, GetId() );
+            wxCommandEvent ClickEvent( event.LeftUp() ? wxEVT_BUTTON : wxEVT_COMMAND_RIGHT_CLICK, GetId() );
             ClickEvent.SetEventObject( this );
             AddPendingEvent( ClickEvent );
             m_IsClicked = false;

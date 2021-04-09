@@ -421,7 +421,10 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     m_RandomPlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
     //m_RepeatPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
     if( m_EqualizerButton != NULL )
+    {
         m_EqualizerButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnEqualizerButtonClicked, this );
+        m_EqualizerButton->Bind( wxEVT_COMMAND_RIGHT_CLICK, &guPlayerPanel::OnEqualizerRightButtonClicked, this );
+    }
     m_PlayModeButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnPlayModeButtonClicked, this );
 
     Bind( wxEVT_MENU, &guPlayerPanel::OnRandomPlayButtonClick, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
@@ -555,7 +558,10 @@ guPlayerPanel::~guPlayerPanel()
     m_RandomPlayButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
     //m_RepeatPlayButton->Unbind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnRepeatPlayButtonClick, this );
     if( m_EqualizerButton != NULL )
+    {
         m_EqualizerButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnEqualizerButtonClicked, this );
+        m_EqualizerButton->Unbind( wxEVT_COMMAND_RIGHT_CLICK, &guPlayerPanel::OnEqualizerRightButtonClicked, this );
+    }
     m_PlayModeButton->Unbind( wxEVT_BUTTON, &guPlayerPanel::OnPlayModeButtonClicked, this );
 
     Unbind( wxEVT_MENU, &guPlayerPanel::OnRandomPlayButtonClick, this, ID_PLAYER_PLAYLIST_RANDOMPLAY );
@@ -2774,6 +2780,14 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
         }
         Eq10Band->Destroy();
     }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnEqualizerRightButtonClicked( wxCommandEvent &event )
+{
+    guLogDebug( "guPlayerPanel::OnEqualizerRightButtonClicked << <%s>", event.GetString() );
+    m_MediaCtrl->ToggleEqualizer();
+    m_EnableEq = !m_EnableEq;    
 }
 
 // -------------------------------------------------------------------------------- //

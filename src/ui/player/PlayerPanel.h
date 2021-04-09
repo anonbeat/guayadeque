@@ -443,6 +443,7 @@ class guPlayerPanel : public wxPanel
     //void                        OnRepeatPlayButtonClick( wxCommandEvent &event );
     void                        OnLoveBanButtonClick( wxCommandEvent &event );
     void                        OnEqualizerButtonClicked( wxCommandEvent &event );
+    void                        OnEqualizerRightButtonClicked( wxCommandEvent &event );
     void                        OnForceGaplessClick( wxCommandEvent &event );
     void                        OnPlayModeButtonClicked( wxCommandEvent &event );
 
