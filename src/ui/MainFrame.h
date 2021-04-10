@@ -386,7 +386,6 @@ class guMainFrame : public wxFrame
     void                            OnMountMonitorUpdated( wxCommandEvent &event );
     void                            OnAudioCdVolumeUpdated( wxCommandEvent &event );
 
-    void                            OnSetForceGapless( wxCommandEvent &event );
     void                            OnSetAudioScrobble( wxCommandEvent &event );
 
     void                            OnLyricFound( wxCommandEvent &event );
@@ -411,6 +410,8 @@ class guMainFrame : public wxFrame
   public:
                                     guMainFrame( wxWindow * parent, guDbCache * dbcache );
                                     ~guMainFrame();
+
+    void                            OnSetForceGapless( wxCommandEvent &event );
 
     static guMainFrame *            GetMainFrame( void ) { return m_MainFrame; }
     void                            SetMainFrame( void ) { m_MainFrame = this; }

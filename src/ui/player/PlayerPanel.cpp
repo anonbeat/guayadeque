@@ -2790,7 +2790,12 @@ void guPlayerPanel::OnVolCtlToggle( wxCommandEvent &event )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, m_EnableVolCtls, CONFIG_PATH_GENERAL );
     bool fg = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
-    SetForceGapless( fg );
+    if( fg != m_ForceGapless )
+    {
+        event.SetInt( fg );
+        m_MainFrame->OnSetForceGapless( event );
+    }
+    
     if( m_EnableVolCtls )
     {
         m_VolumeBar->Show();
