@@ -24,6 +24,7 @@
 
 #include "MediaEvent.h"
 #include "FaderTimeLine.h"
+#include "GstTypes.h"
 #include "Utils.h"
 
 #include <gst/gst.h>
@@ -132,6 +133,8 @@ class guFaderPlaybin
     int                 m_StartOffset;
     int                 m_SeekTimerId;
 
+    guGstElementsChain  m_PlayChain;
+
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
     bool                BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer );
@@ -211,6 +214,8 @@ class guFaderPlaybin
     void                RemoveRecordElement( GstPad * pad );
 
     bool                DoStartSeek( void );
+    void                ToggleEqualizer( void );
+    void                ToggleVolCtl( void );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;

@@ -1052,6 +1052,40 @@ wxString guMediaCtrl::ProxyServer() const
     return m_ProxyServer;
 }
 
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::ToggleEqualizer()
+{
+    guLogDebug("guMediaCtrl::ToggleEqualizer <<" );
+    Lock();
+    int Count = m_FaderPlayBins.Count();
+    for( int Index = 0; Index < Count; Index++ )
+    {
+        guFaderPlaybin * FaderPlaybin = m_FaderPlayBins[ Index ];
+        if( FaderPlaybin->IsOk() )
+            FaderPlaybin->ToggleEqualizer();
+    }
+    m_EnableEq = !m_EnableEq;
+    Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaCtrl::ToggleVolCtl()
+{
+    guLogDebug("guMediaCtrl::ToggleVolCtl <<" );
+    Lock();
+    int Count = m_FaderPlayBins.Count();
+    for( int Index = 0; Index < Count; Index++ )
+    {
+        guFaderPlaybin * FaderPlaybin = m_FaderPlayBins[ Index ];
+        if( FaderPlaybin->IsOk() )
+            FaderPlaybin->ToggleVolCtl();
+    }
+    m_EnableVolCtls = !m_EnableVolCtls;
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+    m_ForceGapless = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
+    Unlock();
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

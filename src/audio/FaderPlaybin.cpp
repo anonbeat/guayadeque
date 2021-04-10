@@ -25,6 +25,7 @@
 #include "MediaCtrl.h"
 #include "RadioTagInfo.h"
 #include "GstPipelineBuilder.h"
+#include "GstPipelineActuator.h"
 
 #include <wx/wx.h>
 #include <wx/url.h>
@@ -526,7 +527,12 @@ guFaderPlaybin::~guFaderPlaybin()
         gst_object_unref( bus );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
         if( !m_Player->m_EnableVolCtls )
+        {
             gst_object_unref( GST_OBJECT( m_FaderVolume ) );
+            gst_object_unref( GST_OBJECT( m_Volume ) );
+        }
+        if( !m_Player->m_EnableEq )
+            gst_object_unref( GST_OBJECT( m_Equalizer ) );
     }
 
     if( m_FaderTimeLine )
@@ -631,10 +637,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
 
     gpb.Add( "audioconvert", "pb_audioconvert" );
     
-    if( m_Player->m_EnableEq )
-        gpb.Add( "equalizer-10bands", "pb_equalizer", &m_Equalizer );
-    else
-        m_Equalizer = NULL;
+    gpb.Add( "equalizer-10bands", "pb_equalizer", &m_Equalizer, m_Player->m_EnableEq );
 
     if( m_Player->m_ReplayGainMode )
     {
@@ -700,6 +703,8 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
         gst_object_unref( bus );
 
         gpb.SetCleanup( false );
+
+        m_PlayChain = gpb.GetChain();
 
         return true;
     }
@@ -1534,6 +1539,21 @@ void guFaderPlaybin::RemoveRecordElement( GstPad * pad )
     g_object_unref( m_RecordBin );
 
     SetRecordBin( NULL );
+}
+
+void guFaderPlaybin::ToggleEqualizer( void )
+{
+    guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
+    guGstPipelineActuator gpa( m_PlayChain );
+    gpa.Toggle( m_Equalizer );
+}
+
+void guFaderPlaybin::ToggleVolCtl( void )
+{
+    guLogDebug( "guFaderPlaybin::ToggleVolCtl" );
+    guGstPipelineActuator gpa( m_PlayChain );
+    gpa.Toggle( m_FaderVolume );
+    gpa.Toggle( m_Volume );
 }
 
 }
