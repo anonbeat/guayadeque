@@ -163,6 +163,8 @@ class guMediaCtrl : public wxEvtHandler
     void            ToggleEqualizer();
     void            ToggleVolCtl();
 
+    void            ReconfigureRG();
+
     friend class guFaderPlaybin;
 };
 

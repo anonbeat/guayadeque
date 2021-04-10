@@ -193,7 +193,13 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
         return GST_PAD_PROBE_REMOVE;
     }
 
-    guGstPtr<GstPad> next_sink_pad_gp( guGetPeerPad( unplug_me_src_pad ) );
+    guGstPtr<GstPad> next_sink_pad_gp( gst_pad_get_peer( unplug_me_src_pad ) );
+    if( GST_OBJECT_PARENT( GST_OBJECT_PARENT( next_sink_pad_gp.ptr ) ) != GST_OBJECT_PARENT( GST_OBJECT_PARENT( previous_src_pad ) ) )
+    {
+        guLogGstPadData( "guUnplugGstElementProbe try traverse", next_sink_pad_gp.ptr );
+        gst_object_unref( next_sink_pad_gp.ptr );
+        next_sink_pad_gp.ptr =  guGetPeerPad( unplug_me_src_pad );
+    }
     GstPad *next_sink_pad = next_sink_pad_gp.ptr;
     guLogGstPadData( "guUnplugGstElementProbe next_sink_pad", next_sink_pad );
     if( next_sink_pad == NULL )
@@ -245,9 +251,12 @@ guUnplugGstElement( GstElement *unplug_me )
         [] ( GstElement * element, GstPad * sink_pad, void * user_data ) 
         {
             bool *res_ptr = (bool *)user_data;
-            guLogGstPadData( "guUnplugGstElement unplug sink pad",sink_pad );
-            GstPad *sink_peer = guGetPeerPad( sink_pad );
+            guLogGstPadData( "guUnplugGstElement unplug sink pad", sink_pad );
+            // GstPad *sink_peer = guGetPeerPad( sink_pad );
+            GstPad *sink_peer = gst_pad_get_peer( sink_pad );
             guLogDebug( "guUnplugGstElement sink_peer is <%s>", GST_OBJECT_NAME(sink_peer) );
+            guLogDebug( "guUnplugGstElement sink_peer.parent is <%s>", GST_OBJECT_NAME(GST_OBJECT_PARENT(sink_peer)) );
+            guLogDebug( "guUnplugGstElement sink_peer.parent.parent is <%s>", GST_OBJECT_NAME(GST_OBJECT_PARENT(GST_OBJECT_PARENT(sink_peer))) );
             if ( sink_peer != NULL )
             {
                 if( gst_pad_add_probe( sink_peer, GST_PAD_PROBE_TYPE_IDLE, guUnplugGstElementProbe, NULL, NULL ) )

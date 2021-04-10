@@ -481,6 +481,8 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_SeekTimerId = 0;
     m_SettingRecordFileName = false;
     m_PositionDelta = 0;
+    m_ReplayGain = NULL;
+    m_ReplayGainLimiter = NULL;
 
     guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%li)  %i" ), m_Id, playtype );
 
@@ -533,6 +535,12 @@ guFaderPlaybin::~guFaderPlaybin()
         }
         if( !m_Player->m_EnableEq )
             gst_object_unref( GST_OBJECT( m_Equalizer ) );
+
+        if( !m_Player->m_ReplayGainMode )
+        {
+            gst_object_unref( GST_OBJECT( m_ReplayGain ) );
+            gst_object_unref( GST_OBJECT( m_ReplayGainLimiter ) );
+        }
     }
 
     if( m_FaderTimeLine )
@@ -639,17 +647,9 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
     
     gpb.Add( "equalizer-10bands", "pb_equalizer", &m_Equalizer, m_Player->m_EnableEq );
 
-    if( m_Player->m_ReplayGainMode )
-    {
-        gpb.Add( "rgvolume", "pb_rgvolume", &m_ReplayGain, true,
-            "pre-amp", gdouble( m_Player->m_ReplayGainPreAmp ),
-            "album-mode", gboolean( m_Player->m_ReplayGainMode == 2 )
-            );        
-        //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
-        gpb.Add( "rglimiter", "pb_rglimiter" );
-    }
-    else
-        m_ReplayGain = NULL;
+    gpb.Add( "rgvolume", "pb_rgvolume", &m_ReplayGain, m_Player->m_ReplayGainMode );
+    SetRGProperties();
+    gpb.Add( "rglimiter", "pb_rglimiter", &m_ReplayGainLimiter, m_Player->m_ReplayGainMode );
 
     gpb.Add( "volume", "pb_volume", &m_Volume, m_Player->m_EnableVolCtls );
 
@@ -1541,6 +1541,7 @@ void guFaderPlaybin::RemoveRecordElement( GstPad * pad )
     SetRecordBin( NULL );
 }
 
+// -------------------------------------------------------------------------------- //
 void guFaderPlaybin::ToggleEqualizer( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
@@ -1548,12 +1549,43 @@ void guFaderPlaybin::ToggleEqualizer( void )
     gpa.Toggle( m_Equalizer );
 }
 
+// -------------------------------------------------------------------------------- //
 void guFaderPlaybin::ToggleVolCtl( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleVolCtl" );
     guGstPipelineActuator gpa( m_PlayChain );
     gpa.Toggle( m_FaderVolume );
     gpa.Toggle( m_Volume );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFaderPlaybin::SetRGProperties( void )
+{
+    guLogDebug( "guFaderPlaybin::SetRGProperties" );
+    g_object_set( m_ReplayGain,
+        "pre-amp", gdouble( m_Player->m_ReplayGainPreAmp ),
+        "album-mode", gboolean( m_Player->m_ReplayGainMode == 2 ),
+        NULL );
+    //g_object_set( G_OBJECT( m_ReplayGain ), "fallback-gain", gdouble( -6 ), NULL );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFaderPlaybin::ReconfigureRG( void )
+{
+    guLogDebug( "guFaderPlaybin::ReconfigureRG" );
+    SetRGProperties();
+    guGstPipelineActuator gpa( m_PlayChain );
+    if( m_Player->m_ReplayGainMode )
+    {
+        gpa.Enable( m_ReplayGainLimiter );
+        gpa.Enable( m_ReplayGain );
+
+    }
+    else
+    {
+        gpa.Disable( m_ReplayGain );
+        gpa.Disable( m_ReplayGainLimiter );
+    }
 }
 
 }

@@ -117,6 +117,7 @@ class guFaderPlaybin
     GstElement *        m_Playbackbin;
     GstElement *        m_FaderVolume;
     GstElement *        m_ReplayGain;
+    GstElement *        m_ReplayGainLimiter;
     GstElement *        m_Volume;
     GstElement *        m_Equalizer;
     GstElement *        m_Tee;
@@ -216,6 +217,9 @@ class guFaderPlaybin
     bool                DoStartSeek( void );
     void                ToggleEqualizer( void );
     void                ToggleVolCtl( void );
+
+    void                ReconfigureRG( void );
+    void                SetRGProperties( void );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;
