@@ -527,7 +527,12 @@ guFaderPlaybin::~guFaderPlaybin()
         gst_object_unref( bus );
         gst_object_unref( GST_OBJECT( m_Playbin ) );
         if( !m_Player->m_EnableVolCtls )
+        {
             gst_object_unref( GST_OBJECT( m_FaderVolume ) );
+            gst_object_unref( GST_OBJECT( m_Volume ) );
+        }
+        if( !m_Player->m_EnableEq )
+            gst_object_unref( GST_OBJECT( m_Equalizer ) );
     }
 
     if( m_FaderTimeLine )
@@ -1542,6 +1547,15 @@ void guFaderPlaybin::ToggleEqualizer( void )
     guGstPipelineActuator gpa( m_PlayChain );
     gpa.Toggle( m_Equalizer );
 }
+
+void guFaderPlaybin::ToggleVolCtl( void )
+{
+    guLogDebug( "guFaderPlaybin::ToggleVolCtl" );
+    guGstPipelineActuator gpa( m_PlayChain );
+    gpa.Toggle( m_FaderVolume );
+    gpa.Toggle( m_Volume );
+}
+
 }
 
 // -------------------------------------------------------------------------------- //

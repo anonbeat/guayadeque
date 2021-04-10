@@ -329,6 +329,7 @@ class guPlayerPanel : public wxPanel
     void                        OnVolumeMouseWheel( wxMouseEvent &event );
     void                        OnVolumeChanged( wxScrollEvent &event );
     void                        OnVolumeClicked( wxCommandEvent &event );
+    void                        OnVolumeRightClicked( wxCommandEvent &event );
     //void                        OnPlayerCoverBitmapMouseOver( wxCommandEvent &event );
     void                        OnLeftClickPlayerCoverBitmap( wxMouseEvent &event );
     void                        OnPlayerPositionSliderBeginSeek( wxScrollEvent &event );
@@ -444,6 +445,7 @@ class guPlayerPanel : public wxPanel
     void                        OnLoveBanButtonClick( wxCommandEvent &event );
     void                        OnEqualizerButtonClicked( wxCommandEvent &event );
     void                        OnEqualizerRightButtonClicked( wxCommandEvent &event );
+    void                        OnVolCtlToggle( wxCommandEvent &event );
     void                        OnForceGaplessClick( wxCommandEvent &event );
     void                        OnPlayModeButtonClicked( wxCommandEvent &event );
 

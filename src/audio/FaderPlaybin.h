@@ -215,6 +215,7 @@ class guFaderPlaybin
 
     bool                DoStartSeek( void );
     void                ToggleEqualizer( void );
+    void                ToggleVolCtl( void );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;

@@ -151,6 +151,7 @@ bool guGstPipelineActuator::Enable( GstElement *element )
 }
 
 
+// -------------------------------------------------------------------------------- //
 static GstPadProbeReturn
 guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpointer data )
 {
@@ -234,6 +235,7 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
 }
 
 
+// -------------------------------------------------------------------------------- //
 static bool
 guUnplugGstElement( GstElement *unplug_me )
 {

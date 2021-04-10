@@ -161,6 +161,7 @@ class guMediaCtrl : public wxEvtHandler
     wxString        ProxyServer() const;
 
     void            ToggleEqualizer();
+    void            ToggleVolCtl();
 
     friend class guFaderPlaybin;
 };

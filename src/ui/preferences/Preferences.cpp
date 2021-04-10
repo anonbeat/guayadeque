@@ -843,11 +843,11 @@ void guPrefDialog::BuildPlaybackPage( void )
     m_NotifyChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SHOW_NOTIFICATIONS, true, CONFIG_PATH_GENERAL ) );
 	PlayGenSizer->Add( m_NotifyChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
-    m_EqOnChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enable equalizer (requires player restart)" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_EqOnChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enable equalizer" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_EqOnChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_EQ_ENABLED, true, CONFIG_PATH_GENERAL ) );
     PlayGenSizer->Add( m_EqOnChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
-    m_VolOnChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enable volume and fader (requires player restart)" ), wxDefaultPosition, wxDefaultSize, 0 );
+    m_VolOnChkBox = new wxCheckBox( m_PlayPanel, wxID_ANY, _( "Enable volume and fader" ), wxDefaultPosition, wxDefaultSize, 0 );
     m_VolOnChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, true, CONFIG_PATH_GENERAL ) );
     PlayGenSizer->Add( m_VolOnChkBox, 0, wxBOTTOM|wxLEFT|wxRIGHT, 5 );
 
