@@ -1329,7 +1329,7 @@ void guPlayerPanel::OnPlayListDClick( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forceskip )
 {
-    guLogDebug( wxT( "LoadMedia  %i  %i  (%i)" ), m_CurTrackId, m_NextTrackId, m_SavedPlayedTrack );
+    guLogDebug( wxT( "LoadMedia  %li  %li  (%i)" ), m_CurTrackId, m_NextTrackId, m_SavedPlayedTrack );
     if( !forceskip && ( m_MediaSong.m_Type & guTRACK_TYPE_STOP_HERE ) )
     {
         m_MediaSong.m_Type = guTrackType( int( m_MediaSong.m_Type ) ^ guTRACK_TYPE_STOP_HERE );
@@ -1616,7 +1616,7 @@ void  guPlayerPanel::OnMediaPosition( guMediaEvent &event )
 
     if( ( ( CurPos / 1000 ) != ( m_LastCurPos / 1000 ) ) && !m_SliderIsDragged )
     {
-        guLogDebug( wxT( "OnMediaPosition... %i - %li => %li  %li %li" ), CurPos, CurLen, m_LastLength - CurPos, m_CurTrackId, m_NextTrackId );
+        guLogDebug( wxT( "OnMediaPosition... %li - %li => %li  %li %li" ), CurPos, CurLen, m_LastLength - CurPos, m_CurTrackId, m_NextTrackId );
         m_LastCurPos = CurPos;
 
         if( m_TrackChanged )
@@ -1913,7 +1913,7 @@ void guPlayerPanel::OnMediaLoaded( guMediaEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::OnMediaPlayStarted( void )
 {
-    guLogDebug( wxT( "OnMediaPlayStarted  %i %i" ), m_CurTrackId, m_NextTrackId );
+    guLogDebug( wxT( "OnMediaPlayStarted  %li %li" ), m_CurTrackId, m_NextTrackId );
 
     SavePlayedTrack();
 
