@@ -24,6 +24,7 @@
 
 #include "MediaEvent.h"
 #include "FaderTimeLine.h"
+#include "GstTypes.h"
 #include "Utils.h"
 
 #include <gst/gst.h>
@@ -116,6 +117,7 @@ class guFaderPlaybin
     GstElement *        m_Playbackbin;
     GstElement *        m_FaderVolume;
     GstElement *        m_ReplayGain;
+    GstElement *        m_ReplayGainLimiter;
     GstElement *        m_Volume;
     GstElement *        m_Equalizer;
     GstElement *        m_Tee;
@@ -131,6 +133,8 @@ class guFaderPlaybin
 
     int                 m_StartOffset;
     int                 m_SeekTimerId;
+
+    guGstElementsChain  m_PlayChain;
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
@@ -211,6 +215,11 @@ class guFaderPlaybin
     void                RemoveRecordElement( GstPad * pad );
 
     bool                DoStartSeek( void );
+    void                ToggleEqualizer( void );
+    void                ToggleVolCtl( void );
+
+    void                ReconfigureRG( void );
+    void                SetRGProperties( void );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;
