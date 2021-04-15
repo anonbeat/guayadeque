@@ -445,6 +445,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Bind( guEVT_MEDIA_CHANGED_STATE, &guPlayerPanel::OnMediaState, this );
     Bind( guEVT_MEDIA_CHANGED_POSITION, &guPlayerPanel::OnMediaPosition, this );
     Bind( guEVT_MEDIA_CHANGED_LENGTH, &guPlayerPanel::OnMediaLength, this );
+    Bind( guEVT_EQ_STATUS_CHANGED, &guPlayerPanel::OnUpdateEqualizerStatus, this );
 
     Bind( wxEVT_MENU, &guPlayerPanel::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
     Bind( wxEVT_MENU, &guPlayerPanel::OnSmartEndThread, this, ID_SMARTMODE_THREAD_END );
@@ -582,6 +583,7 @@ guPlayerPanel::~guPlayerPanel()
     Unbind( guEVT_MEDIA_CHANGED_STATE, &guPlayerPanel::OnMediaState, this );
     Unbind( guEVT_MEDIA_CHANGED_POSITION, &guPlayerPanel::OnMediaPosition, this );
     Unbind( guEVT_MEDIA_CHANGED_LENGTH, &guPlayerPanel::OnMediaLength, this );
+    Unbind( guEVT_EQ_STATUS_CHANGED, &guPlayerPanel::OnUpdateEqualizerStatus, this );
 
     Unbind( wxEVT_MENU, &guPlayerPanel::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
     Unbind( wxEVT_MENU, &guPlayerPanel::OnSmartEndThread, this, ID_SMARTMODE_THREAD_END );
@@ -2774,8 +2776,15 @@ void guPlayerPanel::OnEqualizerRightButtonClicked( wxCommandEvent &event )
 {
     guLogDebug( "guPlayerPanel::OnEqualizerRightButtonClicked << <%s>", event.GetString() );
     m_MediaCtrl->ToggleEqualizer();
-    m_EnableEq = !m_EnableEq;    
+    m_EnableEq = !m_EnableEq;
+    OnUpdateEqualizerStatus( event );
+}
 
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnUpdateEqualizerStatus( wxCommandEvent &event )
+{
+    guLogDebug( "guPlayerPanel::OnUpdateEqualizerStatus <<" );
+    m_EnableEq = m_MediaCtrl->IsEqualizerEnabled();
     m_EqualizerButton->SetBitmapLabel( guImage( m_EnableEq ? guIMAGE_INDEX_player_normal_equalizer : guIMAGE_INDEX_player_light_equalizer ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->WriteBool( CONFIG_KEY_GENERAL_EQ_ENABLED, m_EnableEq, CONFIG_PATH_GENERAL );

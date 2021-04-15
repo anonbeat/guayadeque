@@ -25,6 +25,7 @@
 #include "MediaEvent.h"
 #include "FaderTimeLine.h"
 #include "GstTypes.h"
+#include "GstUtils.h"
 #include "Utils.h"
 
 #include <gst/gst.h>
@@ -32,6 +33,8 @@
 #include <wx/dynarray.h>
 #include <wx/filename.h>
 #include <wx/uri.h>
+
+#include <memory>
 
 namespace Guayadeque {
 
@@ -90,6 +93,9 @@ class guMediaCtrl;
 class guFaderPlaybin
 {
   protected :
+    
+    std::shared_ptr<guFaderPlaybin*>    m_SharedPointer;
+
     guMediaCtrl *       m_Player;
     wxMutex             m_Lock;
     guTimeLine *        m_FaderTimeLine;
@@ -135,6 +141,8 @@ class guFaderPlaybin
     int                 m_SeekTimerId;
 
     guGstElementsChain  m_PlayChain;
+
+    std::weak_ptr<guFaderPlaybin*> GetPtr() { return m_SharedPointer; }
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
@@ -216,6 +224,7 @@ class guFaderPlaybin
 
     bool                DoStartSeek( void );
     void                ToggleEqualizer( void );
+    bool                IsEqualizerEnabled( void ) { return guIsGstElementLinked( m_Equalizer ); };
     void                ToggleVolCtl( void );
 
     void                ReconfigureRG( void );

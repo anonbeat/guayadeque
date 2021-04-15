@@ -483,6 +483,7 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_PositionDelta = 0;
     m_ReplayGain = NULL;
     m_ReplayGainLimiter = NULL;
+    m_SharedPointer = std::make_shared<guFaderPlaybin*>( this );
 
     guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%li)  %i" ), m_Id, playtype );
 
@@ -1542,10 +1543,33 @@ void guFaderPlaybin::RemoveRecordElement( GstPad * pad )
 }
 
 // -------------------------------------------------------------------------------- //
+static void guFaderPlaybin__ToggleEqualizer_status( std::weak_ptr<guFaderPlaybin*> * wpp )
+{
+    guLogDebug( "guFaderPlaybin__ToggleEqualizer_success << %p", wpp );
+    if( auto sp = wpp->lock() )
+    {
+        guMediaEvent e( guEVT_EQ_STATUS_CHANGED );
+        (*sp)->SendEvent( e );
+    }
+    else
+    {
+        guLogTrace( "Toggle Equalizer: parent fader playbin is gone" );
+    }
+    delete wpp;
+    guLogDebug( "guFaderPlaybin__ToggleEqualizer_success >>" );
+}
+
+
+// -------------------------------------------------------------------------------- //
 void guFaderPlaybin::ToggleEqualizer( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
     guGstPipelineActuator gpa( m_PlayChain );
+    guGstResultHandler rh(
+        guGstResultHandler::Func( guFaderPlaybin__ToggleEqualizer_status ),
+        new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
+        );
+    gpa.SetHandler( &rh );
     gpa.Toggle( m_Equalizer );
 }
 
