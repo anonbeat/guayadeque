@@ -165,6 +165,8 @@ class guMediaCtrl : public wxEvtHandler
 
     void            ReconfigureRG();
 
+    bool            IsEqualizerEnabled() { return m_CurrentPlayBin!= NULL ? m_CurrentPlayBin->IsEqualizerEnabled() : m_EnableEq; }
+
     friend class guFaderPlaybin;
 };
 

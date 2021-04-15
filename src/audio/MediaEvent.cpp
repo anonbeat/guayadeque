@@ -38,6 +38,8 @@ wxDEFINE_EVENT( guEVT_MEDIA_CHANGED_LENGTH,   guMediaEvent );
 wxDEFINE_EVENT( guEVT_MEDIA_FADEOUT_FINISHED, guMediaEvent );
 wxDEFINE_EVENT( guEVT_MEDIA_FADEIN_STARTED,   guMediaEvent );
 
+wxDEFINE_EVENT( guEVT_EQ_STATUS_CHANGED,      guMediaEvent );
+
 wxDEFINE_EVENT( guEVT_MEDIA_ERROR,            guMediaEvent );
 
 }

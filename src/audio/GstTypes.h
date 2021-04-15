@@ -17,11 +17,82 @@ struct guGstPipelineElementPack
     GstElement **   element_ref;
 };
 
+static void guGstResultHandler_noop_success_handler( const void *hint )
+{
+    guLogDebug( "guGstResultHandler_noop_success_handler: <%s>", (const char *)hint );
+}
+
+static void guGstResultHandler_noop_error_handler( const void *hint )
+{
+    guLogTrace( "Unhandled gstreamer error (hint: %s)", (const char *)hint );
+}
+
+struct guGstResultHandler
+{
+    void    * m_ExecData;
+    void    (*m_SuccessExec)(const void *);
+    void    (*m_ErrorExec)(const void *);
+    guGstResultHandler( guGstResultHandler * copy )
+    {
+        m_SuccessExec = copy->m_SuccessExec;
+        m_ErrorExec = copy->m_ErrorExec;
+        m_ExecData = copy->m_ExecData;
+    }
+    guGstResultHandler( const char * hint = NULL )
+    {
+        m_SuccessExec = guGstResultHandler_noop_success_handler;
+        m_ErrorExec = guGstResultHandler_noop_error_handler;
+        m_ExecData = (void *)hint;
+    }
+    guGstResultHandler(
+        void (*success_func)(const void *), 
+        void (*error_func)(const void *),
+        void *exec_data = NULL )
+        {
+            m_ExecData = exec_data;
+            m_SuccessExec = success_func;
+            m_ErrorExec = error_func;
+        }
+};
+
+class guGstResultExec
+{
+private:
+    bool                 m_ErrorMode;
+    guGstResultHandler   * m_Handler;
+public:
+    guGstResultExec( guGstResultHandler *rhandler = NULL, bool error_mode = true )
+    { 
+        m_ErrorMode = error_mode;
+        m_Handler = rhandler;
+        if( m_Handler == NULL )
+            m_Handler = new guGstResultHandler( "empty result handler" );
+    }
+    ~guGstResultExec()
+    {
+        if( m_Handler != NULL )
+        {
+            if( m_ErrorMode )
+                m_Handler->m_ErrorExec( m_Handler->m_ExecData );
+            else
+                m_Handler->m_SuccessExec( m_Handler->m_ExecData );
+            delete m_Handler;
+        }
+    }
+    void SetErrorMode( bool err ) { m_ErrorMode = err; }
+    guGstResultHandler * Pass()
+    {
+        guGstResultHandler * res = m_Handler;
+        m_Handler = NULL;
+        return res;
+    }
+};
+
 // struct template for a nicer gstreamer objects unref
 template< class GstObjectType = GstObject >
 struct guGstPtr
 {
-    GstObjectType   *ptr;
+    GstObjectType   * ptr;
     guGstPtr( GstObjectType *go ) { ptr = go; }
     ~guGstPtr() { if( ptr != NULL ) gst_object_unref( ptr ); }
 };

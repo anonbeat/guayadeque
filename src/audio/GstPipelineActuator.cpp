@@ -3,13 +3,24 @@
 
 namespace Guayadeque {
 
+struct guGstElementProbeData
+{
+    guGstResultHandler      * rhandler;
+    void                    * probe_data;
+    guGstElementProbeData( void * e, guGstResultHandler * rh )
+    {
+        rhandler = rh;
+        probe_data = e;
+    }
+};
+
 // -------------------------------------------------------------------------------- //
-// guGstPipelineBuilder
+// guGstPipelineActuator
 // -------------------------------------------------------------------------------- //
 
 
 // -------------------------------------------------------------------------------- //
-guGstPipelineActuator::guGstPipelineActuator( GstElement *element )
+guGstPipelineActuator::guGstPipelineActuator( GstElement *element ) : guGstPipelineActuator()
 {
     guLogDebug( "guGstPipelineActuator <%s>", GST_ELEMENT_NAME(element) );
     m_Chain.push_back( element );
@@ -17,7 +28,7 @@ guGstPipelineActuator::guGstPipelineActuator( GstElement *element )
 
 
 // -------------------------------------------------------------------------------- //
-guGstPipelineActuator::guGstPipelineActuator( guGstElementsChain chain )
+guGstPipelineActuator::guGstPipelineActuator( guGstElementsChain chain ) : guGstPipelineActuator()
 {
     guLogDebug( "guGstPipelineActuator [%lu]", chain.size() );
     m_Chain = chain;
@@ -29,8 +40,12 @@ static GstPadProbeReturn
 guPlugGstElementProbe( GstPad *pad, GstPadProbeInfo *info, gpointer data )
 {
 
-    GstElement *what = (GstElement*)data;
-    guLogDebug( "guPlugGstElementProbe << %s", GST_ELEMENT_NAME(data) );
+    guGstElementProbeData * pd = (guGstElementProbeData *)data;
+    GstElement *what = (GstElement *)pd->probe_data;
+    guGstResultExec rexec( pd->rhandler );
+    delete pd;
+
+    guLogDebug( "guPlugGstElementProbe << %s", GST_ELEMENT_NAME(what) );
     guLogGstPadData( "guPlugGstElementProbe my pad", pad );
 
     guGstPtr<GstPad> peer_gp( gst_pad_get_peer( pad ) );
@@ -60,6 +75,7 @@ guPlugGstElementProbe( GstPad *pad, GstPadProbeInfo *info, gpointer data )
         if( what_src_pad.ptr == NULL || gst_element_link_pads( what, NULL, GST_ELEMENT( GST_OBJECT_PARENT( peer ) ), GST_OBJECT_NAME( peer ) ) )
         {
             guLogDebug( "guPlugGstElementProbe plugged ok" );
+            rexec.SetErrorMode( false );
             return GST_PAD_PROBE_REMOVE;
         }
         else
@@ -79,7 +95,7 @@ guPlugGstElementProbe( GstPad *pad, GstPadProbeInfo *info, gpointer data )
 
 // -------------------------------------------------------------------------------- //
 static gulong
-guPlugGstElement( GstElement *plug_element, GstElement *previous_element )
+guPlugGstElement( GstElement *plug_element, GstElement *previous_element, guGstResultHandler * rhandler )
 {
     guLogDebug( "guPlugGstElement << <%s> after <%s>", GST_ELEMENT_NAME(plug_element), GST_ELEMENT_NAME(previous_element) );
     if( !guIsGstElementLinked(previous_element) )
@@ -101,7 +117,7 @@ guPlugGstElement( GstElement *plug_element, GstElement *previous_element )
         guLogError( "Unable to get source pad of the element <%s>", GST_ELEMENT_NAME(previous_element) );
         return false;
     }
-    gulong res = gst_pad_add_probe( src_pad, GST_PAD_PROBE_TYPE_IDLE, guPlugGstElementProbe, plug_element, NULL );
+    gulong res = gst_pad_add_probe( src_pad, GST_PAD_PROBE_TYPE_IDLE, guPlugGstElementProbe, new guGstElementProbeData( plug_element, rhandler ), NULL );
     if( res == 0 )
     {
         if( !guIsGstElementLinked( plug_element ) )
@@ -145,7 +161,7 @@ bool guGstPipelineActuator::Enable( GstElement *element )
     }
     guLogDebug( "guGstPipelineActuator::Enable previous_element_name <%s>", GST_ELEMENT_NAME(plug_here) );
 
-    bool res = guPlugGstElement( element, plug_here );
+    bool res = guPlugGstElement( element, plug_here, m_ResultHandler != NULL ? new guGstResultHandler( m_ResultHandler ) : new guGstResultHandler( "Actuator Enable default handler" ) );
     guLogDebug( "guGstPipelineActuator::Enable >> %i", res );
     return res;
 }
@@ -156,6 +172,10 @@ static GstPadProbeReturn
 guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpointer data )
 {
     guLogDebug( "guUnplugGstElementProbe on pad <%s> of <%s>", GST_OBJECT_NAME(previous_src_pad), GST_ELEMENT_NAME(GST_OBJECT_PARENT(previous_src_pad)) );
+
+    guGstElementProbeData * pd = (guGstElementProbeData *)data;
+    guGstResultExec rexec( pd->rhandler );
+    delete pd;
 
     guGstPtr<GstPad> previous_src_pad_peer_gp( gst_pad_get_peer( previous_src_pad ) );
     GstPad *previous_src_pad_peer = previous_src_pad_peer_gp.ptr;
@@ -226,6 +246,7 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
             // happy finish
             gst_pad_send_event( previous_src_pad_peer, gst_event_new_eos() );
             gst_element_set_state( unplug_me, GST_STATE_NULL);
+            rexec.SetErrorMode( false );
             return GST_PAD_PROBE_REMOVE;
         }
         else
@@ -243,14 +264,16 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
 
 // -------------------------------------------------------------------------------- //
 static bool
-guUnplugGstElement( GstElement *unplug_me )
+guUnplugGstElement( GstElement *unplug_me, guGstResultHandler * rhandler )
 {
     guLogDebug( "guUnplugGstElement << <%s>", GST_ELEMENT_NAME(unplug_me) );
     bool unplug_result = false;
+    guGstElementProbeData pd( &unplug_result, rhandler );
     gst_element_foreach_sink_pad( unplug_me,
-        [] ( GstElement * element, GstPad * sink_pad, void * user_data ) 
+        [ ] ( GstElement * element, GstPad * sink_pad, void * user_data ) 
         {
-            bool *res_ptr = (bool *)user_data;
+            guGstElementProbeData * pd = (guGstElementProbeData *)user_data;
+            bool *res_ptr = (bool *)pd->probe_data;
             guLogGstPadData( "guUnplugGstElement unplug sink pad", sink_pad );
             // GstPad *sink_peer = guGetPeerPad( sink_pad );
             GstPad *sink_peer = gst_pad_get_peer( sink_pad );
@@ -259,15 +282,17 @@ guUnplugGstElement( GstElement *unplug_me )
             guLogDebug( "guUnplugGstElement sink_peer.parent.parent is <%s>", GST_OBJECT_NAME(GST_OBJECT_PARENT(GST_OBJECT_PARENT(sink_peer))) );
             if ( sink_peer != NULL )
             {
-                if( gst_pad_add_probe( sink_peer, GST_PAD_PROBE_TYPE_IDLE, guUnplugGstElementProbe, NULL, NULL ) )
+                guGstResultHandler * rh = new guGstResultHandler( pd->rhandler );
+                if( gst_pad_add_probe( sink_peer, GST_PAD_PROBE_TYPE_IDLE, guUnplugGstElementProbe, new guGstElementProbeData( NULL, rh ), NULL ) )
                     *res_ptr = true;
                 else
                     guLogTrace( "Failed to add element probe for element <%s> pad <%s>", GST_ELEMENT_NAME(GST_OBJECT_PARENT(sink_peer)), GST_OBJECT_NAME(sink_peer) );
+                gst_object_unref( sink_peer );
             }
             else
                 guLogTrace( "Unplug target is null for element <%s> pad <%s>", GST_ELEMENT_NAME(GST_OBJECT_PARENT(sink_pad)), GST_OBJECT_NAME(sink_pad) );
             return 1;
-        }, &unplug_result );
+        }, &pd );
     guLogDebug( "guUnplugGstElement >> %i", unplug_result);
     return unplug_result;
 }
@@ -282,7 +307,7 @@ bool guGstPipelineActuator::Disable( GstElement *element )
         guLogDebug( "guGstPipelineActuator::Disable >> already disabled" );
         return true;
     }
-    return guUnplugGstElement( element );
+    return guUnplugGstElement( element, m_ResultHandler != NULL ? m_ResultHandler : new guGstResultHandler( "Actuator Disable handler" ) );
 }
 
 

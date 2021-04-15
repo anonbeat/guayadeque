@@ -17,12 +17,17 @@ Pipeline actuator class to support adding & removing pipeline elements on the fl
 class guGstPipelineActuator
 {
 private:
-    guGstElementsChain m_Chain;
+    guGstElementsChain              m_Chain;
+    guGstResultHandler              * m_ResultHandler;
+
+    guGstPipelineActuator() { SetHandler( NULL ); }
 
 public:
     guGstPipelineActuator( GstElement *element );
     guGstPipelineActuator( guGstElementsChain chain );
     ~guGstPipelineActuator() { guLogDebug( "~guGstPipelineActuator" ); }
+
+    void SetHandler( guGstResultHandler *rhandler = NULL ) { m_ResultHandler = rhandler; }
 
     bool Enable( GstElement *element );
     bool Enable( int element_nr ) { return Enable( m_Chain[ element_nr ] ); }
