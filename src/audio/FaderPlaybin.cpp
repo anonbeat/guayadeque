@@ -1543,51 +1543,32 @@ void guFaderPlaybin::RemoveRecordElement( GstPad * pad )
 }
 
 // -------------------------------------------------------------------------------- //
+static void guFaderPlaybin__ToggleEqualizer_status( std::weak_ptr<guFaderPlaybin*> * wpp )
+{
+    guLogDebug( "guFaderPlaybin__ToggleEqualizer_success << %p", wpp );
+    if( auto sp = wpp->lock() )
+    {
+        guMediaEvent e( guEVT_EQ_STATUS_CHANGED );
+        (*sp)->SendEvent( e );
+    }
+    else
+    {
+        guLogTrace( "Toggle Equalizer: parent fader playbin is gone" );
+    }
+    delete wpp;
+    guLogDebug( "guFaderPlaybin__ToggleEqualizer_success >>" );
+}
+
+
+// -------------------------------------------------------------------------------- //
 void guFaderPlaybin::ToggleEqualizer( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
     guGstPipelineActuator gpa( m_PlayChain );
     guGstResultHandler rh(
-        [] ( const void * p ) { // success handler
-            auto wp = (std::weak_ptr<guFaderPlaybin*> *)p;
-            if( auto sp = wp->lock() )
-            {
-                guMediaEvent e( guEVT_EQ_STATUS_CHANGED );
-                (*sp)->SendEvent( e );
-            }
-            else
-            {
-                guLogTrace( "Toggle Equalizer: parent fader playbin is gone" );
-            }
-            delete wp;
-        },
-        [] ( const void * p ) { // error handler
-            auto wp = (std::weak_ptr<guFaderPlaybin*> *)p;
-            if( auto sp = wp->lock() )
-            {
-                guMediaCtrl * MediaCtrl = (*sp)->GetPlayer();
-                if( MediaCtrl && (*sp)->IsOk() )
-                {
-                    MediaCtrl->SetLastError( 10000001 );
-                    (*sp)->SetErrorCode( 10000001 );
-                    (*sp)->SetState( guFADERPLAYBIN_STATE_ERROR );
-
-                    guMediaEvent event( guEVT_MEDIA_ERROR );
-                    event.SetClientData( new wxString( "Equalizer error" ) );
-                    MediaCtrl->SendEvent( event );
-
-                    guMediaEvent e( guEVT_EQ_STATUS_CHANGED );
-                    (*sp)->SendEvent( e );
-                }
-
-            }
-            else
-            {
-                guLogTrace( "Toggle Equalizer error: parent fader playbin is gone" );
-            }
-            delete wp;
-        },
-        new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer ) );
+        guGstResultHandler::Func( guFaderPlaybin__ToggleEqualizer_status ),
+        new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
+        );
     gpa.SetHandler( &rh );
     gpa.Toggle( m_Equalizer );
 }

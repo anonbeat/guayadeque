@@ -29,9 +29,13 @@ static void guGstResultHandler_noop_error_handler( const void *hint )
 
 struct guGstResultHandler
 {
-    void    * m_ExecData;
-    void    (*m_SuccessExec)(const void *);
-    void    (*m_ErrorExec)(const void *);
+    
+    typedef  void   (*Func)(const void *);
+
+    void     * m_ExecData;
+    Func    m_SuccessExec;
+    Func    m_ErrorExec;
+
     guGstResultHandler( guGstResultHandler * copy )
     {
         m_SuccessExec = copy->m_SuccessExec;
@@ -44,15 +48,18 @@ struct guGstResultHandler
         m_ErrorExec = guGstResultHandler_noop_error_handler;
         m_ExecData = (void *)hint;
     }
-    guGstResultHandler(
-        void (*success_func)(const void *), 
-        void (*error_func)(const void *),
-        void *exec_data = NULL )
-        {
-            m_ExecData = exec_data;
-            m_SuccessExec = success_func;
-            m_ErrorExec = error_func;
-        }
+    guGstResultHandler( Func return_func, void *exec_data = NULL )
+    {
+        m_ExecData = exec_data;
+        m_SuccessExec = return_func;
+        m_ErrorExec = return_func;
+    }
+    guGstResultHandler( Func success_func, Func error_func, void *exec_data = NULL )
+    {
+        m_ExecData = exec_data;
+        m_SuccessExec = success_func;
+        m_ErrorExec = error_func;
+    }
 };
 
 class guGstResultExec
