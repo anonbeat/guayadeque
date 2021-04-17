@@ -237,12 +237,6 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
     }
 
     guGstPtr<GstPad> next_sink_pad_gp( unplug_me_is_sink ? NULL : gst_pad_get_peer( unplug_me_src_pad ) );
-    if( !unplug_me_is_sink && GST_OBJECT_PARENT( GST_OBJECT_PARENT( next_sink_pad_gp.ptr ) ) != GST_OBJECT_PARENT( GST_OBJECT_PARENT( previous_src_pad ) ) )
-    {
-        guLogGstPadData( "guUnplugGstElementProbe try traverse", next_sink_pad_gp.ptr );
-        gst_object_unref( next_sink_pad_gp.ptr );
-        next_sink_pad_gp.ptr =  guGetPeerPad( unplug_me_src_pad );
-    }
     GstPad *next_sink_pad = next_sink_pad_gp.ptr;
     guLogGstPadData( "guUnplugGstElementProbe next_sink_pad", next_sink_pad );
     if( !unplug_me_is_sink && next_sink_pad == NULL )
