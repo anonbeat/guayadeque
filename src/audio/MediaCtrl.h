@@ -166,6 +166,7 @@ class guMediaCtrl : public wxEvtHandler
     void            ReconfigureRG();
 
     bool            IsEqualizerEnabled() { return m_CurrentPlayBin!= NULL ? m_CurrentPlayBin->IsEqualizerEnabled() : m_EnableEq; }
+    bool            IsVolCtlsEnabled() { return m_CurrentPlayBin!= NULL ? m_CurrentPlayBin->IsVolCtlsEnabled() : m_EnableEq; }
 
     friend class guFaderPlaybin;
 };

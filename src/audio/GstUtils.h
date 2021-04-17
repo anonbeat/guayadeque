@@ -28,6 +28,9 @@ GstPad * guGetPeerPad( GstPad * pad );
 // check if any of element pads is linked to another element
 bool guIsGstElementLinked( GstElement *element );
 
+// set element state to NULL if unlinked
+bool guGstStateToNullIfUnlinked( GstElement *element );
+
 
 } // namespace Guayadeque
 

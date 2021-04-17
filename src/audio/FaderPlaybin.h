@@ -220,11 +220,12 @@ class guFaderPlaybin
     bool                SetRecordFileName( void );
 
     void                AddRecordElement( GstPad * pad );
-    void                RemoveRecordElement( GstPad * pad );
 
     bool                DoStartSeek( void );
     void                ToggleEqualizer( void );
-    bool                IsEqualizerEnabled( void ) { return guIsGstElementLinked( m_Equalizer ); };
+    void                RefreshPipelineElements( void );
+    bool                IsEqualizerEnabled( void ) { return guIsGstElementLinked( m_Equalizer ); }
+    bool                IsVolCtlsEnabled( void ) { return guIsGstElementLinked( m_Volume ); }
     void                ToggleVolCtl( void );
 
     void                ReconfigureRG( void );

@@ -433,18 +433,6 @@ static GstPadProbeReturn add_record_element( GstPad * pad, GstPadProbeInfo * inf
 }
 
 // -------------------------------------------------------------------------------- //
-static GstPadProbeReturn remove_record_element( GstPad * pad, GstPadProbeInfo * info, guFaderPlaybin * ctrl )
-{
-    guLogDebug( wxT( "remove_record_element" ) );
-
-    ctrl->RemoveRecordElement( pad );
-
-    gst_pad_remove_probe( pad, GST_PAD_PROBE_INFO_ID( info ) );
-
-    return GST_PAD_PROBE_OK;
-}
-
-// -------------------------------------------------------------------------------- //
 bool IsValidElement( GstElement * element )
 {
     if( !GST_IS_ELEMENT( element ) )
@@ -484,6 +472,7 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_ReplayGain = NULL;
     m_ReplayGainLimiter = NULL;
     m_SharedPointer = std::make_shared<guFaderPlaybin*>( this );
+    m_RecordBin = NULL;
 
     guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%li)  %i" ), m_Id, playtype );
 
@@ -1434,28 +1423,40 @@ bool guFaderPlaybin::EnableRecord( const wxString &recfile, const int format, co
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlaybin::DisableRecord( void )
+static void guFaderPlaybin__RefreshPipelineElements( std::weak_ptr<guFaderPlaybin*> * wpp )
 {
-    guLogDebug( wxT( "guFaderPlayBin::DisableRecord" ) );
-    bool NeedBlock = true;
-
-    GstPad * AddPad;
-    GstPad * BlockPad;
-
-    AddPad = gst_element_get_static_pad( m_Tee, "sink" );
-    BlockPad = gst_pad_get_peer( AddPad );
-    gst_object_unref( AddPad );
-
-    if( NeedBlock )
+    guLogDebug( "guFaderPlaybin__RefreshPipelineElements << %p", wpp );
+    if( auto sp = wpp->lock() )
     {
-        //gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( remove_record_element ), this );
-        gst_pad_add_probe( BlockPad, GST_PAD_PROBE_TYPE_BLOCK_UPSTREAM,
-            GstPadProbeCallback( remove_record_element ), this, NULL );
+        // this function runs inside pad probe thread, so
+        // elements state changes should happen in another thread
+        guLogDebug( "guFaderPlaybin__RefreshPipelineElements locked on bin" );
+        guMediaEvent e( guEVT_PIPELINE_CHANGED );
+        e.SetClientData( new std::weak_ptr<guFaderPlaybin*>( sp ) );
+        (*sp)->SendEvent( e ); // returns in ::RefreshPipelineElements
     }
     else
     {
-        //remove_record_element( BlockPad, false, this );
+        guLogTrace( "Refresh pipeline elements: parent fader playbin is gone" );
     }
+    delete wpp;
+    guLogDebug( "guFaderPlaybin__RefreshPipelineElements >>" );
+}
+
+// -------------------------------------------------------------------------------- //
+void guFaderPlaybin::DisableRecord( void )
+{
+
+    guLogDebug( wxT( "guFaderPlayBin::DisableRecord" ) );
+    if( !GST_IS_ELEMENT( m_RecordBin ) )
+        return;
+    guGstPipelineActuator gpa( m_RecordBin );
+    guGstResultHandler rh(
+        guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
+        new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
+    );
+    gpa.SetHandler( &rh );
+    gpa.Disable();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1529,36 +1530,16 @@ void guFaderPlaybin::AddRecordElement( GstPad * pad )
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlaybin::RemoveRecordElement( GstPad * pad )
+void guFaderPlaybin::RefreshPipelineElements( void )
 {
-    g_object_ref( m_RecordBin );
-    gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
-
-    gst_bin_remove( GST_BIN( m_Playbackbin ), m_RecordBin );
-
-    gst_element_set_state( m_RecordBin, GST_STATE_NULL );
-    g_object_unref( m_RecordBin );
-
-    SetRecordBin( NULL );
+    guLogDebug( "guFaderPlaybin::RefreshPipelineElements" );
+    guGstStateToNullIfUnlinked( m_Equalizer );
+    guGstStateToNullIfUnlinked( m_FaderVolume );
+    guGstStateToNullIfUnlinked( m_Volume );
+    guGstStateToNullIfUnlinked( m_ReplayGain );
+    guGstStateToNullIfUnlinked( m_ReplayGainLimiter );
+    guGstStateToNullIfUnlinked( m_RecordBin );
 }
-
-// -------------------------------------------------------------------------------- //
-static void guFaderPlaybin__ToggleEqualizer_status( std::weak_ptr<guFaderPlaybin*> * wpp )
-{
-    guLogDebug( "guFaderPlaybin__ToggleEqualizer_success << %p", wpp );
-    if( auto sp = wpp->lock() )
-    {
-        guMediaEvent e( guEVT_EQ_STATUS_CHANGED );
-        (*sp)->SendEvent( e );
-    }
-    else
-    {
-        guLogTrace( "Toggle Equalizer: parent fader playbin is gone" );
-    }
-    delete wpp;
-    guLogDebug( "guFaderPlaybin__ToggleEqualizer_success >>" );
-}
-
 
 // -------------------------------------------------------------------------------- //
 void guFaderPlaybin::ToggleEqualizer( void )
@@ -1566,7 +1547,7 @@ void guFaderPlaybin::ToggleEqualizer( void )
     guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
     guGstPipelineActuator gpa( m_PlayChain );
     guGstResultHandler rh(
-        guGstResultHandler::Func( guFaderPlaybin__ToggleEqualizer_status ),
+        guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
         new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
         );
     gpa.SetHandler( &rh );
@@ -1578,8 +1559,14 @@ void guFaderPlaybin::ToggleVolCtl( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleVolCtl" );
     guGstPipelineActuator gpa( m_PlayChain );
+    guGstResultHandler rh(
+        guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
+        new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
+        );
+    gpa.SetHandler( &rh );
     gpa.Toggle( m_FaderVolume );
-    gpa.Toggle( m_Volume );
+    // renew weak_ptr for every next call
+    gpa.Toggle( m_Volume, new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer ) );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1599,16 +1586,21 @@ void guFaderPlaybin::ReconfigureRG( void )
     guLogDebug( "guFaderPlaybin::ReconfigureRG" );
     SetRGProperties();
     guGstPipelineActuator gpa( m_PlayChain );
+    guGstResultHandler rh(
+        guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
+        new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
+        );
+    gpa.SetHandler( &rh );
     if( m_Player->m_ReplayGainMode )
     {
         gpa.Enable( m_ReplayGainLimiter );
-        gpa.Enable( m_ReplayGain );
+        gpa.Enable( m_ReplayGain, new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer ) );
 
     }
     else
     {
         gpa.Disable( m_ReplayGain );
-        gpa.Disable( m_ReplayGainLimiter );
+        gpa.Disable( m_ReplayGainLimiter, new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer ) );
     }
 }
 

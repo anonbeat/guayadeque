@@ -96,4 +96,22 @@ bool guIsGstElementLinked( GstElement *element )
     return pads_connected;
 }
 
+//
+// set element state to NULL if unlinked
+//
+bool guGstStateToNullIfUnlinked( GstElement *element )
+{
+    if( guIsGstElementLinked( element ) )
+    {
+        guLogDebug( "guGstStateToNullIfUnlinked: element is linked" );
+        return false;
+    }
+    else
+    {
+        guLogDebug( "guGstStateToNullIfUnlinked: setting state" );
+        gst_element_set_state( element, GST_STATE_NULL );
+        return true;
+    }
+}
+
 } // namespace Guayadeque

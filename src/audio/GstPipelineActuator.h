@@ -29,16 +29,16 @@ public:
 
     void SetHandler( guGstResultHandler *rhandler = NULL ) { m_ResultHandler = rhandler; }
 
-    bool Enable( GstElement *element );
-    bool Enable( int element_nr ) { return Enable( m_Chain[ element_nr ] ); }
+    bool Enable( GstElement *element, void * new_data = NULL );
+    bool Enable( int element_nr, void * new_data = NULL ) { return Enable( m_Chain[ element_nr ], new_data ); }
     bool Enable() { return Enable(0); }
 
-    bool Disable( GstElement *element );
-    bool Disable( int element_nr ) { return Disable( m_Chain[ element_nr ] ); }
+    bool Disable( GstElement *element, void * new_data = NULL );
+    bool Disable( int element_nr, void * new_data = NULL ) { return Disable( m_Chain[ element_nr ], new_data ); }
     bool Disable() { return Disable(0); }
 
-    bool Toggle( GstElement *element );
-    bool Toggle( int element_nr ) { return Toggle( m_Chain[ element_nr ] ); }
+    bool Toggle( GstElement *element, void * new_data = NULL );
+    bool Toggle( int element_nr, void * new_data = NULL ) { return Toggle( m_Chain[ element_nr ], new_data ); }
     bool Toggle()  { return Toggle(0); }
 
 };
