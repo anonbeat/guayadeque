@@ -615,7 +615,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
 {
 //
 // full playback pipeline including [removable] elements:
-//      playbin > tee > queue > audioconvert > 
+//      playbin > valve > tee > queue > audioconvert > 
 //        [ equalizer-10bands ] > [ rgvolume > rglimiter ] >
 //        [ volume > fader volume ] > level > audioresample > sink
 //
@@ -625,6 +625,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
         "uri", ( const char * ) m_Uri.mb_str( wxConvFile ),
         "buffer-size", gint( m_Player->BufferSize() * 1024 )
         );
+    gpb.Add( "valve", "pb_valve", &m_Valve );
     gpb.Add( "tee", "pb_tee", &m_Tee );
 
     gpb.Add( "queue", "pb_queue", NULL, true,
@@ -668,7 +669,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
         return false;
 
     guLogDebug("guFaderPlaybin::BuildPlaybackBin pipeline is built");
-    GstPad * pad = gst_element_get_static_pad( m_Tee, "sink" );
+    GstPad * pad = gst_element_get_static_pad( m_Valve, "sink" );
     if( GST_IS_PAD( pad ) )
     {
         GstPad * ghostpad = gst_ghost_pad_new( "sink", pad );
@@ -970,6 +971,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
 bool guFaderPlaybin::Play( void )
 {
     guLogDebug( wxT( "guFaderPlayBin::Play (%li)" ), m_Id );
+    g_object_set( m_Valve, "drop", gboolean(0), NULL );
     return ( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE );
 }
 
@@ -1252,7 +1254,6 @@ bool guFaderPlaybin::StartFade( double volstart, double volend, int timeout )
 bool guFaderPlaybin::Pause( void )
 {
     guLogDebug( wxT( "guFaderPlayBin::Pause (%li)" ), m_Id );
-//    return ( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) != GST_STATE_CHANGE_FAILURE );
     g_timeout_add( 200, GSourceFunc( pause_timeout ), m_Playbin );
     return true;
 }
@@ -1261,6 +1262,7 @@ bool guFaderPlaybin::Pause( void )
 bool guFaderPlaybin::Stop( void )
 {
     guLogDebug( wxT( "guFaderPlayBin::Stop (%li)" ), m_Id );
+    g_object_set( m_Valve, "drop", gboolean(1), NULL );
     return ( gst_element_set_state( m_Playbin, GST_STATE_READY ) != GST_STATE_CHANGE_FAILURE );
 }
 

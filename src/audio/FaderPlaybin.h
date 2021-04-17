@@ -127,6 +127,7 @@ class guFaderPlaybin
     GstElement *        m_Volume;
     GstElement *        m_Equalizer;
     GstElement *        m_Tee;
+    GstElement *        m_Valve;
 
     GstElement *        m_RecordBin;
     GstElement *        m_FileSink;
