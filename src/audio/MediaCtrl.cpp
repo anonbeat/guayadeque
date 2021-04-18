@@ -406,10 +406,12 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype, c
             {
                 guLogDebug( wxT( "guMediaCtrl::Load Id: %li  State: %i  Error: %i" ), m_CurrentPlayBin->GetId(), m_CurrentPlayBin->GetState(), m_CurrentPlayBin->ErrorCode() );
                 //if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
-                if( !m_CurrentPlayBin->IsOk() )
+                if( !m_CurrentPlayBin->IsOk() || m_IsRecording )
                 {
-                    guLogDebug( wxT( "guMediaCtrl::Load The current playbin has error...Removing it" ) );
+                    guLogDebug( wxT( "guMediaCtrl::Load The current playbin has error or recording...Removing it" ) );
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                    m_CurrentPlayBin->SetValveDrop( true );
+                    DisableRecord();
                     ScheduleCleanUp();
                 }
                 else

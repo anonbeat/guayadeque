@@ -332,8 +332,6 @@ guUnplugGstElement( GstElement *unplug_me, const guGstResultHandler &rhandler )
 {
     guLogDebug( "guUnplugGstElement << <%s>", GST_ELEMENT_NAME(unplug_me) );
     bool unplug_result = false;
-    // guGstResultHandler rh( rhandler );
-    // guGstElementProbeData pd( &unplug_result, &rh );
     guGstElementProbeData pd( &unplug_result, (guGstResultHandler*)&rhandler );
     gst_element_foreach_sink_pad( unplug_me,
         [ ] ( GstElement * element, GstPad * sink_pad, void * user_data ) 

@@ -98,6 +98,7 @@ class guFaderPlaybin
 
     guMediaCtrl *       m_Player;
     wxMutex             m_Lock;
+    wxMutex             m_ChainOperation;
     guTimeLine *        m_FaderTimeLine;
     wxString            m_Uri;
     wxString            m_NextUri;
@@ -216,7 +217,8 @@ class guFaderPlaybin
     bool                EmittedStartFadeIn( void ) { return m_EmittedStartFadeIn; }
 
     bool                EnableRecord( const wxString &path, const int format, const int quality );
-    void                DisableRecord( void );
+    bool                DisableRecord( void );
+    void                DisableRecordSync( int timeout_msec = 1000 );
     bool                SetRecordFileName( const wxString &filename );
     bool                SetRecordFileName( void );
 
@@ -231,6 +233,8 @@ class guFaderPlaybin
 
     void                ReconfigureRG( void );
     void                SetRGProperties( void );
+
+    void                SetValveDrop( bool drop );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;

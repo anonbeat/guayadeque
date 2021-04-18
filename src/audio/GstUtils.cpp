@@ -101,6 +101,9 @@ bool guIsGstElementLinked( GstElement *element )
 //
 bool guGstStateToNullIfUnlinked( GstElement *element )
 {
+    if( element == NULL )
+        return false;
+
     if( guIsGstElementLinked( element ) )
     {
         guLogDebug( "guGstStateToNullIfUnlinked: element is linked" );
@@ -109,8 +112,7 @@ bool guGstStateToNullIfUnlinked( GstElement *element )
     else
     {
         guLogDebug( "guGstStateToNullIfUnlinked: setting state" );
-        gst_element_set_state( element, GST_STATE_NULL );
-        return true;
+        return gst_element_set_state( element, GST_STATE_NULL ) == GST_STATE_CHANGE_SUCCESS;
     }
 }
 

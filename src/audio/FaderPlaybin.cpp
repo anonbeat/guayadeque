@@ -448,7 +448,7 @@ bool IsValidElement( GstElement * element )
 
 
 // -------------------------------------------------------------------------------- //
-// guFaderPlayBin
+// guFaderPlaybin
 // -------------------------------------------------------------------------------- //
 guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, const int playtype, const int startpos )
 {
@@ -473,8 +473,9 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
     m_ReplayGainLimiter = NULL;
     m_SharedPointer = std::make_shared<guFaderPlaybin*>( this );
     m_RecordBin = NULL;
+    m_Valve = NULL;
 
-    guLogDebug( wxT( "guFaderPlayBin::guFaderPlayBin (%li)  %i" ), m_Id, playtype );
+    guLogDebug( wxT( "guFaderPlaybin::guFaderPlaybin (%li)  %i" ), m_Id, playtype );
 
     if( BuildOutputBin() && BuildPlaybackBin() )
     {
@@ -491,7 +492,9 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
 // -------------------------------------------------------------------------------- //
 guFaderPlaybin::~guFaderPlaybin()
 {
-    guLogDebug( wxT( "guFaderPlayBin::~guFaderPlayBin (%li) e: %i" ), m_Id, m_ErrorCode );
+    guLogDebug( wxT( "guFaderPlaybin::~guFaderPlaybin (%li) e: %i" ), m_Id, m_ErrorCode );
+    if( m_RecordBin != NULL )
+        guGstPipelineActuator( m_RecordBin ).Disable();
     //m_Player->RemovePlayBin( this );
     if( m_SeekTimerId )
     {
@@ -510,7 +513,8 @@ guFaderPlaybin::~guFaderPlaybin()
         //guLogMessage( wxT( "Set To NULL: %i" ), ChangeState );
         if( ChangeState == GST_STATE_CHANGE_ASYNC )
         {
-            gst_element_get_state( m_Playbin, NULL, NULL, GST_CLOCK_TIME_NONE );
+            guLogDebug( "guFaderPlaybin::~guFaderPlaybin wait on GST_STATE_CHANGE_ASYNC" );
+            gst_element_get_state( m_Playbin, NULL, NULL, GST_SECOND );
         }
         // guLogDebug( "mPlaybin refcount: %i", GST_OBJECT_REFCOUNT( m_Playbin ) );
         GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
@@ -537,6 +541,10 @@ guFaderPlaybin::~guFaderPlaybin()
     {
         EndFade();
     }
+
+    if( m_RecordBin != NULL )
+        gst_object_unref( m_RecordBin );
+
     guLogDebug( wxT( "Finished destroying the playbin %li" ), m_Id );
 }
 
@@ -793,7 +801,7 @@ void guFaderPlaybin::SetBuffering( const bool isbuffering )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::SetVolume( double volume )
 {
-    guLogDebug( wxT( "guFaderPlayBin::SetVolume (%li)  %0.2f" ), m_Id, volume );
+    guLogDebug( wxT( "guFaderPlaybin::SetVolume (%li)  %0.2f" ), m_Id, volume );
     g_object_set( m_Volume, "volume", gdouble( wxMax( 0.0001, volume ) ), NULL );
     return true;
 }
@@ -827,7 +835,7 @@ bool guFaderPlaybin::SetFaderVolume( double volume )
 
     if( volume != m_LastFadeVolume )
     {
-        //guLogDebug( wxT( "guFaderPlayBin::SetFaderVolume (%li)   %0.2f  %i" ), m_Id, volume, m_State == guFADERPLAYBIN_STATE_FADEIN );
+        //guLogDebug( wxT( "guFaderPlaybin::SetFaderVolume (%li)   %0.2f  %i" ), m_Id, volume, m_State == guFADERPLAYBIN_STATE_FADEIN );
         Lock();
         m_LastFadeVolume = volume;
         g_object_set( m_FaderVolume, "volume", gdouble( volume ), NULL );
@@ -922,14 +930,17 @@ void guFaderPlaybin::SetEqualizerBand( const int band, const int value )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int startpos )
 {
-    guLogDebug( wxT( "guFaderPlayBin::Load (%li) %i" ), m_Id, restart );
+    guLogDebug( wxT( "guFaderPlaybin::Load (%li) %i" ), m_Id, restart );
+    
+    DisableRecordSync();
+
     if( GST_IS_ELEMENT( m_Playbin ) )
 
     if( restart )
     {
         if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
         {
-            guLogDebug( wxT( "guFaderPlayBin::Load => Could not set state to ready..." ) );
+            guLogDebug( wxT( "guFaderPlaybin::Load => Could not set state to ready..." ) );
             return false;
         }
         gst_element_set_state( m_Playbin, GST_STATE_NULL );
@@ -937,7 +948,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
 
     if( !gst_uri_is_valid( ( const char * ) uri.mb_str( wxConvFile ) ) )
     {
-        guLogDebug( wxT( "guFaderPlayBin::Load => Invalid uri: '%s'" ), uri.c_str() );
+        guLogDebug( wxT( "guFaderPlaybin::Load => Invalid uri: '%s'" ), uri.c_str() );
         return false;
     }
 
@@ -947,7 +958,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
     {
         if( gst_element_set_state( m_Playbin, GST_STATE_PAUSED ) == GST_STATE_CHANGE_FAILURE )
         {
-            guLogDebug( wxT( "guFaderPlayBin::Load => Could not restore state to paused..." ) );
+            guLogDebug( wxT( "guFaderPlaybin::Load => Could not restore state to paused..." ) );
             return false;
         }
     }
@@ -962,7 +973,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
     guMediaEvent event( guEVT_MEDIA_LOADED );
     event.SetInt( restart );
     SendEvent( event );
-    guLogDebug( wxT( "guFaderPlayBin::Load => Sent the loaded event..." ) );
+    guLogDebug( wxT( "guFaderPlaybin::Load => Sent the loaded event..." ) );
 
     return true;
 }
@@ -970,15 +981,15 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::Play( void )
 {
-    guLogDebug( wxT( "guFaderPlayBin::Play (%li)" ), m_Id );
-    g_object_set( m_Valve, "drop", gboolean(0), NULL );
+    guLogDebug( wxT( "guFaderPlaybin::Play (%li)" ), m_Id );
+    SetValveDrop( false );
     return ( gst_element_set_state( m_Playbin, GST_STATE_PLAYING ) != GST_STATE_CHANGE_FAILURE );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::StartPlay( void )
 {
-    guLogMessage( wxT( "guFaderPlayBin::StartPlay (%li)" ), m_Id );
+    guLogMessage( wxT( "guFaderPlaybin::StartPlay (%li)" ), m_Id );
     bool                Ret = true;
     bool                NeedReap = false;
     bool                Playing = false;
@@ -1193,7 +1204,7 @@ bool guFaderPlaybin::StartPlay( void )
 // -------------------------------------------------------------------------------- //
 void guFaderPlaybin::AboutToFinish( void )
 {
-    guLogDebug( wxT( "guFaderPlayBin::AboutToFinish (%li)" ), m_Id );
+    guLogDebug( wxT( "guFaderPlaybin::AboutToFinish (%li)" ), m_Id );
     Load( m_NextUri, false );
     m_NextUri = wxEmptyString;
     m_AboutToFinishPending = true;
@@ -1210,7 +1221,7 @@ static bool reset_about_to_finish( guFaderPlaybin * faderplaybin )
 // -------------------------------------------------------------------------------- //
 void guFaderPlaybin::AudioChanged( void )
 {
-    guLogDebug( wxT( "guFaderPlayBin::AudioChanged (%li)" ), m_Id );
+    guLogDebug( wxT( "guFaderPlaybin::AudioChanged (%li)" ), m_Id );
     if( m_AboutToFinishPending )
     {
         if( m_NextId )
@@ -1230,7 +1241,7 @@ void guFaderPlaybin::AudioChanged( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::StartFade( double volstart, double volend, int timeout )
 {
-    guLogDebug( wxT( "guFaderPlayBin::StartFade (%li) %0.2f, %0.2f, %i" ), m_Id, volstart, volend, timeout );
+    guLogDebug( wxT( "guFaderPlaybin::StartFade (%li) %0.2f, %0.2f, %i" ), m_Id, volstart, volend, timeout );
 //    SetFaderVolume( volstart );
 
     m_EmittedStartFadeIn = false;
@@ -1253,7 +1264,7 @@ bool guFaderPlaybin::StartFade( double volstart, double volend, int timeout )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::Pause( void )
 {
-    guLogDebug( wxT( "guFaderPlayBin::Pause (%li)" ), m_Id );
+    guLogDebug( wxT( "guFaderPlaybin::Pause (%li)" ), m_Id );
     g_timeout_add( 200, GSourceFunc( pause_timeout ), m_Playbin );
     return true;
 }
@@ -1261,15 +1272,16 @@ bool guFaderPlaybin::Pause( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::Stop( void )
 {
-    guLogDebug( wxT( "guFaderPlayBin::Stop (%li)" ), m_Id );
-    g_object_set( m_Valve, "drop", gboolean(1), NULL );
+    guLogDebug( wxT( "guFaderPlaybin::Stop (%li)" ), m_Id );
+    SetValveDrop( true );
+    DisableRecordSync();
     return ( gst_element_set_state( m_Playbin, GST_STATE_READY ) != GST_STATE_CHANGE_FAILURE );
 }
 
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::Seek( wxFileOffset where, bool accurate )
 {
-    guLogDebug( wxT( "guFaderPlayBin::Seek (%li) %li )" ), m_Id, where );
+    guLogDebug( wxT( "guFaderPlaybin::Seek (%li) %li )" ), m_Id, where );
 
     GstSeekFlags SeekFlags = GstSeekFlags( GST_SEEK_FLAG_FLUSH | GST_SEEK_FLAG_KEY_UNIT );
     if( accurate )
@@ -1327,7 +1339,7 @@ wxFileOffset guFaderPlaybin::Length( void )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::EnableRecord( const wxString &recfile, const int format, const int quality )
 {
-    guLogDebug( wxT( "guFaderPlayBin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
+    guLogDebug( wxT( "guFaderPlaybin::EnableRecord  %i %i '%s'" ), format, quality, recfile.c_str() );
     GstElement * Encoder = NULL;
     GstElement * Muxer = NULL;
     gint Mp3Quality[] = { 320, 192, 128, 96, 64 };
@@ -1408,6 +1420,7 @@ bool guFaderPlaybin::EnableRecord( const wxString &recfile, const int format, co
             //gst_pad_set_blocked_async( BlockPad, true, GstPadBlockCallback( add_record_element ), this );
             gst_pad_add_probe( BlockPad, GST_PAD_PROBE_TYPE_BLOCK_DOWNSTREAM,
                 GstPadProbeCallback( add_record_element ), this, NULL );
+            gst_object_unref( BlockPad );
 
             return true;
         }
@@ -1446,19 +1459,72 @@ static void guFaderPlaybin__RefreshPipelineElements( std::weak_ptr<guFaderPlaybi
 }
 
 // -------------------------------------------------------------------------------- //
-void guFaderPlaybin::DisableRecord( void )
+bool guFaderPlaybin::DisableRecord( void )
 {
 
-    guLogDebug( wxT( "guFaderPlayBin::DisableRecord" ) );
+    guLogDebug( "guFaderPlaybin::DisableRecord" );
     if( !GST_IS_ELEMENT( m_RecordBin ) )
-        return;
+        return false;
     guGstPipelineActuator gpa( m_RecordBin );
     guGstResultHandler rh(
         guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
         new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer )
     );
     gpa.SetHandler( &rh );
-    gpa.Disable();
+    return gpa.Disable();
+}
+
+// -------------------------------------------------------------------------------- //
+static void guFaderPlaybin__MutexUnlock( wxMutex ** mpp )
+{
+    guLogDebug( "guFaderPlaybin__MutexUnlock << %p", mpp );
+    if( (*mpp) !=NULL )
+        (*mpp)->Unlock();
+}
+// -------------------------------------------------------------------------------- //
+void guFaderPlaybin::DisableRecordSync( int timeout_msec )
+{
+
+    guLogDebug( "guFaderPlaybin::DisableRecordSync << %i" , timeout_msec );
+
+    if( m_RecordBin == NULL || !GST_IS_ELEMENT( m_RecordBin ) )
+        return;
+
+    if( GST_STATE( m_RecordBin ) == GST_STATE_PLAYING || GST_STATE( m_RecordBin ) == GST_STATE_PAUSED )
+    {
+        wxMutex sync_here;
+        wxMutex *sync_here_ptr = &sync_here;
+        guGstPipelineActuator gpa( m_RecordBin );
+        guGstResultHandler rh(
+            guGstResultHandler::Func( guFaderPlaybin__MutexUnlock ),
+            &sync_here_ptr
+        );
+        gpa.SetHandler( &rh );
+        sync_here.Lock();
+        if( gpa.Disable() )
+        {
+            guLogDebug( "guFaderPlaybin::DisableRecordSync start sync" );
+            if( sync_here.LockTimeout( timeout_msec ) == wxMUTEX_NO_ERROR )
+            {
+                guLogDebug( "guFaderPlaybin::DisableRecordSync sync ok" );
+                gst_element_set_state( m_RecordBin, GST_STATE_NULL );
+            }
+            else
+            {
+                sync_here_ptr = NULL;
+                guLogWarning( "Graceful recorder removal has failed, possible stream data loss" );
+                gst_bin_remove( GST_BIN(m_Playbackbin), m_RecordBin );
+                gst_element_set_state( m_RecordBin, GST_STATE_NULL );
+            }
+        }
+    }
+    if( GST_STATE( m_RecordBin ) == GST_STATE_READY )
+    {
+        gst_element_set_state( m_RecordBin, GST_STATE_NULL );
+    }
+
+    gst_object_unref( m_RecordBin );
+    m_RecordBin = NULL;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -1476,7 +1542,7 @@ bool guFaderPlaybin::SetRecordFileName( const wxString &filename )
         return true;
     }
 
-    guLogDebug( wxT( "guFaderPlayBin::SetRecordFileName %i" ), m_IsBuffering );
+    guLogDebug( wxT( "guFaderPlaybin::SetRecordFileName %i" ), m_IsBuffering );
     m_SettingRecordFileName = true;
     m_LastRecordFileName = filename;
     m_PendingNewRecordName.Clear();
@@ -1491,6 +1557,7 @@ bool guFaderPlaybin::SetRecordFileName( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::SetRecordFileName( void )
 {
+    guLogDebug( "guFaderPlaybin::SetRecordFileName <<" );
 //    m_RecordFileName = m_RecordPath + filename + m_RecordExt;
     if( !wxDirExists( wxPathOnly( m_LastRecordFileName ) ) )
         wxFileName::Mkdir( wxPathOnly( m_LastRecordFileName ), 0770, wxPATH_MKDIR_FULL );
@@ -1520,6 +1587,7 @@ bool guFaderPlaybin::SetRecordFileName( void )
 // -------------------------------------------------------------------------------- //
 void guFaderPlaybin::AddRecordElement( GstPad * pad )
 {
+    guLogGstPadData( "guFaderPlaybin::AddRecordElement << ", pad );
     gst_element_set_state( m_RecordBin, GST_STATE_PAUSED );
 
     gst_bin_add( GST_BIN( m_Playbackbin ), m_RecordBin );
@@ -1540,13 +1608,19 @@ void guFaderPlaybin::RefreshPipelineElements( void )
     guGstStateToNullIfUnlinked( m_Volume );
     guGstStateToNullIfUnlinked( m_ReplayGain );
     guGstStateToNullIfUnlinked( m_ReplayGainLimiter );
-    guGstStateToNullIfUnlinked( m_RecordBin );
+    if( guGstStateToNullIfUnlinked( m_RecordBin ) )
+    {
+        gst_object_unref( m_RecordBin );
+        m_RecordBin = NULL;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
 void guFaderPlaybin::ToggleEqualizer( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
+    wxMutexLocker lock( m_ChainOperation );
+ 
     guGstPipelineActuator gpa( m_PlayChain );
     guGstResultHandler rh(
         guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
@@ -1560,6 +1634,8 @@ void guFaderPlaybin::ToggleEqualizer( void )
 void guFaderPlaybin::ToggleVolCtl( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleVolCtl" );
+    wxMutexLocker lock( m_ChainOperation );
+
     guGstPipelineActuator gpa( m_PlayChain );
     guGstResultHandler rh(
         guGstResultHandler::Func( guFaderPlaybin__RefreshPipelineElements ),
@@ -1586,6 +1662,8 @@ void guFaderPlaybin::SetRGProperties( void )
 void guFaderPlaybin::ReconfigureRG( void )
 {
     guLogDebug( "guFaderPlaybin::ReconfigureRG" );
+    wxMutexLocker lock( m_ChainOperation );
+
     SetRGProperties();
     guGstPipelineActuator gpa( m_PlayChain );
     guGstResultHandler rh(
@@ -1605,6 +1683,17 @@ void guFaderPlaybin::ReconfigureRG( void )
         gpa.Disable( m_ReplayGainLimiter, new std::weak_ptr<guFaderPlaybin*>( m_SharedPointer ) );
     }
 }
+
+void guFaderPlaybin::SetValveDrop( bool drop )
+{
+    guLogDebug( "guFaderPlaybin::SetValveDrop << %i", drop );
+    if( m_Valve != NULL )
+    {
+        g_object_set( m_Valve, "drop", gboolean( drop ), NULL );
+    }
+
+}
+
 
 }
 
