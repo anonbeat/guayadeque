@@ -43,6 +43,7 @@ guMediaRecordCtrl::guMediaRecordCtrl( guPlayerPanel * playerpanel, guMediaCtrl *
 // -------------------------------------------------------------------------------- //
 guMediaRecordCtrl::~guMediaRecordCtrl()
 {
+    guLogDebug( "guMediaRecordCtrl::~guMediaRecordCtrl" );
 }
 
 // -------------------------------------------------------------------------------- //

@@ -115,7 +115,7 @@ class guMediaCtrl : public wxEvtHandler
 
     bool            IsBuffering( void ) { return ( m_CurrentPlayBin && m_CurrentPlayBin->IsBuffering() ); }
     int             BufferSize( void ) { return m_BufferSize; }
-    bool            IsRecording( void ) { return m_IsRecording; }
+    bool            IsRecording( void );
 
     bool            ForceGapless( void ) { return m_ForceGapless; }
     void            ForceGapless( const bool forcegapless ) { m_ForceGapless = forcegapless; }

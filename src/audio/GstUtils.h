@@ -31,6 +31,9 @@ bool guIsGstElementLinked( GstElement *element );
 // set element state to NULL if unlinked
 bool guGstStateToNullIfUnlinked( GstElement *element );
 
+// set element state to NULL and unref
+bool guGstStateToNullAndUnref( GstElement *element );
+
 
 } // namespace Guayadeque
 

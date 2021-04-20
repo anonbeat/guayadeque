@@ -23,17 +23,83 @@ struct guGstElementProbeData
 guGstPipelineActuator::guGstPipelineActuator( GstElement *element ) : guGstPipelineActuator()
 {
     guLogDebug( "guGstPipelineActuator <%s>", GST_ELEMENT_NAME(element) );
-    m_Chain.push_back( element );
+    m_PrivateChain = true;
+    m_Chain = new guGstElementsChain();
+    m_Chain->push_back( element );
 }
 
 
 // -------------------------------------------------------------------------------- //
-guGstPipelineActuator::guGstPipelineActuator( guGstElementsChain chain ) : guGstPipelineActuator()
+guGstPipelineActuator::guGstPipelineActuator( guGstElementsChain *chain ) : guGstPipelineActuator()
 {
-    guLogDebug( "guGstPipelineActuator [%lu]", chain.size() );
+    guLogDebug( "guGstPipelineActuator [%lu]", chain->size() );
     m_Chain = chain;
+    m_PrivateChain = false;
 }
 
+guGstPipelineActuator::~guGstPipelineActuator()
+{
+    guLogDebug( "~guGstPipelineActuator" );
+    if( m_PrivateChain && m_Chain != NULL )
+        delete m_Chain;
+}
+
+// -------------------------------------------------------------------------------- //
+static GstPadProbeReturn guUnplugGstElementEOS( GstPad * my_pad, GstPadProbeInfo * info, guGstElementProbeData * pd )
+{
+    guLogGstPadData( "guUnplugGstElementEOS << ", my_pad );
+
+    GstEvent *event = GST_PAD_PROBE_INFO_EVENT (info);
+    if( GST_EVENT_TYPE( event ) != GST_EVENT_EOS )
+        return GST_PAD_PROBE_OK;
+
+    guGstResultExec rexec( pd->rhandler );
+    GstElement *what = (GstElement *)pd->probe_data;
+    delete pd;
+
+    gst_object_ref( what );
+    gst_bin_remove( GST_BIN( GST_OBJECT_PARENT( what ) ), what );
+
+    guLogDebug( "guUnplugGstElementEOS >> " );
+    return GST_PAD_PROBE_REMOVE;
+
+}
+
+// -------------------------------------------------------------------------------- //
+static bool guScheduleEOSProbe( GstPad * pad, GstElement * unplug_me, guGstResultExec * rexec )
+{
+    GstPad * wait_eos_here = pad;
+    guGstPtr<GstPad> wait_eos_here_unref( NULL );
+    if( GST_IS_BIN( unplug_me ) ) // need to wait on the last sink
+    {
+        guLogDebug( "guScheduleEOSProbe unplug_me is bin");
+        GstIterator * gi = gst_bin_iterate_sinks( GST_BIN( unplug_me ) );
+        GValue v = G_VALUE_INIT;
+        if( gi != NULL && gst_iterator_next( gi, &v ) == GST_ITERATOR_OK )
+        {
+            GstElement * e = GST_ELEMENT( g_value_get_object( &v ) );
+            guLogDebug( "guScheduleEOSProbe bin sink: <%s>", GST_ELEMENT_NAME(e) );
+            wait_eos_here = gst_element_get_static_pad( e, "sink" );
+            wait_eos_here_unref.ptr = wait_eos_here;
+            g_value_reset( &v );
+            gst_iterator_free( gi );
+        }
+        else
+            guLogTrace( "EOS scheduler: failed to list bin sinks, trying pad probe" );
+    }
+    guLogGstPadData( "guScheduleEOSProbe wait_eos_here", wait_eos_here );
+    guGstElementProbeData * pd = new guGstElementProbeData( unplug_me, rexec->Pass() );
+    if( gst_pad_add_probe( wait_eos_here, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
+        GstPadProbeCallback( guUnplugGstElementEOS ), pd, NULL) )
+    {
+        gst_pad_send_event( pad, gst_event_new_eos() );
+        return true;
+    }
+    guLogTrace( "EOS scheduler: add event probe failure" );
+    rexec->Retake( pd->rhandler );
+    delete pd;
+    return false;
+}
 
 // -------------------------------------------------------------------------------- //
 static GstPadProbeReturn
@@ -75,6 +141,14 @@ guPlugGstElementProbe( GstPad *pad, GstPadProbeInfo *info, gpointer data )
         if( what_src_pad.ptr == NULL || gst_element_link_pads( what, NULL, GST_ELEMENT( GST_OBJECT_PARENT( peer ) ), GST_OBJECT_NAME( peer ) ) )
         {
             guLogDebug( "guPlugGstElementProbe plugged ok" );
+            if( what_src_pad.ptr == NULL )
+            {
+                guLogTrace( "Plug: element <%s> has no 'src' pad (replacing sink or bin?)", GST_ELEMENT_NAME( what ) );
+                if( guScheduleEOSProbe( peer, GST_ELEMENT( GST_OBJECT_PARENT( peer ) ), &rexec ) )
+                    guLogDebug( "guPlugGstElementProbe guScheduleEOSProbe ok" );
+                else
+                    guLogDebug( "guPlugGstElementProbe guScheduleEOSProbe fail" );
+            }
             rexec.SetErrorMode( false );
             return GST_PAD_PROBE_REMOVE;
         }
@@ -156,7 +230,7 @@ bool guGstPipelineActuator::Enable( GstElement *element, void * new_data )
 
     GstElement *found_here = NULL, *plug_here = NULL;
 
-    for( GstElement *pf : m_Chain )
+    for( GstElement *pf : *m_Chain )
     {
         if( pf == element )
         {
@@ -177,27 +251,6 @@ bool guGstPipelineActuator::Enable( GstElement *element, void * new_data )
     guLogDebug( "guGstPipelineActuator::Enable >> %i", res );
     return res;
 }
-
-static GstPadProbeReturn guUnplugGstElementEOS( GstPad * my_pad, GstPadProbeInfo * info, guGstElementProbeData * pd )
-{
-    guLogGstPadData( "guUnplugGstElementEOS << ", my_pad );
-
-    GstEvent *event = GST_PAD_PROBE_INFO_EVENT (info);
-    if( GST_EVENT_TYPE( event ) != GST_EVENT_EOS )
-        return GST_PAD_PROBE_OK;
-
-    guGstResultExec rexec( pd->rhandler );
-    GstElement *what = (GstElement *)pd->probe_data;
-    delete pd;
-
-    gst_object_ref( what );
-    gst_bin_remove( GST_BIN( GST_OBJECT_PARENT( what ) ), what );
-
-    guLogDebug( "guUnplugGstElementEOS >> " );
-    return GST_PAD_PROBE_REMOVE;
-
-}
-
 
 // -------------------------------------------------------------------------------- //
 static GstPadProbeReturn
@@ -268,46 +321,24 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
             {
                 // happy finish
                 //
-                GstPad * wait_eos_here = previous_src_pad_peer;
-                guGstPtr<GstPad> wait_eos_here_unref( NULL );
-                if( !unplug_me_is_sink )
-                    wait_eos_here = unplug_me_src_pad;
-                else
+                if( unplug_me_is_sink && GST_STATE(unplug_me) == GST_STATE_PLAYING ) // need EOS
                 {
-                    if( GST_IS_BIN( unplug_me ) )
+                    if( guScheduleEOSProbe( previous_src_pad_peer, unplug_me, &rexec ) )
                     {
-                        guLogDebug( "guUnplugGstElementProbe unplug_me is bin");
-                        GstIterator * gi = gst_bin_iterate_sinks( GST_BIN( unplug_me ) );
-                        GValue v = G_VALUE_INIT;
-                        if( gi != NULL && gst_iterator_next( gi, &v ) == GST_ITERATOR_OK )
-                        {
-                            GstElement * e = GST_ELEMENT( g_value_get_object( &v ) );
-                            guLogDebug( "guUnplugGstElementProbe bin sink: <%s>", GST_ELEMENT_NAME(e) );
-                            wait_eos_here = gst_element_get_static_pad( e, "sink" );
-                            wait_eos_here_unref.ptr = wait_eos_here;
-                            g_value_reset( &v );
-                            gst_iterator_free( gi );
-                        }
-                        else
-                            guLogTrace( "Unplug: failed to list bin sinks" );
-                    }                    
+                        guLogDebug( "guUnplugGstElementProbe guScheduleEOSProbe ok" );
+                        return GST_PAD_PROBE_REMOVE;
+                    }
+                    else
+                        guLogDebug( "guUnplugGstElementProbe guScheduleEOSProbe fail" );
                 }
-                guLogGstPadData( "guUnplugGstElementProbe wait_eos_here", wait_eos_here );
-                guGstElementProbeData * pd = new guGstElementProbeData( unplug_me, rexec.Pass() );
-                if( !gst_pad_add_probe( wait_eos_here, GST_PAD_PROBE_TYPE_EVENT_DOWNSTREAM,
-                    GstPadProbeCallback( guUnplugGstElementEOS ), pd, NULL) )
+                guLogDebug( "guUnplugGstElementProbe no eos unplug" );
+                gst_object_ref( unplug_me );
+                if( !gst_bin_remove( GST_BIN( GST_OBJECT_PARENT( unplug_me ) ), unplug_me ) )
                 {
-                    // this may be a bit dangerous, but we try it anyway
-                    guLogWarning( "Unplug: add EOS event probe failure" );
-                    rexec.Retake( pd->rhandler );
-                    delete pd;
-                    gst_object_ref( unplug_me );
-                    gst_bin_remove( GST_BIN( GST_OBJECT_PARENT( unplug_me ) ), unplug_me );
+                    guLogDebug( "guUnplugGstElementProbe gst_bin_remove fail" );
+                    gst_object_unref( unplug_me );
                 }
-
-                gst_pad_send_event( previous_src_pad_peer, gst_event_new_eos() );
                 rexec.SetErrorMode( false );
-                
                 return GST_PAD_PROBE_REMOVE;
             }
             else
@@ -340,7 +371,7 @@ guUnplugGstElement( GstElement *unplug_me, const guGstResultHandler &rhandler )
             bool *res_ptr = (bool *)pd->probe_data;
             guLogGstPadData( "guUnplugGstElement unplug sink pad", sink_pad );
             GstPad *sink_peer = gst_pad_get_peer( sink_pad );
-            guLogDebug( "guUnplugGstElement sink_peer is <%s>", GST_OBJECT_NAME(sink_peer) );
+            guLogGstPadData( "guUnplugGstElement sink_peer is", sink_peer );
             if ( sink_peer != NULL )
             {
                 guGstResultHandler * rh = new guGstResultHandler( *pd->rhandler );

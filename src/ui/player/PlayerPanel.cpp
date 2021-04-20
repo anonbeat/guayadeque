@@ -644,6 +644,7 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             m_SilenceDetectorTime = Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_END_TIME, 45, CONFIG_PATH_PLAYBACK ) * 1000;
         }
 
+        m_MediaCtrl->ReconfigureRG();
         MediaCtrlNeedUpdated = true;
     }
 
@@ -1921,19 +1922,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 
     // Enable or disables the record button. Only enabled for radio stations
     m_RecordButton->Enable( ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
-    if( m_RecordButton->GetValue() )
-    {
-        m_RecordButton->SetValue( ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
-        if( !m_RecordButton->GetValue() )
-        {
-            m_MediaRecordCtrl->Stop();
-        }
-        else
-        {
-            m_MediaRecordCtrl->Start( &m_NextSong );
-            //m_MediaRecordCtrl->SetTrack( m_NextSong );
-        }
-    }
+    m_RecordButton->SetValue( false );
 
     // Set the Current Song
     m_CurTrackId = m_NextTrackId;
@@ -2782,12 +2771,12 @@ void guPlayerPanel::OnEqualizerRightButtonClicked( wxCommandEvent &event )
 void guPlayerPanel::OnUpdatePipeline( wxCommandEvent &event )
 {
     guLogDebug( "guPlayerPanel::OnUpdatePipeline <<" );
-    auto wpp = (std::weak_ptr<guFaderPlaybin*> *)event.GetClientData();
+    auto wpp = (guFaderPlaybin::WeakPtr *)event.GetClientData();
     if( wpp != NULL )
     {
         if( auto sp = wpp->lock() )
         {
-            (*sp)->RefreshPipelineElements();
+            (*sp)->RefreshPlaybackItems();
         }
         else
             guLogTrace( "Player update: target fader playbin is gone" );
@@ -2825,6 +2814,7 @@ void guPlayerPanel::OnUpdatePipeline( wxCommandEvent &event )
         m_VolumeButton->Hide();
         m_ForceGaplessButton->Hide();
     }
+    m_RecordButton->SetValue( m_MediaCtrl->IsRecording() );
     Layout();
 
 }

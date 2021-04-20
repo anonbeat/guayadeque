@@ -410,8 +410,7 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype, c
                 {
                     guLogDebug( wxT( "guMediaCtrl::Load The current playbin has error or recording...Removing it" ) );
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
-                    m_CurrentPlayBin->SetValveDrop( true );
-                    DisableRecord();
+                    m_CurrentPlayBin->DisableRecordAndStop();
                     ScheduleCleanUp();
                 }
                 else
@@ -792,7 +791,6 @@ void guMediaCtrl::UpdatedConfig( void )
 
     m_ProxyServer = wxString::Format( wxT( "%s:%d" ), m_ProxyHost, m_ProxyPort );
 
-    ReconfigureRG();
 }
 
 // -------------------------------------------------------------------------------- //
@@ -923,7 +921,7 @@ void guMediaCtrl::DisableRecord( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetRecordFileName( const wxString &filename )
 {
-    guLogDebug( wxT( "guMediaCtrl::SetRecordFileName  '%s'" ), filename.c_str() );
+    guLogDebug( "guMediaCtrl::SetRecordFileName  '%s'", filename );
 
     Lock();
     bool Result = m_CurrentPlayBin && m_CurrentPlayBin->SetRecordFileName( filename );
@@ -1103,6 +1101,14 @@ void guMediaCtrl::ReconfigureRG()
             FaderPlaybin->ReconfigureRG();
     }
     Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::IsRecording( void )
+{
+    if( m_CurrentPlayBin )
+        m_IsRecording = m_CurrentPlayBin->IsRecording();
+    return m_IsRecording;
 }
 
 }

@@ -48,11 +48,33 @@ public:
 
     guGstElementsChain GetChain() { return m_ElementChain; };
 
+    // add element followed by valve in order to eliminate
+    // racing condition on pad probes between pluggables
+    // when multiple dynamic elements are switched on or off at exactly the same time
+    //   this methode probably can be enchanced by using proxy pads instead of valve :)
+    GstElement * AddV( const char * factoryname, const char * name, GstElement ** element_ref = NULL, const bool link = true )
+    {
+        return AddV( factoryname, name, element_ref, link, "name", name );
+    }
+    
+    template<typename... PropArgs>
+    GstElement * AddV( const char * factoryname, const char * name, GstElement ** element_ref, const bool link, PropArgs... properties )
+    {
+        GstElement * res = Add( factoryname, name, element_ref, link, properties... );
+        if( GST_IS_ELEMENT(res) )
+        {
+            std::string v_name = "gpb_valve_" + std::string( name );
+            Add( "valve", v_name.c_str() );
+            return res;
+        }
+        return NULL;
+    }
+    
     GstElement * Add( const char * factoryname, const char * name, GstElement ** element_ref = NULL, const bool link = true )
     {
         return Add( factoryname, name, element_ref, link, "name", name );
     }
-    
+
     template<typename... PropArgs>
     GstElement * Add( const char * factoryname, const char * name, GstElement ** element_ref, const bool link, PropArgs... properties )
     {
