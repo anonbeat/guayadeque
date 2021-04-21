@@ -792,6 +792,10 @@ void guMediaCtrl::UpdatedConfig( void )
     m_ProxyServer = wxString::Format( wxT( "%s:%d" ), m_ProxyHost, m_ProxyPort );
 
     ReconfigureRG();
+    guMediaEvent e( guEVT_PIPELINE_CHANGED );
+    e.SetClientData( NULL );
+    SendEvent( e ); // returns in ::RefreshPlaybackItems
+
 
 }
 

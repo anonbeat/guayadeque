@@ -2787,13 +2787,22 @@ void guPlayerPanel::OnUpdatePipeline( wxCommandEvent &event )
         guLogTrace( "Player update: target fader playbin is null" );
     }
 
-    m_EnableEq = m_MediaCtrl->IsEqualizerEnabled();
-    m_EqualizerButton->SetBitmapLabel( guImage( m_EnableEq ? guIMAGE_INDEX_player_normal_equalizer : guIMAGE_INDEX_player_light_equalizer ) );
     guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( CONFIG_KEY_GENERAL_EQ_ENABLED, m_EnableEq, CONFIG_PATH_GENERAL );
 
-    m_EnableVolCtls = m_MediaCtrl->IsVolCtlsEnabled();
-    Config->WriteBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, m_EnableVolCtls, CONFIG_PATH_GENERAL );
+    if( GetState()  == guMEDIASTATE_PLAYING )
+    {
+        m_EnableEq = m_MediaCtrl->IsEqualizerEnabled();
+        m_EnableVolCtls = m_MediaCtrl->IsVolCtlsEnabled();
+        Config->WriteBool( CONFIG_KEY_GENERAL_EQ_ENABLED, m_EnableEq, CONFIG_PATH_GENERAL );
+        Config->WriteBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, m_EnableVolCtls, CONFIG_PATH_GENERAL );
+    }
+    else
+    {
+        m_EnableVolCtls = Config->ReadBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, true, CONFIG_PATH_GENERAL );
+        m_EnableEq = Config->ReadBool( CONFIG_KEY_GENERAL_EQ_ENABLED, true, CONFIG_PATH_GENERAL );
+    }
+    m_EqualizerButton->SetBitmapLabel( guImage( m_EnableEq ? guIMAGE_INDEX_player_normal_equalizer : guIMAGE_INDEX_player_light_equalizer ) );
+
     bool fg = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
     if( fg != m_ForceGapless )
     {
@@ -2815,6 +2824,7 @@ void guPlayerPanel::OnUpdatePipeline( wxCommandEvent &event )
     }
     m_RecordButton->SetValue( m_MediaCtrl->IsRecording() );
     Layout();
+    guLogDebug( " guPlayerPanel::OnUpdatePipeline (eq=%i vol=%i fg=%i) >> ", m_EnableEq, m_EnableVolCtls, fg );
 
 }
 
