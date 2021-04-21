@@ -644,7 +644,6 @@ void guPlayerPanel::OnConfigUpdated( wxCommandEvent &event )
             m_SilenceDetectorTime = Config->ReadNum( CONFIG_KEY_PLAYBCK_SILENCE_END_TIME, 45, CONFIG_PATH_PLAYBACK ) * 1000;
         }
 
-        m_MediaCtrl->ReconfigureRG();
         MediaCtrlNeedUpdated = true;
     }
 

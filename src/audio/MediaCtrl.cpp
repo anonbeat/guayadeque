@@ -791,6 +791,8 @@ void guMediaCtrl::UpdatedConfig( void )
 
     m_ProxyServer = wxString::Format( wxT( "%s:%d" ), m_ProxyHost, m_ProxyPort );
 
+    ReconfigureRG();
+
 }
 
 // -------------------------------------------------------------------------------- //

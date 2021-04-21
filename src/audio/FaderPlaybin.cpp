@@ -56,9 +56,22 @@ static char ProxyUser[ 200 ] = "";
 static char ProxyPass[ 200 ] = "";
 
 // -------------------------------------------------------------------------------- //
-static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFaderPlaybin * ctrl )
+static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFaderPlaybin::WeakPtr * wpp )
 {
+    if( wpp == NULL)
+    {
+        guLogTrace( "Gst async fail: parent fader playbin is null" );
+        return FALSE;
+    }
+    auto sp = wpp->lock();
+    if( !sp )
+    {
+        guLogTrace( "Gst async fail: parent fader playbin is gone" );
+        delete wpp;
+        return FALSE;
+    }
 
+    guFaderPlaybin * ctrl = (*sp);
     switch( GST_MESSAGE_TYPE( message ) )
     {
         case GST_MESSAGE_ERROR :
@@ -346,9 +359,23 @@ static gboolean gst_bus_async_callback( GstBus * bus, GstMessage * message, guFa
 }
 
 // -------------------------------------------------------------------------------- //
-static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin * ctrl )
+static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin::WeakPtr * wpp )
 {
-    guLogDebug( "gst_about_to_finish" );
+    guLogDebug( "gst_about_to_finish << %p", wpp );
+    if( wpp == NULL)
+    {
+        guLogTrace( "Gst about to finish: parent fader playbin is null" );
+        return;
+    }
+    auto sp = wpp->lock();
+    if( !sp )
+    {
+        guLogTrace( "Gst about to finish: parent fader playbin is gone" );
+        delete wpp;
+        return;
+    }
+
+    guFaderPlaybin * ctrl = (*sp);
     if( !ctrl->NextUri().IsEmpty() )
     {
         ctrl->AboutToFinish();
@@ -360,10 +387,23 @@ static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin * ctrl )
 }
 
 // -------------------------------------------------------------------------------- //
-static void gst_audio_changed( GstElement * playbin, guFaderPlaybin * ctrl )
+static void gst_audio_changed( GstElement * playbin, guFaderPlaybin::WeakPtr * wpp )
 {
-    guLogDebug( "gst_audio_changed" );
-    ctrl->AudioChanged();
+    guLogDebug( "gst_audio_changed << %p", wpp );
+    if( wpp == NULL)
+    {
+        guLogTrace( "gst_audio_changed: parent fader playbin is null" );
+        return;
+    }
+    if( auto sp = wpp->lock() )
+    {
+        (*sp)->AudioChanged();
+    }
+    else
+    {
+        guLogTrace( "gst_audio_changed: parent fader playbin is gone" );
+        delete wpp;
+    }
 }
 
 // -------------------------------------------------------------------------------- //
@@ -394,9 +434,14 @@ void gst_source_setup( GstElement * playbin, GstElement * source, guMediaCtrl * 
 }
 
 // -------------------------------------------------------------------------------- //
-static bool seek_timeout( guFaderPlaybin * faderplaybin )
+static bool seek_timeout( guFaderPlaybin::WeakPtr * wpp )
 {
-    faderplaybin->DoStartSeek();
+    if( auto sp = wpp->lock() )
+        (*sp)->DoStartSeek();
+    else
+        guLogTrace( "Seek timeout fail: parent bin is gone" );
+
+    delete wpp;
     return false;
 }
 
@@ -458,7 +503,7 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
         //Load( uri, false );
         if( startpos )
         {
-            m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), this );
+            m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), GetWeakPtr() );
         }
         SetVolume( m_Player->GetVolume() );
         SetEqualizer( m_Player->GetEqualizer() );
@@ -660,16 +705,16 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
         g_object_set( G_OBJECT( m_Playbin ), "flags", GST_PLAY_FLAG_AUDIO | GST_PLAY_FLAG_SOFT_VOLUME, NULL );
 
         g_signal_connect( G_OBJECT( m_Playbin ), "about-to-finish",
-            G_CALLBACK( gst_about_to_finish ), ( void * ) this );
+            G_CALLBACK( gst_about_to_finish ), ( void * ) GetWeakPtr() );
         //
         g_signal_connect( G_OBJECT( m_Playbin ), "audio-changed",
-            G_CALLBACK( gst_audio_changed ), ( void * ) this );
+            G_CALLBACK( gst_audio_changed ), ( void * ) GetWeakPtr() );
 
         g_signal_connect( G_OBJECT( m_Playbin ), "source-setup",
             G_CALLBACK( gst_source_setup ), ( void * ) m_Player );
 
         GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
-        gst_bus_add_watch( bus, GstBusFunc( gst_bus_async_callback ), this );
+        gst_bus_add_watch( bus, GstBusFunc( gst_bus_async_callback ), GetWeakPtr() );
         gst_object_unref( bus );
 
         gpb.SetCleanup( false );
@@ -909,6 +954,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
 
     if( restart )
     {
+        // recording data loss here => do not reuse recording bins
         if( gst_element_set_state( m_Playbin, GST_STATE_READY ) == GST_STATE_CHANGE_FAILURE )
         {
             guLogDebug( wxT( "guFaderPlaybin::Load => Could not set state to ready..." ) );
@@ -938,7 +984,7 @@ bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int st
     if( startpos )
     {
         m_StartOffset = startpos;
-        m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), this );
+        m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), GetWeakPtr() );
     }
 
     guMediaEvent event( guEVT_MEDIA_LOADED );
@@ -1189,9 +1235,18 @@ void guFaderPlaybin::AboutToFinish( void )
 }
 
 // -------------------------------------------------------------------------------- //
-static bool reset_about_to_finish( guFaderPlaybin * faderplaybin )
+static bool guFaderPlaybin__AudioChanged_timeout( guFaderPlaybin::WeakPtr * wpp )
 {
-    faderplaybin->ResetAboutToFinishPending();
+    guLogDebug( "guFaderPlaybin__AudioChanged_timeout << %p", wpp );
+    if( auto sp = wpp->lock() )
+    {
+        (*sp)->ResetAboutToFinishPending();
+    }
+    else
+    {
+        guLogTrace( "Audio changed event: parent fader playbin is gone" );
+    }
+    delete wpp;
     return false;
 }
 
@@ -1212,7 +1267,7 @@ void guFaderPlaybin::AudioChanged( void )
         event.SetInt( GST_STATE_PLAYING );
         SendEvent( event );
         //m_AboutToFinishPending = false;
-        m_AboutToFinishPendingId = g_timeout_add( 3000, GSourceFunc( reset_about_to_finish ), this );
+        m_AboutToFinishPendingId = g_timeout_add( 3000, GSourceFunc( guFaderPlaybin__AudioChanged_timeout ), GetWeakPtr() );
     }
 }
 
@@ -1509,14 +1564,14 @@ static void guFaderPlaybin__RefreshPlaybackItems( guFaderPlaybin::WeakPtr * wpp 
         // elements state changes should happen in another
         guLogDebug( "guFaderPlaybin__RefreshPlaybackItems found the bin" );
         guMediaEvent e( guEVT_PIPELINE_CHANGED );
-        e.SetClientData( new guFaderPlaybin::WeakPtr( sp ) );
+        e.SetClientData( wpp );
         (*sp)->SendEvent( e ); // returns in ::RefreshPlaybackItems
     }
     else
     {
         guLogTrace( "Refresh pipeline elements: parent fader playbin is gone" );
+        delete wpp;
     }
-    delete wpp;
     guLogDebug( "guFaderPlaybin__RefreshPlaybackItems >>" );
 }
 
