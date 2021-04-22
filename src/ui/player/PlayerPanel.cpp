@@ -445,7 +445,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     Bind( guEVT_MEDIA_CHANGED_STATE, &guPlayerPanel::OnMediaState, this );
     Bind( guEVT_MEDIA_CHANGED_POSITION, &guPlayerPanel::OnMediaPosition, this );
     Bind( guEVT_MEDIA_CHANGED_LENGTH, &guPlayerPanel::OnMediaLength, this );
-    Bind( guEVT_EQ_STATUS_CHANGED, &guPlayerPanel::OnUpdateEqualizerStatus, this );
+    Bind( guEVT_PIPELINE_CHANGED, &guPlayerPanel::OnUpdatePipeline, this );
 
     Bind( wxEVT_MENU, &guPlayerPanel::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
     Bind( wxEVT_MENU, &guPlayerPanel::OnSmartEndThread, this, ID_SMARTMODE_THREAD_END );
@@ -583,7 +583,7 @@ guPlayerPanel::~guPlayerPanel()
     Unbind( guEVT_MEDIA_CHANGED_STATE, &guPlayerPanel::OnMediaState, this );
     Unbind( guEVT_MEDIA_CHANGED_POSITION, &guPlayerPanel::OnMediaPosition, this );
     Unbind( guEVT_MEDIA_CHANGED_LENGTH, &guPlayerPanel::OnMediaLength, this );
-    Unbind( guEVT_EQ_STATUS_CHANGED, &guPlayerPanel::OnUpdateEqualizerStatus, this );
+    Unbind( guEVT_PIPELINE_CHANGED, &guPlayerPanel::OnUpdatePipeline, this );
 
     Unbind( wxEVT_MENU, &guPlayerPanel::OnSmartAddTracks, this, ID_SMARTMODE_ADD_TRACKS );
     Unbind( wxEVT_MENU, &guPlayerPanel::OnSmartEndThread, this, ID_SMARTMODE_THREAD_END );
@@ -1921,19 +1921,7 @@ void guPlayerPanel::OnMediaPlayStarted( void )
 
     // Enable or disables the record button. Only enabled for radio stations
     m_RecordButton->Enable( ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
-    if( m_RecordButton->GetValue() )
-    {
-        m_RecordButton->SetValue( ( m_NextSong.m_Type == guTRACK_TYPE_RADIOSTATION ) );
-        if( !m_RecordButton->GetValue() )
-        {
-            m_MediaRecordCtrl->Stop();
-        }
-        else
-        {
-            m_MediaRecordCtrl->Start( &m_NextSong );
-            //m_MediaRecordCtrl->SetTrack( m_NextSong );
-        }
-    }
+    m_RecordButton->SetValue( false );
 
     // Set the Current Song
     m_CurTrackId = m_NextTrackId;
@@ -2775,29 +2763,46 @@ void guPlayerPanel::OnEqualizerButtonClicked( wxCommandEvent &event )
 void guPlayerPanel::OnEqualizerRightButtonClicked( wxCommandEvent &event )
 {
     guLogDebug( "guPlayerPanel::OnEqualizerRightButtonClicked << <%s>", event.GetString() );
-    m_MediaCtrl->ToggleEqualizer();
-    m_EnableEq = !m_EnableEq;
-    OnUpdateEqualizerStatus( event );
+    m_MediaCtrl->ToggleEqualizer(); // this should return in OnUpdatePipeline
 }
 
 // -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnUpdateEqualizerStatus( wxCommandEvent &event )
+void guPlayerPanel::OnUpdatePipeline( wxCommandEvent &event )
 {
-    guLogDebug( "guPlayerPanel::OnUpdateEqualizerStatus <<" );
-    m_EnableEq = m_MediaCtrl->IsEqualizerEnabled();
+    guLogDebug( "guPlayerPanel::OnUpdatePipeline <<" );
+    auto wpp = (guFaderPlaybin::WeakPtr *)event.GetClientData();
+    if( wpp != NULL )
+    {
+        if( auto sp = wpp->lock() )
+        {
+            (*sp)->RefreshPlaybackItems();
+        }
+        else
+            guLogTrace( "Player update: target fader playbin is gone" );
+
+        delete wpp;
+    }
+    else
+    {
+        guLogTrace( "Player update: target fader playbin is null" );
+    }
+
+    guConfig * Config = ( guConfig * ) guConfig::Get();
+
+    if( GetState()  == guMEDIASTATE_PLAYING )
+    {
+        m_EnableEq = m_MediaCtrl->IsEqualizerEnabled();
+        m_EnableVolCtls = m_MediaCtrl->IsVolCtlsEnabled();
+        Config->WriteBool( CONFIG_KEY_GENERAL_EQ_ENABLED, m_EnableEq, CONFIG_PATH_GENERAL );
+        Config->WriteBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, m_EnableVolCtls, CONFIG_PATH_GENERAL );
+    }
+    else
+    {
+        m_EnableVolCtls = Config->ReadBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, true, CONFIG_PATH_GENERAL );
+        m_EnableEq = Config->ReadBool( CONFIG_KEY_GENERAL_EQ_ENABLED, true, CONFIG_PATH_GENERAL );
+    }
     m_EqualizerButton->SetBitmapLabel( guImage( m_EnableEq ? guIMAGE_INDEX_player_normal_equalizer : guIMAGE_INDEX_player_light_equalizer ) );
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( CONFIG_KEY_GENERAL_EQ_ENABLED, m_EnableEq, CONFIG_PATH_GENERAL );
-}
 
-// -------------------------------------------------------------------------------- //
-void guPlayerPanel::OnVolCtlToggle( wxCommandEvent &event )
-{
-    guLogDebug( "guPlayerPanel::OnVolCtlToggle << <%s>", event.GetString() );
-    m_MediaCtrl->ToggleVolCtl();
-    m_EnableVolCtls = !m_EnableVolCtls;    
-    guConfig * Config = ( guConfig * ) guConfig::Get();
-    Config->WriteBool( CONFIG_KEY_GENERAL_VOLUME_ENABLED, m_EnableVolCtls, CONFIG_PATH_GENERAL );
     bool fg = m_EnableVolCtls ? Config->ReadBool( CONFIG_KEY_CROSSFADER_FORCE_GAPLESS, false, CONFIG_PATH_CROSSFADER ) : true;
     if( fg != m_ForceGapless )
     {
@@ -2817,7 +2822,17 @@ void guPlayerPanel::OnVolCtlToggle( wxCommandEvent &event )
         m_VolumeButton->Hide();
         m_ForceGaplessButton->Hide();
     }
+    m_RecordButton->SetValue( m_MediaCtrl->IsRecording() );
     Layout();
+    guLogDebug( " guPlayerPanel::OnUpdatePipeline (eq=%i vol=%i fg=%i) >> ", m_EnableEq, m_EnableVolCtls, fg );
+
+}
+
+// -------------------------------------------------------------------------------- //
+void guPlayerPanel::OnVolCtlToggle( wxCommandEvent &event )
+{
+    guLogDebug( "guPlayerPanel::OnVolCtlToggle << <%s>", event.GetString() );
+    m_MediaCtrl->ToggleVolCtl();
 }
 
 // -------------------------------------------------------------------------------- //

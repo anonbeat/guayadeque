@@ -92,9 +92,20 @@ class guMediaCtrl;
 // -------------------------------------------------------------------------------- //
 class guFaderPlaybin
 {
+  // smart pointer features {
+  public:
+    typedef std::weak_ptr<guFaderPlaybin*> WeakPtr;
+
+    WeakPtr             * GetWeakPtr() { return new WeakPtr( m_SharedPointer ); }
+
   protected :
+    typedef std::shared_ptr<guFaderPlaybin*> Ptr;
+
+    Ptr                 m_SharedPointer;
+  // } smart pointer features
+
     
-    std::shared_ptr<guFaderPlaybin*>    m_SharedPointer;
+  protected :
 
     guMediaCtrl *       m_Player;
     wxMutex             m_Lock;
@@ -127,8 +138,12 @@ class guFaderPlaybin
     GstElement *        m_Volume;
     GstElement *        m_Equalizer;
     GstElement *        m_Tee;
+    GstElement *        m_Valve;
 
     GstElement *        m_RecordBin;
+    GstElement *        m_Muxer                     = NULL;
+    GstElement *        m_Encoder                   = NULL;
+
     GstElement *        m_FileSink;
     GstPad *            m_RecordSinkPad;
     GstPad *            m_TeeSrcPad;
@@ -142,11 +157,10 @@ class guFaderPlaybin
 
     guGstElementsChain  m_PlayChain;
 
-    std::weak_ptr<guFaderPlaybin*> GetPtr() { return m_SharedPointer; }
 
     bool                BuildPlaybackBin( void );
     bool                BuildOutputBin( void );
-    bool                BuildRecordBin( const wxString &path, GstElement * encoder, GstElement * muxer );
+    bool                BuildRecordBin( const wxString &path );
 
   public :
     guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, const int playtype, const int startpos = 0 );
@@ -215,20 +229,29 @@ class guFaderPlaybin
     bool                EmittedStartFadeIn( void ) { return m_EmittedStartFadeIn; }
 
     bool                EnableRecord( const wxString &path, const int format, const int quality );
-    void                DisableRecord( void );
-    bool                SetRecordFileName( const wxString &filename );
-    bool                SetRecordFileName( void );
 
-    void                AddRecordElement( GstPad * pad );
-    void                RemoveRecordElement( GstPad * pad );
+    bool                DisableRecord( void );
+    bool                DisableRecordAndStop( void );
+    void                DisableRecordAndStop_finish( void );
+
+
+    void                DisableRecordSync( int timeout_msec = 1000 );
+    bool                SetRecordFileName( const wxString &filename );
+
+    bool                AddRecordElement( GstPad * pad );
 
     bool                DoStartSeek( void );
     void                ToggleEqualizer( void );
-    bool                IsEqualizerEnabled( void ) { return guIsGstElementLinked( m_Equalizer ); };
+    void                RefreshPlaybackItems( void );
+    bool                IsEqualizerEnabled( void ) { return guIsGstElementLinked( m_Equalizer ); }
+    bool                IsVolCtlsEnabled( void ) { return guIsGstElementLinked( m_Volume ); }
+    bool                IsRecording( void ) { return guIsGstElementLinked( m_RecordBin ); }
     void                ToggleVolCtl( void );
 
     void                ReconfigureRG( void );
     void                SetRGProperties( void );
+
+    void                SetValveDrop( bool drop );
 
     friend class guMediaCtrl;
     friend class guFaderTimeLine;

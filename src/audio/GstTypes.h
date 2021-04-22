@@ -36,11 +36,11 @@ struct guGstResultHandler
     Func    m_SuccessExec;
     Func    m_ErrorExec;
 
-    guGstResultHandler( guGstResultHandler * copy )
+    guGstResultHandler( const guGstResultHandler &copy )
     {
-        m_SuccessExec = copy->m_SuccessExec;
-        m_ErrorExec = copy->m_ErrorExec;
-        m_ExecData = copy->m_ExecData;
+        m_SuccessExec = copy.m_SuccessExec;
+        m_ErrorExec = copy.m_ErrorExec;
+        m_ExecData = copy.m_ExecData;
     }
     guGstResultHandler( const char * hint = NULL )
     {
@@ -86,8 +86,11 @@ public:
             delete m_Handler;
         }
     }
-    void SetErrorMode( bool err ) { m_ErrorMode = err; }
-    guGstResultHandler * Pass()
+
+    void                    SetErrorMode( bool err ) { m_ErrorMode = err; }
+
+    void                    Retake( guGstResultHandler * rhandler ) { m_Handler = rhandler; }
+    guGstResultHandler *    Pass()
     {
         guGstResultHandler * res = m_Handler;
         m_Handler = NULL;

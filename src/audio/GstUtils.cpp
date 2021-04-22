@@ -96,4 +96,58 @@ bool guIsGstElementLinked( GstElement *element )
     return pads_connected;
 }
 
+//
+// set element state to NULL if unlinked
+//
+bool guGstStateToNullIfUnlinked( GstElement *element )
+{
+    if( element == NULL )
+        return false;
+
+    if( guIsGstElementLinked( element ) )
+    {
+        guLogDebug( "guGstStateToNullIfUnlinked: element is linked" );
+        return false;
+    }
+    else
+    {
+        guLogDebug( "guGstStateToNullIfUnlinked: setting state" );
+        if( GST_IS_ELEMENT( GST_OBJECT_PARENT( element ) ) )
+        {
+            gst_object_ref( element );
+            if( !gst_bin_remove( GST_BIN( GST_OBJECT_PARENT( element ) ), element ) )
+            {
+                guLogDebug( "guGstStateToNullIfUnlinked gst_bin_remove fail" );
+                gst_object_unref( element );
+                return false;
+            }
+        }
+        return gst_element_set_state( element, GST_STATE_NULL ) == GST_STATE_CHANGE_SUCCESS;
+    }
+}
+
+//
+// set element state to NULL and unref
+//
+bool guGstStateToNullAndUnref( GstElement *element )
+{
+    if( element == NULL || !GST_IS_ELEMENT( element ) )
+        return true;
+
+    if( GST_IS_ELEMENT( GST_OBJECT_PARENT( element ) ) )
+    {
+        gst_object_ref( element );
+        if( !gst_bin_remove( GST_BIN( GST_OBJECT_PARENT( element ) ), element ) )
+        {
+            guLogTrace( "Failed to remove element <%s> from the bin", GST_ELEMENT_NAME( element ) );
+            gst_object_unref( element );
+        }
+    }
+
+    bool res = gst_element_set_state( element, GST_STATE_NULL ) == GST_STATE_CHANGE_SUCCESS;
+    gst_object_unref( element );
+
+    return res;
+}
+
 } // namespace Guayadeque

@@ -489,7 +489,7 @@ class guPlayerPanel : public wxPanel
 
     void                        CheckStartPlaying( void );
 
-    void                        OnUpdateEqualizerStatus( wxCommandEvent &event );
+    void                        OnUpdatePipeline( wxCommandEvent &event );
 
     //friend class guSmartAddTracksThread;
 };

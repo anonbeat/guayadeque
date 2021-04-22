@@ -53,12 +53,20 @@ namespace Guayadeque {
 class guTrackArray;
 class guMediaViewer;
 
-static bool guDebugMode = std::getenv( "GU_DEBUG" ) != NULL;
+static bool guDebugMode     = std::getenv( "GU_DEBUG" ) != NULL;
+static bool guGatherStats   = std::getenv( "GU_STATS" ) != NULL;
 
 template<typename... Args>
 static void guLogMsgIfDebug( Args... what )
 {
     if( guDebugMode )
+        guLogMessage( what... );
+}
+
+template<typename... Args>
+static void guLogStats( Args... what )
+{
+    if( guGatherStats )
         guLogMessage( what... );
 }
 

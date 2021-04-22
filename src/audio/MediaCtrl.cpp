@@ -406,10 +406,11 @@ long guMediaCtrl::Load( const wxString &uri, guFADERPLAYBIN_PLAYTYPE playtype, c
             {
                 guLogDebug( wxT( "guMediaCtrl::Load Id: %li  State: %i  Error: %i" ), m_CurrentPlayBin->GetId(), m_CurrentPlayBin->GetState(), m_CurrentPlayBin->ErrorCode() );
                 //if( m_CurrentPlayBin->m_State == guFADERPLAYBIN_STATE_ERROR )
-                if( !m_CurrentPlayBin->IsOk() )
+                if( !m_CurrentPlayBin->IsOk() || m_IsRecording )
                 {
-                    guLogDebug( wxT( "guMediaCtrl::Load The current playbin has error...Removing it" ) );
+                    guLogDebug( wxT( "guMediaCtrl::Load The current playbin has error or recording...Removing it" ) );
                     m_CurrentPlayBin->m_State = guFADERPLAYBIN_STATE_PENDING_REMOVE;
+                    m_CurrentPlayBin->DisableRecordAndStop();
                     ScheduleCleanUp();
                 }
                 else
@@ -791,6 +792,11 @@ void guMediaCtrl::UpdatedConfig( void )
     m_ProxyServer = wxString::Format( wxT( "%s:%d" ), m_ProxyHost, m_ProxyPort );
 
     ReconfigureRG();
+    guMediaEvent e( guEVT_PIPELINE_CHANGED );
+    e.SetClientData( NULL );
+    SendEvent( e ); // returns in ::RefreshPlaybackItems
+
+
 }
 
 // -------------------------------------------------------------------------------- //
@@ -921,7 +927,7 @@ void guMediaCtrl::DisableRecord( void )
 // -------------------------------------------------------------------------------- //
 bool guMediaCtrl::SetRecordFileName( const wxString &filename )
 {
-    guLogDebug( wxT( "guMediaCtrl::SetRecordFileName  '%s'" ), filename.c_str() );
+    guLogDebug( "guMediaCtrl::SetRecordFileName  '%s'", filename );
 
     Lock();
     bool Result = m_CurrentPlayBin && m_CurrentPlayBin->SetRecordFileName( filename );
@@ -1101,6 +1107,14 @@ void guMediaCtrl::ReconfigureRG()
             FaderPlaybin->ReconfigureRG();
     }
     Unlock();
+}
+
+// -------------------------------------------------------------------------------- //
+bool guMediaCtrl::IsRecording( void )
+{
+    if( m_CurrentPlayBin )
+        m_IsRecording = m_CurrentPlayBin->IsRecording();
+    return m_IsRecording;
 }
 
 }
