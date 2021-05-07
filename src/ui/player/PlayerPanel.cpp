@@ -3151,7 +3151,7 @@ void guPlayerPanel::SendNotifyInfo( wxImage * image )
 {
     if( m_ShowNotifications && m_NotifySrv )
     {
-        image->Rescale( 60, 60, wxIMAGE_QUALITY_HIGH );
+        image->Rescale( 300, 300, wxIMAGE_QUALITY_HIGH );
 
         wxString Body;
         if( m_MediaSong.m_Length )
