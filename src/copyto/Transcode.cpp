@@ -441,7 +441,6 @@ void guTranscodeThread::BuildPipeline( void )
   if( GST_IS_ELEMENT( m_Pipeline ) )
   {
     GstElement * src;
-    //src = gst_element_factory_make( "filesrc", "guTransSource" );
     if( m_Track->m_Type == guTRACK_TYPE_AUDIOCD )
     {
         src = gst_element_make_from_uri( GST_URI_SRC, "cdda://", "guTransSource", NULL );
@@ -452,35 +451,30 @@ void guTranscodeThread::BuildPipeline( void )
     }
     if( GST_IS_ELEMENT( src ) )
     {
-      if( m_Track->m_Type == guTRACK_TYPE_AUDIOCD )
+      if( m_Track->m_Type != guTRACK_TYPE_AUDIOCD )
       {
-        g_object_set( src, "mode", 0, NULL );
-        g_object_set( src, "track", m_Track->m_Number, NULL );
-      }
-      else
-      {
-          wxString Location;
-          wxURI URI( m_Track->m_FileName );
-          if( URI.IsReference() )
-          {
-              Location = wxT( "file://" ) + m_Track->m_FileName;
-          }
-          else
-          {
-              if( !URI.HasScheme() )
-              {
-                  Location = wxT( "http://" ) + m_Track->m_FileName;
-              }
-              else
-              {
-                Location = m_Track->m_FileName;
-              }
-          }
+        wxString Location;
+        wxURI URI( m_Track->m_FileName );
+        if( URI.IsReference() )
+        {
+            Location = wxT( "file://" ) + m_Track->m_FileName;
+        }
+        else
+        {
+            if( !URI.HasScheme() )
+            {
+                Location = wxT( "http://" ) + m_Track->m_FileName;
+            }
+            else
+            {
+              Location = m_Track->m_FileName;
+            }
+        }
 
-          Location.Replace( " ", "%20", true );
+        Location.Replace( " ", "%20", true );
 
-          guLogMessage( wxT( "Transode source location: '%s'" ), Location.c_str() );
-          g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
+        guLogMessage( wxT( "Transode source location: '%s'" ), Location.c_str() );
+        g_object_set( G_OBJECT( src ), "location", ( const char * ) Location.mb_str( wxConvFile ), NULL );
       }
 
       GstElement * dec;
@@ -532,9 +526,17 @@ void guTranscodeThread::BuildPipeline( void )
 
                 gst_element_set_state( m_Pipeline, GST_STATE_PAUSED );
 
-                if( m_StartPos )
+                if( m_Track->m_Type == guTRACK_TYPE_AUDIOCD )
                 {
-                    m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), this );
+                  g_object_set( src, "mode", 0, NULL );
+                  g_object_set( src, "track", m_Track->m_Number, NULL );
+                }
+                else
+                {
+                  if( m_StartPos )
+                  {
+                      m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), this );
+                  }
                 }
 
                 return;
