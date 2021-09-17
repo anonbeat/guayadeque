@@ -440,7 +440,7 @@ void guDynPlayList::FromString( const wxString &playlist )
 guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * playlist,
                                           const bool albumfilter ) :
   wxDialog( parent, wxID_ANY, albumfilter ? _( "Filter Album Browser" ) :
-    _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600,400 ), wxDEFAULT_DIALOG_STYLE )
+    _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600, 400 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX )
 {
 	int index;
 	int count;
@@ -453,6 +453,7 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
     InitArrayStrings();
 
 	this->SetSizeHints( wxDefaultSize, wxDefaultSize );
+    this->SetMinSize( wxSize( 500, 350 ) );
 
 	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
