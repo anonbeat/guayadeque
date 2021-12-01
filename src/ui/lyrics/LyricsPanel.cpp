@@ -1105,6 +1105,7 @@ wxString guLyricSource::SourceFieldClean( const wxString &field )
 // -------------------------------------------------------------------------------- //
 guLyricSearchEngine::guLyricSearchEngine()
 {
+    LoadDisabledGenres();
     // Load the search engines...
     Load();
 }
@@ -1156,8 +1157,17 @@ void guLyricSearchEngine::ReadTargets( wxXmlNode * xmlnode )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLyricSearchEngine::LoadDisabledGenres() 
+{
+    // Load the lyrics disabled genres
+    guConfig * Config = guConfig::Get();
+    m_LyricDisabledGenres = Config->ReadAStr( CONFIG_KEY_LYRICS_DISGENRES, wxEmptyString, CONFIG_PATH_LYRICS );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLyricSearchEngine::Load( void )
 {
+    // 
     m_LyricSources.Empty();
     m_LyricTargets.Empty();
     m_TargetsEnabled = false;
@@ -1958,6 +1968,14 @@ guLyricSearchThread::ExitCode guLyricSearchThread::Entry()
     if( !m_LyricText.IsEmpty() )
     {
         ProcessSave( LyricSource );
+        return 0;
+    }
+
+    // Check if genre is disabled...
+    const wxArrayString DisabledGenres = m_LyricSearchContext->m_LyricSearchEngine->GetDisabledGenres();
+    if( DisabledGenres.Index( m_LyricSearchContext->m_Track.m_GenreName ) != wxNOT_FOUND )
+    {
+        guLogMessage( wxT( "Lyric Search Engine is disabled for the genre '%s'" ), m_LyricSearchContext->m_Track.m_GenreName.c_str() );
         return 0;
     }
 

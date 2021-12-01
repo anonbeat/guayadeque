@@ -403,6 +403,7 @@ class guLyricSearchEngine
   protected :
     guLyricSourceArray          m_LyricSources;
     guLyricSourceArray          m_LyricTargets;
+    wxArrayString               m_LyricDisabledGenres;
     guLyricSearchThreadArray    m_LyricSearchThreads;
     wxMutex                     m_LyricSearchThreadsMutex;
     bool                        m_TargetsEnabled;
@@ -424,6 +425,7 @@ class guLyricSearchEngine
     void                        SearchFinished( guLyricSearchThread * searchthread );
 
     void                        Load( void );
+    void                        LoadDisabledGenres();
 
     size_t                      SourcesCount( void ) { return m_LyricSources.Count(); }
     guLyricSource *             GetSource( const int index ) { return &m_LyricSources[ index ]; }
@@ -445,6 +447,8 @@ class guLyricSearchEngine
     bool                        Save( void );
 
     void                        RemoveContextThread( guLyricSearchContext * searchcontext );
+
+    wxArrayString               GetDisabledGenres( void ) { return m_LyricDisabledGenres; }
 
 };
 

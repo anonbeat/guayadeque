@@ -241,6 +241,12 @@ class guPrefDialog : public wxDialog
     wxBitmapButton *            m_LyricsSaveUpButton;
     wxBitmapButton *            m_LyricsSaveDownButton;
     wxBitmapButton *            m_LyricsSaveDelButton;
+
+    wxArrayString               m_LyricDisabledGenres;
+    wxListBox *                 m_LirycsDisGenresListBox;
+    wxBitmapButton *            m_LyricsDisGenreAddButton;
+    wxBitmapButton *            m_LyricsDisGenreDelButton;
+
     wxFontPickerCtrl *          m_LyricFontPicker;
     wxChoice *                  m_LyricsAlignChoice;
 
@@ -361,6 +367,7 @@ class guPrefDialog : public wxDialog
     int                         m_LyricSourceSelected;
     int                         m_LyricTargetSelected;
 
+
     void                        BuildGeneralPage( void );
     void                        BuildLibraryPage( void );
     void                        BuildPlaybackPage( void );
@@ -424,6 +431,9 @@ class guPrefDialog : public wxDialog
     void OnLyricSaveUpBtnClick( wxCommandEvent &event );
     void OnLyricSaveDownBtnClick( wxCommandEvent &event );
     void OnLyricSaveDelBtnClick( wxCommandEvent &event );
+    void OnLyricDisGenreSelected( wxCommandEvent &event );
+    void OnLyricDisGenreAddBtnClick( wxCommandEvent &event );
+    void OnLyricDisGenreDelBtnClick( wxCommandEvent &event );
 
 
     void OnPlayLevelEnabled( wxCommandEvent &event );

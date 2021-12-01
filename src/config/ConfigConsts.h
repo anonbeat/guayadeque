@@ -178,6 +178,7 @@ namespace Guayadeque {
 
 // Lyrics
 #define CONFIG_PATH_LYRICS                               "lyrics"
+#define CONFIG_KEY_LYRICS_DISGENRES                      "DisGenres"
 #define CONFIG_KEY_LYRICS_FOLLOW_PLAYER                  "FollowPlayer"
 #define CONFIG_KEY_LYRICS_TEXT_ALIGN                     "TextAlign"
 #define CONFIG_KEY_LYRICS_FONT                           "Font"

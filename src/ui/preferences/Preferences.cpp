@@ -1383,10 +1383,12 @@ void guPrefDialog::BuildLyricsPage( void )
 	m_LyricsDelButton->Enable( false );
 	LyricsSrcBtnSizer->Add( m_LyricsDelButton, 0, wxTOP|wxBOTTOM, 5 );
 
-	LyricsSrcSizer->Add( LyricsSrcBtnSizer, 0, wxEXPAND, 5 );
+	LyricsSrcSizer->Add( LyricsSrcBtnSizer, 0, wxEXPAND|wxALL, 5 );
 
 	LyricsMainSizer->Add( LyricsSrcSizer, 1, wxEXPAND|wxALL, 5 );
 
+    // Targets
+    //
 	wxStaticBoxSizer * LyricsSaveSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Targets " ) ), wxHORIZONTAL );
 
     wxArrayString LyricTargetsNames;
@@ -1423,10 +1425,34 @@ void guPrefDialog::BuildLyricsPage( void )
 	m_LyricsSaveDelButton->Enable( false );
 	LyricsSaveBtnSizer->Add( m_LyricsSaveDelButton, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
 
-	LyricsSaveSizer->Add( LyricsSaveBtnSizer, 0, wxEXPAND, 5 );
+	LyricsSaveSizer->Add( LyricsSaveBtnSizer, 0, wxEXPAND|wxALL, 5 );
 
 	LyricsMainSizer->Add( LyricsSaveSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
+    // Disabled Genres
+    //
+  	wxStaticBoxSizer * LyricsDisGenreSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Disabled Genres " ) ), wxHORIZONTAL );
+
+    m_LirycsDisGenresListBox = new wxListBox( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, 100 ), 0, NULL, 0 );
+    m_LirycsDisGenresListBox->Append( m_Config->ReadAStr( CONFIG_KEY_LYRICS_DISGENRES, wxEmptyString, CONFIG_PATH_LYRICS ) );
+    LyricsDisGenreSizer->Add( m_LirycsDisGenresListBox, 1, wxALL|wxEXPAND, 5 );
+
+	wxBoxSizer * LyricsDisGenreBtnSizer = new wxBoxSizer( wxVERTICAL );
+	m_LyricsDisGenreAddButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_add ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	//m_LyricsDisGenreAddButton->Enable( false );
+	LyricsDisGenreBtnSizer->Add( m_LyricsDisGenreAddButton, 0, wxTOP|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	m_LyricsDisGenreDelButton = new wxBitmapButton( m_LyricsPanel, wxID_ANY, guImage( guIMAGE_INDEX_tiny_del ), wxDefaultPosition, wxDefaultSize, wxBU_AUTODRAW );
+	m_LyricsDisGenreDelButton->Enable( false );
+	LyricsDisGenreBtnSizer->Add( m_LyricsDisGenreDelButton, 0, wxTOP|wxBOTTOM|wxALIGN_CENTER_HORIZONTAL, 5 );
+
+	LyricsDisGenreSizer->Add( LyricsDisGenreBtnSizer, 0, wxEXPAND|wxALL, 5 );
+
+	LyricsMainSizer->Add( LyricsDisGenreSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
+
+
+    // Font
+    //
 	wxStaticBoxSizer * LyricsFontSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _(" Font ") ), wxHORIZONTAL );
 
 	wxStaticText * LyricsFontLabel = new wxStaticText( m_LyricsPanel, wxID_ANY, _( "Font:" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -1451,7 +1477,7 @@ void guPrefDialog::BuildLyricsPage( void )
 	LyricsAlignChoices.Add( _( "Right" ) );
 	m_LyricsAlignChoice = new wxChoice( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1,-1 ), LyricsAlignChoices, 0 );
     m_LyricsAlignChoice->SetSelection( m_Config->ReadNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, 1, CONFIG_PATH_LYRICS ) );
-	LyricsFontSizer->Add( m_LyricsAlignChoice, 1, wxRIGHT, 5 );
+	LyricsFontSizer->Add( m_LyricsAlignChoice, 1, wxALL, 5 );
 
 	LyricsMainSizer->Add( LyricsFontSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -1473,6 +1499,9 @@ void guPrefDialog::BuildLyricsPage( void )
     m_LyricsSaveUpButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveUpBtnClick, this );
     m_LyricsSaveDownButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveDownBtnClick, this );
     m_LyricsSaveDelButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricSaveDelBtnClick, this );
+    m_LirycsDisGenresListBox->Bind( wxEVT_LISTBOX, &guPrefDialog::OnLyricDisGenreSelected, this );
+    m_LyricsDisGenreAddButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricDisGenreAddBtnClick, this );
+    m_LyricsDisGenreDelButton->Bind( wxEVT_BUTTON, &guPrefDialog::OnLyricDisGenreDelBtnClick, this );
 
 }
 
@@ -2611,6 +2640,7 @@ void guPrefDialog::SaveSettings( void )
         m_LyricSearchEngine->Save();
         m_Config->WriteStr( CONFIG_KEY_LYRICS_FONT, m_LyricFontPicker->GetSelectedFont().GetNativeFontInfoDesc(), CONFIG_PATH_LYRICS );
         m_Config->WriteNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, m_LyricsAlignChoice->GetSelection(), CONFIG_PATH_LYRICS );
+        m_Config->WriteAStr( CONFIG_KEY_LYRICS_DISGENRES, m_LyricDisabledGenres, CONFIG_PATH_LYRICS );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_JAMENDO )
@@ -3400,6 +3430,41 @@ void guPrefDialog::OnLyricSaveDelBtnClick( wxCommandEvent &event )
     {
         m_LyricSearchEngine->TargetRemoveAt( m_LyricTargetSelected );
         m_LyricsSaveListBox->Delete( m_LyricTargetSelected );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricDisGenreSelected( wxCommandEvent &event )
+{
+    m_LyricsDisGenreDelButton->Enable( event.GetInt() != wxNOT_FOUND );
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricDisGenreAddBtnClick( wxCommandEvent &event )
+{
+    wxTextEntryDialog * EntryDialog = new wxTextEntryDialog( this, _( "Genre: " ), _( "Enter the genre to disable" ), wxEmptyString );
+    if( EntryDialog )
+    {
+        if( EntryDialog->ShowModal() == wxID_OK )
+        {
+            if( m_LyricDisabledGenres.Index( EntryDialog->GetValue() ) == wxNOT_FOUND )
+            {
+                m_LyricDisabledGenres.Add( EntryDialog->GetValue() );
+                m_LirycsDisGenresListBox->Append( EntryDialog->GetValue() );
+            }
+        }
+        EntryDialog->Destroy();
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guPrefDialog::OnLyricDisGenreDelBtnClick( wxCommandEvent &event )
+{
+    int SelectedDisGenre = m_LirycsDisGenresListBox->GetSelection();
+    if( SelectedDisGenre != wxNOT_FOUND )
+    {
+        m_LyricDisabledGenres.RemoveAt( SelectedDisGenre );
+        m_LirycsDisGenresListBox->Delete( SelectedDisGenre );
     }
 }
 
