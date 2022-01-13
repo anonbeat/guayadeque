@@ -34,7 +34,7 @@ class guMediaCtrl;
 // -------------------------------------------------------------------------------- //
 class guMediaRecordCtrl
 {
-  protected:
+  protected :
     guPlayerPanel * m_PlayerPanel;
     guMediaCtrl *   m_MediaCtrl;
     guTrack         m_TrackInfo;

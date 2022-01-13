@@ -22,6 +22,8 @@
 #ifndef __RADIOTAGINFO_H__
 #define __RADIOTAGINFO_H__
 
+#include <gst/gst.h>
+
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //

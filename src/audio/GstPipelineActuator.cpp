@@ -1,4 +1,24 @@
-
+// -------------------------------------------------------------------------------- //
+//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//
+//    This Program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 3, or (at your option)
+//    any later version.
+//
+//    This Program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; see the file LICENSE.  If not, write to
+//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+//    Boston, MA 02110-1301 USA.
+//
+//    http://www.gnu.org/copyleft/gpl.html
+//
+// -------------------------------------------------------------------------------- //
 #include "GstPipelineActuator.h"
 
 namespace Guayadeque {
@@ -28,7 +48,6 @@ guGstPipelineActuator::guGstPipelineActuator( GstElement *element ) : guGstPipel
     m_Chain->push_back( element );
 }
 
-
 // -------------------------------------------------------------------------------- //
 guGstPipelineActuator::guGstPipelineActuator( guGstElementsChain *chain ) : guGstPipelineActuator()
 {
@@ -37,6 +56,7 @@ guGstPipelineActuator::guGstPipelineActuator( guGstElementsChain *chain ) : guGs
     m_PrivateChain = false;
 }
 
+// -------------------------------------------------------------------------------- //
 guGstPipelineActuator::~guGstPipelineActuator()
 {
     guLogDebug( "~guGstPipelineActuator" );
@@ -168,8 +188,7 @@ guPlugGstElementProbe( GstPad *pad, GstPadProbeInfo *info, gpointer data )
 
 
 // -------------------------------------------------------------------------------- //
-static gulong
-guPlugGstElement( GstElement *plug_element, GstElement *previous_element, const guGstResultHandler &rhandler )
+static gulong guPlugGstElement( GstElement *plug_element, GstElement *previous_element, const guGstResultHandler &rhandler )
 {
     guLogDebug( "guPlugGstElement << <%s> after <%s>", GST_ELEMENT_NAME(plug_element), GST_ELEMENT_NAME(previous_element) );
     if( !guIsGstElementLinked(previous_element) )
@@ -211,9 +230,7 @@ guPlugGstElement( GstElement *plug_element, GstElement *previous_element, const 
 
     gst_object_unref( src_pad );
     return res;
-
 }
-
 
 // -------------------------------------------------------------------------------- //
 bool guGstPipelineActuator::Enable( GstElement *element, void * new_data )
@@ -253,8 +270,7 @@ bool guGstPipelineActuator::Enable( GstElement *element, void * new_data )
 }
 
 // -------------------------------------------------------------------------------- //
-static GstPadProbeReturn
-guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpointer data )
+static GstPadProbeReturn guUnplugGstElementProbe( GstPad * previous_src_pad, GstPadProbeInfo * info, gpointer data )
 {
     guLogDebug( "guUnplugGstElementProbe on pad <%s> of <%s>", GST_OBJECT_NAME(previous_src_pad), GST_ELEMENT_NAME(GST_OBJECT_PARENT(previous_src_pad)) );
 
@@ -358,8 +374,7 @@ guUnplugGstElementProbe( GstPad *previous_src_pad, GstPadProbeInfo *info, gpoint
 
 
 // -------------------------------------------------------------------------------- //
-static bool
-guUnplugGstElement( GstElement *unplug_me, const guGstResultHandler &rhandler )
+static bool guUnplugGstElement( GstElement *unplug_me, const guGstResultHandler &rhandler )
 {
     guLogDebug( "guUnplugGstElement << <%s>", GST_ELEMENT_NAME(unplug_me) );
     bool unplug_result = false;
@@ -402,7 +417,6 @@ guUnplugGstElement( GstElement *unplug_me, const guGstResultHandler &rhandler )
     return unplug_result;
 }
 
-
 // -------------------------------------------------------------------------------- //
 bool guGstPipelineActuator::Disable( GstElement *element, void * new_data )
 {
@@ -436,4 +450,6 @@ bool guGstPipelineActuator::Toggle( GstElement *element, void * new_data )
     return guIsGstElementLinked( element ) ? Disable( element, new_data ) : Enable( element, new_data );
 }
 
-} // namespace Guayadeque
+}
+
+// -------------------------------------------------------------------------------- //

@@ -1,4 +1,24 @@
-
+// -------------------------------------------------------------------------------- //
+//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//
+//    This Program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 3, or (at your option)
+//    any later version.
+//
+//    This Program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; see the file LICENSE.  If not, write to
+//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+//    Boston, MA 02110-1301 USA.
+//
+//    http://www.gnu.org/copyleft/gpl.html
+//
+// -------------------------------------------------------------------------------- //
 #ifndef __GSTTYPES_H__
 #define __GSTTYPES_H__
 
@@ -11,22 +31,26 @@ namespace Guayadeque {
 
 typedef std::vector<GstElement*> guGstElementsChain;
 
+// -------------------------------------------------------------------------------- //
 struct guGstPipelineElementPack
 {
     GstElement *    element;
     GstElement **   element_ref;
 };
 
+// -------------------------------------------------------------------------------- //
 static void guGstResultHandler_noop_success_handler( const void *hint )
 {
     guLogDebug( "guGstResultHandler_noop_success_handler: <%s>", (const char *)hint );
 }
 
+// -------------------------------------------------------------------------------- //
 static void guGstResultHandler_noop_error_handler( const void *hint )
 {
     guLogTrace( "Unhandled gstreamer error (hint: %s)", (const char *)hint );
 }
 
+// -------------------------------------------------------------------------------- //
 struct guGstResultHandler
 {
     
@@ -62,12 +86,14 @@ struct guGstResultHandler
     }
 };
 
+// -------------------------------------------------------------------------------- //
 class guGstResultExec
 {
-private:
+  private :
     bool                 m_ErrorMode;
     guGstResultHandler   * m_Handler;
-public:
+    
+  public :
     guGstResultExec( guGstResultHandler *rhandler = NULL, bool error_mode = true )
     { 
         m_ErrorMode = error_mode;
@@ -99,6 +125,7 @@ public:
 };
 
 // struct template for a nicer gstreamer objects unref
+// -------------------------------------------------------------------------------- //
 template< class GstObjectType = GstObject >
 struct guGstPtr
 {
@@ -108,6 +135,7 @@ struct guGstPtr
 };
 
 // stateful GstElement unref'er
+// -------------------------------------------------------------------------------- //
 struct guGstElementStatePtr : guGstPtr<GstElement>
 {
     guGstElementStatePtr( GstElement *go ): guGstPtr( go ) { }
@@ -115,6 +143,7 @@ struct guGstElementStatePtr : guGstPtr<GstElement>
 };
 
 // stateful GstMessage unref'er
+// -------------------------------------------------------------------------------- //
 struct guGstMessagePtr : guGstPtr<GstMessage>
 {
     guGstMessagePtr( GstMessage *go ): guGstPtr( go ) { }
@@ -124,3 +153,4 @@ struct guGstMessagePtr : guGstPtr<GstMessage>
 }
 
 #endif
+// -------------------------------------------------------------------------------- //

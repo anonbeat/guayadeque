@@ -1,3 +1,24 @@
+// -------------------------------------------------------------------------------- //
+//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//
+//    This Program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 3, or (at your option)
+//    any later version.
+//
+//    This Program is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with this program; see the file LICENSE.  If not, write to
+//    the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+//    Boston, MA 02110-1301 USA.
+//
+//    http://www.gnu.org/copyleft/gpl.html
+//
+// -------------------------------------------------------------------------------- //
 
 #ifndef __GSTTYPEFINDER_H__
 #define __GSTTYPEFINDER_H__
@@ -17,9 +38,10 @@ WX_DECLARE_STRING_HASH_MAP( wxArrayString, guMediaFileExtensionsHashMap );
 //
 // hashmap to keep stuff
 //
+// -------------------------------------------------------------------------------- //
 class guMediaFileExtensions : public guMediaFileExtensionsHashMap
 {
-public:
+  public :
 	guMediaFileExtensions();
 	void join(guMediaFileExtensions what);	
 };
@@ -28,14 +50,15 @@ public:
 // lazy & safe singleton object with some mutex-based sync
 // ...otherwise gstreamer crashes the player on me  :}
 //
+// -------------------------------------------------------------------------------- //
 class guGstTypeFinder
 {
-private:
+  private :
 	guGstTypeFinder();
 	guGstTypeFinder(guGstTypeFinder const &copy);
 	guGstTypeFinder& operator=(guGstTypeFinder const &copy);
 
-protected:
+  protected :
 	
 	guMediaFileExtensions	m_Media;
 	wxMutex			m_MediaMutex;
@@ -52,7 +75,7 @@ protected:
 	wxArrayString GetMediaTypesByPrefix( const wxString &media_type_prefix = wxEmptyString );
 	void AddMediaTypePrefix( const wxString &media_type_prefix );
 
-public:
+  public :
 
 	static guGstTypeFinder& getGTF() { static guGstTypeFinder inst; return inst; }
 	
@@ -67,3 +90,4 @@ public:
 }
 
 #endif
+// -------------------------------------------------------------------------------- //
