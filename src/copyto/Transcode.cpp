@@ -200,7 +200,7 @@ guTranscodeThread::~guTranscodeThread()
         gst_element_set_state( m_Pipeline, GST_STATE_NULL );
         GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Pipeline ) );
         gst_bus_remove_watch( bus );
-        gst_object_unref( G_OBJECT( bus ) );        
+        gst_object_unref( G_OBJECT( bus ) );
         gst_object_unref( GST_OBJECT( m_Pipeline ) );
     }
 }
@@ -435,6 +435,19 @@ bool guTranscodeThread::BuildEncoder( GstElement ** enc, GstElement ** mux )
 }
 
 // -------------------------------------------------------------------------------- //
+bool SetStateAndWait( GstElement * element, GstState state )
+{
+    GstStateChangeReturn ChangeState = gst_element_set_state( element, state );
+    if( ChangeState == GST_STATE_CHANGE_ASYNC )
+    {
+        gst_element_get_state( element, NULL, NULL, GST_CLOCK_TIME_NONE );
+        return true;
+    }
+
+    return ChangeState == GST_STATE_CHANGE_SUCCESS;
+}
+
+// -------------------------------------------------------------------------------- //
 void guTranscodeThread::BuildPipeline( void )
 {
   m_Pipeline = gst_pipeline_new( "guTransPipeline" );
@@ -524,20 +537,13 @@ void guTranscodeThread::BuildPipeline( void )
                     gst_element_link_many( conv, enc, filesink, NULL );
                 }
 
-                gst_element_set_state( m_Pipeline, GST_STATE_PAUSED );
-
                 if( m_Track->m_Type == guTRACK_TYPE_AUDIOCD )
                 {
                   g_object_set( src, "mode", 0, NULL );
                   g_object_set( src, "track", m_Track->m_Number, NULL );
                 }
-                else
-                {
-                  if( m_StartPos )
-                  {
-                      m_SeekTimerId = g_timeout_add( 100, GSourceFunc( seek_timeout ), this );
-                  }
-                }
+
+                SetStateAndWait( m_Pipeline, GST_STATE_READY );
 
                 return;
               }
@@ -591,22 +597,9 @@ void guTranscodeThread::BuildPipeline( void )
 }
 
 // -------------------------------------------------------------------------------- //
-bool SetStateAndWait( GstElement * element, GstState state )
-{
-    GstStateChangeReturn ChangeState = gst_element_set_state( element, state );
-    if( ChangeState == GST_STATE_CHANGE_ASYNC )
-    {
-        gst_element_get_state( element, NULL, NULL, GST_CLOCK_TIME_NONE );
-        return true;
-    }
-
-    return ChangeState == GST_STATE_CHANGE_SUCCESS;
-}
-
-// -------------------------------------------------------------------------------- //
 bool guTranscodeThread::DoStartSeek( void )
 {
-    //guLogMessage( wxT( "DoStartSeek( %i )" ), m_StartPos );
+    guLogMessage( wxT( "DoStartSeek( %i )" ), m_StartPos );
     if( GST_IS_ELEMENT( m_Pipeline ) )
     {
         GstSeekFlags SeekFlags = GstSeekFlags( GST_SEEK_FLAG_FLUSH |
@@ -626,6 +619,11 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
 {
     if( m_Pipeline )
     {
+        SetStateAndWait( m_Pipeline, GST_STATE_PAUSED );
+        if( m_StartPos )
+        {
+            m_SeekTimerId = g_timeout_add( 150, GSourceFunc( seek_timeout ), this );
+        }
         // If the seek timer was created...
         while( m_SeekTimerId )
         {
@@ -634,9 +632,6 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
         }
 
         //gst_element_set_state( m_Pipeline, GST_STATE_PLAYING );
-        SetStateAndWait( m_Pipeline, GST_STATE_READY );
-        Sleep( 200 );
-
         SetStateAndWait( m_Pipeline, GST_STATE_PLAYING );
         Sleep( 200 );
 
@@ -645,16 +640,22 @@ guTranscodeThread::ExitCode guTranscodeThread::Entry()
         {
             if( m_StartPos )
             {
-                wxFileOffset Position;
-                gst_element_query_position( m_Pipeline, GST_FORMAT_TIME, ( gint64 * ) &Position );
-
-                if( m_StartPos + Position > m_StartPos + m_Length )
+                wxFileOffset Position = 0;
+                if( !gst_element_query_position( m_Pipeline, GST_FORMAT_TIME, ( gint64 * ) &Position ) )
                 {
+                    wxLogDebug( wxT( "Could not get the position" ) );
+                }
+                Position /= GST_MSECOND;
+                wxLogDebug( wxT( "Position: %lli" ), Position );
+
+                if( Position > m_StartPos + m_Length )
+                {
+                    wxLogDebug( wxT( "Reached the end of the track %i %lli %i" ), m_StartPos, Position, m_Length );
                     Stop();
                 }
             }
 
-            Sleep( 200 );
+            Sleep( 30 );
         }
 
         if( !TestDestroy() )
