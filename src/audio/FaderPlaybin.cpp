@@ -1398,7 +1398,7 @@ bool guFaderPlaybin::AddRecordElement( GstPad * pad )
         return false;
     }
 
-    m_TeeSrcPad = gst_element_get_request_pad( m_Tee, "src_%u" );
+    m_TeeSrcPad = gst_element_request_pad_simple( m_Tee, "src_%u" );
     guLogGstPadData( "guFaderPlaybin::AddRecordElement src request pad", m_TeeSrcPad );
     if( m_TeeSrcPad == NULL )
     {

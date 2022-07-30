@@ -386,8 +386,8 @@ bool SetXiphCommentCoverArt( Ogg::XiphComment * xiphcomment, const wxImage * ima
     {
         if( xiphcomment->contains( "COVERART" ) )
         {
-            xiphcomment->removeField( "COVERARTMIME" );
-            xiphcomment->removeField( "COVERART" );
+            xiphcomment->removeFields( "COVERARTMIME" );
+            xiphcomment->removeFields( "COVERART" );
         }
         if( image )
         {
@@ -434,7 +434,7 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
     {
         while( xiphcomment->contains( "LYRICS" ) )
         {
-            xiphcomment->removeField( "LYRICS" );
+            xiphcomment->removeFields( "LYRICS" );
         }
 
         if( !lyrics.IsEmpty() )
@@ -450,9 +450,9 @@ bool SetXiphCommentLyrics( Ogg::XiphComment * xiphcomment, const wxString &lyric
 // -------------------------------------------------------------------------------- //
 wxImage * GetMp4Image( TagLib::MP4::Tag * mp4tag )
 {
-    if( mp4tag && mp4tag->itemListMap().contains( "covr" ) )
+    if( mp4tag && mp4tag->itemMap().contains( "covr" ) )
     {
-        TagLib::MP4::CoverArtList Covers = mp4tag->itemListMap()[ "covr" ].toCoverArtList();
+        TagLib::MP4::CoverArtList Covers = mp4tag->itemMap()[ "covr" ].toCoverArtList();
 
         for( TagLib::MP4::CoverArtList::Iterator it = Covers.begin(); it != Covers.end(); it++ )
         {
@@ -491,9 +491,11 @@ bool SetMp4Image( TagLib::MP4::Tag * mp4tag, const wxImage * image )
 {
     if( mp4tag )
     {
-        if( mp4tag->itemListMap().contains( "covr" ) )
+        TagLib::MP4::ItemMap items = mp4tag->itemMap();
+
+        if( items.contains( "covr" ) )
         {
-            mp4tag->itemListMap().erase( "covr" );
+            items.erase( "covr" );
         }
 
         if( image )
@@ -507,7 +509,7 @@ bool SetMp4Image( TagLib::MP4::Tag * mp4tag, const wxImage * image )
                 TagLib::MP4::CoverArtList CoverList;
                 TagLib::MP4::CoverArt Cover( TagLib::MP4::CoverArt::JPEG, ImgData );
                 CoverList.append( Cover );
-                mp4tag->itemListMap()[ "covr" ] = CoverList;
+                items[ "covr" ] = CoverList;
 
                 return true;
             }
@@ -524,8 +526,9 @@ wxString GetMp4Lyrics( TagLib::MP4::Tag * mp4tag )
 {
     if( mp4tag )
     {
-        if( mp4tag->itemListMap().contains( "\xa9lyr" ) )
-            return TStringTowxString( mp4tag->itemListMap()[ "\xa9lyr" ].toStringList().front() );
+        TagLib::MP4::ItemMap items = mp4tag->itemMap();
+        if( items.contains( "\xa9lyr" ) )
+            return TStringTowxString( items[ "\xa9lyr" ].toStringList().front() );
     }
     return wxEmptyString;
 }
@@ -535,14 +538,15 @@ bool SetMp4Lyrics( TagLib::MP4::Tag * mp4tag, const wxString &lyrics )
 {
     if( mp4tag )
     {
-        if( mp4tag->itemListMap().contains( "\xa9lyr" ) )
+        TagLib::MP4::ItemMap items = mp4tag->itemMap();
+        if( items.contains( "\xa9lyr" ) )
         {
-            mp4tag->itemListMap().erase( "\xa9lyr" );
+            items.erase( "\xa9lyr" );
         }
         if( !lyrics.IsEmpty() )
         {
             const TagLib::String Lyrics = wxStringToTString( lyrics );
-            mp4tag->itemListMap()[ "\xa9lyr" ] = TagLib::StringList( Lyrics );
+            items[ "\xa9lyr" ] = TagLib::StringList( Lyrics );
         }
         return true;
     }
@@ -852,7 +856,7 @@ void Xiph_CheckLabelFrame( Ogg::XiphComment * xiphcomment, const char * descript
         }
         else
         {
-            xiphcomment->removeField( description );
+            xiphcomment->removeFields( description );
         }
     }
     else
@@ -894,22 +898,23 @@ bool guStrDiskToDiskNum( const wxString &diskstr, int &disknum, int &disktotal )
 void Mp4_CheckLabelFrame( TagLib::MP4::Tag * mp4tag, const char * description, const wxString &value )
 {
     //guLogMessage( wxT( "USERTEXT[ %s ] = '%s'" ), wxString( description, wxConvISO8859_1 ).c_str(), value.c_str() );
-    if( mp4tag->itemListMap().contains( description ) )
+    TagLib::MP4::ItemMap items = mp4tag->itemMap();
+    if( items.contains( description ) )
     {
         if( !value.IsEmpty() )
         {
-            mp4tag->itemListMap()[ description ] = TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) );
+            items[ description ] = TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) );
         }
         else
         {
-            mp4tag->itemListMap().erase( description );
+            items.erase( description );
         }
     }
     else
     {
         if( !value.IsEmpty() )
         {
-            mp4tag->itemListMap().insert( description, TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) ) );
+            items.insert( description, TagLib::MP4::Item( TagLib::StringList( wxStringToTString( value ) ) ) );
         }
     }
 }
@@ -1220,34 +1225,35 @@ bool guTagInfo::ReadExtendedTags( MP4::Tag * tag )
 {
     if( tag )
     {
-        if( tag->itemListMap().contains( "aART" ) )
+        TagLib::MP4::ItemMap items = tag->itemMap();
+        if( items.contains( "aART" ) )
         {
-            m_AlbumArtist = TStringTowxString( tag->itemListMap()["aART"].toStringList().front() );
+            m_AlbumArtist = TStringTowxString( items["aART"].toStringList().front() );
         }
 
-        if( tag->itemListMap().contains( "\xA9wrt" ) )
+        if( items.contains( "\xA9wrt" ) )
         {
-            m_Composer = TStringTowxString( tag->itemListMap()["\xa9wrt"].toStringList().front() );
+            m_Composer = TStringTowxString( items["\xa9wrt"].toStringList().front() );
         }
 
-        if( tag->itemListMap().contains( "disk" ) )
+        if( items.contains( "disk" ) )
         {
             m_Disk = wxString::Format( wxT( "%i/%i" ),
-                tag->itemListMap()["disk"].toIntPair().first,
-                tag->itemListMap()["disk"].toIntPair().second );
+                items["disk"].toIntPair().first,
+                items["disk"].toIntPair().second );
 
         }
 
-        if( tag->itemListMap().contains( "cpil" ) )
+        if( items.contains( "cpil" ) )
         {
-            m_Compilation = tag->itemListMap()["cpil"].toBool();
+            m_Compilation = items["cpil"].toBool();
         }
 
         // Rating
-        if( tag->itemListMap().contains( "----:com.apple.iTunes:RATING" ) )
+        if( items.contains( "----:com.apple.iTunes:RATING" ) )
         {
             long Rating = 0;
-            if( TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:RATING"].toStringList().front() ).ToLong( &Rating ) )
+            if( TStringTowxString( items["----:com.apple.iTunes:RATING"].toStringList().front() ).ToLong( &Rating ) )
             {
                 if( Rating )
                 {
@@ -1263,10 +1269,10 @@ bool guTagInfo::ReadExtendedTags( MP4::Tag * tag )
             }
         }
 
-        if( tag->itemListMap().contains( "----:com.apple.iTunes:PLAY_COUNTER" ) )
+        if( items.contains( "----:com.apple.iTunes:PLAY_COUNTER" ) )
         {
             long PlayCount = 0;
-            if( TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:PLAY_COUNTER"].toStringList().front()  ).ToLong( &PlayCount ) )
+            if( TStringTowxString( items["----:com.apple.iTunes:PLAY_COUNTER"].toStringList().front()  ).ToLong( &PlayCount ) )
             {
                 m_PlayCount = PlayCount;
             }
@@ -1275,27 +1281,27 @@ bool guTagInfo::ReadExtendedTags( MP4::Tag * tag )
         // Labels
         if( m_TrackLabels.Count() == 0 )
         {
-            if( tag->itemListMap().contains( "----:com.apple.iTunes:TRACK_LABELS" ) )
+            if( items.contains( "----:com.apple.iTunes:TRACK_LABELS" ) )
             {
-                m_TrackLabelsStr = TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:TRACK_LABELS"].toStringList().front() );
+                m_TrackLabelsStr = TStringTowxString( items["----:com.apple.iTunes:TRACK_LABELS"].toStringList().front() );
                 m_TrackLabels = wxStringTokenize( m_TrackLabelsStr, wxT( "|" ) );
             }
         }
 
         if( m_ArtistLabels.Count() == 0 )
         {
-            if( tag->itemListMap().contains( "----:com.apple.iTunes:ARTIST_LABELS" ) )
+            if( items.contains( "----:com.apple.iTunes:ARTIST_LABELS" ) )
             {
-                m_ArtistLabelsStr = TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:ARTIST_LABELS"].toStringList().front() );
+                m_ArtistLabelsStr = TStringTowxString( items["----:com.apple.iTunes:ARTIST_LABELS"].toStringList().front() );
                 m_ArtistLabels = wxStringTokenize( m_ArtistLabelsStr, wxT( "|" ) );
             }
         }
 
         if( m_AlbumLabels.Count() == 0 )
         {
-            if( tag->itemListMap().contains( "----:com.apple.iTunes:ALBUM_LABELS" ) )
+            if( items.contains( "----:com.apple.iTunes:ALBUM_LABELS" ) )
             {
-                m_AlbumLabelsStr = TStringTowxString( tag->itemListMap()["----:com.apple.iTunes:ALBUM_LABELS"].toStringList().front() );
+                m_AlbumLabelsStr = TStringTowxString( items["----:com.apple.iTunes:ALBUM_LABELS"].toStringList().front() );
                 m_AlbumLabels = wxStringTokenize( m_AlbumLabelsStr, wxT( "|" ) );
             }
         }
@@ -1310,21 +1316,22 @@ bool guTagInfo::WriteExtendedTags( MP4::Tag * tag, const int changedflag )
 {
     if( tag )
     {
+        TagLib::MP4::ItemMap items = tag->itemMap();
         if( changedflag & guTRACK_CHANGED_DATA_TAGS )
         {
-            tag->itemListMap()["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
-            tag->itemListMap()["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
+            items["aART"] = TagLib::StringList( wxStringToTString( m_AlbumArtist ) );
+            items["\xA9wrt"] = TagLib::StringList( wxStringToTString( m_Composer ) );
             int first;
             int second;
             guStrDiskToDiskNum( m_Disk, first, second );
-            tag->itemListMap()["disk"] = TagLib::MP4::Item( first, second );
-            tag->itemListMap()["cpil"] = TagLib::MP4::Item( m_Compilation );
+            items["disk"] = TagLib::MP4::Item( first, second );
+            items["cpil"] = TagLib::MP4::Item( m_Compilation );
         }
 
         if( changedflag & guTRACK_CHANGED_DATA_RATING )
         {
-            tag->itemListMap()["----:com.apple.iTunes:RATING" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
-            tag->itemListMap()[ "----:com.apple.iTunes:PLAY_COUNTER" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
+            items["----:com.apple.iTunes:RATING" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), guRatingToPopM( m_Rating ) ) ) );
+            items[ "----:com.apple.iTunes:PLAY_COUNTER" ] = TagLib::MP4::Item( wxStringToTString( wxString::Format( wxT( "%u" ), m_PlayCount ) ) );
         }
 
         if( changedflag & guTRACK_CHANGED_DATA_LABELS )

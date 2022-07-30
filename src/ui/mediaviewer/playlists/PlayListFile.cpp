@@ -232,7 +232,7 @@ bool guPlaylistFile::ReadPlsStream( wxInputStream &playlist, const wxString &pat
                             else
                             {
                                 wxFileName FileName( Location );
-                                FileName.Normalize( wxPATH_NORM_ALL, path );
+                                FileName.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT, path );
 
                                 m_Playlist.Add( new guPlaylistItem( FileName.GetFullPath(), Title ) );
                             }
@@ -309,7 +309,7 @@ bool guPlaylistFile::ReadM3uStream( wxInputStream &playlist, const wxString &pat
                 else
                 {
                     wxFileName FileName( Lines[ Index ] );
-                    FileName.Normalize( wxPATH_NORM_ALL, path );
+                    FileName.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT, path );
                     m_Playlist.Add( new guPlaylistItem( FileName.GetFullPath(), ItemName ) );
                 }
 

@@ -3348,7 +3348,7 @@ void guDbLibrary::UpdateStaticPlayListFile( const int plid )
     if( !PlaylistPath.IsEmpty() )
     {
         wxFileName FileName( PlaylistPath );
-        if( FileName.Normalize() )
+        if( FileName.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT ) )
         {
             guTrackArray Tracks;
             GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );

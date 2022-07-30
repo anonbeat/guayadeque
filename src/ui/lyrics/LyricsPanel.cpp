@@ -1811,7 +1811,7 @@ void guLyricSearchThread::LyricFile( guLyricSource &lyricsource )
 {
     wxString FilePath = GetSource( lyricsource );
     wxFileName FileName( FilePath );
-    if( FileName.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+    if( FileName.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
     {
         if( wxFileExists( FileName.GetFullPath() ) )
         {
@@ -1913,7 +1913,7 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
                     }
 
                     wxFileName FileName( TargetFileName );
-                    if( FileName.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+                    if( FileName.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
                     {
                         FileName.Mkdir( 0770, wxPATH_MKDIR_FULL );
 

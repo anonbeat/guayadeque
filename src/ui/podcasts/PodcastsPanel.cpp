@@ -946,13 +946,13 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	m_DetailChannelTitle = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, 0 );
 	m_DetailChannelTitle->Wrap( -1 );
-	m_DetailChannelTitle->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 92, false, wxEmptyString ) );
+	m_DetailChannelTitle->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( m_DetailChannelTitle, 0, wxALIGN_CENTER_VERTICAL|wxALL, 5 );
 
 	DetailDescLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Description:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailDescLabel->Wrap( -1 );
-	DetailDescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailDescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailDescLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -962,7 +962,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	DetailAuthorLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailAuthorLabel->Wrap( -1 );
-	DetailAuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailAuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailAuthorLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -972,7 +972,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	DetailOwnerLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailOwnerLabel->Wrap( -1 );
-	DetailOwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailOwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailOwnerLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -983,7 +983,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 	wxStaticText * DetailLinkLabel;
 	DetailLinkLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Link:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailLinkLabel->Wrap( -1 );
-	DetailLinkLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailLinkLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailLinkLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -998,7 +998,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	DetailItemTitleLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Title:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemTitleLabel->Wrap( -1 );
-	DetailItemTitleLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailItemTitleLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailItemTitleLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -1008,7 +1008,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	DetailItemSumaryLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Sumary:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemSumaryLabel->Wrap( -1 );
-	DetailItemSumaryLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailItemSumaryLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailItemSumaryLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -1018,7 +1018,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	DetailItemDateLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Date:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemDateLabel->Wrap( -1 );
-	DetailItemDateLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailItemDateLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailItemDateLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -1028,7 +1028,7 @@ guPodcastPanel::guPodcastPanel( wxWindow * parent, guDbPodcasts * db, guMainFram
 
 	DetailItemLengthLabel = new wxStaticText( m_DetailScrolledWindow, wxID_ANY, _("Length:"), wxDefaultPosition, wxDefaultSize, 0 );
 	DetailItemLengthLabel->Wrap( -1 );
-	DetailItemLengthLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DetailItemLengthLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	m_DetailFlexGridSizer->Add( DetailItemLengthLabel, 0, wxBOTTOM|wxRIGHT|wxLEFT|wxALIGN_RIGHT, 5 );
 
@@ -1216,7 +1216,7 @@ void guPodcastPanel::AddChannel( wxCommandEvent &event )
                 // Create the channel dir
                 wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
                                           PodcastChannel.m_Title );
-                if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+                if( ChannelDir.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
                 {
                     if( !wxDirExists( ChannelDir.GetFullPath() ) )
                     {
@@ -1283,7 +1283,7 @@ void guPodcastPanel::ChannelProperties( wxCommandEvent &event )
         // Create the channel dir
         wxFileName ChannelDir = wxFileName( m_PodcastsPath + wxT( "/" ) +
                                   PodcastChannel.m_Title );
-        if( ChannelDir.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+        if( ChannelDir.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
         {
             if( !wxDirExists( ChannelDir.GetFullPath() ) )
             {
@@ -1488,7 +1488,7 @@ void guPodcastPanel::UpdateChannelInfo( int itemid )
         wxFileName ImageFile = wxFileName( m_PodcastsPath + wxT( "/" ) +
                                            PodcastChannel.m_Title + wxT( "/" ) +
                                            PodcastChannel.m_Title + wxT( ".jpg" ) );
-        if( ImageFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+        if( ImageFile.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
         {
             wxImage PodcastImage;
             if( wxFileExists( ImageFile.GetFullPath() ) &&

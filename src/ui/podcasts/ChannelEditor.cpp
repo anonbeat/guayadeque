@@ -73,7 +73,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
     wxFileName ImageFile = wxFileName( PodcastsPath + wxT( "/" ) +
                                        channel->m_Title + wxT( "/" ) +
                                        channel->m_Title + wxT( ".jpg" ) );
-    if( ImageFile.Normalize( wxPATH_NORM_ALL | wxPATH_NORM_CASE ) )
+    if( ImageFile.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
     {
         wxImage PodcastImage;
         if( wxFileExists( ImageFile.GetFullPath() ) &&
@@ -101,7 +101,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	DescLabel = new wxStaticText( this, wxID_ANY, _( "Description:" ), wxDefaultPosition, wxDefaultSize, 0 );
 	DescLabel->Wrap( -1 );
-	DescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	DescLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	FlexGridSizer->Add( DescLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -113,7 +113,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	AuthorLabel = new wxStaticText( this, wxID_ANY, _("Author:"), wxDefaultPosition, wxDefaultSize, 0 );
 	AuthorLabel->Wrap( -1 );
-	AuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	AuthorLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	FlexGridSizer->Add( AuthorLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 
@@ -123,7 +123,7 @@ guChannelEditor::guChannelEditor( wxWindow * parent, guPodcastChannel * channel 
 
 	OwnerLabel = new wxStaticText( this, wxID_ANY, _("Owner:"), wxDefaultPosition, wxDefaultSize, 0 );
 	OwnerLabel->Wrap( -1 );
-	OwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), 70, 90, 90, false, wxEmptyString ) );
+	OwnerLabel->SetFont( wxFont( wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, wxEmptyString ) );
 
 	FlexGridSizer->Add( OwnerLabel, 0, wxALIGN_RIGHT|wxBOTTOM|wxRIGHT|wxLEFT, 5 );
 

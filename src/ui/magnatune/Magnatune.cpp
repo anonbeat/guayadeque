@@ -443,7 +443,7 @@ guMagnatuneDownloadThread::ExitCode guMagnatuneDownloadThread::Entry()
     wxFileName CoverFile = wxFileName( guPATH_MAGNATUNE_COVERS +
                  wxString::Format( wxT( "%s-%s.jpg" ), m_ArtistName.c_str(), m_AlbumName.c_str() ) );
 
-    if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+    if( CoverFile.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
     {
         wxString CoverUrl = wxString::Format( wxT( "http://he3.magnatune.com/music/%s/%s/cover_600.jpg" ),
                 guURLEncode( m_ArtistName, false ).c_str(),
@@ -1088,7 +1088,7 @@ wxImage * guMediaViewerMagnatune::GetAlbumCover( const int albumid, int &coverid
     wxFileName CoverFile = wxFileName( guPATH_MAGNATUNE_COVERS +
                  wxString::Format( wxT( "%s-%s.jpg" ), artistname.c_str(), albumname.c_str() ) );
 
-    if( CoverFile.Normalize( wxPATH_NORM_ALL|wxPATH_NORM_CASE ) )
+    if( CoverFile.Normalize( wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE | wxPATH_NORM_LONG | wxPATH_NORM_SHORTCUT | wxPATH_NORM_CASE ) )
     {
         if( CoverFile.FileExists() )
         {
