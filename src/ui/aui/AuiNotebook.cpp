@@ -26,6 +26,7 @@
 #include "Utils.h"
 
 #include <wx/dc.h>
+#include <wx/version.h> 
 
 namespace Guayadeque {
 
@@ -293,7 +294,11 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     int close_button_width = 0;
     if( close_button_state != wxAUI_BUTTON_STATE_HIDDEN )
     {
+      #if wxCHECK_VERSION(3, 2, 0)
+       close_button_width = m_activeCloseBmp.GetDefaultSize().GetWidth(); 
+      #else
         close_button_width = m_activeCloseBmp.GetWidth();
+      #endif 
     }
 
 
@@ -303,12 +308,22 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
         bitmap_offset = tab_x + 8;
 
         // draw bitmap
-        dc.DrawBitmap(page.bitmap,
-                      bitmap_offset,
-                      drawn_tab_yoff + (drawn_tab_height/2) - (page.bitmap.GetHeight()/2),
-                      true);
+        #if wxCHECK_VERSION(3, 2, 0)
+          dc.DrawBitmap(page.bitmap.GetBitmap(wxDefaultSize),
+              bitmap_offset,
+              drawn_tab_yoff + (drawn_tab_height/2) - (page.bitmap.GetDefaultSize().GetHeight()/2),
+              true);
 
-        text_offset = bitmap_offset + page.bitmap.GetWidth();
+          text_offset = bitmap_offset + page.bitmap.GetDefaultSize().GetWidth();
+        #else
+          dc.DrawBitmap(page.bitmap,
+              bitmap_offset,
+              drawn_tab_yoff + (drawn_tab_height/2) - (page.bitmap.GetHeight()/2),
+              true);
+
+          text_offset = bitmap_offset + page.bitmap.GetWidth();
+        #endif
+
         text_offset += 3; // bitmap padding
     }
      else
@@ -331,12 +346,20 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     // draw close button if necessary
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
     {
-        wxBitmap bmp = m_disabledCloseBmp;
+        #if wxCHECK_VERSION(3, 2, 0)
+          wxBitmap bmp = m_disabledCloseBmp.GetBitmap(wxDefaultSize);
+        #else
+          wxBitmap bmp = m_disabledCloseBmp;
+        #endif
 
         if (close_button_state == wxAUI_BUTTON_STATE_HOVER ||
             close_button_state == wxAUI_BUTTON_STATE_PRESSED)
         {
+          #if wxCHECK_VERSION(3, 2, 0)
+            bmp = m_activeCloseBmp.GetBitmap(wxDefaultSize);
+          #else
             bmp = m_activeCloseBmp;
+          #endif
         }
 
         wxRect rect(tab_x + tab_width - close_button_width - 1,
