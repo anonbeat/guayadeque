@@ -5,13 +5,14 @@ MACRO(GETTEXT_PROCESS_POFILE _lang _moFile _poFile )
    GET_FILENAME_COMPONENT(_moBasename ${_moFile} NAME_WE)
    GET_FILENAME_COMPONENT(_relmoFile ${_moFile} NAME)
    GET_FILENAME_COMPONENT(_absFile ${_poFile} ABSOLUTE)
+   STRING( REPLACE @ _ _targetname "${_moBasename}.${_lang}.mo" )
    ADD_CUSTOM_COMMAND(
       OUTPUT ${_relmoFile}
       COMMAND ${GETTEXT_MSGFMT_EXECUTABLE} -o ${CMAKE_CURRENT_BINARY_DIR}/${_relmoFile} ${_absFile}
       DEPENDS ${_absFile}
    )
    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${_relmoFile} DESTINATION ${CMAKE_INSTALL_LOCALEDIR}/${_lang}/LC_MESSAGES )
-   ADD_CUSTOM_TARGET( ${_moBasename}.${_lang}.mo ALL DEPENDS ${_relmoFile} )
+   ADD_CUSTOM_TARGET( ${_targetname} ALL DEPENDS ${_relmoFile} )
 ENDMACRO(GETTEXT_PROCESS_POFILE )
 
 # Current languages

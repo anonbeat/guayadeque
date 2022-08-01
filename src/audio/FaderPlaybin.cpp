@@ -1808,6 +1808,7 @@ void guFaderPlaybin::ReconfigureRG( void )
     }
 }
 
+// -------------------------------------------------------------------------------- //
 void guFaderPlaybin::SetValveDrop( bool drop )
 {
     guLogDebug( "guFaderPlaybin::SetValveDrop << %i", drop );
