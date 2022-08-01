@@ -46,6 +46,12 @@ sudo apt install libindicate-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstre
 sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev libtag1-dev libcurl4-gnutls-dev
 ```
 
+### Ubuntu 22.04
+
+```bash
+sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev libtag1-dev libcurl4-gnutls-dev libdbus-1-dev gettext
+```
+
 ---
 
 ## Build
