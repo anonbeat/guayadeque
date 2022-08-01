@@ -1348,8 +1348,28 @@ void guPlayerPanel::LoadMedia( guFADERPLAYBIN_PLAYTYPE playtype, const bool forc
         fn_uri = param;
     else
         fn_uri = gst_filename_to_uri( param, NULL );
-
+    
     wxString Uri = wxString( fn_uri );
+
+    // If a file or folder contains stylized quotes or accented characters, then the above will fails and param will return 
+    // an empty string. The music tagger/organizer 'beet' will somewhat regularly make these changes. 
+    // 
+    // Examples (Band - Album):
+    //   Guns N’ Roses - Appetite for Destruction
+    //   The Kinks - “Percy”
+    //   Lynyrd Skynyrd - (pronounced 'lĕh-'nérd 'skin-'nérd)
+    //   Dire Straits - Communiqué
+
+    if ( strcmp( param, "" ) == 0 ) {
+      guLogDebug( wxT( "URI was blank. Attempting workaround." ) );
+      wxString protocol = "file://";
+
+      // Using mb_str() results in an empty string being returned. 
+      // Changing the mb_str() to c_str() above did not change the results.
+      wxString file_path = m_NextSong.m_FileName.c_str();
+
+      Uri = wxString( protocol + file_path );
+    }
 
     try {
 
