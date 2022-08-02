@@ -33,6 +33,7 @@
 #include "OnlineLinks.h"
 #include "PlayListAppend.h"
 #include "MainFrame.h"
+#include "Utils.h"
 
 #include <wx/arrimpl.cpp>
 #include "wx/clipbrd.h"
@@ -483,13 +484,27 @@ void guArtistInfoCtrl::SetInfo( guLastFMArtistInfo * info )
     m_Info = info;
 
     m_DbMutex.Lock();
-    m_Info->m_ArtistId = m_Db ? m_Db->FindArtist( m_Info->m_Artist->m_Name ) :
-                                m_DefaultDb->FindArtist( m_Info->m_Artist->m_Name );
+    guDbLibrary * Db = m_Db ? m_Db : m_DefaultDb;
+
+    m_Info->m_ArtistId = Db->FindArtist( m_Info->m_Artist->m_Name );
+
+    wxString id = wxString::Format(wxT("%d"), m_Info->m_ArtistId);
+    wxString query = wxT( "SELECT song_coverid FROM songs WHERE song_artistid = " + id + " ORDER BY song_playcount DESC LIMIT 1;" );
+    wxSQLite3ResultSet results = Db->ExecuteQuery( query );
+
+    wxImage cover;
+
+    if ( !results.IsNull(0) )
+      cover = Db->GetCoverBitmap(results.GetInt(0), false)->ConvertToImage();
+
     m_DbMutex.Unlock();
 
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
                                         m_NotFoundColor : m_NormalColor );
-    SetBitmap( m_Info->m_Image );
+
+    if ( !results.IsNull(0) )
+      SetBitmap( &cover );
+    
     SetLabel( m_Info->m_Artist->m_Name );
 
     UpdateArtistInfoText();
@@ -956,13 +971,43 @@ void guSimilarArtistInfoCtrl::SetInfo( guLastFMSimilarArtistInfo * info )
     m_Info = info;
 
     m_DbMutex.Lock();
-    m_Info->m_ArtistId = m_Db ? m_Db->FindArtist( m_Info->m_Artist->m_Name ) :
-                                m_DefaultDb->FindArtist( m_Info->m_Artist->m_Name );
+    guDbLibrary * Db = m_Db ? m_Db : m_DefaultDb;
+
+    m_Info->m_ArtistId = Db->FindArtist( m_Info->m_Artist->m_Name );
+
+    wxArrayInt Artist;
+    wxArrayInt AlbumIdList;
+    Artist.Add( m_Info->m_ArtistId  );
+    Db->GetArtistsAlbums( Artist, &AlbumIdList );
+    wxImage cover;
+    int year;
+    int trackcount;
+    int highestTrackCount = -1;
+
+    if ( !AlbumIdList.IsEmpty() ) {
+      // set default CoverID
+      int CoverId = Db->GetAlbumCoverId( AlbumIdList[0] );
+
+      for (size_t i = 0; i < AlbumIdList.Count(); ++i) {
+        Db->GetAlbumDetails(AlbumIdList[i], &year, &trackcount);
+
+        if (trackcount >= highestTrackCount) {
+          highestTrackCount = trackcount;
+          CoverId = Db->GetAlbumCoverId(AlbumIdList[i]);
+        }
+      }
+
+      cover = Db->GetCoverBitmap(CoverId)->ConvertToImage();
+    }
+
     m_DbMutex.Unlock();
     //guLogMessage( wxT("Artist '%s' id: %i"), Info->Artist->Name.c_str(), Info->ArtistId );
     m_Text->SetForegroundColour( m_Info->m_ArtistId == wxNOT_FOUND ?
                                        m_NotFoundColor : m_NormalColor );
-    SetBitmap( m_Info->m_Image );
+
+  if ( !AlbumIdList.IsEmpty() ) {
+    SetBitmap(&cover);
+  }
     double Match;
 
     if( !m_Info->m_Artist->m_Match.ToDouble( &Match ) )
@@ -1160,11 +1205,25 @@ void guTrackInfoCtrl::SetInfo( guLastFMTrackInfo * info )
 
     m_Info->m_TrackId = Db->FindTrack( m_Info->m_Track->m_ArtistName, m_Info->m_Track->m_TrackName );
     m_Info->m_ArtistId = Db->FindArtist( m_Info->m_Track->m_ArtistName );
+    guTrack * Track = Db->FindSong( m_Info->m_Track->m_ArtistName , m_Info->m_Track->m_TrackName, 0, 0 );
+
     m_DbMutex.Unlock();
     m_Text->SetForegroundColour( m_Info->m_TrackId == wxNOT_FOUND ?
                                        m_NotFoundColor : m_NormalColor );
 
-    SetBitmap( m_Info->m_Image );
+    if( Track )
+    {
+      m_DbMutex.Lock();
+      wxImage cover = Db->GetCoverBitmap(Track->m_CoverId)->ConvertToImage();
+      m_DbMutex.Unlock();
+      SetBitmap( &cover );
+    }
+
+    if( Track )
+    {
+      wxImage cover = Db->GetCoverBitmap(Track->m_CoverId)->ConvertToImage();
+      SetBitmap( &cover );
+    }
 
     double Match;
     if( !m_Info->m_Track->m_Match.ToDouble( &Match ) )
@@ -1385,11 +1444,19 @@ void guTopTrackInfoCtrl::SetInfo( guLastFMTopTrackInfo * info )
 
     m_Info->m_TrackId = Db->FindTrack( m_Info->m_TopTrack->m_ArtistName, m_Info->m_TopTrack->m_TrackName );
     m_Info->m_ArtistId = Db->FindArtist( m_Info->m_TopTrack->m_ArtistName );
+    guTrack * Track = Db->FindSong( m_Info->m_TopTrack->m_ArtistName , m_Info->m_TopTrack->m_TrackName, 0, 0 );
+
     m_DbMutex.Unlock();
     m_Text->SetForegroundColour( m_Info->m_TrackId == wxNOT_FOUND ?
                                        m_NotFoundColor : m_NormalColor );
 
-    SetBitmap( m_Info->m_Image );
+    if( Track )
+    {
+      m_DbMutex.Lock();
+      wxImage cover = Db->GetCoverBitmap(Track->m_CoverId)->ConvertToImage();
+      m_DbMutex.Unlock();
+      SetBitmap( &cover );
+    }
 
     SetLabel( wxString::Format( _( "%s\n%i plays by %u users" ),
         m_Info->m_TopTrack->m_TrackName.c_str(),
@@ -2974,6 +3041,7 @@ void guLastFMPanel::OnUpdateTrackItem( wxCommandEvent &event )
     int index = event.GetInt();
     //guLogMessage( wxT( "Received LastFMInfoItem %u" ), index );
     guLastFMTrackInfo * TrackInfo = ( guLastFMTrackInfo * ) event.GetClientData();
+
     if( TrackInfo )
     {
         m_SimTracksInfoCtrls[ index ]->SetInfo( TrackInfo );
