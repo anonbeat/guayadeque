@@ -1434,7 +1434,7 @@ void guPrefDialog::BuildLyricsPage( void )
   	wxStaticBoxSizer * LyricsDisGenreSizer = new wxStaticBoxSizer( new wxStaticBox( m_LyricsPanel, wxID_ANY, _( " Disabled Genres " ) ), wxHORIZONTAL );
 
     m_LirycsDisGenresListBox = new wxListBox( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, 100 ), 0, NULL, 0 );
-    m_LirycsDisGenresListBox->Append( m_Config->ReadAStr( CONFIG_KEY_LYRICS_DISGENRES, wxEmptyString, CONFIG_PATH_LYRICS ) );
+    m_LirycsDisGenresListBox->Append( m_Config->ReadAStr( CONFIG_KEY_LYRICS_DISGENRE, wxEmptyString, CONFIG_PATH_LYRICS_DISGENRES ) );
     LyricsDisGenreSizer->Add( m_LirycsDisGenresListBox, 1, wxALL|wxEXPAND, 5 );
 
 	wxBoxSizer * LyricsDisGenreBtnSizer = new wxBoxSizer( wxVERTICAL );
@@ -1893,7 +1893,7 @@ void guPrefDialog::BuildMagnatunePage( void )
     m_MagStRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Streaming" ), wxDefaultPosition, wxDefaultSize );
     m_MagDlRadioItem = new wxRadioButton( m_MagnatunePanel, wxID_ANY, _( "Downloading" ), wxDefaultPosition, wxDefaultSize );
     int Membership = m_Config->ReadNum( CONFIG_KEY_MAGNATUNE_MEMBERSHIP, 0, CONFIG_PATH_MAGNATUNE );
-    
+
     if( Membership == 1 ) m_MagStRadioItem->SetValue( true );
     else if( Membership == 2 ) m_MagDlRadioItem->SetValue( true );
     else m_MagNoRadioItem->SetValue( true );
@@ -2640,7 +2640,7 @@ void guPrefDialog::SaveSettings( void )
         m_LyricSearchEngine->Save();
         m_Config->WriteStr( CONFIG_KEY_LYRICS_FONT, m_LyricFontPicker->GetSelectedFont().GetNativeFontInfoDesc(), CONFIG_PATH_LYRICS );
         m_Config->WriteNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, m_LyricsAlignChoice->GetSelection(), CONFIG_PATH_LYRICS );
-        m_Config->WriteAStr( CONFIG_KEY_LYRICS_DISGENRES, m_LyricDisabledGenres, CONFIG_PATH_LYRICS );
+        m_Config->WriteAStr( CONFIG_KEY_LYRICS_DISGENRE, m_LyricDisabledGenres, CONFIG_PATH_LYRICS_DISGENRES );
     }
 
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_JAMENDO )
@@ -2997,7 +2997,7 @@ void guPrefDialog::OnLibDelCollectClick( wxCommandEvent& event )
             guLogMessage( wxT( "Could not delete the collection folder '%s'" ), m_Collections[ m_CollectSelected ].m_UniqueId.c_str() );
         m_Collections.RemoveAt( m_CollectSelected );
         m_LibCollectListBox->Delete( m_CollectSelected );
-        
+
         m_CollectSelected = wxNOT_FOUND;
         m_LibCollectListBox->SetSelection( m_CollectSelected );
 

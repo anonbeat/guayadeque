@@ -8,7 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< Updated upstream
 "POT-Creation-Date: 2022-07-31 19:14+0100\n"
+=======
+"POT-Creation-Date: 2023-02-16 21:47+0000\n"
+>>>>>>> Stashed changes
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -364,7 +368,7 @@ msgstr ""
 #: ui/lastfmpanel/LastFMPanel.cpp:604 ui/lastfmpanel/LastFMPanel.cpp:876
 #: ui/lastfmpanel/LastFMPanel.cpp:1078 ui/lastfmpanel/LastFMPanel.cpp:1289
 #: ui/lastfmpanel/LastFMPanel.cpp:1503 ui/lastfmpanel/LastFMPanel.cpp:1634
-#: ui/lyrics/LyricsPanel.cpp:286
+#: ui/lyrics/LyricsPanel.cpp:289
 #: ui/mediaviewer/albumbrowser/AlbumBrowser.cpp:457
 #: ui/mediaviewer/albumbrowser/AlbumBrowser.cpp:2031
 msgid "Copy to Clipboard"
@@ -520,7 +524,7 @@ msgstr ""
 msgid "Unnamed"
 msgstr ""
 
-#: ui/radios/RadioEditor.cpp:47 ui/lyrics/LyricsPanel.cpp:2127
+#: ui/radios/RadioEditor.cpp:47 ui/lyrics/LyricsPanel.cpp:2130
 #: ui/preferences/Preferences.cpp:2054 ui/preferences/Preferences.cpp:2175
 #: ui/preferences/Preferences.cpp:2300
 #: ui/mediaviewer/portablemedia/PortableMedia.cpp:701
@@ -674,7 +678,7 @@ msgstr ""
 msgid " Radio Search "
 msgstr ""
 
-#: ui/radios/RadioPanel.cpp:1213 ui/lyrics/LyricsPanel.cpp:2585
+#: ui/radios/RadioPanel.cpp:1213 ui/lyrics/LyricsPanel.cpp:2588
 msgid "Search:"
 msgstr ""
 
@@ -847,113 +851,113 @@ msgstr ""
 msgid "Search the lyrics on the web"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:286
+#: ui/lyrics/LyricsPanel.cpp:289
 msgid "Copy the content of the lyric to clipboard"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:298 ui/filebrowser/FileBrowser.cpp:406
+#: ui/lyrics/LyricsPanel.cpp:301 ui/filebrowser/FileBrowser.cpp:406
 #: ui/filebrowser/FileBrowser.cpp:1189
 msgid "Paste"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:298
+#: ui/lyrics/LyricsPanel.cpp:301
 msgid "Paste the content of the lyric from clipboard"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:307 misc/Accelerators.cpp:410
+#: ui/lyrics/LyricsPanel.cpp:310 misc/Accelerators.cpp:410
 msgid "Print"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:307
+#: ui/lyrics/LyricsPanel.cpp:310
 msgid "Print the content of the lyrics"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:442 ui/lyrics/LyricsPanel.cpp:561
-#: ui/lyrics/LyricsPanel.cpp:844 ui/lyrics/LyricsPanel.cpp:846
+#: ui/lyrics/LyricsPanel.cpp:445 ui/lyrics/LyricsPanel.cpp:564
+#: ui/lyrics/LyricsPanel.cpp:847 ui/lyrics/LyricsPanel.cpp:849
 msgid "Searching..."
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:757 ui/lyrics/LyricsPanel.cpp:850
+#: ui/lyrics/LyricsPanel.cpp:760 ui/lyrics/LyricsPanel.cpp:853
 msgid "No lyrics found"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:842
+#: ui/lyrics/LyricsPanel.cpp:845
 msgid "Lyrics from "
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2103
+#: ui/lyrics/LyricsPanel.cpp:2106
 msgid "Lyrics Target Editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2103
+#: ui/lyrics/LyricsPanel.cpp:2106
 msgid "Lyrics Source Editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2136
+#: ui/lyrics/LyricsPanel.cpp:2139
 msgid "Type:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2141
+#: ui/lyrics/LyricsPanel.cpp:2144
 msgid "Embedded"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2142
+#: ui/lyrics/LyricsPanel.cpp:2145
 msgid "File"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2143
+#: ui/lyrics/LyricsPanel.cpp:2146
 msgid "Command"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2145 ui/podcasts/PodcastsPanel.cpp:2110
+#: ui/lyrics/LyricsPanel.cpp:2148 ui/podcasts/PodcastsPanel.cpp:2110
 msgid "Download"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2152
+#: ui/lyrics/LyricsPanel.cpp:2155
 msgid "Source:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2160 ui/lyrics/LyricsPanel.cpp:2586
+#: ui/lyrics/LyricsPanel.cpp:2163 ui/lyrics/LyricsPanel.cpp:2589
 msgid "Replace:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2195
+#: ui/lyrics/LyricsPanel.cpp:2198
 msgid "Extract:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2225
+#: ui/lyrics/LyricsPanel.cpp:2228
 msgid "Exclude:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2255
+#: ui/lyrics/LyricsPanel.cpp:2258
 msgid "Not Found:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2584
+#: ui/lyrics/LyricsPanel.cpp:2587
 msgid "Replace option editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2590
+#: ui/lyrics/LyricsPanel.cpp:2593
 msgid "Extract option editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2591 ui/lyrics/LyricsPanel.cpp:2597
+#: ui/lyrics/LyricsPanel.cpp:2594 ui/lyrics/LyricsPanel.cpp:2600
 msgid "Begin:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2592 ui/lyrics/LyricsPanel.cpp:2598
+#: ui/lyrics/LyricsPanel.cpp:2595 ui/lyrics/LyricsPanel.cpp:2601
 msgid "End:"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2596
+#: ui/lyrics/LyricsPanel.cpp:2599
 msgid "Exclude option editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2602
+#: ui/lyrics/LyricsPanel.cpp:2605
 msgid "Not Found option editor"
 msgstr ""
 
-#: ui/lyrics/LyricsPanel.cpp:2603 ui/lyrics/LyricsPanel.cpp:2604
+#: ui/lyrics/LyricsPanel.cpp:2606 ui/lyrics/LyricsPanel.cpp:2607
 msgid "Tag:"
 msgstr ""
 

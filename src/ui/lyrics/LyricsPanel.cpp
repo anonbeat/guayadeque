@@ -235,7 +235,10 @@ void guLyricsPanel::OnConfigUpdated( wxCommandEvent &event )
             wxFont CurrentFont;
             CurrentFont.SetNativeFontInfo( Config->ReadStr( CONFIG_KEY_LYRICS_FONT, wxEmptyString, CONFIG_PATH_LYRICS ) );
             if( !CurrentFont.IsOk() )
+            {
+                wxLogError( wxT( "Font was not correctly loaded from preferences..." ) );
                 CurrentFont = GetFont();
+            }
 
             m_LyricText->SetWindowStyle( m_LyricText->GetWindowStyle() ^ m_LyricAlign );
             m_LyricAlign = LyricAligns[ Config->ReadNum( CONFIG_KEY_LYRICS_TEXT_ALIGN, 1, CONFIG_PATH_LYRICS ) ];
@@ -1157,17 +1160,17 @@ void guLyricSearchEngine::ReadTargets( wxXmlNode * xmlnode )
 }
 
 // -------------------------------------------------------------------------------- //
-void guLyricSearchEngine::LoadDisabledGenres() 
+void guLyricSearchEngine::LoadDisabledGenres()
 {
     // Load the lyrics disabled genres
     guConfig * Config = guConfig::Get();
-    m_LyricDisabledGenres = Config->ReadAStr( CONFIG_KEY_LYRICS_DISGENRES, wxEmptyString, CONFIG_PATH_LYRICS );
+    m_LyricDisabledGenres = Config->ReadAStr( CONFIG_KEY_LYRICS_DISGENRE, wxEmptyString, CONFIG_PATH_LYRICS_DISGENRES );
 }
 
 // -------------------------------------------------------------------------------- //
 void guLyricSearchEngine::Load( void )
 {
-    // 
+    //
     m_LyricSources.Empty();
     m_LyricTargets.Empty();
     m_TargetsEnabled = false;
