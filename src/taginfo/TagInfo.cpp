@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This library is free software; you can redistribute it and/or
 //    modify it under the terms of the GNU Lesser General Public
@@ -2471,7 +2471,7 @@ GDateTime * guGStreamerTagInfo::GetGstTimeTag( const gchar * tag )
 {
     if( m_GstTagList == NULL )
         return NULL;
-    
+
     GstDateTime *dt;
     GDateTime *res = NULL;
     GDate *gd;
@@ -2531,7 +2531,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     if( gst_uri_is_valid ( filename.c_str() ) )
     {
         uri = g_strdup( filename.c_str() );
-    } 
+    }
     else
     {
         uri = gst_filename_to_uri( filename.c_str(), NULL );
@@ -2563,7 +2563,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     guLogDebug("guGStreamerTagInfo::ReadGStreamerTags length: %u", m_Length);
 
     GList *l, *slist = gst_discoverer_info_get_streams( info, g_type_from_name( "GstDiscovererAudioInfo" ) );
-    for( l = slist; l != NULL; l = l->next ) 
+    for( l = slist; l != NULL; l = l->next )
     {
         if ( !m_Bitrate )
             m_Bitrate = gst_discoverer_audio_info_get_bitrate((const GstDiscovererAudioInfo*)l->data);
@@ -2604,7 +2604,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
 
     if( m_GStreamerImage != NULL )
         return m_GStreamerImage;
-    
+
     const char *uri, *param = (const char*)m_FileName.mb_str();
 
     if( gst_uri_is_valid( param ) )
@@ -2627,7 +2627,7 @@ wxImage *   guGStreamerTagInfo::GetImage( void )
     GstElement *sink = sink_gp.ptr;
 
     if( sink == NULL )
-        return NULL;        
+        return NULL;
 
     GstStateChangeReturn ret = gst_element_set_state( pipeline, GST_STATE_PLAYING );
     if( ret == GST_STATE_CHANGE_FAILURE )

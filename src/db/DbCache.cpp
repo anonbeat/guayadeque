@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -112,7 +112,7 @@ bool guDbCache::DoSetImage( const wxString &url, wxImage * img, const wxBitmapTy
   wxMemoryOutputStream Outs;
   if( img->SaveFile( Outs, imgtype ) )
   {
-      wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( 
+      wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format(
           wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) " \
                "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
                escape_query_str( url ).c_str(), ( int ) imgtype, wxDateTime::Now().GetTicks(), imagesize ) );
@@ -197,7 +197,7 @@ wxString guDbCache::GetContent( const wxString &url )
 bool guDbCache::SetContent( const wxString &url, const char * str, const int len )
 {
   try {
-    wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format( 
+    wxSQLite3Statement stmt = m_Db->PrepareStatement( wxString::Format(
       wxT( "INSERT INTO cache( cache_id, cache_key, cache_data, cache_type, cache_time, cache_size ) " \
            "VALUES( NULL, '%s', ?, %u, %lu, %u );" ),
            escape_query_str( url ).c_str(), guDBCACHE_TYPE_TEXT, wxDateTime::Now().GetTicks(), 0 ) );

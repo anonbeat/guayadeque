@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
     MainSizer->Add( EditsSizer, 0, wxEXPAND, 5 );
 
-    
+
     wxBoxSizer * TopButtonsSizer = new wxBoxSizer( wxHORIZONTAL );
 
     m_EmbedToFilesChkBox = new wxCheckBox( this, wxID_ANY, _( "Embed into tracks" ), wxDefaultPosition, wxDefaultSize, 0 );
@@ -115,7 +115,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
     TopButtonsSizer->Add( m_EmbedToFilesChkBox, 0, wxEXPAND|wxRIGHT|wxLEFT, 5 );
 
     TopButtonsSizer->Add( 10, 10, wxEXPAND );
-    
+
     m_CoverSelectButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_download_covers ), wxDefaultPosition, wxSize( 32, 32 ), wxBU_AUTODRAW );
     TopButtonsSizer->Add( m_CoverSelectButton, 0, wxALIGN_RIGHT | wxLEFT, 5 );
 
@@ -124,7 +124,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
     MainSizer->Add( TopButtonsSizer, 0, wxEXPAND, 5 );
 
-    
+
     TopStaticLine = new wxStaticLine( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLI_HORIZONTAL );
     MainSizer->Add( TopStaticLine, 0, wxEXPAND | wxALL, 5 );
 
@@ -138,7 +138,7 @@ guCoverEditor::guCoverEditor( wxWindow* parent, const wxString &Artist, const wx
 
     int CoverFrame = Config->ReadNum( CONFIG_KEY_GENERAL_COVER_FRAME, guCOVERFRAME_DEFAULT, CONFIG_PATH_GENERAL );
     wxImage DefaultCover( guImage( CoverFrame ? guIMAGE_INDEX_blank_cd_cover : guIMAGE_INDEX_no_cover ) );
-    
+
     if( !CoverFrame ) DefaultCover.Rescale( 250, 250, wxIMAGE_QUALITY_HIGH );
 
     m_CoverBitmap = new wxStaticBitmap( this, wxID_ANY, DefaultCover, wxDefaultPosition, wxSize( -1,-1 ), 0 );
@@ -622,7 +622,7 @@ void guCoverEditor::OnCoverDownloadClick( wxCommandEvent & )
                 {
                     wxCommandEvent event( wxEVT_MENU, ID_COVEREDITOR_ADDCOVERIMAGE );
                     event.SetClientData( new guCoverImage( CoverUrl, "", CoverImage ) );
-                    OnAddCoverImage( event );                
+                    OnAddCoverImage( event );
                 }
             }
 

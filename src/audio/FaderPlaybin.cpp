@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -638,7 +638,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
 {
 //
 // full playback pipeline including [removable] elements:
-//      playbin > valve > tee > queue > audioconvert > 
+//      playbin > valve > tee > queue > audioconvert >
 //        [ equalizer-10bands ] > [ rgvolume > rglimiter ] >
 //        [ volume > fader volume ] > level > audioresample > sink
 //
@@ -658,7 +658,7 @@ bool guFaderPlaybin::BuildPlaybackBin( void )
         );
 
     gpb.Add( "audioconvert", "pb_audioconvert" );
-    
+
     // add with valve's since we want to mass-plug those & don't want be racing on pads
     gpb.AddV( "equalizer-10bands", "pb_equalizer", &m_Equalizer, m_Player->m_EnableEq );
 
@@ -947,7 +947,7 @@ void guFaderPlaybin::SetEqualizerBand( const int band, const int value )
 bool guFaderPlaybin::Load( const wxString &uri, const bool restart, const int startpos )
 {
     guLogDebug( wxT( "guFaderPlaybin::Load (%li) %i" ), m_Id, restart );
-    
+
     DisableRecord();
 
     if( GST_IS_ELEMENT( m_Playbin ) )
@@ -1298,7 +1298,7 @@ bool guFaderPlaybin::StartFade( double volstart, double volend, int timeout )
 bool guFaderPlaybin::Pause( void )
 {
     guLogDebug( wxT( "guFaderPlaybin::Pause (%li)" ), m_Id );
-    
+
     // we do not pause while recording, filesinks don't like it
     if( IsRecording() )
     {
@@ -1347,7 +1347,7 @@ wxFileOffset guFaderPlaybin::Position( void )
 {
     wxFileOffset Position = 0;
 
-    // actual position detection 
+    // actual position detection
     gst_element_query_position( m_Playbin, GST_FORMAT_TIME, &Position );
 
     // feature R&D {
@@ -1405,7 +1405,7 @@ bool guFaderPlaybin::AddRecordElement( GstPad * pad )
         guLogError( "Record error: request pad is null" );
         return false;
     }
-    
+
     int lres = gst_pad_link( m_TeeSrcPad, m_RecordSinkPad );
     if( lres == GST_PAD_LINK_OK )
     {
@@ -1617,7 +1617,7 @@ void guFaderPlaybin::DisableRecordAndStop_finish( void )
     m_RecordBin = NULL;
     gst_element_set_state( m_Playbin, GST_STATE_READY );
     guMediaEvent e( guEVT_PIPELINE_CHANGED );
-    e.SetClientData( NULL ); 
+    e.SetClientData( NULL );
     SendEvent( e ); // will not return
 }
 
@@ -1645,7 +1645,7 @@ static void guFaderPlaybin__DisableRecordAndStop( guFaderPlaybin::WeakPtr * wpp 
     g_timeout_add( 10, GSourceFunc( guFaderPlaybin__DisableRecordAndStop_finish ), wpp );
 }
 
-// clean way to stop playback while recording without loosing data 
+// clean way to stop playback while recording without loosing data
 // -------------------------------------------------------------------------------- //
 bool guFaderPlaybin::DisableRecordAndStop( void )
 {
@@ -1691,7 +1691,7 @@ bool guFaderPlaybin::SetRecordFileName( const wxString &filename )
     m_SettingRecordFileName = true;
     m_LastRecordFileName = filename;
     m_PendingNewRecordName.Clear();
-  
+
     if( !wxDirExists( wxPathOnly( m_LastRecordFileName ) ) )
         wxFileName::Mkdir( wxPathOnly( m_LastRecordFileName ), 0770, wxPATH_MKDIR_FULL );
 
@@ -1746,7 +1746,7 @@ void guFaderPlaybin::RefreshPlaybackItems( void )
 void guFaderPlaybin::ToggleEqualizer( void )
 {
     guLogDebug( "guFaderPlaybin::ToggleEqualizer" );
- 
+
     guGstPipelineActuator gpa( &m_PlayChain );
     guGstResultHandler rh(
         guGstResultHandler::Func( guFaderPlaybin__RefreshPlaybackItems ),

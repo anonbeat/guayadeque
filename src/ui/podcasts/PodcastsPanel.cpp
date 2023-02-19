@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -779,7 +779,7 @@ int guDbPodcasts::GetPendingPodcasts( guPodcastItemArray * items )
             "FROM podcastitems, podcastchs " \
             "WHERE podcastitem_chid = podcastch_id " \
             "AND podcastitem_status IN ( 1, 2 ) " \
-            "ORDER BY podcastitem_status DESC;" ); 
+            "ORDER BY podcastitem_status DESC;" );
 
   dbRes = ExecuteQuery( query );
 

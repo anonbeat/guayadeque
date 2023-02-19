@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ static void guGstResultHandler_noop_error_handler( const void *hint )
 // -------------------------------------------------------------------------------- //
 struct guGstResultHandler
 {
-    
+
     typedef  void   (*Func)(const void *);
 
     void     * m_ExecData;
@@ -92,10 +92,10 @@ class guGstResultExec
   private :
     bool                 m_ErrorMode;
     guGstResultHandler   * m_Handler;
-    
+
   public :
     guGstResultExec( guGstResultHandler *rhandler = NULL, bool error_mode = true )
-    { 
+    {
         m_ErrorMode = error_mode;
         m_Handler = rhandler;
         if( m_Handler == NULL )

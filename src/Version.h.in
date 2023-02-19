@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2020 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
 
 namespace Guayadeque {
 
-#define ID_GUAYADEQUE_VERSION	"0.4.6"
+#define ID_GUAYADEQUE_VERSION	"0.4.7"
 #define ID_GUAYADEQUE_REVISION	"${_GUREVISION_}"
 
 }

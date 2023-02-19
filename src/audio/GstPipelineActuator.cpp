@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -380,7 +380,7 @@ static bool guUnplugGstElement( GstElement *unplug_me, const guGstResultHandler 
     bool unplug_result = false;
     guGstElementProbeData pd( &unplug_result, (guGstResultHandler*)&rhandler );
     gst_element_foreach_sink_pad( unplug_me,
-        [ ] ( GstElement * element, GstPad * sink_pad, void * user_data ) 
+        [ ] ( GstElement * element, GstPad * sink_pad, void * user_data )
         {
             guGstElementProbeData * pd = (guGstElementProbeData *)user_data;
             bool *res_ptr = (bool *)pd->probe_data;

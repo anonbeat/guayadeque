@@ -1,6 +1,6 @@
 # General
 
-Guayadeque Music Player 0.4.6 Beta
+Guayadeque Music Player 0.4.7 Beta
 Juan Rios anonbeat@gmail.com
 see LICENSE
 
@@ -59,7 +59,7 @@ sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-d
 ### Normal build
 
 ```bash
-./build 
+./build
 sudo make install
 ```
 

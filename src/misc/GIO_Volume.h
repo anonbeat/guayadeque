@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -129,7 +129,7 @@ class guGIO_VolumeMonitor
     guGIO_Mount *       GetMount( const int index ) { return m_MountedVolumes->Item( index ); }
     guGIO_Mount *       GetMountById( const wxString &id );
     guGIO_Mount *       GetMountByPath( const wxString &path );
-    guGIO_Mount *       GetMountByName( const wxString &name );    
+    guGIO_Mount *       GetMountByName( const wxString &name );
 
 };
 

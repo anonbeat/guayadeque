@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -221,7 +221,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     //m_EqualizerButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_equalizer ), wxDefaultPosition, wxDefaultSize, 0 );
     m_EqualizerButton = new guRoundButton( this, guImage( m_EnableEq ? guIMAGE_INDEX_player_normal_equalizer : guIMAGE_INDEX_player_light_equalizer ), guImage( guIMAGE_INDEX_player_highlight_equalizer ) );
     m_EqualizerButton->SetToolTip( _( "Show the equalizer (right click for on/off)" ) );
-    PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );        
+    PlayerBtnSizer->Add( m_EqualizerButton, 0, wxALIGN_CENTER_VERTICAL|wxLEFT|wxTOP|wxBOTTOM, guPLAYER_ICONS_SEPARATOR );
 
     m_VolumeButton = new guRoundButton( this, guImage( guIMAGE_INDEX_player_normal_vol_mid ), guImage( guIMAGE_INDEX_player_highlight_vol_mid ) );
     m_VolumeButton->SetToolTip( _( "Volume" ) + wxString::Format( wxT( " %i%%" ), ( int ) SavedVol ) );
@@ -237,7 +237,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
         m_VolumeBar->Show();
     else
         m_VolumeBar->Hide();
-    PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );        
+    PlayerMainSizer->Add( PlayerBtnSizer, 0, wxEXPAND, 2 );
     //m_VolumeButton = new wxBitmapButton( this, wxID_ANY, guImage( guIMAGE_INDEX_player_normal_vol_mid ), wxDefaultPosition, wxDefaultSize, 0 );
 
 
@@ -400,7 +400,7 @@ guPlayerPanel::guPlayerPanel( wxWindow * parent, guDbLibrary * db,
     {
         m_VolumeBar->Bind( wxEVT_SCROLL_CHANGED	, &guPlayerPanel::OnVolumeChanged, this );
         m_VolumeBar->Bind( wxEVT_SCROLL_THUMBTRACK, &guPlayerPanel::OnVolumeChanged, this );
-        m_VolumeBar->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );        
+        m_VolumeBar->Bind( wxEVT_MOUSEWHEEL, &guPlayerPanel::OnVolumeMouseWheel, this );
     }
     //m_SmartPlayButton->Bind( wxEVT_TOGGLEBUTTON, &guPlayerPanel::OnSmartPlayButtonClick, this );
     m_RandomPlayButton->Bind( wxEVT_BUTTON, &guPlayerPanel::OnRandomPlayButtonClick, this );
@@ -2607,8 +2607,8 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
  //        if( m_MediaSong.m_Length )
  //    m_PlayerPositionSlider->SetValue( 0 );
  //    ResetVumeterLevel();
-    } 
-    else 
+    }
+    else
     {
         m_MediaSong = guCurrentTrack();
         m_MediaSong.SetCoverImage( new wxImage( guImage( guIMAGE_INDEX_no_cover ) ) );
@@ -2624,7 +2624,7 @@ void guPlayerPanel::OnStopButtonClick( wxCommandEvent& event )
         UpdateCover(false, false);
         UpdateCoverImage(false);
         m_PlayListCtrl->ClearItems();
-    }    
+    }
     SavePlayedTrack( true );
 }
 
@@ -2809,7 +2809,7 @@ void guPlayerPanel::OnUpdatePipeline( wxCommandEvent &event )
         event.SetInt( fg );
         m_MainFrame->OnSetForceGapless( event );
     }
-    
+
     if( m_EnableVolCtls )
     {
         m_VolumeBar->Show();

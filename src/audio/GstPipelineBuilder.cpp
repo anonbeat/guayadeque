@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -41,7 +41,7 @@ bool guGstPipelineBuilder::IsValidElement( GstElement * element )
 // -------------------------------------------------------------------------------- //
 guGstPipelineBuilder::guGstPipelineBuilder( GstElement * the_bin )
 {
-    guLogDebug( "guGstPipelineBuilder::guGstPipelineBuilder existing bin: %s", GST_ELEMENT_NAME(the_bin) );    
+    guLogDebug( "guGstPipelineBuilder::guGstPipelineBuilder existing bin: %s", GST_ELEMENT_NAME(the_bin) );
     m_CanPlay = false;
     m_Last = NULL;
     m_Cleanup = true;
@@ -51,7 +51,7 @@ guGstPipelineBuilder::guGstPipelineBuilder( GstElement * the_bin )
 // -------------------------------------------------------------------------------- //
 guGstPipelineBuilder::guGstPipelineBuilder( const char * bin_name, GstElement ** element_ref )
 {
-    
+
     guLogDebug( "guGstPipelineBuilder::guGstPipelineBuilder %s (%p)", bin_name, element_ref );
     m_CanPlay = false;
     m_Last = NULL;

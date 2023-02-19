@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -62,7 +62,7 @@ guGstTypeFinder::guGstTypeFinder()
 // -------------------------------------------------------------------------------- //
 bool guGstTypeFinder::FetchMedia( void )
 {
-    
+
     if( READY )
         return true;
 
@@ -227,7 +227,7 @@ void guGstTypeFinder::InitMediaTypes( void )
     AddMediaTypePrefix( "application/x-3gp" ); // 3GP video
     AddMediaTypePrefix( "application/x-ape" ); // APE
     AddMediaTypePrefix( "application/x-hls" ); // UTF8 M3U
-    AddMediaTypePrefix( "application/x-ogm-audio" ); // sounds like something with sound :) 
+    AddMediaTypePrefix( "application/x-ogm-audio" ); // sounds like something with sound :)
     AddMediaTypePrefix( "application/x-yuv4mpeg" ); // sounds like something with sound :)
 
     // some gstreamer supported formats (DSD & exotic tracker audio)

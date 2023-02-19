@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -42,13 +42,13 @@ Conditional pointer unref'er + chain builder to build & link GstElements in GstB
 // -------------------------------------------------------------------------------- //
 class guGstPipelineBuilder
 {
-  private :   
+  private :
     guGstElementsChain                      m_ElementChain;
     std::stack<guGstPipelineElementPack>    m_UnrefElementStack;
 
     bool    m_CanPlay;
     bool    m_Cleanup;
-    
+
     GstElement *    m_Bin;
     GstElement *    m_Last;
 
@@ -75,7 +75,7 @@ class guGstPipelineBuilder
     {
         return AddV( factoryname, name, element_ref, link, "name", name );
     }
-    
+
     template<typename... PropArgs>
     GstElement * AddV( const char * factoryname, const char * name, GstElement ** element_ref, const bool link, PropArgs... properties )
     {
@@ -88,7 +88,7 @@ class guGstPipelineBuilder
         }
         return NULL;
     }
-    
+
     GstElement * Add( const char * factoryname, const char * name, GstElement ** element_ref = NULL, const bool link = true )
     {
         return Add( factoryname, name, element_ref, link, "name", name );
@@ -98,7 +98,7 @@ class guGstPipelineBuilder
     GstElement * Add( const char * factoryname, const char * name, GstElement ** element_ref, const bool link, PropArgs... properties )
     {
         guLogDebug( "guGstPipelineBuilder::Add %s <%s> @ [%p]", name, factoryname, element_ref );
-        
+
         GstElement * ge = gst_element_factory_make( factoryname, name );
         if( IsValidElement( ge ) )
         {

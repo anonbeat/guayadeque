@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@ class guMediaFileExtensions : public guMediaFileExtensionsHashMap
 {
   public :
 	guMediaFileExtensions();
-	void join(guMediaFileExtensions what);	
+	void join(guMediaFileExtensions what);
 };
 
 //
@@ -59,31 +59,31 @@ class guGstTypeFinder
 	guGstTypeFinder& operator=(guGstTypeFinder const &copy);
 
   protected :
-	
+
 	guMediaFileExtensions	m_Media;
 	wxMutex			m_MediaMutex;
 
 	wxArrayString		m_MediaTypePrefixes;
 
 	bool 			READY = false;
-	
+
 	void AddMediaExtension( const wxString &media_type, const wxString &extension = wxEmptyString );
 	bool FetchMedia( void );
 	void InitMediaTypes( void );
 	guMediaFileExtensions GetMediaByPrefix( const wxString &media_type_prefix = wxEmptyString );
-	wxArrayString GetExtensionsByPrefix( const wxString &media_type_prefix = wxEmptyString );	
+	wxArrayString GetExtensionsByPrefix( const wxString &media_type_prefix = wxEmptyString );
 	wxArrayString GetMediaTypesByPrefix( const wxString &media_type_prefix = wxEmptyString );
 	void AddMediaTypePrefix( const wxString &media_type_prefix );
 
   public :
 
 	static guGstTypeFinder& getGTF() { static guGstTypeFinder inst; return inst; }
-	
+
 	bool HasPrefixes( void );
 
 	wxArrayString GetExtensions( void );
 	wxArrayString GetMediaTypes( void );
-	guMediaFileExtensions GetMedia( void );	
+	guMediaFileExtensions GetMedia( void );
 
 };
 

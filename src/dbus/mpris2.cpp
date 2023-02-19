@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -203,9 +203,9 @@ const char ** guMPRIS2::GetSupportedMimeTypes( void )
 
     wxArrayString arr = guGstTypeFinder::getGTF().GetMediaTypes();
 
-    long unsigned int mime_ptr_size = 
+    long unsigned int mime_ptr_size =
       sizeof(char*) * arr.Count() +
-      sizeof(char*) * gsmt_count + 
+      sizeof(char*) * gsmt_count +
       sizeof(char*);
 
     char ** all_media = (char **) malloc( mime_ptr_size );

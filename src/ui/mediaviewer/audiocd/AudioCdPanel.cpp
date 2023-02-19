@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -162,7 +162,7 @@ guAudioCdReadTocThread::~guAudioCdReadTocThread()
         gst_element_set_state( m_Pipeline, GST_STATE_NULL );
         GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Pipeline ) );
         gst_bus_remove_watch( bus );
-        gst_object_unref( G_OBJECT( bus ) );        
+        gst_object_unref( G_OBJECT( bus ) );
         gst_object_unref( GST_OBJECT( m_Pipeline ) );
         m_Pipeline = NULL;
     }

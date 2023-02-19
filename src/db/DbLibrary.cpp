@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -2129,7 +2129,7 @@ void guDbLibrary::UpdateImageFile( const char * filename, const char * saveto, c
             Image->Rescale( maxsize, maxsize, wxIMAGE_QUALITY_HIGH );
         }
 
-        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + SaveTo;        
+        CoverFile = wxPathOnly( FileName ) + wxT( '/' ) + SaveTo;
         if( !Image->SaveFile( CoverFile, type ) )
         {
             delete Image;
@@ -2711,7 +2711,7 @@ void guDbLibrary::GetYears( guListItems * Years, const bool FullList )
   }
   else
   {
-    query = wxT( "SELECT DISTINCT song_year FROM songs WHERE song_year > 0 AND " ) + 
+    query = wxT( "SELECT DISTINCT song_year FROM songs WHERE song_year > 0 AND " ) +
                   FiltersSQL( guLIBRARY_FILTER_YEARS );
     query += wxT( " ORDER BY song_year DESC;" );
   }
@@ -2803,7 +2803,7 @@ void guDbLibrary::GetAlbumArtists( guListItems * Items, const bool FullList )
   }
   else
   {
-    query = wxT( "SELECT song_albumartistid, song_albumartist FROM songs WHERE song_albumartist > '' AND " ) + 
+    query = wxT( "SELECT song_albumartistid, song_albumartist FROM songs WHERE song_albumartist > '' AND " ) +
                  FiltersSQL( guLIBRARY_FILTER_ALBUMARTISTS );
     query += wxT( " GROUP BY song_albumartistid ORDER BY song_albumartist" );
   }
@@ -2834,7 +2834,7 @@ void guDbLibrary::GetComposers( guListItems * Items, const bool FullList )
   }
   else
   {
-    query = wxT( "SELECT song_composerid, song_composer FROM songs WHERE song_composer > '' AND " ) + 
+    query = wxT( "SELECT song_composerid, song_composer FROM songs WHERE song_composer > '' AND " ) +
                  FiltersSQL( guLIBRARY_FILTER_COMPOSERS );
     query += wxT( " GROUP BY song_composerid ORDER BY song_composer" );
   }

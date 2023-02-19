@@ -1,5 +1,5 @@
 // -------------------------------------------------------------------------------- //
-//    Copyright (C) 2008-2022 J.Rios anonbeat@gmail.com
+//    Copyright (C) 2008-2023 J.Rios anonbeat@gmail.com
 //
 //    This Program is free software; you can redistribute it and/or modify
 //    it under the terms of the GNU General Public License as published by
@@ -60,7 +60,7 @@ int guAppleCoverFetcher::ExtractImagesInfo( wxString &content )
          {
              int Count = Results.size();
              //guLogMessage( wxT( "Results is array....%d" ), Count );
-             
+
              for( int Index = 0; Index < Count; Index++ )
              {
                  Json::Value Result = Results[ Index ];
@@ -69,7 +69,7 @@ int guAppleCoverFetcher::ExtractImagesInfo( wxString &content )
                  {
                     wxString CoverLink = wxString( Result[ "artworkUrl100" ].asString() );
                     if( !CoverLink.IsEmpty() )
-                    {                        
+                    {
                         CoverLink.Replace( wxT( "100x100" ), wxT( "500x500" ) );
                         if( !CoverLinkExist( CoverLink ) )
                         {
@@ -90,7 +90,7 @@ int guAppleCoverFetcher::ExtractImagesInfo( wxString &content )
 // -------------------------------------------------------------------------------- //
 int guAppleCoverFetcher::AddCoverLinks( int pagenum )
 {
-    wxString SearchParams = guURLEncode( m_Artist + wxT( " " ) + m_Album ) + 
+    wxString SearchParams = guURLEncode( m_Artist + wxT( " " ) + m_Album ) +
                             APPLE_SEARCH_PARAMS;
 
     SearchParams.Replace( wxT( "," ), wxT( "%2C" ) );
