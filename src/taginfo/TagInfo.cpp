@@ -2530,7 +2530,7 @@ bool guGStreamerTagInfo::ReadGStreamerTags( const wxString &filename )
     gchar *uri;
     if( gst_uri_is_valid ( filename.c_str() ) )
     {
-        uri = g_strdup( filename.c_str() );
+        uri = g_strdup( ( const gchar * ) filename.c_str() );
     }
     else
     {
