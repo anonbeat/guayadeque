@@ -35,7 +35,7 @@ Its been developed in XUbuntu
 ### Ubuntu (pre 20.0):
 
 ```bash
-sudo apt install libindicate-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev
+sudo apt install libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev
 ```
 
 ---

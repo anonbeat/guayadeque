@@ -521,15 +521,11 @@ void guPrefDialog::BuildGeneralPage( void )
 	BehaviSizer->Add( m_TaskIconChkBox, 0, wxLEFT | wxRIGHT, 5 );
 
     m_SoundMenuChkBox = NULL;
-    bool WithIndicateSupport = false;
-#ifdef WITH_LIBINDICATE_SUPPORT
-    WithIndicateSupport = true;
-#endif
 
     guMPRIS2 * MPRIS2 = guMPRIS2::Get();
     bool IsSoundMenuAvailable = MPRIS2->Indicators_Sound_Available();
 
-    if( WithIndicateSupport || IsSoundMenuAvailable )
+    if( IsSoundMenuAvailable )
     {
         m_SoundMenuChkBox = new wxCheckBox( m_GenPanel, wxID_ANY, _( "Integrate into SoundMenu" ), wxDefaultPosition, wxDefaultSize, 0 );
         m_SoundMenuChkBox->SetValue( m_Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL ) );

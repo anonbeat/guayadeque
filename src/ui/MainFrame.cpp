@@ -382,9 +382,6 @@ guMainFrame::guMainFrame( wxWindow * parent, guDbCache * dbcache )
 
     //
     m_TaskBarIcon = NULL;
-#ifdef WITH_LIBINDICATE_SUPPORT
-    m_IndicateServer = NULL;
-#endif
 
     m_DBusServer = new guDBusServer( NULL );
     guDBusServer::Set( m_DBusServer );
@@ -621,14 +618,6 @@ guMainFrame::~guMainFrame()
 
     if( m_TaskBarIcon )
         delete m_TaskBarIcon;
-
-#ifdef WITH_LIBINDICATE_SUPPORT
-    if( m_IndicateServer )
-    {
-        indicate_server_hide( m_IndicateServer );
-        g_object_unref( m_IndicateServer );
-    }
-#endif
 
     // destroy the mpris object
     if( m_MPRIS )
@@ -1763,21 +1752,6 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
 {
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
-#ifdef WITH_LIBINDICATE_SUPPORT
-    if( m_IndicateServer )
-    {
-        guMediaState State = m_PlayerPanel->GetState();
-        if( State == guMEDIASTATE_PLAYING )
-        {
-            if( event.CanVeto() )
-            {
-                Show( false );
-                return;
-            }
-        }
-    }
-    else
-#else
     if( m_MPRIS2->Indicators_Sound_Available() )
     {
         if( Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL ) )
@@ -1794,7 +1768,6 @@ void guMainFrame::OnCloseWindow( wxCloseEvent &event )
         }
     }
     else
-#endif
     {
         // If the icon
         if( m_TaskBarIcon &&
@@ -3463,19 +3436,6 @@ void guMainFrame::CreateTaskBarIcon( void )
 
     if( ShowIcon )
     {
-#ifdef WITH_LIBINDICATE_SUPPORT
-        SoundMenuEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL );
-        if( SoundMenuEnabled )
-        {
-            if( !m_IndicateServer )
-            {
-                m_IndicateServer = indicate_server_ref_default();
-                indicate_server_set_type( m_IndicateServer, GUAYADEQUE_INDICATOR_NAME );
-                indicate_server_set_desktop_file( m_IndicateServer, GUAYADEQUE_DESKTOP_PATH );
-                indicate_server_show( m_IndicateServer );
-            }
-        }
-#else
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
             SoundMenuEnabled = Config->ReadBool( CONFIG_KEY_GENERAL_SOUND_MENU_INTEGRATE, false, CONFIG_PATH_GENERAL );
@@ -3488,7 +3448,6 @@ void guMainFrame::CreateTaskBarIcon( void )
                 }
             }
         }
-#endif
 
         if( SoundMenuEnabled )
         {
@@ -3501,14 +3460,6 @@ void guMainFrame::CreateTaskBarIcon( void )
         }
         else
         {
-#ifdef WITH_LIBINDICATE_SUPPORT
-            if( m_IndicateServer )
-            {
-                indicate_server_hide( m_IndicateServer );
-                g_object_unref( m_IndicateServer );
-                m_IndicateServer = NULL;
-            }
-#else
             if( m_MPRIS2->Indicators_Sound_Available() )
             {
                 int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
@@ -3520,7 +3471,6 @@ void guMainFrame::CreateTaskBarIcon( void )
                     }
                 }
             }
-#endif
             if( !m_TaskBarIcon )
             {
                 m_TaskBarIcon = new guTaskBarIcon( this, m_PlayerPanel );
@@ -3533,14 +3483,6 @@ void guMainFrame::CreateTaskBarIcon( void )
     }
     else
     {
-#ifdef WITH_LIBINDICATE_SUPPORT
-        if( m_IndicateServer )
-        {
-            indicate_server_hide( m_IndicateServer );
-            g_object_unref( m_IndicateServer );
-            m_IndicateServer = NULL;
-        }
-#else
         if( m_MPRIS2->Indicators_Sound_Available() )
         {
             int IsBlacklisted = m_MPRIS2->Indicators_Sound_IsBlackListed();
@@ -3552,7 +3494,6 @@ void guMainFrame::CreateTaskBarIcon( void )
                 }
             }
         }
-#endif
         if( m_TaskBarIcon )
         {
             m_TaskBarIcon->RemoveIcon();

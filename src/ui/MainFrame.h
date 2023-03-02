@@ -69,16 +69,6 @@
 
 namespace Guayadeque {
 
-#ifdef WITH_LIBINDICATE_SUPPORT
-
-#define GUAYADEQUE_INDICATOR_NAME               "music.guayadeque"
-#define GUAYADEQUE_DESKTOP_PATH                 DATAROOTDIR "/applications/guayadeque.desktop"
-
-#include "libindicate/server.h"
-#include "libindicate/indicator.h"
-
-#endif
-
 #define     guPANEL_MAIN_PLAYERPLAYLIST     ( 1 << 0 )
 #define     guPANEL_MAIN_PLAYERFILTERS      ( 1 << 1 )
 #define     guPANEL_MAIN_PLAYERVUMETERS     ( 1 << 2 )
@@ -158,9 +148,7 @@ class guMainFrame : public wxFrame
     guAudioCdPanel *                m_AudioCdPanel;
 
     guTaskBarIcon *                 m_TaskBarIcon;
-#ifdef WITH_LIBINDICATE_SUPPORT
-    IndicateServer *                m_IndicateServer;
-#endif
+
     guStatusBar *                   m_MainStatusBar;
 
     wxMenuItem *                    m_MenuPlaySmart;

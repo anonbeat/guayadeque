@@ -1,13 +1,6 @@
 # define minimum cmake version
 cmake_minimum_required(VERSION 3.0)
-# IF(POLICY CMP0005)
-#    cmake_policy(SET CMP0005 NEW)
-# ENDIF(POLICY CMP0005)
 
-# IF(POLICY CMP0037)
-#    cmake_policy(SET CMP0037 OLD)   # cmake warns about sr@latin target
-# ENDIF(POLICY CMP0037)
- 
 project( Guayadeque )
 
 # Set Release type for builds where CMAKE_BUILD_TYPE is unset.
@@ -76,26 +69,6 @@ IF( ENABLE_IPOD )
         ENDIF( NOT LIBGPOD_FOUND )
 ENDIF( ENABLE_IPOD )
 
-OPTION( ENABLE_LIBINDICATE "Enable support for Ayatana notification using the libindicate library" ON )
-IF( ENABLE_LIBINDICATE )
-        PKG_CHECK_MODULES( LIBINDICATE07 indicate-0.7 )
-        IF( NOT LIBINDICATE07_FOUND )
-                PKG_CHECK_MODULES( LIBINDICATE06 indicate-0.6 )
-                IF( NOT LIBINDICATE06_FOUND )
-                        PKG_CHECK_MODULES( LIBINDICATE indicate )
-                        IF( NOT LIBINDICATE_FOUND )
-                                MESSAGE( " libindicate library not found! No sound menu support!!" )
-                        ELSE( NOT LIBINDICATE_FOUND )
-                                ADD_DEFINITIONS(-DWITH_LIBINDICATE_SUPPORT=1)
-                        ENDIF( NOT LIBINDICATE_FOUND )
-                ELSE( NOT LIBINDICATE06_FOUND )
-                        ADD_DEFINITIONS(-DWITH_LIBINDICATE_SUPPORT=1)
-                ENDIF( NOT LIBINDICATE06_FOUND )
-        ELSE( NOT LIBINDICATE07_FOUND )
-                ADD_DEFINITIONS(-DWITH_LIBINDICATE_SUPPORT=1)
-        ENDIF( NOT LIBINDICATE07_FOUND )
-ENDIF( ENABLE_LIBINDICATE )
-
 PKG_CHECK_MODULES( LIBWXSQLITE3 wxsqlite3 )
 IF( NOT LIBWXSQLITE3_FOUND )
         PKG_CHECK_MODULES( LIBWXSQLITE330 wxsqlite3-3.0 )
@@ -126,12 +99,12 @@ ENDIF( NOT _GUREVISION_ )
 CONFIGURE_FILE( ${CMAKE_CURRENT_SOURCE_DIR}/src/Version.h.in
                 ${CMAKE_CURRENT_BINARY_DIR}/Version.h )
 
-#    
+#
 #ADD_DEFINITIONS(${wxWidgets_DEFINITIONS})
 ADD_COMPILE_OPTIONS( -Wall )
 ADD_DEFINITIONS( -DDATADIR=\"${CMAKE_INSTALL_FULL_DATADIR}/guayadeque\" -DDATAROOTDIR=\"${CMAKE_INSTALL_FULL_DATAROOTDIR}\" )
- 
-# We define the include paths here, our minimal source dir is one, 
+
+# We define the include paths here, our minimal source dir is one,
 # and also the include dirs defined by wxWidgets
 INCLUDE_DIRECTORIES(
         ${CMAKE_CURRENT_BINARY_DIR}
@@ -144,9 +117,6 @@ INCLUDE_DIRECTORIES(
         ${LIBDBUS_INCLUDE_DIRS}
         ${LIBGIO_INCLUDE_DIRS}
         ${LIBGPOD_INCLUDE_DIRS}
-        ${LIBINDICATE_INCLUDE_DIRS}
-        ${LIBINDICATE06_INCLUDE_DIRS}
-        ${LIBINDICATE07_INCLUDE_DIRS}
         ${LIBWXSQLITE3_INCLUDE_DIRS}
         ${LIBWXSQLITE330_INCLUDE_DIRS}
 	${LIBJSONCPP_INCLUDE_DIRS}
@@ -158,7 +128,7 @@ IF( PROFILE )
         MESSAGE( "Adding profiling code." )
 ENDIF( PROFILE )
 
- 
+
 ADD_SUBDIRECTORY( src )
 ADD_SUBDIRECTORY( po )
 
