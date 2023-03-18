@@ -181,9 +181,8 @@ wxString guCoListBox::GetSearchText( int item ) const
 // -------------------------------------------------------------------------------- //
 int guCoListBox::FindComposer( const wxString &composer )
 {
-    int Index;
     int Count = m_Items->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Items->Item( Index ).m_Name == composer )
         {

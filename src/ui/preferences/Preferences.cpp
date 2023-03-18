@@ -57,16 +57,15 @@ guCopyToPattern::guCopyToPattern()
 // -------------------------------------------------------------------------------- //
 guCopyToPattern::guCopyToPattern( const wxString &pattern )
 {
-    int Index;
-    int Count;
     // Default:{g}/{a}/{b}/{n} - {a} - {t}:0:4:0
     m_Format = guTRANSCODE_FORMAT_KEEP;
     m_Quality = guTRANSCODE_QUALITY_KEEP;
     m_MoveFiles = false;
     wxArrayString Fields = wxStringTokenize( pattern, wxT( ":" ) );
-    if( ( Count = Fields.Count() ) )
+    int Count = Fields.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             switch( Index )
             {
@@ -617,9 +616,8 @@ void guPrefDialog::BuildLibraryPage( void )
     m_Config->LoadCollections( &m_Collections, guMEDIA_COLLECTION_TYPE_IPOD );
 
 	m_LibCollectListBox = new wxListBox( LibCollectPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_HSCROLL|wxLB_SINGLE );
-	int Index;
 	int Count = m_Collections.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         m_LibCollectListBox->Append( m_Collections[ Index ].m_Name );
 	}
@@ -740,7 +738,7 @@ void guPrefDialog::BuildLibraryPage( void )
 	CopyToChoices.Add( _( "None" ) );
     wxArrayString CopyToOptions = m_Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
 	Count = CopyToOptions.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
 	    CopyToChoices.Add( CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) ) );
 	}
@@ -1345,9 +1343,8 @@ void guPrefDialog::BuildLyricsPage( void )
 
     wxArrayString LyricSourcesNames;
     wxArrayInt    LyricSourcesEnabled;
-    int Index;
     int Count = m_LyricSearchEngine->SourcesCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSource * LyricSource = m_LyricSearchEngine->GetSource( Index );
         LyricSourcesNames.Add( LyricSource->Name() );
@@ -1356,7 +1353,7 @@ void guPrefDialog::BuildLyricsPage( void )
 
 	m_LyricsSrcListBox = new wxCheckListBox( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), LyricSourcesNames, 0 );
 	LyricsSrcSizer->Add( m_LyricsSrcListBox, 1, wxALL|wxEXPAND, 5 );
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         m_LyricsSrcListBox->Check( Index, LyricSourcesEnabled[ Index ] );
 	}
@@ -1390,14 +1387,14 @@ void guPrefDialog::BuildLyricsPage( void )
     wxArrayString LyricTargetsNames;
     wxArrayInt    LyricTargetsEnabled;
     Count = m_LyricSearchEngine->TargetsCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSource * LyricTarget = m_LyricSearchEngine->GetTarget( Index );
         LyricTargetsNames.Add( LyricTarget->Name() );
         LyricTargetsEnabled.Add( LyricTarget->Enabled() );
     }
 	m_LyricsSaveListBox = new wxCheckListBox( m_LyricsPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), LyricTargetsNames, 0 );
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         m_LyricsSaveListBox->Check( Index, LyricTargetsEnabled[ Index ] );
 	}
@@ -1754,7 +1751,7 @@ void guPrefDialog::BuildJamendoPage( void )
 
     m_JamGenresListBox = new wxCheckListBox( m_JamendoPanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), JamendoGenres, 0 );
     int Count = m_LastJamendoGenres.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_JamGenresListBox->Check( m_LastJamendoGenres[ Index ] );
         //guLogMessage( wxT( "Checking %i" ), m_LastJamendoGenres[ Index ] );
@@ -1847,9 +1844,8 @@ void guPrefDialog::BuildMagnatunePage( void )
     m_LastMagnatuneGenres = m_Config->ReadAStr( CONFIG_KEY_MAGNATUNE_GENRES_GENRE, wxEmptyString, CONFIG_PATH_MAGNATUNE_GENRES );
 
     m_MagGenresListBox = new wxCheckListBox( m_MagnatunePanel, wxID_ANY, wxDefaultPosition, wxSize( -1, guPREFERENCES_LISTBOX_HEIGHT ), MagnatuneGenres, 0 );
-    int Index;
     int Count = m_LastMagnatuneGenres.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
     int Pos = MagnatuneGenres.Index( m_LastMagnatuneGenres[ Index ] );
     if( Pos != wxNOT_FOUND )
@@ -1999,8 +1995,7 @@ void guPrefDialog::BuildLinksPage( void )
 	while( ( int ) m_LinksNames.Count() > count )
         m_LinksNames.RemoveAt( count );
 
-    int index;
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( m_LinksNames[ index ].IsEmpty() )
         {
@@ -2116,13 +2111,12 @@ void guPrefDialog::BuildCommandsPage( void )
     wxArrayString Commands = m_Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 	m_CmdListBox->Append( Commands );
     m_CmdNames = m_Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-	int index;
     int count = m_CmdListBox->GetCount();
 	while( ( int ) m_CmdNames.Count() < count )
         m_CmdNames.Add( wxEmptyString );
     if( ( int ) m_CmdNames.Count() > count )
         m_CmdNames.RemoveAt( count, m_CmdNames.Count() - count );
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( m_CmdNames[ index ].IsEmpty() )
         {
@@ -2239,11 +2233,10 @@ void guPrefDialog::BuildCopyToPage( void )
 
     wxArrayString Options = m_Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
 	wxArrayString Names;
-    int Index;
-    int Count;
-	if( ( Count = Options.Count() ) )
+    int Count = Options.Count();
+	if( Count )
 	{
-	    for( Index = 0; Index < Count; Index++ )
+	    for( int Index = 0; Index < Count; Index++ )
 	    {
 	        guCopyToPattern * CopyToPattern = new guCopyToPattern( Options[ Index ] );
 	        if( CopyToPattern )
@@ -2424,9 +2417,8 @@ void guPrefDialog::BuildAcceleratorsPage( void )
 	while( m_AccelKeys.Count() < m_AccelActionNames.Count() )
         m_AccelKeys.Add( 0 );
 
-    int Index;
     int Count = m_AccelActionNames.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_AccelKeyNames.Add( guAccelGetKeyCodeString( m_AccelKeys[ Index ] ) );
     }
@@ -2461,7 +2453,7 @@ void guPrefDialog::BuildAcceleratorsPage( void )
     {
         OddBgColor.Set( EveBgColor.Red() + 0xA, EveBgColor.Green() + 0x0A, EveBgColor.Blue() + 0x0A );
     }
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         long NewItem = m_AccelListCtrl->InsertItem( Index, m_AccelActionNames[ Index ], 0 );
         m_AccelListCtrl->SetItemData( NewItem, m_AccelKeys[ Index ] );
@@ -2642,9 +2634,8 @@ void guPrefDialog::SaveSettings( void )
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_JAMENDO )
     {
         wxArrayInt EnabledGenres;
-        int Index;
         int Count = m_JamGenresListBox->GetCount();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( m_JamGenresListBox->IsChecked( Index ) )
                 EnabledGenres.Add( Index );
@@ -2654,8 +2645,8 @@ void guPrefDialog::SaveSettings( void )
         bool DoUpgrade = ( EnabledGenres.Count() != m_LastJamendoGenres.Count() );
         if( !DoUpgrade )
         {
-            Count = EnabledGenres.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = EnabledGenres.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( m_LastJamendoGenres.Index( EnabledGenres[ Index ] ) == wxNOT_FOUND )
                 {
@@ -2673,9 +2664,8 @@ void guPrefDialog::SaveSettings( void )
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_MAGNATUNE )
     {
         wxArrayString EnabledGenres;
-        int Index;
         int Count = m_MagGenresListBox->GetCount();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( m_MagGenresListBox->IsChecked( Index ) )
                 EnabledGenres.Add( m_MagGenresListBox->GetString( Index ) );
@@ -2685,8 +2675,8 @@ void guPrefDialog::SaveSettings( void )
         bool DoUpgrade = ( EnabledGenres.Count() != m_LastMagnatuneGenres.Count() );
         if( !DoUpgrade )
         {
-            Count = EnabledGenres.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = EnabledGenres.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( m_LastMagnatuneGenres.Index( EnabledGenres[ Index ] ) == wxNOT_FOUND )
                 {
@@ -2716,9 +2706,8 @@ void guPrefDialog::SaveSettings( void )
         m_Config->WriteAStr( CONFIG_KEY_SEARCHLINKS_NAME, m_LinksNames, CONFIG_PATH_SEARCHLINKS_NAMES, false );
 
         // TODO : Make this process in a thread
-        int index;
         int count = SearchLinks.Count();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             wxURI Uri( SearchLinks[ index ] );
             if( !wxDirExists( guPATH_LINKICONS ) )
@@ -2761,9 +2750,8 @@ void guPrefDialog::SaveSettings( void )
     if( m_VisiblePanels & guPREFERENCE_PAGE_FLAG_COPYTO )
     {
         wxArrayString Options;
-        int Index;
         int Count = m_CopyToOptions->Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guCopyToPattern &CopyToPattern = m_CopyToOptions->Item( Index );
             Options.Add( CopyToPattern.ToString() );
@@ -2828,15 +2816,14 @@ void guPrefDialog::OnLibOptionsLoadControls( void )
     if( CollectSelected )
     {
         guMediaCollection &CurCollection = m_Collections[ m_CollectSelected ];
-        int Index;
         int Count = CurCollection.m_Paths.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_LibPathListBox->Append( CurCollection.m_Paths[ Index ] );
         }
 
         Count = CurCollection.m_CoverWords.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_LibCoverListBox->Append( CurCollection.m_CoverWords[ Index ] );
         }
@@ -3758,9 +3745,8 @@ void guPrefDialog::OnOnlineProxyEnabledChanged( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnJamendoSelectAll( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_JamGenresListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_JamGenresListBox->Check( Index );
     }
@@ -3769,9 +3755,8 @@ void guPrefDialog::OnJamendoSelectAll( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnJamendoSelectNone( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_JamGenresListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_JamGenresListBox->Check( Index, false );
     }
@@ -3780,9 +3765,8 @@ void guPrefDialog::OnJamendoSelectNone( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnJamendoInvertSelection( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_JamGenresListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_JamGenresListBox->Check( Index, !m_JamGenresListBox->IsChecked( Index ) );
     }
@@ -3791,9 +3775,8 @@ void guPrefDialog::OnJamendoInvertSelection( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnMagnatuneSelectAll( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_MagGenresListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_MagGenresListBox->Check( Index );
     }
@@ -3802,9 +3785,8 @@ void guPrefDialog::OnMagnatuneSelectAll( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnMagnatuneSelectNone( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_MagGenresListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_MagGenresListBox->Check( Index, false );
     }
@@ -3813,9 +3795,8 @@ void guPrefDialog::OnMagnatuneSelectNone( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guPrefDialog::OnMagnatuneInvertSelection( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_MagGenresListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_MagGenresListBox->Check( Index, !m_MagGenresListBox->IsChecked( Index ) );
     }
@@ -4301,12 +4282,10 @@ void guPrefDialog::UpdateCopyToOptions( void )
         m_LibOptCopyToChoice->Clear();
         m_LibOptCopyToChoice->Append( wxEmptyString );
 
-        int Index;
-        int Count;
         if( m_CopyToOptions )
         {
-            Count = m_CopyToOptions->Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = m_CopyToOptions->Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 m_LibOptCopyToChoice->Append( m_CopyToOptions->Item( Index ).m_Name );
             }
@@ -4314,8 +4293,8 @@ void guPrefDialog::UpdateCopyToOptions( void )
         else
         {
             wxArrayString CopyToOptions = m_Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
-            Count = CopyToOptions.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = CopyToOptions.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 m_LibOptCopyToChoice->Append( CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) ) );
             }
@@ -4432,9 +4411,8 @@ void guPrefDialog::OnAccelDefaultClicked( wxCommandEvent &event )
     m_AccelKeys.Empty();
     guAccelGetDefaultKeys( m_AccelKeys );
 
-    int Index;
     int Count = m_AccelKeys.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_AccelListCtrl->SetItem( Index, 1, guAccelGetKeyCodeString( m_AccelKeys[ Index ] ) );
     }

@@ -90,9 +90,8 @@ void guPcListBox::GetItemsList( void )
 int guPcListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) const
 {
     wxArrayInt Items = GetSelectedItems();
-    int Index;
     int Count = Items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Items[ Index ] )
             Items[ Index ]--;

@@ -198,11 +198,10 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
 {
     wxArrayInt Selection;
     wxArrayString RenameFiles;
-    int Index;
     int Count = m_FilesListBox->GetSelections( Selection );
     if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             RenameFiles.Add( m_Files[ Selection[ Index ] ] );
         }
@@ -210,7 +209,7 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
     else
     {
         Count = m_Files.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
             Selection.Add( Index );
         RenameFiles = m_Files;
     }
@@ -219,7 +218,7 @@ void guFileRenamer::OnPatternApply( wxCommandEvent& event )
     {
         guMainFrame * MainFrame = ( guMainFrame * ) guMainFrame::GetMainFrame();
         guDbPodcasts * DbPodcasts = MainFrame->GetPodcastsDb();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxString FileName = RenameFiles[ Index ];
             if( guIsValidAudioFile( FileName  ) )
@@ -288,9 +287,8 @@ void guFileRenamer::OnPattternRevert( wxCommandEvent& event )
 wxArrayString guFileRenamer::GetRenamedNames( void )
 {
     wxArrayString RetVal;
-    int Index;
     int Count = m_FilesListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         RetVal.Add( m_FilesListBox->GetString( Index ) );
     }

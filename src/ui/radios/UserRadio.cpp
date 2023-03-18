@@ -240,11 +240,10 @@ void guUserRadioProvider::OnRadioImport( wxCommandEvent &event )
             if( XmlNode && XmlNode->GetName() == wxT( "RadioStations" ) )
             {
                 ReadXmlRadioStations( XmlNode->GetChildren(), &UserStations );
-                int Index;
-                int Count;
-                if( ( Count = UserStations.Count() ) )
+                int Count = UserStations.Count();
+                if( Count )
                 {
-                    for( Index = 0; Index < Count; Index++ )
+                    for( int Index = 0; Index < Count; Index++ )
                     {
                         m_Db->SetRadioStation( &UserStations[ Index ] );
                     }
@@ -262,11 +261,9 @@ void guUserRadioProvider::OnRadioExport( wxCommandEvent &event )
 {
     guRadioStations UserStations;
     m_Db->GetUserRadioStations( &UserStations );
-    int Index;
-    int Count;
-    if( ( Count = UserStations.Count() ) )
+    int Count = UserStations.Count();
+    if( Count )
     {
-
         wxFileDialog * FileDialog = new wxFileDialog( m_RadioPanel,
             wxT( "Select the output xml filename" ),
             wxGetHomeDir(),
@@ -282,7 +279,7 @@ void guUserRadioProvider::OnRadioExport( wxCommandEvent &event )
                 //OutXml.SetRoot(  );
                 wxXmlNode * RootNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "RadioStations" ) );
 
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     //guLogMessage( wxT( "Adding %s" ), UserStations[ Index ].m_Name.c_str() );
                     wxXmlNode * RadioNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "RadioStation" ) );

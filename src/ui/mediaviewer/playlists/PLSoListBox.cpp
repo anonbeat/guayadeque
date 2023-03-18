@@ -213,16 +213,14 @@ void guPLSoListBox::OnDropFile( const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::OnDropEnd( void )
 {
-    int index;
-    int count;
     wxArrayInt ItemIds;
 
     if( ( m_PLIds.Count() == 1 ) && ( m_PLTypes[ 0 ] == guPLAYLIST_TYPE_STATIC ) )
     {
         if( m_DropIds.Count() )
         {
-            count = m_Items.Count();
-            for( index = 0; index < count; index++ )
+            int count = m_Items.Count();
+            for( int index = 0; index < count; index++ )
             {
                 ItemIds.Add( m_Items[ index ].m_SongId );
             }
@@ -234,7 +232,7 @@ void guPLSoListBox::OnDropEnd( void )
             //guLogMessage( wxT( "Pos: %i + %i  %i of %i " ), m_DragOverItem, m_DragOverAfter, InsertPos, m_Items.Count() );
 
             count = m_DropIds.Count();
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 ItemIds.Insert( m_DropIds[ index ], InsertPos + index );
             }
@@ -279,9 +277,8 @@ void guPLSoListBox::MoveSelection( void )
         InsertPos = m_Items.Count();
 
     // Remove the elements from the original position
-    int index;
     int count = MoveIndex.Count();
-    for( index = count - 1; index >= 0; index-- )
+    for( int index = count - 1; index >= 0; index-- )
     {
         m_Items.RemoveAt( MoveIndex[ index ] );
 
@@ -290,13 +287,13 @@ void guPLSoListBox::MoveSelection( void )
     }
 
     count = m_Items.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         ItemIds.Add( m_Items[ index ].m_SongId );
     }
 
     count = MoveIds.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         ItemIds.Insert( MoveIds[ index ], InsertPos + index );
     }
@@ -343,10 +340,9 @@ int guPLSoListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) 
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::GetAllSongs( guTrackArray * tracks )
 {
-    int index;
     m_ItemsMutex.Lock();
     int count = m_Items.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         tracks->Add( new guTrack( m_Items[ index ] ) );
     }
@@ -398,9 +394,8 @@ void guPLSoListBox::SetTracksOrder( const int order )
 
         // Create the Columns
         int CurColId;
-        int Index;
         int Count = m_ColumnNames.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             CurColId = GetColumnId( Index );
             SetColumnLabel( Index,
@@ -414,7 +409,6 @@ void guPLSoListBox::SetTracksOrder( const int order )
 // -------------------------------------------------------------------------------- //
 void guPLSoListBox::RandomizeTracks( void )
 {
-    int Index;
     int Pos;
     int NewPos;
     int Count = m_Items.Count();
@@ -422,7 +416,7 @@ void guPLSoListBox::RandomizeTracks( void )
 
     if( Count > 2 )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             do {
                 Pos = guRandom( Count );

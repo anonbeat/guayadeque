@@ -437,9 +437,8 @@ void guAuiNotebook::AddId( wxWindow * ptr, const wxString &id )
 // -------------------------------------------------------------------------------- //
 wxString guAuiNotebook::GetPageId( const wxWindow * ptr )
 {
-    int Index;
     int Count = m_PagePtrs.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_PagePtrs[ Index ] == ptr )
         {

@@ -83,9 +83,8 @@ wxString guLastFMRequest::GetSign()
     wxSortedArrayString Params;
     wxString SignStr = wxEmptyString;
     guMD5 md5;
-    int Index;
     int Count = m_Args.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         SignStr += m_Args[ Index ].BeforeFirst( '=' );
         SignStr += m_Args[ Index ].AfterFirst( '=' );
@@ -97,8 +96,6 @@ wxString guLastFMRequest::GetSign()
 // -------------------------------------------------------------------------------- //
 wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction )
 {
-    int         Index;
-    int         Count;
     wxString    RetVal = wxEmptyString;
     guHttp      Http;
     char *      Buffer = NULL;
@@ -109,8 +106,8 @@ wxString guLastFMRequest::DoRequest( const bool AddSign, const bool IsGetAction 
     //
     // TODO : Add a LastFM query cache where stores the queries and respective responses
     //
-    Count = m_Args.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = m_Args.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         UrlStr += ( Index ? wxT( "&" ) : wxT( "?" ) ) + m_Args[ Index ];
     }

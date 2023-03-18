@@ -47,9 +47,8 @@ WX_DEFINE_OBJARRAY( guFileItemArray )
 guMediaViewer * FindMediaViewerByPath( guMainFrame * mainframe, const wxString curpath )
 {
     const guMediaCollectionArray &Collections = mainframe->GetMediaCollections();
-    int Index;
     int Count = Collections.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         const guMediaCollection & Collection = Collections[ Index ];
         if( mainframe->IsCollectionActive( Collection.m_UniqueId ) )
@@ -129,9 +128,8 @@ void guGenericDirCtrl::SetupSections()
     if( m_ShowPaths & guFILEBROWSER_SHOWPATH_LOCATIONS )
     {
         const guMediaCollectionArray &  Collections = m_MainFrame->GetMediaCollections();
-        int Index;
         int Count = Collections.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             const guMediaCollection & Collection = Collections[ Index ];
             if( m_MainFrame->IsCollectionActive( Collection.m_UniqueId ) )
@@ -305,8 +303,6 @@ void guFileBrowserDirCtrl::CreateAcceleratorTable( void )
 void AppendFolderCommands( wxMenu * menu )
 {
     wxMenu * SubMenu;
-    int Index;
-    int Count;
     wxMenuItem * MenuItem;
 
     SubMenu = new wxMenu();
@@ -314,9 +310,10 @@ void AppendFolderCommands( wxMenu * menu )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
     wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-    if( ( Count = Commands.Count() ) )
+    int Count = Commands.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( ( Commands[ Index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) )
             {
@@ -1082,8 +1079,6 @@ void guFilesListBox::ReloadItems( bool reset )
 void AppendItemsCommands( wxMenu * menu, int selcount, int seltype )
 {
     wxMenu * SubMenu;
-    int Index;
-    int Count;
     wxMenuItem * MenuItem;
 
     SubMenu = new wxMenu();
@@ -1093,9 +1088,10 @@ void AppendItemsCommands( wxMenu * menu, int selcount, int seltype )
     guConfig * Config = ( guConfig * ) guConfig::Get();
     wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
     wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-    if( ( Count = Commands.Count() ) )
+    int Count = Commands.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( ( Commands[ Index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) ||
                 ( ( selcount == 1 ) && ( seltype == guFILEITEM_TYPE_IMAGE ) ) )
@@ -1245,9 +1241,8 @@ void guFilesListBox::SetOrder( int columnid )
 
     wxArrayString ColumnNames = GetColumnNames();
     int CurColId;
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         CurColId = GetColumnId( index );
         SetColumnLabel( index,
@@ -1275,11 +1270,10 @@ int guFilesListBox::GetAllSongs( guTrackArray * tracks ) const
 // -------------------------------------------------------------------------------- //
 int guFilesListBox::GetTracksFromFiles( const wxArrayString &files, guTrackArray * tracks ) const
 {
-    int Index;
-    int Count;
-    if( ( Count = files.Count() ) )
+    int Count = files.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxString FileName = files[ Index ];
             //guLogMessage( wxT( "GetTracksFromFiles: %s" ), FileName.c_str() );
@@ -1328,11 +1322,10 @@ wxArrayString guFilesListBox::GetSelectedFiles( const bool recursive ) const
 {
     wxArrayString Files;
     wxArrayInt Selection = GetSelectedItems( false );
-    int Index;
-    int Count;
-    if( ( Count = Selection.Count() ) )
+    int Count = Selection.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( m_Files[ Selection[ Index ] ].m_Name != wxT( ".." ) )
             {
@@ -1365,11 +1358,10 @@ wxArrayString guFilesListBox::GetSelectedFiles( const bool recursive ) const
 wxArrayString guFilesListBox::GetAllFiles( const bool recursive ) const
 {
     wxArrayString Files;
-    int Index;
     int Count = m_Files.Count();
     if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( m_Files[ Index ].m_Name != wxT( ".." ) )
             {
@@ -1402,9 +1394,8 @@ wxArrayString guFilesListBox::GetAllFiles( const bool recursive ) const
 int guFilesListBox::GetDragFiles( guDataObjectComposite * files )
 {
     wxArrayString SelectFiles = GetSelectedFiles( true );
-    int Index;
     int Count = SelectFiles.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
        SelectFiles[ Index ] = guFileDnDEncode( SelectFiles[ Index ] );
     }
@@ -1466,11 +1457,9 @@ int guFilesListBox::GetType( const int item ) const
 // -------------------------------------------------------------------------------- //
 bool guFilesListBox::GetCounters( wxLongLong * count, wxLongLong * len, wxLongLong * size )
 {
-    int Index;
-    int Count;
     * count = * len = * size = 0;
-    Count = m_Files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = m_Files.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Files[ Index ].m_Type == guFILEITEM_TYPE_FOLDER )
         {
@@ -1729,11 +1718,10 @@ void guFileBrowser::OnDirBeginDrag( wxTreeEvent &event )
     wxFileDataObject Files;
 
     wxArrayString FolderFiles = m_FilesCtrl->GetAllFiles( true );
-    int Index;
-    int Count;
-    if( ( Count = FolderFiles.Count() ) )
+    int Count = FolderFiles.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Files.AddFile( FolderFiles[ Index ] );
         }
@@ -1873,9 +1861,8 @@ void guFileBrowser::OnFolderPaste( wxCommandEvent &event )
                 wxArrayString Files = FileObject.GetFilenames();
                 wxArrayString FromFiles;
                 //guLogMessage( wxT( "Pasted: %s" ), Files[ 0 ].c_str() );
-                int Index;
                 int Count = Files.Count();
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     if( wxDirExists( Files[ Index ] ) )
                     {
@@ -1960,9 +1947,8 @@ void guFileBrowser::OnFolderSaveToPlayList( wxCommandEvent &event )
 
     m_FilesCtrl->GetAllSongs( &Tracks );
     wxArrayInt TrackIds;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         TrackIds.Add( Tracks[ Index ].m_SongId );
     }
@@ -2042,9 +2028,8 @@ void guFileBrowser::OnItemsPlay( wxCommandEvent &event )
 {
     wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
 
-    int Index;
     int Count = Files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLogMessage( wxT( "File%i: '%s'" ), Index, Files[ Index ].c_str() );
     }
@@ -2106,9 +2091,8 @@ void guFileBrowser::OnItemsSaveToPlayList( wxCommandEvent &event )
     m_FilesCtrl->GetSelectedSongs( &Tracks );
 
     wxArrayInt TrackIds;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         TrackIds.Add( Tracks[ Index ].m_SongId );
     }
@@ -2186,9 +2170,8 @@ void guFileBrowser::OnItemsRename( wxCommandEvent &event )
             if( FileRenamer->ShowModal() == wxID_OK )
             {
                 wxArrayString RenamedFiles = FileRenamer->GetRenamedNames();
-                int Index;
                 int Count = RenamedFiles.Count();
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     if( Files[ Index ] != RenamedFiles[ Index ] )
                     {
@@ -2226,17 +2209,16 @@ void guFileBrowser::OnItemsDelete( wxCommandEvent &event )
 {
     wxArrayString Files = m_FilesCtrl->GetSelectedFiles();
 
-    int Index;
-    int Count;
     bool Error = false;
-    if( ( Count = Files.Count() ) )
+    int Count = Files.Count();
+    if( Count )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected files ?" ),
                          _( "Confirm" ),
                          wxICON_QUESTION | wxYES_NO, this ) == wxYES )
         {
             wxArrayString DeleteFiles;
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( wxDirExists( Files[ Index ] ) )
                 {
@@ -2275,17 +2257,15 @@ void guFileBrowser::OnItemsDelete( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
-    Index = event.GetId();
+    int CommandId = event.GetId();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
-        Index -= ID_COMMANDS_BASE;
-        wxString CurCmd = Commands[ Index ];
+        CommandId -= ID_COMMANDS_BASE;
+        wxString CurCmd = Commands[ CommandId ];
         if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
         {
             wxString DirPath = m_DirCtrl->GetPath();
@@ -2297,8 +2277,8 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
         {
             wxString SongList;
             wxArrayString Files = m_FilesCtrl->GetAllFiles( true );
-            Count = Files.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = Files.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
             }
@@ -2313,17 +2293,15 @@ void guFileBrowser::OnFolderCommand( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
-    Index = event.GetId();
+    int CommandId = event.GetId();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
     {
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
-        Index -= ID_COMMANDS_BASE;
-        wxString CurCmd = Commands[ Index ];
+        CommandId -= ID_COMMANDS_BASE;
+        wxString CurCmd = Commands[ CommandId ];
         if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
         {
             wxString DirPath = m_DirCtrl->GetPath();
@@ -2335,8 +2313,8 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
         {
             wxString SongList;
             wxArrayString Files = m_FilesCtrl->GetSelectedFiles( false );
-            Count = Files.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = Files.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
             }
@@ -2347,8 +2325,8 @@ void guFileBrowser::OnItemsCommand( wxCommandEvent &event )
         {
             wxString SongList;
             wxArrayString Files = m_FilesCtrl->GetSelectedFiles( true );
-            Count = Files.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = Files.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 SongList += wxT( " \"" ) + Files[ Index ] + wxT( "\"" );
             }
@@ -2375,9 +2353,8 @@ void guFileBrowser::OnItemsCopy( wxCommandEvent &event )
             wxDataObjectComposite * CompositeObject = new wxDataObjectComposite();
 
             wxString FilesText;
-            int Index;
             int Count = Files.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 wxString CurFile = Files[ Index ];
                 FilesText += ( FilesText.IsEmpty() ? wxT( "" ) : wxT( "\n" ) ) + CurFile;
@@ -2432,9 +2409,8 @@ void guFileBrowser::OnItemsPaste( wxCommandEvent &event )
                 wxArrayString Files = FileObject.GetFilenames();
                 wxArrayString FromFiles;
                 //guLogMessage( wxT( "Pasted: %s" ), Files[ 0 ].c_str() );
-                int Index;
                 int Count = Files.Count();
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     if( wxDirExists( Files[ Index ] ) )
                     {

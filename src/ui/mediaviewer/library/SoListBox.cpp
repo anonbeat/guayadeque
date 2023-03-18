@@ -108,6 +108,7 @@ guSoListBox::guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxStri
     Bind( guConfigUpdatedEvent, &guSoListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     Bind( wxEVT_MENU, &guSoListBox::OnCreateSmartPlaylist, this, ID_PLAYLIST_SMART_PLAYLIST );
+    Bind( wxEVT_MENU, &guSoListBox::OnCreateBestOfPlaylist, this, ID_PLAYER_PLAYLIST_CREATE_BESTOF );
 
     CreateAcceleratorTable();
 
@@ -125,9 +126,8 @@ guSoListBox::~guSoListBox()
     Config->WriteBool( wxT( "TracksOrderDesc" ), m_TracksOrderDesc, m_ConfName );
 
     //int ColId;
-    int index;
     int count = guSONGS_COLUMN_COUNT;
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "id%u" ), index ),
                           ( * m_Columns )[ index ].m_Id,
@@ -153,6 +153,7 @@ guSoListBox::~guSoListBox()
     Unbind( guConfigUpdatedEvent, &guSoListBox::OnConfigUpdated, this, ID_CONFIG_UPDATED );
 
     Unbind( wxEVT_MENU, &guSoListBox::OnCreateSmartPlaylist, this, ID_PLAYLIST_SMART_PLAYLIST );
+    Unbind( wxEVT_MENU, &guSoListBox::OnCreateBestOfPlaylist, this, ID_PLAYER_PLAYLIST_CREATE_BESTOF );
 }
 
 // -------------------------------------------------------------------------------- //
@@ -404,10 +405,9 @@ int guSoListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) co
 // -------------------------------------------------------------------------------- //
 void guSoListBox::GetAllSongs( guTrackArray * tracks )
 {
-    int index;
     m_ItemsMutex.Lock();
     int count = GetItemCount();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         guTrack * Track = new guTrack();
         if( m_Db->GetSong( GetItemId( index ), Track ) )
@@ -432,8 +432,6 @@ wxArrayString guSoListBox::GetColumnNames( void ) const
 void AddSongsCommands( wxMenu * Menu, int SelCount )
 {
     wxMenu * SubMenu;
-    int index;
-    int count;
     wxMenuItem * MenuItem;
     if( Menu )
     {
@@ -442,9 +440,10 @@ void AddSongsCommands( wxMenu * Menu, int SelCount )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
         wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-        if( ( count = Commands.Count() ) )
+        int count = Commands.Count();
+        if( count )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 if( ( ( Commands[ index ].Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND ) ||
                       ( Commands[ index ].Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND ) )
@@ -628,6 +627,8 @@ void guSoListBox::CreateContextMenu( wxMenu * Menu ) const
         {
             MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_SMART_PLAYLIST, _( "Create Smart Playlist" ), _( "Create a smart playlist from this track" ) );
             Menu->Append( MenuItem );
+            MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_CREATE_BESTOF, _( "Create Best Of Playlist" ), _( "Create a playlist with the best of this artist" ) );
+            Menu->Append( MenuItem );
         }
 
         Menu->AppendSeparator();
@@ -705,20 +706,16 @@ void guSoListBox::OnSearchLinkClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guSoListBox::OnCommandClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
-        index = event.GetId();
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
-            index -= ID_COMMANDS_BASE;
-            wxString CurCmd = Commands[ index ];
+            int CommandIndex = event.GetId() - ID_COMMANDS_BASE;
+            wxString CurCmd = Commands[ CommandIndex ];
 
             if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
@@ -728,8 +725,8 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
                 AlbumList.Add( Songs[ 0 ].m_AlbumId );
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( AlbumList );
                 wxString Paths = wxEmptyString;
-                count = AlbumPaths.Count();
-                for( index = 0; index < count; index++ )
+                int count = AlbumPaths.Count();
+                for( int index = 0; index < count; index++ )
                 {
                     AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " ) );
                     Paths += wxT( " " ) + AlbumPaths[ index ];
@@ -757,10 +754,10 @@ void guSoListBox::OnCommandClicked( wxCommandEvent &event )
                 guTrackArray Songs;
                 GetSelectedSongs( &Songs );
                 wxString SongList = wxEmptyString;
-                count = Songs.Count();
+                int count = Songs.Count();
                 if( count )
                 {
-                    for( index = 0; index < count; index++ )
+                    for( int index = 0; index < count; index++ )
                     {
                         SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
                     }
@@ -943,9 +940,8 @@ void guSoListBox::UpdatedTrack( const guTrack * track )
 // -------------------------------------------------------------------------------- //
 int guSoListBox::FindItem( const int trackid )
 {
-    int Index;
     int Count = m_Items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Items[ Index ].m_SongId == trackid )
         {
@@ -992,6 +988,19 @@ void guSoListBox::OnCreateSmartPlaylist( wxCommandEvent &event )
     if( Tracks.Count() == 1 )
     {
         m_MediaViewer->CreateSmartPlaylist( Tracks[ 0 ].m_ArtistName, Tracks[ 0 ].m_SongName );
+    }
+}
+
+// -------------------------------------------------------------------------------- //
+void guSoListBox::OnCreateBestOfPlaylist( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    GetSelectedSongs( &Tracks );
+    if( !Tracks.IsEmpty() )
+    {
+        const guTrack &Track = Tracks[ 0 ];
+        if( Track.m_MediaViewer )
+            m_MediaViewer->CreateBestOfPlaylist( Track );
     }
 }
 

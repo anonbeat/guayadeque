@@ -104,8 +104,6 @@ int guAAListBox::GetSelectedSongs( guTrackArray * songs, const bool isdrag ) con
 void AddAlbumArtistCommands( wxMenu * Menu, int SelCount )
 {
     wxMenu * SubMenu;
-    int index;
-    int count;
     wxMenuItem * MenuItem;
     if( Menu )
     {
@@ -114,9 +112,10 @@ void AddAlbumArtistCommands( wxMenu * Menu, int SelCount )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
         wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-        if( ( count = Commands.Count() ) )
+        int count = Commands.Count();
+        if( count )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 if( ( Commands[ index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
                 {
@@ -204,6 +203,11 @@ void guAAListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_ALBUMARTIST_CREATE_BESTOF_PLAYLIST,
+                                wxString( _( "Create Best of Playlist" ) ),
+                                _( "Create a playlist with the best of this artist" ) );
+        Menu->Append( MenuItem );
+
         if( ( ContextMenuFlags & guCONTEXTMENU_COPY_TO ) ||
             ( ContextMenuFlags & guCONTEXTMENU_LINKS ) ||
             ( ContextMenuFlags & guCONTEXTMENU_COMMANDS ) )
@@ -237,9 +241,8 @@ wxString guAAListBox::GetSearchText( int item ) const
 // -------------------------------------------------------------------------------- //
 int guAAListBox::FindAlbumArtist( const wxString &albumartist )
 {
-    int Index;
     int Count = m_Items->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Items->Item( Index ).m_Name == albumartist )
         {
@@ -263,30 +266,26 @@ void guAAListBox::OnSearchLinkClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAAListBox::OnCommandClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
-        index = event.GetId();
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
+            int CommandIndex = event.GetId() - ID_COMMANDS_BASE;
             //guLogMessage( wxT( "CommandId: %u" ), index );
-            index -= ID_COMMANDS_BASE;
-            wxString CurCmd = Commands[ index ];
+            wxString CurCmd = Commands[ CommandIndex ];
 
             if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayInt AlbumList;
                 m_Db->GetAlbumArtistsAlbums( Selection, &AlbumList );
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( AlbumList );
-                count = AlbumPaths.Count();
                 wxString Paths = wxEmptyString;
-                for( index = 0; index < count; index++ )
+                int count = AlbumPaths.Count();
+                for( int index = 0; index < count; index++ )
                 {
                     AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " ) );
                     Paths += wxT( " " ) + AlbumPaths[ index ];
@@ -313,8 +312,8 @@ void guAAListBox::OnCommandClicked( wxCommandEvent &event )
                 wxString SongList = wxEmptyString;
                 if( m_Db->GetAlbumArtistsSongs( Selection, &Songs ) )
                 {
-                    count = Songs.Count();
-                    for( index = 0; index < count; index++ )
+                    int count = Songs.Count();
+                    for( int index = 0; index < count; index++ )
                     {
                         SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
                     }

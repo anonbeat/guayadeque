@@ -74,11 +74,10 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
     }
 
     wxArrayString FilterItems = wxStringTokenize( filterentry.AfterFirst( wxT( ':' ) ), wxT( ':' ) );
-    int Index;
-    int Count;
-    if( ( Count = FilterItems.Count() ) )
+    int Count = FilterItems.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             long Value;
             FilterItems[ Index ].ToLong( &Value );
@@ -88,7 +87,7 @@ guTreeViewFilterEditor::guTreeViewFilterEditor( wxWindow * parent, const wxStrin
 
 	m_FiltersListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_SINGLE );
 	Count = m_FilterItems.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
 	    m_FiltersListBox->Append( FilterItemNames[ m_FilterItems[ Index ] ] );
 	}
@@ -252,9 +251,8 @@ void guTreeViewFilterEditor::OnAddFilterBtnClick( wxCommandEvent& event )
 wxString guTreeViewFilterEditor::GetTreeViewFilterEntry( void )
 {
     wxString RetVal = m_NameTextCtrl->GetValue();
-    int Index;
     int Count = m_FilterItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         RetVal += wxString::Format( wxT( ":%i" ), m_FilterItems[ Index ] );
     }

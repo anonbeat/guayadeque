@@ -2818,13 +2818,11 @@ bool guTagSetLyrics( const wxString &filename, const wxString &lyrics, const boo
 void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
                     const wxArrayString &lyrics, const wxArrayInt &changedflags, const bool forcesave )
 {
-    int Index;
-    int Count = tracks.Count();
-
     guMainFrame * MainFrame = guMainFrame::GetMainFrame();
 
     // Process each Track
-    for( Index = 0; Index < Count; Index++ )
+    int Count = tracks.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         // If there is nothign to change continue with next one
         int ChangedFlag = changedflags[ Index ];
@@ -2906,9 +2904,8 @@ void guUpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
 // -------------------------------------------------------------------------------- //
 void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, const wxArrayInt &changedflags )
 {
-    int Index;
     int Count = images.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( !songs[ Index ].m_Offset && ( changedflags[ Index ] & guTRACK_CHANGED_DATA_IMAGES ) )
             guTagSetPicture( songs[ Index ].m_FileName, images[ Index ] );
@@ -2918,9 +2915,8 @@ void guUpdateImages( const guTrackArray &songs, const guImagePtrArray &images, c
 // -------------------------------------------------------------------------------- //
 void guUpdateLyrics( const guTrackArray &songs, const wxArrayString &lyrics, const wxArrayInt &changedflags )
 {
-    int Index;
     int Count = lyrics.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( !songs[ Index ].m_Offset && ( changedflags[ Index ] & guTRACK_CHANGED_DATA_LYRICS ) )
             guTagSetLyrics( songs[ Index ].m_FileName, lyrics[ Index ] );

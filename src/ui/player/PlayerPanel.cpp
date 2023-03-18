@@ -518,9 +518,8 @@ guPlayerPanel::~guPlayerPanel()
         }
         //printf( PlaySmart ? "Smart Enabled" : "Smart Disabled" );  printf( "\n" );
 
-        int index;
         wxArrayInt Equalizer;
-        for( index = 0; index < guEQUALIZER_BAND_COUNT; index++ )
+        for( int index = 0; index < guEQUALIZER_BAND_COUNT; index++ )
         {
             Equalizer.Add( m_MediaCtrl->GetEqualizerBand( index ) );
         }
@@ -922,9 +921,8 @@ void guPlayerPanel::SetPlayList( const wxArrayString &files )
 {
     m_PlayListCtrl->ClearItems();
 
-    int Index;
     int Count = files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_PlayListCtrl->AddPlayListItem( files[ Index ], guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
     }
@@ -994,11 +992,9 @@ void guPlayerPanel::AddToPlayList( const guTrackArray &tracks, const bool allowp
 
         if( m_PlayMode == guPLAYER_PLAYMODE_SMART )
         {
-            int Count;
-            int Index;
-            Count = tracks.Count();
+            int Count = tracks.Count();
             // We only insert the last CACHEITEMS as the rest should be forgiven
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( tracks[ Index ].m_TrackMode != guTRACK_MODE_SMART )
                 {
@@ -1066,9 +1062,8 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const int aftercu
 {
     int PrevTrackCount = m_PlayListCtrl->GetItemCount();
 
-    int Index;
     int Count = files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_PlayListCtrl->AddPlayListItem( files[ Index ], aftercurrent, aftercurrent ? Index : wxNOT_FOUND );
     }
@@ -1081,7 +1076,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const int aftercu
     {
         Count = m_PlayListCtrl->GetItemCount();
         // We only insert the last CACHEITEMS as the rest should be forgiven
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guTrack * Track = m_PlayListCtrl->GetItem( Index );
 
@@ -1114,9 +1109,8 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowp
     guLogDebug( wxT( "AddToPlayList( ..., %i, %i )" ), allowplay, aftercurrent );
     int PrevTrackCount = m_PlayListCtrl->GetItemCount();
 
-    int Index;
     int Count = files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_PlayListCtrl->AddPlayListItem( files[ Index ], aftercurrent, Index );
     }
@@ -1129,7 +1123,7 @@ void guPlayerPanel::AddToPlayList( const wxArrayString &files, const bool allowp
     {
         Count = m_PlayListCtrl->GetItemCount();
         // We only insert the last CACHEITEMS as the rest should be forgiven
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guTrack * Track = m_PlayListCtrl->GetItem( Index );
 
@@ -3072,9 +3066,8 @@ void guPlayerPanel::OnRatingChanged( guRatingEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayerPanel::UpdatedTracks( const guTrackArray * tracks )
 {
-    int index;
     int count = tracks->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( ( tracks->Item( index ).m_FileName == m_MediaSong.m_FileName ) &&
             ( tracks->Item( index ).m_Offset == m_MediaSong.m_Offset ) )

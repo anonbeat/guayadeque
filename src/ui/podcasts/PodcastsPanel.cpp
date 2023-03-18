@@ -72,9 +72,8 @@ guDbPodcasts::guDbPodcasts( const wxString &dbname ) : guDb( dbname )
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'podcastitem_length' on podcastitems(podcastitem_length ASC);" ) );
 
 
-    int Index;
     int Count = query.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ExecuteUpdate( query[ Index ] );
     }
@@ -194,9 +193,8 @@ void guDbPodcasts::SavePodcastChannel( guPodcastChannel * channel, bool onlynew 
 // -------------------------------------------------------------------------------- //
 int guDbPodcasts::SavePodcastChannels( guPodcastChannelArray * channels, bool onlynew )
 {
-    int Index;
     int Count = channels->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         SavePodcastChannel( &channels->Item( Index ), onlynew );
     }
@@ -556,9 +554,8 @@ void guDbPodcasts::SavePodcastItem( const int channelid, guPodcastItem * item, b
 // -------------------------------------------------------------------------------- //
 void guDbPodcasts::SavePodcastItems( const int channelid, guPodcastItemArray * items, bool onlynew )
 {
-    int Index;
     int Count = items->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         SavePodcastItem( channelid, &items->Item( Index ), onlynew );
     }
@@ -1173,9 +1170,8 @@ void NormalizePodcastChannel( guPodcastChannel * PodcastChannel )
     int ChId = PodcastChannel->m_Id;
     wxString ChName = PodcastChannel->m_Title;
     wxString Category = PodcastChannel->m_Category;
-    int Index;
     int Count = PodcastChannel->m_Items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guPodcastItem * PodcastItem = &PodcastChannel->m_Items[ Index ];
         PodcastItem->m_ChId = ChId;
@@ -1251,12 +1247,11 @@ void guPodcastPanel::DeleteChannels( wxCommandEvent &event )
                       wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
     {
         wxArrayInt SelectedItems = m_ChannelsListBox->GetSelectedItems();
-        int Index;
-        int Count;
-        if( ( Count = SelectedItems.Count() ) )
+        int Count = SelectedItems.Count();
+        if( Count )
         {
             wxSetCursor( * wxHOURGLASS_CURSOR );
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 m_Db->DelPodcastChannel( SelectedItems[ Index ] );
             }
@@ -1317,9 +1312,8 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
 
     m_Db->GetPodcastItems( &PodcastItems, m_PodcastsListBox->GetFilters(), m_PodcastsListBox->GetOrder(), m_PodcastsListBox->GetOrderDesc() );
 
-    int Index;
     int Count = PodcastItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack * Track = new guTrack();
         if( Track )
@@ -1342,17 +1336,17 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
         }
     }
 
-    Index = event.GetId() - ID_COPYTO_BASE;
-    if( Index >= guCOPYTO_DEVICE_BASE )
+    int CommandIndex = event.GetId() - ID_COPYTO_BASE;
+    if( CommandIndex >= guCOPYTO_DEVICE_BASE )
     {
-        Index -= guCOPYTO_DEVICE_BASE;
+        CommandIndex -= guCOPYTO_DEVICE_BASE;
         event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
     {
         event.SetId( ID_MAINFRAME_COPYTO );
     }
-    event.SetInt( Index );
+    event.SetInt( CommandIndex );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( m_MainFrame, event );
 }
@@ -1361,13 +1355,12 @@ void guPodcastPanel::ChannelsCopyTo( wxCommandEvent &event )
 void guPodcastPanel::UpdateChannels( wxCommandEvent &event )
 {
     wxArrayInt Selected = m_ChannelsListBox->GetSelectedItems();
-    int Count;
-    if( ( Count = Selected.Count() ) )
+    int Count = Selected.Count();
+    if( Count )
     {
         wxSetCursor( * wxHOURGLASS_CURSOR );
         guPodcastChannel PodcastChannel;
-        int Index;
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( m_Db->GetPodcastChannelId( Selected[ Index ], &PodcastChannel ) != wxNOT_FOUND )
             {
@@ -1539,13 +1532,12 @@ void guPodcastPanel::OnPodcastItemUpdated( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPodcastPanel::OnSelectPodcasts( bool enqueue, const int aftercurrent )
 {
-    int Index;
-    int Count;
     wxArrayInt Selected = m_PodcastsListBox->GetSelectedItems();
-    if( ( Count = Selected.Count() ) )
+    int Count = Selected.Count();
+    if( Count )
     {
         guTrackArray Tracks;
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guPodcastItem PodcastItem;
             if( m_Db->GetPodcastItemId( Selected[ Index ], &PodcastItem ) != wxNOT_FOUND )
@@ -1637,15 +1629,14 @@ void guPodcastPanel::OnPodcastItemDelete( wxCommandEvent &event )
                       wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, this ) == wxYES )
     {
         wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
-        int Index;
-        int Count = Selection.Count();
 
         // Check if in the download thread this items are included and delete them
         guPodcastItemArray Podcasts;
         m_Db->GetPodcastItems( Selection, &Podcasts, m_PodcastsListBox->GetOrder(), m_PodcastsListBox->GetOrderDesc() );
         m_MainFrame->RemovePodcastDownloadItems( &Podcasts );
 
-        for( Index = 0; Index < Count; Index++ )
+        int Count = Selection.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_Db->SetPodcastItemStatus( Selection[ Index ], guPODCAST_STATUS_DELETED );
         }
@@ -1659,9 +1650,8 @@ void guPodcastPanel::OnPodcastItemDownload( wxCommandEvent &event )
 {
     wxArrayInt Selection = m_PodcastsListBox->GetSelectedItems();
     guPodcastItemArray DownloadList;
-    int Index;
     int Count = Selection.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guPodcastItem PodcastItem;
         m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem );
@@ -1722,10 +1712,8 @@ void guPodcastPanel::UpdateTrack( const guTrack * )
 void guChannelsListBox::GetItemsList( void )
 {
     m_PodChannels.Empty();
-    int Index;
-    int Count;
-    Count = ( ( guDbPodcasts * ) m_Db )->GetPodcastChannels( &m_PodChannels );
-    for( Index = 0; Index < Count; Index++ )
+    int Count = ( ( guDbPodcasts * ) m_Db )->GetPodcastChannels( &m_PodChannels );
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_Items->Add( new guListItem( m_PodChannels[ Index ].m_Id, m_PodChannels[ Index ].m_Title ) );
     }
@@ -1794,9 +1782,8 @@ void guChannelsListBox::CreateContextMenu( wxMenu * Menu ) const
 // -------------------------------------------------------------------------------- //
 int guChannelsListBox::FindItem( const int channelid )
 {
-    int Index;
     int Count = m_Items->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Items->Item( Index ).m_Id == channelid )
         {
@@ -1839,15 +1826,11 @@ guPodcastListBox::guPodcastListBox( wxWindow * parent, guDbPodcasts * db ) :
     m_Images[ guPODCAST_STATUS_DELETED ] = new wxImage( guImage( guIMAGE_INDEX_tiny_status_error ) );
     m_Images[ guPODCAST_STATUS_ERROR ] = new wxImage( guImage( guIMAGE_INDEX_tiny_status_error ) );
 
-    int ColId;
-    wxString ColName;
-    int index;
     int count = m_ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, wxT( "podcasts/columns/ids" ) );
-
-        ColName = m_ColumnNames[ ColId ];
+        int ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, wxT( "podcasts/columns/ids" ) );
+        wxString ColName = m_ColumnNames[ ColId ];
 
         ColName += ( ( ColId == m_Order ) ? ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
 
@@ -1874,9 +1857,8 @@ guPodcastListBox::~guPodcastListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    int index;
     int count = m_ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "id%u" ), index ),
                           ( * m_Columns )[ index ].m_Id, wxT( "podcasts/columns/ids" ) );
@@ -1890,7 +1872,7 @@ guPodcastListBox::~guPodcastListBox()
     Config->WriteBool( CONFIG_KEY_PODCASTS_ORDERDESC, m_OrderDesc, CONFIG_PATH_PODCASTS );
 
 
-    for( index = 0; index < guPODCAST_STATUS_ERROR + 1; index++ )
+    for( int index = 0; index < guPODCAST_STATUS_ERROR + 1; index++ )
     {
         delete m_Images[ index ];
     }
@@ -2150,12 +2132,10 @@ void guPodcastListBox::SetOrder( int columnid )
 
     //m_Db->SetPodcastOrder( m_Order );
 
-    int CurColId;
-    int index;
     int count = m_ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        CurColId = GetColumnId( index );
+        int CurColId = GetColumnId( index );
         SetColumnLabel( index,
             m_ColumnNames[ CurColId ]  + ( ( CurColId == m_Order ) ?
                 ( m_OrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
@@ -2181,9 +2161,8 @@ void guPodcastListBox::SetFilters( const wxArrayInt &filters )
 int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) const
 {
     wxArrayInt Selection = GetSelectedItems();
-    int Index;
     int Count = Selection.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guPodcastItem PodcastItem;
         if( ( m_Db->GetPodcastItemId( Selection[ Index ], &PodcastItem ) != wxNOT_FOUND ) &&
@@ -2217,9 +2196,8 @@ int guPodcastListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag
 // -------------------------------------------------------------------------------- //
 int guPodcastListBox::FindItem( const int podcastid )
 {
-    int Index;
     int Count = m_PodItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_PodItems[ Index ].m_Id == podcastid )
         {

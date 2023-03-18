@@ -66,16 +66,14 @@ void guPodcastTreeCtrl::ReloadItems( void )
 {
     DeleteChildren( m_RootId );
 
-    int IndexCh;
     int CountCh = m_NewPodcasts->Count();
-    for( IndexCh = 0; IndexCh < CountCh; IndexCh++ )
+    for( int IndexCh = 0; IndexCh < CountCh; IndexCh++ )
     {
         guNewPodcastCategory * NewPodcastChannel = &m_NewPodcasts->Item( IndexCh );
 
         wxTreeItemId LastItemId = AppendItem( m_RootId, NewPodcastChannel->m_Name, -1, -1, NULL );
-        int IndexIt;
         int CountIt = NewPodcastChannel->m_Items.Count();
-        for( IndexIt = 0; IndexIt < CountIt; IndexIt++ )
+        for( int IndexIt = 0; IndexIt < CountIt; IndexIt++ )
         {
             AppendItem( LastItemId, NewPodcastChannel->m_Items[ IndexIt ].m_Name, -1, -1,
                              new guNewPodcastItem( NewPodcastChannel->m_Items[ IndexIt ] ) );
@@ -192,12 +190,11 @@ int guNewPodcastChannelSelector::ReadNewPodcastChannel( wxXmlNode * XmlNode, guN
             return 0;
         XmlNode->GetAttribute( wxT( "text" ), &NewPodcastItem->m_Name );
         XmlNode->GetAttribute( wxT( "url" ), &NewPodcastItem->m_Url );
-        int Index;
-        int Count;
-        if( ( Count = m_Filters.Count() ) )
+        int Count = m_Filters.Count();
+        if( Count )
         {
             bool ItemFound = false;
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( NewPodcastItem->m_Name.Lower().Find( m_Filters[ Index ].Lower() ) != wxNOT_FOUND )
                 {
@@ -369,11 +366,10 @@ void guNewPodcastChannelSelector::OnDirectoryItemSelected( wxTreeEvent &event )
 void guNewPodcastChannelSelector::OnFilterDirectoryClicked( wxCommandEvent &event )
 {
     wxString FilterText = wxEmptyString;
-    int Index;
-    int Count;
-    if( ( Count = m_Filters.Count() ) )
+    int Count = m_Filters.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             FilterText += m_Filters[ Index ] + wxT( " " );
         }

@@ -925,8 +925,7 @@ bool guFaderPlaybin::SetEqualizer( const wxArrayInt &eqbands )
 {
     if( m_Equalizer && ( eqbands.Count() == guEQUALIZER_BAND_COUNT ) )
     {
-        int index;
-        for( index = 0; index < guEQUALIZER_BAND_COUNT; index++ )
+        for( int index = 0; index < guEQUALIZER_BAND_COUNT; index++ )
         {
             SetEqualizerBand( index, eqbands[ index ] );
         }
@@ -1032,9 +1031,8 @@ bool guFaderPlaybin::StartPlay( void )
         {
             guLogDebug( wxT( "About to start the faderplaybin in crossfade type" ) );
             m_Player->Lock();
-            int Index;
             int Count = m_Player->m_FaderPlayBins.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 guFaderPlaybin * FaderPlaybin = m_Player->m_FaderPlayBins[ Index ];
 
@@ -1066,7 +1064,7 @@ bool guFaderPlaybin::StartPlay( void )
             m_Player->Unlock();
 
             Count = ToFade.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 double FadeOutStart = 1.0;
                 int    FadeOutTime = m_Player->m_ForceGapless ? 0 : m_Player->m_FadeOutTime;
@@ -1114,10 +1112,9 @@ bool guFaderPlaybin::StartPlay( void )
         case guFADERPLAYBIN_PLAYTYPE_AFTER_EOS :
         {
             Playing = false;
-            int Index;
             m_Player->Lock();
             int Count = m_Player->m_FaderPlayBins.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 guFaderPlaybin * FaderPlaybin = m_Player->m_FaderPlayBins[ Index ];
 
@@ -1172,10 +1169,9 @@ bool guFaderPlaybin::StartPlay( void )
 
         case guFADERPLAYBIN_PLAYTYPE_REPLACE :
         {
-            int Index;
             m_Player->Lock();
             int Count = m_Player->m_FaderPlayBins.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 guFaderPlaybin * FaderPlaybin = m_Player->m_FaderPlayBins[ Index ];
 

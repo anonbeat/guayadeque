@@ -140,9 +140,8 @@ int guIpodLibrary::CreateStaticPlayList( const wxString &name, const wxArrayInt 
         guLogMessage( wxT( "Attached to the database" ) );
         guTrackArray Tracks;
         GetSongs( trackids, &Tracks );
-        int Index;
         int Count = Tracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guLogMessage( wxT( "Searching for track %s" ), Tracks[ Index ].m_FileName.c_str() );
             Itdb_Track * iPodTrack = iPodFindTrack( Tracks[ Index ].m_FileName );
@@ -182,9 +181,8 @@ int guIpodLibrary::UpdateStaticPlayList( const int plid, const wxArrayInt &track
 
         guTrackArray PlayListTracks;
         GetSongs( trackids, &PlayListTracks );
-        int Index;
         int Count = PlayListTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
             if( iPodTrack )
@@ -208,9 +206,8 @@ int guIpodLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &track
     {
         guTrackArray PlayListTracks;
         GetSongs( trackids, &PlayListTracks );
-        int Index;
         int Count = PlayListTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
             if( iPodTrack )
@@ -233,9 +230,8 @@ int guIpodLibrary::DelPlaylistSetIds( const int plid, const wxArrayInt &trackids
     {
         guTrackArray PlayListTracks;
         GetSongs( trackids, &PlayListTracks );
-        int Index;
         int Count = PlayListTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Itdb_Track * iPodTrack = iPodFindTrack( PlayListTracks[ Index ].m_FileName );
             if( iPodTrack )
@@ -296,9 +292,8 @@ Itdb_Playlist * guIpodLibrary::CreateiPodPlayList( const wxString &path, const w
     if( iPodPlayList )
     {
         itdb_playlist_add( m_iPodDb, iPodPlayList, wxNOT_FOUND );
-        int Index;
         int Count = filenames.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guLogMessage( wxT( "Trying to search for: '%s'" ), filenames[ Index ].c_str() );
             Itdb_Track * iPodTrack = iPodFindTrack( filenames[ Index ] );
@@ -431,9 +426,8 @@ int guIpodLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayL
         guLogMessage( wxT( "checklimits : %i" ), PlaylistPref->checklimits );
         guLogMessage( wxT( "limittype   : %i" ), PlaylistPref->limittype );
 
-        int Index;
         int Count = playlist->m_Filters.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Itdb_SPLRule * PlaylistRule;
             if( Index > 0 )
@@ -945,11 +939,10 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
         dbRes.Finalize();
 
         // Add the covers to the albums
-        int Index;
         int Count;
         if( ( Count = CoveriPodTracks.Count() ) )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( TestDestroy() )
                     break;
@@ -1386,9 +1379,8 @@ guIpodLibraryUpdate::ExitCode guIpodLibraryUpdate::Entry( void )
             Queries.Add( wxT( "DELETE FROM plsets WHERE plset_type = 0 AND plset_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
             Queries.Add( wxT( "DELETE FROM settags WHERE settag_songid NOT IN ( SELECT DISTINCT song_id FROM songs );" ) );
 
-            int Index;
             int Count = Queries.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( TestDestroy() )
                     break;
@@ -1533,9 +1525,8 @@ void guMediaVieweriPodDevice::CleanLibrary( void )
 // -------------------------------------------------------------------------------- //
 void guMediaVieweriPodDevice::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
-    int Index;
     int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         tracks->Item( Index ).m_Type = guTRACK_TYPE_IPOD;
     }
@@ -1548,7 +1539,6 @@ bool guMediaVieweriPodDevice::SetAlbumCover( const int albumid, const wxString &
     wxArrayInt   Albums;
     Albums.Add( albumid );
     m_Db->GetAlbumsSongs( Albums, &Tracks );
-    int Index;
     int Count;
     if( ( Count = Tracks.Count() ) )
     {
@@ -1563,7 +1553,7 @@ bool guMediaVieweriPodDevice::SetAlbumCover( const int albumid, const wxString &
         TmpFile += wxT( ".jpg" );
         if( coverimg->SaveFile( TmpFile, wxBITMAP_TYPE_JPEG ) )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Tracks[ Index ].m_FileName );
                 if( iPodTrack )
@@ -1642,11 +1632,10 @@ void guMediaVieweriPodDevice::DeleteAlbumCover( const int albumid )
     wxArrayInt   Albums;
     Albums.Add( albumid );
     m_Db->GetAlbumsSongs( Albums, &Tracks );
-    int Index;
     int Count;
     if( ( Count = Tracks.Count() ) )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Tracks[ Index ].m_FileName );
             if( iPodTrack )
@@ -1666,7 +1655,6 @@ void guMediaVieweriPodDevice::DeleteAlbumCover( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guMediaVieweriPodDevice::DeleteTracks( const guTrackArray * tracks )
 {
-    int Index;
     int Count;
     if( ( Count = tracks->Count() ) )
     {
@@ -1675,7 +1663,7 @@ void guMediaVieweriPodDevice::DeleteTracks( const guTrackArray * tracks )
 
         Itdb_Playlist * MasterPlaylist = itdb_playlist_mpl( iPodDb );
 
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( tracks->Item( Index ).m_FileName );
             if( iPodTrack )
@@ -1833,9 +1821,8 @@ int guMediaVieweriPodDevice::CopyTo( const guTrack * track, wxString &filename )
 void guMediaVieweriPodDevice::UpdateTracks( const guTrackArray &tracks, const guImagePtrArray &images,
                                 const wxArrayString &lyrics, const wxArrayInt &changedflags )
 {
-    int Index;
     int Count = tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = tracks[ Index ];
         Itdb_Track * iPodTrack = ( ( guIpodLibrary * ) m_Db )->iPodFindTrack( Track.m_FileName );

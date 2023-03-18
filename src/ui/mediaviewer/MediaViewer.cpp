@@ -27,6 +27,7 @@
 #include "DynamicPlayList.h"
 #include "Images.h"
 #include "ImportFiles.h"
+#include "LastFM.h"
 #include "LibUpdate.h"
 #include "MainFrame.h"
 #include "SelCoverFile.h"
@@ -85,12 +86,10 @@ guMediaViewer::guMediaViewer( wxWindow * parent, guMediaCollection &collection, 
     if( !m_MediaCollection->m_DefaultCopyAction.IsEmpty() )
     {
         wxArrayString Options = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
-        int Index;
-        int Count;
-
-        if( ( Count = Options.Count() ) )
+        int Count = Options.Count();
+        if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( Options[ Index ].BeforeFirst( wxT( ':' ) ) == m_MediaCollection->m_DefaultCopyAction )
                 {
@@ -232,9 +231,8 @@ void guMediaViewer::CreateControls( void )
     wxArrayString FilterNames;
     FilterNames.Add( _( "All Albums" ) );
 
-    int Index;
     int Count = m_DynFilterArray.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         FilterNames.Add( unescape_configlist_str( m_DynFilterArray[ Index ].BeforeFirst( wxT( ':' ) ) ) );
     }
@@ -1264,12 +1262,11 @@ void AddImportFiles( guTrackArray * tracks, const wxString &filename )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::ImportFiles( const wxArrayString &files )
 {
-    int Index;
     int Count = files.Count();
     if( Count )
     {
         guTrackArray * Tracks = new guTrackArray();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             AddImportFiles( Tracks, files[ Index ] );
         }
@@ -1677,9 +1674,8 @@ void guMediaViewer::DeleteAlbumCover( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::DeleteAlbumCover( const wxArrayInt &albumids )
 {
-    int Index;
     int Count = albumids.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         DeleteAlbumCover( albumids[ Index ] );
     }
@@ -1890,9 +1886,8 @@ void guMediaViewer::DeleteTracks( const guTrackArray * tracks )
     m_Db->DeleteLibraryTracks( tracks, false );
     //
     wxArrayString DeletePaths;
-    int Index;
     int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &CurTrack = tracks->Item( Index );
         if( CurTrack.m_Offset )
@@ -1913,12 +1908,12 @@ void guMediaViewer::DeleteTracks( const guTrackArray * tracks )
     if( ( Count = DeletePaths.Count() ) )
     {
         wxArrayString LibPaths = GetPaths();
-        for( Index = 0; Index < ( int ) LibPaths.Count(); Index++ )
+        for( int Index = 0; Index < ( int ) LibPaths.Count(); Index++ )
         {
             guLogMessage( wxT( "Libath: %s"), LibPaths[ Index ].c_str() );
         }
 
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxString CurPath = DeletePaths[ Index ];
             while( !CurPath.IsEmpty() && LibPaths.Index( CurPath + wxT( "/" ) ) == wxNOT_FOUND )
@@ -2034,14 +2029,13 @@ void guMediaViewer::UpdatePlaylists( void )
 // -------------------------------------------------------------------------------- //
 void guMediaViewer::SetTracksRating( guTrackArray &tracks, const int rating )
 {
-    int Index;
-    int Count;
-    if( ( Count = tracks.Count() ) )
+    int Count = tracks.Count();
+    if( Count )
     {
         wxArrayInt ChangedFlags;
         ChangedFlags.Add( guTRACK_CHANGED_DATA_RATING, Count );
 
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             tracks[ Index ].m_Rating = rating;
         }
@@ -2148,9 +2142,8 @@ void guMediaViewer::OnSmartAddTracks( wxCommandEvent &event )
     if( Tracks )
     {
         wxArrayInt TrackIds;
-        int Index;
         int Count = Tracks->Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             TrackIds.Add( Tracks->Item( Index ).m_SongId );
         }
@@ -2206,6 +2199,56 @@ void guMediaViewer::CreateSmartPlaylist( const wxString &artistname, const wxStr
     }
 }
 
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::CreateBestOfPlaylist( const guTrack &track )
+{
+    wxString ArtistName = track.m_AlbumArtist;
+    if( ArtistName.IsEmpty() )
+        ArtistName = track.m_ArtistName;
+
+    CreateBestOfPlaylist( ArtistName );
+}
+
+// -------------------------------------------------------------------------------- //
+void guMediaViewer::CreateBestOfPlaylist( const wxString &artistname )
+{
+    wxString PlaylistName = _( "The best of " ) + artistname;
+    wxLogMessage( wxT( "Creating the playlist: %s" ), PlaylistName );
+    guLastFM * lfm = new guLastFM();
+
+    guTopTrackInfoArray TopTracks = lfm->ArtistGetTopTracks( artistname );
+    if( !TopTracks.IsEmpty() )
+    {
+        wxArrayInt TrackIds;
+        int Count = TopTracks.Count();
+        for( int Index = 0; Index < Count; Index++ )
+        {
+            const guTopTrackInfo TopTrack = TopTracks[ Index ];
+            int TrackId = m_Db->FindTrack( TopTrack.m_ArtistName, TopTrack.m_TrackName );
+            if( TrackId != wxNOT_FOUND )
+            {
+                TrackIds.Add( TrackId );
+            }
+        }
+
+        if( !TrackIds.IsEmpty() )
+        {
+            m_Db->CreateStaticPlayList( PlaylistName, TrackIds );
+            UpdatePlaylists();
+        }
+        else
+        {
+            wxLogMessage( _( "No tracks found for %s." ), PlaylistName );
+        }
+    }
+    else
+    {
+        wxLogMessage( _( "Best tracks for '%s' not found." ), artistname );
+    }
+
+    delete lfm;
+}
+
 
 // -------------------------------------------------------------------------------- //
 // guUpdateCoversThread
@@ -2239,13 +2282,12 @@ guUpdateCoversThread::~guUpdateCoversThread()
 guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
 {
     guCoverInfos MissingCovers;
-    int Index;
-    int Count;
 
     wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     event.SetInt( m_GaugeId );
 
-    if( ( Count = m_MediaViewer->GetDb()->GetEmptyCovers( MissingCovers ) ) )
+    int Count = m_MediaViewer->GetDb()->GetEmptyCovers( MissingCovers );
+    if( Count )
     {
         event.SetExtraLong( Count );
         wxPostEvent( m_MediaViewer->GetMainFrame(), event );
@@ -2253,7 +2295,7 @@ guUpdateCoversThread::ExitCode guUpdateCoversThread::Entry()
         event.SetId( ID_STATUSBAR_GAUGE_UPDATE );
         event.SetInt( m_GaugeId );
 
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guCoverInfo &CurrentCover = MissingCovers[ Index ];
 

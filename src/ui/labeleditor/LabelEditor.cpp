@@ -73,9 +73,8 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 	ItemsStaticBox = new wxStaticBoxSizer( new wxStaticBox( m_ItemsPanel, wxID_ANY, _(" Items ") ), wxVERTICAL );
 
 	m_ItemsListBox = new wxListBox( m_ItemsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
-	int Index;
 	int Count = items->Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
     {
         m_ItemsListBox->Append( items->Item( Index ).m_Name );
     }
@@ -104,7 +103,7 @@ guLabelEditor::guLabelEditor( wxWindow * parent, guDbLibrary * db, const wxStrin
 
 	m_LabelsListBox = new wxCheckListBox( m_LabelsPanel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	Count = m_Labels.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_LabelsListBox->Append( m_Labels[ Index ].m_Name );
     }
@@ -203,9 +202,8 @@ guLabelEditor::~guLabelEditor()
 // -------------------------------------------------------------------------------- //
 void guLabelEditor::ClearCheckedItems( void )
 {
-    int Index;
     int Count = m_Labels.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_LabelsListBox->Check( Index, false );
     }
@@ -216,9 +214,8 @@ void guLabelEditor::CheckLabelItems( const wxArrayInt &checkeditems )
 {
     if( checkeditems.Count() )
     {
-        int Index;
         int Count = m_Labels.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( checkeditems.Index( m_Labels[ Index ].m_Id ) != wxNOT_FOUND )
             {
@@ -335,9 +332,8 @@ void guLabelEditor::OnDelLabelClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLabelEditor::OnCopyLabelsClicked( wxCommandEvent& event )
 {
-    int Index;
     int Count = m_Labels.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_LabelsListBox->IsChecked( Index ) )
         {
@@ -361,9 +357,8 @@ void guLabelEditor::OnIdle( wxIdleEvent &event )
 // -------------------------------------------------------------------------------- //
 void  guLabelEditor::AddToAllItems( const int labelid )
 {
-    int Index;
     int Count = m_LabelSets->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_LabelSets->Item( Index ).Index( labelid ) == wxNOT_FOUND )
             m_LabelSets->Item( Index ).AddData( labelid );
@@ -373,9 +368,8 @@ void  guLabelEditor::AddToAllItems( const int labelid )
 // -------------------------------------------------------------------------------- //
 void  guLabelEditor::DelToAllItems( const int labelid )
 {
-    int Index;
     int Count = m_LabelSets->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_LabelSets->Item( Index ).DelData( labelid );
     }

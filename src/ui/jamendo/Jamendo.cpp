@@ -234,9 +234,8 @@ void guJamendoPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
     m_SongListCtrl->GetSelectedSongs( &Tracks );
 
     wxArrayInt Albums;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
@@ -292,13 +291,11 @@ void guJamendoDownloadThread::AddAlbum( const int albumid, const bool iscover )
 // -------------------------------------------------------------------------------- //
 void guJamendoDownloadThread::AddAlbums( const wxArrayInt &albumids, const bool iscover )
 {
-    int Index;
     int Count = albumids.Count();
-
     if( iscover )
     {
         m_CoversMutex.Lock();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_Covers.Add( albumids[ Index ] );
         }
@@ -307,7 +304,7 @@ void guJamendoDownloadThread::AddAlbums( const wxArrayInt &albumids, const bool 
     else
     {
         m_AlbumsMutex.Lock();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_Albums.Add( albumids[ Index ] );
         }
@@ -732,9 +729,8 @@ guJamendoUpdateThread::ExitCode guJamendoUpdateThread::Entry()
             m_Db->GetGenres( &CurrentGenres, true );
 
             wxArrayInt GenresToDel;
-            int Index;
             int Count = CurrentGenres.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( m_AllowedGenres.Index( CurrentGenres[ Index ].m_Id - 1 ) == wxNOT_FOUND )
                     GenresToDel.Add( CurrentGenres[ Index ].m_Id );
@@ -889,9 +885,8 @@ void guJamendoTreePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
 
     wxArrayInt Albums;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
@@ -929,9 +924,8 @@ void guJamendoPlayListPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
 
     wxArrayInt Albums;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
@@ -1022,13 +1016,12 @@ void guMediaViewerJamendo::UpgradeLibrary( void )
 // -------------------------------------------------------------------------------- //
 void guMediaViewerJamendo::NormalizeTracks( guTrackArray * tracks, const bool isdrag )
 {
-    int Index;
     int Count;
     if( tracks && ( Count = tracks->Count() ) )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
         int AudioFormat = Config->ReadNum( CONFIG_KEY_JAMENDO_AUDIOFORMAT, 1, CONFIG_PATH_JAMENDO );
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guTrack * Track = &( * tracks )[ Index ];
             Track->m_FileName = wxString::Format( guJAMENDO_FILE_STREAM_URL, Track->m_SongId );
@@ -1255,9 +1248,8 @@ void guMediaViewerJamendo::SelectAlbumCover( const int albumid )
 // -------------------------------------------------------------------------------- //
 void guMediaViewerJamendo::DownloadAlbums( const wxArrayInt &albums, const bool istorrent )
 {
-    int Index;
-    int Count;
-    if( ( Count = albums.Count() ) )
+    int Count = albums.Count();
+    if( Count )
     {
         if( istorrent )
         {
@@ -1273,7 +1265,7 @@ void guMediaViewerJamendo::DownloadAlbums( const wxArrayInt &albums, const bool 
         }
         else
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 guWebExecute( wxString::Format( guJAMENDO_DOWNLOAD_DIRECT, albums[ Index ] ) );
             }

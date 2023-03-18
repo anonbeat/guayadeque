@@ -96,6 +96,7 @@ class guSoListBox : public guListView
     virtual void                CreateAcceleratorTable();
 
     virtual void                OnCreateSmartPlaylist( wxCommandEvent &event );
+    virtual void                OnCreateBestOfPlaylist( wxCommandEvent &event );
 
   public :
     guSoListBox( wxWindow * parent, guMediaViewer * mediaviewer, wxString confname, long style = 0 );

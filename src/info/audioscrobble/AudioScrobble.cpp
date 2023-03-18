@@ -163,8 +163,6 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
     //guLogMessage( wxT( "guAudioScrobbleSender::SubmitPlayedSongs" ) );
     wxString    PostData;
     wxString    Content;
-    int         index;
-    int         count;
     wxString    Artist;
     wxString    Album;
     wxString    Track;
@@ -212,14 +210,14 @@ bool guAudioScrobbleSender::SubmitPlayedSongs( const guAS_SubmitInfoArray &Playe
             The MusicBrainz Track ID, or an empty string if not known.
     */
 
-
-    if( ( count = PlayedSongs.Count() ) )
+    int count = PlayedSongs.Count();
+    if( count )
     {
         if( m_SessionId.IsEmpty() && !GetSessionId() )
             return false;
 
         PostData = wxT( "s=" ) + m_SessionId + wxT( "&" );
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             Artist = guURLEncode( PlayedSongs[ index ].m_ArtistName );
             Track  = guURLEncode( PlayedSongs[ index ].m_TrackName );

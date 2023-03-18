@@ -769,8 +769,7 @@ DBusHandlerResult guMPRIS::HandleMessages( guDBusMessage * msg, guDBusMessage * 
                         dbus_message_iter_init_append( reply->GetMessage(), &args );
 
                         wxArrayString * TrackList = new wxArrayString();
-                        int Index;
-                        for( Index = 0; Index < TracksCount; Index++ )
+                        for( int Index = 0; Index < TracksCount; Index++ )
                         {
                             TrackList->Add( wxString( Tracks[ Index ], wxConvUTF8 ) );
                         }

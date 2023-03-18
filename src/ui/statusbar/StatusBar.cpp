@@ -308,11 +308,10 @@ void guStatusBar::OnAudioScrobbleDClicked( void )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::SetSizes( int FieldCnt )
 {
-    int index;
     int * FieldWidths = ( int * ) malloc( sizeof( int ) * FieldCnt );
     if( FieldWidths )
     {
-        for( index = 0; index < FieldCnt; index++ )
+        for( int index = 0; index < FieldCnt; index++ )
         {
             if( index == 0 )
                 FieldWidths[ index ] = -1;
@@ -343,14 +342,12 @@ void guStatusBar::SetSizes( int FieldCnt )
 // -------------------------------------------------------------------------------- //
 void guStatusBar::UpdateGauges( void )
 {
-    int     index;
-    int     count;
     wxRect  rect;
     wxSize  size;
     int     PanelIndex = 0;
     // Update the pos for all the gauges in the statusbar
-    count = m_Gauges.Count();
-    for( index = 0; index < count; index++ )
+    int count = m_Gauges.Count();
+    for( int index = 0; index < count; index++ )
     {
         if( m_Gauges[ index ] )
         {

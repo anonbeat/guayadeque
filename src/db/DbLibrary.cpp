@@ -154,11 +154,10 @@ wxString guListItemsGetName( const guListItems &items, int id )
 wxArrayInt GetArraySameItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 {
   wxArrayInt RetVal = Source;
-  int index;
   int count = RetVal.Count();
   if( count )
   {
-    for( index = count - 1; index >= 0; index-- )
+    for( int index = count - 1; index >= 0; index-- )
     {
       if( Oper.Index( RetVal[ index ] ) == wxNOT_FOUND )
       {
@@ -173,11 +172,10 @@ wxArrayInt GetArraySameItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 {
   wxArrayInt RetVal = Source;
-  int index;
   int count = RetVal.Count();
   if( count )
   {
-    for( index = count - 1; index >= 0; index-- )
+    for( int index = count - 1; index >= 0; index-- )
     {
       if( Oper.Index( RetVal[ index ] ) != wxNOT_FOUND )
       {
@@ -191,12 +189,11 @@ wxArrayInt GetArrayDiffItems( const wxArrayInt &Source, const wxArrayInt &Oper )
 // -------------------------------------------------------------------------------- //
 wxString TextFilterToSQL( const wxArrayString &TeFilters )
 {
-  int index;
   int count;
   wxString RetVal;
   if( ( count = TeFilters.Count() ) )
   {
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         wxString Filter = escape_query_str( TeFilters[ index ] );
         RetVal += wxT( "( song_name LIKE '%" ) + Filter + wxT( "%' OR " );
@@ -215,14 +212,13 @@ wxString TextFilterToSQL( const wxArrayString &TeFilters )
 // -------------------------------------------------------------------------------- //
 wxString LabelFilterToSQL( const wxArrayInt &LaFilters )
 {
-  long count;
-  long index;
+  int count;
   wxString subquery;
   wxString RetVal = wxEmptyString;
   if( ( count = LaFilters.Count() ) )
   {
     subquery = wxT( "(" );
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         subquery += wxString::Format( wxT( "%u," ), LaFilters[ index ] );
     }
@@ -480,9 +476,8 @@ void guDbLibrary::CleanFiles( const wxArrayString &Files )
   wxSQLite3ResultSet dbRes;
   wxArrayInt Tracks;
   wxArrayInt Covers;
-  int Index;
   int Count = Files.Count();
-  for( Index = 0; Index < Count; Index++ )
+  for( int Index = 0; Index < Count; Index++ )
   {
     if( guIsValidAudioFile( Files[ Index ] ) )
     {
@@ -546,8 +541,6 @@ void guDbLibrary::CleanItems( const wxArrayInt &tracks, const wxArrayInt &covers
 bool guDbLibrary::CheckDbVersion( void )
 {
   wxArrayString query;
-  int Index;
-  int Count;
   unsigned long dbVer;
   bool NeedVacuum = false;
 
@@ -969,8 +962,8 @@ bool guDbLibrary::CheckDbVersion( void )
     query.Add( wxT( "VACUUM;" ) );
   }
 
-  Count = query.Count();
-  for( Index = 0; Index < Count; Index++ )
+  int Count = query.Count();
+  for( int Index = 0; Index < Count; Index++ )
   {
     try
     {
@@ -1363,14 +1356,12 @@ wxString guDbLibrary::GetCoverPath( const int CoverId )
   wxString query;
   wxSQLite3ResultSet dbRes;
   wxString RetVal = wxEmptyString;
-  int count;
-  int index;
   if( m_LastCoverId != CoverId )
   {
-    count = m_LastItems.Count();
+    int count = m_LastItems.Count();
     if( count )
     {
-      for( index = 0; index < count; index++ )
+      for( int index = 0; index < count; index++ )
       {
         if( m_LastItems[ index ].m_Id == CoverId )
         {
@@ -1556,9 +1547,8 @@ wxArrayInt guDbLibrary::GetLabelIds( const wxArrayString &Labels )
   wxArrayInt RetVal;
   wxString LabelName;
   int      LabelId;
-  int index;
   int count = Labels.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
     LabelName = Labels[ index ];
     if( GetLabelId( &LabelId, LabelName ) )
@@ -1721,18 +1711,17 @@ int guDbLibrary::GetSongId( wxString &FileName, wxString &FilePath, const time_t
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating )
 {
-  int Index;
-  int Count;
   if( guCuePlaylistFile::IsValidFile( filename ) )   // If its a cue playlist
   {
     //guLogMessage( wxT( "***** CUE FILE ***** '%s'" ), filename.c_str() );
 
     //
     guCuePlaylistFile CuePlaylistFile( filename );
-    if( ( Count = CuePlaylistFile.Count() ) )
+    int Count = CuePlaylistFile.Count();
+    if( Count )
     {
       //guLogMessage( wxT( "With %i tracks" ), Count );
-      for( Index = 0; Index < Count; Index++ )
+      for( int Index = 0; Index < Count; Index++ )
       {
         guCuePlaylistItem &CueItem = CuePlaylistFile.GetItem( Index );
         //guLogMessage( wxT( "Loading track %i '%s'" ), Index, CueItem.m_TrackPath.c_str() );
@@ -1929,9 +1918,8 @@ int guDbLibrary::ReadFileTags( const wxString &filename, const bool allowrating 
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::AddFiles( const wxArrayString &files )
 {
-    int Index;
     int Count = files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ReadFileTags( files[ Index ] );
     }
@@ -1958,12 +1946,11 @@ void guDbLibrary::UpdateTrackBitRate( const int trackid, const int bitrate )
 void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &changedflags )
 {
   guTrack * Song;
-  int index;
   int count = Songs->Count();
   wxArrayPtrVoid MediaViewerPtrs;
 
   // Process each Track
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
         if( !( changedflags[ index ] & ( guTRACK_CHANGED_DATA_TAGS | guTRACK_CHANGED_DATA_RATING ) ) )
             continue;
@@ -2034,7 +2021,7 @@ void guDbLibrary::UpdateSongs( const guTrackArray * Songs, const wxArrayInt &cha
   // And send the clean db event to all of them
   wxCommandEvent event( wxEVT_MENU, ID_LIBRARY_DOCLEANDB );
   count = MediaViewerPtrs.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
 //    event.SetClientData( ( void * ) MediaViewerPtrs[ index ] );
     wxPostEvent( ( guMediaViewer * ) MediaViewerPtrs[ index ], event );
@@ -2384,9 +2371,8 @@ void guDbLibrary::SetRaFilters( const wxArrayInt &filter )
     {
         //m_RaFilters = filter;
         m_RaFilters.Empty();
-        int Index;
         int Count = filter.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_RaFilters.Add( filter[ Index ] - 1 );
         }
@@ -2404,9 +2390,8 @@ void guDbLibrary::SetPcFilters( const wxArrayInt &filter )
     else
     {
         m_PcFilters.Empty();
-        int Index;
         int Count = filter.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_PcFilters.Add( filter[ Index ] - 1 );
         }
@@ -3048,12 +3033,11 @@ int guDbLibrary::GetAlbumTrackCount( const int albumid )
 // -------------------------------------------------------------------------------- //
 wxString inline AlbumBrowserTextFilterToSQL( const wxArrayString &textfilters )
 {
-  int index;
-  int count;
   wxString RetVal;
-  if( ( count = textfilters.Count() ) )
+  int count = textfilters.Count();
+  if( count )
   {
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         wxString Filter = escape_query_str( textfilters[ index ] );
         RetVal += wxT( "( song_album LIKE '%" ) + Filter + wxT( "%' OR " );
@@ -3258,8 +3242,7 @@ int guDbLibrary::CreateStaticPlayList( const wxString &path, const wxArrayInt &s
   if( PlayListId )
   {
     int count = songs.Count();
-    int index;
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
 //      query.Add( wxT( "CREATE TABLE IF NOT EXISTS playlists( playlist_id INTEGER PRIMARY KEY AUTOINCREMENT, playlist_name varchar(100), "
 //                      "playlist_type INTEGER(2));" ) );
@@ -3292,9 +3275,8 @@ int guDbLibrary::AppendStaticPlayList( const int plid, const wxArrayInt &tracks 
 {
   wxString query;
 
-  int index;
   int count = tracks.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
     query = wxString::Format( wxT( "INSERT INTO plsets( plset_id, plset_plid, plset_songid, plset_type, plset_option, plset_text, plset_option2 ) "
                                    "VALUES( NULL, %u, %u, 0, 0, '', 0 );" ),
@@ -3354,9 +3336,8 @@ void guDbLibrary::UpdateStaticPlayListFile( const int plid )
             GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
             guPlaylistFile PlayListFile;
             PlayListFile.SetName( FileName.GetFullPath() );
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 PlayListFile.AddItem( Tracks[ Index ].m_FileName,
                     Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length / 1000 );
@@ -3396,9 +3377,8 @@ int guDbLibrary::CreateDynamicPlayList( const wxString &name, const guDynPlayLis
 
   if( PlayListId )
   {
-      int index;
       int count = playlist->m_Filters.Count();
-      for( index = 0; index < count; index++ )
+      for( int index = 0; index < count; index++ )
       {
         guFilterItem * FilterItem = &playlist->m_Filters[ index ];
 
@@ -3505,9 +3485,8 @@ void guDbLibrary::GetPlayLists( guListItems * PlayLists, const int type, const w
 
   if( textfilters && textfilters->Count() )
   {
-      int Index;
       int Count = textfilters->Count();
-      for( Index = 0; Index < Count; Index++ )
+      for( int Index = 0; Index < Count; Index++ )
       {
           wxString Filter = escape_query_str( ( * textfilters )[ Index ] );
           query += wxT( "AND playlist_name LIKE '%" ) + Filter + wxT( "%' " );
@@ -3668,9 +3647,8 @@ const wxString DynPlayListToSQLQuery( guDynPlayList * playlist )
   wxString query = wxEmptyString;
   wxString dbNames = wxEmptyString;
   wxString dbSets = wxEmptyString;
-  int index;
   int count = playlist->m_Filters.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
     if( index )
     {
@@ -4075,9 +4053,7 @@ int guDbLibrary::GetPlayListSongs( const int plid, const int pltype, guTrackArra
 int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &types, guTrackArray * tracks,
                     wxArrayInt * setids, wxLongLong * len, wxLongLong * size, const int order, const bool orderdesc )
 {
-    int Index;
     int Count = wxMin( ids.Count(), types.Count() );
-
     if( Count == 1 )
     {
         return GetPlayListSongs( ids[ 0 ], types[ 0 ], tracks, setids, len, size, order, orderdesc );
@@ -4099,7 +4075,7 @@ int guDbLibrary::GetPlayListSongs( const wxArrayInt &ids, const wxArrayInt &type
                "song_addedtime, song_lastplay, song_filesize, plset_id " \
                "FROM songs " );
     query += wxT( ", plsets WHERE plset_songid = song_id AND plset_plid IN (" );
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         query += wxString::Format( wxT( "%u," ), ids[ Index ] );
     }
@@ -4151,9 +4127,8 @@ int guDbLibrary::GetPlayListSetIds( const int plid, wxArrayInt * setids )
 // -------------------------------------------------------------------------------- //
 int guDbLibrary::GetPlayListSetIds( const wxArrayInt &plids, wxArrayInt * setids )
 {
-    int Index;
     int Count = plids.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         GetPlayListSetIds( plids[ Index ], setids );
     }
@@ -4224,9 +4199,8 @@ void guDbLibrary::UpdateDynamicPlayList( const int plid, const guDynPlayList * p
   query = wxString::Format( wxT( "DELETE FROM plsets WHERE plset_plid = %u;" ), plid );
   ExecuteUpdate( query );
 
-  int index;
   int count = playlist->m_Filters.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
     guFilterItem * FilterItem = &playlist->m_Filters[ index ];
 
@@ -5285,10 +5259,8 @@ int guDbLibrary::GetSongs( const wxArrayInt &SongIds, guTrackArray * Songs )
 wxString inline GetTreeViewFilterEntrySql( const guTreeViewFilterEntry &filterentry )
 {
   wxString RetVal = wxT( "(" );
-  int Index;
   int Count = filterentry.Count();
-
-  for( Index = 0; Index < Count; Index++ )
+  for( int Index = 0; Index < Count; Index++ )
   {
     switch( filterentry[ Index ].m_Type )
     {
@@ -5336,10 +5308,8 @@ wxString inline GetTreeViewFilterEntrySql( const guTreeViewFilterEntry &filteren
 wxString inline GetTreeViewFilterArraySql( const guTreeViewFilterArray &filterarray )
 {
   wxString RetVal = wxT( "(" );
-  int Index;
   int Count = filterarray.Count();
-
-  for( Index = 0; Index < Count; Index++ )
+  for( int Index = 0; Index < Count; Index++ )
   {
     RetVal += GetTreeViewFilterEntrySql( filterarray[ Index ] );
     RetVal += wxT( "OR " );
@@ -5541,9 +5511,8 @@ void guDbLibrary::DeleteLibraryTracks( const guTrackArray * tracks, const bool c
 {
     wxArrayInt Tracks;
     wxArrayInt Covers;
-    int Index;
     int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = tracks->Item( Index );
         Tracks.Add( Track.m_SongId );
@@ -5640,11 +5609,10 @@ guArrayListItems guDbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
   guArrayListItems RetVal;
   guArrayListItem * CurItem = NULL;
   int Id;
-  int index;
   int count = Artists.Count();
   if( count )
   {
-      for( index = 0; index < count; index++ )
+      for( int index = 0; index < count; index++ )
       {
           Id = Artists[ index ];
           RetVal.Add( new guArrayListItem( Id ) );
@@ -5656,7 +5624,7 @@ guArrayListItems guDbLibrary::GetArtistsLabels( const wxArrayInt &Artists )
 
       dbRes = ExecuteQuery( query );
 
-      index = 0;
+      int index = 0;
       CurItem = &RetVal[ index ];
       while( dbRes.NextRow() )
       {
@@ -5685,9 +5653,8 @@ guArrayListItems guDbLibrary::GetAlbumsLabels( const wxArrayInt &Albums )
   guArrayListItems RetVal;
   guArrayListItem * CurItem = NULL;
   int Id;
-  int index;
   int count = Albums.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
       Id = Albums[ index ];
       RetVal.Add( new guArrayListItem( Id ) );
@@ -5699,7 +5666,7 @@ guArrayListItems guDbLibrary::GetAlbumsLabels( const wxArrayInt &Albums )
 
   dbRes = ExecuteQuery( query );
 
-  index = 0;
+  int index = 0;
   CurItem = &RetVal[ index ];
   while( dbRes.NextRow() )
   {
@@ -5727,9 +5694,8 @@ guArrayListItems guDbLibrary::GetSongsLabels( const wxArrayInt &Songs )
   guArrayListItems RetVal;
   guArrayListItem * CurItem = NULL;
   int Id;
-  int index;
   int count = Songs.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
       Id = Songs[ index ];
       RetVal.Add( new guArrayListItem( Id ) );
@@ -5742,7 +5708,7 @@ guArrayListItems guDbLibrary::GetSongsLabels( const wxArrayInt &Songs )
   dbRes = ExecuteQuery( query );
   //guLogMessage( query );
 
-  index = 0;
+  int index = 0;
   CurItem = &RetVal[ index ];
   while( dbRes.NextRow() )
   {
@@ -5860,11 +5826,10 @@ void guDbLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
   for( ArIndex = 0; ArIndex < ArCount; ArIndex++ )
   {
     wxArrayInt ArLabels = labelsets[ ArIndex ].GetData();
-    int Index;
     int Count = ArLabels.Count();
 
     ArtistLabelStr.Empty();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
       ArtistLabelStr += guListItemsGetName( LaItems, ArLabels[ Index ] );
       ArtistLabelStr += wxT( "|" );
@@ -5883,7 +5848,7 @@ void guDbLibrary::UpdateArtistsLabels( const guArrayListItems &labelsets )
       // Get the affected tracks
       GetArtistsSongs( Artists, &Songs );
       Count = Songs.Count();
-      for( Index = 0; Index < Count; Index++ )
+      for( int Index = 0; Index < Count; Index++ )
       {
         Song = &Songs[ Index ];
 
@@ -5927,11 +5892,10 @@ void guDbLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
   for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
   {
     wxArrayInt ItemLabels = labelsets[ ItemIndex ].GetData();
-    int Index;
     int Count = ItemLabels.Count();
 
     AlbumLabelStr.Empty();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
       AlbumLabelStr += guListItemsGetName( LaItems, ItemLabels[ Index ] ) + wxT( "|" );
     }
@@ -5950,7 +5914,7 @@ void guDbLibrary::UpdateAlbumsLabels( const guArrayListItems &labelsets )
         GetAlbumsSongs( ItemIds, &Songs );
 
         Count = Songs.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
           Song = &Songs[ Index ];
 
@@ -5994,11 +5958,10 @@ void guDbLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
   for( ItemIndex = 0; ItemIndex < ItemCount; ItemIndex++ )
   {
     wxArrayInt ItemLabels = labelsets[ ItemIndex ].GetData();
-    int Index;
     int Count = ItemLabels.Count();
 
     TrackLabelStr.Empty();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
       TrackLabelStr += guListItemsGetName( LaItems, ItemLabels[ Index ] ) + wxT( "|" );
     }
@@ -6017,7 +5980,7 @@ void guDbLibrary::UpdateSongsLabels( const guArrayListItems &labelsets )
         GetSongs( ItemIds, &Songs );
 
         Count = Songs.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
           Song = &Songs[ Index ];
 
@@ -6088,9 +6051,8 @@ void guDbLibrary::UpdateSongLabel( const guTrack &track, const wxString &label, 
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::UpdateSongsLabel( const guTrackArray &tracks, const wxString &label, const wxString &newname )
 {
-    int Index;
     int Count = tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         UpdateSongLabel( tracks[ Index ], label, newname );
     }
@@ -6131,15 +6093,14 @@ void guDbLibrary::SetTracksRating( const wxArrayInt &songids, const int rating, 
 // -------------------------------------------------------------------------------- //
 void guDbLibrary::SetTracksRating( const guTrackArray * tracks, const int rating, const bool writetags )
 {
-    wxArrayInt TrackIds;
-    int Index;
     int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
-    {
-        TrackIds.Add( tracks->Item( Index ).m_SongId );
-    }
     if( Count )
     {
+        wxArrayInt TrackIds;
+        for( int Index = 0; Index < Count; Index++ )
+        {
+            TrackIds.Add( tracks->Item( Index ).m_SongId );
+        }
         SetTracksRating( TrackIds, rating, writetags );
     }
 }
@@ -6313,13 +6274,11 @@ bool guDbLibrary::DeleteCachedPlayedSongs( const guAS_SubmitInfoArray &SubmitInf
 {
   wxString query;
 //  wxSQLite3ResultSet dbRes;
-  int index;
-  int count;
-
-  if( ( count = SubmitInfo.Count() ) )
+  int count = SubmitInfo.Count();
+  if( count )
   {
     query = wxT( "DELETE from audioscs WHERE audiosc_id IN (" );
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         query += wxString::Format( wxT( "%u," ), SubmitInfo[ index ].m_Id );
     }

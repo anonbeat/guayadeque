@@ -42,9 +42,8 @@ guDbCache::guDbCache( const wxString &dbname ) : guDb( dbname )
   query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'cache_key' on cache( cache_key ASC );" ) );
   query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'cache_time' on cache( cache_time ASC );" ) );
 
-  int Index;
   int Count = query.Count();
-  for( Index = 0; Index < Count; Index++ )
+  for( int Index = 0; Index < Count; Index++ )
   {
       //guLogMessage( query[ Index ] );
     ExecuteUpdate( query[ Index ] );

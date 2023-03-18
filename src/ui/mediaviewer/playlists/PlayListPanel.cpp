@@ -142,8 +142,6 @@ void guPLNamesTreeCtrl::CreateAcceleratorTable( void )
 // -------------------------------------------------------------------------------- //
 void guPLNamesTreeCtrl::ReloadItems( const bool reset )
 {
-    int Index;
-    int Count;
     wxArrayTreeItemIds SelectedItems;
     wxArrayInt         SelectedIds;
     int SelCount = 0;
@@ -151,7 +149,7 @@ void guPLNamesTreeCtrl::ReloadItems( const bool reset )
     if( !reset )
     {
         SelCount = GetSelections( SelectedItems );
-        for( Index = 0; Index < SelCount; Index++ )
+        for( int Index = 0; Index < SelCount; Index++ )
         {
             guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( SelectedItems[ Index ] );
             if( ItemData )
@@ -167,9 +165,10 @@ void guPLNamesTreeCtrl::ReloadItems( const bool reset )
 
     guListItems m_StaticItems;
     m_Db->GetPlayLists( &m_StaticItems, guPLAYLIST_TYPE_STATIC, &m_TextSearchFilter );
-    if( ( Count = m_StaticItems.Count() ) )
+    int Count = m_StaticItems.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxTreeItemId NewItemId = AppendItem( m_StaticId, m_StaticItems[ Index ].m_Name, -1, -1,
                                 new guPLNamesData( m_StaticItems[ Index ].m_Id, guPLAYLIST_TYPE_STATIC ) );
@@ -182,9 +181,10 @@ void guPLNamesTreeCtrl::ReloadItems( const bool reset )
 
     guListItems m_DynamicItems;
     m_Db->GetPlayLists( &m_DynamicItems, guPLAYLIST_TYPE_DYNAMIC, &m_TextSearchFilter );
-    if( ( Count = m_DynamicItems.Count() ) )
+    Count = m_DynamicItems.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxTreeItemId NewItemId = AppendItem( m_DynamicId, m_DynamicItems[ Index ].m_Name, -1, -1,
                                 new guPLNamesData( m_DynamicItems[ Index ].m_Id, guPLAYLIST_TYPE_DYNAMIC ) );
@@ -197,8 +197,8 @@ void guPLNamesTreeCtrl::ReloadItems( const bool reset )
 
     if( !reset )
     {
-        Count = SelectedItems.Count();
-        for( Index = 0; Index < Count; Index++ )
+        int Count = SelectedItems.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             SelectItem( SelectedItems[ Index ] );
         }
@@ -332,14 +332,12 @@ void guPLNamesTreeCtrl::OnContextMenu( wxTreeEvent &event )
 void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
 {
     m_DragOverItem = wxTreeItemId();
-    int Index;
-    int Count;
     wxArrayTreeItemIds SelectedItems;
-    if( ( Count = GetSelections( SelectedItems ) ) )
+    int Count = GetSelections( SelectedItems );
+    if( Count )
     {
         wxFileDataObject Files;
-
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guPLNamesData * ItemData = ( guPLNamesData * ) GetItemData( SelectedItems[ Index ] );
             if( ItemData )
@@ -355,17 +353,15 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                     else
                     {
                         //m_Db->GetPlayListFiles( ItemData->GetData(), &Files );
-                        int Index;
-                        int Count;
                         guTrackArray Tracks;
                         //m_Db->GetPlayListSongs( ItemData->GetData(), guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
                         //m_PLTracksListBox->GetAllSongs( &Tracks );
                         m_PlayListPanel->GetPlaylistTracks( &Tracks );
-                        if( ( Count = Tracks.Count() ) )
+                        int Count = Tracks.Count();
+                        if( Count )
                         {
                             guPlaylistFile PlayListFile;
-
-                            for( Index = 0; Index < Count; Index++ )
+                            for( int Index = 0; Index < Count; Index++ )
                             {
                                 PlayListFile.AddItem( Tracks[ Index ].m_FileName,
                                     Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName, Tracks[ Index ].m_Length / 1000 );
@@ -387,9 +383,8 @@ void guPLNamesTreeCtrl::OnBeginDrag( wxTreeEvent &event )
                 {
                     guTrackArray Tracks;
                     m_Db->GetPlayListSongs( ItemData->GetData(), ItemData->GetType(), &Tracks, NULL, NULL );
-                    int index;
                     int count = Tracks.Count();
-                    for( index = 0; index < count; index++ )
+                    for( int index = 0; index < count; index++ )
                     {
                         Files.AddFile( Tracks[ index ].m_FileName );
                     }
@@ -453,11 +448,10 @@ void guPLNamesTreeCtrl::OnDropFile( const wxString &filename )
     if( guPlaylistFile::IsValidPlayList( filename ) )
     {
         guPlaylistFile PlayList( filename );
-        int Index;
-        int Count;
-        if( ( Count = PlayList.Count() ) )
+        int Count = PlayList.Count();
+        if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 OnDropFile( PlayList.GetItem( Index ).m_Location );
             }
@@ -481,11 +475,10 @@ void guPLNamesTreeCtrl::OnDropTracks( const guTrackArray * tracks )
 {
     if( tracks )
     {
-        int Index;
-        int Count;
-        if( ( Count = tracks->Count() ) )
+        int Count = tracks->Count();
+        if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 const guTrack &Track = tracks->Item( Index );
                 if( Track.m_MediaViewer == m_PlayListPanel->m_MediaViewer )
@@ -608,9 +601,8 @@ void guPLNamesDropFilesThread::AddDropFiles( const wxString &DirName )
 // -------------------------------------------------------------------------------- //
 guPLNamesDropFilesThread::ExitCode guPLNamesDropFilesThread::Entry()
 {
-    int index;
     int Count = m_Files.Count();
-    for( index = 0; index < Count; ++index )
+    for( int index = 0; index < Count; ++index )
     {
         if( TestDestroy() )
             break;
@@ -911,9 +903,8 @@ void guPlayListPanel::OnPLNamesSelected( wxTreeEvent& event )
                 m_NamesTreeCtrl->GetSelections( Selections );
                 wxArrayInt Ids;
                 wxArrayInt Types;
-                int Index;
                 int Count = Selections.Count();
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( Selections[ Index ] );
                     if( ItemData && ( ItemData->GetType() == guPLAYLIST_TYPE_STATIC ) )
@@ -1058,11 +1049,10 @@ void guPlayListPanel::OnPLNamesRenamePlaylist( wxCommandEvent &event )
 void guPlayListPanel::DeleteCurrentPlayList( void )
 {
     wxArrayTreeItemIds SelectedItems;
-    int Index;
     int Count = m_NamesTreeCtrl->GetSelections( SelectedItems );
     if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guPLNamesData * ItemData = ( guPLNamesData * ) m_NamesTreeCtrl->GetItemData( SelectedItems[ Index ] );
             if( ItemData )
@@ -1111,17 +1101,16 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
                 }
                 else
                 {
-                    int Index;
-                    int Count;
                     guTrackArray Tracks;
                     m_PLTracksListBox->GetAllSongs( &Tracks );
-                    if( ( Count = Tracks.Count() ) )
+                    int Count = Tracks.Count();
+                    if( Count )
                     {
                         guPlaylistFile PlayListFile;
 
                         NormalizeTracks( &Tracks );
 
-                        for( Index = 0; Index < Count; Index++ )
+                        for( int Index = 0; Index < Count; Index++ )
                         {
                             PlayListFile.AddItem( Tracks[ Index ].m_FileName,
                                 Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
@@ -1160,9 +1149,6 @@ void guPlayListPanel::OnPLNamesCopyTo( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
-
     wxFileDialog * FileDialog = new wxFileDialog( this,
         _( "Select the playlist file" ),
         wxGetHomeDir(),
@@ -1175,7 +1161,8 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
         if( FileDialog->ShowModal() == wxID_OK )
         {
             guPlaylistFile PlayListFile( FileDialog->GetPath() );
-            if( ( Count = PlayListFile.Count() ) )
+            int Count = PlayListFile.Count();
+            if( Count )
             {
                 if( PlayListFile.GetName().IsEmpty() )
                 {
@@ -1195,7 +1182,7 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
                 }
 
                 wxArrayInt Songs;
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     //wxURI Uri( PlayListFile.GetItem( Index ).m_Location );
                     //wxString FileName = Uri.BuildUnescapedURI();
@@ -1230,9 +1217,6 @@ void guPlayListPanel::OnPLNamesImport( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
-
     wxTreeItemId ItemId = m_NamesTreeCtrl->GetFocusedItem();
     if( ItemId.IsOk() )
     {
@@ -1256,10 +1240,11 @@ void guPlayListPanel::OnPLNamesExport( wxCommandEvent &event )
                 guTrackArray Tracks;
 
                 m_PLTracksListBox->GetAllSongs( &Tracks );
-                if( ( Count = Tracks.Count() ) )
+                int Count = Tracks.Count();
+                if( Count )
                 {
                     NormalizeTracks( &Tracks );
-                    for( Index = 0; Index < Count; Index++ )
+                    for( int Index = 0; Index < Count; Index++ )
                     {
                         PlayListFile.AddItem( Tracks[ Index ].m_FileName,
                             Tracks[ Index ].m_ArtistName + wxT( " - " ) + Tracks[ Index ].m_SongName );
@@ -1423,15 +1408,13 @@ void guPlayListPanel::OnPLTracksCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
-
-    if( ( count = Tracks.Count() ) )
+    int count = Tracks.Count();
+    if( count )
     {
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             NewSongs.Add( Tracks[ index ].m_SongId );
         }
@@ -1439,8 +1422,8 @@ void guPlayListPanel::OnPLTracksSavePlayListClicked( wxCommandEvent &event )
     else
     {
         m_PLTracksListBox->GetAllSongs( &Tracks );
-        count = Tracks.Count();
-        for( index = 0; index < count; index++ )
+        int count = Tracks.Count();
+        for( int index = 0; index < count; index++ )
         {
             NewSongs.Add( Tracks[ index ].m_SongId );
         }
@@ -1515,9 +1498,8 @@ void guPlayListPanel::OnPLTracksSetField( wxCommandEvent &event )
 
     // This should be done in a thread for huge selections of tracks...
     wxArrayInt ChangedFlags;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
         guTrack * Track = &Tracks[ Index ];
@@ -1581,9 +1563,8 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
 
     wxArrayString Items;
 
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxVariant Value;
         guTrack * Track = &Tracks[ Index ];
@@ -1642,9 +1623,8 @@ void guPlayListPanel::OnPLTracksEditField( wxCommandEvent &event )
 
             // This should be done in a thread for huge selections of tracks...
             wxArrayInt ChangedFlags;
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
                 guTrack * Track = &Tracks[ Index ];
@@ -1711,9 +1691,8 @@ void guPlayListPanel::OnPLTracksSelectGenre( wxCommandEvent &event )
     guTrackArray Tracks;
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Genres = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Genres->Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
         {
@@ -1732,9 +1711,8 @@ void guPlayListPanel::OnPLTracksSelectArtist( wxCommandEvent &event )
     guTrackArray Tracks;
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Artists = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Artists->Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
         {
@@ -1752,9 +1730,8 @@ void guPlayListPanel::OnPLTracksSelectAlbumArtist( wxCommandEvent &event )
     guTrackArray Tracks;
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Ids = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Ids->Index( Tracks[ index ].m_AlbumArtistId ) == wxNOT_FOUND )
         {
@@ -1773,9 +1750,8 @@ void guPlayListPanel::OnPLTracksSelectAlbum( wxCommandEvent &event )
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Albums = new wxArrayInt();
 
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Albums->Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
         {
@@ -1794,9 +1770,8 @@ void guPlayListPanel::OnPLTracksSelectComposer( wxCommandEvent &event )
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Composers = new wxArrayInt();
 
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Composers->Index( Tracks[ index ].m_ComposerId ) == wxNOT_FOUND )
         {
@@ -1921,9 +1896,8 @@ void guPlayListPanel::UpdatePlaylists( void )
 //    // Create the Columns
 //    wxArrayString ColumnNames = m_PLTracksListBox->GetColumnNames();
 //    int CurColId;
-//    int index;
 //    int count = ColumnNames.Count();
-//    for( index = 0; index < count; index++ )
+//    for( int index = 0; index < count; index++ )
 //    {
 //        CurColId = m_PLTracksListBox->GetColumnId( index );
 //        m_PLTracksListBox->SetColumnLabel( index,

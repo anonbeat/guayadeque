@@ -130,9 +130,8 @@ void guAuiManagerPanel::OnPaneClose( wxAuiManagerEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAuiManagerPanel::LoadPerspective( const wxString &layoutstr, const unsigned int visiblepanels )
 {
-    int Index;
     int Count = m_PanelIds.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         int PanelId = m_PanelIds[ Index ];
         if( ( visiblepanels & PanelId ) != ( m_VisiblePanels & PanelId ) )
@@ -156,9 +155,8 @@ void guAuiManagerPanel::SaveLayout( wxXmlNode * xmlnode, const wxString &name )
     XmlNode->SetAttributes( Property );
 
     wxXmlNode * Columns = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "columns" ) );
-    int Index;
     int Count = GetListViewColumnCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         int  ColumnPos;
         int  ColumnWidth;

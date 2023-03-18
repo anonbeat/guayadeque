@@ -84,9 +84,8 @@ guPlayerFilters::~guPlayerFilters()
 // -------------------------------------------------------------------------------- //
 int GetListItemsIdIndex( const guListItems &listitems, const int id )
 {
-    int Index;
     int Count = listitems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( listitems[ Index ].m_Id == id )
             return Index;
@@ -112,9 +111,8 @@ void guPlayerFilters::UpdateFilters( void )
     m_Db->GetPlayLists( &m_FilterPlayLists, guPLAYLIST_TYPE_DYNAMIC );
 
     wxArrayString ChoiceItems;
-    int Index;
     int Count = m_FilterPlayLists.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ChoiceItems.Add( m_FilterPlayLists[ Index ].m_Name );
     }

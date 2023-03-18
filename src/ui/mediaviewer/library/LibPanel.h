@@ -136,6 +136,7 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnArtistEditTracksClicked( wxCommandEvent &event );
     virtual void            OnArtistCopyToClicked( wxCommandEvent &event );
     virtual void            OnArtistSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnArtistCreateBestOfPlaylistClicked( wxCommandEvent &event );
 
     // AlbumsListBoxEvents
     virtual void            OnAlbumListActivated( wxCommandEvent &event );
@@ -150,6 +151,7 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnAlbumEmbedCoverClicked( wxCommandEvent &event );
     virtual void            OnAlbumCopyToClicked( wxCommandEvent &event );
     virtual void            OnAlbumSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnAlbumCreateBestOfPlaylistClicked( wxCommandEvent &event );
 
     virtual void            DoDeleteAlbumCover( const int albumid );
 
@@ -197,6 +199,7 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            OnAlbumArtistListEditTracksClicked( wxCommandEvent &event );
     virtual void            OnAlbumArtistListCopyToClicked( wxCommandEvent &event );
     virtual void            OnAlbumArtistSavePlayListClicked( wxCommandEvent &event );
+    virtual void            OnAlbumArtistCreateBestOfPlayListClicked( wxCommandEvent &event );
 
     // SongsListBox Events
     virtual void            OnSongListActivated( wxCommandEvent &event );
@@ -246,6 +249,7 @@ class guLibPanel : public guAuiManagerPanel
     virtual void            UpdateTracksLyrics( const guTrackArray &tracks, const wxArrayString &lyrics, const wxArrayInt &changedflags );
 
     virtual void            SaveToPlayList( const wxArrayInt &tracks );
+    virtual void            CreateBestOfPlaylist( const guTrack &track );
 
     virtual void            OnGoToSearch( wxCommandEvent &event );
 

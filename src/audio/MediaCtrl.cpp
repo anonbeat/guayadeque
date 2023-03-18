@@ -55,9 +55,8 @@ static void DumpFaderPlayBins( const guFaderPlayBinArray &playbins, guFaderPlayb
     }
 
     guLogDebug( wxT( " * * * * * * * * * * current stream list * * * * * * * * * *" ) );
-    int Index;
     int Count = playbins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guFaderPlaybin * FaderPlayBin = playbins[ Index ];
 
@@ -161,9 +160,8 @@ guMediaCtrl::~guMediaCtrl()
 void guMediaCtrl::CleanUp( void )
 {
     Lock();
-    int Index;
     int Count = m_FaderPlayBins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         delete m_FaderPlayBins[ Index ];
     }
@@ -267,9 +265,8 @@ bool guMediaCtrl::SetVolume( double volume )
     guLogDebug( wxT( "MediaCtrl::SetVolume( %0.5f )" ), volume );
     m_Volume = volume;
     Lock();
-    int Index;
     int Count = m_FaderPlayBins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_FaderPlayBins[ Index ]->SetVolume( volume );
     }
@@ -282,9 +279,8 @@ void guMediaCtrl::SetEqualizerBand( const int band, const int value )
 {
     m_EqBands[ band ] = value;
     Lock();
-    int Index;
     int Count = m_FaderPlayBins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_FaderPlayBins[ Index ]->SetEqualizerBand( band, value );
     }
@@ -296,9 +292,8 @@ bool guMediaCtrl::SetEqualizer( const wxArrayInt &eqbands )
 {
     m_EqBands = eqbands;
     Lock();
-    int Index;
     int Count = m_FaderPlayBins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_FaderPlayBins[ Index ]->SetEqualizer( eqbands );
     }
@@ -309,16 +304,15 @@ bool guMediaCtrl::SetEqualizer( const wxArrayInt &eqbands )
 // -------------------------------------------------------------------------------- //
 void guMediaCtrl::ResetEqualizer( void )
 {
-    int Index;
     int Count = m_EqBands.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_EqBands[ Index ] = 0;
     }
 
     Lock();
     Count = m_FaderPlayBins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_FaderPlayBins[ Index ]->SetEqualizer( m_EqBands );
     }
@@ -539,7 +533,6 @@ bool guMediaCtrl::Pause( void )
 	gint64          FadeOutTime;
 
 	Lock();
-	int Index;
 	int Count = m_FaderPlayBins.Count();
 	if( !Count )
 	{
@@ -550,7 +543,7 @@ bool guMediaCtrl::Pause( void )
     DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
 #endif
 
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = m_FaderPlayBins[ Index ];
 
@@ -589,7 +582,7 @@ bool guMediaCtrl::Pause( void )
     Unlock();
 
 	Count = ToFade.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = ( guFaderPlaybin * ) ToFade[ Index ];
         FadeOutTime = ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
@@ -638,7 +631,6 @@ bool guMediaCtrl::Stop( void )
 	gint64          FadeOutTime;
 
 	Lock();
-	int Index;
 	int Count = m_FaderPlayBins.Count();
 	if( !Count )
 	{
@@ -650,7 +642,7 @@ bool guMediaCtrl::Stop( void )
     DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
 #endif
 
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = m_FaderPlayBins[ Index ];
 
@@ -695,7 +687,7 @@ bool guMediaCtrl::Stop( void )
     Unlock();
 
 	Count = ToFade.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         FaderPlayBin = ( guFaderPlaybin * ) ToFade[ Index ];
         FadeOutTime = ( !m_ForceGapless && m_FadeOutTime ) ? guFADERPLAYBIN_FAST_FADER_TIME : guFADERPLAYBIN_SHORT_FADER_TIME;
@@ -819,9 +811,8 @@ void guMediaCtrl::FadeInStart( void )
 #ifdef guSHOW_DUMPFADERPLAYBINS
     DumpFaderPlayBins( m_FaderPlayBins, m_CurrentPlayBin );
 #endif
-    int Index;
     int Count = m_FaderPlayBins.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guFaderPlaybin * NextPlayBin = m_FaderPlayBins[ Index ];
         if( NextPlayBin->m_State == guFADERPLAYBIN_STATE_WAITING )
@@ -949,9 +940,8 @@ void guMediaCtrl::DoCleanUp( void )
 
 	m_CleanUpId = 0;
 
-	int Index;
 	int Count = m_FaderPlayBins.Count();
-	for( Index = Count - 1; Index >= 0; Index-- )
+	for( int Index = Count - 1; Index >= 0; Index-- )
 	{
         guFaderPlaybin * FaderPlaybin = m_FaderPlayBins[ Index ];
 		if( ( FaderPlaybin->m_State == guFADERPLAYBIN_STATE_PENDING_REMOVE ) ||
@@ -978,7 +968,7 @@ void guMediaCtrl::DoCleanUp( void )
 	Unlock();
 
 	Count = ToDelete.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
         guLogDebug( wxT( "Free stream %li" ), ( ( guFaderPlaybin * ) ToDelete[ Index ] )->GetId() );
         delete ( ( guFaderPlaybin * ) ToDelete[ Index ] );

@@ -80,12 +80,10 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 
     // By default enable already added items
     m_Db->GetRadioGenres( guRADIO_SOURCE_SHOUTCAST_GENRE, &m_AddedGenres, false );
-    int index;
     int count = m_AddedGenres.Count();
-    int item;
-    for( index = 0; index < count; index ++ )
+    for( int index = 0; index < count; index ++ )
     {
-        item = m_RadioGenres.Index( m_AddedGenres[ index ].m_Name );
+        int item = m_RadioGenres.Index( m_AddedGenres[ index ].m_Name );
         if( item != wxNOT_FOUND )
             m_CheckListBox->Check( item );
     }
@@ -96,9 +94,8 @@ guRadioGenreEditor::guRadioGenreEditor( wxWindow * parent, guDbRadios * db ) :
 // -------------------------------------------------------------------------------- //
 int guListItemsFind( guListItems &items, const wxString &name )
 {
-    int Index;
     int Count = items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( items[ Index ].m_Name == name )
             return Index;
@@ -109,9 +106,8 @@ int guListItemsFind( guListItems &items, const wxString &name )
 // -------------------------------------------------------------------------------- //
 int guListItemsFind( guListItems &items, const int &id )
 {
-    int Index;
     int Count = items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( items[ Index ].m_Id == id )
             return Index;
@@ -122,9 +118,8 @@ int guListItemsFind( guListItems &items, const int &id )
 // -------------------------------------------------------------------------------- //
 void guRadioGenreEditor::GetGenres( wxArrayString &addedgenres, wxArrayInt &deletedgenres )
 {
-    int index;
     int count = m_CheckListBox->GetCount();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( m_CheckListBox->IsChecked( index ) )
         {

@@ -73,8 +73,6 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     m_ComposerChangedTimer( this, guTRACKEDIT_TIMER_COMPOSER_ID ),
     m_GenreChangedTimer( this, guTRACKEDIT_TIMER_GENRE_ID )
 {
-    int index;
-    int count;
     m_Db = db;
 
     wxPanel *           SongListPanel;
@@ -633,8 +631,8 @@ guTrackEditor::guTrackEditor( wxWindow * parent, guDbLibrary * db, guTrackArray 
     wxArrayString ItemsText;
 
     // Generate the list of tacks, pictures and lyrics
-    count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    int count = m_Items->Count();
+    for( int index = 0; index < count; index++ )
     {
         ItemsText.Add( ( * m_Items )[ index ].m_FileName );
         // Fill the initial Images of the files
@@ -1091,10 +1089,9 @@ void guTrackEditor::WriteItemData( void )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAACopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_AlbumArtistComboBox->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_AlbumArtist, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1103,10 +1100,9 @@ void guTrackEditor::OnAACopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnArCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_ArtistComboBox->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_ArtistName, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1115,10 +1111,9 @@ void guTrackEditor::OnArCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnAlCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_AlbumComboBox->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_AlbumName, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1127,10 +1122,9 @@ void guTrackEditor::OnAlCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnTiCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_TitleTextCtrl->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_SongName, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1139,10 +1133,9 @@ void guTrackEditor::OnTiCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnCoCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_CompComboBox->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_Composer, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1151,11 +1144,8 @@ void guTrackEditor::OnCoCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnNuOrderButtonClicked( wxCommandEvent& event )
 {
-    int index;
-    //int CurData;
-    //NumberTextCtrl->GetValue().ToLong( ( long int *) &CurData );
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_Number, ( index + 1 ), ( * m_ChangedFlags )[ index ] );
     }
@@ -1164,11 +1154,10 @@ void guTrackEditor::OnNuOrderButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnNuCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     long CurData;
     m_NumberTextCtrl->GetValue().ToLong( &CurData );
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_Number, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1177,10 +1166,9 @@ void guTrackEditor::OnNuCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnDiCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_DiskTextCtrl->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_Disk, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1189,10 +1177,9 @@ void guTrackEditor::OnDiCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnGeCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_GenreComboBox->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_GenreName, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1219,10 +1206,9 @@ void guTrackEditor::OnYeCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     int count = m_Items->Count();
     int CurData = m_Rating->GetRating();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         guTrack &Track = ( * m_Items )[ index ];
         bool EmbeddRatings = Track.m_MediaViewer && Track.m_MediaViewer->GetEmbeddMetadata();
@@ -1234,10 +1220,9 @@ void guTrackEditor::OnRaCopyButtonClicked( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guTrackEditor::OnCommentCopyButtonClicked( wxCommandEvent& event )
 {
-    int index;
     wxString CurData = m_CommentText->GetValue();
     int count = m_Items->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         SetTagField( ( * m_Items )[ index ].m_Comments, CurData, ( * m_ChangedFlags )[ index ] );
     }
@@ -1423,9 +1408,8 @@ void guTrackEditor::OnCopyImageClicked( wxCommandEvent &event )
     wxImage * pCurImage = ( * m_Images )[ m_CurItem ];
     wxASSERT( pCurImage );
 
-    int index;
     int count = m_Images->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( index != m_CurItem )
         {
@@ -1648,9 +1632,8 @@ void guTrackEditor::UpdateMBrainzTrackInfo( void )
 int guTrackEditor::CheckTracksLengths( guMBRecordingArray * mbtracks, guTrackArray * tracks )
 {
     int RetVal = 0;
-    int Index;
     int Count = wxMin( tracks->Count(), mbtracks->Count() );
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( GetTrackLengthDiff( tracks->Item( Index ).m_Length,
                              mbtracks->Item( Index ).m_Length ) > guMBRAINZ_MAX_TIME_DIFF )
@@ -2086,10 +2069,8 @@ guTrackEditorGetComboDataThread::~guTrackEditorGetComboDataThread()
 // -------------------------------------------------------------------------------- //
 void guTrackEditorGetComboDataThread::FillArrayStrings( wxSortedArrayString &array, const guListItems &items )
 {
-    int Index;
-    int Count;
-    Count = items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = items.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxString CurText = items[ Index ].m_Name;
         if( !CurText.IsEmpty() && array.Index( CurText ) == wxNOT_FOUND )

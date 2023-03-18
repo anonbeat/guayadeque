@@ -441,6 +441,7 @@ void guLibPanel::CreateControls( void )
     Bind( wxEVT_MENU, &guLibPanel::OnArtistEditTracksClicked, this, ID_ARTIST_EDITTRACKS );
     m_ArtistListCtrl->Bind( wxEVT_MENU, &guLibPanel::OnArtistCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
     Bind( wxEVT_MENU, &guLibPanel::OnArtistSavePlayListClicked, this, ID_ARTIST_SAVETOPLAYLIST );
+    Bind( wxEVT_MENU, &guLibPanel::OnArtistCreateBestOfPlaylistClicked, this, ID_ARTIST_CREATE_BESTOF_PLAYLIST );
 
     Bind( wxEVT_MENU, &guLibPanel::OnAlbumPlayClicked, this, ID_ALBUM_PLAY );
     Bind( wxEVT_MENU, &guLibPanel::OnAlbumQueueClicked, this, ID_ALBUM_ENQUEUE_AFTER_ALL, ID_ALBUM_ENQUEUE_AFTER_ARTIST );
@@ -452,6 +453,7 @@ void guLibPanel::CreateControls( void )
     Bind( wxEVT_MENU, &guLibPanel::OnAlbumEmbedCoverClicked, this, ID_ALBUM_COVER_EMBED );
     m_AlbumListCtrl->Bind( wxEVT_MENU, &guLibPanel::OnAlbumCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
     Bind( wxEVT_MENU, &guLibPanel::OnAlbumSavePlayListClicked, this, ID_ALBUM_SAVETOPLAYLIST );
+    Bind( wxEVT_MENU, &guLibPanel::OnAlbumCreateBestOfPlaylistClicked, this, ID_ALBUM_CREATE_BESTOF_PLAYLIST );
 
     Bind( wxEVT_MENU, &guLibPanel::OnYearListPlayClicked, this, ID_YEAR_PLAY );
     Bind( wxEVT_MENU, &guLibPanel::OnYearListQueueClicked, this, ID_YEAR_ENQUEUE_AFTER_ALL, ID_YEAR_ENQUEUE_AFTER_ARTIST );
@@ -482,6 +484,7 @@ void guLibPanel::CreateControls( void )
     Bind( wxEVT_MENU, &guLibPanel::OnAlbumArtistListEditTracksClicked, this, ID_ALBUMARTIST_EDITTRACKS );
     m_AlbumArtistListCtrl->Bind( wxEVT_MENU, &guLibPanel::OnAlbumArtistListCopyToClicked, this, ID_COPYTO_BASE, ID_COPYTO_BASE + guCOPYTO_MAXCOUNT );
     Bind( wxEVT_MENU, &guLibPanel::OnAlbumArtistSavePlayListClicked, this, ID_ALBUMARTIST_SAVETOPLAYLIST );
+    Bind( wxEVT_MENU, &guLibPanel::OnAlbumArtistCreateBestOfPlayListClicked, this, ID_ALBUMARTIST_CREATE_BESTOF_PLAYLIST );
 
     Bind( wxEVT_MENU, &guLibPanel::OnSongPlayClicked, this, ID_TRACKS_PLAY );
     Bind( wxEVT_MENU, &guLibPanel::OnSongQueueClicked, this, ID_TRACKS_ENQUEUE_AFTER_ALL, ID_TRACKS_ENQUEUE_AFTER_ARTIST );
@@ -751,14 +754,12 @@ void guLibPanel::OnGenreCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnGenreSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_GenreListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
@@ -869,14 +870,12 @@ void guLibPanel::UpdateLabels( void )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnLabelSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_LabelsListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
@@ -971,9 +970,8 @@ void guLibPanel::DoEditTracks( guTrackArray &tracks )
     guImagePtrArray Images;
     wxArrayString Lyrics;
     wxArrayInt ChangedFlags;
-    int Index;
     int Count = tracks.Count();
-    for( Index = Count - 1; Index >= 0; Index-- )
+    for( int Index = Count - 1; Index >= 0; Index-- )
     {
         if( tracks[ Index ].m_Offset )
         {
@@ -1060,19 +1058,27 @@ void guLibPanel::OnArtistCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnArtistSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_ArtistListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
 
     SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnArtistCreateBestOfPlaylistClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    if( m_ArtistListCtrl->GetSelectedSongs( &Tracks ) )
+    {
+        CreateBestOfPlaylist( Tracks[ 0 ] );
+    }
 }
 
 // -------------------------------------------------------------s------------------- //
@@ -1229,12 +1235,11 @@ void guLibPanel::OnAlbumDeleteCoverClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumEmbedCoverClicked( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
     wxArrayInt SelectedAlbums = m_AlbumListCtrl->GetSelectedItems();
-    if( ( Count = SelectedAlbums.Count() ) )
+    int Count = SelectedAlbums.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             m_MediaViewer->EmbedAlbumCover( SelectedAlbums[ Index ] );
         }
@@ -1266,20 +1271,29 @@ void guLibPanel::OnAlbumCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_AlbumListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
 
     SaveToPlayList( NewSongs );
 }
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnAlbumCreateBestOfPlaylistClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    if( m_AlbumListCtrl->GetSelectedSongs( &Tracks ) )
+    {
+        CreateBestOfPlaylist( Tracks[ 0 ] );
+    }
+}
+
 
 // -------------------------------------------------------------------------------- //
 // SongListBox Events
@@ -1450,17 +1464,21 @@ void guLibPanel::SaveToPlayList( const wxArrayInt &tracks )
 }
 
 // -------------------------------------------------------------------------------- //
+void guLibPanel::CreateBestOfPlaylist( const guTrack &track )
+{
+    m_MediaViewer->CreateBestOfPlaylist( track );
+}
+
+// -------------------------------------------------------------------------------- //
 void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
-
-    if( ( count = Tracks.Count() ) )
+    int count = Tracks.Count();
+    if( count )
     {
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             NewSongs.Add( Tracks[ index ].m_SongId );
         }
@@ -1469,7 +1487,7 @@ void guLibPanel::OnSongSavePlayListClicked( wxCommandEvent &event )
     {
         m_SongListCtrl->GetAllSongs( &Tracks );
         count = Tracks.Count();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             NewSongs.Add( Tracks[ index ].m_SongId );
         }
@@ -1511,9 +1529,8 @@ void guLibPanel::OnSongSetField( wxCommandEvent &event )
 
     // This should be done in a thread for huge selections of tracks...
     wxArrayInt ChangedFlags;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
         guTrack * Track = &Tracks[ Index ];
@@ -1640,9 +1657,8 @@ void guLibPanel::OnSongEditField( wxCommandEvent &event )
 
             // This should be done in a thread for huge selections of tracks...
             wxArrayInt ChangedFlags;
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
                 guTrack * Track = &Tracks[ Index ];
@@ -1709,9 +1725,8 @@ void guLibPanel::OnSongListColClicked( wxListEvent &event )
     // Create the Columns
     wxArrayString ColumnNames = m_SongListCtrl->GetColumnNames();
     int CurColId;
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         CurColId = m_SongListCtrl->GetColumnId( index );
         m_SongListCtrl->SetColumnLabel( index,
@@ -1727,9 +1742,8 @@ void guLibPanel::OnSongSelectGenre( wxCommandEvent &event )
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
     wxArrayInt * Genres = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Genres->Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
         {
@@ -1746,9 +1760,8 @@ void guLibPanel::OnSongSelectArtist( wxCommandEvent &event )
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
     wxArrayInt * Artists = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Artists->Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
         {
@@ -1765,9 +1778,8 @@ void guLibPanel::OnSongSelectAlbumArtist( wxCommandEvent &event )
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
     wxArrayInt * AlbumArtists = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( AlbumArtists->Index( Tracks[ index ].m_AlbumArtistId ) == wxNOT_FOUND )
         {
@@ -1784,9 +1796,8 @@ void guLibPanel::OnSongSelectComposer( wxCommandEvent &event )
     guTrackArray Tracks;
     m_SongListCtrl->GetSelectedSongs( &Tracks );
     wxArrayInt * Composers = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Composers->Index( Tracks[ index ].m_ComposerId ) == wxNOT_FOUND )
         {
@@ -1804,9 +1815,8 @@ void guLibPanel::OnSongSelectAlbum( wxCommandEvent &event )
     m_SongListCtrl->GetSelectedSongs( &Tracks );
     wxArrayInt * Albums = new wxArrayInt();
 
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Albums->Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
         {
@@ -2146,14 +2156,12 @@ void guLibPanel::OnYearListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnYearSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_YearListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
@@ -2250,14 +2258,12 @@ void guLibPanel::OnRatingListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnRatingSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_RatingListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
@@ -2354,14 +2360,12 @@ void guLibPanel::OnPlayCountListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnPlayCountSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_PlayCountListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
@@ -2459,14 +2463,12 @@ void guLibPanel::OnComposerListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnComposerSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_ComposerListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
@@ -2564,19 +2566,27 @@ void guLibPanel::OnAlbumArtistListCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guLibPanel::OnAlbumArtistSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_AlbumArtistListCtrl->GetSelectedSongs( &Tracks );
 
-    count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    int count = Tracks.Count();
+    for( int index = 0; index < count; index++ )
     {
         NewSongs.Add( Tracks[ index ].m_SongId );
     }
 
     SaveToPlayList( NewSongs );
+}
+
+// -------------------------------------------------------------------------------- //
+void guLibPanel::OnAlbumArtistCreateBestOfPlayListClicked( wxCommandEvent &event )
+{
+    guTrackArray Tracks;
+    if( m_AlbumArtistListCtrl->GetSelectedSongs( &Tracks ) )
+    {
+        CreateBestOfPlaylist( Tracks[ 0 ] );
+    }
 }
 
 // -------------------------------------------------------------------------------- //

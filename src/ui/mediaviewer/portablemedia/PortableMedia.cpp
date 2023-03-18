@@ -82,12 +82,11 @@ int GetPortableMediaType( const wxString &path )
 int MimeStrToAudioFormat( const wxString &mimestr )
 {
     int Formats = 0;
-    int Index;
-    int Count;
     wxArrayString AudioFormats = wxStringTokenize( mimestr, wxT( "," ) );
-    if( ( Count = AudioFormats.Count() ) )
+    int Count = AudioFormats.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             AudioFormats[ Index ].Trim( true ).Trim( false );
             if( AudioFormats[ Index ] == wxT( "audio/mpeg" ) )
@@ -170,12 +169,11 @@ wxString AudioFormatsToMimeStr( const int formats )
 int MimeStrToPlaylistFormat( const wxString &mimestr )
 {
     int Formats = 0;
-    int Index;
-    int Count;
     wxArrayString PlaylistFormats = wxStringTokenize( mimestr, wxT( "," ) );
-    if( ( Count = PlaylistFormats.Count() ) )
+    int Count = PlaylistFormats.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             PlaylistFormats[ Index ].Trim( true ).Trim( false );
             if( ( PlaylistFormats[ Index ] == wxT( "audio/mpegurl" ) ) ||
@@ -248,12 +246,11 @@ wxString PlaylistFormatsToMimeStr( const int formats )
 int MimeStrToCoverFormat( const wxString &mimestr )
 {
     int Formats = 0;
-    int Index;
-    int Count;
     wxArrayString CoverFormats = wxStringTokenize( mimestr, wxT( "," ) );
-    if( ( Count = CoverFormats.Count() ) )
+    int Count = CoverFormats.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             CoverFormats[ Index ].Trim( true ).Trim( false );
             if( CoverFormats[ Index ] == wxT( "embedded" ) )
@@ -610,9 +607,8 @@ void guPortableMediaLibrary::UpdateStaticPlayListFile( const int plid )
             GetPlayListSongs( plid, guPLAYLIST_TYPE_STATIC, &Tracks, NULL, NULL );
             guPlaylistFile PlayListFile;
             PlayListFile.SetName( FileName.GetFullPath() );
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 const guTrack &Track = Tracks[ Index ];
 
@@ -1082,9 +1078,8 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
         ItemFlags.Add( guPORTABLEMEDIA_AUDIO_FORMAT_WMA );
     }
 
-    int Index;
     int Count = ItemFlags.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_AudioFormats & ItemFlags[ Index ] )
         {
@@ -1099,8 +1094,8 @@ void guPortableMediaProperties::OnAudioFormatBtnClick( wxCommandEvent &event )
         {
             ListCheckOptionsDialog->GetSelectedItems( Selection );
             m_AudioFormats = 0;
-            Count = Selection.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = Selection.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 m_AudioFormats |= ItemFlags[ Selection[ Index ] ];
             }
@@ -1157,9 +1152,8 @@ void guPortableMediaProperties::OnPlaylistFormatBtnClick( wxCommandEvent &event 
     ItemFlags.Add( guPORTABLEMEDIA_PLAYLIST_FORMAT_XSPF );
     ItemFlags.Add( guPORTABLEMEDIA_PLAYLIST_FORMAT_ASX );
 
-    int Index;
     int Count = ItemFlags.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_PlaylistFormats & ItemFlags[ Index ] )
         {
@@ -1174,8 +1168,8 @@ void guPortableMediaProperties::OnPlaylistFormatBtnClick( wxCommandEvent &event 
         {
             ListCheckOptionsDialog->GetSelectedItems( Selection );
             m_PlaylistFormats = 0;
-            Count = Selection.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = Selection.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 m_PlaylistFormats |= ItemFlags[ Selection[ Index ] ];
             }
@@ -1209,9 +1203,8 @@ void guPortableMediaProperties::OnCoverFormatBtnClick( wxCommandEvent &event )
         ItemFlags.Add( guPORTABLEMEDIA_COVER_FORMAT_GIF );
     }
 
-    int Index;
     int Count = ItemFlags.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_CoverFormats & ItemFlags[ Index ] )
         {
@@ -1226,8 +1219,8 @@ void guPortableMediaProperties::OnCoverFormatBtnClick( wxCommandEvent &event )
         {
             ListCheckOptionsDialog->GetSelectedItems( Selection );
             m_CoverFormats = 0;
-            Count = Selection.Count();
-            for( Index = 0; Index < Count; Index++ )
+            int Count = Selection.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 m_CoverFormats |= ItemFlags[ Selection[ Index ] ];
             }
@@ -1259,9 +1252,8 @@ guListCheckOptionsDialog::guListCheckOptionsDialog( wxWindow * parent, const wxS
 	wxBoxSizer * MainSizer = new wxBoxSizer( wxVERTICAL );
 
 	m_CheckListBox = new wxCheckListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, items, wxLB_MULTIPLE );
-	int Index;
 	int Count = selection.Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
 	    m_CheckListBox->Check( selection[ Index ] );
 	}
@@ -1297,9 +1289,8 @@ guListCheckOptionsDialog::~guListCheckOptionsDialog()
 int guListCheckOptionsDialog::GetSelectedItems( wxArrayInt &selection )
 {
     selection.Empty();
-    int Index;
     int Count = m_CheckListBox->GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_CheckListBox->IsChecked( Index ) )
             selection.Add( Index );
@@ -1593,9 +1584,8 @@ void guMediaViewerPortableDevice::UpdateCollectionProperties( void )
 wxArrayString guMediaViewerPortableDevice::GetPaths( void )
 {
     wxArrayString Paths = wxStringTokenize( m_PortableDevice->AudioFolders(), wxT( "," ) );
-    int Index;
     int Count = Paths.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         Paths[ Index ] = m_PortableDevice->MountPath() + Paths[ Index ];
         Paths[ Index ].Replace( wxT( "//" ), wxT( "/" ) );

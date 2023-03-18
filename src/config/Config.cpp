@@ -524,9 +524,8 @@ void SaveCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
     WriteStr( XmlNode, wxT( "LastUpdate" ), wxString::Format( wxT( "%i" ), collection->m_LastUpdate ) );
 
     wxXmlNode * ParentNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "paths" ) );
-    int Index;
     int Count = collection->m_Paths.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         WriteStr( ParentNode, wxString::Format( wxT( "Path%i" ), Index ), collection->m_Paths[ Index ] );
     }
@@ -535,7 +534,7 @@ void SaveCollection( wxXmlNode * xmlnode, guMediaCollection * collection )
 
     ParentNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "covers" ) );
     Count = collection->m_CoverWords.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         WriteStr( ParentNode, wxString::Format( wxT( "Cover%i" ), Index ), collection->m_CoverWords[ Index ] );
     }
@@ -558,9 +557,8 @@ void guConfig::SaveCollections( guMediaCollectionArray * collections, const bool
         XmlNode = CreateCategoryNode( m_RootNode, wxT( "collections" ) );
     }
 
-    int Index;
     int Count = collections->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         SaveCollection( XmlNode, &collections->Item( Index ) );
     }
@@ -569,18 +567,17 @@ void guConfig::SaveCollections( guMediaCollectionArray * collections, const bool
 // -------------------------------------------------------------------------------- //
 bool guConfig::WriteAStr( const wxString &keyname, const wxArrayString &value, const wxString &category, bool resetgroup )
 {
-    int Index;
     int Count = value.Count();
 
     if( resetgroup )
         DeleteCategory( category );
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( !WriteStr( keyname + wxString::Format( wxT( "%i" ), Index ), value[ Index ], category ) )
-            break;
+            return false;
     }
-    return ( Index = Count );
+    return true;
 }
 
 #if wxUSE_STL
@@ -588,9 +585,8 @@ bool guConfig::WriteAStr( const wxString &keyname, const wxArrayString &value, c
 bool guConfig::WriteAStr( const wxString &Key, const wxSortedArrayString &Value, const wxString &Category, bool ResetGroup )
 {
     wxArrayString AStrings;
-    int Index;
     int Count = Value.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         AStrings.Add( Value[ Index ] );
     }
@@ -625,18 +621,17 @@ wxArrayInt guConfig::ReadANum( const wxString &keyname, const int defval, const 
 // -------------------------------------------------------------------------------- //
 bool guConfig::WriteANum( const wxString &keyname, const wxArrayInt &value, const wxString &category, bool resetgroup )
 {
-    int Index;
     int Count = value.Count();
 
     if( resetgroup )
         DeleteCategory( category );
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( !WriteNum( keyname + wxString::Format( wxT( "%i" ), Index ), value[ Index ], category ) )
-            break;
+            return false;
     }
-    return ( Index = Count );
+    return true;
 }
 
 // -------------------------------------------------------------------------------- //
@@ -667,9 +662,8 @@ void guConfig::SendConfigChangedEvent( const int flags )
     wxCommandEvent event( guConfigUpdatedEvent, ID_CONFIG_UPDATED );
     event.SetInt( flags );
 
-    int Index;
     int Count = m_Objects.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_Objects[ Index ]->AddPendingEvent( event );
     }
@@ -786,9 +780,8 @@ bool guConfig::SavePlaylistTracks( const guTrackArray &tracks, const int current
 
     wxXmlNode * XmlNode = CreateCategoryNode( m_RootNode, wxT( "playlist/nowplaying/tracks" ) );
 
-    int Index;
     int Count = tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         WriteTrack( XmlNode, tracks[ Index ] );
     }

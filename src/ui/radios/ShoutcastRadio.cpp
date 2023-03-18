@@ -173,9 +173,8 @@ int guShoutcastRadioProvider::GetStations( guRadioStations * stations, const lon
         guListItems RadioGenres;
         m_Db->GetRadioGenres( guRADIO_SOURCE_SHOUTCAST_GENRE, &RadioGenres );
 
-        int Index;
         int Count = RadioGenres.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             RadioTreeCtrl->AppendItem( m_ShoutcastGenreId, RadioGenres[ Index ].m_Name, -1, -1,
                 new guRadioItemData( RadioGenres[ Index ].m_Id, guRADIO_SOURCE_SHOUTCAST_GENRE, RadioGenres[ Index ].m_Name, 0 ) );
@@ -189,9 +188,8 @@ int guShoutcastRadioProvider::GetStations( guRadioStations * stations, const lon
         guListItems RadioSearchs;
         wxArrayInt RadioFlags;
         m_Db->GetRadioGenres( guRADIO_SOURCE_SHOUTCAST_SEARCH, &RadioSearchs, true, &RadioFlags );
-        int Index;
         int Count = RadioSearchs.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             RadioTreeCtrl->AppendItem( m_ShoutcastSearchId, RadioSearchs[ Index ].m_Name, -1, -1,
                 new guRadioItemData( RadioSearchs[ Index ].m_Id, guRADIO_SOURCE_SHOUTCAST_SEARCH, RadioSearchs[ Index ].m_Name, RadioFlags[ Index ] ) );
@@ -248,9 +246,8 @@ void guShoutcastRadioProvider::DoUpdate( void )
             Source = guRADIO_SOURCE_SHOUTCAST_SEARCH;
             guListItems Genres;
             m_Db->GetRadioGenres( Source, &Genres );
-            int index;
             int count = Genres.Count();
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 GenresIds.Add( Genres[ index ].m_Id );
             }
@@ -261,9 +258,8 @@ void guShoutcastRadioProvider::DoUpdate( void )
     {
         guListItems Genres;
         m_Db->GetRadioGenres( guRADIO_SOURCE_SHOUTCAST_GENRE, &Genres );
-        int index;
         int count = Genres.Count();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             GenresIds.Add( Genres[ index ].m_Id );
         }
@@ -291,8 +287,6 @@ void guShoutcastRadioProvider::SetSearchText( const wxArrayString &texts )
 // -------------------------------------------------------------------------------- //
 void guShoutcastRadioProvider::OnGenreAdd( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
     guRadioGenreEditor * RadioGenreEditor = new guRadioGenreEditor( m_RadioPanel, m_Db );
     if( RadioGenreEditor )
     {
@@ -303,10 +297,11 @@ void guShoutcastRadioProvider::OnGenreAdd( wxCommandEvent &event )
             wxArrayString NewGenres;
             wxArrayInt DelGenres;
             RadioGenreEditor->GetGenres( NewGenres, DelGenres );
-            if( ( Count = NewGenres.Count() ) )
+            int Count = NewGenres.Count();
+            if( Count )
             {
                 //
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     m_Db->AddRadioGenre( NewGenres[ Index ], guRADIO_SOURCE_SHOUTCAST_GENRE, guRADIO_SEARCH_FLAG_NONE );
                 }
@@ -315,7 +310,7 @@ void guShoutcastRadioProvider::OnGenreAdd( wxCommandEvent &event )
 
             if( ( Count = DelGenres.Count() ) )
             {
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     m_Db->DelRadioGenre( DelGenres[ Index ] );
                 }
@@ -362,19 +357,18 @@ void guShoutcastRadioProvider::OnGenreEdit( wxCommandEvent &event )
 void guShoutcastRadioProvider::OnGenreDelete( wxCommandEvent &event )
 {
     wxArrayTreeItemIds ItemIds;
-    int index;
-    int count;
 
     guRadioGenreTreeCtrl * RadioTreeCtrl = m_RadioPanel->GetTreeCtrl();
 
-    if( ( count = RadioTreeCtrl->GetSelections( ItemIds ) ) )
+    int count = RadioTreeCtrl->GetSelections( ItemIds );
+    if( count )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected radio genres?" ),
                           _( "Confirm" ),
                           wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, m_RadioPanel ) == wxYES )
         {
             guRadioItemData * RadioGenreData;
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 RadioGenreData = m_RadioPanel->GetSelectedData( ItemIds[ index ] );
                 if( RadioGenreData )
@@ -443,18 +437,17 @@ void guShoutcastRadioProvider::OnSearchEdit( wxCommandEvent &event )
 void guShoutcastRadioProvider::OnSearchDelete( wxCommandEvent &event )
 {
     wxArrayTreeItemIds ItemIds;
-    int index;
-    int count;
 
     guRadioGenreTreeCtrl * RadioTreeCtrl = m_RadioPanel->GetTreeCtrl();
-    if( ( count = RadioTreeCtrl->GetSelections( ItemIds ) ) )
+    int count = RadioTreeCtrl->GetSelections( ItemIds );
+    if( count )
     {
         if( wxMessageBox( _( "Are you sure to delete the selected radio searches?" ),
                           _( "Confirm" ),
                           wxICON_QUESTION|wxYES_NO|wxNO_DEFAULT, m_RadioPanel ) == wxYES )
         {
             guRadioItemData * RadioGenreData;
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 RadioGenreData = m_RadioPanel->GetSelectedData( ItemIds[ index ] );
                 if( RadioGenreData )
@@ -476,9 +469,8 @@ void guShoutcastRadioProvider::OnSearchDelete( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 bool inline guListItemsSearchName( guListItems &items, const wxString &name )
 {
-    int Index;
     int Count = items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( items[ Index ].m_Name.Lower() == name )
         {
@@ -512,11 +504,10 @@ void guShoutcastUpdateThread::CheckRadioStationsFilters( const int flags, const 
     guListItems RadioGenres;
     m_Db->GetRadioGenres( guRADIO_SOURCE_SHOUTCAST_GENRE, &RadioGenres );
 
-    int Index;
     int Count = stations.Count();
     if( Count )
     {
-        for( Index = Count - 1; Index >= 0; Index-- )
+        for( int Index = Count - 1; Index >= 0; Index-- )
         {
             if( ( flags & guRADIO_SEARCH_FLAG_NOWPLAYING ) )
             {
@@ -561,8 +552,6 @@ void guShoutcastUpdateThread::CheckRadioStationsFilters( const int flags, const 
 guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
 {
 //    guListItems Genres;
-    int index;
-    int count;
     wxCommandEvent event( wxEVT_MENU, ID_STATUSBAR_GAUGE_SETMAX );
     guShoutCast * ShoutCast = new guShoutCast();
     guRadioStations RadioStations;
@@ -582,13 +571,13 @@ guShoutcastUpdateThread::ExitCode guShoutcastUpdateThread::Entry()
         //
         m_Db->DelRadioStations( m_Source, m_Ids );
         //guLogMessage( wxT( "Deleted all radio stations" ) );
-        count = Genres.Count();
+        int count = Genres.Count();
 
         event.SetInt( m_GaugeId );
         event.SetExtraLong( count );
         wxPostEvent( guMainFrame::GetMainFrame(), event );
 
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             guLogMessage( wxT( "Updating radiostations for genre '%s'" ), Genres[ index ].m_Name.c_str() );
             ShoutCast->GetStations( m_Source, Flags[ index ], Genres[ index ].m_Name, Genres[ index ].m_Id, &RadioStations, MinBitRate );

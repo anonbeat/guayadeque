@@ -635,9 +635,8 @@ int guAccelDoAcceleratorTable( const wxArrayInt &aliascmds, const wxArrayInt &re
     wxAcceleratorEntry AccelEntries[ 20 ];
 
     int EntryCount = 0;
-    int Index;
     int Count = aliascmds.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         int AccelKeyCode = guAccelGetCommandKeyCode( aliascmds[ Index ] );
         if( AccelKeyCode )

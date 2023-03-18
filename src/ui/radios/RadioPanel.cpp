@@ -153,9 +153,8 @@ void guRadioGenreTreeCtrl::ReloadProviders( guRadioProviderArray * radioprovider
 {
     m_ImageList = new wxImageList();
     DeleteChildren( m_RootId );
-    int Index;
     int Count = m_RadioPanel->GetProviderCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guRadioProvider * RadioProvider = m_RadioPanel->GetProvider( Index );
         RadioProvider->RegisterImages( m_ImageList );
@@ -236,15 +235,11 @@ guRadioStationListBox::guRadioStationListBox( wxWindow * parent, guRadioPanel * 
 
     wxArrayString ColumnNames = GetColumnNames();
     // Create the Columns
-    int ColId;
-    wxString ColName;
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, wxT( "radios/columns/ids" ) );
-
-        ColName = ColumnNames[ ColId ];
+        int ColId = Config->ReadNum( wxString::Format( wxT( "id%u" ), index ), index, wxT( "radios/columns/ids" ) );
+        wxString ColName = ColumnNames[ ColId ];
 
         ColName += ( ( ColId == m_StationsOrder ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString );
 
@@ -271,16 +266,13 @@ guRadioStationListBox::~guRadioStationListBox()
     guConfig * Config = ( guConfig * ) guConfig::Get();
     Config->UnRegisterObject( this );
 
-    //int ColId;
-    int index;
     int count = guRADIOSTATIONS_COLUMN_COUNT;
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         Config->WriteNum( wxString::Format( wxT( "id%u" ), index ), ( * m_Columns )[ index ].m_Id, wxT( "radios/columns/ids" ) );
         Config->WriteNum( wxString::Format( wxT( "width%u" ), index ), ( * m_Columns )[ index ].m_Width, wxT( "radios/columns/widths" ) );
         Config->WriteBool( wxString::Format( wxT( "show%u" ), index ), ( * m_Columns )[ index ].m_Enabled, wxT( "radios/columns/shows" ) );
     }
-
 }
 
 // -------------------------------------------------------------------------------- //
@@ -498,12 +490,10 @@ void guRadioStationListBox::SetStationsOrder( int order )
     m_RadioPanel->SetStationsOrder( m_StationsOrder, m_StationsOrderDesc );
 
     wxArrayString ColumnNames = GetColumnNames();
-    int CurColId;
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        CurColId = GetColumnId( index );
+        int CurColId = GetColumnId( index );
         SetColumnLabel( index,
             ColumnNames[ CurColId ]  + ( ( order == CurColId ) ? ( m_StationsOrderDesc ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }
@@ -755,9 +745,8 @@ void guRadioPanel::SetStationsOrder( const int columnid, const bool desc )
 {
     m_StationsOrder = columnid;
     m_StationsOrderDesc = desc;
-    int Index;
     int Count = GetProviderCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guRadioProvider * RadioProvider = GetProvider( Index );
         RadioProvider->SetStationsOrder( columnid, desc );
@@ -773,9 +762,8 @@ void guRadioPanel::ReloadProviders( void )
 // -------------------------------------------------------------------------------- //
 guRadioProvider * guRadioPanel::GetProvider( const wxTreeItemId &itemid )
 {
-    int Index;
     int Count = GetProviderCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guRadioProvider * RadioProvider = GetProvider( Index );
         if( RadioProvider->HasItemId( itemid ) )
@@ -883,9 +871,8 @@ bool guRadioPanel::DoTextSearch( void )
     if( !SearchString.IsEmpty() )
     {
         wxArrayString Words = guSplitWords( SearchString );
-        int Index;
         int Count = m_RadioProviders->Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guRadioProvider * RadioProvicer = GetProvider( Index );
             RadioProvicer->SetSearchText( Words );
@@ -899,9 +886,8 @@ bool guRadioPanel::DoTextSearch( void )
     else
     {
         wxArrayString Words;
-        int Index;
         int Count = m_RadioProviders->Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guRadioProvider * RadioProvicer = GetProvider( Index );
             RadioProvicer->SetSearchText( Words );
@@ -951,10 +937,9 @@ void guRadioPanel::OnRadioCreateItems( wxCommandEvent &event )
         if( RadioProvider )
         {
             wxArrayString Items = RadioProvider->GetPendingItems();
-            int Index;
             int Count = Items.Count();
             //guLogMessage( wxT( "Processing %i Pending Items" ), Count );
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 wxArrayString StationParam = wxStringTokenize( Items[ Index ], wxT( "|" ) );
                 if( StationParam.Count() == 2 )

@@ -281,9 +281,8 @@ void guTuneInReadStationsThread::SortStations( void )
 // -------------------------------------------------------------------------------- //
 bool SearchFilterTexts( wxArrayString &texts, const wxString &name )
 {
-    int Index;
     int Count = texts.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         //guLogMessage( wxT( "%s = > '%s'" ), name.c_str(), texts[ Index ].Lower().c_str() );
         if( name.Find( texts[ Index ].Lower() ) == wxNOT_FOUND )

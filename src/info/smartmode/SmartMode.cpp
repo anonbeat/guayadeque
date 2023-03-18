@@ -242,9 +242,8 @@ int guSmartModeThread::AddSimilarTracks( const wxString &artist, const wxString 
     guSimilarTrackInfoArray SimilarTracks = m_LastFM->TrackGetSimilar( artist, track );
     if( SimilarTracks.Count() )
     {
-        int Index;
         int Count = SimilarTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             double Match = MatchStr2Double( SimilarTracks[ Index ].m_Match );
             //guLogMessage( wxT( "Match: %f" ), Match );
@@ -265,9 +264,8 @@ int guSmartModeThread::AddSimilarTracks( const wxString &artist, const wxString 
     if( FoundTracks.Count() < 4 )
     {
         guSimilarArtistInfoArray SimilarArtists = m_LastFM->ArtistGetSimilar( artist );
-        int Index;
         int Count = SimilarArtists.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( !m_SmartAddedArtists || ( m_SmartAddedArtists->Index( SimilarArtists[ Index ].m_Name.Upper() ) == wxNOT_FOUND ) )
             {
@@ -375,7 +373,7 @@ guSmartModeThread::ExitCode guSmartModeThread::Entry()
             }
 
             //guLogDebug( wxT( "========" ) );
-            //for( Index = 0; Index < m_SmartAddedArtists->Count(); Index++ )
+            //for( int Index = 0; Index < m_SmartAddedArtists->Count(); Index++ )
             //    guLogDebug( wxT( "Artist: '%s'" ), ( * m_SmartAddedArtists )[ Index ].c_str() );
 
             SendTracks( Tracks );
@@ -418,9 +416,8 @@ guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * media
 	m_SaveToComboBox = new wxComboBox( this, wxID_ANY, playlistname, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	FlexGridSizer->Add( m_SaveToComboBox, 1, wxEXPAND|wxTOP|wxBOTTOM|wxRIGHT, 5 );
 
-	int Index;
 	int Count = m_Playlists.Count();
-	for( Index = 1; Index < Count; Index++ )
+	for( int Index = 1; Index < Count; Index++ )
     {
         m_SaveToComboBox->Append( m_Playlists[ Index ].m_Name );
     }
@@ -437,7 +434,7 @@ guGenSmartPlaylist::guGenSmartPlaylist( wxWindow * parent, guMediaViewer * media
 
     wxArrayString FilterChoices;
     Count = m_Playlists.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         FilterChoices.Add( m_Playlists[ Index ].m_Name );
     }

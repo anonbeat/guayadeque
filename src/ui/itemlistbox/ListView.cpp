@@ -332,8 +332,6 @@ wxArrayInt guListView::GetSelectedItems( const bool convertall ) const
     wxArrayInt RetVal;
     unsigned long cookie;
     int item;
-    int index;
-    int count;
     int ItemId;
     if( GetItemCount() )
     {
@@ -363,8 +361,8 @@ wxArrayInt guListView::GetSelectedItems( const bool convertall ) const
         if( convertall && ( RetVal.Index( 0 ) != wxNOT_FOUND ) )
         {
             RetVal.Empty();
-            count = GetItemCount();
-            for( index = 0; index < count; index++ )
+            int count = GetItemCount();
+            for( int index = 0; index < count; index++ )
             {
                 RetVal.Add( GetItemId( index ) );
             }
@@ -379,8 +377,6 @@ wxArrayInt guListView::GetSelectedIndexs( const bool convertall ) const
     wxArrayInt RetVal;
     unsigned long cookie;
     int item;
-    int index;
-    int count;
     if( GetItemCount() )
     {
         if( m_ListBox->HasMultipleSelection() )
@@ -407,8 +403,8 @@ wxArrayInt guListView::GetSelectedIndexs( const bool convertall ) const
         if( convertall && ( RetVal.Index( 0 ) != wxNOT_FOUND ) )
         {
             RetVal.Empty();
-            count = GetItemCount();
-            for( index = 0; index < count; index++ )
+            int count = GetItemCount();
+            for( int index = 0; index < count; index++ )
             {
                 RetVal.Add( index );
             }
@@ -480,10 +476,9 @@ void guListView::GetSelectedItems( guListItems * items, const bool convertall ) 
 {
     unsigned long cookie;
     int item;
-    int index;
-    int count;
     bool AppendAll = false;
-    if( ( count = GetItemCount() ) )
+    int count = GetItemCount();
+    if( count )
     {
         if( m_ListBox->HasMultipleSelection() )
         {
@@ -511,7 +506,7 @@ void guListView::GetSelectedItems( guListItems * items, const bool convertall ) 
         //
         if( convertall && AppendAll )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 items->Add( new guListItem( GetItemId( index ), GetItemName( index ) ) );
             }
@@ -560,9 +555,8 @@ int guListView::GetDragFiles( guDataObjectComposite * files )
 {
     guTrackArray Tracks;
     wxArrayString Filenames;
-    int Index;
     int Count = GetSelectedSongs( &Tracks, true );
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Tracks[ Index ].m_Offset )
             continue;
@@ -664,9 +658,8 @@ void guListView::OnMouse( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 int FindColumnId( const guListViewColumnArray * columns, const int id )
 {
-    int index;
     int count = columns->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( ( * columns )[ index ].m_Id == id )
             return index;
@@ -810,11 +803,10 @@ void guListViewClient::OnMouse( wxMouseEvent &event )
 
         MouseX += GetScrollPos( wxHORIZONTAL );
 
-        int Index;
         int Col_Start = 0;
         int Col_Border = 0;
         int Count = m_Columns->Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( ( * m_Columns )[ Index ].m_Enabled )
             {
@@ -988,9 +980,8 @@ void guListViewClient::OnDrawItem( wxDC &dc, const wxRect &rect, size_t n ) cons
     wxRect cRect = rect;
 
     int StartOfs = rect.x;
-    int index;
     int count = m_Columns->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( ( * m_Columns )[ index ].m_Enabled )
         {
@@ -1072,9 +1063,8 @@ void guListViewClient::OnDrawBackground( wxDC &dc, const wxRect &rect, size_t n 
 
     wxRect cRect = rect;
     int StartOfs = rect.x;
-    int index;
     int count = m_Columns->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( ( * m_Columns )[ index ].m_Enabled )
         {
@@ -1112,9 +1102,8 @@ long guListViewClient::FindItem( long start, const wxString& str, bool partial, 
     if( pos < 0 )
         pos = 0;
 
-    int index;
     int count = GetItemCount();
-    for( index = pos; index < count; index++ )
+    for( int index = pos; index < count; index++ )
     {
         wxString line_upper = GetItemSearchText( index ).Upper();
         if( !partial )
@@ -1252,12 +1241,11 @@ void guListViewHeader::OnPaint( wxPaintEvent &event )
     dc.GetTextExtent( wxT( "hg" ), &wLabel, &hLabel );
     hLabel = ( h / 2 ) - ( hLabel / 2 );
 
-    int index;
     int count = m_Columns->Count();
     wxRect cRect = wxRect( 0, 0, w, h );
     int StartOfs = 0;
     int ScrollPos = m_ListViewClient->GetScrollPos( wxHORIZONTAL );
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         guListViewColumn * CurCol = &m_Columns->Item( index );
         if( CurCol->m_Enabled )
@@ -1316,11 +1304,10 @@ void guListViewHeader::OnMouse( wxMouseEvent &event )
 
     int my = event.GetY();
 
-    int index;
     int col_border = 0;
     int col_start = 0;
     int count = m_Columns->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( ( * m_Columns )[ index ].m_Enabled )
         {
@@ -1416,12 +1403,11 @@ int guListViewHeader::RefreshWidth( void )
     int w, h;
     m_ListViewClient->GetClientSize( &w, &h );
 
-    int index;
     int count = m_Columns->Count();
     if( count > 1 )
     {
         m_Width = 0;
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             if( ( * m_Columns )[ index ].m_Enabled )
             {
@@ -1503,9 +1489,8 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	wxStaticBoxSizer * ColumnsSizer;
 	ColumnsSizer = new wxStaticBoxSizer( new wxStaticBox( this, wxID_ANY, _(" Columns ") ), wxHORIZONTAL );
 
-    int index;
     int count = columns->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         m_ItemsText.Add( ( * columns )[ index ].m_Label );
         m_ItemsData.Add( ( * columns )[ index ].m_Id );
@@ -1548,7 +1533,7 @@ guListViewColEdit::guListViewColEdit( wxWindow * parent, guListViewColumnArray *
 	StdBtnSizerOK->SetDefault();
 
     count = columns->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( ( * columns )[ index ].m_Enabled )
         {
@@ -1579,9 +1564,8 @@ void guListViewColEdit::UpdateColumns( void )
 {
     int ColId;
     int ColPos;
-    int index;
     int count = m_ItemsData.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         ColId = m_ItemsData[ index ];
         ColPos = FindColumnId( m_Columns, ColId );
@@ -1754,9 +1738,8 @@ void guListViewDropFilesThread::AddDropFiles( const wxString &dirname )
 // -------------------------------------------------------------------------------- //
 guListViewDropFilesThread::ExitCode guListViewDropFilesThread::Entry()
 {
-    int index;
     int Count = m_Files.Count();
-    for( index = 0; index < Count; ++index )
+    for( int index = 0; index < Count; ++index )
     {
         if( TestDestroy() )
             return 0;
@@ -1906,9 +1889,8 @@ void guDataObjectComposite::SetFiles( const wxArrayString &files )
 {
     wxFileDataObject * FileDataObject = new wxFileDataObject();
 
-    int Index;
     int Count = files.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         FileDataObject->AddFile( files[ Index ] );
     }
@@ -1921,9 +1903,8 @@ void guDataObjectComposite::SetTracks( const guTrackArray &tracks )
     wxCustomDataObject * TracksObject = new wxCustomDataObject( wxDataFormat( wxT( "x-gutracks/guayadeque-copied-tracks" ) ) );
     m_Tracks = new guTrackArray();
 
-    int Index;
     int Count = tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_Tracks->Add( new guTrack( tracks[ Index ] ) );
     }

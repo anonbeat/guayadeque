@@ -371,9 +371,8 @@ guDiscogsCoverFetcher::~guDiscogsCoverFetcher()
 bool GetNameMatch( const wxString &title, const wxString &search )
 {
     wxArrayString SearchWords = wxStringTokenize( search );
-    int index;
     int count = SearchWords.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( title.Find( SearchWords[ index ].Lower() ) == wxNOT_FOUND )
             return false;
@@ -387,13 +386,12 @@ int guDiscogsCoverFetcher::AddCoverLinks( int pagenum )
     guDiscogs Discogs;
     guDiscogsArtist Artist;
     Discogs.GetArtist( m_Artist, &Artist );
-    int Index;
     int Count = wxMin( (int) Artist.m_Releases.Count(), ( pagenum + 1 ) * guDISCOGS_REQUEST_ITEMS );
     int CheckCount = 0;
 
     //guLogMessage( wxT( "Reading %s %i Releases..." ), m_Artist.c_str(), Count );
 
-    for( Index = ( pagenum * guDISCOGS_REQUEST_ITEMS ); Index < Count; Index++ )
+    for( int Index = ( pagenum * guDISCOGS_REQUEST_ITEMS ); Index < Count; Index++ )
     {
 //        guLogMessage( wxT( "Release '%s' type '%s' format '%s'" ),
 //            Artist.m_Releases[ Index ].m_Title.c_str(),

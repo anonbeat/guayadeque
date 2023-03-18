@@ -231,9 +231,8 @@ guCoverEditor::~guCoverEditor()
     Config->WriteBool( CONFIG_KEY_GENERAL_EMBED_TO_FILES, m_EmbedToFilesChkBox->GetValue(), CONFIG_PATH_GENERAL );
 
     m_DownloadThreadMutex.Lock();
-    int index;
     int count = m_DownloadThreads.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
         if( DownThread )
@@ -490,9 +489,8 @@ wxImage * guCoverEditor::GetSelectedCoverImage( void )
 void guCoverEditor::OnTextCtrlEnter( wxCommandEvent& event )
 {
     m_DownloadThreadMutex.Lock();
-    int index;
     int count = m_DownloadThreads.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
         if( DownThread )
@@ -535,9 +533,8 @@ void guCoverEditor::OnEngineChanged( wxCommandEvent& event )
     if( m_EngineIndex != m_EngineChoice->GetSelection() )
     {
         m_DownloadThreadMutex.Lock();
-        int index;
         int count = m_DownloadThreads.Count();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             guDownloadCoverThread * DownThread = ( guDownloadCoverThread * ) m_DownloadThreads[ index ];
             if( DownThread )

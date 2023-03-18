@@ -263,9 +263,8 @@ wxString guDynPlayList::ToString( void )
         m_SortDesc,
         m_AnyOption );
 
-    int Index;
     int Count = m_Filters.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guFilterItem FilterItem = m_Filters[ Index ];
         RetVal += wxString::Format( wxT( "{%i;%i;%s;%i;%i;%s}:" ),
@@ -442,8 +441,6 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
   wxDialog( parent, wxID_ANY, albumfilter ? _( "Filter Album Browser" ) :
     _( "Dynamic Playlist Editor" ), wxDefaultPosition, wxSize( 600, 400 ), wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxMAXIMIZE_BOX )
 {
-	int index;
-	int count;
 	m_PlayList = playlist;
 	m_Filters = &m_PlayList->m_Filters;
 	m_CurFilter = wxNOT_FOUND;
@@ -473,9 +470,9 @@ guDynPlayListEditor::guDynPlayListEditor( wxWindow * parent, guDynPlayList * pla
 	m_FiltersListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, 0 );
 	m_FiltersListBox->SetMinSize( wxSize( -1,80 ) );
 
-	count = m_Filters->Count();
+	int count = m_Filters->Count();
 	//guLogMessage( wxT( "Found %u filters" ), count );
-	for( index = 0; index < count; index++ )
+	for( int index = 0; index < count; index++ )
 	{
 	    m_FiltersListBox->Append( ( * m_Filters )[ index ].GetLabel() );
 	    //guLogMessage( wxT( "Filter %u : %s" ), index, ( * m_Filters )[ index ].GetLabel().c_str() );

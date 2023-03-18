@@ -36,8 +36,6 @@ namespace Guayadeque {
 void AddOnlineLinksMenu( wxMenu * Menu )
 {
     wxMenu * SubMenu;
-    int index;
-    int count;
     wxMenuItem * MenuItem;
     if( Menu )
     {
@@ -46,9 +44,10 @@ void AddOnlineLinksMenu( wxMenu * Menu )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Links = Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_LINK, wxEmptyString, CONFIG_PATH_SEARCHLINKS_LINKS );
         wxArrayString Names = Config->ReadAStr( CONFIG_KEY_SEARCHLINKS_NAME, wxEmptyString, CONFIG_PATH_SEARCHLINKS_NAMES );
-        if( ( count = Links.Count() ) )
+        int count = Links.Count();
+        if( count )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 wxURI Uri( Links[ index ] );
                 MenuItem = new wxMenuItem( Menu, ID_LINKS_BASE + index, Names[ index ], Links[ index ] );

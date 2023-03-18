@@ -105,6 +105,7 @@ guPlayList::guPlayList( wxWindow * parent, guDbLibrary * db, guPlayerPanel * pla
     Bind( wxEVT_MENU, &guPlayList::OnClearClicked, this, ID_PLAYER_PLAYLIST_CLEAR );
     Bind( wxEVT_MENU, &guPlayList::OnRemoveClicked, this, ID_PLAYER_PLAYLIST_REMOVE );
     Bind( wxEVT_MENU, &guPlayList::OnSaveClicked, this, ID_PLAYER_PLAYLIST_SAVE );
+    Bind( wxEVT_MENU, &guPlayList::OnCreateBestOfClicked, this, ID_PLAYER_PLAYLIST_CREATE_BESTOF );
     Bind( wxEVT_MENU, &guPlayList::OnEditLabelsClicked, this, ID_PLAYER_PLAYLIST_EDITLABELS );
     Bind( wxEVT_MENU, &guPlayList::OnEditTracksClicked, this, ID_PLAYER_PLAYLIST_EDITTRACKS );
     Bind( wxEVT_MENU, &guPlayList::OnSearchClicked, this, ID_PLAYER_PLAYLIST_SEARCH );
@@ -167,6 +168,7 @@ guPlayList::~guPlayList()
     Unbind( wxEVT_MENU, &guPlayList::OnClearClicked, this, ID_PLAYER_PLAYLIST_CLEAR );
     Unbind( wxEVT_MENU, &guPlayList::OnRemoveClicked, this, ID_PLAYER_PLAYLIST_REMOVE );
     Unbind( wxEVT_MENU, &guPlayList::OnSaveClicked, this, ID_PLAYER_PLAYLIST_SAVE );
+    Unbind( wxEVT_MENU, &guPlayList::OnCreateBestOfClicked, this, ID_PLAYER_PLAYLIST_CREATE_BESTOF );
     Unbind( wxEVT_MENU, &guPlayList::OnEditLabelsClicked, this, ID_PLAYER_PLAYLIST_EDITLABELS );
     Unbind( wxEVT_MENU, &guPlayList::OnEditTracksClicked, this, ID_PLAYER_PLAYLIST_EDITTRACKS );
     Unbind( wxEVT_MENU, &guPlayList::OnSearchClicked, this, ID_PLAYER_PLAYLIST_SEARCH );
@@ -310,11 +312,9 @@ void guPlayList::OnDropEnd( void )
 // -------------------------------------------------------------------------------- //
 int guPlayList::GetSelectedSongs( guTrackArray * Songs, const bool isdrag ) const
 {
-    int Index;
-    int Count;
     wxArrayInt Selection = GetSelectedItems( false );
-    Count = Selection.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = Selection.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         Songs->Add( new guTrack( m_Items[ Selection[ Index ] ] ) );
     }
@@ -340,11 +340,9 @@ void guPlayList::RemoveItem( int itemnum )
 // -------------------------------------------------------------------------------- //
 void guPlayList::RemoveSelected()
 {
-    int index;
-    int count;
     wxArrayInt Selected = GetSelectedItems( false );
-    count = Selected.Count();
-    for( index = count - 1; index >= 0; index-- )
+    int count = Selected.Count();
+    for( int index = count - 1; index >= 0; index-- )
     {
         RemoveItem( Selected[ index ] );
     }
@@ -354,10 +352,9 @@ void guPlayList::RemoveSelected()
 //// -------------------------------------------------------------------------------- //
 //static void PrintItems( const guTrackArray &Songs, int IP, int SI, int CI )
 //{
-//    int Index;
 //    int Count = Songs.Count();
 //    printf( "SI: %d  IP: %d  CI: %d\n", SI, IP, CI );
-//    for( Index = 0; Index < Count; Index++ )
+//    for( int Index = 0; Index < Count; Index++ )
 //    {
 //        printf( "%02d ", Songs[ Index ].m_Number );
 //    }
@@ -372,8 +369,6 @@ void guPlayList::MoveSelection( void )
     // Move the Selected Items to the DragOverItem and DragOverFirst
     //
     int     InsertPos;
-    int     Index;
-    int     Count;
     bool    CurItemSet = false;
     guTrackArray MoveItems;
     wxArrayInt Selection = GetSelectedItems( false );
@@ -393,17 +388,17 @@ void guPlayList::MoveSelection( void )
     // Where is the Items to be moved
     InsertPos = m_DragOverAfter ? m_DragOverItem + 1 : m_DragOverItem;
     // How Many elements to move
-    Count = Selection.Count();
+    int Count = Selection.Count();
     //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
     // Get a copy of every element to move
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         MoveItems.Add( m_Items[ Selection[ Index ] ] );
     }
 
     // Remove the Items and move CurItem and InsertPos
     // We move from last (bigger) to first
-    for( Index = Count - 1; Index >= 0; Index-- )
+    for( int Index = Count - 1; Index >= 0; Index-- )
     {
         //guLogMessage( wxT( "%i) ci:%i ip:%i" ), Index, m_CurItem, InsertPos );
         m_Items.RemoveAt( Selection[ Index ] );
@@ -421,7 +416,7 @@ void guPlayList::MoveSelection( void )
     //PrintItems( m_Items, InsertPos, Selection[ 0 ], m_CurItem );
 
     // Insert every element at the InsertPos
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_Items.Insert( MoveItems[ Index ], InsertPos );
         if( !CurItemSet && ( InsertPos <= m_CurItem ) )
@@ -455,16 +450,14 @@ void guPlayList::OnKeyDown( wxKeyEvent &event )
 void guPlayList::SetPlayList( const guTrackArray &NewItems )
 {
     wxMutexLocker Lock( m_ItemsMutex );
-    int Index;
-    int Count;
     m_Items = NewItems;
 
     SetSelection( -1 );
 
     m_CurItem = 0;
-    Count = m_Items.Count();
     m_TotalLen = 0;
-    for( Index = 0; Index < Count; Index++ )
+    int Count = m_Items.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
       m_TotalLen += m_Items[ Index ].m_Length;
     }
@@ -565,11 +558,10 @@ void guPlayList::DrawItem( wxDC &dc, const wxRect &rect, const int row, const in
 //        if( Item.m_Type != guTRACK_TYPE_RADIOSTATION )
 //        {
             // Draw the rating
-            int index;
             //OffsetSecLine += 2;
             CutRect.x += 1;
             CutRect.y += 2;
-            for( index = 0; index < 5; index++ )
+            for( int index = 0; index < 5; index++ )
             {
                dc.DrawBitmap( ( index >= Item.m_Rating ) ? * m_NormalStar : * m_SelectStar,
                               CutRect.x + ( 11 * index ), CutRect.y + m_SecondLineOffset + 2, true );
@@ -985,8 +977,7 @@ wxString guPlayList::GetLengthStr() const
 // -------------------------------------------------------------------------------- //
 void guPlayList::ClearItems()
 {
-    int Index;
-    for( Index = m_Items.Count() - 1; Index >= 0; Index-- )
+    for( int Index = m_Items.Count() - 1; Index >= 0; Index-- )
     {
         m_Items.RemoveAt( Index );
     }
@@ -1008,7 +999,6 @@ void guPlayList::ClearItems()
 // -------------------------------------------------------------------------------- //
 void guPlayList::Randomize( const bool isplaying )
 {
-    int index;
     int pos;
     int newpos;
     int count = m_Items.Count();
@@ -1028,7 +1018,7 @@ void guPlayList::Randomize( const bool isplaying )
             if( m_CurItem != wxNOT_FOUND )
                 m_CurItem = wxNOT_FOUND;
         }
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             do {
                 pos = guRandom( count );
@@ -1098,8 +1088,6 @@ wxString guPlayList::FindCoverFile( const wxString &dirname )
 void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold, const int aftercurrent )
 {
     wxMutexLocker Lock( m_ItemsMutex );
-    int Index;
-    int Count;
 
     int InsertPosition = 0;
 
@@ -1161,8 +1149,8 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold,
         }
     }
 
-    Count = items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    int Count = items.Count();
+    for( int Index = 0; Index < Count; Index++ )
     {
         AddItem( items[ Index ], InsertPosition + Index );
         m_TotalLen += items[ Index ].m_Length;
@@ -1184,8 +1172,6 @@ void guPlayList::AddToPlayList( const guTrackArray &items, const bool deleteold,
 void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurrent, const int pos )
 {
     // Check if its a uri or a filename
-    int Index;
-    int Count;
     wxString FileName;
     guTrack Track;
     guPodcastItem PodcastItem;
@@ -1258,9 +1244,10 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
     {
         int InsertPos = wxMax( pos, 0 );
         guCuePlaylistFile CuePlaylistFile( filename );
-        if( ( Count = CuePlaylistFile.Count() ) )
+        int Count = CuePlaylistFile.Count();
+        if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 guCuePlaylistItem &CueItem = CuePlaylistFile.GetItem( Index );
                 Track.m_SongId = wxNOT_FOUND;
@@ -1288,9 +1275,10 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
     {
         int InsertPos = wxMax( pos, 0 );
         guPlaylistFile PlayList( filename );
-        if( ( Count = PlayList.Count() ) )
+        int Count = PlayList.Count();
+        if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 AddPlayListItem( PlayList.GetItem( Index ).m_Location, aftercurrent, InsertPos++ );
             }
@@ -1483,21 +1471,19 @@ void guPlayList::AddPlayListItem( const wxString &filename, const int aftercurre
 // -------------------------------------------------------------------------------- //
 void AddPlayListCommands( wxMenu * Menu, int SelCount )
 {
-    wxMenu * SubMenu;
-    int index;
-    int count;
-    wxMenuItem * MenuItem;
     if( Menu )
     {
-        SubMenu = new wxMenu();
+        wxMenuItem * MenuItem;
+        wxMenu * SubMenu = new wxMenu();
         wxASSERT( SubMenu );
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
         wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-        if( ( count = Commands.Count() ) )
+        int count = Commands.Count();
+        if( count )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 if( ( ( Commands[ index ].Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND ) ||
                       ( Commands[ index ].Find( guCOMMAND_COVERPATH ) != wxNOT_FOUND ) )
@@ -1601,6 +1587,8 @@ void guPlayList::CreateContextMenu( wxMenu * Menu ) const
     if( SelCount == 1 )
     {
         MenuItem = new wxMenuItem( Menu, ID_PLAYLIST_SMART_PLAYLIST, _( "Create Smart Playlist" ), _( "Create a smart playlist from this track" ) );
+        Menu->Append( MenuItem );
+        MenuItem = new wxMenuItem( Menu, ID_PLAYER_PLAYLIST_CREATE_BESTOF, _( "Create Best Of Playlist" ), _( "Create a playlist with the best of this artist" ) );
         Menu->Append( MenuItem );
     }
 
@@ -1707,12 +1695,11 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
 {
     guTrackArray * Tracks;
     wxArrayInt SelectedItems = GetSelectedItems( false );
-    int index;
     int count = SelectedItems.Count();
     if( count )
     {
         Tracks = new guTrackArray();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             Tracks->Add( new guTrack( m_Items[ SelectedItems[ index ] ] ) );
         }
@@ -1722,10 +1709,10 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
         Tracks = new guTrackArray( m_Items );
     }
 
-    int Index = event.GetId() - ID_COPYTO_BASE;
-    if( Index >= guCOPYTO_DEVICE_BASE )
+    int CommandIndex = event.GetId() - ID_COPYTO_BASE;
+    if( CommandIndex >= guCOPYTO_DEVICE_BASE )
     {
-        Index -= guCOPYTO_DEVICE_BASE;
+        CommandIndex -= guCOPYTO_DEVICE_BASE;
         event.SetId( ID_MAINFRAME_COPYTODEVICE_TRACKS );
     }
     else
@@ -1733,7 +1720,7 @@ void guPlayList::OnCopyToClicked( wxCommandEvent &event )
         event.SetId( ID_MAINFRAME_COPYTO );
     }
 
-    event.SetInt( Index );
+    event.SetInt( CommandIndex );
     event.SetClientData( ( void * ) Tracks );
     wxPostEvent( m_MainFrame, event );
 }
@@ -1746,9 +1733,8 @@ void inline UpdateTracks( const guTrackArray &tracks, const wxArrayInt &changedf
 
     guTrackArray CurrentTracks;
     wxArrayInt   CurrentFlags;
-    int Index;
     int Count = MediaViewerPtrs.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         CurrentTracks.Empty();
         CurrentFlags.Empty();
@@ -1773,11 +1759,9 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
             guTrackArray SelectedTracks;
             wxArrayInt PodcastsIds;
 
-            int Index;
-            int Count;
             wxArrayInt Selected = GetSelectedItems( false );
-            Count = Selected.Count();
-            for( Index = Count - 1; Index >= 0; Index-- )
+            int Count = Selected.Count();
+            for( int Index = Count - 1; Index >= 0; Index-- )
             {
                 const guTrack & Track = m_Items[ Selected[ Index ] ];
 
@@ -1807,7 +1791,7 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
 
                 if( ( Count = MediaViewerPtrs.Count() ) )
                 {
-                    for( Index = 0; Index < Count; Index++ )
+                    for( int Index = 0; Index < Count; Index++ )
                     {
                         guMediaViewer * MediaViewer = ( guMediaViewer * ) MediaViewerPtrs[ Index ];
                         guTrackArray MediaViewerTracks;
@@ -1828,7 +1812,7 @@ void guPlayList::OnDeleteFromLibrary( wxCommandEvent &event )
 
                 m_MainFrame->RemovePodcastDownloadItems( &Podcasts );
 
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     DbPodcasts->SetPodcastItemStatus( PodcastsIds[ Index ], guPODCAST_STATUS_DELETED );
                 }
@@ -1853,11 +1837,9 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
         {
             guTrackArray SelectedTracks;
             wxArrayInt PodcastsIds;
-            int Index;
-            int Count;
             wxArrayInt Selected = GetSelectedItems( false );
-            Count = Selected.Count();
-            for( Index = Count - 1; Index >= 0; Index-- )
+            int Count = Selected.Count();
+            for( int Index = Count - 1; Index >= 0; Index-- )
             {
                 const guTrack & Track = m_Items[ Selected[ Index ] ];
 
@@ -1896,7 +1878,7 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
 
                 if( ( Count = MediaViewerPtrs.Count() ) )
                 {
-                    for( Index = 0; Index < Count; Index++ )
+                    for( int Index = 0; Index < Count; Index++ )
                     {
                         guMediaViewer * MediaViewer = ( guMediaViewer * ) MediaViewerPtrs[ Index ];
                         guTrackArray MediaViewerTracks;
@@ -1917,7 +1899,7 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
 
                 m_MainFrame->RemovePodcastDownloadItems( &Podcasts );
 
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     DbPodcasts->SetPodcastItemStatus( PodcastsIds[ Index ], guPODCAST_STATUS_DELETED );
                 }
@@ -1935,14 +1917,13 @@ void guPlayList::OnDeleteFromDrive( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnSaveClicked( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
     wxArrayInt SelectedItems = GetSelectedItems( false );
     guTrackArray SelectedTracks;
 
-    if( ( Count = SelectedItems.Count() ) )
+    int Count = SelectedItems.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             const guTrack &Track = m_Items[ SelectedItems[ Index ] ];
             if( Track.m_MediaViewer )
@@ -1952,7 +1933,7 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
     else
     {
         Count = m_Items.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             const guTrack &Track = m_Items[ Index ];
             if( Track.m_MediaViewer )
@@ -1973,7 +1954,7 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
 
             wxArrayInt TrackIds;
             Count = MediaViewerTracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 TrackIds.Add( MediaViewerTracks[ Index ].m_SongId );
             }
@@ -2019,6 +2000,24 @@ void guPlayList::OnSaveClicked( wxCommandEvent &event )
 }
 
 // -------------------------------------------------------------------------------- //
+void guPlayList::OnCreateBestOfClicked( wxCommandEvent &event )
+{
+    wxArrayInt SelectedItems = GetSelectedItems( false );
+    if( !SelectedItems.IsEmpty() )
+    {
+        const guTrack &Track = m_Items[ SelectedItems[ 0 ] ];
+        if( Track.m_MediaViewer )
+        {
+            Track.m_MediaViewer->CreateBestOfPlaylist( Track );
+        }
+        else
+        {
+            guLogMessage( _( "Can't create a playlist without mediaviewer." ) );
+        }
+    }
+}
+
+// -------------------------------------------------------------------------------- //
 void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
 {
     guTrackArray Songs;
@@ -2029,12 +2028,11 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
     //
     guTrack * Track;
     wxArrayInt SelectedItems = GetSelectedItems( false );
-    int index;
 
     int count = SelectedItems.Count();
     if( count )
     {
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             Track = &m_Items[ SelectedItems[ index ] ];
             if( !Track->m_Offset && ( Track->m_Type < guTRACK_TYPE_RADIOSTATION ) )
@@ -2048,7 +2046,7 @@ void guPlayList::OnEditTracksClicked( wxCommandEvent &event )
         // If there is no selection then use all songs that are
         // recognized in the database.
         count = m_Items.Count();
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             Track = &m_Items[ index ];
             if( !Track->m_Offset && ( Track->m_Type < guTRACK_TYPE_RADIOSTATION ) )
@@ -2086,11 +2084,10 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
 
     //
     wxArrayInt SelectedItems = GetSelectedItems( false );
-    int Index;
     int Count = SelectedItems.Count();
     if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             const guTrack &Track = m_Items[ SelectedItems[ Index ] ];
             if( Track.m_MediaViewer )
@@ -2103,8 +2100,8 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
     {
         // If there is no selection then use all songs that are
         // recognized in the database.
-        Count = m_Items.Count();
-        for( Index = 0; Index < Count; Index++ )
+        int Count = m_Items.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             const guTrack &Track = m_Items[ Index ];
             if( Track.m_MediaViewer )
@@ -2125,11 +2122,10 @@ void guPlayList::OnEditLabelsClicked( wxCommandEvent &event )
             guTrackArray MediaViewerTracks;
             GetMediaViewerTracks( SelectedTracks, MediaViewer, MediaViewerTracks );
 
-
             guListItems Tracks;
             wxArrayInt  TrackIds;
-
-            for( Index = 0; Index < Count; Index++ )
+            int Count = MediaViewerTracks.Count();
+            for( int Index = 0; Index < Count; Index++ )
             {
                 const guTrack &Track = MediaViewerTracks[ Index ];
                 Tracks.Add( new guListItem( Track.m_SongId, Track.m_SongName ) );
@@ -2352,21 +2348,17 @@ void guPlayList::OnSearchLinkClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guPlayList::OnCommandClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt Selection = GetSelectedItems( false );
     if( Selection.Count() )
     {
-        index = event.GetId();
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
             wxASSERT( Commands.Count() > 0 );
 
-            index -= ID_COMMANDS_BASE;
-            wxString CurCmd = Commands[ index ];
+            int CommandIndex = event.GetId() - ID_COMMANDS_BASE;
+            wxString CurCmd = Commands[ CommandIndex ];
 
             const guTrack &Track = m_Items[ Selection[ 0 ] ];
 
@@ -2400,10 +2392,10 @@ void guPlayList::OnCommandClicked( wxCommandEvent &event )
             if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
             {
                 wxString SongList = wxEmptyString;
-                count = Selection.Count();
+                int count = Selection.Count();
                 if( count )
                 {
-                    for( index = 0; index < count; index++ )
+                    for( int index = 0; index < count; index++ )
                     {
                         SongList += wxT( " \"" ) + m_Items[ Selection[ index ] ].m_FileName + wxT( "\"" );
                     }
@@ -2425,13 +2417,11 @@ void guPlayList::UpdatedTracks( const guTrackArray * tracks )
         return;
 
     bool found = false;
-    int index;
     int count = tracks->Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        int item;
         int itemcnt = m_Items.Count();
-        for( item = 0; item < itemcnt; item++ )
+        for( int item = 0; item < itemcnt; item++ )
         {
             if( ( m_Items[ item ].m_FileName == tracks->Item( index ).m_FileName ) &&
                 ( m_Items[ item ].m_Offset == tracks->Item( index ).m_Offset ) )
@@ -2502,12 +2492,11 @@ wxString guPlayList::GetSearchText( int item ) const
 void guPlayList::StopAtEnd( void )
 {
     int ItemToFlag = wxNOT_FOUND;
-    int Index;
-    int Count;
     wxArrayInt Selection = GetSelectedItems( false );
-    if( ( Count = Selection.Count() ) )
+    int Count = Selection.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( Selection[ Index ] > ItemToFlag )
                 ItemToFlag = Selection[ Index ];
@@ -2546,16 +2535,14 @@ void guPlayList::ClearStopAtEnd( void )
 void guPlayList::OnSetRating( wxCommandEvent &event )
 {
     guLogMessage( wxT( "OnSetRating( %i )" ), event.GetId() - ID_PLAYERPANEL_SETRATING_0 );
-    int Index;
-    int Count;
     wxArrayInt Selected = GetSelectedItems( false );
-    Count = Selected.Count();
+    int Count = Selected.Count();
     if( Count )
     {
         int Rating = event.GetId() - ID_PLAYERPANEL_SETRATING_0;
         guTrackArray UpdatedTracks;
 
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             int ItemNum = Selected[ Index ];
             m_Items[ ItemNum ].m_Rating = Rating;
@@ -2585,9 +2572,8 @@ void guPlayList::SetTracksRating( const guTrackArray &tracks, const int rating )
 
     guTrackArray CurrentTracks;
     wxArrayInt   CurrentFlags;
-    int Index;
     int Count = MediaViewerPtrs.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         CurrentTracks.Empty();
         CurrentFlags.Empty();
@@ -2611,6 +2597,9 @@ void guPlayList::SetTracksRating( const guTrackArray &tracks, const int rating )
         m_PlayerPanel->UpdatedTracks( &CurrentTracks );
     }
 }
+    int Index;
+    int Count;
+
 
 // -------------------------------------------------------------------------------- //
 void guPlayList::MediaViewerCreated( const wxString &uniqueid, guMediaViewer * mediaviewer )
@@ -2624,9 +2613,8 @@ void guPlayList::MediaViewerCreated( const wxString &uniqueid, guMediaViewer * m
 // -------------------------------------------------------------------------------- //
 void guPlayList::MediaViewerClosed( guMediaViewer * mediaviewer )
 {
-    int Index;
     int Count = m_Items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack & Track = m_Items[ Index ];
         if( Track.m_MediaViewer == mediaviewer )
@@ -2661,9 +2649,8 @@ void guPlayList::CheckPendingLoadItems( const wxString &uniqueid, guMediaViewer 
         return;
 
     wxString FileName;
-    int Index;
     int Count = m_Items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack & Track = m_Items[ Index ];
         if( Track.m_Type == Type )
@@ -2732,14 +2719,12 @@ void guPlayList::OnCreateSmartPlaylist( wxCommandEvent &event )
 void guPlayList::SavePlaylistTracks( void )
 {
     guTrackArray Tracks;
-    int Index;
-    int Count;
     guConfig * Config = ( guConfig * ) guConfig::Get();
 
     if( Config->ReadBool( CONFIG_KEY_PLAYLIST_SAVE_ON_CLOSE, true, CONFIG_PATH_PLAYLIST ) )
     {
-        Count = m_Items.Count();
-        for( Index = 0; Index < Count; Index++ )
+        int Count = m_Items.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( m_Items[ Index ].m_Type < guTRACK_TYPE_IPOD )
                 Tracks.Add( new guTrack( m_Items[ Index ] ) );
@@ -2758,14 +2743,11 @@ void guPlayList::LoadPlaylistTracks( void )
     wxBusyInfo BusyInfo( _( "Loading tracks. Please wait" ) );
     wxTheApp->Yield();
 
-    int Index;
-    int Count;
-
     guMainApp * MainApp = ( guMainApp * ) wxTheApp;
     if( MainApp && MainApp->argc > 1 )
     {
-        Count = MainApp->argc;
-        for( Index = 1; Index < Count; Index++ )
+        int Count = MainApp->argc;
+        for( int Index = 1; Index < Count; Index++ )
         {
             //guLogMessage( wxT( "%u-%u %s" ), Index, MainApp->argc, MainApp->argv[ Index ] );
             AddPlayListItem( MainApp->argv[ Index ], guINSERT_AFTER_CURRENT_NONE, wxNOT_FOUND );
@@ -2783,8 +2765,8 @@ void guPlayList::LoadPlaylistTracks( void )
 
         wxTheApp->Yield();
 
-        Count = Tracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        int Count = Tracks.Count();
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( Tracks[ Index ].m_Offset ||
                 ( Tracks[ Index ].m_Type == guTRACK_TYPE_RADIOSTATION ) )

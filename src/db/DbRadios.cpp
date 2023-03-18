@@ -82,9 +82,8 @@ guDbRadios::guDbRadios( const wxString &dbname ) : guDb( dbname )
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_labelid' on radiosetlabels (radiosetlabel_labelid ASC);" ) );
     query.Add( wxT( "CREATE INDEX IF NOT EXISTS 'radiosetlabel_stationidid' on radiosetlabels (radiosetlabel_stationid ASC);" ) );
 
-    int Index;
     int Count = query.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ExecuteUpdate( query[ Index ] );
     }
@@ -123,11 +122,10 @@ int guDbRadios::GetRadioFiltersCount( void ) const
 wxString inline RadioTextFilterToSQL( const wxArrayString &textfilters, const int source )
 {
   long count;
-  long index;
   wxString RetVal = wxEmptyString;
   if( ( count = textfilters.Count() ) )
   {
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( source == guRADIO_SOURCE_USER )
         {
@@ -320,15 +318,13 @@ void guDbRadios::SetRadioGenres( const wxArrayString &Genres )
 {
   wxString query;
   wxSQLite3ResultSet dbRes;
-  int index;
-  int count;
   wxString GenreName;
 
   query = wxT( "DELETE FROM radiogenres;" );
   ExecuteUpdate( query );
 
-  count = Genres.Count();
-  for( index = 0; index < count; index++ )
+  int count = Genres.Count();
+  for( int index = 0; index < count; index++ )
   {
     GenreName = Genres[ index ];
     escape_query_str( &GenreName );
@@ -567,12 +563,10 @@ void guDbRadios::SetRadioStation( const guRadioStation * radiostation )
 // -------------------------------------------------------------------------------- //
 void guDbRadios::SetRadioStations( const guRadioStations * RadioStations )
 {
-  int index;
-  int count;
-
-  if( ( count = RadioStations->Count() ) )
+  int count = RadioStations->Count();
+  if( count )
   {
-      for( index = 0; index < count; index++ )
+      for( int index = 0; index < count; index++ )
       {
           SetRadioStation( &RadioStations->Item( index ) );
       }
@@ -652,9 +646,8 @@ guArrayListItems guDbRadios::GetStationsLabels( const wxArrayInt &Stations )
   guArrayListItems RetVal;
   guArrayListItem * CurItem = NULL;
   int Id;
-  int index;
   int count = Stations.Count();
-  for( index = 0; index < count; index++ )
+  for( int index = 0; index < count; index++ )
   {
       Id = Stations[ index ];
       RetVal.Add( new guArrayListItem( Id ) );
@@ -667,7 +660,7 @@ guArrayListItems guDbRadios::GetStationsLabels( const wxArrayInt &Stations )
   //guLogMessage( query );
   dbRes = ExecuteQuery( query );
 
-  index = 0;
+  int index = 0;
   CurItem = &RetVal[ index ];
   while( dbRes.NextRow() )
   {

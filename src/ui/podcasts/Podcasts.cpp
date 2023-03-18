@@ -261,12 +261,11 @@ int guPodcastChannel::GetUpdateItems( guDbPodcasts * db, guPodcastItemArray * it
     {
         Words = guSplitWords( m_DownloadText );
     }
-    int Index;
-    int Count;
-    if( ( Count = Words.Count() ) )
+    int Count = Words.Count();
+    if( Count )
     {
         query += wxT( "AND ( " );
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             query += wxString::Format( wxT( "podcastitem_title LIKE '%%%s%%' OR " \
                                             "podcastitem_summary LIKE '%%%s%%'" ),
@@ -374,12 +373,11 @@ int guPodcastChannel::CheckDownloadItems( guDbPodcasts * db, guMainFrame * mainf
         guPodcastItemArray Podcasts;
         GetPendingChannelItems( db, m_Id, &Podcasts );
 
-        int Index;
         int Count = Podcasts.Count();
         if( Count )
         {
             mainframe->RemovePodcastDownloadItems( &Podcasts );
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 db->SetPodcastItemStatus( Podcasts[ Index ].m_Id, guPODCAST_STATUS_NORMAL );
             }
@@ -598,23 +596,17 @@ void guPodcastDownloadQueueThread::SendUpdateEvent( guPodcastItem * podcastitem 
 // -------------------------------------------------------------------------------- //
 void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, bool priority )
 {
-    int Index;
     int Count = items->Count();
     if( Count )
     {
         Lock();
-        //if( !TestDestroy() )
-        //{
-            for( Index = 0; Index < Count; Index++ )
-            {
-                //if( TestDestroy() )
-                //    break;
-                if( priority )
-                    m_Items.Insert( new guPodcastItem( items->Item( Index ) ), m_CurPos );
-                else
-                    m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
-            }
-        //}
+        for( int Index = 0; Index < Count; Index++ )
+        {
+            if( priority )
+                m_Items.Insert( new guPodcastItem( items->Item( Index ) ), m_CurPos );
+            else
+                m_Items.Add( new guPodcastItem( items->Item( Index ) ) );
+        }
         Unlock();
     }
 
@@ -628,9 +620,8 @@ void guPodcastDownloadQueueThread::AddPodcastItems( guPodcastItemArray * items, 
 // -------------------------------------------------------------------------------- //
 int guPodcastDownloadQueueThread::FindPodcastItem( guPodcastItem * podcastitem )
 {
-    int Index;
     int Count = m_Items.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Items[ Index ].m_Enclosure == podcastitem->m_Enclosure )
             return Index;
@@ -642,27 +633,21 @@ int guPodcastDownloadQueueThread::FindPodcastItem( guPodcastItem * podcastitem )
 // -------------------------------------------------------------------------------- //
 void guPodcastDownloadQueueThread::RemovePodcastItems( guPodcastItemArray * items )
 {
-    int Index;
     int ItemPos;
     int Count = items->Count();
     if( Count && m_Items.Count() )
     {
         Lock();
-        //if( !TestDestroy() )
-        //{
-            for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
+        {
+            if( ( ItemPos = FindPodcastItem( &items->Item( Index ) ) ) != wxNOT_FOUND )
             {
-                //if( TestDestroy() )
-                //    break;
-                if( ( ItemPos = FindPodcastItem( &items->Item( Index ) ) ) != wxNOT_FOUND )
-                {
-                    m_Items.RemoveAt( ItemPos );
+                m_Items.RemoveAt( ItemPos );
 
-                    if( ItemPos < m_CurPos )
-                        m_CurPos--;
-                }
+                if( ItemPos < m_CurPos )
+                    m_CurPos--;
             }
-        //}
+        }
         Unlock();
     }
 }

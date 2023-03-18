@@ -164,9 +164,8 @@ wxString RemoveSearchFilters( const wxString &SearchStr )
 // -------------------------------------------------------------------------------- //
 bool SearchCoverWords( const wxString &FileName, const wxArrayString &Strings )
 {
-    int index;
     int count = Strings.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( FileName.Find( Strings[ index ] ) != wxNOT_FOUND )
             return true;
@@ -308,10 +307,8 @@ wxString guURLEncode( const wxString &url, bool encodespace )
     wxChar CurChar;
 
     wxCharBuffer CharBuffer = url.ToUTF8();
-	int Index;
 	int Count = strlen( CharBuffer );
-
-	for( Index = 0; Index < Count; ++Index )
+	for( int Index = 0; Index < Count; ++Index )
 	{
 		CurChar = CharBuffer[ Index ];
 
@@ -340,11 +337,9 @@ wxString guFileDnDEncode( const wxString &file )
 {
   wxString RetVal;
   wxString HexCode;
-  size_t index;
   wxCharBuffer CharBuffer = file.ToUTF8();
   size_t StrLen = strlen( CharBuffer );
-
-  for( index = 0; index < StrLen; index++ )
+  for( size_t index = 0; index < StrLen; index++ )
   {
     wxChar C = CharBuffer[ index ];
     {
@@ -501,9 +496,8 @@ void CheckSymLinks( wxArrayString &libpaths )
     char TmpBuf[ 4096 ];
     int Result;
 
-    int Index;
     int Count = libpaths.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         Result = readlink( libpaths[ Index ].char_str(), TmpBuf, WXSIZEOF( TmpBuf ) - sizeof( char ) );
         if( Result != -1 )
@@ -518,9 +512,8 @@ void CheckSymLinks( wxArrayString &libpaths )
 // -------------------------------------------------------------------------------- //
 bool CheckFileLibPath( const wxArrayString &LibPaths, const wxString &filename )
 {
-    int index;
     int count = LibPaths.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( filename.StartsWith( LibPaths[ index ] ) )
             return true;
@@ -806,9 +799,8 @@ bool guRemoveDir( const wxString &path )
 void GetMediaViewerTracks( const guTrackArray &sourcetracks, const wxArrayInt &sourceflags,
                                  const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags )
 {
-    int Index;
     int Count = sourcetracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = sourcetracks[ Index ];
         if( Track.m_MediaViewer == mediaviewer )
@@ -823,9 +815,8 @@ void GetMediaViewerTracks( const guTrackArray &sourcetracks, const wxArrayInt &s
 void GetMediaViewerTracks( const guTrackArray &sourcetracks, const int flags,
                                  const guMediaViewer * mediaviewer, guTrackArray &tracks, wxArrayInt &changedflags )
 {
-    int Index;
     int Count = sourcetracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = sourcetracks[ Index ];
         if( Track.m_MediaViewer == mediaviewer )
@@ -839,9 +830,8 @@ void GetMediaViewerTracks( const guTrackArray &sourcetracks, const int flags,
 // -------------------------------------------------------------------------------- //
 void GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer * mediaviewer, guTrackArray &tracks )
 {
-    int Index;
     int Count = sourcetracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = sourcetracks[ Index ];
         if( Track.m_MediaViewer == mediaviewer )
@@ -854,9 +844,8 @@ void GetMediaViewerTracks( const guTrackArray &sourcetracks, const guMediaViewer
 // -------------------------------------------------------------------------------- //
 void GetMediaViewersList( const guTrackArray &tracks, wxArrayPtrVoid &MediaViewerPtrs )
 {
-    int Index;
     int Count = tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack &Track = tracks[ Index ];
         guMediaViewer * MediaViewer = Track.m_MediaViewer;

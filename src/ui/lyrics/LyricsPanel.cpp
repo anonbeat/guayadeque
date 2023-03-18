@@ -808,9 +808,8 @@ void guLyricsPanel::UpdatedTracks( const guTrackArray * tracks )
     if( !m_CurrentTrack )
         return;
 
-    int Index;
     int Count = tracks->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack * Track = &tracks->Item( Index );
         if( Track->m_FileName == m_CurrentTrack->m_FileName )
@@ -1076,9 +1075,8 @@ void guLyricSource::ReadNotFoundItems( wxXmlNode * xmlnode )
 wxString guCharsReplace( const wxString &text, const wxString &bannedchars, const wxString &replacechar )
 {
     wxString RetVal;
-    int Index;
     int Count = text.Length();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxChar C = text[ Index ];
         if( wxStrchr( bannedchars, C ) )
@@ -1092,9 +1090,8 @@ wxString guCharsReplace( const wxString &text, const wxString &bannedchars, cons
 wxString guLyricSource::SourceFieldClean( const wxString &field )
 {
     wxString RetVal = field;
-    int Index;
     int Count = m_ReplaceItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceReplace SourceReplace = m_ReplaceItems[ Index ];
         RetVal = guCharsReplace( RetVal, SourceReplace.Search(), SourceReplace.Replace() );
@@ -1117,11 +1114,10 @@ guLyricSearchEngine::guLyricSearchEngine()
 guLyricSearchEngine::~guLyricSearchEngine()
 {
     m_LyricSearchThreadsMutex.Lock();
-    int Index;
     int Count;
     if( ( Count = m_LyricSearchThreads.Count() ) )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guLyricSearchThread * LyrycSearchThread = m_LyricSearchThreads[ Index ];
             LyrycSearchThread->Pause();
@@ -1279,14 +1275,13 @@ void guLyricSearchEngine::TargetMoveDown( const int index )
 // -------------------------------------------------------------------------------- //
 void SaveLyricNotFound( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 {
-    int Index;
     int Count;
     if( !( Count = lyricsource->NotFoundCount() ) )
         return;
 
     wxXmlNode * NotFoundNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "notfound" ) );
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxString NotFoundTag = lyricsource->NotFoundItem( Index );
 
@@ -1304,14 +1299,13 @@ void SaveLyricNotFound( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 // -------------------------------------------------------------------------------- //
 void SaveLyricExclude( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 {
-    int Index;
     int Count;
     if( !( Count = lyricsource->ExcludeCount() ) )
         return;
 
     wxXmlNode * ExcludeNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "exclude" ) );
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceExtract * ExcludeItem = lyricsource->ExcludeItem( Index );
 
@@ -1339,14 +1333,13 @@ void SaveLyricExclude( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 // -------------------------------------------------------------------------------- //
 void SaveLyricExtract( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 {
-    int Index;
     int Count;
     if( !( Count = lyricsource->ExtractCount() ) )
         return;
 
     wxXmlNode * ExtractNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "extract" ) );
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceExtract * ExtractItem = lyricsource->ExtractItem( Index );
 
@@ -1375,14 +1368,13 @@ void SaveLyricExtract( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 // -------------------------------------------------------------------------------- //
 void SaveLyricReplace( wxXmlNode * xmlnode, guLyricSource * lyricsource )
 {
-    int Index;
     int Count;
     if( !( Count = lyricsource->ReplaceCount() ) )
         return;
 
     wxXmlNode * ReplaceNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "replace" ) );
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceReplace * ReplaceItem = lyricsource->ReplaceItem( Index );
 
@@ -1441,9 +1433,8 @@ bool guLyricSearchEngine::Save( void )
 
     wxXmlNode * SourcesNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "lyricsources" ) );
 
-    int Index;
     int Count = m_LyricSources.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         SaveLyricSource( SourcesNode, &m_LyricSources[ Index ], wxT( "lyricsource" ) );
     }
@@ -1451,7 +1442,7 @@ bool guLyricSearchEngine::Save( void )
 
     wxXmlNode * TargetsNode = new wxXmlNode( wxXML_ELEMENT_NODE, wxT( "lyrictargets" ) );
     Count = m_LyricTargets.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         SaveLyricSource( TargetsNode, &m_LyricTargets[ Index ], wxT( "lyrictarget" ) );
     }
@@ -1517,9 +1508,8 @@ void guLyricSearchEngine::SearchFinished( guLyricSearchThread * searchthread )
 void guLyricSearchEngine::RemoveContextThread( guLyricSearchContext * searchcontext )
 {
     m_LyricSearchThreadsMutex.Lock();
-    int Index;
     int Count = m_LyricSearchThreads.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSearchThread * LyricSearchThread = m_LyricSearchThreads[ Index ];
         if( LyricSearchThread->LyricSearchContext() == searchcontext )
@@ -1569,9 +1559,8 @@ guLyricSearchThread::~guLyricSearchThread()
 // -------------------------------------------------------------------------------- //
 bool guLyricSearchThread::CheckNotFound( guLyricSource &lyricsource )
 {
-    int Index;
     int Count = lyricsource.NotFoundCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxString NotFoundLabel = lyricsource.NotFoundItem( Index );
         if( m_LyricText.Find( NotFoundLabel ) != wxNOT_FOUND )
@@ -1618,11 +1607,10 @@ wxString DoExtractTag( const wxString &content, const wxString &tag )
 wxString guLyricSearchThread::CheckExtract( const wxString &content, guLyricSource &lyricsource )
 {
     wxString RetVal = wxEmptyString;
-    int Index;
     int Count = lyricsource.ExtractCount();
     if( !Count )
         return content;
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceExtract * LyricSourceExtract = lyricsource.ExtractItem( Index );
         if( LyricSourceExtract->IsSingleOption() )
@@ -1677,9 +1665,8 @@ wxString DoExcludeTag( const wxString &content, const wxString &tag )
 wxString guLyricSearchThread::CheckExclude( const wxString &content, guLyricSource &lyricsource )
 {
     wxString RetVal = content;
-    int Index;
     int Count = lyricsource.ExcludeCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceExclude * LyricSourceExclude = lyricsource.ExcludeItem( Index );
         if( LyricSourceExclude->IsSingleOption() )
@@ -1709,9 +1696,8 @@ wxString guLyricSearchThread::DoReplace( const wxString &text, const wxString &s
 wxString guLyricSearchThread::DoReplace( const wxString &text, guLyricSource &lyricsource )
 {
     wxString RetVal = text;
-    int Index;
     int Count = lyricsource.ReplaceCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceReplace * LyricSourceReplace = lyricsource.ReplaceItem( Index );
         RetVal = DoReplace( RetVal, LyricSourceReplace->Search(), LyricSourceReplace->Replace() );
@@ -1724,9 +1710,8 @@ wxString SpecialCase( const wxString &text )
 {
     wxString RetVal;
     wxArrayString Words = wxStringTokenize( text, wxT( " " ) );
-    int Index;
     int Count = Words.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         Words[ Index ][ 0 ] = wxToupper( Words[ Index ][ 0 ] );
         RetVal += Words[ Index ] + wxT( " " );
@@ -1876,9 +1861,8 @@ void guLyricSearchThread::ProcessSave( guLyricSource &lyricsource )
     if( !TestDestroy() && ( m_LyricSearchContext->DoSaveProcess() || m_ForceSaveProcess ) )
     {
         guLyricSearchEngine * LyricSearchEngine = m_LyricSearchContext->m_LyricSearchEngine;
-        int Index;
         int Count = LyricSearchEngine->TargetsCount();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guLyricSource * LyricTarget = LyricSearchEngine->GetTarget( Index );
             if( LyricTarget->Enabled() )
@@ -2167,9 +2151,8 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
     wxBoxSizer * ReplaceListBoxSizer = new wxBoxSizer( wxHORIZONTAL );
 
     wxArrayString ListBoxOptions;
-    int Index;
     int Count = m_ReplaceItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guLyricSourceReplace * ReplaceItem = &m_ReplaceItems[ Index ];
         ListBoxOptions.Add( ReplaceItem->ToStr() );
@@ -2203,7 +2186,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
         ListBoxOptions.Empty();
         Count = m_ExtractItems.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guLyricSourceExtract * ExtractItem = &m_ExtractItems[ Index ];
             ListBoxOptions.Add( ExtractItem->ToStr() );
@@ -2233,7 +2216,7 @@ guLyricSourceEditor::guLyricSourceEditor( wxWindow * parent, guLyricSource * lyr
 
         ListBoxOptions.Empty();
         Count = m_ExcludeItems.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guLyricSourceExclude * ExcludeItem = &m_ExcludeItems[ Index ];
             ListBoxOptions.Add( ExcludeItem->ToStr() );

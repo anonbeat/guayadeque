@@ -104,12 +104,11 @@ guUpdateAlbumDetails::ExitCode guUpdateAlbumDetails::Entry()
     {
         //guLogMessage( wxT( "Searching details..." ) );
         guDbLibrary * Db = m_AlbumBrowser->m_Db;
-        int Index;
         m_AlbumBrowser->m_AlbumItemsMutex.Lock();
         int Count = m_AlbumBrowser->m_AlbumItems.Count();
         if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( TestDestroy() )
                     break;
@@ -628,9 +627,8 @@ int guAlbumBrowserItemPanel::GetDragFiles( guDataObjectComposite * files )
 {
     guTrackArray Tracks;
     wxArrayString Filenames;
-    int Index;
     int Count = m_AlbumBrowser->GetAlbumTracks( m_AlbumBrowserItem->m_AlbumId, &Tracks );
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Tracks[ Index ].m_Offset )
             continue;
@@ -1067,9 +1065,8 @@ void guAlbumBrowser::OnChangedSize( wxSizeEvent &event )
                 }
                 else //if( m_ItemCount < OldCount )
                 {
-                    size_t Index;
                     //size_t Count;
-                    for( Index = OldCount; Index > m_ItemCount; Index-- )
+                    for( size_t Index = OldCount; Index > m_ItemCount; Index-- )
                     {
                         guAlbumBrowserItemPanel *  ItemPanel = m_ItemPanels[ Index - 1 ];
                         m_AlbumsSizer->Detach( ItemPanel );
@@ -1201,9 +1198,8 @@ void guAlbumBrowser::RefreshAll( void )
     m_UpdateDetailsMutex.Unlock();
 
     m_AlbumItemsMutex.Lock();
-    size_t Index;
-    size_t Count = m_ItemCount;
-    for( Index = 0; Index < Count; Index++ )
+    unsigned int Count = m_ItemCount;
+    for( unsigned int Index = 0; Index < Count; Index++ )
     {
         //guLogMessage( wxT( "%li %s " ), Index, m_AlbumItems[ Index ].m_AlbumName.c_str() );
         if( Index < m_AlbumItems.Count() )
@@ -1289,27 +1285,23 @@ void guAlbumBrowser::OnSortSelected( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
 {
-    int index;
-    int count;
     wxArrayInt Selection;
     Selection.Add( albumid );
     if( Selection.Count() )
     {
-        index = cmdid;
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
-            index -= ID_COMMANDS_BASE;
-            wxString CurCmd = Commands[ index ];
+            int CommandIndex = cmdid - ID_COMMANDS_BASE;
+            wxString CurCmd = Commands[ CommandIndex ];
             if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( Selection );
                 wxString Paths = wxEmptyString;
-                count = AlbumPaths.Count();
-                for( index = 0; index < count; index++ )
+                int count = AlbumPaths.Count();
+                for( int index = 0; index < count; index++ )
                 {
                     AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " ) );
                     //Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
@@ -1336,8 +1328,8 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
                 if( m_Db->GetAlbumsSongs( Selection, &Songs, true ) )
                 {
                     NormalizeTracks( &Songs );
-                    count = Songs.Count();
-                    for( index = 0; index < count; index++ )
+                    int count = Songs.Count();
+                    for( int index = 0; index < count; index++ )
                     {
                         SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
                     }
@@ -1354,25 +1346,20 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const int albumid )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &tracks )
 {
-    int Index;
-    int Count;
     if( tracks.Count() )
     {
-        Index = cmdid;
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
-
-            Index -= ID_COMMANDS_BASE;
-            wxString CurCmd = Commands[ Index ];
+            int CommandIndex = cmdid - ID_COMMANDS_BASE;
+            wxString CurCmd = Commands[ CommandIndex ];
 
             if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths;
-                Count = tracks.Count();
-                for( Index = 0; Index < Count; Index++ )
+                int Count = tracks.Count();
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     wxString Path = wxPathOnly( tracks[ Index ].m_FileName ) + wxT( "/" );
                     if( AlbumPaths.Index( Path ) == wxNOT_FOUND )
@@ -1380,7 +1367,7 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
                 }
                 wxString Paths = wxEmptyString;
                 Count = AlbumPaths.Count();
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     AlbumPaths[ Index ].Replace( wxT( " " ), wxT( "\\ " ) );
                     Paths += wxT( " " ) + AlbumPaths[ Index ];
@@ -1404,10 +1391,10 @@ void guAlbumBrowser::OnCommandClicked( const int cmdid, const guTrackArray &trac
             if( CurCmd.Find( guCOMMAND_TRACKPATH ) != wxNOT_FOUND )
             {
                 wxString SongList = wxEmptyString;
-                Count = tracks.Count();
+                int Count = tracks.Count();
                 if( Count )
                 {
-                    for( Index = 0; Index < Count; Index++ )
+                    for( int Index = 0; Index < Count; Index++ )
                     {
                         SongList += wxT( " \"" ) + tracks[ Index ].m_FileName + wxT( "\"" );
                     }
@@ -1535,9 +1522,8 @@ void guAlbumBrowser::OnUpdateDetails( wxCommandEvent &event )
 {
     m_AlbumItemsMutex.Lock();
     //guLogMessage( wxT( "OnUpdateDetails %i - %li" ), event.GetInt(), m_ItemPanels.GetCount() );
-    int Index;
     int Count = m_ItemPanels.GetCount();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_ItemPanels[ Index ]->UpdateDetails();
     }
@@ -1713,9 +1699,8 @@ void guAlbumBrowser::OnBitmapClicked( guAlbumBrowserItem * albumitem, const wxPo
         m_BigCoverTracksListBox->Clear();
         m_BigCoverTracksListBox->Append( _( "All" ) );
         wxUint64 AlbumLength = 0;
-        int Index;
         int Count = m_BigCoverTracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             const guTrack &Track = m_BigCoverTracks[ Index ];
             AlbumLength += Track.m_Length;
@@ -1823,9 +1808,8 @@ void guAlbumBrowser::AlbumCoverChanged( const int albumid )
     ReloadItems();
 
     // When we do the ReloadItems the m_LastAlbumBrowser pointer is invalid so find it again
-    int Index;
     int Count = m_AlbumItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_AlbumItems[ Index ].m_AlbumId == ( unsigned int ) albumid )
         {
@@ -1902,7 +1886,6 @@ void guAlbumBrowser::OnBigCoverTracksDClicked( wxCommandEvent &event )
 int guAlbumBrowser::GetSelectedTracks( guTrackArray * tracks )
 {
     wxArrayInt Selections;
-    int Index;
     int Count = m_BigCoverTracksListBox->GetSelections( Selections );
     if( Selections.Index( 0 ) != wxNOT_FOUND )
     {
@@ -1910,7 +1893,7 @@ int guAlbumBrowser::GetSelectedTracks( guTrackArray * tracks )
     }
     else
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             tracks->Add( new guTrack( m_BigCoverTracks[ Selections[ Index ] - 1 ] ) );
         }
@@ -2192,9 +2175,8 @@ void guAlbumBrowser::OnBigCoverTracksEditLabelsClicked( wxCommandEvent &event )
     {
         guListItems TrackItems;
         wxArrayInt TrackIds;
-        int Index;
         int Count = Tracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             TrackItems.Add( new guListItem( Tracks[ Index ].m_SongId, Tracks[ Index ].m_SongName ) );
             TrackIds.Add( Tracks[ Index ].m_SongId );
@@ -2381,9 +2363,8 @@ void guAlbumBrowser::OnBigCoverSearchLinkClicked( wxCommandEvent &event )
     {
         guTrackArray Tracks;
         GetSelectedTracks( &Tracks );
-        int Index;
         int Count = Tracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             ExecuteOnlineLink( event.GetId(), Tracks[ Index ].m_ArtistName + wxT( " \"" ) +
                                               Tracks[ Index ].m_SongName + wxT( "\"" ) );
@@ -2476,17 +2457,15 @@ void guAlbumBrowser::OnBigCoverTracksMouseMoved( wxMouseEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlbumBrowser::OnBigCoverTracksBeginDrag( wxCommandEvent &event )
 {
-    int Index;
-    int Count;
     //guLogMessage( wxT( "On BeginDrag event..." ) );
     guTrackArray Tracks;
-    GetSelectedTracks( &Tracks );
-    if( ( Count = Tracks.Count() ) )
+    int Count = GetSelectedTracks( &Tracks );
+    if( Count )
     {
         guDataObjectComposite Files;
 
         wxArrayString Filenames;
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             if( Tracks[ Index ].m_Offset )
                 continue;
@@ -2512,9 +2491,8 @@ void guAlbumBrowser::OnBigCoverTracksPlaylistSave( wxCommandEvent &event )
     if( Tracks.Count() )
     {
         wxArrayInt TrackIds;
-        int Index;
         int Count = Tracks.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             TrackIds.Add( Tracks[ Index ].m_SongId );
         }

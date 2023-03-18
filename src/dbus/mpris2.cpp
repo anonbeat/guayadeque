@@ -870,10 +870,8 @@ bool guMPRIS2::GetPlaylists( DBusMessage * msg, const dbus_int32_t start, const 
 
     dbus_message_iter_open_container( &args, DBUS_TYPE_ARRAY, "(oss)", &arrentry );
 
-    int Index;
     int Count = wxMin( start + maxcount, ( int ) Playlists.Count() );
-
-    for( Index = start; Index < Count; Index++ )
+    for( int Index = start; Index < Count; Index++ )
     {
         AppendPlaylist( &arrentry, Playlists[ Index ] );
     }

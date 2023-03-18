@@ -222,8 +222,6 @@ int guAlListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) co
 void AddAlbumCommands( wxMenu * Menu, int SelCount )
 {
     wxMenu * SubMenu;
-    int index;
-    int count;
     wxMenuItem * MenuItem;
     if( Menu )
     {
@@ -232,9 +230,10 @@ void AddAlbumCommands( wxMenu * Menu, int SelCount )
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
         wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-        if( ( count = Commands.Count() ) )
+        int count = Commands.Count();
+        if( count )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 if( ( Commands[ index ].Find( guCOMMAND_COVERPATH ) == wxNOT_FOUND ) || ( SelCount == 1 ) )
                 {
@@ -341,6 +340,11 @@ void guAlListBox::CreateContextMenu( wxMenu * Menu ) const
         MenuItem->SetBitmap( guImage( guIMAGE_INDEX_tiny_doc_save ) );
         Menu->Append( MenuItem );
 
+        MenuItem = new wxMenuItem( Menu, ID_ALBUM_CREATE_BESTOF_PLAYLIST,
+                                wxString( _( "Create Best of Playlist" ) ),
+                                _( "Create a playlist with the best of this artist" ) );
+        Menu->Append( MenuItem );
+
         if( SelCount == 1 && ( ContextMenuFlags & guCONTEXTMENU_DOWNLOAD_COVERS ) )
         {
             Menu->AppendSeparator();
@@ -403,28 +407,24 @@ void guAlListBox::OnSearchLinkClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guAlListBox::OnCommandClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt Selection = GetSelectedItems();
     if( Selection.Count() )
     {
-        index = event.GetId();
-
         guConfig * Config = ( guConfig * ) guConfig::Get();
         if( Config )
         {
             wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
             //guLogMessage( wxT( "CommandId: %u" ), index );
-            index -= ID_COMMANDS_BASE;
-            wxString CurCmd = Commands[ index ];
+            int CommandIndex = event.GetId() - ID_COMMANDS_BASE;
+            wxString CurCmd = Commands[ CommandIndex ];
 
             if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
             {
                 wxArrayString AlbumPaths = m_Db->GetAlbumsPaths( Selection );
                 wxString Paths = wxEmptyString;
-                count = AlbumPaths.Count();
-                for( index = 0; index < count; index++ )
+                int count = AlbumPaths.Count();
+                for( int index = 0; index < count; index++ )
                 {
                     //Paths += wxT( " \"" ) + AlbumPaths[ index ] + wxT( "\"" );
                     AlbumPaths[ index ].Replace( wxT( " " ), wxT( "\\ " )  );
@@ -450,8 +450,8 @@ void guAlListBox::OnCommandClicked( wxCommandEvent &event )
                 wxString SongList = wxEmptyString;
                 if( m_Db->GetAlbumsSongs( Selection, &Songs ) )
                 {
-                    count = Songs.Count();
-                    for( index = 0; index < count; index++ )
+                    int count = Songs.Count();
+                    for( int index = 0; index < count; index++ )
                     {
                         SongList += wxT( " \"" ) + Songs[ index ].m_FileName + wxT( "\"" );
                     }
@@ -512,9 +512,8 @@ void guAlListBox::ReloadItems( bool reset )
 // -------------------------------------------------------------------------------- //
 int guAlListBox::FindAlbum( const int albumid )
 {
-    int Index;
     int Count = m_Items->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_Items->Item( Index ).m_Id == albumid )
         {

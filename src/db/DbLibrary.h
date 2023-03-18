@@ -569,11 +569,9 @@ wxString LabelFilterToSQL( const wxArrayInt &LaFilters );
 // -------------------------------------------------------------------------------- //
 wxString inline ArrayIntToStrList( const wxArrayInt &Data )
 {
-  int index;
-  int count;
   wxString RetVal = wxT( "(" );
-  count = Data.Count();
-  for( index = 0; index < count; index++ )
+  int count = Data.Count();
+  for( int index = 0; index < count; index++ )
   {
     RetVal += wxString::Format( wxT( "%u," ), Data[ index ]  );
   }

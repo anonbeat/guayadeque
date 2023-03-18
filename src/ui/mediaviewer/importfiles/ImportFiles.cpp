@@ -97,11 +97,10 @@ void guImportFiles::CreateControls( void )
     wxBoxSizer * CopyToChoiceSIzer = new wxBoxSizer( wxHORIZONTAL );
 
     wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
-    int Index;
-    int Count;
-    if( ( Count = CopyToOptions.Count() ) )
+    int Count = CopyToOptions.Count();
+    if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             CopyToOptions[ Index ] = CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) );
         }
@@ -133,7 +132,7 @@ void guImportFiles::CreateControls( void )
 
 	m_FilesListBox = new wxListBox( this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, NULL, wxLB_MULTIPLE );
 	Count = m_Tracks->Count();
-	for( Index = 0; Index < Count; Index++ )
+	for( int Index = 0; Index < Count; Index++ )
 	{
 	    const guTrack & CurTrack = m_Tracks->Item( Index );
 	    wxString CurFile = CurTrack.m_FileName.AfterLast( wxT( '/' ) );
@@ -203,11 +202,10 @@ void guImportFiles::OnConfigUpdated( wxCommandEvent &event )
     {
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString CopyToOptions = Config->ReadAStr( CONFIG_KEY_COPYTO_OPTION, wxEmptyString, CONFIG_PATH_COPYTO );
-        int Index;
-        int Count;
-        if( ( Count = CopyToOptions.Count() ) )
+        int Count = CopyToOptions.Count();
+        if( Count )
         {
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 CopyToOptions[ Index ] = CopyToOptions[ Index ].BeforeFirst( wxT( ':' ) );
             }
@@ -263,9 +261,8 @@ void guImportFiles::OnAddFilesClicked( wxCommandEvent &event )
         {
             wxArrayString NewFiles;
             FileDialog->GetPaths( NewFiles );
-            int Index;
             int Count = NewFiles.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 wxString NewFile = NewFiles[ Index ];
                 //guLogMessage( wxT( "Openning file '%s'" ), NewFile.c_str() );
@@ -298,9 +295,8 @@ void guImportFiles::OnDelFilesClicked( wxCommandEvent &event )
 {
     wxArrayInt Selected;
     m_FilesListBox->GetSelections( Selected );
-    int Index;
     int Count = Selected.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         m_FilesListBox->Delete( Selected[ Index ] );
         m_Tracks->RemoveAt( Selected[ Index ] );
@@ -320,11 +316,10 @@ void guImportFiles::UpdateCounters( void )
 {
     wxLongLong Size = 0;
     wxLongLong Length = 0;
-    int Index;
     int Count = m_Tracks->Count();
     if( Count )
     {
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guTrack &Track = m_Tracks->Item( Index );
             Size += Track.m_FileSize;

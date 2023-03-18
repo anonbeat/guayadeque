@@ -318,6 +318,8 @@ class guMediaViewer : public wxPanel
     virtual int             CoverSize( void ) { return 0; }
 
     virtual void            CreateSmartPlaylist( const wxString &artistname, const wxString &trackname );
+    virtual void            CreateBestOfPlaylist( const guTrack &track );
+    virtual void            CreateBestOfPlaylist( const wxString &artistname );
 
 };
 WX_DEFINE_ARRAY_PTR( guMediaViewer *, guMediaViewerArray );

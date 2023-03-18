@@ -118,9 +118,8 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     m_PresetComboBox = new wxComboBox( this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxSize( -1,-1 ), 0, NULL, 0 );
     wxString LastPreset = Config->ReadStr( CONFIG_KEY_EQUALIZER_LAST_PRESET, wxEmptyString, CONFIG_PATH_EQUALIZER );
     int LastPresetIndex = wxNOT_FOUND;
-    int index;
     int count = m_EQPresets.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         m_PresetComboBox->Append( m_EQPresets[ index ].m_Name );
         if( m_EQPresets[ index ].m_Name == LastPreset )
@@ -380,8 +379,7 @@ guEq10Band::guEq10Band( wxWindow * parent, guMediaCtrl * mediactrl ) //wxDialog(
     EQBtnSizer->Realize();
     MainSizer->Add( EQBtnSizer, 0, wxEXPAND|wxBOTTOM|wxRIGHT, 5 );
 
-    int Index;
-    for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
+    for( int Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
     {
         m_Values[ Index ]->SetLabel( wxString::Format( wxT( "%.1f" ), double( m_Bands[ Index ]->GetValue() ) / 10.0 ) );
 
@@ -453,8 +451,7 @@ guEq10Band::~guEq10Band()
     m_SaveButton->Unbind( wxEVT_BUTTON, &guEq10Band::OnAddPreset, this );
     m_DelButton->Unbind( wxEVT_BUTTON, &guEq10Band::OnDelPreset, this );
 
-    int Index;
-    for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
+    for( int Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
     {
         m_Bands[ Index ]->Unbind( wxEVT_SCROLL_CHANGED, &guEq10Band::OnBandChanged, this );
         m_Bands[ Index ]->Unbind( wxEVT_SCROLL_THUMBTRACK, &guEq10Band::OnUpdateLabel, this );
@@ -464,9 +461,8 @@ guEq10Band::~guEq10Band()
 // -------------------------------------------------------------------------------- //
 bool FindPresetName( const wxString &name, guEQPresetArray &presets )
 {
-    int index;
     int count = presets.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( presets[ index ].m_Name == name )
             return true;
@@ -514,8 +510,7 @@ void guEq10Band::OnPresetSelected( wxCommandEvent& event )
     int Preset = event.GetInt();
     if( Preset >= 0 )
     {
-        int Index;
-        for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
+        for( int Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
         {
             m_Bands[ Index ]->SetValue( m_EQPresets[ Preset ].m_Sets[ Index ] );
             m_Values[ Index ]->SetLabel( wxString::Format( wxT( "%.1f" ), double( m_EQPresets[ Preset ].m_Sets[ Index ] ) / 10.0 ) );
@@ -548,8 +543,7 @@ void guEq10Band::OnPresetText( wxCommandEvent& event )
 void guEq10Band::OnAddPreset( wxCommandEvent& event )
 {
     wxArrayInt EQSet;
-    int Index;
-    for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
+    for( int Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
     {
         EQSet.Add( m_Bands[ Index ]->GetValue() );
     }
@@ -588,8 +582,7 @@ void guEq10Band::OnDelPreset( wxCommandEvent& event )
 // -------------------------------------------------------------------------------- //
 void guEq10Band::OnResetPreset( wxCommandEvent &event )
 {
-    int Index;
-    for( Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
+    for( int Index = 0; Index < guEQUALIZER_BAND_COUNT; Index++ )
     {
         m_Bands[ Index ]->SetValue( Index );
     }

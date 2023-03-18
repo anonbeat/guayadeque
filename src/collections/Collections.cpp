@@ -52,10 +52,9 @@ guMediaCollection::~guMediaCollection()
 // -------------------------------------------------------------------------------- //
 bool guMediaCollection::CheckPaths( void )
 {
-    int Index;
     int Count = m_Paths.Count();
     bool RetVal = Count;
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxString CurPath = m_Paths[ Index ];
         if( !CurPath.EndsWith( wxT( "/" ) ) )

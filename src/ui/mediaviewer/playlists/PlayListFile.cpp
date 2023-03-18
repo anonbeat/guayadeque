@@ -124,9 +124,8 @@ bool guPlaylistFile::Load( const wxString &uri )
             wxString Content = GetUrlContent( uri );
             guLogMessage( wxT( "Content:\n%s" ), Content.c_str() );
             wxArrayString PlaylistItems = wxStringTokenize( Content, wxT( "\n" ) );
-            int Index;
             int Count = PlaylistItems.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 Load( PlaylistItems[ Index ] );
             }
@@ -284,9 +283,8 @@ bool guPlaylistFile::ReadM3uStream( wxInputStream &playlist, const wxString &pat
         wxString ItemName;
         wxArrayString Lines = wxStringTokenize( M3uFile, wxT( "\n" ) );
 
-        int Index;
         int Count = Lines.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Lines[ Index ].Trim( false ).Trim( true );
             if( Lines[ Index ].IsEmpty() || ( Lines[ Index ].Find( wxT( "#EXTM3U" ) ) != wxNOT_FOUND ) )
@@ -673,9 +671,8 @@ bool guCuePlaylistFile::LoadFromText( const wxString &content )
         wxArrayString Lines = wxStringTokenize( content, wxT( "\n" ) );
         int CurrentTrack = wxNOT_FOUND;
 
-        int Index;
         int Count = Lines.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             Lines[ Index ].Trim( false ).Trim( true );
             wxString Line = Lines[ Index ];

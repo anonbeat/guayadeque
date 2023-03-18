@@ -218,8 +218,7 @@ bool SendFilesByMPRIS( const int argc, wxChar * argv[] )
     dbus_message_iter_open_container( &dbiter, DBUS_TYPE_ARRAY, "s", &dbitertracks );
 
     wxString FilePath;
-    int index;
-    for( index = 1; index < argc; index++ )
+    for( int index = 1; index < argc; index++ )
     {
         FilePath = argv[ index ];
         //guLogMessage( wxT( "Trying to add file '%s'" ), argv[ index ] );

@@ -200,9 +200,8 @@ void guTreeViewTreeCtrl::LoadFilterLayout( void )
     m_FilterLayout.Empty();
     wxArrayString FilterItems = wxStringTokenize( m_FilterEntries[ m_CurrentFilter ].AfterFirst( wxT( ':' ) ), wxT( ':' ) );
 
-    int Index;
     int Count = FilterItems.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         long Value;
         FilterItems[ Index ].ToLong( &Value );
@@ -218,9 +217,8 @@ void guTreeViewTreeCtrl::ReloadFilters( void )
     wxFont BoldFont = GetFont();
     BoldFont.SetWeight( wxFONTWEIGHT_BOLD );
 
-    int Index;
     int Count = m_FilterEntries.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxTreeItemId CurItem = AppendItem( m_FiltersId, m_FilterEntries[ Index ].BeforeFirst( wxT( ':' ) ), wxNOT_FOUND, wxNOT_FOUND,
                    new guTreeViewData( Index, Index ) );
@@ -240,9 +238,8 @@ void guTreeViewTreeCtrl::ReloadItems( void )
 
     wxString Query = wxT( "SELECT DISTINCT " );
     wxString Sorting = wxT( " ORDER BY " );
-    int Index;
     int Count = m_FilterLayout.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         switch( m_FilterLayout[ Index ] )
         {
@@ -320,16 +317,15 @@ void AddTreeViewCommands( wxMenu * Menu, int ItemType )
         wxMenu * SubMenu;
         wxMenuItem * MenuItem = NULL;
 
-        int index;
-        int count;
         SubMenu = new wxMenu();
 
         guConfig * Config = ( guConfig * ) guConfig::Get();
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
         wxArrayString Names = Config->ReadAStr( CONFIG_KEY_COMMANDS_NAME, wxEmptyString, CONFIG_PATH_COMMANDS_NAMES );
-        if( ( count = Commands.Count() ) )
+        int count = Commands.Count();
+        if( count )
         {
-            for( index = 0; index < count; index++ )
+            for( int index = 0; index < count; index++ )
             {
                 if( ( ItemType == guLIBRARY_ELEMENT_ALBUMS ) ||
                     ( ItemType == guLIBRARY_ELEMENT_ARTISTS ) ||
@@ -508,13 +504,12 @@ void guTreeViewTreeCtrl::OnBeginDrag( wxTreeEvent &event )
     {
         guTrackArray Tracks;
         m_TreeViewPanel->GetAllTracks( &Tracks );
-        int Index;
-        int Count;
-        if( ( Count = Tracks.Count() ) )
+        int Count = Tracks.Count();
+        if( Count )
         {
             wxFileDataObject Files;
 
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 Files.AddFile( Tracks[ Index ].m_FileName );
             }
@@ -707,12 +702,8 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
     guTreeViewData * TreeViewData = ( guTreeViewData * ) GetItemData( CurItemId );
 //    int ItemType = TreeViewData->GetType();
 
-    int Index;
-    int Count;
     wxArrayInt Selection;
     Selection.Add( TreeViewData->GetData() );
-
-    Index = event.GetId();
 
     guConfig * Config = ( guConfig * ) guConfig::Get();
     if( Config )
@@ -720,15 +711,15 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
         wxArrayString Commands = Config->ReadAStr( CONFIG_KEY_COMMANDS_EXEC, wxEmptyString, CONFIG_PATH_COMMANDS_EXECS );
 
         //guLogMessage( wxT( "CommandId: %u" ), Index );
-        Index -= ID_COMMANDS_BASE;
-        wxString CurCmd = Commands[ Index ];
+        int CommandIndex = event.GetId() - ID_COMMANDS_BASE;
+        wxString CurCmd = Commands[ CommandIndex ];
 
         if( CurCmd.Find( guCOMMAND_ALBUMPATH ) != wxNOT_FOUND )
         {
             wxArrayString AlbumPaths = GetSelectedAlbumPaths( m_Db, TreeViewData->GetData(), TreeViewData->GetType() );
-            Count = AlbumPaths.Count();
+            int Count = AlbumPaths.Count();
             wxString Paths = wxEmptyString;
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 AlbumPaths[ Index ].Replace( wxT( " " ), wxT( "\\ " ) );
                 Paths += wxT( " " ) + AlbumPaths[ Index ];
@@ -753,8 +744,8 @@ void guTreeViewTreeCtrl::OnCommandClicked( wxCommandEvent &event )
             wxString SongList = wxEmptyString;
             if( GetSelectedTracks( m_Db, &Songs, TreeViewData->GetData(), TreeViewData->GetType() ) )
             {
-                Count = Songs.Count();
-                for( Index = 0; Index < Count; Index++ )
+                int Count = Songs.Count();
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     SongList += wxT( " \"" ) + Songs[ Index ].m_FileName + wxT( "\"" );
                 }
@@ -956,9 +947,8 @@ void guTreeViewPanel::OnTreeItemSelectedTimer( wxTimerEvent &event )
     wxArrayTreeItemIds Selections;
     if( m_TreeViewCtrl->GetSelections( Selections ) )
     {
-        int Index;
         int Count = Selections.Count();
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             guTreeViewFilterEntry FilterEntry;
             m_TreeViewCtrl->GetItemFilterEntry( Selections[ Index ], FilterEntry );
@@ -1135,9 +1125,8 @@ void guTreeViewPanel::OnTreeViewSaveToPlayList( wxCommandEvent &event )
         {
             wxArrayInt NewSongs;
             //NormalizeTracks( &Tracks );
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 NewSongs.Add( Tracks[ Index ].m_SongId );
             }
@@ -1389,15 +1378,13 @@ void guTreeViewPanel::OnTVTracksCopyToClicked( wxCommandEvent &event )
 // -------------------------------------------------------------------------------- //
 void guTreeViewPanel::OnTVTracksSavePlayListClicked( wxCommandEvent &event )
 {
-    int index;
-    int count;
     wxArrayInt NewSongs;
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
-
-    if( ( count = Tracks.Count() ) )
+    int count = Tracks.Count();
+    if( count )
     {
-        for( index = 0; index < count; index++ )
+        for( int index = 0; index < count; index++ )
         {
             NewSongs.Add( Tracks[ index ].m_SongId );
         }
@@ -1405,8 +1392,8 @@ void guTreeViewPanel::OnTVTracksSavePlayListClicked( wxCommandEvent &event )
     else
     {
         m_TVTracksListBox->GetAllSongs( &Tracks );
-        count = Tracks.Count();
-        for( index = 0; index < count; index++ )
+        int count = Tracks.Count();
+        for( int index = 0; index < count; index++ )
         {
             NewSongs.Add( Tracks[ index ].m_SongId );
         }
@@ -1481,9 +1468,8 @@ void guTreeViewPanel::OnTVTracksSetField( wxCommandEvent &event )
 
     // This should be done in a thread for huge selections of tracks...
     wxArrayInt ChangedFlags;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
         guTrack * Track = &Tracks[ Index ];
@@ -1547,9 +1533,8 @@ void guTreeViewPanel::OnTVTracksEditField( wxCommandEvent &event )
 
     wxArrayString Items;
 
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         wxVariant Value;
         guTrack * Track = &Tracks[ Index ];
@@ -1608,9 +1593,8 @@ void guTreeViewPanel::OnTVTracksEditField( wxCommandEvent &event )
 
             // This should be done in a thread for huge selections of tracks...
             wxArrayInt ChangedFlags;
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 ChangedFlags.Add( guTRACK_CHANGED_DATA_TAGS );
                 guTrack * Track = &Tracks[ Index ];
@@ -1668,9 +1652,8 @@ void guTreeViewPanel::OnTVTracksSelectGenre( wxCommandEvent &event )
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Genres = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Genres->Index( Tracks[ index ].m_GenreId ) == wxNOT_FOUND )
         {
@@ -1689,9 +1672,8 @@ void guTreeViewPanel::OnTVTracksSelectArtist( wxCommandEvent &event )
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Artists = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Artists->Index( Tracks[ index ].m_ArtistId ) == wxNOT_FOUND )
         {
@@ -1709,9 +1691,8 @@ void guTreeViewPanel::OnTVTracksSelectAlbumArtist( wxCommandEvent &event )
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Ids = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Ids->Index( Tracks[ index ].m_AlbumArtistId ) == wxNOT_FOUND )
         {
@@ -1729,9 +1710,8 @@ void guTreeViewPanel::OnTVTracksSelectComposer( wxCommandEvent &event )
     guTrackArray Tracks;
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Ids = new wxArrayInt();
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Ids->Index( Tracks[ index ].m_ComposerId ) == wxNOT_FOUND )
         {
@@ -1750,9 +1730,8 @@ void guTreeViewPanel::OnTVTracksSelectAlbum( wxCommandEvent &event )
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
     wxArrayInt * Albums = new wxArrayInt();
 
-    int index;
     int count = Tracks.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         if( Albums->Index( Tracks[ index ].m_AlbumId ) == wxNOT_FOUND )
         {
@@ -1795,9 +1774,8 @@ void guTreeViewPanel::OnTVTracksDeleteDrive( wxCommandEvent &event )
             //
             m_Db->DeleteLibraryTracks( &Tracks, false );
             //
-            int Index;
             int Count = Tracks.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( !wxRemoveFile( Tracks[ Index ].m_FileName ) )
                 {
@@ -1834,12 +1812,10 @@ void guTreeViewPanel::OnTrackListColClicked( wxListEvent &event )
 
     // Create the Columns
     wxArrayString ColumnNames = m_TVTracksListBox->GetColumnNames();
-    int CurColId;
-    int index;
     int count = ColumnNames.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
-        CurColId = m_TVTracksListBox->GetColumnId( index );
+        int CurColId = m_TVTracksListBox->GetColumnId( index );
         m_TVTracksListBox->SetColumnLabel( index,
             ColumnNames[ CurColId ]  + ( ( ColId == CurColId ) ? ( m_TVTracksListBox->GetTracksOrderDesc() ? wxT( " ▼" ) : wxT( " ▲" ) ) : wxEmptyString ) );
     }

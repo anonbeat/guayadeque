@@ -130,9 +130,8 @@ guCopyToAction::guCopyToAction( wxString * playlistpath, guMediaViewer * mediavi
     m_CoverSize = mediaviewer->CoverSize();
     m_CoverName = mediaviewer->CoverName();
 
-    int Index;
     int Count = m_PlayListFile->Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         guTrack * CurTrack = new guTrack();
         if( m_Db->FindTrackFile( m_PlayListFile->GetItem( Index ).m_Location, CurTrack ) )
@@ -319,9 +318,8 @@ bool guMoreCopyToIpodActions( guCopyToActionArray * actions )
 {
     if( actions->Count() > 1 )
     {
-        int Index;
         int Count = actions->Count();
-        for( Index = 1; Index < Count; Index++ )
+        for( int Index = 1; Index < Count; Index++ )
         {
             guCopyToAction &CopyToAction = actions->Item( Index );
             if( CopyToAction.Type() == guCOPYTO_ACTION_COPYTOIPOD )
@@ -335,7 +333,6 @@ bool guMoreCopyToIpodActions( guCopyToActionArray * actions )
 // -------------------------------------------------------------------------------- //
 void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 {
-    int             Index;
     int             Count = copytoaction.Count();
     wxString        FileName;
     wxString        FilePattern;
@@ -348,7 +345,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 
     DestDir = copytoaction.DestDir();
 
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
 
         if( TestDestroy() )
@@ -772,7 +769,6 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
 #endif
     if( copytoaction.Type() == guCOPYTO_ACTION_COPYTODEVICE )
     {
-        int Index;
         int Count;
         // Update the files
         guPortableMediaLibrary * PortableMediaDb = ( guPortableMediaLibrary * ) copytoaction.GetDb();
@@ -785,7 +781,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
             wxArrayInt TrackIds;
             // The tracks just copied was part of a playlist we need to create too
             Count = m_FilesToAdd.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 int TrackId = PortableMediaDb->FindTrackFile( m_FilesToAdd[ Index ], NULL );
                 if( TrackId )
@@ -814,7 +810,7 @@ void guCopyToThread::DoCopyToAction( guCopyToAction &copytoaction )
                 }
                 DevCoverName += wxT( ".jpg" );
                 Count = m_CoversToAdd.Count();
-                for( Index = 0; Index < Count; Index++ )
+                for( int Index = 0; Index < Count; Index++ )
                 {
                     Db->UpdateImageFile( m_CoversToAdd[ Index ].ToUTF8(), DevCoverName.ToUTF8() );
                 }

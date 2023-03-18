@@ -129,10 +129,9 @@ int guTVSoListBox::GetSelectedSongs( guTrackArray * tracks, const bool isdrag ) 
 // -------------------------------------------------------------------------------- //
 void guTVSoListBox::GetAllSongs( guTrackArray * tracks )
 {
-    int index;
     m_ItemsMutex.Lock();
     int count = m_Items.Count();
-    for( index = 0; index < count; index++ )
+    for( int index = 0; index < count; index++ )
     {
         tracks->Add( new guTrack( m_Items[ index ] ) );
     }

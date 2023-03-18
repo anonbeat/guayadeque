@@ -280,9 +280,8 @@ void guMagnatunePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
     m_SongListCtrl->GetSelectedSongs( &Tracks );
 
     wxArrayInt Albums;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
@@ -362,9 +361,8 @@ void guMagnatuneTreePanel::OnDownloadTrackAlbum( wxCommandEvent &event )
     m_TVTracksListBox->GetSelectedSongs( &Tracks );
 
     wxArrayInt Albums;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
@@ -400,9 +398,8 @@ void guMagnatunePlayListPanel::OnDownloadTrackAlbum( wxCommandEvent &event )
     m_PLTracksListBox->GetSelectedSongs( &Tracks );
 
     wxArrayInt Albums;
-    int Index;
     int Count = Tracks.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( Albums.Index( Tracks[ Index ].m_AlbumId ) == wxNOT_FOUND )
             Albums.Add( Tracks[ Index ].m_AlbumId );
@@ -574,9 +571,8 @@ guMagnatuneUpdateThread::~guMagnatuneUpdateThread()
 bool inline IsGenreEnabled( const wxArrayString &genrelist, const wxString &current )
 {
     wxArrayString CurrentGenres = wxStringTokenize( current, wxT( "," ) );
-    int Index;
     int Count = CurrentGenres.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( genrelist.Index( CurrentGenres[ Index ] ) != wxNOT_FOUND )
             return true;
@@ -590,9 +586,8 @@ bool inline IsGenreEnabled( const wxArrayString &genrelist, const wxString &curr
 void guMagnatuneUpdateThread::AddGenres( const wxString &genres )
 {
     wxArrayString Genres = wxStringTokenize( genres, wxT( "," ) );
-    int Index;
     int Count = Genres.Count();
-    for( Index = 0; Index < Count; Index++ )
+    for( int Index = 0; Index < Count; Index++ )
     {
         if( m_GenreList.Index( Genres[ Index ] ) == wxNOT_FOUND )
         {
@@ -758,9 +753,8 @@ guMagnatuneUpdateThread::ExitCode guMagnatuneUpdateThread::Entry()
             m_Db->GetGenres( &CurrentGenres, true );
 
             wxArrayInt GenresToDel;
-            int Index;
             int Count = CurrentGenres.Count();
-            for( Index = 0; Index < Count; Index++ )
+            for( int Index = 0; Index < Count; Index++ )
             {
                 if( !IsGenreEnabled( m_AllowedGenres, CurrentGenres[ Index ].m_Name ) )
                 {
@@ -1190,7 +1184,6 @@ void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
         wxT( "<URL_WAVZIP>" ),
     };
 
-    int Index;
     int Count;
     if( ( Count = albumids.Count() ) )
     {
@@ -1202,7 +1195,7 @@ void guMediaViewerMagnatune::DownloadAlbums( const wxArrayInt &albumids )
             DownloadFormat = 0;
         }
 
-        for( Index = 0; Index < Count; Index++ )
+        for( int Index = 0; Index < Count; Index++ )
         {
             wxString DownloadUrl = wxString::Format( guMAGNATUNE_DOWNLOAD_URL,
                                 m_UserName.c_str(), m_Password.c_str(),
