@@ -1,3 +1,13 @@
+# NOTICE
+We regret to inform our users that the Guayadeque project has reached the end of its development journey and is no longer actively maintained. 
+After years of dedicated work by the open-source community, this beloved music player and library organizer will no longer receive updates or support. 
+We want to extend our gratitude to all the contributors and users who made Guayadeque a part of their music experience. 
+While it may no longer be actively developed, we hope that it continues to serve its purpose for those who choose to use it. 
+Thank you for your support throughout the years. 
+
+If anyone wishes to continue the development and support of Guayadeque, please feel free to contact me
+
+
 # General
 
 Guayadeque Music Player 0.4.7 Beta
