@@ -45,7 +45,7 @@ Its been developed in XUbuntu
 ### Ubuntu (pre 20.0):
 
 ```bash
-sudo apt install libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev
+sudo apt install libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev binutils
 ```
 
 ---
@@ -53,7 +53,7 @@ sudo apt install libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-bas
 ### Ubuntu 20.04
 
 ```bash
-sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev libtag1-dev libcurl4-gnutls-dev
+sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev libtag1-dev libcurl4-gnutls-dev binutils
 ```
 
 ---
@@ -61,7 +61,7 @@ sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-d
 ### Ubuntu 22.04
 
 ```bash
-sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev libtag1-dev libcurl4-gnutls-dev libdbus-1-dev gettext
+sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-dev libgstreamer-plugins-base1.0-dev libgstreamer1.0-dev libwxsqlite3-3.0-dev libwxbase3.0-dev libtag1-dev libcurl4-gnutls-dev libdbus-1-dev gettext binutils
 ```
 
 ---
@@ -69,7 +69,7 @@ sudo apt install libgpod-dev libjsoncpp-dev libgdk-pixbuf2.0-dev libtag-extras-d
 ### Mageia 9
 
 ```
-sudo urpmi lib64wx_gtk3u_wxsqlite3_3.2-devel lib64taglib-devel lib64sqlite3-devel lib64curl-devel gstreamer1.0-devtools lib64dbus-devel lib64gio2.0_0 lib64jsoncpp-devel 
+sudo urpmi lib64wx_gtk3u_wxsqlite3_3.2-devel lib64taglib-devel lib64sqlite3-devel lib64curl-devel gstreamer1.0-devtools lib64dbus-devel lib64gio2.0_0 lib64jsoncpp-devel binutils
 ```
 
 ---
