@@ -1,5 +1,18 @@
+  * Removed libindicate support
+  * Added Best of playlist generator
+  * Gstreamer-1.22 and wxwidgets-3.2 support
+  * Fullscreen cover view on cover panel click
   * Bugfixes
+
+2023-02-24 0.4.7
+
   * Added to CoverEditor the option to select a cover from a file and also to download it from an url
+  * Enable last.fm cover download
+  * Updated lyric sources
+  * Better gstreamer integration (formats support, audio pipeline reworked)
+  * UI changes
+  * Bugfixes
+
 
 2019-06-05 0.4.6
 

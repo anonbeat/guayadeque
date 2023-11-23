@@ -390,7 +390,7 @@ static void gst_about_to_finish( GstElement * playbin, guFaderPlaybin::WeakPtr *
 static void gst_audio_changed( GstElement * playbin, guFaderPlaybin::WeakPtr * wpp )
 {
     guLogDebug( "gst_audio_changed << %p", wpp );
-    if( wpp == NULL)
+    if( (wpp == NULL) || (!GST_IS_BIN(playbin)) )
     {
         guLogTrace( "gst_audio_changed: parent fader playbin is null" );
         return;
@@ -514,6 +514,7 @@ guFaderPlaybin::guFaderPlaybin( guMediaCtrl * mediactrl, const wxString &uri, co
 guFaderPlaybin::~guFaderPlaybin()
 {
     guLogDebug( wxT( "guFaderPlaybin::~guFaderPlaybin (%li) e: %i" ), m_Id, m_ErrorCode );
+    m_SharedPointer.reset();
     if( m_RecordBin != NULL )
         guGstPipelineActuator( m_RecordBin ).Disable();
     //m_Player->RemovePlayBin( this );
@@ -537,13 +538,6 @@ guFaderPlaybin::~guFaderPlaybin()
             guLogDebug( "guFaderPlaybin::~guFaderPlaybin wait on GST_STATE_CHANGE_ASYNC" );
             gst_element_get_state( m_Playbin, NULL, NULL, GST_SECOND );
         }
-        // guLogDebug( "mPlaybin refcount: %i", GST_OBJECT_REFCOUNT( m_Playbin ) );
-        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
-        gst_bus_remove_watch( bus );
-        // guLogDebug( "mPlaybin bus refcount: %i", GST_OBJECT_REFCOUNT( bus ) - 1 );
-        gst_object_unref( bus );
-        gst_object_unref( GST_OBJECT( m_Playbin ) );
-
         guGstStateToNullAndUnref( m_FaderVolume );
         guGstStateToNullAndUnref( m_Volume );
 
@@ -551,6 +545,13 @@ guFaderPlaybin::~guFaderPlaybin()
 
         guGstStateToNullAndUnref( m_ReplayGain );
         guGstStateToNullAndUnref( m_ReplayGainLimiter );
+
+        // guLogDebug( "mPlaybin refcount: %i", GST_OBJECT_REFCOUNT( m_Playbin ) );
+        GstBus * bus = gst_pipeline_get_bus( GST_PIPELINE( m_Playbin ) );
+        gst_bus_remove_watch( bus );
+        // guLogDebug( "mPlaybin bus refcount: %i", GST_OBJECT_REFCOUNT( bus ) - 1 );
+        gst_object_unref( bus );
+        gst_object_unref( GST_OBJECT( m_Playbin ) );
     }
 
     if( m_FaderTimeLine )

@@ -293,7 +293,7 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     int close_button_width = 0;
     if( close_button_state != wxAUI_BUTTON_STATE_HIDDEN )
     {
-        close_button_width = m_activeCloseBmp.GetWidth();
+        close_button_width = guENSURE_BITMAP(m_activeCloseBmp).GetWidth();
     }
 
 
@@ -303,12 +303,12 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
         bitmap_offset = tab_x + 8;
 
         // draw bitmap
-        dc.DrawBitmap(page.bitmap,
+        dc.DrawBitmap(guENSURE_BITMAP(page.bitmap),
                       bitmap_offset,
-                      drawn_tab_yoff + (drawn_tab_height/2) - (page.bitmap.GetHeight()/2),
+                      drawn_tab_yoff + (drawn_tab_height/2) - (guENSURE_BITMAP(page.bitmap).GetHeight()/2),
                       true);
 
-        text_offset = bitmap_offset + page.bitmap.GetWidth();
+        text_offset = bitmap_offset + guENSURE_BITMAP(page.bitmap).GetWidth();
         text_offset += 3; // bitmap padding
     }
      else
@@ -331,12 +331,12 @@ void guAuiTabArt::DrawTab(wxDC &dc, wxWindow * wnd, const wxAuiNotebookPage &pag
     // draw close button if necessary
     if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN)
     {
-        wxBitmap bmp = m_disabledCloseBmp;
+        wxBitmap bmp = guENSURE_BITMAP(m_disabledCloseBmp);
 
         if (close_button_state == wxAUI_BUTTON_STATE_HOVER ||
             close_button_state == wxAUI_BUTTON_STATE_PRESSED)
         {
-            bmp = m_activeCloseBmp;
+            bmp = guENSURE_BITMAP(m_activeCloseBmp);
         }
 
         wxRect rect(tab_x + tab_width - close_button_width - 1,
