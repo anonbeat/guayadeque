@@ -22,6 +22,7 @@
 #ifndef __COVERPANEL_H__
 #define __COVERPANEL_H__
 
+#include "CoverWindow.h"
 #include "PlayerPanel.h"
 
 #include <wx/bitmap.h>
@@ -45,7 +46,7 @@ class guCoverPanel : public wxPanel
     guPlayerPanel *     m_PlayerPanel;
     int                 m_LastSize;
     wxBitmap            m_CoverImage;
-    int                 m_CoverType;
+    guSongCoverType     m_CoverType;
     wxString            m_CoverPath;
     wxMutex             m_CoverImageMutex;
     wxTimer             m_ResizeTimer;
@@ -53,12 +54,15 @@ class guCoverPanel : public wxPanel
     virtual void        OnSize( wxSizeEvent &event );
     virtual void        OnPaint( wxPaintEvent &event );
     virtual void        OnResizeTimer( wxTimerEvent &event );
+    virtual void        OnClick( wxMouseEvent &event );
 
     void                UpdateImage( void );
 
   public :
     guCoverPanel( wxWindow * parent, guPlayerPanel * playerpanel );
     ~guCoverPanel();
+
+    guCoverWindow      * m_CoverWindow = NULL;
 
     void                OnUpdatedTrack( wxCommandEvent &event );
 

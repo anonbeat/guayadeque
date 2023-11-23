@@ -19,46 +19,59 @@
 //    http://www.gnu.org/copyleft/gpl.html
 //
 // -------------------------------------------------------------------------------- //
-#include "CoverPanel.h"
+#include "CoverWindow.h"
 
+#include "CoverPanel.h"
 #include "Images.h"
 #include "TagInfo.h"
 
-#define guCOVERPANEL_RESIZE_TIMER_TIME  250
-#define guCOVERPANEL_RESIZE_TIMER_ID    10
+#define guCOVERWINDOW_RESIZE_TIMER_TIME  250
+#define guCOVERWINDOW_RESIZE_TIMER_ID    10
 
 namespace Guayadeque {
 
 // -------------------------------------------------------------------------------- //
-guCoverPanel::guCoverPanel( wxWindow * parent, guPlayerPanel * playerpanel ) :
-    wxPanel( parent, wxID_ANY, wxDefaultPosition, wxSize( 100, 100 ), wxTAB_TRAVERSAL ),
-    m_ResizeTimer( this, guCOVERPANEL_RESIZE_TIMER_ID )
+guCoverWindow::guCoverWindow( guCoverPanel * parent, wxWindowID id, const wxString & title, const wxPoint & pos, const wxSize & size, long style ) :
+     wxFrame( parent, id, title, pos, size, style ),
+    m_ResizeTimer( this, guCOVERWINDOW_RESIZE_TIMER_ID )
 {
-    m_PlayerPanel = playerpanel;
     m_LastSize = 100;
+    m_CoverPanel = parent;
 
-    Bind( wxEVT_SIZE, &guCoverPanel::OnSize, this );
-    Bind( wxEVT_PAINT, &guCoverPanel::OnPaint, this );
-    Bind( wxEVT_TIMER, &guCoverPanel::OnResizeTimer, this, guCOVERPANEL_RESIZE_TIMER_ID );
-    Bind( wxEVT_LEFT_UP, &guCoverPanel::OnClick, this);
-    Bind( wxEVT_RIGHT_UP, &guCoverPanel::OnClick, this);
+    m_Panel = new wxPanel(this);
+
+    Bind( wxEVT_SIZE, &guCoverWindow::OnSize, this );
+    Bind( wxEVT_PAINT, &guCoverWindow::OnPaint, this );
+    Bind( wxEVT_TIMER, &guCoverWindow::OnResizeTimer, this, guCOVERWINDOW_RESIZE_TIMER_ID );
+    Bind( wxEVT_LEFT_UP, &guCoverWindow::OnClick, this);
+    Bind( wxEVT_RIGHT_UP, &guCoverWindow::OnRightClick, this);
+    Bind( wxEVT_MOUSEWHEEL, &guCoverWindow::OnClick, this);
+    m_Panel->Bind( wxEVT_KEY_UP, &guCoverWindow::OnKey, this);
+    m_Panel->SetFocus();
 
     wxCommandEvent Event;
     OnUpdatedTrack( Event );
 }
 
 // -------------------------------------------------------------------------------- //
-guCoverPanel::~guCoverPanel()
+guCoverWindow::~guCoverWindow()
 {
-    Unbind( wxEVT_SIZE, &guCoverPanel::OnSize, this );
-    Unbind( wxEVT_PAINT, &guCoverPanel::OnPaint, this );
-    Unbind( wxEVT_TIMER, &guCoverPanel::OnResizeTimer, this, guCOVERPANEL_RESIZE_TIMER_ID );
-    Unbind( wxEVT_LEFT_UP, &guCoverPanel::OnClick, this);
-    Unbind( wxEVT_RIGHT_UP, &guCoverPanel::OnClick, this);
+    guLogDebug("guCoverWindow::~guCoverWindow");
+
+    m_CoverPanel->m_CoverWindow = NULL;
+
+    m_Panel->Unbind( wxEVT_KEY_UP, &guCoverWindow::OnKey, this);
+
+    Unbind( wxEVT_SIZE, &guCoverWindow::OnSize, this );
+    Unbind( wxEVT_PAINT, &guCoverWindow::OnPaint, this );
+    Unbind( wxEVT_TIMER, &guCoverWindow::OnResizeTimer, this, guCOVERWINDOW_RESIZE_TIMER_ID );
+    Unbind( wxEVT_LEFT_UP, &guCoverWindow::OnClick, this);
+    Unbind( wxEVT_RIGHT_UP, &guCoverWindow::OnRightClick, this);
+    Unbind( wxEVT_MOUSEWHEEL, &guCoverWindow::OnClick, this);
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverPanel::OnPaint( wxPaintEvent &event )
+void guCoverWindow::OnPaint( wxPaintEvent &event )
 {
 	wxCoord Width;
 	wxCoord Height;
@@ -69,35 +82,45 @@ void guCoverPanel::OnPaint( wxPaintEvent &event )
         wxPaintDC dc( this );
         dc.DrawBitmap( m_CoverImage, ( Width - m_LastSize ) / 2, ( Height - m_LastSize ) / 2, false );
     }
+    event.Skip();
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverPanel::OnResizeTimer( wxTimerEvent &event )
+void guCoverWindow::OnResizeTimer( wxTimerEvent &event )
 {
     UpdateImage();
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverPanel::OnClick( wxMouseEvent &event )
+void guCoverWindow::OnClick( wxMouseEvent &event )
 {
-    if ( m_CoverWindow == NULL ) {
-        m_CoverWindow = new guCoverWindow( this );
-    }
-    else
-    {
-        m_CoverWindow->Raise();
-    }
-
-    if( m_CoverWindow )
-    {
-        m_CoverWindow->SetBitmap( m_CoverType, m_CoverPath );
-        m_CoverWindow->ShowFullScreen( true );
-    }
+    guLogDebug("guCoverWindow::OnClick");
+    Close();
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverPanel::OnSize( wxSizeEvent &event )
+void guCoverWindow::OnRightClick( wxMouseEvent &event )
 {
+    guLogDebug("guCoverWindow::OnRightClick");
+    if ( IsFullScreen() ) {
+        ShowFullScreen( false );
+    }
+    else
+    {
+        ShowFullScreen( true );
+    }
+}
+
+void guCoverWindow::OnKey( wxKeyEvent &event )
+{
+    guLogDebug("guCoverWindow::OnKey");
+    Close();
+}
+
+// -------------------------------------------------------------------------------- //
+void guCoverWindow::OnSize( wxSizeEvent &event )
+{
+    guLogDebug("guCoverWindow::OnSize");
     wxSize Size = event.GetSize();
     int MinSize = wxMin( Size.GetWidth(), Size.GetHeight() );
     if( MinSize != m_LastSize )
@@ -107,14 +130,15 @@ void guCoverPanel::OnSize( wxSizeEvent &event )
         {
             m_ResizeTimer.Stop();
         }
-        m_ResizeTimer.Start( guCOVERPANEL_RESIZE_TIMER_TIME, wxTIMER_ONE_SHOT );
+        m_ResizeTimer.Start( guCOVERWINDOW_RESIZE_TIMER_TIME, wxTIMER_ONE_SHOT );
     }
-    event.Skip();
+    SetFocus();
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverPanel::UpdateImage( void )
+void guCoverWindow::UpdateImage( void )
 {
+    guLogDebug("guCoverWindow::UpdateImage");
     wxImage * CoverImage = NULL;
 
     switch( m_CoverType )
@@ -160,27 +184,20 @@ void guCoverPanel::UpdateImage( void )
 }
 
 // -------------------------------------------------------------------------------- //
-void guCoverPanel::OnUpdatedTrack( wxCommandEvent &event )
+void guCoverWindow::OnUpdatedTrack( wxCommandEvent &event )
 {
-    const guCurrentTrack * CurrentTrack = m_PlayerPanel->GetCurrentTrack();
-
-    if( CurrentTrack )
-    {
-        m_CoverType = CurrentTrack->m_CoverType;
-        m_CoverPath = CurrentTrack->m_CoverPath;
-        if ( m_CoverWindow != NULL ) {
-            m_CoverWindow->SetBitmap( m_CoverType, m_CoverPath );
-        }
-        guLogMessage( wxT( "Changed image to %i '%s'" ), m_CoverType, m_CoverPath.c_str() );
-    }
-    else
-    {
-        m_CoverType = GU_SONGCOVER_NONE;
-        m_CoverPath = wxEmptyString;
-    }
     UpdateImage();
 }
 
+// -------------------------------------------------------------------------------- //
+void guCoverWindow::SetBitmap( const guSongCoverType CoverType, const wxString &CoverPath )
+{
+    guLogDebug("guCoverWindow::SetBitmap ( %d , %s )", CoverType, CoverPath);
+    m_CoverType = CoverType;
+    m_CoverPath = CoverPath;
+    UpdateImage();
 }
+
+} // Guayadeque namespace
 
 // -------------------------------------------------------------------------------- //
